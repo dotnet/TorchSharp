@@ -1,0 +1,66 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using System.Runtime.InteropServices;
+
+namespace PytorchSharp {
+<#
+foreach (var type in new [] { 
+    new { ApiName = "Byte", Storage = "byte" } }){
+        string tname = type.ApiName;
+        string ttype = type.Storage;
+#>
+
+    public class <#=tname#>Storage : IDisposable {
+        IntPtr handle;
+        
+        [DllImport ("caffe2")]
+        extern static IntPtr TH<#=tname#>Storage_new ();
+        
+        public <#=tname#>Storage ()
+        {
+            handle = TH<#=tname#>Storage_new ();
+        }
+        
+        [DllImport ("caffe2")]
+        extern static IntPtr TH<#=tname#>Storage_new_with_size (IntPtr size);
+        
+        public <#=tname#>Storage (long size)
+        {
+            handle = TH<#=tname#>Storage_new_with_size ((IntPtr) size);
+        }
+        
+        ~<#=tname#>Storage ()
+        {
+            Dispose (false);
+        }
+        
+        public void Dispose ()
+        {
+            Dispose (true);
+            GC.SuppressFinalize (this);
+        }
+        
+        public void Dispose (bool disposing)
+        {
+            if (disposing){
+                
+                TH<#=tname#>Storage_free (handle);
+                handle = IntPtr.Zero;
+            }
+        }
+        
+        public <#=ttype#> this [long index] {
+            get {
+                return  default(<#ttype#>);
+            }
+            set {
+            }
+        }
+    }
+<#
+}
+#>
