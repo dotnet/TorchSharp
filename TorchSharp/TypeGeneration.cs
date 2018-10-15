@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using HType=Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid;
+using HType=TorchSharp.TorchHandle;
 using System.Text;
 
 namespace TorchSharp {
