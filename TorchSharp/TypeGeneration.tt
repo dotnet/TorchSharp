@@ -1,0 +1,509 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+using HType=Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid;
+using System.Text;
+
+namespace TorchSharp {
+<#
+foreach (var type in new [] { 
+    new { ApiName = "Byte", Storage = "byte" }, 
+    new { ApiName = "Short", Storage = "short" },   
+    new { ApiName = "Int", Storage = "int" },
+    new { ApiName = "Long", Storage = "long" },
+    new { ApiName = "Double", Storage = "double" },
+    new { ApiName = "Float", Storage = "float" },
+     }){
+        string tname = type.ApiName;
+        string ttype = type.Storage;
+        
+        // In the future, we should add HalfFloat (16-bit float)
+        bool isFloat = type.Storage == "double" || type.Storage == "float";
+#>
+
+    public class <#=tname#>Storage : IDisposable {
+        HType handle;
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Storage_new ();
+        
+        public <#=tname#>Storage ()
+        {
+            handle = TH<#=tname#>Storage_new ();
+        }
+        
+        internal <#=tname#>Storage (HType fromHandle)
+        {
+            this.handle = fromHandle;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Storage_new_wiTHsize (IntPtr size);
+        
+        public <#=tname#>Storage (long size)
+        {
+            handle = TH<#=tname#>Storage_new_wiTHsize ((IntPtr) size);
+        }
+        
+        ~<#=tname#>Storage ()
+        {
+            Dispose (false);
+        }
+        
+        public void Dispose ()
+        {
+            Dispose (true);
+            GC.SuppressFinalize (this);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Storage_free (HType handle);
+        
+        public void Dispose (bool disposing)
+        {
+            if (disposing){
+                TH<#=tname#>Storage_free (handle);
+                handle.Dispose ();
+            }
+        }
+        
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Storage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
+        extern static void TH<#=tname#>Storage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  <#=ttype#> value);
+        
+        public <#=ttype#> this [long index] {
+            get => TH<#=tname#>Storage_get (handle, (IntPtr) (index));
+            set {
+                TH<#=tname#>Storage_set (handle, (IntPtr) (index), value);
+            }
+        }
+        
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Storage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
+        
+        public void Resize (ulong size)
+        {
+            TH<#=tname#>Storage_resize (handle, (UIntPtr) size);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Storage_fill (HType handle, <#=ttype#> value);
+        
+        public void Fill (<#=ttype#> value)
+        {
+            TH<#=tname#>Storage_fill (handle, value);
+        }
+    }
+    
+    public class <#=tname#>Tensor : IDisposable {
+        HType handle;
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_new ();
+        
+        /// <summary>
+        ///    Creates an empty tensor.
+        /// </summary>
+        public <#=tname#>Tensor ()
+        {
+            handle = TH<#=tname#>Tensor_new ();
+        }
+        
+        public <#=tname#>Tensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
+        /// <summary>
+        ///    Creates a 1D tensor of the specified size.
+        /// </summary>    
+        /// <param name="size0">Size for the first dimension.</param>
+
+        public <#=tname#>Tensor (long size0)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize1d (size0);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newWithSize2d (long size0, long size1);
+        
+        /// <summary>
+        ///    Creates a 2D tensor of the specified size.
+        /// </summary>        
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize2d (size0, size1);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newWithSize3d (long size0, long size1, long size2);
+        /// <summary>
+        ///    Creates a 3D tensor of the specified size.
+        /// </summary>        
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        /// <param name="size2">Size for the third dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1, long size2)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize3d (size0, size1, size2);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        /// <summary>
+        ///    Creates a 4D tensor of the specified size.
+        /// </summary>
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        /// <param name="size2">Size for the third dimension.</param>
+        /// <param name="size3">Size for the fourth dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1, long size2, long size3)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize4d (size0, size1, size2, size3);
+        }
+        
+        ~<#=tname#>Tensor ()
+        {
+            Dispose (false);
+        }
+        
+        public void Dispose ()
+        {
+            Dispose (true);
+            GC.SuppressFinalize (this);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_free (HType handle);
+        
+        public void Dispose (bool disposing)
+        {
+            if (disposing){
+                TH<#=tname#>Tensor_free (handle);
+                handle.Dispose ();
+            }
+        }
+        
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_zero (HType handle);
+     
+        /// <summary>
+        ///  Fills the tensor with zeros
+        /// </summary>
+        public void ZeroFill ()
+        {
+            TH<#=tname#>Tensor_zero (handle);
+        }   
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_fill (HType handle, <#=ttype#> value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value
+        /// </summary>
+        public void Fill (<#=ttype#> value)
+        {
+            TH<#=tname#>Tensor_fill (handle, value);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_storage (HType handle);
+
+        /// <summary>
+        ///  Returns the associated storage for this tensor
+        /// </summary>
+        
+        public <#=tname#>Storage Storage => new <#=tname#>Storage (TH<#=tname#>Tensor_storage (handle));
+        
+        [DllImport ("caffe2")]
+        extern static int TH<#=tname#>Tensor_nDimension (HType handle);
+        
+        /// <summary>
+        ///  Returns the number of dimensions for this tensor
+        /// </summary>
+        public int Dimensions => TH<#=tname#>Tensor_nDimension (handle);
+        
+        [DllImport ("caffe2")]
+        extern static long TH<#=tname#>Tensor_size (HType handle, int dim);
+        
+        /// <summary>
+        ///  Retrieves the size of the specified dimension in the tensor.
+        /// </summary>
+        public long GetTensorDimension (int dim)
+        {
+            return TH<#=tname#>Tensor_size (handle, dim);
+        }
+
+        /// <summary>
+        /// Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+        /// </summary>
+        /// <remarks>
+        ///     An array of size 0 is used for constants, an array of size 1 is used
+        ///     for single-dimension arrays, where the dimension is the value of the
+        ///     first element.   And so on.
+        /// </remarks>
+        public long [] Shape {
+            get {
+                    var dims = new long [Dimensions];
+                    for (int i = 0; i < dims.Length; i++)
+                            dims [i] = (long)GetTensorDimension (i);
+
+                    return dims;
+            }
+        }
+
+
+        [DllImport ("caffe2")]
+        extern static long TH<#=tname#>Tensor_stride (HType handle, int dim);
+        
+        /// <summary>
+        ///  Retrieves the stride of the specified dimension in the tensor.
+        /// </summary>
+        public long GetTensorStride (int dim)
+        {
+            return TH<#=tname#>Tensor_stride (handle, dim);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static IntPtr TH<#=tname#>Tensor_data (HType handle);
+        
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public unsafe <#=ttype#> *Data => (<#=ttype#>*) TH<#=tname#>Tensor_data (handle);
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newClone (HType handle);
+        
+        /// <summary>
+        ///   Returns a deep clone of the tensor
+        /// </summary>
+        public <#=tname#>Tensor Clone () => new <#=tname#>Tensor (TH<#=tname#>Tensor_newClone (handle));
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newSelect (HType handle, int dim, long slideIndex);
+        
+        public <#=tname#>Tensor Select (int dim, long slideIndex) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newSelect (handle, dim, slideIndex));
+
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newNarrow (HType handle, int dim, long firstIndex, long size);
+        
+        public <#=tname#>Tensor Narrow (int dim, long firstIndex, long size) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newNarrow (handle, dim, firstIndex, size));
+                
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newTranspose (HType handle, int dim1, int dim2);
+        public <#=tname#>Tensor Transpose (int dim1, int dim2) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newTranspose (handle, dim1, dim2));
+        
+        [DllImport ("caffe2")]
+        extern static HType TH<#=tname#>Tensor_newUnfold (HType handle, int dim1, long size, long step);
+        public <#=tname#>Tensor Unfold (int dim, long size, long step) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newUnfold (handle, dim, size, step));
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resize1d (HType handle, long size);
+        
+        public void Resize1d (long size)
+        {
+            TH<#=tname#>Tensor_resize1d (handle, size);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resize2d (HType handle, long size0, long size1);
+        public void Resize2d (long size0, long size1)
+        {
+            TH<#=tname#>Tensor_resize2d (handle, size0, size1);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resize3d (HType handle, long size0, long size1, long size2);
+        
+        public void Resize3d (long size0, long size1, long size2)
+        {
+            TH<#=tname#>Tensor_resize3d (handle, size0, size1, size2);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resize4d (HType handle, long size0, long size1, long size2, long size4);
+        public void Resize4d (long size0, long size1, long size2, long size3)
+        {
+            TH<#=tname#>Tensor_resize4d (handle, size0, size1, size2, size3);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resize5d (HType handle, long size0, long size1, long size2, long size4, long size5);
+
+        public void Resize5d (long size0, long size1, long size2, long size3, long size4)
+        {
+            TH<#=tname#>Tensor_resize5d (handle, size0, size1, size2, size3, size4);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_resizeAs (HType handle, HType src);
+       
+        public void ResizeAs (<#=tname#>Tensor src)
+        {
+            TH<#=tname#>Tensor_resizeAs (handle, src.handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_set (HType handle, HType src);
+        
+        public void Set (<#=tname#>Tensor src)
+        {
+            TH<#=tname#>Tensor_set (handle, src.handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_set1d (HType handle, long x0, <#=ttype#> value);
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_get1d (HType handle, long x0);
+
+        /// <summary>
+        ///   Access to element at the specified position in the tensor
+        /// </summary>        
+        public <#=ttype#> this [long x0] {
+            get => TH<#=tname#>Tensor_get1d (handle, x0);
+            set => TH<#=tname#>Tensor_set1d (handle, x0, value);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_set2d (HType handle, long x0, long x1, <#=ttype#> value);
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_get2d (HType handle, long x0, long x1);
+
+        /// <summary>
+        ///   Access to element at the specified position in the tensor
+        /// </summary>        
+        public <#=ttype#> this [long x0, long x1] {
+            get => TH<#=tname#>Tensor_get2d (handle, x0, x1);
+            set => TH<#=tname#>Tensor_set2d (handle, x0, x1, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_set3d (HType handle, long x0, long x1, long x2, <#=ttype#> value);
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_get3d (HType handle, long x0, long x1, long x2);
+
+        /// <summary>
+        ///   Access to element at the specified position in the tensor
+        /// </summary>        
+        public <#=ttype#> this [long x0, long x1, long x2] {
+            get => TH<#=tname#>Tensor_get3d (handle, x0, x1, x2);
+            set => TH<#=tname#>Tensor_set3d (handle, x0, x1, x2, value);
+        }
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_set4d (HType handle, long x0, long x1, long x2, long x3, <#=ttype#> value);
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_get4d (HType handle, long x0, long x1, long x2, long x3);
+
+        /// <summary>
+        ///   Access to element at the specified position in the tensor
+        /// </summary>        
+        public <#=ttype#> this [long x0, long x1, long x2, long x3] {
+            get => TH<#=tname#>Tensor_get4d (handle, x0, x1, x2, x3);
+            set => TH<#=tname#>Tensor_set4d (handle, x0, x1, x2, x3, value);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_randperm (HType handle, IntPtr thgenerator, long n);
+        public void Random (THRandom source, long n)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            TH<#=tname#>Tensor_randperm (handle, source.handle, n);
+        }
+        
+        public void Random (long n)
+        {
+            using (var r = new THRandom ())
+                Random (r, n);
+        }
+        
+        
+        public override string ToString ()
+        {
+            var n = Dimensions;
+            if (n == 0)
+                    return "[]";
+
+            StringBuilder sb = new StringBuilder ("[");
+            for (int i = 0; i < n; i++) {
+                    sb.Append (GetTensorDimension (i));
+                    if (i + 1 < n)
+                            sb.Append ("x");
+            }
+            sb.Append ("]");
+            return sb.ToString ();
+        }
+<#
+        // Idiom Op (Target, Source, Scalar)
+        
+            foreach (var op in new [] 
+                { "Add", "Sub", "Mul", "Div", "LShift", "RShift", "Fmod", "Remainder", "Clamp", "BitAnd", "BitOr", "BitXor"}){
+                
+                // BitOr and BitXor not supported for floating point values, rather than
+                // letting the runtime assert, do not surface the API.
+                if ((op == "BitOr" || op == "BitXor") && isFloat)
+                    continue;
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType source, <#=ttype#> value);
+        
+        // Not married to xthis yet - we have a few ways of solving this, sometimes
+        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
+        // which can also be surprising
+        
+        /// <summary>
+        ///   Performs the <#=op#> operation on each element of the source with the
+        ///   provided scalar.   The result tensor specified as the last parameters
+        ///   is resized to match the source.
+        /// </summary>
+        /// <remarks>
+        ///    For each element in the <see paramref="source"/> performs the <#=op#> operation
+        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
+        ///    tensor.
+        /// </remarks>
+        /// <param name="source">Source tensor on which the operation will take place.</param>
+        /// <param name="value">The scalar value that the operation uses.</param>
+        public static void <#=op#> (<#=tname#>Tensor source, <#=ttype#> value, <#=tname#>Tensor result)
+        {
+            // Arguments swapped to match Func<.., TResult> 
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, source.handle, value);
+        }
+        
+        /// <summary>
+        ///   Performs the <#=op#> operation on each element of the tensor with the
+        ///   <see paramref="value"/> and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        /// <remarks>
+        ///   If you want to avoid the allocation of a new tensor, you can use the 
+        ///   alternative method <see cref="M:PytorchSharp.<#=op#>(PytorchSharp.<#=tname#>Tensor, <#=tname#>, PytorchSharp.<#=tname#>)"/>.
+        /// </remarks>
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> value)
+        {
+            var result = new <#=tname#>Tensor ();
+            <#=op#> (this, value, result);
+            return result;
+        }
+<# } #>
+        #if false
+        [DllImport ("caffe2")]
+        extern static string TH<#=tname#>Tensor_
+        #endif
+    }
+<#
+}
+#>
+}

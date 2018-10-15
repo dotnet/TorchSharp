@@ -18,6 +18,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TypeGeneration.cs</LastGenOutput>
     </None>
+    <None Update="Generator.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>Generator.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="PreprocessedT4Template.cs" />
