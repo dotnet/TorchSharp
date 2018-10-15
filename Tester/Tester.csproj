@@ -34,7 +34,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PytorchSharp.csproj">
+    <ProjectReference Include="..\TorchSharp.csproj">
       <Project>{E47E6785-B43B-49E9-A360-DB23B5E21C35}</Project>
       <Name>TorchSharp</Name>
     </ProjectReference>
