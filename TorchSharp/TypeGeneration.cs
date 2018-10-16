@@ -23,11 +23,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THByteStorage_new_wiTHsize (IntPtr size);
+        extern static HType THByteStorage_new_withSize (IntPtr size);
         
         public ByteStorage (long size)
         {
-            handle = THByteStorage_new_wiTHsize ((IntPtr) size);
+            handle = THByteStorage_new_withSize ((IntPtr) size);
         }
         
         ~ByteStorage ()
@@ -395,7 +395,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static byte THByteTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -404,7 +404,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
@@ -963,11 +963,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THShortStorage_new_wiTHsize (IntPtr size);
+        extern static HType THShortStorage_new_withSize (IntPtr size);
         
         public ShortStorage (long size)
         {
-            handle = THShortStorage_new_wiTHsize ((IntPtr) size);
+            handle = THShortStorage_new_withSize ((IntPtr) size);
         }
         
         ~ShortStorage ()
@@ -1335,7 +1335,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static short THShortTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -1344,7 +1344,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
@@ -1903,11 +1903,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THIntStorage_new_wiTHsize (IntPtr size);
+        extern static HType THIntStorage_new_withSize (IntPtr size);
         
         public IntStorage (long size)
         {
-            handle = THIntStorage_new_wiTHsize ((IntPtr) size);
+            handle = THIntStorage_new_withSize ((IntPtr) size);
         }
         
         ~IntStorage ()
@@ -2275,7 +2275,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static int THIntTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -2284,7 +2284,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
@@ -2843,11 +2843,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THLongStorage_new_wiTHsize (IntPtr size);
+        extern static HType THLongStorage_new_withSize (IntPtr size);
         
         public LongStorage (long size)
         {
-            handle = THLongStorage_new_wiTHsize ((IntPtr) size);
+            handle = THLongStorage_new_withSize ((IntPtr) size);
         }
         
         ~LongStorage ()
@@ -3215,7 +3215,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static long THLongTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -3224,7 +3224,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
@@ -3783,11 +3783,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THDoubleStorage_new_wiTHsize (IntPtr size);
+        extern static HType THDoubleStorage_new_withSize (IntPtr size);
         
         public DoubleStorage (long size)
         {
-            handle = THDoubleStorage_new_wiTHsize ((IntPtr) size);
+            handle = THDoubleStorage_new_withSize ((IntPtr) size);
         }
         
         ~DoubleStorage ()
@@ -4155,7 +4155,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -4164,7 +4164,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
@@ -4637,11 +4637,11 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THFloatStorage_new_wiTHsize (IntPtr size);
+        extern static HType THFloatStorage_new_withSize (IntPtr size);
         
         public FloatStorage (long size)
         {
-            handle = THFloatStorage_new_wiTHsize ((IntPtr) size);
+            handle = THFloatStorage_new_withSize ((IntPtr) size);
         }
         
         ~FloatStorage ()
@@ -5009,7 +5009,7 @@ namespace TorchSharp {
         
         [DllImport ("caffe2")]
         extern static float THFloatTensor_randperm (HType handle, IntPtr thgenerator, long n);
-        public void Random (THRandom source, long n)
+        public void Random (RandomGenerator source, long n)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -5018,7 +5018,7 @@ namespace TorchSharp {
         
         public void Random (long n)
         {
-            using (var r = new THRandom ())
+            using (var r = new RandomGenerator ())
                 Random (r, n);
         }
         
