@@ -415,6 +415,10 @@ foreach (var type in new [] {
         
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_randperm (HType handle, IntPtr thgenerator, long n);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
         public void Random (RandomGenerator source, long n)
         {
             if (source == null)
@@ -422,6 +426,9 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_randperm (handle, source.handle, n);
         }
         
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+        /// </summary>
         public void Random (long n)
         {
             using (var r = new RandomGenerator ())
@@ -497,11 +504,137 @@ foreach (var type in new [] {
             <#=op#> (this, value, result);
             return result;
         }
-<# } #>
-        #if false
+<#          } /* foreach */ #>
+
+<#
+        // Idiom Op (Result, T, Scalar, Source2)
+        
+            foreach (var op in new [] { "CAdd", "CSub" }){
+            
+#>                
         [DllImport ("caffe2")]
-        extern static string TH<#=tname#>Tensor_
-        #endif
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, <#=ttype#> value, HType src);
+        /// <summary>
+        ///   Performs the <#=op#> operation on each element of the tensor with the
+        ///   <see paramref="value"/> and returns a new tensor with the result.
+        ///   where the result is t[idx] + value * src[idx]
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> value, <#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle, value, src.handle);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+
+<#
+        // Idiom Op (Result)
+            if (isFloat){
+            foreach (var opdoc in new [] { 
+                new { Name="Sigmoid", Doc="sigmoid" },
+                new { Name="Log", Doc="natural logarithm" },
+                new { Name="Lgamma", Doc="" },
+                new { Name="Digamma", Doc="" },
+                new { Name="Trigamma", Doc="" },
+                new { Name="Polygamma", Doc="" },
+                new { Name="Log10", Doc="" },
+                new { Name="Log1p", Doc="" },
+                new { Name="Log2", Doc="" },
+                new { Name="Exp", Doc="" },
+                new { Name="Expm1", Doc="" },
+                new { Name="Cos", Doc="" },
+                new { Name="Acos", Doc="" },
+                new { Name="Cosh", Doc="" },
+                new { Name="Sin", Doc="" },
+                new { Name="Asin", Doc="" },
+                new { Name="Sinh", Doc="" },
+                new { Name="Tan", Doc="" },
+                new { Name="Atan", Doc="" },
+                new { Name="Atan2", Doc="" },
+                new { Name="Tanh", Doc="" },
+                new { Name="Erf", Doc="" },
+                new { Name="Erfc", Doc="" },
+                new { Name="Erfinv", Doc="" },
+                new { Name="Sqrt", Doc="square root" },
+                new { Name="Rsqrt", Doc="reciprocal of the square root" },
+                new { Name="Ceil", Doc="values rounded up to the nearest integer" },
+                new { Name="Floor", Doc="values rounded down to the nearest integer" },
+                new { Name="Round", Doc="values rounded to the nearest integer" },
+                new { Name="Abs", Doc="absolute values" },
+                new { Name="Trunc", Doc="truncated integer values" },
+                new { Name="Frac", Doc="fractional portion" }
+               
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc == "" ? opdoc.Name : opdoc.Doc;
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the <#=op#> of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle);
+            return result;
+        }
+
+<#          } /* foreach */ } #>
+
+
+<#
+        // Idiom Op (Result, Tensor, Tensor 
+        
+            foreach (var opdoc in new [] { 
+                new { Name="CMul", Doc="element wise multiplication" },
+                new { Name="CPow", Doc="element-wise power operation" },
+                new { Name="CDiv", Doc="element-wise division " },
+                new { Name="CLShift", Doc="left shift operation of each element" },
+                new { Name="CFMod", Doc="element-wide remainder of the division (rounded towards zero)" },
+                new { Name="CRemainder", Doc="element-wise remainder of the division (rounded to nearest)" },
+                new { Name="CBitAnd", Doc="bitwise and operation of each element " },
+                new { Name="CBitOr", Doc="bitwise or operation of each element " },
+                new { Name="CBitXor", Doc="bitwise xor operation of each element " },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+
     }
 <#
 }
