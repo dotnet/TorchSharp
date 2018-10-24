@@ -12,15 +12,16 @@ using System.Text;
 namespace TorchSharp {
 <#
 foreach (var type in new [] { 
-    new { ApiName = "Byte", Storage = "byte" }, 
-    new { ApiName = "Short", Storage = "short" },   
-    new { ApiName = "Int", Storage = "int" },
-    new { ApiName = "Long", Storage = "long" },
-    new { ApiName = "Double", Storage = "double" },
-    new { ApiName = "Float", Storage = "float" },
+    new { ApiName = "Byte", Storage = "byte", AccReal="long" }, 
+    new { ApiName = "Short", Storage = "short", AccReal="long" },   
+    new { ApiName = "Int", Storage = "int",  AccReal="long"},
+    new { ApiName = "Long", Storage = "long", AccReal="long" },
+    new { ApiName = "Double", Storage = "double", AccReal="double" },
+    new { ApiName = "Float", Storage = "float", AccReal="double" },
      }){
         string tname = type.ApiName;
         string ttype = type.Storage;
+        string accreal = type.AccReal;
         
         // In the future, we should add HalfFloat (16-bit float)
         bool isFloat = type.Storage == "double" || type.Storage == "float";
@@ -537,43 +538,45 @@ foreach (var type in new [] {
         // Idiom Op (Result)
             if (isFloat){
             foreach (var opdoc in new [] { 
-                new { Name="Sigmoid", Doc="sigmoid" },
-                new { Name="Log", Doc="natural logarithm" },
-                new { Name="Lgamma", Doc="" },
-                new { Name="Digamma", Doc="" },
-                new { Name="Trigamma", Doc="" },
-                new { Name="Polygamma", Doc="" },
-                new { Name="Log10", Doc="" },
-                new { Name="Log1p", Doc="" },
-                new { Name="Log2", Doc="" },
-                new { Name="Exp", Doc="" },
-                new { Name="Expm1", Doc="" },
-                new { Name="Cos", Doc="" },
-                new { Name="Acos", Doc="" },
-                new { Name="Cosh", Doc="" },
-                new { Name="Sin", Doc="" },
-                new { Name="Asin", Doc="" },
-                new { Name="Sinh", Doc="" },
-                new { Name="Tan", Doc="" },
-                new { Name="Atan", Doc="" },
-                new { Name="Atan2", Doc="" },
-                new { Name="Tanh", Doc="" },
-                new { Name="Erf", Doc="" },
-                new { Name="Erfc", Doc="" },
-                new { Name="Erfinv", Doc="" },
-                new { Name="Sqrt", Doc="square root" },
-                new { Name="Rsqrt", Doc="reciprocal of the square root" },
-                new { Name="Ceil", Doc="values rounded up to the nearest integer" },
-                new { Name="Floor", Doc="values rounded down to the nearest integer" },
-                new { Name="Round", Doc="values rounded to the nearest integer" },
-                new { Name="Abs", Doc="absolute values" },
-                new { Name="Trunc", Doc="truncated integer values" },
-                new { Name="Frac", Doc="fractional portion" }
-               
+                new { FloatOnly=true,  Name="Sigmoid", Doc="sigmoid" },
+                new { FloatOnly=true,  Name="Log", Doc="natural logarithm" },
+                new { FloatOnly=true,  Name="Lgamma", Doc="" },
+                new { FloatOnly=true,  Name="Digamma", Doc="" },
+                new { FloatOnly=true,  Name="Trigamma", Doc="" },
+                new { FloatOnly=true,  Name="Polygamma", Doc="" },
+                new { FloatOnly=true,  Name="Log10", Doc="" },
+                new { FloatOnly=true,  Name="Log1p", Doc="" },
+                new { FloatOnly=true,  Name="Log2", Doc="" },
+                new { FloatOnly=true,  Name="Exp", Doc="" },
+                new { FloatOnly=true,  Name="Expm1", Doc="" },
+                new { FloatOnly=true,  Name="Cos", Doc="" },
+                new { FloatOnly=true,  Name="Acos", Doc="" },
+                new { FloatOnly=true,  Name="Cosh", Doc="" },
+                new { FloatOnly=true,  Name="Sin", Doc="" },
+                new { FloatOnly=true,  Name="Asin", Doc="" },
+                new { FloatOnly=true,  Name="Sinh", Doc="" },
+                new { FloatOnly=true,  Name="Tan", Doc="" },
+                new { FloatOnly=true,  Name="Atan", Doc="" },
+                new { FloatOnly=true,  Name="Atan2", Doc="" },
+                new { FloatOnly=true,  Name="Tanh", Doc="" },
+                new { FloatOnly=true,  Name="Erf", Doc="" },
+                new { FloatOnly=true,  Name="Erfc", Doc="" },
+                new { FloatOnly=true,  Name="Erfinv", Doc="" },
+                new { FloatOnly=true,  Name="Sqrt", Doc="square root" },
+                new { FloatOnly=true,  Name="Rsqrt", Doc="reciprocal of the square root" },
+                new { FloatOnly=true,  Name="Ceil", Doc="values rounded up to the nearest integer" },
+                new { FloatOnly=true,  Name="Floor", Doc="values rounded down to the nearest integer" },
+                new { FloatOnly=true,  Name="Round", Doc="values rounded to the nearest integer" },
+                new { FloatOnly=false, Name="Abs", Doc="absolute values" },
+                new { FloatOnly=true,  Name="Trunc", Doc="truncated integer values" },
+                new { FloatOnly=true,  Name="Frac", Doc="fractional portion" },
+                new { FloatOnly=false, Name="cinv", Doc="inverse value (1/x)" },
+                new { FloatOnly=false, Name="neg", Doc="inverted sign " },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc == "" ? opdoc.Name : opdoc.Doc;
-            
+                if (opdoc.FloatOnly && !isFloat)
+                    continue;
 #>                
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t);
@@ -595,7 +598,22 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ } #>
 
-
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public <#=accreal#> Dot (<#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return TH<#=tname#>Tensor_dot (this.handle, src.handle);
+        }
 <#
         // Idiom Op (Result, Tensor, Tensor 
         
@@ -632,6 +650,36 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle, src.handle);
             return result;
         }
+
+<#          } /* foreach */ #>
+<#
+        // Idiom Op (Result, Tensor, Tensor 
+        
+            foreach (var opdoc in new [] { 
+                new { Name="MinAll", Doc="minimum value", Ret=ttype },
+                new { Name="MaxAll", Doc="maximum value", Ret=ttype },
+                new { Name="MedianAll", Doc="median", Ret=ttype },
+                new { Name="SumAll", Doc="sum", Ret=accreal},
+                new { Name="ProdAll", Doc="product", Ret=accreal },
+                new { Name="MeanAll", Doc="mean", Ret=accreal },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+                var ret = opdoc.Ret;
+#> 
+        [DllImport ("caffe2")]
+        extern static <#=ret#> TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result);
+        /// <summary>
+        ///   Returns the <#=doc#> of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The <#=doc#> of the tensor.
+        /// </returns>
+        public <#=ret#> <#=op#> ()
+        {
+            return TH<#=tname#>Tensor_<#=op.ToLower()#> (this.handle);
+        }
+
 
 <#          } /* foreach */ #>
 

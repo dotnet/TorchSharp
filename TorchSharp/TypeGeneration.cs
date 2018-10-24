@@ -990,7 +990,22 @@ namespace TorchSharp {
 
 
 
-
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public long Dot (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THByteTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmul (HType result, HType t, HType src);
@@ -1170,6 +1185,96 @@ namespace TorchSharp {
             THByteTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static byte THByteTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public byte MinAll ()
+        {
+            return THByteTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static byte THByteTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public byte MaxAll ()
+        {
+            return THByteTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static byte THByteTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public byte MedianAll ()
+        {
+            return THByteTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public long SumAll ()
+        {
+            return THByteTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public long ProdAll ()
+        {
+            return THByteTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public long MeanAll ()
+        {
+            return THByteTensor_meanall (this.handle);
+        }
+
 
 
     }
@@ -2158,7 +2263,22 @@ namespace TorchSharp {
 
 
 
-
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public long Dot (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THShortTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmul (HType result, HType t, HType src);
@@ -2338,6 +2458,96 @@ namespace TorchSharp {
             THShortTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static short THShortTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public short MinAll ()
+        {
+            return THShortTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static short THShortTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public short MaxAll ()
+        {
+            return THShortTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static short THShortTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public short MedianAll ()
+        {
+            return THShortTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public long SumAll ()
+        {
+            return THShortTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public long ProdAll ()
+        {
+            return THShortTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public long MeanAll ()
+        {
+            return THShortTensor_meanall (this.handle);
+        }
+
 
 
     }
@@ -3326,7 +3536,22 @@ namespace TorchSharp {
 
 
 
-
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public long Dot (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THIntTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmul (HType result, HType t, HType src);
@@ -3506,6 +3731,96 @@ namespace TorchSharp {
             THIntTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public int MinAll ()
+        {
+            return THIntTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public int MaxAll ()
+        {
+            return THIntTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public int MedianAll ()
+        {
+            return THIntTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public long SumAll ()
+        {
+            return THIntTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public long ProdAll ()
+        {
+            return THIntTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public long MeanAll ()
+        {
+            return THIntTensor_meanall (this.handle);
+        }
+
 
 
     }
@@ -4494,7 +4809,22 @@ namespace TorchSharp {
 
 
 
-
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public long Dot (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THLongTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmul (HType result, HType t, HType src);
@@ -4674,6 +5004,96 @@ namespace TorchSharp {
             THLongTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public long MinAll ()
+        {
+            return THLongTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public long MaxAll ()
+        {
+            return THLongTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public long MedianAll ()
+        {
+            return THLongTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public long SumAll ()
+        {
+            return THLongTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public long ProdAll ()
+        {
+            return THLongTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public long MeanAll ()
+        {
+            return THLongTensor_meanall (this.handle);
+        }
+
 
 
     }
@@ -6183,8 +6603,61 @@ namespace TorchSharp {
             return result;
         }
 
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cinv (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor cinv (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_cinv (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_neg (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor neg (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_neg (result.handle, this.handle);
+            return result;
+        }
 
 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public double Dot (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THDoubleTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmul (HType result, HType t, HType src);
@@ -6364,6 +6837,96 @@ namespace TorchSharp {
             THDoubleTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public double MinAll ()
+        {
+            return THDoubleTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public double MaxAll ()
+        {
+            return THDoubleTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public double MedianAll ()
+        {
+            return THDoubleTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public double SumAll ()
+        {
+            return THDoubleTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public double ProdAll ()
+        {
+            return THDoubleTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public double MeanAll ()
+        {
+            return THDoubleTensor_meanall (this.handle);
+        }
+
 
 
     }
@@ -7873,8 +8436,61 @@ namespace TorchSharp {
             return result;
         }
 
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cinv (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor cinv (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_cinv (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_neg (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor neg (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_neg (result.handle, this.handle);
+            return result;
+        }
 
 
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_dot (HType self, HType other);
+        
+        /// <summary>
+        ///   Returns the tensor product between this tensor and the provided one
+        /// </summary>
+        /// <returns>
+        ///   The dot product
+        /// </returns>
+        public double Dot (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+           
+            return THFloatTensor_dot (this.handle, src.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmul (HType result, HType t, HType src);
@@ -8054,6 +8670,96 @@ namespace TorchSharp {
             THFloatTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
+
+ 
+        [DllImport ("caffe2")]
+        extern static float THFloatTensor_minall (HType result);
+        /// <summary>
+        ///   Returns the minimum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The minimum value of the tensor.
+        /// </returns>
+        public float MinAll ()
+        {
+            return THFloatTensor_minall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static float THFloatTensor_maxall (HType result);
+        /// <summary>
+        ///   Returns the maximum value of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The maximum value of the tensor.
+        /// </returns>
+        public float MaxAll ()
+        {
+            return THFloatTensor_maxall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static float THFloatTensor_medianall (HType result);
+        /// <summary>
+        ///   Returns the median of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The median of the tensor.
+        /// </returns>
+        public float MedianAll ()
+        {
+            return THFloatTensor_medianall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_sumall (HType result);
+        /// <summary>
+        ///   Returns the sum of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The sum of the tensor.
+        /// </returns>
+        public double SumAll ()
+        {
+            return THFloatTensor_sumall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_prodall (HType result);
+        /// <summary>
+        ///   Returns the product of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The product of the tensor.
+        /// </returns>
+        public double ProdAll ()
+        {
+            return THFloatTensor_prodall (this.handle);
+        }
+
+
+ 
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_meanall (HType result);
+        /// <summary>
+        ///   Returns the mean of the elements in the tensor.
+        /// </summary>
+        /// <returns>
+        ///   The mean of the tensor.
+        /// </returns>
+        public double MeanAll ()
+        {
+            return THFloatTensor_meanall (this.handle);
+        }
+
 
 
     }
