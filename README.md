@@ -6,6 +6,8 @@ Status
 Currently I am binding the Tensor APIs, opportunities to bind other APIs
 are wide open.
 
+[API Documentation](https://xamarin.github.io/TorchSharp/api/TorchSharp.html)
+
 Running this
 ============
 To run this, you will need libtorch and its dependencies (on Mac that
