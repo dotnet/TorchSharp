@@ -1,1 +1,6 @@
 *~
+.vs
+obj
+bin
+*.exe
+*pdb
