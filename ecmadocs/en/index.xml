@@ -6,10 +6,13 @@
           <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCompany("TorchSharp")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCompany("Miguel de Icaza")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyConfiguration("Release")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription(".NET Bindings for Torch")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyFileVersion("1.0.0.0")</AttributeName>
@@ -52,7 +55,6 @@
       <Type Name="RandomGenerator" Kind="Class" />
       <Type Name="ShortStorage" Kind="Class" />
       <Type Name="ShortTensor" Kind="Class" />
-      <Type Name="TorchHandle" Kind="Class" />
     </Namespace>
   </Types>
   <Title>TorchSharp</Title>

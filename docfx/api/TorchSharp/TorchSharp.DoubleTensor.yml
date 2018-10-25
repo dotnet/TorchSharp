@@ -5,7 +5,6 @@ items:
   children:
   - TorchSharp.DoubleTensor.#ctor
   - TorchSharp.DoubleTensor.#ctor(System.Int64)
-  - TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
   - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
   - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64)
   - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -16,8 +15,8 @@ items:
   - TorchSharp.DoubleTensor.Asin(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Atan(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Atan2(TorchSharp.DoubleTensor)
-  - TorchSharp.DoubleTensor.BitAnd(System.Double)
   - TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.BitAnd(System.Double)
   - TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.CBitAnd(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.CBitOr(TorchSharp.DoubleTensor)
@@ -41,8 +40,8 @@ items:
   - TorchSharp.DoubleTensor.Dimensions
   - TorchSharp.DoubleTensor.Dispose
   - TorchSharp.DoubleTensor.Dispose(System.Boolean)
-  - TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Div(System.Double)
+  - TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Erf(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Erfc(TorchSharp.DoubleTensor)
@@ -57,10 +56,10 @@ items:
   - TorchSharp.DoubleTensor.Frac(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.GetTensorDimension(System.Int32)
   - TorchSharp.DoubleTensor.GetTensorStride(System.Int32)
+  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
   - TorchSharp.DoubleTensor.Item(System.Int64)
   - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
-  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
-  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
   - TorchSharp.DoubleTensor.Lgamma(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Log(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Log10(TorchSharp.DoubleTensor)
@@ -72,8 +71,8 @@ items:
   - TorchSharp.DoubleTensor.MeanAll
   - TorchSharp.DoubleTensor.MedianAll
   - TorchSharp.DoubleTensor.MinAll
-  - TorchSharp.DoubleTensor.Mul(System.Double)
   - TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Mul(System.Double)
   - TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
   - TorchSharp.DoubleTensor.neg(TorchSharp.DoubleTensor)
   - TorchSharp.DoubleTensor.Polygamma(TorchSharp.DoubleTensor)
@@ -171,26 +170,6 @@ items:
     - id: size0
       type: System.Int64
       description: Size for the first dimension.
-  overload: TorchSharp.DoubleTensor.#ctor*
-  exceptions: []
-- uid: TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
-  id: '#ctor(TorchSharp.TorchHandle)'
-  parent: TorchSharp.DoubleTensor
-  langs:
-  - csharp
-  name: DoubleTensor(TorchHandle)
-  nameWithType: DoubleTensor.DoubleTensor(TorchHandle)
-  fullName: DoubleTensor.DoubleTensor(TorchHandle)
-  type: Constructor
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  syntax:
-    content: public DoubleTensor (TorchSharp.TorchHandle handle);
-    parameters:
-    - id: handle
-      type: TorchSharp.TorchHandle
-      description: To be added.
   overload: TorchSharp.DoubleTensor.#ctor*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
@@ -380,7 +359,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Add*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Asin(TorchSharp.DoubleTensor)
@@ -455,33 +434,6 @@ items:
       description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.DoubleTensor.Atan2*
   exceptions: []
-- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
-  id: BitAnd(System.Double)
-  parent: TorchSharp.DoubleTensor
-  langs:
-  - csharp
-  name: BitAnd(Double)
-  nameWithType: DoubleTensor.BitAnd(Double)
-  fullName: DoubleTensor.BitAnd(Double)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the BitAnd operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
-  syntax:
-    content: public TorchSharp.DoubleTensor BitAnd (double value);
-    parameters:
-    - id: value
-      type: System.Double
-      description: To be added.
-    return:
-      type: TorchSharp.DoubleTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.DoubleTensor.BitAnd*
-  exceptions: []
 - uid: TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   id: BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
@@ -513,7 +465,34 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.DoubleTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
+  id: BitAnd(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: BitAnd(Double)
+  nameWithType: DoubleTensor.BitAnd(Double)
+  fullName: DoubleTensor.BitAnd(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor BitAnd (double value);
+    parameters:
+    - id: value
+      type: System.Double
       description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.DoubleTensor.BitAnd*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
@@ -772,7 +751,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Clamp*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Clone
@@ -1046,6 +1025,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Releases the tensor and its associated data.
   syntax:
     content: public void Dispose ();
     parameters: []
@@ -1063,13 +1043,41 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Implements the .NET Dispose pattern.
   syntax:
-    content: public void Dispose (bool disposing);
+    content: protected void Dispose (bool disposing);
     parameters:
     - id: disposing
       type: System.Boolean
       description: To be added.
   overload: TorchSharp.DoubleTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Div(System.Double)
+  id: Div(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Div(Double)
+  nameWithType: DoubleTensor.Div(Double)
+  fullName: DoubleTensor.Div(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Div (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Div*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   id: Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
@@ -1102,34 +1110,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
-  overload: TorchSharp.DoubleTensor.Div*
-  exceptions: []
-- uid: TorchSharp.DoubleTensor.Div(System.Double)
-  id: Div(System.Double)
-  parent: TorchSharp.DoubleTensor
-  langs:
-  - csharp
-  name: Div(Double)
-  nameWithType: DoubleTensor.Div(Double)
-  fullName: DoubleTensor.Div(Double)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Div operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
-  syntax:
-    content: public TorchSharp.DoubleTensor Div (double value);
-    parameters:
-    - id: value
-      type: System.Double
-      description: To be added.
-    return:
-      type: TorchSharp.DoubleTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Div*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
@@ -1309,6 +1290,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Finalizer for ~DoubleTensor
   syntax:
     content: ~DoubleTensor ();
     parameters: []
@@ -1396,7 +1378,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Fmod*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Frac(TorchSharp.DoubleTensor)
@@ -1471,52 +1453,34 @@ items:
       description: To be added.
   overload: TorchSharp.DoubleTensor.GetTensorStride*
   exceptions: []
-- uid: TorchSharp.DoubleTensor.Item(System.Int64)
-  id: Item(System.Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
   parent: TorchSharp.DoubleTensor
   langs:
   - csharp
-  name: Item(Int64)
-  nameWithType: DoubleTensor.Item(Int64)
-  fullName: DoubleTensor.Item(Int64)
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
   type: Property
   assemblies:
   - TorchSharp
   namespace: TorchSharp
   summary: Access to element at the specified position in the tensor
   syntax:
-    content: public double this[long x0] { get; set; }
+    content: public double this[long x0, long x1, long x2, long x3] { get; set; }
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
-    return:
-      type: System.Double
-      description: To be added.
-  overload: TorchSharp.DoubleTensor.Item*
-  exceptions: []
-- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
-  id: Item(System.Int64,System.Int64)
-  parent: TorchSharp.DoubleTensor
-  langs:
-  - csharp
-  name: Item(Int64, Int64)
-  nameWithType: DoubleTensor.Item(Int64, Int64)
-  fullName: DoubleTensor.Item(Int64, Int64)
-  type: Property
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: Access to element at the specified position in the tensor
-  syntax:
-    content: public double this[long x0, long x1] { get; set; }
-    parameters:
-    - id: x0
-      type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
+    - id: x2
+      type: System.Int64
+      description: Index in the third dimension to access.
+    - id: x3
+      type: System.Int64
+      description: Index in the fourth dimension to access.
     return:
       type: System.Double
       description: To be added.
@@ -1540,46 +1504,64 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     - id: x2
       type: System.Int64
-      description: To be added.
+      description: Index in the third dimension to access.
     return:
       type: System.Double
       description: To be added.
   overload: TorchSharp.DoubleTensor.Item*
   exceptions: []
-- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
-  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64)
+  id: Item(System.Int64)
   parent: TorchSharp.DoubleTensor
   langs:
   - csharp
-  name: Item(Int64, Int64, Int64, Int64)
-  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
-  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  name: Item(Int64)
+  nameWithType: DoubleTensor.Item(Int64)
+  fullName: DoubleTensor.Item(Int64)
   type: Property
   assemblies:
   - TorchSharp
   namespace: TorchSharp
   summary: Access to element at the specified position in the tensor
   syntax:
-    content: public double this[long x0, long x1, long x2, long x3] { get; set; }
+    content: public double this[long x0] { get; set; }
     parameters:
     - id: x0
       type: System.Int64
+      description: Index to access.
+    return:
+      type: System.Double
       description: To be added.
+  overload: TorchSharp.DoubleTensor.Item*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public double this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
-    - id: x2
-      type: System.Int64
-      description: To be added.
-    - id: x3
-      type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     return:
       type: System.Double
       description: To be added.
@@ -1763,7 +1745,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.LShift*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.MaxAll
@@ -1850,33 +1832,6 @@ items:
       description: The minimum value of the tensor.
   overload: TorchSharp.DoubleTensor.MinAll*
   exceptions: []
-- uid: TorchSharp.DoubleTensor.Mul(System.Double)
-  id: Mul(System.Double)
-  parent: TorchSharp.DoubleTensor
-  langs:
-  - csharp
-  name: Mul(Double)
-  nameWithType: DoubleTensor.Mul(Double)
-  fullName: DoubleTensor.Mul(Double)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Mul operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
-  syntax:
-    content: public TorchSharp.DoubleTensor Mul (double value);
-    parameters:
-    - id: value
-      type: System.Double
-      description: To be added.
-    return:
-      type: TorchSharp.DoubleTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.DoubleTensor.Mul*
-  exceptions: []
 - uid: TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   id: Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
@@ -1908,7 +1863,34 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.DoubleTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Mul(System.Double)
+  id: Mul(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Mul(Double)
+  nameWithType: DoubleTensor.Mul(Double)
+  fullName: DoubleTensor.Mul(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Mul (double value);
+    parameters:
+    - id: value
+      type: System.Double
       description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.DoubleTensor.Mul*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
@@ -1923,18 +1905,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: 'Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.'
   syntax:
     content: public TorchSharp.DoubleTensor Narrow (int dim, long firstIndex, long size);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: The dimension to narrow
     - id: firstIndex
       type: System.Int64
-      description: To be added.
+      description: Initial index to narrow
     - id: size
       type: System.Int64
-      description: To be added.
+      description: Number of elements
     return:
       type: TorchSharp.DoubleTensor
       description: To be added.
@@ -2027,7 +2010,7 @@ items:
     parameters:
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.DoubleTensor.Random*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Random(TorchSharp.RandomGenerator,System.Int64)
@@ -2048,10 +2031,10 @@ items:
     parameters:
     - id: source
       type: TorchSharp.RandomGenerator
-      description: To be added.
+      description: The random generator source
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.DoubleTensor.Random*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Remainder(System.Double)
@@ -2112,7 +2095,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Remainder*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Resize1d(System.Int64)
@@ -2127,12 +2110,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize1d (long size);
     parameters:
     - id: size
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
   overload: TorchSharp.DoubleTensor.Resize1d*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Resize2d(System.Int64,System.Int64)
@@ -2147,15 +2131,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize2d (long size0, long size1);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
   overload: TorchSharp.DoubleTensor.Resize2d*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Resize3d(System.Int64,System.Int64,System.Int64)
@@ -2170,18 +2155,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize3d (long size0, long size1, long size2);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
   overload: TorchSharp.DoubleTensor.Resize3d*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -2196,21 +2182,22 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize4d (long size0, long size1, long size2, long size3);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
   overload: TorchSharp.DoubleTensor.Resize4d*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
@@ -2225,24 +2212,25 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
     - id: size4
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fifth dimension of the tensor.
   overload: TorchSharp.DoubleTensor.Resize5d*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.ResizeAs(TorchSharp.DoubleTensor)
@@ -2257,12 +2245,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
   syntax:
     content: public void ResizeAs (TorchSharp.DoubleTensor src);
     parameters:
     - id: src
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The source tensor whose shape will be mirrored by this tensor.
   overload: TorchSharp.DoubleTensor.ResizeAs*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Round(TorchSharp.DoubleTensor)
@@ -2347,7 +2336,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.RShift*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Rsqrt(TorchSharp.DoubleTensor)
@@ -2386,15 +2375,17 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
+  remarks: 'The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.'
   syntax:
     content: public TorchSharp.DoubleTensor Select (int dim, long slideIndex);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: Dimension to select
     - id: slideIndex
       type: System.Int64
-      description: To be added.
+      description: Beginning of the tensor slice
     return:
       type: TorchSharp.DoubleTensor
       description: To be added.
@@ -2412,12 +2403,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.
   syntax:
     content: public void Set (TorchSharp.DoubleTensor src);
     parameters:
     - id: src
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The source tensor which contains the data..
   overload: TorchSharp.DoubleTensor.Set*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.Shape
@@ -2618,7 +2610,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.DoubleTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.DoubleTensor.Sub*
   exceptions: []
 - uid: TorchSharp.DoubleTensor.SumAll
@@ -2702,6 +2694,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a debuggable version of the tensor, in this case the tensor shape
   syntax:
     content: public override string ToString ();
     parameters: []
@@ -2722,15 +2715,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor where dimensions dim1 and dim2 have been swapped.
   syntax:
     content: public TorchSharp.DoubleTensor Transpose (int dim1, int dim2);
     parameters:
     - id: dim1
       type: System.Int32
-      description: To be added.
+      description: First dimension
     - id: dim2
       type: System.Int32
-      description: To be added.
+      description: Second dimension
     return:
       type: TorchSharp.DoubleTensor
       description: To be added.
@@ -2796,6 +2790,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
   syntax:
     content: public TorchSharp.DoubleTensor Unfold (int dim, long size, long step);
     parameters:
@@ -2856,18 +2851,6 @@ references:
   name: Int64
   nameWithType: Int64
   fullName: System.Int64
-- uid: TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: DoubleTensor(TorchHandle)
-  nameWithType: DoubleTensor.DoubleTensor(TorchHandle)
-  fullName: DoubleTensor.DoubleTensor(TorchHandle)
-- uid: TorchSharp.TorchHandle
-  parent: TorchSharp
-  isExternal: false
-  name: TorchHandle
-  nameWithType: TorchHandle
-  fullName: TorchSharp.TorchHandle
 - uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
   parent: TorchSharp.DoubleTensor
   isExternal: false
@@ -2940,18 +2923,18 @@ references:
   name: Atan2(DoubleTensor)
   nameWithType: DoubleTensor.Atan2(DoubleTensor)
   fullName: DoubleTensor.Atan2(DoubleTensor)
-- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: BitAnd(Double)
-  nameWithType: DoubleTensor.BitAnd(Double)
-  fullName: DoubleTensor.BitAnd(Double)
 - uid: TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
   isExternal: false
   name: BitAnd(DoubleTensor, Double, DoubleTensor)
   nameWithType: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
   fullName: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: BitAnd(Double)
+  nameWithType: DoubleTensor.BitAnd(Double)
+  fullName: DoubleTensor.BitAnd(Double)
 - uid: TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
   isExternal: false
@@ -3116,18 +3099,18 @@ references:
   name: Boolean
   nameWithType: Boolean
   fullName: System.Boolean
-- uid: TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: Div(DoubleTensor, Double, DoubleTensor)
-  nameWithType: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
-  fullName: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
 - uid: TorchSharp.DoubleTensor.Div(System.Double)
   parent: TorchSharp.DoubleTensor
   isExternal: false
   name: Div(Double)
   nameWithType: DoubleTensor.Div(Double)
   fullName: DoubleTensor.Div(Double)
+- uid: TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Div(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
 - uid: TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
   isExternal: false
@@ -3212,6 +3195,18 @@ references:
   name: GetTensorStride(Int32)
   nameWithType: DoubleTensor.GetTensorStride(Int32)
   fullName: DoubleTensor.GetTensorStride(Int32)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64)
 - uid: TorchSharp.DoubleTensor.Item(System.Int64)
   parent: TorchSharp.DoubleTensor
   isExternal: false
@@ -3224,18 +3219,6 @@ references:
   name: Item(Int64, Int64)
   nameWithType: DoubleTensor.Item(Int64, Int64)
   fullName: DoubleTensor.Item(Int64, Int64)
-- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: Item(Int64, Int64, Int64)
-  nameWithType: DoubleTensor.Item(Int64, Int64, Int64)
-  fullName: DoubleTensor.Item(Int64, Int64, Int64)
-- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: Item(Int64, Int64, Int64, Int64)
-  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
-  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
 - uid: TorchSharp.DoubleTensor.Lgamma(TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
   isExternal: false
@@ -3302,18 +3285,18 @@ references:
   name: MinAll()
   nameWithType: DoubleTensor.MinAll()
   fullName: DoubleTensor.MinAll()
-- uid: TorchSharp.DoubleTensor.Mul(System.Double)
-  parent: TorchSharp.DoubleTensor
-  isExternal: false
-  name: Mul(Double)
-  nameWithType: DoubleTensor.Mul(Double)
-  fullName: DoubleTensor.Mul(Double)
 - uid: TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
   parent: TorchSharp.DoubleTensor
   isExternal: false
   name: Mul(DoubleTensor, Double, DoubleTensor)
   nameWithType: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
   fullName: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Mul(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Mul(Double)
+  nameWithType: DoubleTensor.Mul(Double)
+  fullName: DoubleTensor.Mul(Double)
 - uid: TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
   parent: TorchSharp.DoubleTensor
   isExternal: false

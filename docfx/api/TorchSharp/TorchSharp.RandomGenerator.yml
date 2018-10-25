@@ -55,6 +55,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Initializes a new instance of the <xref href="TorchSharp.RandomGenerator"></xref> class.
   syntax:
     content: public RandomGenerator ();
     parameters: []
@@ -72,6 +73,12 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Releases all resource used by the <xref href="TorchSharp.RandomGenerator"></xref> object.
+  remarks: >-
+    Call Dispose when you are finished using the <xref href="TorchSharp.RandomGenerator"></xref>. This
+                method leaves the <xref href="TorchSharp.RandomGenerator"></xref> in an unusable state. After
+                calling this method, you must release all references to the <xref href="TorchSharp.RandomGenerator"></xref>
+                so the garbage collector can reclaim the memory that the <xref href="TorchSharp.RandomGenerator"></xref> was occupying.
   syntax:
     content: public void Dispose ();
     parameters: []
@@ -89,12 +96,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Dispose the specified disposing.
   syntax:
     content: protected virtual void Dispose (bool disposing);
     parameters:
     - id: disposing
       type: System.Boolean
-      description: To be added.
+      description: If set to <code>true</code> disposing.
   overload: TorchSharp.RandomGenerator.Dispose*
   exceptions: []
 - uid: TorchSharp.RandomGenerator.Finalize
@@ -109,6 +117,9 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: >-
+    Releases unmanaged resources and performs other cleanup operations before the
+                <xref href="TorchSharp.RandomGenerator"></xref> is reclaimed by garbage collection.
   syntax:
     content: ~RandomGenerator ();
     parameters: []
@@ -188,11 +199,12 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Gets a value indicating whether this <xref href="TorchSharp.RandomGenerator"></xref> is valid.
   syntax:
     content: public bool IsValid { get; }
     return:
       type: System.Boolean
-      description: To be added.
+      description: <code>true</code> if is valid; otherwise, <code>false</code>.
   overload: TorchSharp.RandomGenerator.IsValid*
   exceptions: []
 - uid: TorchSharp.RandomGenerator.NextBernoulliDouble(System.Double,System.Single)

@@ -2,7 +2,7 @@
 using System;
 
 namespace TorchSharp {
-	public sealed class TorchHandle : SafeHandleZeroOrMinusOneIsInvalid {
+	internal sealed class TorchHandle : SafeHandleZeroOrMinusOneIsInvalid {
 		public TorchHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)
 		{
 			SetHandle (preexistingHandle);

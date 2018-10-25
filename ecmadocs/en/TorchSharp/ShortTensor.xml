@@ -60,22 +60,6 @@
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ShortTensor (TorchSharp.TorchHandle handle);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class TorchSharp.TorchHandle handle) cil managed" />
-      <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="handle" Type="TorchSharp.TorchHandle" />
-      </Parameters>
-      <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ShortTensor (long size0, long size1);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size0, int64 size1) cil managed" />
       <MemberType>Constructor</MemberType>
@@ -187,7 +171,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Add operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -246,7 +230,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the BitAnd operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -305,7 +289,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the BitOr operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -364,7 +348,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the BitXor operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -576,7 +560,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Clamp operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -784,13 +768,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+              Releases the tensor and its associated data.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose (bool disposing);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Dispose(bool disposing) cil managed" />
+      <MemberSignature Language="C#" Value="protected void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -803,7 +789,9 @@
       </Parameters>
       <Docs>
         <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>
+              Implements the .NET Dispose pattern.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -853,7 +841,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Div operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -923,7 +911,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+             Finalizer for ~ShortTensor
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -973,7 +963,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Fmod operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1044,7 +1034,7 @@
         <Parameter Name="x0" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="x0">To be added.</param>
+        <param name="x0">Index to access.</param>
         <summary>
               Access to element at the specified position in the tensor
             </summary>
@@ -1067,8 +1057,8 @@
         <Parameter Name="x1" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="x0">To be added.</param>
-        <param name="x1">To be added.</param>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
         <summary>
               Access to element at the specified position in the tensor
             </summary>
@@ -1092,9 +1082,9 @@
         <Parameter Name="x2" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="x0">To be added.</param>
-        <param name="x1">To be added.</param>
-        <param name="x2">To be added.</param>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
+        <param name="x2">Index in the third dimension to access.</param>
         <summary>
               Access to element at the specified position in the tensor
             </summary>
@@ -1119,10 +1109,10 @@
         <Parameter Name="x3" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="x0">To be added.</param>
-        <param name="x1">To be added.</param>
-        <param name="x2">To be added.</param>
-        <param name="x3">To be added.</param>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
+        <param name="x2">Index in the third dimension to access.</param>
+        <param name="x3">Index in the fourth dimension to access.</param>
         <summary>
               Access to element at the specified position in the tensor
             </summary>
@@ -1176,7 +1166,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the LShift operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1319,7 +1309,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Mul operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1348,10 +1338,12 @@
         <Parameter Name="size" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="dim">To be added.</param>
-        <param name="firstIndex">To be added.</param>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dim">The dimension to narrow</param>
+        <param name="firstIndex">Initial index to narrow</param>
+        <param name="size">Number of elements</param>
+        <summary>
+            Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.
+            </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -1391,7 +1383,7 @@
         <Parameter Name="n" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="n">To be added.</param>
+        <param name="n">The upper limit for the values to be generated</param>
         <summary>
              Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
             </summary>
@@ -1413,8 +1405,8 @@
         <Parameter Name="n" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="n">To be added.</param>
+        <param name="source">The random generator source</param>
+        <param name="n">The upper limit for the values to be generated</param>
         <summary>
              Populates the tensor with random values from 0 to n, using the provided random source generator.
             </summary>
@@ -1467,7 +1459,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Remainder operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1494,8 +1486,10 @@
         <Parameter Name="size" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="size">The desired new size for the first dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1514,9 +1508,11 @@
         <Parameter Name="size1" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="size0">To be added.</param>
-        <param name="size1">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1536,10 +1532,12 @@
         <Parameter Name="size2" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="size0">To be added.</param>
-        <param name="size1">To be added.</param>
-        <param name="size2">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1560,11 +1558,13 @@
         <Parameter Name="size3" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="size0">To be added.</param>
-        <param name="size1">To be added.</param>
-        <param name="size2">To be added.</param>
-        <param name="size3">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <param name="size3">The desired new size for the fourth dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1586,12 +1586,14 @@
         <Parameter Name="size4" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="size0">To be added.</param>
-        <param name="size1">To be added.</param>
-        <param name="size2">To be added.</param>
-        <param name="size3">To be added.</param>
-        <param name="size4">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <param name="size3">The desired new size for the fourth dimension of the tensor.</param>
+        <param name="size4">The desired new size for the fifth dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1609,8 +1611,10 @@
         <Parameter Name="src" Type="TorchSharp.ShortTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="src">The source tensor whose shape will be mirrored by this tensor.</param>
+        <summary>
+              Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1660,7 +1664,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the RShift operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1688,11 +1692,15 @@
         <Parameter Name="slideIndex" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="dim">To be added.</param>
-        <param name="slideIndex">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dim">Dimension to select</param>
+        <param name="slideIndex">Beginning of the tensor slice</param>
+        <summary>
+              Returns a new Tensor which is a tensor slice at the given index in the dimension dim. 
+            </summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+              The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Set">
@@ -1709,8 +1717,10 @@
         <Parameter Name="src" Type="TorchSharp.ShortTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="src">The source tensor which contains the data..</param>
+        <summary>
+              The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.   
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1800,7 +1810,7 @@
       <Docs>
         <param name="source">Source tensor on which the operation will take place.</param>
         <param name="value">The scalar value that the operation uses.</param>
-        <param name="result">To be added.</param>
+        <param name="result">The tensor where the result will be placed</param>
         <summary>
               Performs the Sub operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -1846,7 +1856,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+              Returns a debuggable version of the tensor, in this case the tensor shape
+            </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -1866,9 +1878,11 @@
         <Parameter Name="dim2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dim1">To be added.</param>
-        <param name="dim2">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dim1">First dimension</param>
+        <param name="dim2">Second dimension</param>
+        <summary>
+            Returns a tensor where dimensions dim1 and dim2 have been swapped. 
+            </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
@@ -1889,10 +1903,15 @@
         <Parameter Name="step" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="dim">To be added.</param>
-        <param name="size">To be added.</param>
-        <param name="step">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="dim">
+        </param>
+        <param name="size">
+        </param>
+        <param name="step">
+        </param>
+        <summary>
+              Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
+            </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>

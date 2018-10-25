@@ -16,7 +16,6 @@ items:
   - TorchSharp.RandomGenerator
   - TorchSharp.ShortStorage
   - TorchSharp.ShortTensor
-  - TorchSharp.TorchHandle
   langs:
   - csharp
   name: TorchSharp
@@ -102,9 +101,3 @@ references:
   name: ShortTensor
   nameWithType: ShortTensor
   fullName: TorchSharp.ShortTensor
-- uid: TorchSharp.TorchHandle
-  parent: TorchSharp
-  isExternal: false
-  name: TorchHandle
-  nameWithType: TorchHandle
-  fullName: TorchSharp.TorchHandle

@@ -137,34 +137,6 @@
   
   
   <a id="TorchSharp_FloatTensor__ctor_" data-uid="TorchSharp.FloatTensor.#ctor*"></a>
-  <h4 id="TorchSharp_FloatTensor__ctor_TorchSharp_TorchHandle_" data-uid="TorchSharp.FloatTensor.#ctor(TorchSharp.TorchHandle)">FloatTensor(TorchHandle)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FloatTensor (TorchSharp.TorchHandle handle);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.TorchHandle.html">TorchHandle</a></td>
-        <td><span class="parametername">handle</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="TorchSharp_FloatTensor__ctor_" data-uid="TorchSharp.FloatTensor.#ctor*"></a>
   <h4 id="TorchSharp_FloatTensor__ctor_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64)">FloatTensor(Int64, Int64)</h4>
   <div class="markdown level1 summary"><p>Creates a 2D tensor of the specified size.</p>
 </div>
@@ -344,13 +316,13 @@
   
   
   <a id="TorchSharp_FloatTensor_Item_" data-uid="TorchSharp.FloatTensor.Item*"></a>
-  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64)">Item(Int64)</h4>
+  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)">Item(Int64, Int64, Int64, Int64)</h4>
   <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public float this[long x0] { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public float this[long x0, long x1, long x2, long x3] { get; set; }</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -365,58 +337,25 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x0</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Single</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="TorchSharp_FloatTensor_Item_" data-uid="TorchSharp.FloatTensor.Item*"></a>
-  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64,System.Int64)">Item(Int64, Int64)</h4>
-  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public float this[long x0, long x1] { get; set; }</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><span class="parametername">x0</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the first dimension to access.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x1</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the second dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x2</span></td>
+        <td><p>Index in the third dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x3</span></td>
+        <td><p>Index in the fourth dimension to access.</p>
 </td>
       </tr>
     </tbody>
@@ -461,19 +400,19 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x0</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the first dimension to access.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x1</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the second dimension to access.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x2</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the third dimension to access.</p>
 </td>
       </tr>
     </tbody>
@@ -497,13 +436,13 @@
   
   
   <a id="TorchSharp_FloatTensor_Item_" data-uid="TorchSharp.FloatTensor.Item*"></a>
-  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)">Item(Int64, Int64, Int64, Int64)</h4>
+  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64)">Item(Int64)</h4>
   <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public float this[long x0, long x1, long x2, long x3] { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public float this[long x0] { get; set; }</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -518,25 +457,58 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x0</span></td>
+        <td><p>Index to access.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
         <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_FloatTensor_Item_" data-uid="TorchSharp.FloatTensor.Item*"></a>
+  <h4 id="TorchSharp_FloatTensor_Item_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Item(System.Int64,System.Int64)">Item(Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float this[long x0, long x1] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x0</span></td>
+        <td><p>Index in the first dimension to access.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">x1</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><span class="parametername">x2</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><span class="parametername">x3</span></td>
-        <td><p>To be added.</p>
+        <td><p>Index in the second dimension to access.</p>
 </td>
       </tr>
     </tbody>
@@ -796,7 +768,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -944,6 +916,54 @@
   
   
   <a id="TorchSharp_FloatTensor_BitAnd_" data-uid="TorchSharp.FloatTensor.BitAnd*"></a>
+  <h4 id="TorchSharp_FloatTensor_BitAnd_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">BitAnd(FloatTensor, Single, FloatTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void BitAnd (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_FloatTensor_BitAnd_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitAnd operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_FloatTensor_BitAnd_" data-uid="TorchSharp.FloatTensor.BitAnd*"></a>
   <h4 id="TorchSharp_FloatTensor_BitAnd_System_Single_" data-uid="TorchSharp.FloatTensor.BitAnd(System.Single)">BitAnd(Single)</h4>
   <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the tensor with the
               <see paramref="value"></see> and returns a new tensor with the result.</p>
@@ -990,54 +1010,6 @@
   <h5 id="TorchSharp_FloatTensor_BitAnd_System_Single__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
               alternative method <span class="xref">PytorchSharp.BitAnd(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)</span>.</p>
-</div>
-  
-  
-  <a id="TorchSharp_FloatTensor_BitAnd_" data-uid="TorchSharp.FloatTensor.BitAnd*"></a>
-  <h4 id="TorchSharp_FloatTensor_BitAnd_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">BitAnd(FloatTensor, Single, FloatTensor)</h4>
-  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the source with the
-              provided scalar.   The result tensor specified as the last parameters
-              is resized to match the source.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void BitAnd (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">source</span></td>
-        <td><p>Source tensor on which the operation will take place.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Single</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>The scalar value that the operation uses.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="TorchSharp_FloatTensor_BitAnd_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitAnd operation
-               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
-               tensor.</p>
 </div>
   
   
@@ -1500,7 +1472,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -1913,7 +1885,8 @@
   
   <a id="TorchSharp_FloatTensor_Dispose_" data-uid="TorchSharp.FloatTensor.Dispose*"></a>
   <h4 id="TorchSharp_FloatTensor_Dispose" data-uid="TorchSharp.FloatTensor.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Releases the tensor and its associated data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1923,11 +1896,12 @@
   
   <a id="TorchSharp_FloatTensor_Dispose_" data-uid="TorchSharp.FloatTensor.Dispose*"></a>
   <h4 id="TorchSharp_FloatTensor_Dispose_System_Boolean_" data-uid="TorchSharp.FloatTensor.Dispose(System.Boolean)">Dispose(Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Implements the .NET Dispose pattern.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Dispose (bool disposing);</code></pre>
+    <pre><code class="lang-csharp hljs">protected void Dispose (bool disposing);</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1947,54 +1921,6 @@
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="TorchSharp_FloatTensor_Div_" data-uid="TorchSharp.FloatTensor.Div*"></a>
-  <h4 id="TorchSharp_FloatTensor_Div_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">Div(FloatTensor, Single, FloatTensor)</h4>
-  <div class="markdown level1 summary"><p>Performs the Div operation on each element of the source with the
-              provided scalar.   The result tensor specified as the last parameters
-              is resized to match the source.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void Div (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">source</span></td>
-        <td><p>Source tensor on which the operation will take place.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Single</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>The scalar value that the operation uses.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="TorchSharp_FloatTensor_Div_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Div operation
-               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
-               tensor.</p>
-</div>
   
   
   <a id="TorchSharp_FloatTensor_Div_" data-uid="TorchSharp.FloatTensor.Div*"></a>
@@ -2044,6 +1970,54 @@
   <h5 id="TorchSharp_FloatTensor_Div_System_Single__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
               alternative method <span class="xref">PytorchSharp.Div(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_FloatTensor_Div_" data-uid="TorchSharp.FloatTensor.Div*"></a>
+  <h4 id="TorchSharp_FloatTensor_Div_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">Div(FloatTensor, Single, FloatTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Div operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Div (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_FloatTensor_Div_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Div operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
 </div>
   
   
@@ -2348,7 +2322,8 @@
   
   <a id="TorchSharp_FloatTensor_Finalize_" data-uid="TorchSharp.FloatTensor.Finalize*"></a>
   <h4 id="TorchSharp_FloatTensor_Finalize" data-uid="TorchSharp.FloatTensor.Finalize">Finalize()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Finalizer for ~FloatTensor</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -2487,7 +2462,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -2945,7 +2920,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -3066,6 +3041,54 @@
   
   
   <a id="TorchSharp_FloatTensor_Mul_" data-uid="TorchSharp.FloatTensor.Mul*"></a>
+  <h4 id="TorchSharp_FloatTensor_Mul_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">Mul(FloatTensor, Single, FloatTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Mul operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Mul (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_FloatTensor_Mul_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Mul operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_FloatTensor_Mul_" data-uid="TorchSharp.FloatTensor.Mul*"></a>
   <h4 id="TorchSharp_FloatTensor_Mul_System_Single_" data-uid="TorchSharp.FloatTensor.Mul(System.Single)">Mul(Single)</h4>
   <div class="markdown level1 summary"><p>Performs the Mul operation on each element of the tensor with the
               <see paramref="value"></see> and returns a new tensor with the result.</p>
@@ -3115,57 +3138,10 @@
 </div>
   
   
-  <a id="TorchSharp_FloatTensor_Mul_" data-uid="TorchSharp.FloatTensor.Mul*"></a>
-  <h4 id="TorchSharp_FloatTensor_Mul_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)">Mul(FloatTensor, Single, FloatTensor)</h4>
-  <div class="markdown level1 summary"><p>Performs the Mul operation on each element of the source with the
-              provided scalar.   The result tensor specified as the last parameters
-              is resized to match the source.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void Mul (TorchSharp.FloatTensor source, float value, TorchSharp.FloatTensor result);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">source</span></td>
-        <td><p>Source tensor on which the operation will take place.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Single</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>The scalar value that the operation uses.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
-        <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="TorchSharp_FloatTensor_Mul_TorchSharp_FloatTensor_System_Single_TorchSharp_FloatTensor__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Mul operation
-               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
-               tensor.</p>
-</div>
-  
-  
   <a id="TorchSharp_FloatTensor_Narrow_" data-uid="TorchSharp.FloatTensor.Narrow*"></a>
   <h4 id="TorchSharp_FloatTensor_Narrow_System_Int32_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Narrow(System.Int32,System.Int64,System.Int64)">Narrow(Int32, Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3184,19 +3160,19 @@
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">dim</span></td>
-        <td><p>To be added.</p>
+        <td><p>The dimension to narrow</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">firstIndex</span></td>
-        <td><p>To be added.</p>
+        <td><p>Initial index to narrow</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size</span></td>
-        <td><p>To be added.</p>
+        <td><p>Number of elements</p>
 </td>
       </tr>
     </tbody>
@@ -3358,7 +3334,7 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">n</span></td>
-        <td><p>To be added.</p>
+        <td><p>The upper limit for the values to be generated</p>
 </td>
       </tr>
     </tbody>
@@ -3387,13 +3363,13 @@
       <tr>
         <td><a class="xref" href="TorchSharp.RandomGenerator.html">RandomGenerator</a></td>
         <td><span class="parametername">source</span></td>
-        <td><p>To be added.</p>
+        <td><p>The random generator source</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">n</span></td>
-        <td><p>To be added.</p>
+        <td><p>The upper limit for the values to be generated</p>
 </td>
       </tr>
     </tbody>
@@ -3486,7 +3462,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -3500,7 +3476,8 @@
   
   <a id="TorchSharp_FloatTensor_Resize1d_" data-uid="TorchSharp.FloatTensor.Resize1d*"></a>
   <h4 id="TorchSharp_FloatTensor_Resize1d_System_Int64_" data-uid="TorchSharp.FloatTensor.Resize1d(System.Int64)">Resize1d(Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3519,7 +3496,7 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3528,7 +3505,8 @@
   
   <a id="TorchSharp_FloatTensor_Resize2d_" data-uid="TorchSharp.FloatTensor.Resize2d*"></a>
   <h4 id="TorchSharp_FloatTensor_Resize2d_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Resize2d(System.Int64,System.Int64)">Resize2d(Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3547,13 +3525,13 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size0</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size1</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3562,7 +3540,8 @@
   
   <a id="TorchSharp_FloatTensor_Resize3d_" data-uid="TorchSharp.FloatTensor.Resize3d*"></a>
   <h4 id="TorchSharp_FloatTensor_Resize3d_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Resize3d(System.Int64,System.Int64,System.Int64)">Resize3d(Int64, Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3581,19 +3560,19 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size0</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size1</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size2</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3602,7 +3581,8 @@
   
   <a id="TorchSharp_FloatTensor_Resize4d_" data-uid="TorchSharp.FloatTensor.Resize4d*"></a>
   <h4 id="TorchSharp_FloatTensor_Resize4d_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)">Resize4d(Int64, Int64, Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3621,25 +3601,25 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size0</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size1</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size2</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size3</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the fourth dimension of the tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3648,7 +3628,8 @@
   
   <a id="TorchSharp_FloatTensor_Resize5d_" data-uid="TorchSharp.FloatTensor.Resize5d*"></a>
   <h4 id="TorchSharp_FloatTensor_Resize5d_System_Int64_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)">Resize5d(Int64, Int64, Int64, Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3667,31 +3648,31 @@
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size0</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size1</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size2</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size3</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the fourth dimension of the tensor.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">size4</span></td>
-        <td><p>To be added.</p>
+        <td><p>The desired new size for the fifth dimension of the tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3700,7 +3681,8 @@
   
   <a id="TorchSharp_FloatTensor_ResizeAs_" data-uid="TorchSharp.FloatTensor.ResizeAs*"></a>
   <h4 id="TorchSharp_FloatTensor_ResizeAs_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.ResizeAs(TorchSharp.FloatTensor)">ResizeAs(FloatTensor)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3719,7 +3701,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">src</span></td>
-        <td><p>To be added.</p>
+        <td><p>The source tensor whose shape will be mirrored by this tensor.</p>
 </td>
       </tr>
     </tbody>
@@ -3857,7 +3839,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -3916,7 +3898,8 @@
   
   <a id="TorchSharp_FloatTensor_Select_" data-uid="TorchSharp.FloatTensor.Select*"></a>
   <h4 id="TorchSharp_FloatTensor_Select_System_Int32_System_Int64_" data-uid="TorchSharp.FloatTensor.Select(System.Int32,System.Int64)">Select(Int32, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which is a tensor slice at the given index in the dimension dim.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3935,13 +3918,13 @@
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">dim</span></td>
-        <td><p>To be added.</p>
+        <td><p>Dimension to select</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">slideIndex</span></td>
-        <td><p>To be added.</p>
+        <td><p>Beginning of the tensor slice</p>
 </td>
       </tr>
     </tbody>
@@ -3962,11 +3945,15 @@
       </tr>
     </tbody>
   </table>
+  <h5 id="TorchSharp_FloatTensor_Select_System_Int32_System_Int64__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.</p>
+</div>
   
   
   <a id="TorchSharp_FloatTensor_Set_" data-uid="TorchSharp.FloatTensor.Set*"></a>
   <h4 id="TorchSharp_FloatTensor_Set_TorchSharp_FloatTensor_" data-uid="TorchSharp.FloatTensor.Set(TorchSharp.FloatTensor)">Set(FloatTensor)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -3985,7 +3972,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">src</span></td>
-        <td><p>To be added.</p>
+        <td><p>The source tensor which contains the data..</p>
 </td>
       </tr>
     </tbody>
@@ -4258,7 +4245,7 @@
       <tr>
         <td><a class="xref" href="TorchSharp.FloatTensor.html">FloatTensor</a></td>
         <td><span class="parametername">result</span></td>
-        <td><p>To be added.</p>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
@@ -4389,7 +4376,8 @@
   
   <a id="TorchSharp_FloatTensor_ToString_" data-uid="TorchSharp.FloatTensor.ToString*"></a>
   <h4 id="TorchSharp_FloatTensor_ToString" data-uid="TorchSharp.FloatTensor.ToString">ToString()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a debuggable version of the tensor, in this case the tensor shape</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -4415,7 +4403,8 @@
   
   <a id="TorchSharp_FloatTensor_Transpose_" data-uid="TorchSharp.FloatTensor.Transpose*"></a>
   <h4 id="TorchSharp_FloatTensor_Transpose_System_Int32_System_Int32_" data-uid="TorchSharp.FloatTensor.Transpose(System.Int32,System.Int32)">Transpose(Int32, Int32)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a tensor where dimensions dim1 and dim2 have been swapped.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -4434,13 +4423,13 @@
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">dim1</span></td>
-        <td><p>To be added.</p>
+        <td><p>First dimension</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">dim2</span></td>
-        <td><p>To be added.</p>
+        <td><p>Second dimension</p>
 </td>
       </tr>
     </tbody>
@@ -4555,7 +4544,8 @@
   
   <a id="TorchSharp_FloatTensor_Unfold_" data-uid="TorchSharp.FloatTensor.Unfold*"></a>
   <h4 id="TorchSharp_FloatTensor_Unfold_System_Int32_System_Int64_System_Int64_" data-uid="TorchSharp.FloatTensor.Unfold(System.Int32,System.Int64,System.Int64)">Unfold(Int32, Int64, Int64)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">

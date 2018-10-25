@@ -5,7 +5,6 @@ items:
   children:
   - TorchSharp.FloatTensor.#ctor
   - TorchSharp.FloatTensor.#ctor(System.Int64)
-  - TorchSharp.FloatTensor.#ctor(TorchSharp.TorchHandle)
   - TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64)
   - TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64,System.Int64)
   - TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -16,8 +15,8 @@ items:
   - TorchSharp.FloatTensor.Asin(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Atan(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Atan2(TorchSharp.FloatTensor)
-  - TorchSharp.FloatTensor.BitAnd(System.Single)
   - TorchSharp.FloatTensor.BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
+  - TorchSharp.FloatTensor.BitAnd(System.Single)
   - TorchSharp.FloatTensor.CAdd(System.Single,TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.CBitAnd(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.CBitOr(TorchSharp.FloatTensor)
@@ -41,8 +40,8 @@ items:
   - TorchSharp.FloatTensor.Dimensions
   - TorchSharp.FloatTensor.Dispose
   - TorchSharp.FloatTensor.Dispose(System.Boolean)
-  - TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Div(System.Single)
+  - TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Dot(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Erf(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Erfc(TorchSharp.FloatTensor)
@@ -57,10 +56,10 @@ items:
   - TorchSharp.FloatTensor.Frac(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.GetTensorDimension(System.Int32)
   - TorchSharp.FloatTensor.GetTensorStride(System.Int32)
+  - TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64)
   - TorchSharp.FloatTensor.Item(System.Int64)
   - TorchSharp.FloatTensor.Item(System.Int64,System.Int64)
-  - TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64)
-  - TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
   - TorchSharp.FloatTensor.Lgamma(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Log(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Log10(TorchSharp.FloatTensor)
@@ -72,8 +71,8 @@ items:
   - TorchSharp.FloatTensor.MeanAll
   - TorchSharp.FloatTensor.MedianAll
   - TorchSharp.FloatTensor.MinAll
-  - TorchSharp.FloatTensor.Mul(System.Single)
   - TorchSharp.FloatTensor.Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
+  - TorchSharp.FloatTensor.Mul(System.Single)
   - TorchSharp.FloatTensor.Narrow(System.Int32,System.Int64,System.Int64)
   - TorchSharp.FloatTensor.neg(TorchSharp.FloatTensor)
   - TorchSharp.FloatTensor.Polygamma(TorchSharp.FloatTensor)
@@ -171,26 +170,6 @@ items:
     - id: size0
       type: System.Int64
       description: Size for the first dimension.
-  overload: TorchSharp.FloatTensor.#ctor*
-  exceptions: []
-- uid: TorchSharp.FloatTensor.#ctor(TorchSharp.TorchHandle)
-  id: '#ctor(TorchSharp.TorchHandle)'
-  parent: TorchSharp.FloatTensor
-  langs:
-  - csharp
-  name: FloatTensor(TorchHandle)
-  nameWithType: FloatTensor.FloatTensor(TorchHandle)
-  fullName: FloatTensor.FloatTensor(TorchHandle)
-  type: Constructor
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  syntax:
-    content: public FloatTensor (TorchSharp.TorchHandle handle);
-    parameters:
-    - id: handle
-      type: TorchSharp.TorchHandle
-      description: To be added.
   overload: TorchSharp.FloatTensor.#ctor*
   exceptions: []
 - uid: TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64)
@@ -380,7 +359,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Add*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Asin(TorchSharp.FloatTensor)
@@ -455,33 +434,6 @@ items:
       description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.FloatTensor.Atan2*
   exceptions: []
-- uid: TorchSharp.FloatTensor.BitAnd(System.Single)
-  id: BitAnd(System.Single)
-  parent: TorchSharp.FloatTensor
-  langs:
-  - csharp
-  name: BitAnd(Single)
-  nameWithType: FloatTensor.BitAnd(Single)
-  fullName: FloatTensor.BitAnd(Single)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the BitAnd operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
-  syntax:
-    content: public TorchSharp.FloatTensor BitAnd (float value);
-    parameters:
-    - id: value
-      type: System.Single
-      description: To be added.
-    return:
-      type: TorchSharp.FloatTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.FloatTensor.BitAnd*
-  exceptions: []
 - uid: TorchSharp.FloatTensor.BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   id: BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
@@ -513,7 +465,34 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.FloatTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.FloatTensor.BitAnd(System.Single)
+  id: BitAnd(System.Single)
+  parent: TorchSharp.FloatTensor
+  langs:
+  - csharp
+  name: BitAnd(Single)
+  nameWithType: FloatTensor.BitAnd(Single)
+  fullName: FloatTensor.BitAnd(Single)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
+  syntax:
+    content: public TorchSharp.FloatTensor BitAnd (float value);
+    parameters:
+    - id: value
+      type: System.Single
       description: To be added.
+    return:
+      type: TorchSharp.FloatTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.FloatTensor.BitAnd*
   exceptions: []
 - uid: TorchSharp.FloatTensor.CAdd(System.Single,TorchSharp.FloatTensor)
@@ -772,7 +751,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Clamp*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Clone
@@ -1046,6 +1025,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Releases the tensor and its associated data.
   syntax:
     content: public void Dispose ();
     parameters: []
@@ -1063,13 +1043,41 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Implements the .NET Dispose pattern.
   syntax:
-    content: public void Dispose (bool disposing);
+    content: protected void Dispose (bool disposing);
     parameters:
     - id: disposing
       type: System.Boolean
       description: To be added.
   overload: TorchSharp.FloatTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.FloatTensor.Div(System.Single)
+  id: Div(System.Single)
+  parent: TorchSharp.FloatTensor
+  langs:
+  - csharp
+  name: Div(Single)
+  nameWithType: FloatTensor.Div(Single)
+  fullName: FloatTensor.Div(Single)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
+  syntax:
+    content: public TorchSharp.FloatTensor Div (float value);
+    parameters:
+    - id: value
+      type: System.Single
+      description: To be added.
+    return:
+      type: TorchSharp.FloatTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.FloatTensor.Div*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   id: Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
@@ -1102,34 +1110,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
-  overload: TorchSharp.FloatTensor.Div*
-  exceptions: []
-- uid: TorchSharp.FloatTensor.Div(System.Single)
-  id: Div(System.Single)
-  parent: TorchSharp.FloatTensor
-  langs:
-  - csharp
-  name: Div(Single)
-  nameWithType: FloatTensor.Div(Single)
-  fullName: FloatTensor.Div(Single)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Div operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
-  syntax:
-    content: public TorchSharp.FloatTensor Div (float value);
-    parameters:
-    - id: value
-      type: System.Single
-      description: To be added.
-    return:
-      type: TorchSharp.FloatTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Div*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Dot(TorchSharp.FloatTensor)
@@ -1309,6 +1290,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Finalizer for ~FloatTensor
   syntax:
     content: ~FloatTensor ();
     parameters: []
@@ -1396,7 +1378,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Fmod*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Frac(TorchSharp.FloatTensor)
@@ -1471,52 +1453,34 @@ items:
       description: To be added.
   overload: TorchSharp.FloatTensor.GetTensorStride*
   exceptions: []
-- uid: TorchSharp.FloatTensor.Item(System.Int64)
-  id: Item(System.Int64)
+- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
   parent: TorchSharp.FloatTensor
   langs:
   - csharp
-  name: Item(Int64)
-  nameWithType: FloatTensor.Item(Int64)
-  fullName: FloatTensor.Item(Int64)
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: FloatTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: FloatTensor.Item(Int64, Int64, Int64, Int64)
   type: Property
   assemblies:
   - TorchSharp
   namespace: TorchSharp
   summary: Access to element at the specified position in the tensor
   syntax:
-    content: public float this[long x0] { get; set; }
+    content: public float this[long x0, long x1, long x2, long x3] { get; set; }
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
-    return:
-      type: System.Single
-      description: To be added.
-  overload: TorchSharp.FloatTensor.Item*
-  exceptions: []
-- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64)
-  id: Item(System.Int64,System.Int64)
-  parent: TorchSharp.FloatTensor
-  langs:
-  - csharp
-  name: Item(Int64, Int64)
-  nameWithType: FloatTensor.Item(Int64, Int64)
-  fullName: FloatTensor.Item(Int64, Int64)
-  type: Property
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: Access to element at the specified position in the tensor
-  syntax:
-    content: public float this[long x0, long x1] { get; set; }
-    parameters:
-    - id: x0
-      type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
+    - id: x2
+      type: System.Int64
+      description: Index in the third dimension to access.
+    - id: x3
+      type: System.Int64
+      description: Index in the fourth dimension to access.
     return:
       type: System.Single
       description: To be added.
@@ -1540,46 +1504,64 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     - id: x2
       type: System.Int64
-      description: To be added.
+      description: Index in the third dimension to access.
     return:
       type: System.Single
       description: To be added.
   overload: TorchSharp.FloatTensor.Item*
   exceptions: []
-- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
-  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+- uid: TorchSharp.FloatTensor.Item(System.Int64)
+  id: Item(System.Int64)
   parent: TorchSharp.FloatTensor
   langs:
   - csharp
-  name: Item(Int64, Int64, Int64, Int64)
-  nameWithType: FloatTensor.Item(Int64, Int64, Int64, Int64)
-  fullName: FloatTensor.Item(Int64, Int64, Int64, Int64)
+  name: Item(Int64)
+  nameWithType: FloatTensor.Item(Int64)
+  fullName: FloatTensor.Item(Int64)
   type: Property
   assemblies:
   - TorchSharp
   namespace: TorchSharp
   summary: Access to element at the specified position in the tensor
   syntax:
-    content: public float this[long x0, long x1, long x2, long x3] { get; set; }
+    content: public float this[long x0] { get; set; }
     parameters:
     - id: x0
       type: System.Int64
+      description: Index to access.
+    return:
+      type: System.Single
       description: To be added.
+  overload: TorchSharp.FloatTensor.Item*
+  exceptions: []
+- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.FloatTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: FloatTensor.Item(Int64, Int64)
+  fullName: FloatTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public float this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
-    - id: x2
-      type: System.Int64
-      description: To be added.
-    - id: x3
-      type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     return:
       type: System.Single
       description: To be added.
@@ -1763,7 +1745,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.LShift*
   exceptions: []
 - uid: TorchSharp.FloatTensor.MaxAll
@@ -1850,33 +1832,6 @@ items:
       description: The minimum value of the tensor.
   overload: TorchSharp.FloatTensor.MinAll*
   exceptions: []
-- uid: TorchSharp.FloatTensor.Mul(System.Single)
-  id: Mul(System.Single)
-  parent: TorchSharp.FloatTensor
-  langs:
-  - csharp
-  name: Mul(Single)
-  nameWithType: FloatTensor.Mul(Single)
-  fullName: FloatTensor.Mul(Single)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Mul operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
-  syntax:
-    content: public TorchSharp.FloatTensor Mul (float value);
-    parameters:
-    - id: value
-      type: System.Single
-      description: To be added.
-    return:
-      type: TorchSharp.FloatTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.FloatTensor.Mul*
-  exceptions: []
 - uid: TorchSharp.FloatTensor.Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   id: Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
@@ -1908,7 +1863,34 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.FloatTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.FloatTensor.Mul(System.Single)
+  id: Mul(System.Single)
+  parent: TorchSharp.FloatTensor
+  langs:
+  - csharp
+  name: Mul(Single)
+  nameWithType: FloatTensor.Mul(Single)
+  fullName: FloatTensor.Mul(Single)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)\"></xref>."
+  syntax:
+    content: public TorchSharp.FloatTensor Mul (float value);
+    parameters:
+    - id: value
+      type: System.Single
       description: To be added.
+    return:
+      type: TorchSharp.FloatTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.FloatTensor.Mul*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Narrow(System.Int32,System.Int64,System.Int64)
@@ -1923,18 +1905,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: 'Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.'
   syntax:
     content: public TorchSharp.FloatTensor Narrow (int dim, long firstIndex, long size);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: The dimension to narrow
     - id: firstIndex
       type: System.Int64
-      description: To be added.
+      description: Initial index to narrow
     - id: size
       type: System.Int64
-      description: To be added.
+      description: Number of elements
     return:
       type: TorchSharp.FloatTensor
       description: To be added.
@@ -2027,7 +2010,7 @@ items:
     parameters:
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.FloatTensor.Random*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Random(TorchSharp.RandomGenerator,System.Int64)
@@ -2048,10 +2031,10 @@ items:
     parameters:
     - id: source
       type: TorchSharp.RandomGenerator
-      description: To be added.
+      description: The random generator source
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.FloatTensor.Random*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Remainder(System.Single)
@@ -2112,7 +2095,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Remainder*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Resize1d(System.Int64)
@@ -2127,12 +2110,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize1d (long size);
     parameters:
     - id: size
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
   overload: TorchSharp.FloatTensor.Resize1d*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Resize2d(System.Int64,System.Int64)
@@ -2147,15 +2131,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize2d (long size0, long size1);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
   overload: TorchSharp.FloatTensor.Resize2d*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Resize3d(System.Int64,System.Int64,System.Int64)
@@ -2170,18 +2155,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize3d (long size0, long size1, long size2);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
   overload: TorchSharp.FloatTensor.Resize3d*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -2196,21 +2182,22 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize4d (long size0, long size1, long size2, long size3);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
   overload: TorchSharp.FloatTensor.Resize4d*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
@@ -2225,24 +2212,25 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
     - id: size4
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fifth dimension of the tensor.
   overload: TorchSharp.FloatTensor.Resize5d*
   exceptions: []
 - uid: TorchSharp.FloatTensor.ResizeAs(TorchSharp.FloatTensor)
@@ -2257,12 +2245,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
   syntax:
     content: public void ResizeAs (TorchSharp.FloatTensor src);
     parameters:
     - id: src
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The source tensor whose shape will be mirrored by this tensor.
   overload: TorchSharp.FloatTensor.ResizeAs*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Round(TorchSharp.FloatTensor)
@@ -2347,7 +2336,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.RShift*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Rsqrt(TorchSharp.FloatTensor)
@@ -2386,15 +2375,17 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
+  remarks: 'The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.'
   syntax:
     content: public TorchSharp.FloatTensor Select (int dim, long slideIndex);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: Dimension to select
     - id: slideIndex
       type: System.Int64
-      description: To be added.
+      description: Beginning of the tensor slice
     return:
       type: TorchSharp.FloatTensor
       description: To be added.
@@ -2412,12 +2403,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.
   syntax:
     content: public void Set (TorchSharp.FloatTensor src);
     parameters:
     - id: src
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The source tensor which contains the data..
   overload: TorchSharp.FloatTensor.Set*
   exceptions: []
 - uid: TorchSharp.FloatTensor.Shape
@@ -2618,7 +2610,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.FloatTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.FloatTensor.Sub*
   exceptions: []
 - uid: TorchSharp.FloatTensor.SumAll
@@ -2702,6 +2694,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a debuggable version of the tensor, in this case the tensor shape
   syntax:
     content: public override string ToString ();
     parameters: []
@@ -2722,15 +2715,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor where dimensions dim1 and dim2 have been swapped.
   syntax:
     content: public TorchSharp.FloatTensor Transpose (int dim1, int dim2);
     parameters:
     - id: dim1
       type: System.Int32
-      description: To be added.
+      description: First dimension
     - id: dim2
       type: System.Int32
-      description: To be added.
+      description: Second dimension
     return:
       type: TorchSharp.FloatTensor
       description: To be added.
@@ -2796,6 +2790,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
   syntax:
     content: public TorchSharp.FloatTensor Unfold (int dim, long size, long step);
     parameters:
@@ -2856,18 +2851,6 @@ references:
   name: Int64
   nameWithType: Int64
   fullName: System.Int64
-- uid: TorchSharp.FloatTensor.#ctor(TorchSharp.TorchHandle)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: FloatTensor(TorchHandle)
-  nameWithType: FloatTensor.FloatTensor(TorchHandle)
-  fullName: FloatTensor.FloatTensor(TorchHandle)
-- uid: TorchSharp.TorchHandle
-  parent: TorchSharp
-  isExternal: false
-  name: TorchHandle
-  nameWithType: TorchHandle
-  fullName: TorchSharp.TorchHandle
 - uid: TorchSharp.FloatTensor.#ctor(System.Int64,System.Int64)
   parent: TorchSharp.FloatTensor
   isExternal: false
@@ -2940,18 +2923,18 @@ references:
   name: Atan2(FloatTensor)
   nameWithType: FloatTensor.Atan2(FloatTensor)
   fullName: FloatTensor.Atan2(FloatTensor)
-- uid: TorchSharp.FloatTensor.BitAnd(System.Single)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: BitAnd(Single)
-  nameWithType: FloatTensor.BitAnd(Single)
-  fullName: FloatTensor.BitAnd(Single)
 - uid: TorchSharp.FloatTensor.BitAnd(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
   isExternal: false
   name: BitAnd(FloatTensor, Single, FloatTensor)
   nameWithType: FloatTensor.BitAnd(FloatTensor, Single, FloatTensor)
   fullName: FloatTensor.BitAnd(FloatTensor, Single, FloatTensor)
+- uid: TorchSharp.FloatTensor.BitAnd(System.Single)
+  parent: TorchSharp.FloatTensor
+  isExternal: false
+  name: BitAnd(Single)
+  nameWithType: FloatTensor.BitAnd(Single)
+  fullName: FloatTensor.BitAnd(Single)
 - uid: TorchSharp.FloatTensor.CAdd(System.Single,TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
   isExternal: false
@@ -3116,18 +3099,18 @@ references:
   name: Boolean
   nameWithType: Boolean
   fullName: System.Boolean
-- uid: TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: Div(FloatTensor, Single, FloatTensor)
-  nameWithType: FloatTensor.Div(FloatTensor, Single, FloatTensor)
-  fullName: FloatTensor.Div(FloatTensor, Single, FloatTensor)
 - uid: TorchSharp.FloatTensor.Div(System.Single)
   parent: TorchSharp.FloatTensor
   isExternal: false
   name: Div(Single)
   nameWithType: FloatTensor.Div(Single)
   fullName: FloatTensor.Div(Single)
+- uid: TorchSharp.FloatTensor.Div(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
+  parent: TorchSharp.FloatTensor
+  isExternal: false
+  name: Div(FloatTensor, Single, FloatTensor)
+  nameWithType: FloatTensor.Div(FloatTensor, Single, FloatTensor)
+  fullName: FloatTensor.Div(FloatTensor, Single, FloatTensor)
 - uid: TorchSharp.FloatTensor.Dot(TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
   isExternal: false
@@ -3218,6 +3201,18 @@ references:
   name: GetTensorStride(Int32)
   nameWithType: FloatTensor.GetTensorStride(Int32)
   fullName: FloatTensor.GetTensorStride(Int32)
+- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.FloatTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: FloatTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: FloatTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.FloatTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: FloatTensor.Item(Int64, Int64, Int64)
+  fullName: FloatTensor.Item(Int64, Int64, Int64)
 - uid: TorchSharp.FloatTensor.Item(System.Int64)
   parent: TorchSharp.FloatTensor
   isExternal: false
@@ -3230,18 +3225,6 @@ references:
   name: Item(Int64, Int64)
   nameWithType: FloatTensor.Item(Int64, Int64)
   fullName: FloatTensor.Item(Int64, Int64)
-- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: Item(Int64, Int64, Int64)
-  nameWithType: FloatTensor.Item(Int64, Int64, Int64)
-  fullName: FloatTensor.Item(Int64, Int64, Int64)
-- uid: TorchSharp.FloatTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: Item(Int64, Int64, Int64, Int64)
-  nameWithType: FloatTensor.Item(Int64, Int64, Int64, Int64)
-  fullName: FloatTensor.Item(Int64, Int64, Int64, Int64)
 - uid: TorchSharp.FloatTensor.Lgamma(TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
   isExternal: false
@@ -3308,18 +3291,18 @@ references:
   name: MinAll()
   nameWithType: FloatTensor.MinAll()
   fullName: FloatTensor.MinAll()
-- uid: TorchSharp.FloatTensor.Mul(System.Single)
-  parent: TorchSharp.FloatTensor
-  isExternal: false
-  name: Mul(Single)
-  nameWithType: FloatTensor.Mul(Single)
-  fullName: FloatTensor.Mul(Single)
 - uid: TorchSharp.FloatTensor.Mul(TorchSharp.FloatTensor,System.Single,TorchSharp.FloatTensor)
   parent: TorchSharp.FloatTensor
   isExternal: false
   name: Mul(FloatTensor, Single, FloatTensor)
   nameWithType: FloatTensor.Mul(FloatTensor, Single, FloatTensor)
   fullName: FloatTensor.Mul(FloatTensor, Single, FloatTensor)
+- uid: TorchSharp.FloatTensor.Mul(System.Single)
+  parent: TorchSharp.FloatTensor
+  isExternal: false
+  name: Mul(Single)
+  nameWithType: FloatTensor.Mul(Single)
+  fullName: FloatTensor.Mul(Single)
 - uid: TorchSharp.FloatTensor.Narrow(System.Int32,System.Int64,System.Int64)
   parent: TorchSharp.FloatTensor
   isExternal: false

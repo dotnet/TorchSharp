@@ -20,6 +20,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: The storage class provides a mechanism to access the underlying data representation for tensors.
   syntax:
     content: 'public class FloatStorage : IDisposable'
   inheritance:
@@ -39,6 +40,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Initializes an empty FloatStorage instance.
   syntax:
     content: public FloatStorage ();
     parameters: []
@@ -56,12 +58,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Initializes a FloatStorage instance with the specified size.
   syntax:
     content: public FloatStorage (long size);
     parameters:
     - id: size
       type: System.Int64
-      description: To be added.
+      description: The desired number of elements in the storage
   overload: TorchSharp.FloatStorage.#ctor*
   exceptions: []
 - uid: TorchSharp.FloatStorage.Dispose
@@ -76,6 +79,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Releases the storage.
   syntax:
     content: public void Dispose ();
     parameters: []
@@ -93,8 +97,9 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Implements the .NET Dispose pattern.
   syntax:
-    content: public void Dispose (bool disposing);
+    content: protected void Dispose (bool disposing);
     parameters:
     - id: disposing
       type: System.Boolean
@@ -113,12 +118,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Fills every element of the storage with the specified value.
   syntax:
     content: public void Fill (float value);
     parameters:
     - id: value
       type: System.Single
-      description: To be added.
+      description: Value used for each element
   overload: TorchSharp.FloatStorage.Fill*
   exceptions: []
 - uid: TorchSharp.FloatStorage.Finalize
@@ -133,6 +139,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Finalizer
   syntax:
     content: ~FloatStorage ();
     parameters: []
@@ -173,12 +180,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Changes the size of this storage to the new requested size.
   syntax:
     content: public void Resize (ulong size);
     parameters:
     - id: size
       type: System.UInt64
-      description: To be added.
+      description: The desired new size.
   overload: TorchSharp.FloatStorage.Resize*
   exceptions: []
 references:

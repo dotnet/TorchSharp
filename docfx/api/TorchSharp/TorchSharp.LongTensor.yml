@@ -5,7 +5,6 @@ items:
   children:
   - TorchSharp.LongTensor.#ctor
   - TorchSharp.LongTensor.#ctor(System.Int64)
-  - TorchSharp.LongTensor.#ctor(TorchSharp.TorchHandle)
   - TorchSharp.LongTensor.#ctor(System.Int64,System.Int64)
   - TorchSharp.LongTensor.#ctor(System.Int64,System.Int64,System.Int64)
   - TorchSharp.LongTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -40,8 +39,8 @@ items:
   - TorchSharp.LongTensor.Dot(TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Fill(System.Int64)
   - TorchSharp.LongTensor.Finalize
-  - TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Fmod(System.Int64)
+  - TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.GetTensorDimension(System.Int32)
   - TorchSharp.LongTensor.GetTensorStride(System.Int32)
   - TorchSharp.LongTensor.Item(System.Int64)
@@ -68,8 +67,8 @@ items:
   - TorchSharp.LongTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
   - TorchSharp.LongTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
   - TorchSharp.LongTensor.ResizeAs(TorchSharp.LongTensor)
-  - TorchSharp.LongTensor.RShift(System.Int64)
   - TorchSharp.LongTensor.RShift(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
+  - TorchSharp.LongTensor.RShift(System.Int64)
   - TorchSharp.LongTensor.Select(System.Int32,System.Int64)
   - TorchSharp.LongTensor.Set(TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Shape
@@ -141,26 +140,6 @@ items:
     - id: size0
       type: System.Int64
       description: Size for the first dimension.
-  overload: TorchSharp.LongTensor.#ctor*
-  exceptions: []
-- uid: TorchSharp.LongTensor.#ctor(TorchSharp.TorchHandle)
-  id: '#ctor(TorchSharp.TorchHandle)'
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: LongTensor(TorchHandle)
-  nameWithType: LongTensor.LongTensor(TorchHandle)
-  fullName: LongTensor.LongTensor(TorchHandle)
-  type: Constructor
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  syntax:
-    content: public LongTensor (TorchSharp.TorchHandle handle);
-    parameters:
-    - id: handle
-      type: TorchSharp.TorchHandle
-      description: To be added.
   overload: TorchSharp.LongTensor.#ctor*
   exceptions: []
 - uid: TorchSharp.LongTensor.#ctor(System.Int64,System.Int64)
@@ -302,7 +281,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Add*
   exceptions: []
 - uid: TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
@@ -336,7 +315,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.BitAnd*
   exceptions: []
 - uid: TorchSharp.LongTensor.BitAnd(System.Int64)
@@ -424,7 +403,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.BitOr*
   exceptions: []
 - uid: TorchSharp.LongTensor.BitXor(System.Int64)
@@ -485,7 +464,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.BitXor*
   exceptions: []
 - uid: TorchSharp.LongTensor.CAdd(System.Int64,TorchSharp.LongTensor)
@@ -696,7 +675,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Clamp*
   exceptions: []
 - uid: TorchSharp.LongTensor.Clone
@@ -898,6 +877,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Releases the tensor and its associated data.
   syntax:
     content: public void Dispose ();
     parameters: []
@@ -915,8 +895,9 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Implements the .NET Dispose pattern.
   syntax:
-    content: public void Dispose (bool disposing);
+    content: protected void Dispose (bool disposing);
     parameters:
     - id: disposing
       type: System.Boolean
@@ -981,7 +962,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Div*
   exceptions: []
 - uid: TorchSharp.LongTensor.Dot(TorchSharp.LongTensor)
@@ -1041,10 +1022,38 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Finalizer for ~LongTensor
   syntax:
     content: ~LongTensor ();
     parameters: []
   overload: TorchSharp.LongTensor.Finalize*
+  exceptions: []
+- uid: TorchSharp.LongTensor.Fmod(System.Int64)
+  id: Fmod(System.Int64)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: Fmod(Int64)
+  nameWithType: LongTensor.Fmod(Int64)
+  fullName: LongTensor.Fmod(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
+  syntax:
+    content: public TorchSharp.LongTensor Fmod (long value);
+    parameters:
+    - id: value
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.LongTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.LongTensor.Fmod*
   exceptions: []
 - uid: TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   id: Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
@@ -1077,34 +1086,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
-  overload: TorchSharp.LongTensor.Fmod*
-  exceptions: []
-- uid: TorchSharp.LongTensor.Fmod(System.Int64)
-  id: Fmod(System.Int64)
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: Fmod(Int64)
-  nameWithType: LongTensor.Fmod(Int64)
-  fullName: LongTensor.Fmod(Int64)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Fmod operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
-  syntax:
-    content: public TorchSharp.LongTensor Fmod (long value);
-    parameters:
-    - id: value
-      type: System.Int64
-      description: To be added.
-    return:
-      type: TorchSharp.LongTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Fmod*
   exceptions: []
 - uid: TorchSharp.LongTensor.GetTensorDimension(System.Int32)
@@ -1173,7 +1155,7 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index to access.
     return:
       type: System.Int64
       description: To be added.
@@ -1197,10 +1179,10 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     return:
       type: System.Int64
       description: To be added.
@@ -1224,13 +1206,13 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     - id: x2
       type: System.Int64
-      description: To be added.
+      description: Index in the third dimension to access.
     return:
       type: System.Int64
       description: To be added.
@@ -1254,16 +1236,16 @@ items:
     parameters:
     - id: x0
       type: System.Int64
-      description: To be added.
+      description: Index in the first dimension to access.
     - id: x1
       type: System.Int64
-      description: To be added.
+      description: Index in the second dimension to access.
     - id: x2
       type: System.Int64
-      description: To be added.
+      description: Index in the third dimension to access.
     - id: x3
       type: System.Int64
-      description: To be added.
+      description: Index in the fourth dimension to access.
     return:
       type: System.Int64
       description: To be added.
@@ -1327,7 +1309,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.LShift*
   exceptions: []
 - uid: TorchSharp.LongTensor.MaxAll
@@ -1472,7 +1454,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Mul*
   exceptions: []
 - uid: TorchSharp.LongTensor.Narrow(System.Int32,System.Int64,System.Int64)
@@ -1487,18 +1469,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: 'Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.'
   syntax:
     content: public TorchSharp.LongTensor Narrow (int dim, long firstIndex, long size);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: The dimension to narrow
     - id: firstIndex
       type: System.Int64
-      description: To be added.
+      description: Initial index to narrow
     - id: size
       type: System.Int64
-      description: To be added.
+      description: Number of elements
     return:
       type: TorchSharp.LongTensor
       description: To be added.
@@ -1543,7 +1526,7 @@ items:
     parameters:
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.LongTensor.Random*
   exceptions: []
 - uid: TorchSharp.LongTensor.Random(TorchSharp.RandomGenerator,System.Int64)
@@ -1564,10 +1547,10 @@ items:
     parameters:
     - id: source
       type: TorchSharp.RandomGenerator
-      description: To be added.
+      description: The random generator source
     - id: n
       type: System.Int64
-      description: To be added.
+      description: The upper limit for the values to be generated
   overload: TorchSharp.LongTensor.Random*
   exceptions: []
 - uid: TorchSharp.LongTensor.Remainder(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
@@ -1601,7 +1584,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Remainder*
   exceptions: []
 - uid: TorchSharp.LongTensor.Remainder(System.Int64)
@@ -1643,12 +1626,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize1d (long size);
     parameters:
     - id: size
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
   overload: TorchSharp.LongTensor.Resize1d*
   exceptions: []
 - uid: TorchSharp.LongTensor.Resize2d(System.Int64,System.Int64)
@@ -1663,15 +1647,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize2d (long size0, long size1);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
   overload: TorchSharp.LongTensor.Resize2d*
   exceptions: []
 - uid: TorchSharp.LongTensor.Resize3d(System.Int64,System.Int64,System.Int64)
@@ -1686,18 +1671,19 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize3d (long size0, long size1, long size2);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
   overload: TorchSharp.LongTensor.Resize3d*
   exceptions: []
 - uid: TorchSharp.LongTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
@@ -1712,21 +1698,22 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize4d (long size0, long size1, long size2, long size3);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
   overload: TorchSharp.LongTensor.Resize4d*
   exceptions: []
 - uid: TorchSharp.LongTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
@@ -1741,24 +1728,25 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
   syntax:
     content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
     parameters:
     - id: size0
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the first dimension of the tensor.
     - id: size1
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the second dimension of the tensor.
     - id: size2
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the third dimension of the tensor.
     - id: size3
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fourth dimension of the tensor.
     - id: size4
       type: System.Int64
-      description: To be added.
+      description: The desired new size for the fifth dimension of the tensor.
   overload: TorchSharp.LongTensor.Resize5d*
   exceptions: []
 - uid: TorchSharp.LongTensor.ResizeAs(TorchSharp.LongTensor)
@@ -1773,40 +1761,14 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
   syntax:
     content: public void ResizeAs (TorchSharp.LongTensor src);
     parameters:
     - id: src
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The source tensor whose shape will be mirrored by this tensor.
   overload: TorchSharp.LongTensor.ResizeAs*
-  exceptions: []
-- uid: TorchSharp.LongTensor.RShift(System.Int64)
-  id: RShift(System.Int64)
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: RShift(Int64)
-  nameWithType: LongTensor.RShift(Int64)
-  fullName: LongTensor.RShift(Int64)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the RShift operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
-  syntax:
-    content: public TorchSharp.LongTensor RShift (long value);
-    parameters:
-    - id: value
-      type: System.Int64
-      description: To be added.
-    return:
-      type: TorchSharp.LongTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.LongTensor.RShift*
   exceptions: []
 - uid: TorchSharp.LongTensor.RShift(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   id: RShift(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
@@ -1839,7 +1801,34 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.LongTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.LongTensor.RShift(System.Int64)
+  id: RShift(System.Int64)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: RShift(Int64)
+  nameWithType: LongTensor.RShift(Int64)
+  fullName: LongTensor.RShift(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
+  syntax:
+    content: public TorchSharp.LongTensor RShift (long value);
+    parameters:
+    - id: value
+      type: System.Int64
       description: To be added.
+    return:
+      type: TorchSharp.LongTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.LongTensor.RShift*
   exceptions: []
 - uid: TorchSharp.LongTensor.Select(System.Int32,System.Int64)
@@ -1854,15 +1843,17 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
+  remarks: 'The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.'
   syntax:
     content: public TorchSharp.LongTensor Select (int dim, long slideIndex);
     parameters:
     - id: dim
       type: System.Int32
-      description: To be added.
+      description: Dimension to select
     - id: slideIndex
       type: System.Int64
-      description: To be added.
+      description: Beginning of the tensor slice
     return:
       type: TorchSharp.LongTensor
       description: To be added.
@@ -1880,12 +1871,13 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.
   syntax:
     content: public void Set (TorchSharp.LongTensor src);
     parameters:
     - id: src
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The source tensor which contains the data..
   overload: TorchSharp.LongTensor.Set*
   exceptions: []
 - uid: TorchSharp.LongTensor.Shape
@@ -1990,7 +1982,7 @@ items:
       description: The scalar value that the operation uses.
     - id: result
       type: TorchSharp.LongTensor
-      description: To be added.
+      description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Sub*
   exceptions: []
 - uid: TorchSharp.LongTensor.SumAll
@@ -2026,6 +2018,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a debuggable version of the tensor, in this case the tensor shape
   syntax:
     content: public override string ToString ();
     parameters: []
@@ -2046,15 +2039,16 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor where dimensions dim1 and dim2 have been swapped.
   syntax:
     content: public TorchSharp.LongTensor Transpose (int dim1, int dim2);
     parameters:
     - id: dim1
       type: System.Int32
-      description: To be added.
+      description: First dimension
     - id: dim2
       type: System.Int32
-      description: To be added.
+      description: Second dimension
     return:
       type: TorchSharp.LongTensor
       description: To be added.
@@ -2072,6 +2066,7 @@ items:
   assemblies:
   - TorchSharp
   namespace: TorchSharp
+  summary: Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
   syntax:
     content: public TorchSharp.LongTensor Unfold (int dim, long size, long step);
     parameters:
@@ -2132,18 +2127,6 @@ references:
   name: Int64
   nameWithType: Int64
   fullName: System.Int64
-- uid: TorchSharp.LongTensor.#ctor(TorchSharp.TorchHandle)
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: LongTensor(TorchHandle)
-  nameWithType: LongTensor.LongTensor(TorchHandle)
-  fullName: LongTensor.LongTensor(TorchHandle)
-- uid: TorchSharp.TorchHandle
-  parent: TorchSharp
-  isExternal: false
-  name: TorchHandle
-  nameWithType: TorchHandle
-  fullName: TorchSharp.TorchHandle
 - uid: TorchSharp.LongTensor.#ctor(System.Int64,System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2380,18 +2363,18 @@ references:
   name: Finalize()
   nameWithType: LongTensor.Finalize()
   fullName: LongTensor.Finalize()
-- uid: TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: Fmod(LongTensor, Int64, LongTensor)
-  nameWithType: LongTensor.Fmod(LongTensor, Int64, LongTensor)
-  fullName: LongTensor.Fmod(LongTensor, Int64, LongTensor)
 - uid: TorchSharp.LongTensor.Fmod(System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
   name: Fmod(Int64)
   nameWithType: LongTensor.Fmod(Int64)
   fullName: LongTensor.Fmod(Int64)
+- uid: TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: Fmod(LongTensor, Int64, LongTensor)
+  nameWithType: LongTensor.Fmod(LongTensor, Int64, LongTensor)
+  fullName: LongTensor.Fmod(LongTensor, Int64, LongTensor)
 - uid: TorchSharp.LongTensor.GetTensorDimension(System.Int32)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2554,18 +2537,18 @@ references:
   name: ResizeAs(LongTensor)
   nameWithType: LongTensor.ResizeAs(LongTensor)
   fullName: LongTensor.ResizeAs(LongTensor)
-- uid: TorchSharp.LongTensor.RShift(System.Int64)
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: RShift(Int64)
-  nameWithType: LongTensor.RShift(Int64)
-  fullName: LongTensor.RShift(Int64)
 - uid: TorchSharp.LongTensor.RShift(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
   isExternal: false
   name: RShift(LongTensor, Int64, LongTensor)
   nameWithType: LongTensor.RShift(LongTensor, Int64, LongTensor)
   fullName: LongTensor.RShift(LongTensor, Int64, LongTensor)
+- uid: TorchSharp.LongTensor.RShift(System.Int64)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: RShift(Int64)
+  nameWithType: LongTensor.RShift(Int64)
+  fullName: LongTensor.RShift(Int64)
 - uid: TorchSharp.LongTensor.Select(System.Int32,System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false

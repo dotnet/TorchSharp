@@ -28,5 +28,3 @@
     name: ShortStorage
   - uid: TorchSharp.ShortTensor
     name: ShortTensor
-  - uid: TorchSharp.TorchHandle
-    name: TorchHandle

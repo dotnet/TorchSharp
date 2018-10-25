@@ -4,6 +4,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <PackageId>TorchSharp</PackageId>
+    <PackageVersion>0.1</PackageVersion>
+    <Authors>Miguel de Icaza</Authors>
+    <PackageLicenseUrl>https://github.com/xamarin/TorchSharp/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/xamarin/TorchSharp/</PackageProjectUrl>
+    <PackageTags>machine-learning, torch, pytorch, xamarin, .net, c#, f#</PackageTags>
+    <Description>.NET Bindings for Torch</Description>
+    <Owners>Miguel de Icaza</Owners>
+    <Summary>.NET API for Torch</Summary>
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

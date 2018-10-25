@@ -111,11 +111,6 @@ references:
   href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
   nameWithType: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.ByteTensor.#ctor(TorchSharp.TorchHandle)
-  name: ByteTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor__ctor_TorchSharp_TorchHandle_
-  fullName: ByteTensor.ByteTensor(TorchHandle)
-  nameWithType: ByteTensor.ByteTensor(TorchHandle)
 - uid: TorchSharp.ByteTensor.#ctor*
   name: ByteTensor
   href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor__ctor_
@@ -861,11 +856,6 @@ references:
   href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
   nameWithType: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
-  name: DoubleTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor__ctor_TorchSharp_TorchHandle_
-  fullName: DoubleTensor.DoubleTensor(TorchHandle)
-  nameWithType: DoubleTensor.DoubleTensor(TorchHandle)
 - uid: TorchSharp.DoubleTensor.#ctor*
   name: DoubleTensor
   href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor__ctor_
@@ -1921,11 +1911,6 @@ references:
   href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: FloatTensor.FloatTensor(Int64, Int64, Int64, Int64)
   nameWithType: FloatTensor.FloatTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.FloatTensor.#ctor(TorchSharp.TorchHandle)
-  name: FloatTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor__ctor_TorchSharp_TorchHandle_
-  fullName: FloatTensor.FloatTensor(TorchHandle)
-  nameWithType: FloatTensor.FloatTensor(TorchHandle)
 - uid: TorchSharp.FloatTensor.#ctor*
   name: FloatTensor
   href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor__ctor_
@@ -2981,11 +2966,6 @@ references:
   href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
   nameWithType: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.IntTensor.#ctor(TorchSharp.TorchHandle)
-  name: IntTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor__ctor_TorchSharp_TorchHandle_
-  fullName: IntTensor.IntTensor(TorchHandle)
-  nameWithType: IntTensor.IntTensor(TorchHandle)
 - uid: TorchSharp.IntTensor.#ctor*
   name: IntTensor
   href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor__ctor_
@@ -3731,11 +3711,6 @@ references:
   href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: LongTensor.LongTensor(Int64, Int64, Int64, Int64)
   nameWithType: LongTensor.LongTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.LongTensor.#ctor(TorchSharp.TorchHandle)
-  name: LongTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor__ctor_TorchSharp_TorchHandle_
-  fullName: LongTensor.LongTensor(TorchHandle)
-  nameWithType: LongTensor.LongTensor(TorchHandle)
 - uid: TorchSharp.LongTensor.#ctor*
   name: LongTensor
   href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor__ctor_
@@ -4671,11 +4646,6 @@ references:
   href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_
   fullName: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
   nameWithType: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
-- uid: TorchSharp.ShortTensor.#ctor(TorchSharp.TorchHandle)
-  name: ShortTensor(TorchHandle)
-  href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor__ctor_TorchSharp_TorchHandle_
-  fullName: ShortTensor.ShortTensor(TorchHandle)
-  nameWithType: ShortTensor.ShortTensor(TorchHandle)
 - uid: TorchSharp.ShortTensor.#ctor*
   name: ShortTensor
   href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor__ctor_
