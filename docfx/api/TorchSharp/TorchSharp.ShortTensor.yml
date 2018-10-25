@@ -1,0 +1,3001 @@
+### YamlMime:ManagedReference
+items:
+- uid: TorchSharp.ShortTensor
+  id: ShortTensor
+  children:
+  - TorchSharp.ShortTensor.#ctor
+  - TorchSharp.ShortTensor.#ctor(System.Int64)
+  - TorchSharp.ShortTensor.#ctor(TorchSharp.TorchHandle)
+  - TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Add(System.Int16)
+  - TorchSharp.ShortTensor.Add(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.BitAnd(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.BitAnd(System.Int16)
+  - TorchSharp.ShortTensor.BitOr(System.Int16)
+  - TorchSharp.ShortTensor.BitOr(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.BitXor(System.Int16)
+  - TorchSharp.ShortTensor.BitXor(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CAdd(System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CBitAnd(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CBitOr(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CBitXor(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CDiv(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CFMod(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Clamp(System.Int16)
+  - TorchSharp.ShortTensor.Clamp(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Clone
+  - TorchSharp.ShortTensor.CLShift(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CMul(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CPow(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CRemainder(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.CSub(System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Data
+  - TorchSharp.ShortTensor.Dimensions
+  - TorchSharp.ShortTensor.Dispose
+  - TorchSharp.ShortTensor.Dispose(System.Boolean)
+  - TorchSharp.ShortTensor.Div(System.Int16)
+  - TorchSharp.ShortTensor.Div(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Dot(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Fill(System.Int16)
+  - TorchSharp.ShortTensor.Finalize
+  - TorchSharp.ShortTensor.Fmod(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Fmod(System.Int16)
+  - TorchSharp.ShortTensor.GetTensorDimension(System.Int32)
+  - TorchSharp.ShortTensor.GetTensorStride(System.Int32)
+  - TorchSharp.ShortTensor.Item(System.Int64)
+  - TorchSharp.ShortTensor.Item(System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.LShift(System.Int16)
+  - TorchSharp.ShortTensor.LShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.MaxAll
+  - TorchSharp.ShortTensor.MeanAll
+  - TorchSharp.ShortTensor.MedianAll
+  - TorchSharp.ShortTensor.MinAll
+  - TorchSharp.ShortTensor.Mul(System.Int16)
+  - TorchSharp.ShortTensor.Mul(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.ProdAll
+  - TorchSharp.ShortTensor.Random(System.Int64)
+  - TorchSharp.ShortTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  - TorchSharp.ShortTensor.Remainder(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Remainder(System.Int16)
+  - TorchSharp.ShortTensor.Resize1d(System.Int64)
+  - TorchSharp.ShortTensor.Resize2d(System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.ResizeAs(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.RShift(System.Int16)
+  - TorchSharp.ShortTensor.RShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Select(System.Int32,System.Int64)
+  - TorchSharp.ShortTensor.Set(TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.Shape
+  - TorchSharp.ShortTensor.Storage
+  - TorchSharp.ShortTensor.Sub(System.Int16)
+  - TorchSharp.ShortTensor.Sub(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  - TorchSharp.ShortTensor.SumAll
+  - TorchSharp.ShortTensor.ToString
+  - TorchSharp.ShortTensor.Transpose(System.Int32,System.Int32)
+  - TorchSharp.ShortTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.ShortTensor.ZeroFill
+  langs:
+  - csharp
+  name: ShortTensor
+  nameWithType: ShortTensor
+  fullName: TorchSharp.ShortTensor
+  type: Class
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: 'public class ShortTensor : IDisposable'
+  inheritance:
+  - System.Object
+  implements:
+  - System.IDisposable
+  inheritedMembers: []
+- uid: TorchSharp.ShortTensor.#ctor
+  id: '#ctor'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor()
+  nameWithType: ShortTensor.ShortTensor()
+  fullName: ShortTensor.ShortTensor()
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates an empty tensor.
+  syntax:
+    content: public ShortTensor ();
+    parameters: []
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64)
+  id: '#ctor(System.Int64)'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor(Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64)
+  fullName: ShortTensor.ShortTensor(Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 1D tensor of the specified size.
+  syntax:
+    content: public ShortTensor (long size0);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.#ctor(TorchSharp.TorchHandle)
+  id: '#ctor(TorchSharp.TorchHandle)'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor(TorchHandle)
+  nameWithType: ShortTensor.ShortTensor(TorchHandle)
+  fullName: ShortTensor.ShortTensor(TorchHandle)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public ShortTensor (TorchSharp.TorchHandle handle);
+    parameters:
+    - id: handle
+      type: TorchSharp.TorchHandle
+      description: To be added.
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64)'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor(Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 2D tensor of the specified size.
+  syntax:
+    content: public ShortTensor (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor(Int64, Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 3D tensor of the specified size.
+  syntax:
+    content: public ShortTensor (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ShortTensor(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 4D tensor of the specified size.
+  syntax:
+    content: public ShortTensor (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+    - id: size3
+      type: System.Int64
+      description: Size for the fourth dimension.
+  overload: TorchSharp.ShortTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Add(System.Int16)
+  id: Add(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Add(Int16)
+  nameWithType: ShortTensor.Add(Int16)
+  fullName: ShortTensor.Add(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Add(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Add (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Add*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Add(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Add(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Add(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Add(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Add(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Add operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Add (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Add*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitAnd(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: BitAnd(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitAnd(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitAnd(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitAnd(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitAnd operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitAnd (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitAnd(System.Int16)
+  id: BitAnd(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitAnd(Int16)
+  nameWithType: ShortTensor.BitAnd(Int16)
+  fullName: ShortTensor.BitAnd(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor BitAnd (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitOr(System.Int16)
+  id: BitOr(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitOr(Int16)
+  nameWithType: ShortTensor.BitOr(Int16)
+  fullName: ShortTensor.BitOr(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitOr(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor BitOr (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitOr(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: BitOr(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitOr(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitOr(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitOr(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitOr operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitOr (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitXor(System.Int16)
+  id: BitXor(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitXor(Int16)
+  nameWithType: ShortTensor.BitXor(Int16)
+  fullName: ShortTensor.BitXor(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitXor(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor BitXor (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.BitXor(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: BitXor(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: BitXor(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitXor(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitXor(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitXor operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitXor (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CAdd(System.Int16,TorchSharp.ShortTensor)
+  id: CAdd(System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CAdd(Int16, ShortTensor)
+  nameWithType: ShortTensor.CAdd(Int16, ShortTensor)
+  fullName: ShortTensor.CAdd(Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CAdd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.ShortTensor CAdd (short value, TorchSharp.ShortTensor src);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CAdd*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CBitAnd(TorchSharp.ShortTensor)
+  id: CBitAnd(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CBitAnd(ShortTensor)
+  nameWithType: ShortTensor.CBitAnd(ShortTensor)
+  fullName: ShortTensor.CBitAnd(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitAnd of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CBitAnd (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CBitAnd*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CBitOr(TorchSharp.ShortTensor)
+  id: CBitOr(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CBitOr(ShortTensor)
+  nameWithType: ShortTensor.CBitOr(ShortTensor)
+  fullName: ShortTensor.CBitOr(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitOr of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CBitOr (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CBitOr*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CBitXor(TorchSharp.ShortTensor)
+  id: CBitXor(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CBitXor(ShortTensor)
+  nameWithType: ShortTensor.CBitXor(ShortTensor)
+  fullName: ShortTensor.CBitXor(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitXor of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CBitXor (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CBitXor*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CDiv(TorchSharp.ShortTensor)
+  id: CDiv(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CDiv(ShortTensor)
+  nameWithType: ShortTensor.CDiv(ShortTensor)
+  fullName: ShortTensor.CDiv(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CDiv of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CDiv (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CDiv*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CFMod(TorchSharp.ShortTensor)
+  id: CFMod(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CFMod(ShortTensor)
+  nameWithType: ShortTensor.CFMod(ShortTensor)
+  fullName: ShortTensor.CFMod(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CFMod of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CFMod (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CFMod*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Clamp(System.Int16)
+  id: Clamp(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Clamp(Int16)
+  nameWithType: ShortTensor.Clamp(Int16)
+  fullName: ShortTensor.Clamp(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Clamp (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Clamp(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Clamp(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Clamp(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Clamp(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Clamp(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Clamp operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Clamp (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Clone
+  id: Clone
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Clone()
+  nameWithType: ShortTensor.Clone()
+  fullName: ShortTensor.Clone()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a deep clone of the tensor
+  syntax:
+    content: public TorchSharp.ShortTensor Clone ();
+    parameters: []
+    return:
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Clone*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CLShift(TorchSharp.ShortTensor)
+  id: CLShift(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CLShift(ShortTensor)
+  nameWithType: ShortTensor.CLShift(ShortTensor)
+  fullName: ShortTensor.CLShift(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CLShift of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CLShift (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CLShift*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CMul(TorchSharp.ShortTensor)
+  id: CMul(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CMul(ShortTensor)
+  nameWithType: ShortTensor.CMul(ShortTensor)
+  fullName: ShortTensor.CMul(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CMul of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CMul (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CMul*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CPow(TorchSharp.ShortTensor)
+  id: CPow(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CPow(ShortTensor)
+  nameWithType: ShortTensor.CPow(ShortTensor)
+  fullName: ShortTensor.CPow(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CPow of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CPow (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CPow*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CRemainder(TorchSharp.ShortTensor)
+  id: CRemainder(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CRemainder(ShortTensor)
+  nameWithType: ShortTensor.CRemainder(ShortTensor)
+  fullName: ShortTensor.CRemainder(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CRemainder of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ShortTensor CRemainder (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CRemainder*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.CSub(System.Int16,TorchSharp.ShortTensor)
+  id: CSub(System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: CSub(Int16, ShortTensor)
+  nameWithType: ShortTensor.CSub(Int16, ShortTensor)
+  fullName: ShortTensor.CSub(Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CSub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.ShortTensor CSub (short value, TorchSharp.ShortTensor src);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.CSub*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Data
+  id: Data
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Data
+  nameWithType: ShortTensor.Data
+  fullName: ShortTensor.Data
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a pointer to the unmanaged data managed by this tensor.
+  syntax:
+    content: public short* Data { get; }
+    return:
+      type: System.Int16*
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Data*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Dimensions
+  id: Dimensions
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Dimensions
+  nameWithType: ShortTensor.Dimensions
+  fullName: ShortTensor.Dimensions
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the number of dimensions for this tensor
+  syntax:
+    content: public int Dimensions { get; }
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Dimensions*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Dispose
+  id: Dispose
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Dispose()
+  nameWithType: ShortTensor.Dispose()
+  fullName: ShortTensor.Dispose()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose ();
+    parameters: []
+  overload: TorchSharp.ShortTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Dispose(System.Boolean)
+  id: Dispose(System.Boolean)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Dispose(Boolean)
+  nameWithType: ShortTensor.Dispose(Boolean)
+  fullName: ShortTensor.Dispose(Boolean)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose (bool disposing);
+    parameters:
+    - id: disposing
+      type: System.Boolean
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Div(System.Int16)
+  id: Div(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Div(Int16)
+  nameWithType: ShortTensor.Div(Int16)
+  fullName: ShortTensor.Div(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Div (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Div*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Div(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Div(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Div(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Div(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Div(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Div operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Div (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Div*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Dot(TorchSharp.ShortTensor)
+  id: Dot(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Dot(ShortTensor)
+  nameWithType: ShortTensor.Dot(ShortTensor)
+  fullName: ShortTensor.Dot(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor product between this tensor and the provided one
+  syntax:
+    content: public long Dot (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+    return:
+      type: System.Int64
+      description: The dot product
+  overload: TorchSharp.ShortTensor.Dot*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Fill(System.Int16)
+  id: Fill(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Fill(Int16)
+  nameWithType: ShortTensor.Fill(Int16)
+  fullName: ShortTensor.Fill(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with the specified value
+  syntax:
+    content: public void Fill (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Fill*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Finalize
+  id: Finalize
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Finalize()
+  nameWithType: ShortTensor.Finalize()
+  fullName: ShortTensor.Finalize()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: ~ShortTensor ();
+    parameters: []
+  overload: TorchSharp.ShortTensor.Finalize*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Fmod(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Fmod(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Fmod(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Fmod(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Fmod(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Fmod operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Fmod (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Fmod(System.Int16)
+  id: Fmod(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Fmod(Int16)
+  nameWithType: ShortTensor.Fmod(Int16)
+  fullName: ShortTensor.Fmod(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Fmod (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.GetTensorDimension(System.Int32)
+  id: GetTensorDimension(System.Int32)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: GetTensorDimension(Int32)
+  nameWithType: ShortTensor.GetTensorDimension(Int32)
+  fullName: ShortTensor.GetTensorDimension(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the size of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorDimension (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.GetTensorDimension*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.GetTensorStride(System.Int32)
+  id: GetTensorStride(System.Int32)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: GetTensorStride(Int32)
+  nameWithType: ShortTensor.GetTensorStride(Int32)
+  fullName: ShortTensor.GetTensorStride(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the stride of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorStride (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.GetTensorStride*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Item(System.Int64)
+  id: Item(System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Item(Int64)
+  nameWithType: ShortTensor.Item(Int64)
+  fullName: ShortTensor.Item(Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public short this[long x0] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int16
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public short this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int16
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public short this[long x0, long x1, long x2] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int16
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public short this[long x0, long x1, long x2, long x3] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    - id: x3
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int16
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.LShift(System.Int16)
+  id: LShift(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: LShift(Int16)
+  nameWithType: ShortTensor.LShift(Int16)
+  fullName: ShortTensor.LShift(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.LShift(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor LShift (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.LShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: LShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: LShift(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.LShift(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.LShift(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the LShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void LShift (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.MaxAll
+  id: MaxAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: MaxAll()
+  nameWithType: ShortTensor.MaxAll()
+  fullName: ShortTensor.MaxAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the maximum value of the elements in the tensor.
+  syntax:
+    content: public short MaxAll ();
+    parameters: []
+    return:
+      type: System.Int16
+      description: The maximum value of the tensor.
+  overload: TorchSharp.ShortTensor.MaxAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.MeanAll
+  id: MeanAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: MeanAll()
+  nameWithType: ShortTensor.MeanAll()
+  fullName: ShortTensor.MeanAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the mean of the elements in the tensor.
+  syntax:
+    content: public long MeanAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The mean of the tensor.
+  overload: TorchSharp.ShortTensor.MeanAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.MedianAll
+  id: MedianAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: MedianAll()
+  nameWithType: ShortTensor.MedianAll()
+  fullName: ShortTensor.MedianAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the median of the elements in the tensor.
+  syntax:
+    content: public short MedianAll ();
+    parameters: []
+    return:
+      type: System.Int16
+      description: The median of the tensor.
+  overload: TorchSharp.ShortTensor.MedianAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.MinAll
+  id: MinAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: MinAll()
+  nameWithType: ShortTensor.MinAll()
+  fullName: ShortTensor.MinAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the minimum value of the elements in the tensor.
+  syntax:
+    content: public short MinAll ();
+    parameters: []
+    return:
+      type: System.Int16
+      description: The minimum value of the tensor.
+  overload: TorchSharp.ShortTensor.MinAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Mul(System.Int16)
+  id: Mul(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Mul(Int16)
+  nameWithType: ShortTensor.Mul(Int16)
+  fullName: ShortTensor.Mul(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Mul (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Mul(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Mul(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Mul(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Mul(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Mul(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Mul operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Mul (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  id: Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: ShortTensor.Narrow(Int32, Int64, Int64)
+  fullName: ShortTensor.Narrow(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.ShortTensor Narrow (int dim, long firstIndex, long size);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: firstIndex
+      type: System.Int64
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Narrow*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.ProdAll
+  id: ProdAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ProdAll()
+  nameWithType: ShortTensor.ProdAll()
+  fullName: ShortTensor.ProdAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the product of the elements in the tensor.
+  syntax:
+    content: public long ProdAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The product of the tensor.
+  overload: TorchSharp.ShortTensor.ProdAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Random(System.Int64)
+  id: Random(System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Random(Int64)
+  nameWithType: ShortTensor.Random(Int64)
+  fullName: ShortTensor.Random(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+  syntax:
+    content: public void Random (long n);
+    parameters:
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Random*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  id: Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Random(RandomGenerator, Int64)
+  nameWithType: ShortTensor.Random(RandomGenerator, Int64)
+  fullName: ShortTensor.Random(RandomGenerator, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using the provided random source generator.
+  syntax:
+    content: public void Random (TorchSharp.RandomGenerator source, long n);
+    parameters:
+    - id: source
+      type: TorchSharp.RandomGenerator
+      description: To be added.
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Random*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Remainder(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Remainder(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Remainder(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Remainder(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Remainder(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Remainder operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Remainder (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Remainder(System.Int16)
+  id: Remainder(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Remainder(Int16)
+  nameWithType: ShortTensor.Remainder(Int16)
+  fullName: ShortTensor.Remainder(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Remainder(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Remainder (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Resize1d(System.Int64)
+  id: Resize1d(System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Resize1d(Int64)
+  nameWithType: ShortTensor.Resize1d(Int64)
+  fullName: ShortTensor.Resize1d(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize1d (long size);
+    parameters:
+    - id: size
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Resize1d*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Resize2d(System.Int64,System.Int64)
+  id: Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Resize2d(Int64, Int64)
+  nameWithType: ShortTensor.Resize2d(Int64, Int64)
+  fullName: ShortTensor.Resize2d(Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize2d (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Resize2d*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  id: Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize3d(Int64, Int64, Int64)
+  fullName: ShortTensor.Resize3d(Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize3d (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Resize3d*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Resize4d(Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize4d (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Resize4d*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+    - id: size4
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Resize5d*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.ResizeAs(TorchSharp.ShortTensor)
+  id: ResizeAs(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ResizeAs(ShortTensor)
+  nameWithType: ShortTensor.ResizeAs(ShortTensor)
+  fullName: ShortTensor.ResizeAs(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void ResizeAs (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.ResizeAs*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.RShift(System.Int16)
+  id: RShift(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: RShift(Int16)
+  nameWithType: ShortTensor.RShift(Int16)
+  fullName: ShortTensor.RShift(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor RShift (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.RShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: RShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: RShift(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.RShift(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.RShift(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the RShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void RShift (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Select(System.Int32,System.Int64)
+  id: Select(System.Int32,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Select(Int32, Int64)
+  nameWithType: ShortTensor.Select(Int32, Int64)
+  fullName: ShortTensor.Select(Int32, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.ShortTensor Select (int dim, long slideIndex);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: slideIndex
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Select*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Set(TorchSharp.ShortTensor)
+  id: Set(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Set(ShortTensor)
+  nameWithType: ShortTensor.Set(ShortTensor)
+  fullName: ShortTensor.Set(ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Set (TorchSharp.ShortTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Set*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Shape
+  id: Shape
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Shape
+  nameWithType: ShortTensor.Shape
+  fullName: ShortTensor.Shape
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+  remarks: >-
+    An array of size 0 is used for constants, an array of size 1 is used
+                    for single-dimension arrays, where the dimension is the value of the
+                    first element.   And so on.
+  syntax:
+    content: public long[] Shape { get; }
+    return:
+      type: System.Int64[]
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Shape*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Storage
+  id: Storage
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Storage
+  nameWithType: ShortTensor.Storage
+  fullName: ShortTensor.Storage
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the associated storage for this tensor
+  syntax:
+    content: public TorchSharp.ShortStorage Storage { get; }
+    return:
+      type: TorchSharp.ShortStorage
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Storage*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Sub(System.Int16)
+  id: Sub(System.Int16)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Sub(Int16)
+  nameWithType: ShortTensor.Sub(Int16)
+  fullName: ShortTensor.Sub(Int16)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Sub(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)\"></xref>."
+  syntax:
+    content: public TorchSharp.ShortTensor Sub (short value);
+    parameters:
+    - id: value
+      type: System.Int16
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ShortTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Sub(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  id: Sub(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Sub(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Sub(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Sub(ShortTensor, Int16, ShortTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Sub operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Sub (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ShortTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int16
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.SumAll
+  id: SumAll
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: SumAll()
+  nameWithType: ShortTensor.SumAll()
+  fullName: ShortTensor.SumAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the sum of the elements in the tensor.
+  syntax:
+    content: public long SumAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The sum of the tensor.
+  overload: TorchSharp.ShortTensor.SumAll*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.ToString
+  id: ToString
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ToString()
+  nameWithType: ShortTensor.ToString()
+  fullName: ShortTensor.ToString()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public override string ToString ();
+    parameters: []
+    return:
+      type: System.String
+      description: To be added.
+  overload: TorchSharp.ShortTensor.ToString*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Transpose(System.Int32,System.Int32)
+  id: Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Transpose(Int32, Int32)
+  nameWithType: ShortTensor.Transpose(Int32, Int32)
+  fullName: ShortTensor.Transpose(Int32, Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.ShortTensor Transpose (int dim1, int dim2);
+    parameters:
+    - id: dim1
+      type: System.Int32
+      description: To be added.
+    - id: dim2
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Transpose*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  id: Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: ShortTensor.Unfold(Int32, Int64, Int64)
+  fullName: ShortTensor.Unfold(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.ShortTensor Unfold (int dim, long size, long step);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    - id: step
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.ShortTensor
+      description: To be added.
+  overload: TorchSharp.ShortTensor.Unfold*
+  exceptions: []
+- uid: TorchSharp.ShortTensor.ZeroFill
+  id: ZeroFill
+  parent: TorchSharp.ShortTensor
+  langs:
+  - csharp
+  name: ZeroFill()
+  nameWithType: ShortTensor.ZeroFill()
+  fullName: ShortTensor.ZeroFill()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with zeros
+  syntax:
+    content: public void ZeroFill ();
+    parameters: []
+  overload: TorchSharp.ShortTensor.ZeroFill*
+  exceptions: []
+references:
+- uid: System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: TorchSharp.ShortTensor.#ctor
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor()
+  nameWithType: ShortTensor.ShortTensor()
+  fullName: ShortTensor.ShortTensor()
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor(Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64)
+  fullName: ShortTensor.ShortTensor(Int64)
+- uid: System.Int64
+  parent: System
+  isExternal: true
+  name: Int64
+  nameWithType: Int64
+  fullName: System.Int64
+- uid: TorchSharp.ShortTensor.#ctor(TorchSharp.TorchHandle)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor(TorchHandle)
+  nameWithType: ShortTensor.ShortTensor(TorchHandle)
+  fullName: ShortTensor.ShortTensor(TorchHandle)
+- uid: TorchSharp.TorchHandle
+  parent: TorchSharp
+  isExternal: false
+  name: TorchHandle
+  nameWithType: TorchHandle
+  fullName: TorchSharp.TorchHandle
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor(Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64)
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor(Int64, Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.ShortTensor(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.Add(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Add(Int16)
+  nameWithType: ShortTensor.Add(Int16)
+  fullName: ShortTensor.Add(Int16)
+- uid: TorchSharp.ShortTensor
+  parent: TorchSharp
+  isExternal: false
+  name: ShortTensor
+  nameWithType: ShortTensor
+  fullName: TorchSharp.ShortTensor
+- uid: System.Int16
+  parent: System
+  isExternal: true
+  name: Int16
+  nameWithType: Int16
+  fullName: System.Int16
+- uid: TorchSharp.ShortTensor.Add(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Add(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Add(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Add(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.BitAnd(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitAnd(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitAnd(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitAnd(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.BitAnd(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitAnd(Int16)
+  nameWithType: ShortTensor.BitAnd(Int16)
+  fullName: ShortTensor.BitAnd(Int16)
+- uid: TorchSharp.ShortTensor.BitOr(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitOr(Int16)
+  nameWithType: ShortTensor.BitOr(Int16)
+  fullName: ShortTensor.BitOr(Int16)
+- uid: TorchSharp.ShortTensor.BitOr(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitOr(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitOr(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitOr(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.BitXor(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitXor(Int16)
+  nameWithType: ShortTensor.BitXor(Int16)
+  fullName: ShortTensor.BitXor(Int16)
+- uid: TorchSharp.ShortTensor.BitXor(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitXor(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.BitXor(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.BitXor(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.CAdd(System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CAdd(Int16, ShortTensor)
+  nameWithType: ShortTensor.CAdd(Int16, ShortTensor)
+  fullName: ShortTensor.CAdd(Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.CBitAnd(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitAnd(ShortTensor)
+  nameWithType: ShortTensor.CBitAnd(ShortTensor)
+  fullName: ShortTensor.CBitAnd(ShortTensor)
+- uid: TorchSharp.ShortTensor.CBitOr(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitOr(ShortTensor)
+  nameWithType: ShortTensor.CBitOr(ShortTensor)
+  fullName: ShortTensor.CBitOr(ShortTensor)
+- uid: TorchSharp.ShortTensor.CBitXor(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitXor(ShortTensor)
+  nameWithType: ShortTensor.CBitXor(ShortTensor)
+  fullName: ShortTensor.CBitXor(ShortTensor)
+- uid: TorchSharp.ShortTensor.CDiv(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CDiv(ShortTensor)
+  nameWithType: ShortTensor.CDiv(ShortTensor)
+  fullName: ShortTensor.CDiv(ShortTensor)
+- uid: TorchSharp.ShortTensor.CFMod(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CFMod(ShortTensor)
+  nameWithType: ShortTensor.CFMod(ShortTensor)
+  fullName: ShortTensor.CFMod(ShortTensor)
+- uid: TorchSharp.ShortTensor.Clamp(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Clamp(Int16)
+  nameWithType: ShortTensor.Clamp(Int16)
+  fullName: ShortTensor.Clamp(Int16)
+- uid: TorchSharp.ShortTensor.Clamp(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Clamp(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Clamp(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Clamp(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Clone
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Clone()
+  nameWithType: ShortTensor.Clone()
+  fullName: ShortTensor.Clone()
+- uid: TorchSharp.ShortTensor.CLShift(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CLShift(ShortTensor)
+  nameWithType: ShortTensor.CLShift(ShortTensor)
+  fullName: ShortTensor.CLShift(ShortTensor)
+- uid: TorchSharp.ShortTensor.CMul(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CMul(ShortTensor)
+  nameWithType: ShortTensor.CMul(ShortTensor)
+  fullName: ShortTensor.CMul(ShortTensor)
+- uid: TorchSharp.ShortTensor.CPow(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CPow(ShortTensor)
+  nameWithType: ShortTensor.CPow(ShortTensor)
+  fullName: ShortTensor.CPow(ShortTensor)
+- uid: TorchSharp.ShortTensor.CRemainder(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CRemainder(ShortTensor)
+  nameWithType: ShortTensor.CRemainder(ShortTensor)
+  fullName: ShortTensor.CRemainder(ShortTensor)
+- uid: TorchSharp.ShortTensor.CSub(System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CSub(Int16, ShortTensor)
+  nameWithType: ShortTensor.CSub(Int16, ShortTensor)
+  fullName: ShortTensor.CSub(Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Data
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Data
+  nameWithType: ShortTensor.Data
+  fullName: ShortTensor.Data
+- uid: System.Int16*
+  parent: System
+  isExternal: true
+  name: Int16*
+  nameWithType: Int16*
+  fullName: System.Int16*
+  spec.csharp:
+  - uid: System.Int16
+    name: Int16
+    nameWithType: Int16
+    fullName: System.Int16
+  - name: '*'
+    nameWithType: '*'
+    fullName: '*'
+- uid: TorchSharp.ShortTensor.Dimensions
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: ShortTensor.Dimensions
+  fullName: ShortTensor.Dimensions
+- uid: System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: TorchSharp.ShortTensor.Dispose
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dispose()
+  nameWithType: ShortTensor.Dispose()
+  fullName: ShortTensor.Dispose()
+- uid: TorchSharp.ShortTensor.Dispose(System.Boolean)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dispose(Boolean)
+  nameWithType: ShortTensor.Dispose(Boolean)
+  fullName: ShortTensor.Dispose(Boolean)
+- uid: System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: TorchSharp.ShortTensor.Div(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Div(Int16)
+  nameWithType: ShortTensor.Div(Int16)
+  fullName: ShortTensor.Div(Int16)
+- uid: TorchSharp.ShortTensor.Div(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Div(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Div(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Div(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Dot(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dot(ShortTensor)
+  nameWithType: ShortTensor.Dot(ShortTensor)
+  fullName: ShortTensor.Dot(ShortTensor)
+- uid: TorchSharp.ShortTensor.Fill(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Fill(Int16)
+  nameWithType: ShortTensor.Fill(Int16)
+  fullName: ShortTensor.Fill(Int16)
+- uid: TorchSharp.ShortTensor.Finalize
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Finalize()
+  nameWithType: ShortTensor.Finalize()
+  fullName: ShortTensor.Finalize()
+- uid: TorchSharp.ShortTensor.Fmod(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Fmod(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Fmod(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Fmod(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Fmod(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Fmod(Int16)
+  nameWithType: ShortTensor.Fmod(Int16)
+  fullName: ShortTensor.Fmod(Int16)
+- uid: TorchSharp.ShortTensor.GetTensorDimension(System.Int32)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: GetTensorDimension(Int32)
+  nameWithType: ShortTensor.GetTensorDimension(Int32)
+  fullName: ShortTensor.GetTensorDimension(Int32)
+- uid: TorchSharp.ShortTensor.GetTensorStride(System.Int32)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: GetTensorStride(Int32)
+  nameWithType: ShortTensor.GetTensorStride(Int32)
+  fullName: ShortTensor.GetTensorStride(Int32)
+- uid: TorchSharp.ShortTensor.Item(System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Item(Int64)
+  nameWithType: ShortTensor.Item(Int64)
+  fullName: ShortTensor.Item(Int64)
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Item(Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64)
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.LShift(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: LShift(Int16)
+  nameWithType: ShortTensor.LShift(Int16)
+  fullName: ShortTensor.LShift(Int16)
+- uid: TorchSharp.ShortTensor.LShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: LShift(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.LShift(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.LShift(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.MaxAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MaxAll()
+  nameWithType: ShortTensor.MaxAll()
+  fullName: ShortTensor.MaxAll()
+- uid: TorchSharp.ShortTensor.MeanAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MeanAll()
+  nameWithType: ShortTensor.MeanAll()
+  fullName: ShortTensor.MeanAll()
+- uid: TorchSharp.ShortTensor.MedianAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MedianAll()
+  nameWithType: ShortTensor.MedianAll()
+  fullName: ShortTensor.MedianAll()
+- uid: TorchSharp.ShortTensor.MinAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MinAll()
+  nameWithType: ShortTensor.MinAll()
+  fullName: ShortTensor.MinAll()
+- uid: TorchSharp.ShortTensor.Mul(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Mul(Int16)
+  nameWithType: ShortTensor.Mul(Int16)
+  fullName: ShortTensor.Mul(Int16)
+- uid: TorchSharp.ShortTensor.Mul(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Mul(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Mul(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Mul(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: ShortTensor.Narrow(Int32, Int64, Int64)
+  fullName: ShortTensor.Narrow(Int32, Int64, Int64)
+- uid: TorchSharp.ShortTensor.ProdAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ProdAll()
+  nameWithType: ShortTensor.ProdAll()
+  fullName: ShortTensor.ProdAll()
+- uid: TorchSharp.ShortTensor.Random(System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Random(Int64)
+  nameWithType: ShortTensor.Random(Int64)
+  fullName: ShortTensor.Random(Int64)
+- uid: TorchSharp.ShortTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Random(RandomGenerator, Int64)
+  nameWithType: ShortTensor.Random(RandomGenerator, Int64)
+  fullName: ShortTensor.Random(RandomGenerator, Int64)
+- uid: TorchSharp.RandomGenerator
+  parent: TorchSharp
+  isExternal: false
+  name: RandomGenerator
+  nameWithType: RandomGenerator
+  fullName: TorchSharp.RandomGenerator
+- uid: TorchSharp.ShortTensor.Remainder(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Remainder(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Remainder(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Remainder(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Remainder(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Remainder(Int16)
+  nameWithType: ShortTensor.Remainder(Int16)
+  fullName: ShortTensor.Remainder(Int16)
+- uid: TorchSharp.ShortTensor.Resize1d(System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize1d(Int64)
+  nameWithType: ShortTensor.Resize1d(Int64)
+  fullName: ShortTensor.Resize1d(Int64)
+- uid: TorchSharp.ShortTensor.Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize2d(Int64, Int64)
+  nameWithType: ShortTensor.Resize2d(Int64, Int64)
+  fullName: ShortTensor.Resize2d(Int64, Int64)
+- uid: TorchSharp.ShortTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize3d(Int64, Int64, Int64)
+  fullName: ShortTensor.Resize3d(Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Resize4d(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: ShortTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: ShortTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ShortTensor.ResizeAs(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ResizeAs(ShortTensor)
+  nameWithType: ShortTensor.ResizeAs(ShortTensor)
+  fullName: ShortTensor.ResizeAs(ShortTensor)
+- uid: TorchSharp.ShortTensor.RShift(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: RShift(Int16)
+  nameWithType: ShortTensor.RShift(Int16)
+  fullName: ShortTensor.RShift(Int16)
+- uid: TorchSharp.ShortTensor.RShift(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: RShift(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.RShift(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.RShift(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.Select(System.Int32,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Select(Int32, Int64)
+  nameWithType: ShortTensor.Select(Int32, Int64)
+  fullName: ShortTensor.Select(Int32, Int64)
+- uid: TorchSharp.ShortTensor.Set(TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Set(ShortTensor)
+  nameWithType: ShortTensor.Set(ShortTensor)
+  fullName: ShortTensor.Set(ShortTensor)
+- uid: TorchSharp.ShortTensor.Shape
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Shape
+  nameWithType: ShortTensor.Shape
+  fullName: ShortTensor.Shape
+- uid: System.Int64[]
+  parent: System
+  isExternal: true
+  name: Int64[]
+  nameWithType: Int64[]
+  fullName: System.Int64[]
+  spec.csharp:
+  - uid: System.Int64
+    name: Int64
+    nameWithType: Int64
+    fullName: System.Int64
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+- uid: TorchSharp.ShortTensor.Storage
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Storage
+  nameWithType: ShortTensor.Storage
+  fullName: ShortTensor.Storage
+- uid: TorchSharp.ShortStorage
+  parent: TorchSharp
+  isExternal: false
+  name: ShortStorage
+  nameWithType: ShortStorage
+  fullName: TorchSharp.ShortStorage
+- uid: TorchSharp.ShortTensor.Sub(System.Int16)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Sub(Int16)
+  nameWithType: ShortTensor.Sub(Int16)
+  fullName: ShortTensor.Sub(Int16)
+- uid: TorchSharp.ShortTensor.Sub(TorchSharp.ShortTensor,System.Int16,TorchSharp.ShortTensor)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Sub(ShortTensor, Int16, ShortTensor)
+  nameWithType: ShortTensor.Sub(ShortTensor, Int16, ShortTensor)
+  fullName: ShortTensor.Sub(ShortTensor, Int16, ShortTensor)
+- uid: TorchSharp.ShortTensor.SumAll
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: SumAll()
+  nameWithType: ShortTensor.SumAll()
+  fullName: ShortTensor.SumAll()
+- uid: TorchSharp.ShortTensor.ToString
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ToString()
+  nameWithType: ShortTensor.ToString()
+  fullName: ShortTensor.ToString()
+- uid: System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: TorchSharp.ShortTensor.Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Transpose(Int32, Int32)
+  nameWithType: ShortTensor.Transpose(Int32, Int32)
+  fullName: ShortTensor.Transpose(Int32, Int32)
+- uid: TorchSharp.ShortTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: ShortTensor.Unfold(Int32, Int64, Int64)
+  fullName: ShortTensor.Unfold(Int32, Int64, Int64)
+- uid: TorchSharp.ShortTensor.ZeroFill
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ZeroFill()
+  nameWithType: ShortTensor.ZeroFill()
+  fullName: ShortTensor.ZeroFill()
+- uid: TorchSharp.ShortTensor.#ctor*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ShortTensor
+  nameWithType: ShortTensor.ShortTensor
+  fullName: ShortTensor.ShortTensor
+- uid: TorchSharp.ShortTensor.Add*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Add
+  nameWithType: ShortTensor.Add
+  fullName: ShortTensor.Add
+- uid: TorchSharp.ShortTensor.BitAnd*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitAnd
+  nameWithType: ShortTensor.BitAnd
+  fullName: ShortTensor.BitAnd
+- uid: TorchSharp.ShortTensor.BitOr*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitOr
+  nameWithType: ShortTensor.BitOr
+  fullName: ShortTensor.BitOr
+- uid: TorchSharp.ShortTensor.BitXor*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: BitXor
+  nameWithType: ShortTensor.BitXor
+  fullName: ShortTensor.BitXor
+- uid: TorchSharp.ShortTensor.CAdd*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CAdd
+  nameWithType: ShortTensor.CAdd
+  fullName: ShortTensor.CAdd
+- uid: TorchSharp.ShortTensor.CBitAnd*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitAnd
+  nameWithType: ShortTensor.CBitAnd
+  fullName: ShortTensor.CBitAnd
+- uid: TorchSharp.ShortTensor.CBitOr*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitOr
+  nameWithType: ShortTensor.CBitOr
+  fullName: ShortTensor.CBitOr
+- uid: TorchSharp.ShortTensor.CBitXor*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CBitXor
+  nameWithType: ShortTensor.CBitXor
+  fullName: ShortTensor.CBitXor
+- uid: TorchSharp.ShortTensor.CDiv*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CDiv
+  nameWithType: ShortTensor.CDiv
+  fullName: ShortTensor.CDiv
+- uid: TorchSharp.ShortTensor.CFMod*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CFMod
+  nameWithType: ShortTensor.CFMod
+  fullName: ShortTensor.CFMod
+- uid: TorchSharp.ShortTensor.Clamp*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Clamp
+  nameWithType: ShortTensor.Clamp
+  fullName: ShortTensor.Clamp
+- uid: TorchSharp.ShortTensor.Clone*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Clone
+  nameWithType: ShortTensor.Clone
+  fullName: ShortTensor.Clone
+- uid: TorchSharp.ShortTensor.CLShift*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CLShift
+  nameWithType: ShortTensor.CLShift
+  fullName: ShortTensor.CLShift
+- uid: TorchSharp.ShortTensor.CMul*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CMul
+  nameWithType: ShortTensor.CMul
+  fullName: ShortTensor.CMul
+- uid: TorchSharp.ShortTensor.CPow*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CPow
+  nameWithType: ShortTensor.CPow
+  fullName: ShortTensor.CPow
+- uid: TorchSharp.ShortTensor.CRemainder*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CRemainder
+  nameWithType: ShortTensor.CRemainder
+  fullName: ShortTensor.CRemainder
+- uid: TorchSharp.ShortTensor.CSub*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: CSub
+  nameWithType: ShortTensor.CSub
+  fullName: ShortTensor.CSub
+- uid: TorchSharp.ShortTensor.Data*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Data
+  nameWithType: ShortTensor.Data
+  fullName: ShortTensor.Data
+- uid: TorchSharp.ShortTensor.Dimensions*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: ShortTensor.Dimensions
+  fullName: ShortTensor.Dimensions
+- uid: TorchSharp.ShortTensor.Dispose*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dispose
+  nameWithType: ShortTensor.Dispose
+  fullName: ShortTensor.Dispose
+- uid: TorchSharp.ShortTensor.Div*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Div
+  nameWithType: ShortTensor.Div
+  fullName: ShortTensor.Div
+- uid: TorchSharp.ShortTensor.Dot*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Dot
+  nameWithType: ShortTensor.Dot
+  fullName: ShortTensor.Dot
+- uid: TorchSharp.ShortTensor.Fill*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Fill
+  nameWithType: ShortTensor.Fill
+  fullName: ShortTensor.Fill
+- uid: TorchSharp.ShortTensor.Finalize*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Finalize
+  nameWithType: ShortTensor.Finalize
+  fullName: ShortTensor.Finalize
+- uid: TorchSharp.ShortTensor.Fmod*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Fmod
+  nameWithType: ShortTensor.Fmod
+  fullName: ShortTensor.Fmod
+- uid: TorchSharp.ShortTensor.GetTensorDimension*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: GetTensorDimension
+  nameWithType: ShortTensor.GetTensorDimension
+  fullName: ShortTensor.GetTensorDimension
+- uid: TorchSharp.ShortTensor.GetTensorStride*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: GetTensorStride
+  nameWithType: ShortTensor.GetTensorStride
+  fullName: ShortTensor.GetTensorStride
+- uid: TorchSharp.ShortTensor.Item*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Item
+  nameWithType: ShortTensor.Item
+  fullName: ShortTensor.Item
+- uid: TorchSharp.ShortTensor.LShift*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: LShift
+  nameWithType: ShortTensor.LShift
+  fullName: ShortTensor.LShift
+- uid: TorchSharp.ShortTensor.MaxAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MaxAll
+  nameWithType: ShortTensor.MaxAll
+  fullName: ShortTensor.MaxAll
+- uid: TorchSharp.ShortTensor.MeanAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MeanAll
+  nameWithType: ShortTensor.MeanAll
+  fullName: ShortTensor.MeanAll
+- uid: TorchSharp.ShortTensor.MedianAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MedianAll
+  nameWithType: ShortTensor.MedianAll
+  fullName: ShortTensor.MedianAll
+- uid: TorchSharp.ShortTensor.MinAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: MinAll
+  nameWithType: ShortTensor.MinAll
+  fullName: ShortTensor.MinAll
+- uid: TorchSharp.ShortTensor.Mul*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Mul
+  nameWithType: ShortTensor.Mul
+  fullName: ShortTensor.Mul
+- uid: TorchSharp.ShortTensor.Narrow*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Narrow
+  nameWithType: ShortTensor.Narrow
+  fullName: ShortTensor.Narrow
+- uid: TorchSharp.ShortTensor.ProdAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ProdAll
+  nameWithType: ShortTensor.ProdAll
+  fullName: ShortTensor.ProdAll
+- uid: TorchSharp.ShortTensor.Random*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Random
+  nameWithType: ShortTensor.Random
+  fullName: ShortTensor.Random
+- uid: TorchSharp.ShortTensor.Remainder*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Remainder
+  nameWithType: ShortTensor.Remainder
+  fullName: ShortTensor.Remainder
+- uid: TorchSharp.ShortTensor.Resize1d*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize1d
+  nameWithType: ShortTensor.Resize1d
+  fullName: ShortTensor.Resize1d
+- uid: TorchSharp.ShortTensor.Resize2d*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize2d
+  nameWithType: ShortTensor.Resize2d
+  fullName: ShortTensor.Resize2d
+- uid: TorchSharp.ShortTensor.Resize3d*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize3d
+  nameWithType: ShortTensor.Resize3d
+  fullName: ShortTensor.Resize3d
+- uid: TorchSharp.ShortTensor.Resize4d*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize4d
+  nameWithType: ShortTensor.Resize4d
+  fullName: ShortTensor.Resize4d
+- uid: TorchSharp.ShortTensor.Resize5d*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Resize5d
+  nameWithType: ShortTensor.Resize5d
+  fullName: ShortTensor.Resize5d
+- uid: TorchSharp.ShortTensor.ResizeAs*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ResizeAs
+  nameWithType: ShortTensor.ResizeAs
+  fullName: ShortTensor.ResizeAs
+- uid: TorchSharp.ShortTensor.RShift*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: RShift
+  nameWithType: ShortTensor.RShift
+  fullName: ShortTensor.RShift
+- uid: TorchSharp.ShortTensor.Select*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Select
+  nameWithType: ShortTensor.Select
+  fullName: ShortTensor.Select
+- uid: TorchSharp.ShortTensor.Set*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Set
+  nameWithType: ShortTensor.Set
+  fullName: ShortTensor.Set
+- uid: TorchSharp.ShortTensor.Shape*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Shape
+  nameWithType: ShortTensor.Shape
+  fullName: ShortTensor.Shape
+- uid: TorchSharp.ShortTensor.Storage*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Storage
+  nameWithType: ShortTensor.Storage
+  fullName: ShortTensor.Storage
+- uid: TorchSharp.ShortTensor.Sub*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Sub
+  nameWithType: ShortTensor.Sub
+  fullName: ShortTensor.Sub
+- uid: TorchSharp.ShortTensor.SumAll*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: SumAll
+  nameWithType: ShortTensor.SumAll
+  fullName: ShortTensor.SumAll
+- uid: TorchSharp.ShortTensor.ToString*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ToString
+  nameWithType: ShortTensor.ToString
+  fullName: ShortTensor.ToString
+- uid: TorchSharp.ShortTensor.Transpose*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Transpose
+  nameWithType: ShortTensor.Transpose
+  fullName: ShortTensor.Transpose
+- uid: TorchSharp.ShortTensor.Unfold*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: Unfold
+  nameWithType: ShortTensor.Unfold
+  fullName: ShortTensor.Unfold
+- uid: TorchSharp.ShortTensor.ZeroFill*
+  parent: TorchSharp.ShortTensor
+  isExternal: false
+  name: ZeroFill
+  nameWithType: ShortTensor.ZeroFill
+  fullName: ShortTensor.ZeroFill
+- uid: System.IDisposable
+  parent: System
+  isExternal: true
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable

@@ -9,6 +9,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType></DebugType>
+    <DocumentationFile>bin\Release\netstandard2.0\TorchSharp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="PreprocessedT4Template.tt" />

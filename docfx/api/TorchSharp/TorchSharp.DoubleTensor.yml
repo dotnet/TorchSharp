@@ -1,0 +1,4097 @@
+### YamlMime:ManagedReference
+items:
+- uid: TorchSharp.DoubleTensor
+  id: DoubleTensor
+  children:
+  - TorchSharp.DoubleTensor.#ctor
+  - TorchSharp.DoubleTensor.#ctor(System.Int64)
+  - TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
+  - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Abs(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Acos(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Add(System.Double)
+  - TorchSharp.DoubleTensor.Add(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Asin(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Atan(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Atan2(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.BitAnd(System.Double)
+  - TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CBitAnd(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CBitOr(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CBitXor(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CDiv(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Ceil(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CFMod(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.cinv(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Clamp(System.Double)
+  - TorchSharp.DoubleTensor.Clamp(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Clone
+  - TorchSharp.DoubleTensor.CLShift(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CMul(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Cos(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Cosh(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CPow(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CRemainder(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.CSub(System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Data
+  - TorchSharp.DoubleTensor.Digamma(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Dimensions
+  - TorchSharp.DoubleTensor.Dispose
+  - TorchSharp.DoubleTensor.Dispose(System.Boolean)
+  - TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Div(System.Double)
+  - TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Erf(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Erfc(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Erfinv(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Exp(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Expm1(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Fill(System.Double)
+  - TorchSharp.DoubleTensor.Finalize
+  - TorchSharp.DoubleTensor.Floor(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Fmod(System.Double)
+  - TorchSharp.DoubleTensor.Fmod(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Frac(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.GetTensorDimension(System.Int32)
+  - TorchSharp.DoubleTensor.GetTensorStride(System.Int32)
+  - TorchSharp.DoubleTensor.Item(System.Int64)
+  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Lgamma(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Log(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Log10(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Log1p(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Log2(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.LShift(System.Double)
+  - TorchSharp.DoubleTensor.LShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.MaxAll
+  - TorchSharp.DoubleTensor.MeanAll
+  - TorchSharp.DoubleTensor.MedianAll
+  - TorchSharp.DoubleTensor.MinAll
+  - TorchSharp.DoubleTensor.Mul(System.Double)
+  - TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.neg(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Polygamma(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.ProdAll
+  - TorchSharp.DoubleTensor.Random(System.Int64)
+  - TorchSharp.DoubleTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  - TorchSharp.DoubleTensor.Remainder(System.Double)
+  - TorchSharp.DoubleTensor.Remainder(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Resize1d(System.Int64)
+  - TorchSharp.DoubleTensor.Resize2d(System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.ResizeAs(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Round(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.RShift(System.Double)
+  - TorchSharp.DoubleTensor.RShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Rsqrt(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Select(System.Int32,System.Int64)
+  - TorchSharp.DoubleTensor.Set(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Shape
+  - TorchSharp.DoubleTensor.Sigmoid(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Sin(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Sinh(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Sqrt(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Storage
+  - TorchSharp.DoubleTensor.Sub(System.Double)
+  - TorchSharp.DoubleTensor.Sub(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.SumAll
+  - TorchSharp.DoubleTensor.Tan(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Tanh(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.ToString
+  - TorchSharp.DoubleTensor.Transpose(System.Int32,System.Int32)
+  - TorchSharp.DoubleTensor.Trigamma(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Trunc(TorchSharp.DoubleTensor)
+  - TorchSharp.DoubleTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.DoubleTensor.ZeroFill
+  langs:
+  - csharp
+  name: DoubleTensor
+  nameWithType: DoubleTensor
+  fullName: TorchSharp.DoubleTensor
+  type: Class
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: 'public class DoubleTensor : IDisposable'
+  inheritance:
+  - System.Object
+  implements:
+  - System.IDisposable
+  inheritedMembers: []
+- uid: TorchSharp.DoubleTensor.#ctor
+  id: '#ctor'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor()
+  nameWithType: DoubleTensor.DoubleTensor()
+  fullName: DoubleTensor.DoubleTensor()
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates an empty tensor.
+  syntax:
+    content: public DoubleTensor ();
+    parameters: []
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64)
+  id: '#ctor(System.Int64)'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor(Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 1D tensor of the specified size.
+  syntax:
+    content: public DoubleTensor (long size0);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
+  id: '#ctor(TorchSharp.TorchHandle)'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor(TorchHandle)
+  nameWithType: DoubleTensor.DoubleTensor(TorchHandle)
+  fullName: DoubleTensor.DoubleTensor(TorchHandle)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public DoubleTensor (TorchSharp.TorchHandle handle);
+    parameters:
+    - id: handle
+      type: TorchSharp.TorchHandle
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64)'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor(Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 2D tensor of the specified size.
+  syntax:
+    content: public DoubleTensor (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 3D tensor of the specified size.
+  syntax:
+    content: public DoubleTensor (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: DoubleTensor(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 4D tensor of the specified size.
+  syntax:
+    content: public DoubleTensor (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+    - id: size3
+      type: System.Int64
+      description: Size for the fourth dimension.
+  overload: TorchSharp.DoubleTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Abs(TorchSharp.DoubleTensor)
+  id: Abs(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Abs(DoubleTensor)
+  nameWithType: DoubleTensor.Abs(DoubleTensor)
+  fullName: DoubleTensor.Abs(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Abs of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Abs (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Abs*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Acos(TorchSharp.DoubleTensor)
+  id: Acos(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Acos(DoubleTensor)
+  nameWithType: DoubleTensor.Acos(DoubleTensor)
+  fullName: DoubleTensor.Acos(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Acos of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Acos (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Acos*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Add(System.Double)
+  id: Add(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Add(Double)
+  nameWithType: DoubleTensor.Add(Double)
+  fullName: DoubleTensor.Add(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Add(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Add (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Add*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Add(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Add(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Add(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Add(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Add(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Add operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Add (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Add*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Asin(TorchSharp.DoubleTensor)
+  id: Asin(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Asin(DoubleTensor)
+  nameWithType: DoubleTensor.Asin(DoubleTensor)
+  fullName: DoubleTensor.Asin(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Asin of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Asin (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Asin*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Atan(TorchSharp.DoubleTensor)
+  id: Atan(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Atan(DoubleTensor)
+  nameWithType: DoubleTensor.Atan(DoubleTensor)
+  fullName: DoubleTensor.Atan(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Atan of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Atan (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Atan*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Atan2(TorchSharp.DoubleTensor)
+  id: Atan2(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Atan2(DoubleTensor)
+  nameWithType: DoubleTensor.Atan2(DoubleTensor)
+  fullName: DoubleTensor.Atan2(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Atan2 of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Atan2 (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Atan2*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
+  id: BitAnd(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: BitAnd(Double)
+  nameWithType: DoubleTensor.BitAnd(Double)
+  fullName: DoubleTensor.BitAnd(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor BitAnd (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: BitAnd(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitAnd operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitAnd (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
+  id: CAdd(System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CAdd(Double, DoubleTensor)
+  nameWithType: DoubleTensor.CAdd(Double, DoubleTensor)
+  fullName: DoubleTensor.CAdd(Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CAdd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.DoubleTensor CAdd (double value, TorchSharp.DoubleTensor src);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CAdd*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CBitAnd(TorchSharp.DoubleTensor)
+  id: CBitAnd(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CBitAnd(DoubleTensor)
+  nameWithType: DoubleTensor.CBitAnd(DoubleTensor)
+  fullName: DoubleTensor.CBitAnd(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitAnd of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CBitAnd (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CBitAnd*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CBitOr(TorchSharp.DoubleTensor)
+  id: CBitOr(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CBitOr(DoubleTensor)
+  nameWithType: DoubleTensor.CBitOr(DoubleTensor)
+  fullName: DoubleTensor.CBitOr(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitOr of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CBitOr (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CBitOr*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CBitXor(TorchSharp.DoubleTensor)
+  id: CBitXor(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CBitXor(DoubleTensor)
+  nameWithType: DoubleTensor.CBitXor(DoubleTensor)
+  fullName: DoubleTensor.CBitXor(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitXor of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CBitXor (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CBitXor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CDiv(TorchSharp.DoubleTensor)
+  id: CDiv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CDiv(DoubleTensor)
+  nameWithType: DoubleTensor.CDiv(DoubleTensor)
+  fullName: DoubleTensor.CDiv(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CDiv of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CDiv (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CDiv*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Ceil(TorchSharp.DoubleTensor)
+  id: Ceil(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Ceil(DoubleTensor)
+  nameWithType: DoubleTensor.Ceil(DoubleTensor)
+  fullName: DoubleTensor.Ceil(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Ceil of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Ceil (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Ceil*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CFMod(TorchSharp.DoubleTensor)
+  id: CFMod(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CFMod(DoubleTensor)
+  nameWithType: DoubleTensor.CFMod(DoubleTensor)
+  fullName: DoubleTensor.CFMod(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CFMod of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CFMod (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CFMod*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.cinv(TorchSharp.DoubleTensor)
+  id: cinv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: cinv(DoubleTensor)
+  nameWithType: DoubleTensor.cinv(DoubleTensor)
+  fullName: DoubleTensor.cinv(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the cinv of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor cinv (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.cinv*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Clamp(System.Double)
+  id: Clamp(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Clamp(Double)
+  nameWithType: DoubleTensor.Clamp(Double)
+  fullName: DoubleTensor.Clamp(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Clamp (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Clamp(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Clamp(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Clamp(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Clamp(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Clamp(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Clamp operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Clamp (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Clone
+  id: Clone
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Clone()
+  nameWithType: DoubleTensor.Clone()
+  fullName: DoubleTensor.Clone()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a deep clone of the tensor
+  syntax:
+    content: public TorchSharp.DoubleTensor Clone ();
+    parameters: []
+    return:
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Clone*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CLShift(TorchSharp.DoubleTensor)
+  id: CLShift(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CLShift(DoubleTensor)
+  nameWithType: DoubleTensor.CLShift(DoubleTensor)
+  fullName: DoubleTensor.CLShift(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CLShift of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CLShift (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CLShift*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CMul(TorchSharp.DoubleTensor)
+  id: CMul(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CMul(DoubleTensor)
+  nameWithType: DoubleTensor.CMul(DoubleTensor)
+  fullName: DoubleTensor.CMul(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CMul of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CMul (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CMul*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Cos(TorchSharp.DoubleTensor)
+  id: Cos(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Cos(DoubleTensor)
+  nameWithType: DoubleTensor.Cos(DoubleTensor)
+  fullName: DoubleTensor.Cos(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Cos of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Cos (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Cos*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Cosh(TorchSharp.DoubleTensor)
+  id: Cosh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Cosh(DoubleTensor)
+  nameWithType: DoubleTensor.Cosh(DoubleTensor)
+  fullName: DoubleTensor.Cosh(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Cosh of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Cosh (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Cosh*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CPow(TorchSharp.DoubleTensor)
+  id: CPow(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CPow(DoubleTensor)
+  nameWithType: DoubleTensor.CPow(DoubleTensor)
+  fullName: DoubleTensor.CPow(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CPow of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CPow (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CPow*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CRemainder(TorchSharp.DoubleTensor)
+  id: CRemainder(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CRemainder(DoubleTensor)
+  nameWithType: DoubleTensor.CRemainder(DoubleTensor)
+  fullName: DoubleTensor.CRemainder(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CRemainder of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.DoubleTensor CRemainder (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CRemainder*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.CSub(System.Double,TorchSharp.DoubleTensor)
+  id: CSub(System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: CSub(Double, DoubleTensor)
+  nameWithType: DoubleTensor.CSub(Double, DoubleTensor)
+  fullName: DoubleTensor.CSub(Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CSub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.DoubleTensor CSub (double value, TorchSharp.DoubleTensor src);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.CSub*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Data
+  id: Data
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Data
+  nameWithType: DoubleTensor.Data
+  fullName: DoubleTensor.Data
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a pointer to the unmanaged data managed by this tensor.
+  syntax:
+    content: public double* Data { get; }
+    return:
+      type: System.Double*
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Data*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Digamma(TorchSharp.DoubleTensor)
+  id: Digamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Digamma(DoubleTensor)
+  nameWithType: DoubleTensor.Digamma(DoubleTensor)
+  fullName: DoubleTensor.Digamma(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Digamma of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Digamma (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Digamma*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Dimensions
+  id: Dimensions
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Dimensions
+  nameWithType: DoubleTensor.Dimensions
+  fullName: DoubleTensor.Dimensions
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the number of dimensions for this tensor
+  syntax:
+    content: public int Dimensions { get; }
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Dimensions*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Dispose
+  id: Dispose
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Dispose()
+  nameWithType: DoubleTensor.Dispose()
+  fullName: DoubleTensor.Dispose()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose ();
+    parameters: []
+  overload: TorchSharp.DoubleTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Dispose(System.Boolean)
+  id: Dispose(System.Boolean)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Dispose(Boolean)
+  nameWithType: DoubleTensor.Dispose(Boolean)
+  fullName: DoubleTensor.Dispose(Boolean)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose (bool disposing);
+    parameters:
+    - id: disposing
+      type: System.Boolean
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Div(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Div operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Div (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Div*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Div(System.Double)
+  id: Div(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Div(Double)
+  nameWithType: DoubleTensor.Div(Double)
+  fullName: DoubleTensor.Div(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Div (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Div*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
+  id: Dot(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Dot(DoubleTensor)
+  nameWithType: DoubleTensor.Dot(DoubleTensor)
+  fullName: DoubleTensor.Dot(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor product between this tensor and the provided one
+  syntax:
+    content: public double Dot (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: System.Double
+      description: The dot product
+  overload: TorchSharp.DoubleTensor.Dot*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Erf(TorchSharp.DoubleTensor)
+  id: Erf(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Erf(DoubleTensor)
+  nameWithType: DoubleTensor.Erf(DoubleTensor)
+  fullName: DoubleTensor.Erf(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Erf of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Erf (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Erf*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Erfc(TorchSharp.DoubleTensor)
+  id: Erfc(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Erfc(DoubleTensor)
+  nameWithType: DoubleTensor.Erfc(DoubleTensor)
+  fullName: DoubleTensor.Erfc(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Erfc of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Erfc (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Erfc*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Erfinv(TorchSharp.DoubleTensor)
+  id: Erfinv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Erfinv(DoubleTensor)
+  nameWithType: DoubleTensor.Erfinv(DoubleTensor)
+  fullName: DoubleTensor.Erfinv(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Erfinv of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Erfinv (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Erfinv*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Exp(TorchSharp.DoubleTensor)
+  id: Exp(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Exp(DoubleTensor)
+  nameWithType: DoubleTensor.Exp(DoubleTensor)
+  fullName: DoubleTensor.Exp(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Exp of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Exp (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Exp*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Expm1(TorchSharp.DoubleTensor)
+  id: Expm1(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Expm1(DoubleTensor)
+  nameWithType: DoubleTensor.Expm1(DoubleTensor)
+  fullName: DoubleTensor.Expm1(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Expm1 of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Expm1 (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Expm1*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Fill(System.Double)
+  id: Fill(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Fill(Double)
+  nameWithType: DoubleTensor.Fill(Double)
+  fullName: DoubleTensor.Fill(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with the specified value
+  syntax:
+    content: public void Fill (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Fill*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Finalize
+  id: Finalize
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Finalize()
+  nameWithType: DoubleTensor.Finalize()
+  fullName: DoubleTensor.Finalize()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: ~DoubleTensor ();
+    parameters: []
+  overload: TorchSharp.DoubleTensor.Finalize*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Floor(TorchSharp.DoubleTensor)
+  id: Floor(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Floor(DoubleTensor)
+  nameWithType: DoubleTensor.Floor(DoubleTensor)
+  fullName: DoubleTensor.Floor(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Floor of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Floor (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Floor*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Fmod(System.Double)
+  id: Fmod(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Fmod(Double)
+  nameWithType: DoubleTensor.Fmod(Double)
+  fullName: DoubleTensor.Fmod(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Fmod (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Fmod(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Fmod(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Fmod(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Fmod(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Fmod(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Fmod operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Fmod (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Frac(TorchSharp.DoubleTensor)
+  id: Frac(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Frac(DoubleTensor)
+  nameWithType: DoubleTensor.Frac(DoubleTensor)
+  fullName: DoubleTensor.Frac(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Frac of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Frac (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Frac*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.GetTensorDimension(System.Int32)
+  id: GetTensorDimension(System.Int32)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: GetTensorDimension(Int32)
+  nameWithType: DoubleTensor.GetTensorDimension(Int32)
+  fullName: DoubleTensor.GetTensorDimension(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the size of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorDimension (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.GetTensorDimension*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.GetTensorStride(System.Int32)
+  id: GetTensorStride(System.Int32)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: GetTensorStride(Int32)
+  nameWithType: DoubleTensor.GetTensorStride(Int32)
+  fullName: DoubleTensor.GetTensorStride(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the stride of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorStride (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.GetTensorStride*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Item(System.Int64)
+  id: Item(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Item(Int64)
+  nameWithType: DoubleTensor.Item(Int64)
+  fullName: DoubleTensor.Item(Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public double this[long x0] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Double
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Item*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public double this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Double
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Item*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public double this[long x0, long x1, long x2] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Double
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Item*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public double this[long x0, long x1, long x2, long x3] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    - id: x3
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Double
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Item*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Lgamma(TorchSharp.DoubleTensor)
+  id: Lgamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Lgamma(DoubleTensor)
+  nameWithType: DoubleTensor.Lgamma(DoubleTensor)
+  fullName: DoubleTensor.Lgamma(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Lgamma of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Lgamma (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Lgamma*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Log(TorchSharp.DoubleTensor)
+  id: Log(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Log(DoubleTensor)
+  nameWithType: DoubleTensor.Log(DoubleTensor)
+  fullName: DoubleTensor.Log(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Log of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Log (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Log*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Log10(TorchSharp.DoubleTensor)
+  id: Log10(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Log10(DoubleTensor)
+  nameWithType: DoubleTensor.Log10(DoubleTensor)
+  fullName: DoubleTensor.Log10(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Log10 of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Log10 (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Log10*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Log1p(TorchSharp.DoubleTensor)
+  id: Log1p(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Log1p(DoubleTensor)
+  nameWithType: DoubleTensor.Log1p(DoubleTensor)
+  fullName: DoubleTensor.Log1p(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Log1p of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Log1p (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Log1p*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Log2(TorchSharp.DoubleTensor)
+  id: Log2(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Log2(DoubleTensor)
+  nameWithType: DoubleTensor.Log2(DoubleTensor)
+  fullName: DoubleTensor.Log2(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Log2 of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Log2 (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Log2*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.LShift(System.Double)
+  id: LShift(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: LShift(Double)
+  nameWithType: DoubleTensor.LShift(Double)
+  fullName: DoubleTensor.LShift(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.LShift(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor LShift (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.LShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: LShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: LShift(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.LShift(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.LShift(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the LShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void LShift (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.MaxAll
+  id: MaxAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: MaxAll()
+  nameWithType: DoubleTensor.MaxAll()
+  fullName: DoubleTensor.MaxAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the maximum value of the elements in the tensor.
+  syntax:
+    content: public double MaxAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The maximum value of the tensor.
+  overload: TorchSharp.DoubleTensor.MaxAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.MeanAll
+  id: MeanAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: MeanAll()
+  nameWithType: DoubleTensor.MeanAll()
+  fullName: DoubleTensor.MeanAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the mean of the elements in the tensor.
+  syntax:
+    content: public double MeanAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The mean of the tensor.
+  overload: TorchSharp.DoubleTensor.MeanAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.MedianAll
+  id: MedianAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: MedianAll()
+  nameWithType: DoubleTensor.MedianAll()
+  fullName: DoubleTensor.MedianAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the median of the elements in the tensor.
+  syntax:
+    content: public double MedianAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The median of the tensor.
+  overload: TorchSharp.DoubleTensor.MedianAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.MinAll
+  id: MinAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: MinAll()
+  nameWithType: DoubleTensor.MinAll()
+  fullName: DoubleTensor.MinAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the minimum value of the elements in the tensor.
+  syntax:
+    content: public double MinAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The minimum value of the tensor.
+  overload: TorchSharp.DoubleTensor.MinAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Mul(System.Double)
+  id: Mul(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Mul(Double)
+  nameWithType: DoubleTensor.Mul(Double)
+  fullName: DoubleTensor.Mul(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Mul (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Mul(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Mul operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Mul (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  id: Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: DoubleTensor.Narrow(Int32, Int64, Int64)
+  fullName: DoubleTensor.Narrow(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.DoubleTensor Narrow (int dim, long firstIndex, long size);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: firstIndex
+      type: System.Int64
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Narrow*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.neg(TorchSharp.DoubleTensor)
+  id: neg(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: neg(DoubleTensor)
+  nameWithType: DoubleTensor.neg(DoubleTensor)
+  fullName: DoubleTensor.neg(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the neg of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor neg (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.neg*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Polygamma(TorchSharp.DoubleTensor)
+  id: Polygamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Polygamma(DoubleTensor)
+  nameWithType: DoubleTensor.Polygamma(DoubleTensor)
+  fullName: DoubleTensor.Polygamma(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Polygamma of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Polygamma (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Polygamma*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.ProdAll
+  id: ProdAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: ProdAll()
+  nameWithType: DoubleTensor.ProdAll()
+  fullName: DoubleTensor.ProdAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the product of the elements in the tensor.
+  syntax:
+    content: public double ProdAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The product of the tensor.
+  overload: TorchSharp.DoubleTensor.ProdAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Random(System.Int64)
+  id: Random(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Random(Int64)
+  nameWithType: DoubleTensor.Random(Int64)
+  fullName: DoubleTensor.Random(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+  syntax:
+    content: public void Random (long n);
+    parameters:
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Random*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  id: Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Random(RandomGenerator, Int64)
+  nameWithType: DoubleTensor.Random(RandomGenerator, Int64)
+  fullName: DoubleTensor.Random(RandomGenerator, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using the provided random source generator.
+  syntax:
+    content: public void Random (TorchSharp.RandomGenerator source, long n);
+    parameters:
+    - id: source
+      type: TorchSharp.RandomGenerator
+      description: To be added.
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Random*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Remainder(System.Double)
+  id: Remainder(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Remainder(Double)
+  nameWithType: DoubleTensor.Remainder(Double)
+  fullName: DoubleTensor.Remainder(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Remainder(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Remainder (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Remainder(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Remainder(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Remainder(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Remainder(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Remainder(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Remainder operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Remainder (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Resize1d(System.Int64)
+  id: Resize1d(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Resize1d(Int64)
+  nameWithType: DoubleTensor.Resize1d(Int64)
+  fullName: DoubleTensor.Resize1d(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize1d (long size);
+    parameters:
+    - id: size
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Resize1d*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Resize2d(System.Int64,System.Int64)
+  id: Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Resize2d(Int64, Int64)
+  nameWithType: DoubleTensor.Resize2d(Int64, Int64)
+  fullName: DoubleTensor.Resize2d(Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize2d (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Resize2d*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  id: Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize3d(Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize3d(Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize3d (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Resize3d*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize4d(Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize4d (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Resize4d*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+    - id: size4
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Resize5d*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.ResizeAs(TorchSharp.DoubleTensor)
+  id: ResizeAs(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: ResizeAs(DoubleTensor)
+  nameWithType: DoubleTensor.ResizeAs(DoubleTensor)
+  fullName: DoubleTensor.ResizeAs(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void ResizeAs (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.ResizeAs*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Round(TorchSharp.DoubleTensor)
+  id: Round(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Round(DoubleTensor)
+  nameWithType: DoubleTensor.Round(DoubleTensor)
+  fullName: DoubleTensor.Round(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Round of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Round (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Round*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.RShift(System.Double)
+  id: RShift(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: RShift(Double)
+  nameWithType: DoubleTensor.RShift(Double)
+  fullName: DoubleTensor.RShift(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor RShift (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.RShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: RShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: RShift(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.RShift(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.RShift(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the RShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void RShift (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Rsqrt(TorchSharp.DoubleTensor)
+  id: Rsqrt(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Rsqrt(DoubleTensor)
+  nameWithType: DoubleTensor.Rsqrt(DoubleTensor)
+  fullName: DoubleTensor.Rsqrt(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Rsqrt of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Rsqrt (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Rsqrt*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Select(System.Int32,System.Int64)
+  id: Select(System.Int32,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Select(Int32, Int64)
+  nameWithType: DoubleTensor.Select(Int32, Int64)
+  fullName: DoubleTensor.Select(Int32, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.DoubleTensor Select (int dim, long slideIndex);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: slideIndex
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Select*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Set(TorchSharp.DoubleTensor)
+  id: Set(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Set(DoubleTensor)
+  nameWithType: DoubleTensor.Set(DoubleTensor)
+  fullName: DoubleTensor.Set(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Set (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Set*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Shape
+  id: Shape
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Shape
+  nameWithType: DoubleTensor.Shape
+  fullName: DoubleTensor.Shape
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+  remarks: >-
+    An array of size 0 is used for constants, an array of size 1 is used
+                    for single-dimension arrays, where the dimension is the value of the
+                    first element.   And so on.
+  syntax:
+    content: public long[] Shape { get; }
+    return:
+      type: System.Int64[]
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Shape*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sigmoid(TorchSharp.DoubleTensor)
+  id: Sigmoid(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sigmoid(DoubleTensor)
+  nameWithType: DoubleTensor.Sigmoid(DoubleTensor)
+  fullName: DoubleTensor.Sigmoid(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Sigmoid of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Sigmoid (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Sigmoid*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sin(TorchSharp.DoubleTensor)
+  id: Sin(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sin(DoubleTensor)
+  nameWithType: DoubleTensor.Sin(DoubleTensor)
+  fullName: DoubleTensor.Sin(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Sin of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Sin (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Sin*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sinh(TorchSharp.DoubleTensor)
+  id: Sinh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sinh(DoubleTensor)
+  nameWithType: DoubleTensor.Sinh(DoubleTensor)
+  fullName: DoubleTensor.Sinh(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Sinh of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Sinh (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Sinh*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sqrt(TorchSharp.DoubleTensor)
+  id: Sqrt(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sqrt(DoubleTensor)
+  nameWithType: DoubleTensor.Sqrt(DoubleTensor)
+  fullName: DoubleTensor.Sqrt(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Sqrt of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Sqrt (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Sqrt*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Storage
+  id: Storage
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Storage
+  nameWithType: DoubleTensor.Storage
+  fullName: DoubleTensor.Storage
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the associated storage for this tensor
+  syntax:
+    content: public TorchSharp.DoubleStorage Storage { get; }
+    return:
+      type: TorchSharp.DoubleStorage
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Storage*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sub(System.Double)
+  id: Sub(System.Double)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sub(Double)
+  nameWithType: DoubleTensor.Sub(Double)
+  fullName: DoubleTensor.Sub(Double)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Sub(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)\"></xref>."
+  syntax:
+    content: public TorchSharp.DoubleTensor Sub (double value);
+    parameters:
+    - id: value
+      type: System.Double
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Sub(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  id: Sub(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Sub(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Sub(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Sub(DoubleTensor, Double, DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Sub operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Sub (TorchSharp.DoubleTensor source, double value, TorchSharp.DoubleTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.DoubleTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Double
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.SumAll
+  id: SumAll
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: SumAll()
+  nameWithType: DoubleTensor.SumAll()
+  fullName: DoubleTensor.SumAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the sum of the elements in the tensor.
+  syntax:
+    content: public double SumAll ();
+    parameters: []
+    return:
+      type: System.Double
+      description: The sum of the tensor.
+  overload: TorchSharp.DoubleTensor.SumAll*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Tan(TorchSharp.DoubleTensor)
+  id: Tan(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Tan(DoubleTensor)
+  nameWithType: DoubleTensor.Tan(DoubleTensor)
+  fullName: DoubleTensor.Tan(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Tan of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Tan (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Tan*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Tanh(TorchSharp.DoubleTensor)
+  id: Tanh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Tanh(DoubleTensor)
+  nameWithType: DoubleTensor.Tanh(DoubleTensor)
+  fullName: DoubleTensor.Tanh(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Tanh of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Tanh (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Tanh*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.ToString
+  id: ToString
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: ToString()
+  nameWithType: DoubleTensor.ToString()
+  fullName: DoubleTensor.ToString()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public override string ToString ();
+    parameters: []
+    return:
+      type: System.String
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.ToString*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Transpose(System.Int32,System.Int32)
+  id: Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Transpose(Int32, Int32)
+  nameWithType: DoubleTensor.Transpose(Int32, Int32)
+  fullName: DoubleTensor.Transpose(Int32, Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.DoubleTensor Transpose (int dim1, int dim2);
+    parameters:
+    - id: dim1
+      type: System.Int32
+      description: To be added.
+    - id: dim2
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Transpose*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Trigamma(TorchSharp.DoubleTensor)
+  id: Trigamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Trigamma(DoubleTensor)
+  nameWithType: DoubleTensor.Trigamma(DoubleTensor)
+  fullName: DoubleTensor.Trigamma(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Trigamma of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Trigamma (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Trigamma*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Trunc(TorchSharp.DoubleTensor)
+  id: Trunc(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Trunc(DoubleTensor)
+  nameWithType: DoubleTensor.Trunc(DoubleTensor)
+  fullName: DoubleTensor.Trunc(DoubleTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new tensor with the Trunc of the elements of <see paramref="src"></see>
+  syntax:
+    content: public TorchSharp.DoubleTensor Trunc (TorchSharp.DoubleTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.DoubleTensor.Trunc*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  id: Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: DoubleTensor.Unfold(Int32, Int64, Int64)
+  fullName: DoubleTensor.Unfold(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.DoubleTensor Unfold (int dim, long size, long step);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    - id: step
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.DoubleTensor
+      description: To be added.
+  overload: TorchSharp.DoubleTensor.Unfold*
+  exceptions: []
+- uid: TorchSharp.DoubleTensor.ZeroFill
+  id: ZeroFill
+  parent: TorchSharp.DoubleTensor
+  langs:
+  - csharp
+  name: ZeroFill()
+  nameWithType: DoubleTensor.ZeroFill()
+  fullName: DoubleTensor.ZeroFill()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with zeros
+  syntax:
+    content: public void ZeroFill ();
+    parameters: []
+  overload: TorchSharp.DoubleTensor.ZeroFill*
+  exceptions: []
+references:
+- uid: System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: TorchSharp.DoubleTensor.#ctor
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor()
+  nameWithType: DoubleTensor.DoubleTensor()
+  fullName: DoubleTensor.DoubleTensor()
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor(Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64)
+- uid: System.Int64
+  parent: System
+  isExternal: true
+  name: Int64
+  nameWithType: Int64
+  fullName: System.Int64
+- uid: TorchSharp.DoubleTensor.#ctor(TorchSharp.TorchHandle)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor(TorchHandle)
+  nameWithType: DoubleTensor.DoubleTensor(TorchHandle)
+  fullName: DoubleTensor.DoubleTensor(TorchHandle)
+- uid: TorchSharp.TorchHandle
+  parent: TorchSharp
+  isExternal: false
+  name: TorchHandle
+  nameWithType: TorchHandle
+  fullName: TorchSharp.TorchHandle
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor(Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64)
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.DoubleTensor(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Abs(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Abs(DoubleTensor)
+  nameWithType: DoubleTensor.Abs(DoubleTensor)
+  fullName: DoubleTensor.Abs(DoubleTensor)
+- uid: TorchSharp.DoubleTensor
+  parent: TorchSharp
+  isExternal: false
+  name: DoubleTensor
+  nameWithType: DoubleTensor
+  fullName: TorchSharp.DoubleTensor
+- uid: TorchSharp.DoubleTensor.Acos(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Acos(DoubleTensor)
+  nameWithType: DoubleTensor.Acos(DoubleTensor)
+  fullName: DoubleTensor.Acos(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Add(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Add(Double)
+  nameWithType: DoubleTensor.Add(Double)
+  fullName: DoubleTensor.Add(Double)
+- uid: System.Double
+  parent: System
+  isExternal: true
+  name: Double
+  nameWithType: Double
+  fullName: System.Double
+- uid: TorchSharp.DoubleTensor.Add(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Add(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Add(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Add(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Asin(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Asin(DoubleTensor)
+  nameWithType: DoubleTensor.Asin(DoubleTensor)
+  fullName: DoubleTensor.Asin(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Atan(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Atan(DoubleTensor)
+  nameWithType: DoubleTensor.Atan(DoubleTensor)
+  fullName: DoubleTensor.Atan(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Atan2(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Atan2(DoubleTensor)
+  nameWithType: DoubleTensor.Atan2(DoubleTensor)
+  fullName: DoubleTensor.Atan2(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.BitAnd(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: BitAnd(Double)
+  nameWithType: DoubleTensor.BitAnd(Double)
+  fullName: DoubleTensor.BitAnd(Double)
+- uid: TorchSharp.DoubleTensor.BitAnd(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: BitAnd(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.BitAnd(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CAdd(System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CAdd(Double, DoubleTensor)
+  nameWithType: DoubleTensor.CAdd(Double, DoubleTensor)
+  fullName: DoubleTensor.CAdd(Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CBitAnd(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitAnd(DoubleTensor)
+  nameWithType: DoubleTensor.CBitAnd(DoubleTensor)
+  fullName: DoubleTensor.CBitAnd(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CBitOr(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitOr(DoubleTensor)
+  nameWithType: DoubleTensor.CBitOr(DoubleTensor)
+  fullName: DoubleTensor.CBitOr(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CBitXor(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitXor(DoubleTensor)
+  nameWithType: DoubleTensor.CBitXor(DoubleTensor)
+  fullName: DoubleTensor.CBitXor(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CDiv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CDiv(DoubleTensor)
+  nameWithType: DoubleTensor.CDiv(DoubleTensor)
+  fullName: DoubleTensor.CDiv(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Ceil(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Ceil(DoubleTensor)
+  nameWithType: DoubleTensor.Ceil(DoubleTensor)
+  fullName: DoubleTensor.Ceil(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CFMod(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CFMod(DoubleTensor)
+  nameWithType: DoubleTensor.CFMod(DoubleTensor)
+  fullName: DoubleTensor.CFMod(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.cinv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: cinv(DoubleTensor)
+  nameWithType: DoubleTensor.cinv(DoubleTensor)
+  fullName: DoubleTensor.cinv(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Clamp(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Clamp(Double)
+  nameWithType: DoubleTensor.Clamp(Double)
+  fullName: DoubleTensor.Clamp(Double)
+- uid: TorchSharp.DoubleTensor.Clamp(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Clamp(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Clamp(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Clamp(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Clone
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Clone()
+  nameWithType: DoubleTensor.Clone()
+  fullName: DoubleTensor.Clone()
+- uid: TorchSharp.DoubleTensor.CLShift(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CLShift(DoubleTensor)
+  nameWithType: DoubleTensor.CLShift(DoubleTensor)
+  fullName: DoubleTensor.CLShift(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CMul(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CMul(DoubleTensor)
+  nameWithType: DoubleTensor.CMul(DoubleTensor)
+  fullName: DoubleTensor.CMul(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Cos(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Cos(DoubleTensor)
+  nameWithType: DoubleTensor.Cos(DoubleTensor)
+  fullName: DoubleTensor.Cos(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Cosh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Cosh(DoubleTensor)
+  nameWithType: DoubleTensor.Cosh(DoubleTensor)
+  fullName: DoubleTensor.Cosh(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CPow(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CPow(DoubleTensor)
+  nameWithType: DoubleTensor.CPow(DoubleTensor)
+  fullName: DoubleTensor.CPow(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CRemainder(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CRemainder(DoubleTensor)
+  nameWithType: DoubleTensor.CRemainder(DoubleTensor)
+  fullName: DoubleTensor.CRemainder(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.CSub(System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CSub(Double, DoubleTensor)
+  nameWithType: DoubleTensor.CSub(Double, DoubleTensor)
+  fullName: DoubleTensor.CSub(Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Data
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Data
+  nameWithType: DoubleTensor.Data
+  fullName: DoubleTensor.Data
+- uid: System.Double*
+  parent: System
+  isExternal: true
+  name: Double*
+  nameWithType: Double*
+  fullName: System.Double*
+  spec.csharp:
+  - uid: System.Double
+    name: Double
+    nameWithType: Double
+    fullName: System.Double
+  - name: '*'
+    nameWithType: '*'
+    fullName: '*'
+- uid: TorchSharp.DoubleTensor.Digamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Digamma(DoubleTensor)
+  nameWithType: DoubleTensor.Digamma(DoubleTensor)
+  fullName: DoubleTensor.Digamma(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Dimensions
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: DoubleTensor.Dimensions
+  fullName: DoubleTensor.Dimensions
+- uid: System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: TorchSharp.DoubleTensor.Dispose
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dispose()
+  nameWithType: DoubleTensor.Dispose()
+  fullName: DoubleTensor.Dispose()
+- uid: TorchSharp.DoubleTensor.Dispose(System.Boolean)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dispose(Boolean)
+  nameWithType: DoubleTensor.Dispose(Boolean)
+  fullName: DoubleTensor.Dispose(Boolean)
+- uid: System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: TorchSharp.DoubleTensor.Div(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Div(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Div(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Div(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Div(Double)
+  nameWithType: DoubleTensor.Div(Double)
+  fullName: DoubleTensor.Div(Double)
+- uid: TorchSharp.DoubleTensor.Dot(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dot(DoubleTensor)
+  nameWithType: DoubleTensor.Dot(DoubleTensor)
+  fullName: DoubleTensor.Dot(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Erf(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erf(DoubleTensor)
+  nameWithType: DoubleTensor.Erf(DoubleTensor)
+  fullName: DoubleTensor.Erf(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Erfc(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erfc(DoubleTensor)
+  nameWithType: DoubleTensor.Erfc(DoubleTensor)
+  fullName: DoubleTensor.Erfc(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Erfinv(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erfinv(DoubleTensor)
+  nameWithType: DoubleTensor.Erfinv(DoubleTensor)
+  fullName: DoubleTensor.Erfinv(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Exp(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Exp(DoubleTensor)
+  nameWithType: DoubleTensor.Exp(DoubleTensor)
+  fullName: DoubleTensor.Exp(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Expm1(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Expm1(DoubleTensor)
+  nameWithType: DoubleTensor.Expm1(DoubleTensor)
+  fullName: DoubleTensor.Expm1(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Fill(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Fill(Double)
+  nameWithType: DoubleTensor.Fill(Double)
+  fullName: DoubleTensor.Fill(Double)
+- uid: TorchSharp.DoubleTensor.Finalize
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Finalize()
+  nameWithType: DoubleTensor.Finalize()
+  fullName: DoubleTensor.Finalize()
+- uid: TorchSharp.DoubleTensor.Floor(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Floor(DoubleTensor)
+  nameWithType: DoubleTensor.Floor(DoubleTensor)
+  fullName: DoubleTensor.Floor(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Fmod(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Fmod(Double)
+  nameWithType: DoubleTensor.Fmod(Double)
+  fullName: DoubleTensor.Fmod(Double)
+- uid: TorchSharp.DoubleTensor.Fmod(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Fmod(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Fmod(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Fmod(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Frac(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Frac(DoubleTensor)
+  nameWithType: DoubleTensor.Frac(DoubleTensor)
+  fullName: DoubleTensor.Frac(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.GetTensorDimension(System.Int32)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: GetTensorDimension(Int32)
+  nameWithType: DoubleTensor.GetTensorDimension(Int32)
+  fullName: DoubleTensor.GetTensorDimension(Int32)
+- uid: TorchSharp.DoubleTensor.GetTensorStride(System.Int32)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: GetTensorStride(Int32)
+  nameWithType: DoubleTensor.GetTensorStride(Int32)
+  fullName: DoubleTensor.GetTensorStride(Int32)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64)
+  nameWithType: DoubleTensor.Item(Int64)
+  fullName: DoubleTensor.Item(Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Lgamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Lgamma(DoubleTensor)
+  nameWithType: DoubleTensor.Lgamma(DoubleTensor)
+  fullName: DoubleTensor.Lgamma(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Log(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log(DoubleTensor)
+  nameWithType: DoubleTensor.Log(DoubleTensor)
+  fullName: DoubleTensor.Log(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Log10(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log10(DoubleTensor)
+  nameWithType: DoubleTensor.Log10(DoubleTensor)
+  fullName: DoubleTensor.Log10(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Log1p(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log1p(DoubleTensor)
+  nameWithType: DoubleTensor.Log1p(DoubleTensor)
+  fullName: DoubleTensor.Log1p(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Log2(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log2(DoubleTensor)
+  nameWithType: DoubleTensor.Log2(DoubleTensor)
+  fullName: DoubleTensor.Log2(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.LShift(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: LShift(Double)
+  nameWithType: DoubleTensor.LShift(Double)
+  fullName: DoubleTensor.LShift(Double)
+- uid: TorchSharp.DoubleTensor.LShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: LShift(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.LShift(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.LShift(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.MaxAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MaxAll()
+  nameWithType: DoubleTensor.MaxAll()
+  fullName: DoubleTensor.MaxAll()
+- uid: TorchSharp.DoubleTensor.MeanAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MeanAll()
+  nameWithType: DoubleTensor.MeanAll()
+  fullName: DoubleTensor.MeanAll()
+- uid: TorchSharp.DoubleTensor.MedianAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MedianAll()
+  nameWithType: DoubleTensor.MedianAll()
+  fullName: DoubleTensor.MedianAll()
+- uid: TorchSharp.DoubleTensor.MinAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MinAll()
+  nameWithType: DoubleTensor.MinAll()
+  fullName: DoubleTensor.MinAll()
+- uid: TorchSharp.DoubleTensor.Mul(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Mul(Double)
+  nameWithType: DoubleTensor.Mul(Double)
+  fullName: DoubleTensor.Mul(Double)
+- uid: TorchSharp.DoubleTensor.Mul(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Mul(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Mul(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: DoubleTensor.Narrow(Int32, Int64, Int64)
+  fullName: DoubleTensor.Narrow(Int32, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.neg(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: neg(DoubleTensor)
+  nameWithType: DoubleTensor.neg(DoubleTensor)
+  fullName: DoubleTensor.neg(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Polygamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Polygamma(DoubleTensor)
+  nameWithType: DoubleTensor.Polygamma(DoubleTensor)
+  fullName: DoubleTensor.Polygamma(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.ProdAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ProdAll()
+  nameWithType: DoubleTensor.ProdAll()
+  fullName: DoubleTensor.ProdAll()
+- uid: TorchSharp.DoubleTensor.Random(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Random(Int64)
+  nameWithType: DoubleTensor.Random(Int64)
+  fullName: DoubleTensor.Random(Int64)
+- uid: TorchSharp.DoubleTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Random(RandomGenerator, Int64)
+  nameWithType: DoubleTensor.Random(RandomGenerator, Int64)
+  fullName: DoubleTensor.Random(RandomGenerator, Int64)
+- uid: TorchSharp.RandomGenerator
+  parent: TorchSharp
+  isExternal: false
+  name: RandomGenerator
+  nameWithType: RandomGenerator
+  fullName: TorchSharp.RandomGenerator
+- uid: TorchSharp.DoubleTensor.Remainder(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Remainder(Double)
+  nameWithType: DoubleTensor.Remainder(Double)
+  fullName: DoubleTensor.Remainder(Double)
+- uid: TorchSharp.DoubleTensor.Remainder(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Remainder(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Remainder(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Remainder(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Resize1d(System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize1d(Int64)
+  nameWithType: DoubleTensor.Resize1d(Int64)
+  fullName: DoubleTensor.Resize1d(Int64)
+- uid: TorchSharp.DoubleTensor.Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize2d(Int64, Int64)
+  nameWithType: DoubleTensor.Resize2d(Int64, Int64)
+  fullName: DoubleTensor.Resize2d(Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize3d(Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize3d(Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize4d(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: DoubleTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: DoubleTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.ResizeAs(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ResizeAs(DoubleTensor)
+  nameWithType: DoubleTensor.ResizeAs(DoubleTensor)
+  fullName: DoubleTensor.ResizeAs(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Round(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Round(DoubleTensor)
+  nameWithType: DoubleTensor.Round(DoubleTensor)
+  fullName: DoubleTensor.Round(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.RShift(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: RShift(Double)
+  nameWithType: DoubleTensor.RShift(Double)
+  fullName: DoubleTensor.RShift(Double)
+- uid: TorchSharp.DoubleTensor.RShift(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: RShift(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.RShift(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.RShift(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Rsqrt(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Rsqrt(DoubleTensor)
+  nameWithType: DoubleTensor.Rsqrt(DoubleTensor)
+  fullName: DoubleTensor.Rsqrt(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Select(System.Int32,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Select(Int32, Int64)
+  nameWithType: DoubleTensor.Select(Int32, Int64)
+  fullName: DoubleTensor.Select(Int32, Int64)
+- uid: TorchSharp.DoubleTensor.Set(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Set(DoubleTensor)
+  nameWithType: DoubleTensor.Set(DoubleTensor)
+  fullName: DoubleTensor.Set(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Shape
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Shape
+  nameWithType: DoubleTensor.Shape
+  fullName: DoubleTensor.Shape
+- uid: System.Int64[]
+  parent: System
+  isExternal: true
+  name: Int64[]
+  nameWithType: Int64[]
+  fullName: System.Int64[]
+  spec.csharp:
+  - uid: System.Int64
+    name: Int64
+    nameWithType: Int64
+    fullName: System.Int64
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+- uid: TorchSharp.DoubleTensor.Sigmoid(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sigmoid(DoubleTensor)
+  nameWithType: DoubleTensor.Sigmoid(DoubleTensor)
+  fullName: DoubleTensor.Sigmoid(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Sin(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sin(DoubleTensor)
+  nameWithType: DoubleTensor.Sin(DoubleTensor)
+  fullName: DoubleTensor.Sin(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Sinh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sinh(DoubleTensor)
+  nameWithType: DoubleTensor.Sinh(DoubleTensor)
+  fullName: DoubleTensor.Sinh(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Sqrt(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sqrt(DoubleTensor)
+  nameWithType: DoubleTensor.Sqrt(DoubleTensor)
+  fullName: DoubleTensor.Sqrt(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Storage
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Storage
+  nameWithType: DoubleTensor.Storage
+  fullName: DoubleTensor.Storage
+- uid: TorchSharp.DoubleStorage
+  parent: TorchSharp
+  isExternal: false
+  name: DoubleStorage
+  nameWithType: DoubleStorage
+  fullName: TorchSharp.DoubleStorage
+- uid: TorchSharp.DoubleTensor.Sub(System.Double)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sub(Double)
+  nameWithType: DoubleTensor.Sub(Double)
+  fullName: DoubleTensor.Sub(Double)
+- uid: TorchSharp.DoubleTensor.Sub(TorchSharp.DoubleTensor,System.Double,TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sub(DoubleTensor, Double, DoubleTensor)
+  nameWithType: DoubleTensor.Sub(DoubleTensor, Double, DoubleTensor)
+  fullName: DoubleTensor.Sub(DoubleTensor, Double, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.SumAll
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: SumAll()
+  nameWithType: DoubleTensor.SumAll()
+  fullName: DoubleTensor.SumAll()
+- uid: TorchSharp.DoubleTensor.Tan(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Tan(DoubleTensor)
+  nameWithType: DoubleTensor.Tan(DoubleTensor)
+  fullName: DoubleTensor.Tan(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Tanh(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Tanh(DoubleTensor)
+  nameWithType: DoubleTensor.Tanh(DoubleTensor)
+  fullName: DoubleTensor.Tanh(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.ToString
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ToString()
+  nameWithType: DoubleTensor.ToString()
+  fullName: DoubleTensor.ToString()
+- uid: System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: TorchSharp.DoubleTensor.Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Transpose(Int32, Int32)
+  nameWithType: DoubleTensor.Transpose(Int32, Int32)
+  fullName: DoubleTensor.Transpose(Int32, Int32)
+- uid: TorchSharp.DoubleTensor.Trigamma(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Trigamma(DoubleTensor)
+  nameWithType: DoubleTensor.Trigamma(DoubleTensor)
+  fullName: DoubleTensor.Trigamma(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Trunc(TorchSharp.DoubleTensor)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Trunc(DoubleTensor)
+  nameWithType: DoubleTensor.Trunc(DoubleTensor)
+  fullName: DoubleTensor.Trunc(DoubleTensor)
+- uid: TorchSharp.DoubleTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: DoubleTensor.Unfold(Int32, Int64, Int64)
+  fullName: DoubleTensor.Unfold(Int32, Int64, Int64)
+- uid: TorchSharp.DoubleTensor.ZeroFill
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ZeroFill()
+  nameWithType: DoubleTensor.ZeroFill()
+  fullName: DoubleTensor.ZeroFill()
+- uid: TorchSharp.DoubleTensor.#ctor*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: DoubleTensor
+  nameWithType: DoubleTensor.DoubleTensor
+  fullName: DoubleTensor.DoubleTensor
+- uid: TorchSharp.DoubleTensor.Abs*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Abs
+  nameWithType: DoubleTensor.Abs
+  fullName: DoubleTensor.Abs
+- uid: TorchSharp.DoubleTensor.Acos*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Acos
+  nameWithType: DoubleTensor.Acos
+  fullName: DoubleTensor.Acos
+- uid: TorchSharp.DoubleTensor.Add*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Add
+  nameWithType: DoubleTensor.Add
+  fullName: DoubleTensor.Add
+- uid: TorchSharp.DoubleTensor.Asin*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Asin
+  nameWithType: DoubleTensor.Asin
+  fullName: DoubleTensor.Asin
+- uid: TorchSharp.DoubleTensor.Atan*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Atan
+  nameWithType: DoubleTensor.Atan
+  fullName: DoubleTensor.Atan
+- uid: TorchSharp.DoubleTensor.Atan2*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Atan2
+  nameWithType: DoubleTensor.Atan2
+  fullName: DoubleTensor.Atan2
+- uid: TorchSharp.DoubleTensor.BitAnd*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: BitAnd
+  nameWithType: DoubleTensor.BitAnd
+  fullName: DoubleTensor.BitAnd
+- uid: TorchSharp.DoubleTensor.CAdd*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CAdd
+  nameWithType: DoubleTensor.CAdd
+  fullName: DoubleTensor.CAdd
+- uid: TorchSharp.DoubleTensor.CBitAnd*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitAnd
+  nameWithType: DoubleTensor.CBitAnd
+  fullName: DoubleTensor.CBitAnd
+- uid: TorchSharp.DoubleTensor.CBitOr*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitOr
+  nameWithType: DoubleTensor.CBitOr
+  fullName: DoubleTensor.CBitOr
+- uid: TorchSharp.DoubleTensor.CBitXor*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CBitXor
+  nameWithType: DoubleTensor.CBitXor
+  fullName: DoubleTensor.CBitXor
+- uid: TorchSharp.DoubleTensor.CDiv*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CDiv
+  nameWithType: DoubleTensor.CDiv
+  fullName: DoubleTensor.CDiv
+- uid: TorchSharp.DoubleTensor.Ceil*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Ceil
+  nameWithType: DoubleTensor.Ceil
+  fullName: DoubleTensor.Ceil
+- uid: TorchSharp.DoubleTensor.CFMod*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CFMod
+  nameWithType: DoubleTensor.CFMod
+  fullName: DoubleTensor.CFMod
+- uid: TorchSharp.DoubleTensor.cinv*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: cinv
+  nameWithType: DoubleTensor.cinv
+  fullName: DoubleTensor.cinv
+- uid: TorchSharp.DoubleTensor.Clamp*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Clamp
+  nameWithType: DoubleTensor.Clamp
+  fullName: DoubleTensor.Clamp
+- uid: TorchSharp.DoubleTensor.Clone*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Clone
+  nameWithType: DoubleTensor.Clone
+  fullName: DoubleTensor.Clone
+- uid: TorchSharp.DoubleTensor.CLShift*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CLShift
+  nameWithType: DoubleTensor.CLShift
+  fullName: DoubleTensor.CLShift
+- uid: TorchSharp.DoubleTensor.CMul*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CMul
+  nameWithType: DoubleTensor.CMul
+  fullName: DoubleTensor.CMul
+- uid: TorchSharp.DoubleTensor.Cos*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Cos
+  nameWithType: DoubleTensor.Cos
+  fullName: DoubleTensor.Cos
+- uid: TorchSharp.DoubleTensor.Cosh*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Cosh
+  nameWithType: DoubleTensor.Cosh
+  fullName: DoubleTensor.Cosh
+- uid: TorchSharp.DoubleTensor.CPow*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CPow
+  nameWithType: DoubleTensor.CPow
+  fullName: DoubleTensor.CPow
+- uid: TorchSharp.DoubleTensor.CRemainder*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CRemainder
+  nameWithType: DoubleTensor.CRemainder
+  fullName: DoubleTensor.CRemainder
+- uid: TorchSharp.DoubleTensor.CSub*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: CSub
+  nameWithType: DoubleTensor.CSub
+  fullName: DoubleTensor.CSub
+- uid: TorchSharp.DoubleTensor.Data*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Data
+  nameWithType: DoubleTensor.Data
+  fullName: DoubleTensor.Data
+- uid: TorchSharp.DoubleTensor.Digamma*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Digamma
+  nameWithType: DoubleTensor.Digamma
+  fullName: DoubleTensor.Digamma
+- uid: TorchSharp.DoubleTensor.Dimensions*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: DoubleTensor.Dimensions
+  fullName: DoubleTensor.Dimensions
+- uid: TorchSharp.DoubleTensor.Dispose*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dispose
+  nameWithType: DoubleTensor.Dispose
+  fullName: DoubleTensor.Dispose
+- uid: TorchSharp.DoubleTensor.Div*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Div
+  nameWithType: DoubleTensor.Div
+  fullName: DoubleTensor.Div
+- uid: TorchSharp.DoubleTensor.Dot*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Dot
+  nameWithType: DoubleTensor.Dot
+  fullName: DoubleTensor.Dot
+- uid: TorchSharp.DoubleTensor.Erf*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erf
+  nameWithType: DoubleTensor.Erf
+  fullName: DoubleTensor.Erf
+- uid: TorchSharp.DoubleTensor.Erfc*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erfc
+  nameWithType: DoubleTensor.Erfc
+  fullName: DoubleTensor.Erfc
+- uid: TorchSharp.DoubleTensor.Erfinv*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Erfinv
+  nameWithType: DoubleTensor.Erfinv
+  fullName: DoubleTensor.Erfinv
+- uid: TorchSharp.DoubleTensor.Exp*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Exp
+  nameWithType: DoubleTensor.Exp
+  fullName: DoubleTensor.Exp
+- uid: TorchSharp.DoubleTensor.Expm1*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Expm1
+  nameWithType: DoubleTensor.Expm1
+  fullName: DoubleTensor.Expm1
+- uid: TorchSharp.DoubleTensor.Fill*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Fill
+  nameWithType: DoubleTensor.Fill
+  fullName: DoubleTensor.Fill
+- uid: TorchSharp.DoubleTensor.Finalize*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Finalize
+  nameWithType: DoubleTensor.Finalize
+  fullName: DoubleTensor.Finalize
+- uid: TorchSharp.DoubleTensor.Floor*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Floor
+  nameWithType: DoubleTensor.Floor
+  fullName: DoubleTensor.Floor
+- uid: TorchSharp.DoubleTensor.Fmod*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Fmod
+  nameWithType: DoubleTensor.Fmod
+  fullName: DoubleTensor.Fmod
+- uid: TorchSharp.DoubleTensor.Frac*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Frac
+  nameWithType: DoubleTensor.Frac
+  fullName: DoubleTensor.Frac
+- uid: TorchSharp.DoubleTensor.GetTensorDimension*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: GetTensorDimension
+  nameWithType: DoubleTensor.GetTensorDimension
+  fullName: DoubleTensor.GetTensorDimension
+- uid: TorchSharp.DoubleTensor.GetTensorStride*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: GetTensorStride
+  nameWithType: DoubleTensor.GetTensorStride
+  fullName: DoubleTensor.GetTensorStride
+- uid: TorchSharp.DoubleTensor.Item*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Item
+  nameWithType: DoubleTensor.Item
+  fullName: DoubleTensor.Item
+- uid: TorchSharp.DoubleTensor.Lgamma*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Lgamma
+  nameWithType: DoubleTensor.Lgamma
+  fullName: DoubleTensor.Lgamma
+- uid: TorchSharp.DoubleTensor.Log*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log
+  nameWithType: DoubleTensor.Log
+  fullName: DoubleTensor.Log
+- uid: TorchSharp.DoubleTensor.Log10*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log10
+  nameWithType: DoubleTensor.Log10
+  fullName: DoubleTensor.Log10
+- uid: TorchSharp.DoubleTensor.Log1p*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log1p
+  nameWithType: DoubleTensor.Log1p
+  fullName: DoubleTensor.Log1p
+- uid: TorchSharp.DoubleTensor.Log2*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Log2
+  nameWithType: DoubleTensor.Log2
+  fullName: DoubleTensor.Log2
+- uid: TorchSharp.DoubleTensor.LShift*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: LShift
+  nameWithType: DoubleTensor.LShift
+  fullName: DoubleTensor.LShift
+- uid: TorchSharp.DoubleTensor.MaxAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MaxAll
+  nameWithType: DoubleTensor.MaxAll
+  fullName: DoubleTensor.MaxAll
+- uid: TorchSharp.DoubleTensor.MeanAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MeanAll
+  nameWithType: DoubleTensor.MeanAll
+  fullName: DoubleTensor.MeanAll
+- uid: TorchSharp.DoubleTensor.MedianAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MedianAll
+  nameWithType: DoubleTensor.MedianAll
+  fullName: DoubleTensor.MedianAll
+- uid: TorchSharp.DoubleTensor.MinAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: MinAll
+  nameWithType: DoubleTensor.MinAll
+  fullName: DoubleTensor.MinAll
+- uid: TorchSharp.DoubleTensor.Mul*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Mul
+  nameWithType: DoubleTensor.Mul
+  fullName: DoubleTensor.Mul
+- uid: TorchSharp.DoubleTensor.Narrow*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Narrow
+  nameWithType: DoubleTensor.Narrow
+  fullName: DoubleTensor.Narrow
+- uid: TorchSharp.DoubleTensor.neg*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: neg
+  nameWithType: DoubleTensor.neg
+  fullName: DoubleTensor.neg
+- uid: TorchSharp.DoubleTensor.Polygamma*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Polygamma
+  nameWithType: DoubleTensor.Polygamma
+  fullName: DoubleTensor.Polygamma
+- uid: TorchSharp.DoubleTensor.ProdAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ProdAll
+  nameWithType: DoubleTensor.ProdAll
+  fullName: DoubleTensor.ProdAll
+- uid: TorchSharp.DoubleTensor.Random*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Random
+  nameWithType: DoubleTensor.Random
+  fullName: DoubleTensor.Random
+- uid: TorchSharp.DoubleTensor.Remainder*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Remainder
+  nameWithType: DoubleTensor.Remainder
+  fullName: DoubleTensor.Remainder
+- uid: TorchSharp.DoubleTensor.Resize1d*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize1d
+  nameWithType: DoubleTensor.Resize1d
+  fullName: DoubleTensor.Resize1d
+- uid: TorchSharp.DoubleTensor.Resize2d*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize2d
+  nameWithType: DoubleTensor.Resize2d
+  fullName: DoubleTensor.Resize2d
+- uid: TorchSharp.DoubleTensor.Resize3d*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize3d
+  nameWithType: DoubleTensor.Resize3d
+  fullName: DoubleTensor.Resize3d
+- uid: TorchSharp.DoubleTensor.Resize4d*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize4d
+  nameWithType: DoubleTensor.Resize4d
+  fullName: DoubleTensor.Resize4d
+- uid: TorchSharp.DoubleTensor.Resize5d*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Resize5d
+  nameWithType: DoubleTensor.Resize5d
+  fullName: DoubleTensor.Resize5d
+- uid: TorchSharp.DoubleTensor.ResizeAs*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ResizeAs
+  nameWithType: DoubleTensor.ResizeAs
+  fullName: DoubleTensor.ResizeAs
+- uid: TorchSharp.DoubleTensor.Round*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Round
+  nameWithType: DoubleTensor.Round
+  fullName: DoubleTensor.Round
+- uid: TorchSharp.DoubleTensor.RShift*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: RShift
+  nameWithType: DoubleTensor.RShift
+  fullName: DoubleTensor.RShift
+- uid: TorchSharp.DoubleTensor.Rsqrt*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Rsqrt
+  nameWithType: DoubleTensor.Rsqrt
+  fullName: DoubleTensor.Rsqrt
+- uid: TorchSharp.DoubleTensor.Select*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Select
+  nameWithType: DoubleTensor.Select
+  fullName: DoubleTensor.Select
+- uid: TorchSharp.DoubleTensor.Set*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Set
+  nameWithType: DoubleTensor.Set
+  fullName: DoubleTensor.Set
+- uid: TorchSharp.DoubleTensor.Shape*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Shape
+  nameWithType: DoubleTensor.Shape
+  fullName: DoubleTensor.Shape
+- uid: TorchSharp.DoubleTensor.Sigmoid*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sigmoid
+  nameWithType: DoubleTensor.Sigmoid
+  fullName: DoubleTensor.Sigmoid
+- uid: TorchSharp.DoubleTensor.Sin*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sin
+  nameWithType: DoubleTensor.Sin
+  fullName: DoubleTensor.Sin
+- uid: TorchSharp.DoubleTensor.Sinh*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sinh
+  nameWithType: DoubleTensor.Sinh
+  fullName: DoubleTensor.Sinh
+- uid: TorchSharp.DoubleTensor.Sqrt*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sqrt
+  nameWithType: DoubleTensor.Sqrt
+  fullName: DoubleTensor.Sqrt
+- uid: TorchSharp.DoubleTensor.Storage*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Storage
+  nameWithType: DoubleTensor.Storage
+  fullName: DoubleTensor.Storage
+- uid: TorchSharp.DoubleTensor.Sub*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Sub
+  nameWithType: DoubleTensor.Sub
+  fullName: DoubleTensor.Sub
+- uid: TorchSharp.DoubleTensor.SumAll*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: SumAll
+  nameWithType: DoubleTensor.SumAll
+  fullName: DoubleTensor.SumAll
+- uid: TorchSharp.DoubleTensor.Tan*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Tan
+  nameWithType: DoubleTensor.Tan
+  fullName: DoubleTensor.Tan
+- uid: TorchSharp.DoubleTensor.Tanh*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Tanh
+  nameWithType: DoubleTensor.Tanh
+  fullName: DoubleTensor.Tanh
+- uid: TorchSharp.DoubleTensor.ToString*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ToString
+  nameWithType: DoubleTensor.ToString
+  fullName: DoubleTensor.ToString
+- uid: TorchSharp.DoubleTensor.Transpose*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Transpose
+  nameWithType: DoubleTensor.Transpose
+  fullName: DoubleTensor.Transpose
+- uid: TorchSharp.DoubleTensor.Trigamma*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Trigamma
+  nameWithType: DoubleTensor.Trigamma
+  fullName: DoubleTensor.Trigamma
+- uid: TorchSharp.DoubleTensor.Trunc*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Trunc
+  nameWithType: DoubleTensor.Trunc
+  fullName: DoubleTensor.Trunc
+- uid: TorchSharp.DoubleTensor.Unfold*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: Unfold
+  nameWithType: DoubleTensor.Unfold
+  fullName: DoubleTensor.Unfold
+- uid: TorchSharp.DoubleTensor.ZeroFill*
+  parent: TorchSharp.DoubleTensor
+  isExternal: false
+  name: ZeroFill
+  nameWithType: DoubleTensor.ZeroFill
+  fullName: DoubleTensor.ZeroFill
+- uid: System.IDisposable
+  parent: System
+  isExternal: true
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable

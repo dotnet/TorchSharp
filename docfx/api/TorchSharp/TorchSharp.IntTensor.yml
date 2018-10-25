@@ -1,0 +1,2995 @@
+### YamlMime:ManagedReference
+items:
+- uid: TorchSharp.IntTensor
+  id: IntTensor
+  children:
+  - TorchSharp.IntTensor.#ctor
+  - TorchSharp.IntTensor.#ctor(System.Int64)
+  - TorchSharp.IntTensor.#ctor(TorchSharp.TorchHandle)
+  - TorchSharp.IntTensor.#ctor(System.Int64,System.Int64)
+  - TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Add(System.Int32)
+  - TorchSharp.IntTensor.Add(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.BitAnd(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.BitAnd(System.Int32)
+  - TorchSharp.IntTensor.BitOr(System.Int32)
+  - TorchSharp.IntTensor.BitOr(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.BitXor(System.Int32)
+  - TorchSharp.IntTensor.BitXor(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CAdd(System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CBitAnd(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CBitOr(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CBitXor(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CDiv(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CFMod(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Clamp(System.Int32)
+  - TorchSharp.IntTensor.Clamp(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Clone
+  - TorchSharp.IntTensor.CLShift(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CMul(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CPow(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CRemainder(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.CSub(System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Data
+  - TorchSharp.IntTensor.Dimensions
+  - TorchSharp.IntTensor.Dispose
+  - TorchSharp.IntTensor.Dispose(System.Boolean)
+  - TorchSharp.IntTensor.Div(System.Int32)
+  - TorchSharp.IntTensor.Div(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Dot(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Fill(System.Int32)
+  - TorchSharp.IntTensor.Finalize
+  - TorchSharp.IntTensor.Fmod(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Fmod(System.Int32)
+  - TorchSharp.IntTensor.GetTensorDimension(System.Int32)
+  - TorchSharp.IntTensor.GetTensorStride(System.Int32)
+  - TorchSharp.IntTensor.Item(System.Int64)
+  - TorchSharp.IntTensor.Item(System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.LShift(System.Int32)
+  - TorchSharp.IntTensor.LShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.MaxAll
+  - TorchSharp.IntTensor.MeanAll
+  - TorchSharp.IntTensor.MedianAll
+  - TorchSharp.IntTensor.MinAll
+  - TorchSharp.IntTensor.Mul(System.Int32)
+  - TorchSharp.IntTensor.Mul(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.ProdAll
+  - TorchSharp.IntTensor.Random(System.Int64)
+  - TorchSharp.IntTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  - TorchSharp.IntTensor.Remainder(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Remainder(System.Int32)
+  - TorchSharp.IntTensor.Resize1d(System.Int64)
+  - TorchSharp.IntTensor.Resize2d(System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.ResizeAs(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.RShift(System.Int32)
+  - TorchSharp.IntTensor.RShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Select(System.Int32,System.Int64)
+  - TorchSharp.IntTensor.Set(TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.Shape
+  - TorchSharp.IntTensor.Storage
+  - TorchSharp.IntTensor.Sub(System.Int32)
+  - TorchSharp.IntTensor.Sub(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  - TorchSharp.IntTensor.SumAll
+  - TorchSharp.IntTensor.ToString
+  - TorchSharp.IntTensor.Transpose(System.Int32,System.Int32)
+  - TorchSharp.IntTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.IntTensor.ZeroFill
+  langs:
+  - csharp
+  name: IntTensor
+  nameWithType: IntTensor
+  fullName: TorchSharp.IntTensor
+  type: Class
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: 'public class IntTensor : IDisposable'
+  inheritance:
+  - System.Object
+  implements:
+  - System.IDisposable
+  inheritedMembers: []
+- uid: TorchSharp.IntTensor.#ctor
+  id: '#ctor'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor()
+  nameWithType: IntTensor.IntTensor()
+  fullName: IntTensor.IntTensor()
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates an empty tensor.
+  syntax:
+    content: public IntTensor ();
+    parameters: []
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.#ctor(System.Int64)
+  id: '#ctor(System.Int64)'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor(Int64)
+  nameWithType: IntTensor.IntTensor(Int64)
+  fullName: IntTensor.IntTensor(Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 1D tensor of the specified size.
+  syntax:
+    content: public IntTensor (long size0);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.#ctor(TorchSharp.TorchHandle)
+  id: '#ctor(TorchSharp.TorchHandle)'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor(TorchHandle)
+  nameWithType: IntTensor.IntTensor(TorchHandle)
+  fullName: IntTensor.IntTensor(TorchHandle)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public IntTensor (TorchSharp.TorchHandle handle);
+    parameters:
+    - id: handle
+      type: TorchSharp.TorchHandle
+      description: To be added.
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64)'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor(Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 2D tensor of the specified size.
+  syntax:
+    content: public IntTensor (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor(Int64, Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 3D tensor of the specified size.
+  syntax:
+    content: public IntTensor (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: IntTensor(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 4D tensor of the specified size.
+  syntax:
+    content: public IntTensor (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+    - id: size3
+      type: System.Int64
+      description: Size for the fourth dimension.
+  overload: TorchSharp.IntTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Add(System.Int32)
+  id: Add(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Add(Int32)
+  nameWithType: IntTensor.Add(Int32)
+  fullName: IntTensor.Add(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Add(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Add (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Add*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Add(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Add(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Add(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Add(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Add(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Add operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Add (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Add*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitAnd(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: BitAnd(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitAnd(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitAnd(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitAnd(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitAnd operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitAnd (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitAnd(System.Int32)
+  id: BitAnd(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitAnd(Int32)
+  nameWithType: IntTensor.BitAnd(Int32)
+  fullName: IntTensor.BitAnd(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor BitAnd (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitOr(System.Int32)
+  id: BitOr(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitOr(Int32)
+  nameWithType: IntTensor.BitOr(Int32)
+  fullName: IntTensor.BitOr(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitOr(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor BitOr (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitOr(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: BitOr(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitOr(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitOr(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitOr(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitOr operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitOr (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitXor(System.Int32)
+  id: BitXor(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitXor(Int32)
+  nameWithType: IntTensor.BitXor(Int32)
+  fullName: IntTensor.BitXor(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitXor(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor BitXor (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.BitXor(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: BitXor(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: BitXor(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitXor(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitXor(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitXor operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitXor (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CAdd(System.Int32,TorchSharp.IntTensor)
+  id: CAdd(System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CAdd(Int32, IntTensor)
+  nameWithType: IntTensor.CAdd(Int32, IntTensor)
+  fullName: IntTensor.CAdd(Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CAdd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.IntTensor CAdd (int value, TorchSharp.IntTensor src);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CAdd*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CBitAnd(TorchSharp.IntTensor)
+  id: CBitAnd(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CBitAnd(IntTensor)
+  nameWithType: IntTensor.CBitAnd(IntTensor)
+  fullName: IntTensor.CBitAnd(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitAnd of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CBitAnd (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CBitAnd*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CBitOr(TorchSharp.IntTensor)
+  id: CBitOr(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CBitOr(IntTensor)
+  nameWithType: IntTensor.CBitOr(IntTensor)
+  fullName: IntTensor.CBitOr(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitOr of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CBitOr (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CBitOr*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CBitXor(TorchSharp.IntTensor)
+  id: CBitXor(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CBitXor(IntTensor)
+  nameWithType: IntTensor.CBitXor(IntTensor)
+  fullName: IntTensor.CBitXor(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitXor of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CBitXor (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CBitXor*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CDiv(TorchSharp.IntTensor)
+  id: CDiv(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CDiv(IntTensor)
+  nameWithType: IntTensor.CDiv(IntTensor)
+  fullName: IntTensor.CDiv(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CDiv of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CDiv (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CDiv*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CFMod(TorchSharp.IntTensor)
+  id: CFMod(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CFMod(IntTensor)
+  nameWithType: IntTensor.CFMod(IntTensor)
+  fullName: IntTensor.CFMod(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CFMod of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CFMod (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CFMod*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Clamp(System.Int32)
+  id: Clamp(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Clamp(Int32)
+  nameWithType: IntTensor.Clamp(Int32)
+  fullName: IntTensor.Clamp(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Clamp (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Clamp(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Clamp(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Clamp(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Clamp(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Clamp(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Clamp operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Clamp (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Clone
+  id: Clone
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Clone()
+  nameWithType: IntTensor.Clone()
+  fullName: IntTensor.Clone()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a deep clone of the tensor
+  syntax:
+    content: public TorchSharp.IntTensor Clone ();
+    parameters: []
+    return:
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Clone*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CLShift(TorchSharp.IntTensor)
+  id: CLShift(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CLShift(IntTensor)
+  nameWithType: IntTensor.CLShift(IntTensor)
+  fullName: IntTensor.CLShift(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CLShift of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CLShift (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CLShift*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CMul(TorchSharp.IntTensor)
+  id: CMul(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CMul(IntTensor)
+  nameWithType: IntTensor.CMul(IntTensor)
+  fullName: IntTensor.CMul(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CMul of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CMul (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CMul*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CPow(TorchSharp.IntTensor)
+  id: CPow(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CPow(IntTensor)
+  nameWithType: IntTensor.CPow(IntTensor)
+  fullName: IntTensor.CPow(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CPow of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CPow (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CPow*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CRemainder(TorchSharp.IntTensor)
+  id: CRemainder(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CRemainder(IntTensor)
+  nameWithType: IntTensor.CRemainder(IntTensor)
+  fullName: IntTensor.CRemainder(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CRemainder of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.IntTensor CRemainder (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CRemainder*
+  exceptions: []
+- uid: TorchSharp.IntTensor.CSub(System.Int32,TorchSharp.IntTensor)
+  id: CSub(System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: CSub(Int32, IntTensor)
+  nameWithType: IntTensor.CSub(Int32, IntTensor)
+  fullName: IntTensor.CSub(Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CSub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.IntTensor CSub (int value, TorchSharp.IntTensor src);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.CSub*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Data
+  id: Data
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Data
+  nameWithType: IntTensor.Data
+  fullName: IntTensor.Data
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a pointer to the unmanaged data managed by this tensor.
+  syntax:
+    content: public int* Data { get; }
+    return:
+      type: System.Int32*
+      description: To be added.
+  overload: TorchSharp.IntTensor.Data*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Dimensions
+  id: Dimensions
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Dimensions
+  nameWithType: IntTensor.Dimensions
+  fullName: IntTensor.Dimensions
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the number of dimensions for this tensor
+  syntax:
+    content: public int Dimensions { get; }
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Dimensions*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Dispose
+  id: Dispose
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Dispose()
+  nameWithType: IntTensor.Dispose()
+  fullName: IntTensor.Dispose()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose ();
+    parameters: []
+  overload: TorchSharp.IntTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Dispose(System.Boolean)
+  id: Dispose(System.Boolean)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Dispose(Boolean)
+  nameWithType: IntTensor.Dispose(Boolean)
+  fullName: IntTensor.Dispose(Boolean)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Dispose (bool disposing);
+    parameters:
+    - id: disposing
+      type: System.Boolean
+      description: To be added.
+  overload: TorchSharp.IntTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Div(System.Int32)
+  id: Div(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Div(Int32)
+  nameWithType: IntTensor.Div(Int32)
+  fullName: IntTensor.Div(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Div (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Div*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Div(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Div(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Div(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Div(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Div(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Div operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Div (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Div*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Dot(TorchSharp.IntTensor)
+  id: Dot(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Dot(IntTensor)
+  nameWithType: IntTensor.Dot(IntTensor)
+  fullName: IntTensor.Dot(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor product between this tensor and the provided one
+  syntax:
+    content: public long Dot (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+    return:
+      type: System.Int64
+      description: The dot product
+  overload: TorchSharp.IntTensor.Dot*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Fill(System.Int32)
+  id: Fill(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Fill(Int32)
+  nameWithType: IntTensor.Fill(Int32)
+  fullName: IntTensor.Fill(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with the specified value
+  syntax:
+    content: public void Fill (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Fill*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Finalize
+  id: Finalize
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Finalize()
+  nameWithType: IntTensor.Finalize()
+  fullName: IntTensor.Finalize()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: ~IntTensor ();
+    parameters: []
+  overload: TorchSharp.IntTensor.Finalize*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Fmod(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Fmod(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Fmod(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Fmod(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Fmod(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Fmod operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Fmod (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Fmod(System.Int32)
+  id: Fmod(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Fmod(Int32)
+  nameWithType: IntTensor.Fmod(Int32)
+  fullName: IntTensor.Fmod(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Fmod (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.IntTensor.GetTensorDimension(System.Int32)
+  id: GetTensorDimension(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: GetTensorDimension(Int32)
+  nameWithType: IntTensor.GetTensorDimension(Int32)
+  fullName: IntTensor.GetTensorDimension(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the size of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorDimension (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.GetTensorDimension*
+  exceptions: []
+- uid: TorchSharp.IntTensor.GetTensorStride(System.Int32)
+  id: GetTensorStride(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: GetTensorStride(Int32)
+  nameWithType: IntTensor.GetTensorStride(Int32)
+  fullName: IntTensor.GetTensorStride(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the stride of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorStride (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.GetTensorStride*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Item(System.Int64)
+  id: Item(System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Item(Int64)
+  nameWithType: IntTensor.Item(Int64)
+  fullName: IntTensor.Item(Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public int this[long x0] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Item*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public int this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Item*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public int this[long x0, long x1, long x2] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Item*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public int this[long x0, long x1, long x2, long x3] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: To be added.
+    - id: x1
+      type: System.Int64
+      description: To be added.
+    - id: x2
+      type: System.Int64
+      description: To be added.
+    - id: x3
+      type: System.Int64
+      description: To be added.
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.IntTensor.Item*
+  exceptions: []
+- uid: TorchSharp.IntTensor.LShift(System.Int32)
+  id: LShift(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: LShift(Int32)
+  nameWithType: IntTensor.LShift(Int32)
+  fullName: IntTensor.LShift(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.LShift(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor LShift (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.IntTensor.LShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: LShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: LShift(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.LShift(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.LShift(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the LShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void LShift (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.IntTensor.MaxAll
+  id: MaxAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: MaxAll()
+  nameWithType: IntTensor.MaxAll()
+  fullName: IntTensor.MaxAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the maximum value of the elements in the tensor.
+  syntax:
+    content: public int MaxAll ();
+    parameters: []
+    return:
+      type: System.Int32
+      description: The maximum value of the tensor.
+  overload: TorchSharp.IntTensor.MaxAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.MeanAll
+  id: MeanAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: MeanAll()
+  nameWithType: IntTensor.MeanAll()
+  fullName: IntTensor.MeanAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the mean of the elements in the tensor.
+  syntax:
+    content: public long MeanAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The mean of the tensor.
+  overload: TorchSharp.IntTensor.MeanAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.MedianAll
+  id: MedianAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: MedianAll()
+  nameWithType: IntTensor.MedianAll()
+  fullName: IntTensor.MedianAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the median of the elements in the tensor.
+  syntax:
+    content: public int MedianAll ();
+    parameters: []
+    return:
+      type: System.Int32
+      description: The median of the tensor.
+  overload: TorchSharp.IntTensor.MedianAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.MinAll
+  id: MinAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: MinAll()
+  nameWithType: IntTensor.MinAll()
+  fullName: IntTensor.MinAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the minimum value of the elements in the tensor.
+  syntax:
+    content: public int MinAll ();
+    parameters: []
+    return:
+      type: System.Int32
+      description: The minimum value of the tensor.
+  overload: TorchSharp.IntTensor.MinAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Mul(System.Int32)
+  id: Mul(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Mul(Int32)
+  nameWithType: IntTensor.Mul(Int32)
+  fullName: IntTensor.Mul(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Mul (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Mul(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Mul(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Mul(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Mul(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Mul(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Mul operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Mul (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  id: Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: IntTensor.Narrow(Int32, Int64, Int64)
+  fullName: IntTensor.Narrow(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.IntTensor Narrow (int dim, long firstIndex, long size);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: firstIndex
+      type: System.Int64
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Narrow*
+  exceptions: []
+- uid: TorchSharp.IntTensor.ProdAll
+  id: ProdAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: ProdAll()
+  nameWithType: IntTensor.ProdAll()
+  fullName: IntTensor.ProdAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the product of the elements in the tensor.
+  syntax:
+    content: public long ProdAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The product of the tensor.
+  overload: TorchSharp.IntTensor.ProdAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Random(System.Int64)
+  id: Random(System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Random(Int64)
+  nameWithType: IntTensor.Random(Int64)
+  fullName: IntTensor.Random(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+  syntax:
+    content: public void Random (long n);
+    parameters:
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Random*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  id: Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Random(RandomGenerator, Int64)
+  nameWithType: IntTensor.Random(RandomGenerator, Int64)
+  fullName: IntTensor.Random(RandomGenerator, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using the provided random source generator.
+  syntax:
+    content: public void Random (TorchSharp.RandomGenerator source, long n);
+    parameters:
+    - id: source
+      type: TorchSharp.RandomGenerator
+      description: To be added.
+    - id: n
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Random*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Remainder(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Remainder(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Remainder(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Remainder(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Remainder(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Remainder operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Remainder (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Remainder(System.Int32)
+  id: Remainder(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Remainder(Int32)
+  nameWithType: IntTensor.Remainder(Int32)
+  fullName: IntTensor.Remainder(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Remainder(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Remainder (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Resize1d(System.Int64)
+  id: Resize1d(System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Resize1d(Int64)
+  nameWithType: IntTensor.Resize1d(Int64)
+  fullName: IntTensor.Resize1d(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize1d (long size);
+    parameters:
+    - id: size
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Resize1d*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Resize2d(System.Int64,System.Int64)
+  id: Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Resize2d(Int64, Int64)
+  nameWithType: IntTensor.Resize2d(Int64, Int64)
+  fullName: IntTensor.Resize2d(Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize2d (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Resize2d*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  id: Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize3d(Int64, Int64, Int64)
+  fullName: IntTensor.Resize3d(Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize3d (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Resize3d*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Resize4d(Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize4d (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Resize4d*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: To be added.
+    - id: size1
+      type: System.Int64
+      description: To be added.
+    - id: size2
+      type: System.Int64
+      description: To be added.
+    - id: size3
+      type: System.Int64
+      description: To be added.
+    - id: size4
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.IntTensor.Resize5d*
+  exceptions: []
+- uid: TorchSharp.IntTensor.ResizeAs(TorchSharp.IntTensor)
+  id: ResizeAs(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: ResizeAs(IntTensor)
+  nameWithType: IntTensor.ResizeAs(IntTensor)
+  fullName: IntTensor.ResizeAs(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void ResizeAs (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.ResizeAs*
+  exceptions: []
+- uid: TorchSharp.IntTensor.RShift(System.Int32)
+  id: RShift(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: RShift(Int32)
+  nameWithType: IntTensor.RShift(Int32)
+  fullName: IntTensor.RShift(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor RShift (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.IntTensor.RShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: RShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: RShift(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.RShift(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.RShift(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the RShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void RShift (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Select(System.Int32,System.Int64)
+  id: Select(System.Int32,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Select(Int32, Int64)
+  nameWithType: IntTensor.Select(Int32, Int64)
+  fullName: IntTensor.Select(Int32, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.IntTensor Select (int dim, long slideIndex);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: slideIndex
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Select*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Set(TorchSharp.IntTensor)
+  id: Set(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Set(IntTensor)
+  nameWithType: IntTensor.Set(IntTensor)
+  fullName: IntTensor.Set(IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public void Set (TorchSharp.IntTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Set*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Shape
+  id: Shape
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Shape
+  nameWithType: IntTensor.Shape
+  fullName: IntTensor.Shape
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+  remarks: >-
+    An array of size 0 is used for constants, an array of size 1 is used
+                    for single-dimension arrays, where the dimension is the value of the
+                    first element.   And so on.
+  syntax:
+    content: public long[] Shape { get; }
+    return:
+      type: System.Int64[]
+      description: To be added.
+  overload: TorchSharp.IntTensor.Shape*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Storage
+  id: Storage
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Storage
+  nameWithType: IntTensor.Storage
+  fullName: IntTensor.Storage
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the associated storage for this tensor
+  syntax:
+    content: public TorchSharp.IntStorage Storage { get; }
+    return:
+      type: TorchSharp.IntStorage
+      description: To be added.
+  overload: TorchSharp.IntTensor.Storage*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Sub(System.Int32)
+  id: Sub(System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Sub(Int32)
+  nameWithType: IntTensor.Sub(Int32)
+  fullName: IntTensor.Sub(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Sub(PytorchSharp.IntTensor, Int, PytorchSharp.Int)\"></xref>."
+  syntax:
+    content: public TorchSharp.IntTensor Sub (int value);
+    parameters:
+    - id: value
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.IntTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Sub(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  id: Sub(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Sub(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Sub(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Sub(IntTensor, Int32, IntTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Sub operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Sub (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.IntTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Int32
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.IntTensor.SumAll
+  id: SumAll
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: SumAll()
+  nameWithType: IntTensor.SumAll()
+  fullName: IntTensor.SumAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the sum of the elements in the tensor.
+  syntax:
+    content: public long SumAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The sum of the tensor.
+  overload: TorchSharp.IntTensor.SumAll*
+  exceptions: []
+- uid: TorchSharp.IntTensor.ToString
+  id: ToString
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: ToString()
+  nameWithType: IntTensor.ToString()
+  fullName: IntTensor.ToString()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public override string ToString ();
+    parameters: []
+    return:
+      type: System.String
+      description: To be added.
+  overload: TorchSharp.IntTensor.ToString*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Transpose(System.Int32,System.Int32)
+  id: Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Transpose(Int32, Int32)
+  nameWithType: IntTensor.Transpose(Int32, Int32)
+  fullName: IntTensor.Transpose(Int32, Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.IntTensor Transpose (int dim1, int dim2);
+    parameters:
+    - id: dim1
+      type: System.Int32
+      description: To be added.
+    - id: dim2
+      type: System.Int32
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Transpose*
+  exceptions: []
+- uid: TorchSharp.IntTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  id: Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: IntTensor.Unfold(Int32, Int64, Int64)
+  fullName: IntTensor.Unfold(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  syntax:
+    content: public TorchSharp.IntTensor Unfold (int dim, long size, long step);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    - id: step
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.IntTensor
+      description: To be added.
+  overload: TorchSharp.IntTensor.Unfold*
+  exceptions: []
+- uid: TorchSharp.IntTensor.ZeroFill
+  id: ZeroFill
+  parent: TorchSharp.IntTensor
+  langs:
+  - csharp
+  name: ZeroFill()
+  nameWithType: IntTensor.ZeroFill()
+  fullName: IntTensor.ZeroFill()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with zeros
+  syntax:
+    content: public void ZeroFill ();
+    parameters: []
+  overload: TorchSharp.IntTensor.ZeroFill*
+  exceptions: []
+references:
+- uid: System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: TorchSharp.IntTensor.#ctor
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor()
+  nameWithType: IntTensor.IntTensor()
+  fullName: IntTensor.IntTensor()
+- uid: TorchSharp.IntTensor.#ctor(System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor(Int64)
+  nameWithType: IntTensor.IntTensor(Int64)
+  fullName: IntTensor.IntTensor(Int64)
+- uid: System.Int64
+  parent: System
+  isExternal: true
+  name: Int64
+  nameWithType: Int64
+  fullName: System.Int64
+- uid: TorchSharp.IntTensor.#ctor(TorchSharp.TorchHandle)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor(TorchHandle)
+  nameWithType: IntTensor.IntTensor(TorchHandle)
+  fullName: IntTensor.IntTensor(TorchHandle)
+- uid: TorchSharp.TorchHandle
+  parent: TorchSharp
+  isExternal: false
+  name: TorchHandle
+  nameWithType: TorchHandle
+  fullName: TorchSharp.TorchHandle
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor(Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64)
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor(Int64, Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.IntTensor(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.Add(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Add(Int32)
+  nameWithType: IntTensor.Add(Int32)
+  fullName: IntTensor.Add(Int32)
+- uid: TorchSharp.IntTensor
+  parent: TorchSharp
+  isExternal: false
+  name: IntTensor
+  nameWithType: IntTensor
+  fullName: TorchSharp.IntTensor
+- uid: System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: TorchSharp.IntTensor.Add(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Add(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Add(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Add(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.BitAnd(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitAnd(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitAnd(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitAnd(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.BitAnd(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitAnd(Int32)
+  nameWithType: IntTensor.BitAnd(Int32)
+  fullName: IntTensor.BitAnd(Int32)
+- uid: TorchSharp.IntTensor.BitOr(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitOr(Int32)
+  nameWithType: IntTensor.BitOr(Int32)
+  fullName: IntTensor.BitOr(Int32)
+- uid: TorchSharp.IntTensor.BitOr(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitOr(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitOr(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitOr(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.BitXor(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitXor(Int32)
+  nameWithType: IntTensor.BitXor(Int32)
+  fullName: IntTensor.BitXor(Int32)
+- uid: TorchSharp.IntTensor.BitXor(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitXor(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.BitXor(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.BitXor(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.CAdd(System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CAdd(Int32, IntTensor)
+  nameWithType: IntTensor.CAdd(Int32, IntTensor)
+  fullName: IntTensor.CAdd(Int32, IntTensor)
+- uid: TorchSharp.IntTensor.CBitAnd(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitAnd(IntTensor)
+  nameWithType: IntTensor.CBitAnd(IntTensor)
+  fullName: IntTensor.CBitAnd(IntTensor)
+- uid: TorchSharp.IntTensor.CBitOr(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitOr(IntTensor)
+  nameWithType: IntTensor.CBitOr(IntTensor)
+  fullName: IntTensor.CBitOr(IntTensor)
+- uid: TorchSharp.IntTensor.CBitXor(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitXor(IntTensor)
+  nameWithType: IntTensor.CBitXor(IntTensor)
+  fullName: IntTensor.CBitXor(IntTensor)
+- uid: TorchSharp.IntTensor.CDiv(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CDiv(IntTensor)
+  nameWithType: IntTensor.CDiv(IntTensor)
+  fullName: IntTensor.CDiv(IntTensor)
+- uid: TorchSharp.IntTensor.CFMod(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CFMod(IntTensor)
+  nameWithType: IntTensor.CFMod(IntTensor)
+  fullName: IntTensor.CFMod(IntTensor)
+- uid: TorchSharp.IntTensor.Clamp(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Clamp(Int32)
+  nameWithType: IntTensor.Clamp(Int32)
+  fullName: IntTensor.Clamp(Int32)
+- uid: TorchSharp.IntTensor.Clamp(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Clamp(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Clamp(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Clamp(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Clone
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Clone()
+  nameWithType: IntTensor.Clone()
+  fullName: IntTensor.Clone()
+- uid: TorchSharp.IntTensor.CLShift(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CLShift(IntTensor)
+  nameWithType: IntTensor.CLShift(IntTensor)
+  fullName: IntTensor.CLShift(IntTensor)
+- uid: TorchSharp.IntTensor.CMul(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CMul(IntTensor)
+  nameWithType: IntTensor.CMul(IntTensor)
+  fullName: IntTensor.CMul(IntTensor)
+- uid: TorchSharp.IntTensor.CPow(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CPow(IntTensor)
+  nameWithType: IntTensor.CPow(IntTensor)
+  fullName: IntTensor.CPow(IntTensor)
+- uid: TorchSharp.IntTensor.CRemainder(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CRemainder(IntTensor)
+  nameWithType: IntTensor.CRemainder(IntTensor)
+  fullName: IntTensor.CRemainder(IntTensor)
+- uid: TorchSharp.IntTensor.CSub(System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CSub(Int32, IntTensor)
+  nameWithType: IntTensor.CSub(Int32, IntTensor)
+  fullName: IntTensor.CSub(Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Data
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Data
+  nameWithType: IntTensor.Data
+  fullName: IntTensor.Data
+- uid: System.Int32*
+  parent: System
+  isExternal: true
+  name: Int32*
+  nameWithType: Int32*
+  fullName: System.Int32*
+  spec.csharp:
+  - uid: System.Int32
+    name: Int32
+    nameWithType: Int32
+    fullName: System.Int32
+  - name: '*'
+    nameWithType: '*'
+    fullName: '*'
+- uid: TorchSharp.IntTensor.Dimensions
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: IntTensor.Dimensions
+  fullName: IntTensor.Dimensions
+- uid: TorchSharp.IntTensor.Dispose
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dispose()
+  nameWithType: IntTensor.Dispose()
+  fullName: IntTensor.Dispose()
+- uid: TorchSharp.IntTensor.Dispose(System.Boolean)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dispose(Boolean)
+  nameWithType: IntTensor.Dispose(Boolean)
+  fullName: IntTensor.Dispose(Boolean)
+- uid: System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: TorchSharp.IntTensor.Div(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Div(Int32)
+  nameWithType: IntTensor.Div(Int32)
+  fullName: IntTensor.Div(Int32)
+- uid: TorchSharp.IntTensor.Div(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Div(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Div(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Div(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Dot(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dot(IntTensor)
+  nameWithType: IntTensor.Dot(IntTensor)
+  fullName: IntTensor.Dot(IntTensor)
+- uid: TorchSharp.IntTensor.Fill(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Fill(Int32)
+  nameWithType: IntTensor.Fill(Int32)
+  fullName: IntTensor.Fill(Int32)
+- uid: TorchSharp.IntTensor.Finalize
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Finalize()
+  nameWithType: IntTensor.Finalize()
+  fullName: IntTensor.Finalize()
+- uid: TorchSharp.IntTensor.Fmod(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Fmod(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Fmod(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Fmod(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Fmod(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Fmod(Int32)
+  nameWithType: IntTensor.Fmod(Int32)
+  fullName: IntTensor.Fmod(Int32)
+- uid: TorchSharp.IntTensor.GetTensorDimension(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: GetTensorDimension(Int32)
+  nameWithType: IntTensor.GetTensorDimension(Int32)
+  fullName: IntTensor.GetTensorDimension(Int32)
+- uid: TorchSharp.IntTensor.GetTensorStride(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: GetTensorStride(Int32)
+  nameWithType: IntTensor.GetTensorStride(Int32)
+  fullName: IntTensor.GetTensorStride(Int32)
+- uid: TorchSharp.IntTensor.Item(System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Item(Int64)
+  nameWithType: IntTensor.Item(Int64)
+  fullName: IntTensor.Item(Int64)
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Item(Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64)
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.LShift(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: LShift(Int32)
+  nameWithType: IntTensor.LShift(Int32)
+  fullName: IntTensor.LShift(Int32)
+- uid: TorchSharp.IntTensor.LShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: LShift(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.LShift(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.LShift(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.MaxAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MaxAll()
+  nameWithType: IntTensor.MaxAll()
+  fullName: IntTensor.MaxAll()
+- uid: TorchSharp.IntTensor.MeanAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MeanAll()
+  nameWithType: IntTensor.MeanAll()
+  fullName: IntTensor.MeanAll()
+- uid: TorchSharp.IntTensor.MedianAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MedianAll()
+  nameWithType: IntTensor.MedianAll()
+  fullName: IntTensor.MedianAll()
+- uid: TorchSharp.IntTensor.MinAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MinAll()
+  nameWithType: IntTensor.MinAll()
+  fullName: IntTensor.MinAll()
+- uid: TorchSharp.IntTensor.Mul(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Mul(Int32)
+  nameWithType: IntTensor.Mul(Int32)
+  fullName: IntTensor.Mul(Int32)
+- uid: TorchSharp.IntTensor.Mul(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Mul(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Mul(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Mul(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: IntTensor.Narrow(Int32, Int64, Int64)
+  fullName: IntTensor.Narrow(Int32, Int64, Int64)
+- uid: TorchSharp.IntTensor.ProdAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ProdAll()
+  nameWithType: IntTensor.ProdAll()
+  fullName: IntTensor.ProdAll()
+- uid: TorchSharp.IntTensor.Random(System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Random(Int64)
+  nameWithType: IntTensor.Random(Int64)
+  fullName: IntTensor.Random(Int64)
+- uid: TorchSharp.IntTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Random(RandomGenerator, Int64)
+  nameWithType: IntTensor.Random(RandomGenerator, Int64)
+  fullName: IntTensor.Random(RandomGenerator, Int64)
+- uid: TorchSharp.RandomGenerator
+  parent: TorchSharp
+  isExternal: false
+  name: RandomGenerator
+  nameWithType: RandomGenerator
+  fullName: TorchSharp.RandomGenerator
+- uid: TorchSharp.IntTensor.Remainder(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Remainder(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Remainder(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Remainder(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Remainder(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Remainder(Int32)
+  nameWithType: IntTensor.Remainder(Int32)
+  fullName: IntTensor.Remainder(Int32)
+- uid: TorchSharp.IntTensor.Resize1d(System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize1d(Int64)
+  nameWithType: IntTensor.Resize1d(Int64)
+  fullName: IntTensor.Resize1d(Int64)
+- uid: TorchSharp.IntTensor.Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize2d(Int64, Int64)
+  nameWithType: IntTensor.Resize2d(Int64, Int64)
+  fullName: IntTensor.Resize2d(Int64, Int64)
+- uid: TorchSharp.IntTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize3d(Int64, Int64, Int64)
+  fullName: IntTensor.Resize3d(Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Resize4d(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: IntTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: IntTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+- uid: TorchSharp.IntTensor.ResizeAs(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ResizeAs(IntTensor)
+  nameWithType: IntTensor.ResizeAs(IntTensor)
+  fullName: IntTensor.ResizeAs(IntTensor)
+- uid: TorchSharp.IntTensor.RShift(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: RShift(Int32)
+  nameWithType: IntTensor.RShift(Int32)
+  fullName: IntTensor.RShift(Int32)
+- uid: TorchSharp.IntTensor.RShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: RShift(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.RShift(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.RShift(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.Select(System.Int32,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Select(Int32, Int64)
+  nameWithType: IntTensor.Select(Int32, Int64)
+  fullName: IntTensor.Select(Int32, Int64)
+- uid: TorchSharp.IntTensor.Set(TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Set(IntTensor)
+  nameWithType: IntTensor.Set(IntTensor)
+  fullName: IntTensor.Set(IntTensor)
+- uid: TorchSharp.IntTensor.Shape
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Shape
+  nameWithType: IntTensor.Shape
+  fullName: IntTensor.Shape
+- uid: System.Int64[]
+  parent: System
+  isExternal: true
+  name: Int64[]
+  nameWithType: Int64[]
+  fullName: System.Int64[]
+  spec.csharp:
+  - uid: System.Int64
+    name: Int64
+    nameWithType: Int64
+    fullName: System.Int64
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+- uid: TorchSharp.IntTensor.Storage
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Storage
+  nameWithType: IntTensor.Storage
+  fullName: IntTensor.Storage
+- uid: TorchSharp.IntStorage
+  parent: TorchSharp
+  isExternal: false
+  name: IntStorage
+  nameWithType: IntStorage
+  fullName: TorchSharp.IntStorage
+- uid: TorchSharp.IntTensor.Sub(System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Sub(Int32)
+  nameWithType: IntTensor.Sub(Int32)
+  fullName: IntTensor.Sub(Int32)
+- uid: TorchSharp.IntTensor.Sub(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Sub(IntTensor, Int32, IntTensor)
+  nameWithType: IntTensor.Sub(IntTensor, Int32, IntTensor)
+  fullName: IntTensor.Sub(IntTensor, Int32, IntTensor)
+- uid: TorchSharp.IntTensor.SumAll
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: SumAll()
+  nameWithType: IntTensor.SumAll()
+  fullName: IntTensor.SumAll()
+- uid: TorchSharp.IntTensor.ToString
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ToString()
+  nameWithType: IntTensor.ToString()
+  fullName: IntTensor.ToString()
+- uid: System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: TorchSharp.IntTensor.Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Transpose(Int32, Int32)
+  nameWithType: IntTensor.Transpose(Int32, Int32)
+  fullName: IntTensor.Transpose(Int32, Int32)
+- uid: TorchSharp.IntTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: IntTensor.Unfold(Int32, Int64, Int64)
+  fullName: IntTensor.Unfold(Int32, Int64, Int64)
+- uid: TorchSharp.IntTensor.ZeroFill
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ZeroFill()
+  nameWithType: IntTensor.ZeroFill()
+  fullName: IntTensor.ZeroFill()
+- uid: TorchSharp.IntTensor.#ctor*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: IntTensor
+  nameWithType: IntTensor.IntTensor
+  fullName: IntTensor.IntTensor
+- uid: TorchSharp.IntTensor.Add*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Add
+  nameWithType: IntTensor.Add
+  fullName: IntTensor.Add
+- uid: TorchSharp.IntTensor.BitAnd*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitAnd
+  nameWithType: IntTensor.BitAnd
+  fullName: IntTensor.BitAnd
+- uid: TorchSharp.IntTensor.BitOr*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitOr
+  nameWithType: IntTensor.BitOr
+  fullName: IntTensor.BitOr
+- uid: TorchSharp.IntTensor.BitXor*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: BitXor
+  nameWithType: IntTensor.BitXor
+  fullName: IntTensor.BitXor
+- uid: TorchSharp.IntTensor.CAdd*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CAdd
+  nameWithType: IntTensor.CAdd
+  fullName: IntTensor.CAdd
+- uid: TorchSharp.IntTensor.CBitAnd*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitAnd
+  nameWithType: IntTensor.CBitAnd
+  fullName: IntTensor.CBitAnd
+- uid: TorchSharp.IntTensor.CBitOr*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitOr
+  nameWithType: IntTensor.CBitOr
+  fullName: IntTensor.CBitOr
+- uid: TorchSharp.IntTensor.CBitXor*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CBitXor
+  nameWithType: IntTensor.CBitXor
+  fullName: IntTensor.CBitXor
+- uid: TorchSharp.IntTensor.CDiv*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CDiv
+  nameWithType: IntTensor.CDiv
+  fullName: IntTensor.CDiv
+- uid: TorchSharp.IntTensor.CFMod*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CFMod
+  nameWithType: IntTensor.CFMod
+  fullName: IntTensor.CFMod
+- uid: TorchSharp.IntTensor.Clamp*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Clamp
+  nameWithType: IntTensor.Clamp
+  fullName: IntTensor.Clamp
+- uid: TorchSharp.IntTensor.Clone*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Clone
+  nameWithType: IntTensor.Clone
+  fullName: IntTensor.Clone
+- uid: TorchSharp.IntTensor.CLShift*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CLShift
+  nameWithType: IntTensor.CLShift
+  fullName: IntTensor.CLShift
+- uid: TorchSharp.IntTensor.CMul*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CMul
+  nameWithType: IntTensor.CMul
+  fullName: IntTensor.CMul
+- uid: TorchSharp.IntTensor.CPow*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CPow
+  nameWithType: IntTensor.CPow
+  fullName: IntTensor.CPow
+- uid: TorchSharp.IntTensor.CRemainder*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CRemainder
+  nameWithType: IntTensor.CRemainder
+  fullName: IntTensor.CRemainder
+- uid: TorchSharp.IntTensor.CSub*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: CSub
+  nameWithType: IntTensor.CSub
+  fullName: IntTensor.CSub
+- uid: TorchSharp.IntTensor.Data*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Data
+  nameWithType: IntTensor.Data
+  fullName: IntTensor.Data
+- uid: TorchSharp.IntTensor.Dimensions*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: IntTensor.Dimensions
+  fullName: IntTensor.Dimensions
+- uid: TorchSharp.IntTensor.Dispose*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dispose
+  nameWithType: IntTensor.Dispose
+  fullName: IntTensor.Dispose
+- uid: TorchSharp.IntTensor.Div*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Div
+  nameWithType: IntTensor.Div
+  fullName: IntTensor.Div
+- uid: TorchSharp.IntTensor.Dot*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Dot
+  nameWithType: IntTensor.Dot
+  fullName: IntTensor.Dot
+- uid: TorchSharp.IntTensor.Fill*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Fill
+  nameWithType: IntTensor.Fill
+  fullName: IntTensor.Fill
+- uid: TorchSharp.IntTensor.Finalize*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Finalize
+  nameWithType: IntTensor.Finalize
+  fullName: IntTensor.Finalize
+- uid: TorchSharp.IntTensor.Fmod*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Fmod
+  nameWithType: IntTensor.Fmod
+  fullName: IntTensor.Fmod
+- uid: TorchSharp.IntTensor.GetTensorDimension*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: GetTensorDimension
+  nameWithType: IntTensor.GetTensorDimension
+  fullName: IntTensor.GetTensorDimension
+- uid: TorchSharp.IntTensor.GetTensorStride*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: GetTensorStride
+  nameWithType: IntTensor.GetTensorStride
+  fullName: IntTensor.GetTensorStride
+- uid: TorchSharp.IntTensor.Item*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Item
+  nameWithType: IntTensor.Item
+  fullName: IntTensor.Item
+- uid: TorchSharp.IntTensor.LShift*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: LShift
+  nameWithType: IntTensor.LShift
+  fullName: IntTensor.LShift
+- uid: TorchSharp.IntTensor.MaxAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MaxAll
+  nameWithType: IntTensor.MaxAll
+  fullName: IntTensor.MaxAll
+- uid: TorchSharp.IntTensor.MeanAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MeanAll
+  nameWithType: IntTensor.MeanAll
+  fullName: IntTensor.MeanAll
+- uid: TorchSharp.IntTensor.MedianAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MedianAll
+  nameWithType: IntTensor.MedianAll
+  fullName: IntTensor.MedianAll
+- uid: TorchSharp.IntTensor.MinAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: MinAll
+  nameWithType: IntTensor.MinAll
+  fullName: IntTensor.MinAll
+- uid: TorchSharp.IntTensor.Mul*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Mul
+  nameWithType: IntTensor.Mul
+  fullName: IntTensor.Mul
+- uid: TorchSharp.IntTensor.Narrow*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Narrow
+  nameWithType: IntTensor.Narrow
+  fullName: IntTensor.Narrow
+- uid: TorchSharp.IntTensor.ProdAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ProdAll
+  nameWithType: IntTensor.ProdAll
+  fullName: IntTensor.ProdAll
+- uid: TorchSharp.IntTensor.Random*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Random
+  nameWithType: IntTensor.Random
+  fullName: IntTensor.Random
+- uid: TorchSharp.IntTensor.Remainder*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Remainder
+  nameWithType: IntTensor.Remainder
+  fullName: IntTensor.Remainder
+- uid: TorchSharp.IntTensor.Resize1d*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize1d
+  nameWithType: IntTensor.Resize1d
+  fullName: IntTensor.Resize1d
+- uid: TorchSharp.IntTensor.Resize2d*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize2d
+  nameWithType: IntTensor.Resize2d
+  fullName: IntTensor.Resize2d
+- uid: TorchSharp.IntTensor.Resize3d*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize3d
+  nameWithType: IntTensor.Resize3d
+  fullName: IntTensor.Resize3d
+- uid: TorchSharp.IntTensor.Resize4d*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize4d
+  nameWithType: IntTensor.Resize4d
+  fullName: IntTensor.Resize4d
+- uid: TorchSharp.IntTensor.Resize5d*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Resize5d
+  nameWithType: IntTensor.Resize5d
+  fullName: IntTensor.Resize5d
+- uid: TorchSharp.IntTensor.ResizeAs*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ResizeAs
+  nameWithType: IntTensor.ResizeAs
+  fullName: IntTensor.ResizeAs
+- uid: TorchSharp.IntTensor.RShift*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: RShift
+  nameWithType: IntTensor.RShift
+  fullName: IntTensor.RShift
+- uid: TorchSharp.IntTensor.Select*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Select
+  nameWithType: IntTensor.Select
+  fullName: IntTensor.Select
+- uid: TorchSharp.IntTensor.Set*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Set
+  nameWithType: IntTensor.Set
+  fullName: IntTensor.Set
+- uid: TorchSharp.IntTensor.Shape*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Shape
+  nameWithType: IntTensor.Shape
+  fullName: IntTensor.Shape
+- uid: TorchSharp.IntTensor.Storage*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Storage
+  nameWithType: IntTensor.Storage
+  fullName: IntTensor.Storage
+- uid: TorchSharp.IntTensor.Sub*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Sub
+  nameWithType: IntTensor.Sub
+  fullName: IntTensor.Sub
+- uid: TorchSharp.IntTensor.SumAll*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: SumAll
+  nameWithType: IntTensor.SumAll
+  fullName: IntTensor.SumAll
+- uid: TorchSharp.IntTensor.ToString*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ToString
+  nameWithType: IntTensor.ToString
+  fullName: IntTensor.ToString
+- uid: TorchSharp.IntTensor.Transpose*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Transpose
+  nameWithType: IntTensor.Transpose
+  fullName: IntTensor.Transpose
+- uid: TorchSharp.IntTensor.Unfold*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: Unfold
+  nameWithType: IntTensor.Unfold
+  fullName: IntTensor.Unfold
+- uid: TorchSharp.IntTensor.ZeroFill*
+  parent: TorchSharp.IntTensor
+  isExternal: false
+  name: ZeroFill
+  nameWithType: IntTensor.ZeroFill
+  fullName: IntTensor.ZeroFill
+- uid: System.IDisposable
+  parent: System
+  isExternal: true
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable

@@ -1,0 +1,443 @@
+<Type Name="RandomGenerator" FullName="TorchSharp.RandomGenerator">
+  <TypeSignature Language="C#" Value="public class RandomGenerator : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RandomGenerator extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>TorchSharp</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            Random class
+            </summary>
+    <remarks>
+            Behind the scenes this is the THGenerator API and THRandom combined into
+            one as THRandom are just convenience methods on top of THGenerator.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RandomGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~RandomGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitialSeed">
+      <MemberSignature Language="C#" Value="public ulong InitialSeed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 InitialSeed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+             Returns the starting seed used.
+            </summary>
+        <value>The initial seed.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitRandomSeed">
+      <MemberSignature Language="C#" Value="public ulong InitRandomSeed ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int64 InitRandomSeed() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes the random number generator from /dev/urandom or in Windows with the current time.
+            </summary>
+        <returns>The random seed.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitWithSeed">
+      <MemberSignature Language="C#" Value="public void InitWithSeed (ulong seed);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void InitWithSeed(unsigned int64 seed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="seed" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="seed">Seed.</param>
+        <summary>
+            Initializes the random number generator with the given seed.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsValid">
+      <MemberSignature Language="C#" Value="public bool IsValid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsValid" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextBernoulliDouble">
+      <MemberSignature Language="C#" Value="public double NextBernoulliDouble (double mean, double p);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextBernoulliDouble(float64 mean, float64 p) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mean" Type="System.Double" />
+        <Parameter Name="p" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="mean">To be added.</param>
+        <param name="p">To be added.</param>
+        <summary>
+             Returns true with double probability $p$ and false with probability 1-p (p &gt; 0).
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextBernoulliDouble">
+      <MemberSignature Language="C#" Value="public float NextBernoulliDouble (double mean, float p);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 NextBernoulliDouble(float64 mean, float32 p) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mean" Type="System.Double" />
+        <Parameter Name="p" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="mean">To be added.</param>
+        <param name="p">To be added.</param>
+        <summary>
+             Returns true with double probability $p$ and false with probability 1-p (p &gt; 0).
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextCauchyDouble">
+      <MemberSignature Language="C#" Value="public double NextCauchyDouble (double median, double sigma);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextCauchyDouble(float64 median, float64 sigma) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="median" Type="System.Double" />
+        <Parameter Name="sigma" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="median">To be added.</param>
+        <param name="sigma">To be added.</param>
+        <summary>
+             Returns a random number from a Cauchy distribution.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            The Cauchy density is $p(x) = sigma/(pi*(sigma^2 + (x-median)^2))$
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextDouble">
+      <MemberSignature Language="C#" Value="public double NextDouble ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextDouble() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Generates a uniform random double on [0,1).
+            </summary>
+        <returns>Generates a uniform random double on [0,1).</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextDouble">
+      <MemberSignature Language="C#" Value="public double NextDouble (double a, double b);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextDouble(float64 a, float64 b) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Double" />
+        <Parameter Name="b" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>
+             Generates a uniform random double on [a,b).
+            </summary>
+        <returns>Generates a uniform random double on [a, b).</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextExponentialDouble">
+      <MemberSignature Language="C#" Value="public double NextExponentialDouble (double lambda);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextExponentialDouble(float64 lambda) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lambda" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="lambda">Must be a positive number</param>
+        <summary>
+             Generates a random number from an exponential distribution.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            The density is $p(x) = lambda * exp(-lambda * x)$, where lambda is a positive number.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextFloat">
+      <MemberSignature Language="C#" Value="public double NextFloat (float a, float b);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextFloat(float32 a, float32 b) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Single" />
+        <Parameter Name="b" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>
+             Generates a uniform random float on [a,b).
+            </summary>
+        <returns>Generates a uniform random float on [a, b).</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextGeometricDouble">
+      <MemberSignature Language="C#" Value="public double NextGeometricDouble (double mean, double p);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextGeometricDouble(float64 mean, float64 p) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mean" Type="System.Double" />
+        <Parameter Name="p" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="mean">To be added.</param>
+        <param name="p">To be added.</param>
+        <summary>
+             Generates a random number from a geometric distribution.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            It returns an integer i, where p(i) = (1-p) * p^(i-1).
+            p must satisfy $0 &lt; p &lt; 1
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextLogNormalDouble">
+      <MemberSignature Language="C#" Value="public double NextLogNormalDouble (double mean, double stddev);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextLogNormalDouble(float64 mean, float64 stddev) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mean" Type="System.Double" />
+        <Parameter Name="stddev" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="mean">&gt; 0 is the mean of the log-normal distribution</param>
+        <param name="stddev">is its standard deviation.</param>
+        <summary>
+             Generates a random number from a log-normal distribution.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextNormalDouble">
+      <MemberSignature Language="C#" Value="public double NextNormalDouble (double mean, double stdev);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 NextNormalDouble(float64 mean, float64 stdev) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mean" Type="System.Double" />
+        <Parameter Name="stdev" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="mean">Mean for the distribution</param>
+        <param name="stdev">Stanard deviation for the distribution, &gt; 0 </param>
+        <summary>
+             Generates a random number from a normal distribution.
+            </summary>
+        <returns>Generates a number for the normal distribution.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextUInt32">
+      <MemberSignature Language="C#" Value="public uint NextUInt32 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int32 NextUInt32() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Generates a uniform 32 bits integer. 
+            </summary>
+        <returns>UInt32 random value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NextUInt64">
+      <MemberSignature Language="C#" Value="public ulong NextUInt64 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int64 NextUInt64() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Generates a uniform 64 bits integer. 
+            </summary>
+        <returns>UInt64 random value.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
