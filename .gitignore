@@ -4,3 +4,4 @@ obj
 bin
 *.exe
 *pdb
+*trx
