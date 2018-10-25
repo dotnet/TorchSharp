@@ -14,8 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+              Tensor of type Float.
+            </summary>
+    <remarks>
+      <para>
+                Use the default constructor to create an empty tensor, or invoke one of the
+                constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+                create a tensor for the desired number of dimensions.
+              </para>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">

@@ -80,6 +80,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Byte.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class ByteTensor : IDisposable {
         HType handle;
         
@@ -1353,6 +1363,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Short.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class ShortTensor : IDisposable {
         HType handle;
         
@@ -2626,6 +2646,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Int.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class IntTensor : IDisposable {
         HType handle;
         
@@ -3899,6 +3929,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Long.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class LongTensor : IDisposable {
         HType handle;
         
@@ -5172,6 +5212,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Double.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class DoubleTensor : IDisposable {
         HType handle;
         
@@ -7005,6 +7055,16 @@ namespace TorchSharp {
         }
     }
     
+    /// <summary>
+    ///   Tensor of type Float.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Use the default constructor to create an empty tensor, or invoke one of the
+    ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+    ///     create a tensor for the desired number of dimensions.
+    ///   </para>
+    /// </remarks>
     public class FloatTensor : IDisposable {
         HType handle;
         
