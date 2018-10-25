@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TorchSharp {
+xnamespace TorchSharp {
 	/// <summary>
 	/// Random class
 	/// </summary>
