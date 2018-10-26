@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using HType=TorchSharp.TorchHandle;
 using System.Text;
 
 namespace TorchSharp {
@@ -10,6 +9,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class ByteStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THByteStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THByteStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -57,17 +80,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THByteStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THByteStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -121,6 +141,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class ByteTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THByteTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THByteTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -208,17 +251,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THByteTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THByteTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -246,7 +286,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THByteTensor_storage (HType handle);
+        extern static ByteStorage.HType THByteTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor
@@ -1424,6 +1464,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class ShortStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THShortStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THShortStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -1471,17 +1535,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THShortStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THShortStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -1535,6 +1596,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class ShortTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THShortTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THShortTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -1622,17 +1706,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THShortTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THShortTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -1660,7 +1741,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THShortTensor_storage (HType handle);
+        extern static ShortStorage.HType THShortTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor
@@ -2838,6 +2919,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class IntStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THIntStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THIntStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -2885,17 +2990,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THIntStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THIntStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -2949,6 +3051,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class IntTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THIntTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THIntTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -3036,17 +3161,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THIntTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THIntTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -3074,7 +3196,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THIntTensor_storage (HType handle);
+        extern static IntStorage.HType THIntTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor
@@ -4252,6 +4374,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class LongStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THLongStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THLongStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -4299,17 +4445,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THLongStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THLongStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -4363,6 +4506,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class LongTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THLongTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THLongTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -4450,17 +4616,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THLongTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THLongTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -4488,7 +4651,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THLongTensor_storage (HType handle);
+        extern static LongStorage.HType THLongTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor
@@ -5666,6 +5829,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class DoubleStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THDoubleStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THDoubleStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -5713,17 +5900,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THDoubleStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THDoubleStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -5777,6 +5961,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class DoubleTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THDoubleTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THDoubleTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -5864,17 +6071,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THDoubleTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THDoubleTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -5902,7 +6106,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THDoubleTensor_storage (HType handle);
+        extern static DoubleStorage.HType THDoubleTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor
@@ -7638,6 +7842,30 @@ namespace TorchSharp {
     ///    The storage class provides a mechanism to access the underlying data representation for tensors.
     /// </summary>
     public class FloatStorage : IDisposable {
+        internal sealed class HType : SafeHandle {
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
+            
+            public override bool IsInvalid => handle == (IntPtr) 0;
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THFloatStorage_free (IntPtr handle);
+        
+            
+            protected override bool ReleaseHandle ()
+            {
+                THFloatStorage_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
+        }
+
         HType handle;
         
         [DllImport ("caffe2")]
@@ -7685,17 +7913,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THFloatStorage_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THFloatStorage_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -7749,6 +7974,29 @@ namespace TorchSharp {
     ///   </para>
     /// </remarks>
     public class FloatTensor : IDisposable {
+        internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+
+                [DllImport ("caffe2")]
+                extern static void THFloatTensor_free (IntPtr handle);
+                
+                protected override bool ReleaseHandle ()
+                {
+                    THFloatTensor_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+        }
         HType handle;
         
         [DllImport ("caffe2")]
@@ -7836,17 +8084,14 @@ namespace TorchSharp {
             GC.SuppressFinalize (this);
         }
         
-        [DllImport ("caffe2")]
-        extern static void THFloatTensor_free (HType handle);
-        
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
         protected void Dispose (bool disposing)
         {
             if (disposing){
-                THFloatTensor_free (handle);
                 handle.Dispose ();
+                handle = null;
             }
         }
         
@@ -7874,7 +8119,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THFloatTensor_storage (HType handle);
+        extern static FloatStorage.HType THFloatTensor_storage (HType handle);
 
         /// <summary>
         ///  Returns the associated storage for this tensor

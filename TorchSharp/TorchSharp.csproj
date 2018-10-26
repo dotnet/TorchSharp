@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Remove="PreprocessedT4Template.cs" />
     <Compile Remove="T4Template.cs" />
+    <Compile Remove="Handle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="TypeGeneration.cs">
