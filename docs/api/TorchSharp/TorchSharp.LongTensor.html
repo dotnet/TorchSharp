@@ -691,6 +691,56 @@
   
   
   <a id="TorchSharp_LongTensor_BitAnd_" data-uid="TorchSharp.LongTensor.BitAnd*"></a>
+  <h4 id="TorchSharp_LongTensor_BitAnd_System_Int64_" data-uid="TorchSharp.LongTensor.BitAnd(System.Int64)">BitAnd(Int64)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.LongTensor BitAnd (long value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_LongTensor_BitAnd_System_Int64__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.BitAnd(PytorchSharp.LongTensor, Long, PytorchSharp.Long)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_LongTensor_BitAnd_" data-uid="TorchSharp.LongTensor.BitAnd*"></a>
   <h4 id="TorchSharp_LongTensor_BitAnd_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)">BitAnd(LongTensor, Int64, LongTensor)</h4>
   <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the source with the
               provided scalar.   The result tensor specified as the last parameters
@@ -738,15 +788,16 @@
 </div>
   
   
-  <a id="TorchSharp_LongTensor_BitAnd_" data-uid="TorchSharp.LongTensor.BitAnd*"></a>
-  <h4 id="TorchSharp_LongTensor_BitAnd_System_Int64_" data-uid="TorchSharp.LongTensor.BitAnd(System.Int64)">BitAnd(Int64)</h4>
-  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the tensor with the
-              <see paramref="value"></see> and returns a new tensor with the result.</p>
+  <a id="TorchSharp_LongTensor_BitOr_" data-uid="TorchSharp.LongTensor.BitOr*"></a>
+  <h4 id="TorchSharp_LongTensor_BitOr_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)">BitOr(LongTensor, Int64, LongTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitOr operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TorchSharp.LongTensor BitAnd (long value);</code></pre>
+    <pre><code class="lang-csharp hljs">public static void BitOr (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -759,32 +810,29 @@
     </thead>
     <tbody>
       <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">value</span></td>
-        <td><p>To be added.</p>
+        <td><p>The scalar value that the operation uses.</p>
 </td>
       </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
       <tr>
         <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
-        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 id="TorchSharp_LongTensor_BitAnd_System_Int64__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
-              alternative method <span class="xref">PytorchSharp.BitAnd(PytorchSharp.LongTensor, Long, PytorchSharp.Long)</span>.</p>
+  <h5 id="TorchSharp_LongTensor_BitOr_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitOr operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
 </div>
   
   
@@ -835,54 +883,6 @@
   <h5 id="TorchSharp_LongTensor_BitOr_System_Int64__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
               alternative method <span class="xref">PytorchSharp.BitOr(PytorchSharp.LongTensor, Long, PytorchSharp.Long)</span>.</p>
-</div>
-  
-  
-  <a id="TorchSharp_LongTensor_BitOr_" data-uid="TorchSharp.LongTensor.BitOr*"></a>
-  <h4 id="TorchSharp_LongTensor_BitOr_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)">BitOr(LongTensor, Int64, LongTensor)</h4>
-  <div class="markdown level1 summary"><p>Performs the BitOr operation on each element of the source with the
-              provided scalar.   The result tensor specified as the last parameters
-              is resized to match the source.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void BitOr (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
-        <td><span class="parametername">source</span></td>
-        <td><p>Source tensor on which the operation will take place.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>The scalar value that the operation uses.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
-        <td><span class="parametername">result</span></td>
-        <td><p>The tensor where the result will be placed</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="TorchSharp_LongTensor_BitOr_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitOr operation
-               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
-               tensor.</p>
 </div>
   
   
@@ -1268,6 +1268,54 @@
   
   
   <a id="TorchSharp_LongTensor_Clamp_" data-uid="TorchSharp.LongTensor.Clamp*"></a>
+  <h4 id="TorchSharp_LongTensor_Clamp_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)">Clamp(LongTensor, Int64, LongTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Clamp operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Clamp (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_LongTensor_Clamp_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Clamp operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_LongTensor_Clamp_" data-uid="TorchSharp.LongTensor.Clamp*"></a>
   <h4 id="TorchSharp_LongTensor_Clamp_System_Int64_" data-uid="TorchSharp.LongTensor.Clamp(System.Int64)">Clamp(Int64)</h4>
   <div class="markdown level1 summary"><p>Performs the Clamp operation on each element of the tensor with the
               <see paramref="value"></see> and returns a new tensor with the result.</p>
@@ -1314,54 +1362,6 @@
   <h5 id="TorchSharp_LongTensor_Clamp_System_Int64__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
               alternative method <span class="xref">PytorchSharp.Clamp(PytorchSharp.LongTensor, Long, PytorchSharp.Long)</span>.</p>
-</div>
-  
-  
-  <a id="TorchSharp_LongTensor_Clamp_" data-uid="TorchSharp.LongTensor.Clamp*"></a>
-  <h4 id="TorchSharp_LongTensor_Clamp_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)">Clamp(LongTensor, Int64, LongTensor)</h4>
-  <div class="markdown level1 summary"><p>Performs the Clamp operation on each element of the source with the
-              provided scalar.   The result tensor specified as the last parameters
-              is resized to match the source.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void Clamp (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
-        <td><span class="parametername">source</span></td>
-        <td><p>Source tensor on which the operation will take place.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>The scalar value that the operation uses.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
-        <td><span class="parametername">result</span></td>
-        <td><p>The tensor where the result will be placed</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 id="TorchSharp_LongTensor_Clamp_TorchSharp_LongTensor_System_Int64_TorchSharp_LongTensor__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Clamp operation
-               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
-               tensor.</p>
 </div>
   
   
@@ -1630,17 +1630,6 @@
   
   
   <a id="TorchSharp_LongTensor_Dispose_" data-uid="TorchSharp.LongTensor.Dispose*"></a>
-  <h4 id="TorchSharp_LongTensor_Dispose" data-uid="TorchSharp.LongTensor.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"><p>Releases the tensor and its associated data.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Dispose ();</code></pre>
-  </div>
-  
-  
-  <a id="TorchSharp_LongTensor_Dispose_" data-uid="TorchSharp.LongTensor.Dispose*"></a>
   <h4 id="TorchSharp_LongTensor_Dispose_System_Boolean_" data-uid="TorchSharp.LongTensor.Dispose(System.Boolean)">Dispose(Boolean)</h4>
   <div class="markdown level1 summary"><p>Implements the .NET Dispose pattern.</p>
 </div>
@@ -1667,6 +1656,17 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="TorchSharp_LongTensor_Dispose_" data-uid="TorchSharp.LongTensor.Dispose*"></a>
+  <h4 id="TorchSharp_LongTensor_Dispose" data-uid="TorchSharp.LongTensor.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Releases the tensor and its associated data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose ();</code></pre>
+  </div>
   
   
   <a id="TorchSharp_LongTensor_Div_" data-uid="TorchSharp.LongTensor.Div*"></a>
@@ -2033,6 +2033,101 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Int64</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_LongTensor_IndexCopy_" data-uid="TorchSharp.LongTensor.IndexCopy*"></a>
+  <h4 id="TorchSharp_LongTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)">IndexCopy(Int32, LongTensor, LongTensor)</h4>
+  <div class="markdown level1 summary"><p>Copies the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>Dimension to select for the copy</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Entries to copy</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>Tensor to copy the data from.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_LongTensor_IndexSelect_" data-uid="TorchSharp.LongTensor.IndexSelect*"></a>
+  <h4 id="TorchSharp_LongTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_" data-uid="TorchSharp.LongTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)">IndexSelect(Int32, LongTensor)</h4>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which indexes the original Tensor along dimension dim
+              using the entries in index.  The returned Tensor has the same number of dimensions as the 
+              original Tensor. The returned Tensor does not use the same storage as the original Tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.LongTensor IndexSelect (int dim, TorchSharp.LongTensor index);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>Dimension to select</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Entries to extract</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
         <td><p>To be added.</p>
 </td>
       </tr>

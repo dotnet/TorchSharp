@@ -185,7 +185,7 @@ foreach (var type in new [] {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
@@ -853,6 +853,47 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ #>
 
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public <#=tname#>Tensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, <#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            TH<#=tname#>Tensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 <#
 }

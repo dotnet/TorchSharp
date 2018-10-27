@@ -426,6 +426,26 @@ references:
   href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_GetTensorStride_
   fullName: ByteTensor.GetTensorStride
   nameWithType: ByteTensor.GetTensorStride
+- uid: TorchSharp.ByteTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ByteTensor)
+  name: IndexCopy(Int32, LongTensor, ByteTensor)
+  href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_ByteTensor_
+  fullName: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+  nameWithType: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+- uid: TorchSharp.ByteTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_IndexCopy_
+  fullName: ByteTensor.IndexCopy
+  nameWithType: ByteTensor.IndexCopy
+- uid: TorchSharp.ByteTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: ByteTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: ByteTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.ByteTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_IndexSelect_
+  fullName: ByteTensor.IndexSelect
+  nameWithType: ByteTensor.IndexSelect
 - uid: TorchSharp.ByteTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.ByteTensor.html#TorchSharp_ByteTensor_Item_System_Int64_
@@ -1311,6 +1331,26 @@ references:
   href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_GetTensorStride_
   fullName: DoubleTensor.GetTensorStride
   nameWithType: DoubleTensor.GetTensorStride
+- uid: TorchSharp.DoubleTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.DoubleTensor)
+  name: IndexCopy(Int32, LongTensor, DoubleTensor)
+  href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_DoubleTensor_
+  fullName: DoubleTensor.IndexCopy(Int32, LongTensor, DoubleTensor)
+  nameWithType: DoubleTensor.IndexCopy(Int32, LongTensor, DoubleTensor)
+- uid: TorchSharp.DoubleTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_IndexCopy_
+  fullName: DoubleTensor.IndexCopy
+  nameWithType: DoubleTensor.IndexCopy
+- uid: TorchSharp.DoubleTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: DoubleTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: DoubleTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.DoubleTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_IndexSelect_
+  fullName: DoubleTensor.IndexSelect
+  nameWithType: DoubleTensor.IndexSelect
 - uid: TorchSharp.DoubleTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.DoubleTensor.html#TorchSharp_DoubleTensor_Item_System_Int64_
@@ -2366,6 +2406,26 @@ references:
   href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_GetTensorStride_
   fullName: FloatTensor.GetTensorStride
   nameWithType: FloatTensor.GetTensorStride
+- uid: TorchSharp.FloatTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.FloatTensor)
+  name: IndexCopy(Int32, LongTensor, FloatTensor)
+  href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_FloatTensor_
+  fullName: FloatTensor.IndexCopy(Int32, LongTensor, FloatTensor)
+  nameWithType: FloatTensor.IndexCopy(Int32, LongTensor, FloatTensor)
+- uid: TorchSharp.FloatTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_IndexCopy_
+  fullName: FloatTensor.IndexCopy
+  nameWithType: FloatTensor.IndexCopy
+- uid: TorchSharp.FloatTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: FloatTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: FloatTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.FloatTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_IndexSelect_
+  fullName: FloatTensor.IndexSelect
+  nameWithType: FloatTensor.IndexSelect
 - uid: TorchSharp.FloatTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.FloatTensor.html#TorchSharp_FloatTensor_Item_System_Int64_
@@ -3281,6 +3341,26 @@ references:
   href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_GetTensorStride_
   fullName: IntTensor.GetTensorStride
   nameWithType: IntTensor.GetTensorStride
+- uid: TorchSharp.IntTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.IntTensor)
+  name: IndexCopy(Int32, LongTensor, IntTensor)
+  href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_IntTensor_
+  fullName: IntTensor.IndexCopy(Int32, LongTensor, IntTensor)
+  nameWithType: IntTensor.IndexCopy(Int32, LongTensor, IntTensor)
+- uid: TorchSharp.IntTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_IndexCopy_
+  fullName: IntTensor.IndexCopy
+  nameWithType: IntTensor.IndexCopy
+- uid: TorchSharp.IntTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: IntTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: IntTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.IntTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_IndexSelect_
+  fullName: IntTensor.IndexSelect
+  nameWithType: IntTensor.IndexSelect
 - uid: TorchSharp.IntTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.IntTensor.html#TorchSharp_IntTensor_Item_System_Int64_
@@ -4026,6 +4106,26 @@ references:
   href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_GetTensorStride_
   fullName: LongTensor.GetTensorStride
   nameWithType: LongTensor.GetTensorStride
+- uid: TorchSharp.LongTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)
+  name: IndexCopy(Int32, LongTensor, LongTensor)
+  href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_LongTensor_
+  fullName: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+  nameWithType: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+- uid: TorchSharp.LongTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_IndexCopy_
+  fullName: LongTensor.IndexCopy
+  nameWithType: LongTensor.IndexCopy
+- uid: TorchSharp.LongTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: LongTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: LongTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.LongTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_IndexSelect_
+  fullName: LongTensor.IndexSelect
+  nameWithType: LongTensor.IndexSelect
 - uid: TorchSharp.LongTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.LongTensor.html#TorchSharp_LongTensor_Item_System_Int64_
@@ -4961,6 +5061,26 @@ references:
   href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_GetTensorStride_
   fullName: ShortTensor.GetTensorStride
   nameWithType: ShortTensor.GetTensorStride
+- uid: TorchSharp.ShortTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ShortTensor)
+  name: IndexCopy(Int32, LongTensor, ShortTensor)
+  href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_ShortTensor_
+  fullName: ShortTensor.IndexCopy(Int32, LongTensor, ShortTensor)
+  nameWithType: ShortTensor.IndexCopy(Int32, LongTensor, ShortTensor)
+- uid: TorchSharp.ShortTensor.IndexCopy*
+  name: IndexCopy
+  href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_IndexCopy_
+  fullName: ShortTensor.IndexCopy
+  nameWithType: ShortTensor.IndexCopy
+- uid: TorchSharp.ShortTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  name: IndexSelect(Int32, LongTensor)
+  href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_
+  fullName: ShortTensor.IndexSelect(Int32, LongTensor)
+  nameWithType: ShortTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.ShortTensor.IndexSelect*
+  name: IndexSelect
+  href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_IndexSelect_
+  fullName: ShortTensor.IndexSelect
+  nameWithType: ShortTensor.IndexSelect
 - uid: TorchSharp.ShortTensor.Item(System.Int64)
   name: Item(Int64)
   href: api/TorchSharp/TorchSharp.ShortTensor.html#TorchSharp_ShortTensor_Item_System_Int64_

@@ -10,10 +10,10 @@ items:
   - TorchSharp.LongTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
   - TorchSharp.LongTensor.Add(System.Int64)
   - TorchSharp.LongTensor.Add(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
-  - TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.BitAnd(System.Int64)
-  - TorchSharp.LongTensor.BitOr(System.Int64)
+  - TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
+  - TorchSharp.LongTensor.BitOr(System.Int64)
   - TorchSharp.LongTensor.BitXor(System.Int64)
   - TorchSharp.LongTensor.BitXor(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.CAdd(System.Int64,TorchSharp.LongTensor)
@@ -22,8 +22,8 @@ items:
   - TorchSharp.LongTensor.CBitXor(TorchSharp.LongTensor)
   - TorchSharp.LongTensor.CDiv(TorchSharp.LongTensor)
   - TorchSharp.LongTensor.CFMod(TorchSharp.LongTensor)
-  - TorchSharp.LongTensor.Clamp(System.Int64)
   - TorchSharp.LongTensor.Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
+  - TorchSharp.LongTensor.Clamp(System.Int64)
   - TorchSharp.LongTensor.Clone
   - TorchSharp.LongTensor.CLShift(TorchSharp.LongTensor)
   - TorchSharp.LongTensor.CMul(TorchSharp.LongTensor)
@@ -32,8 +32,8 @@ items:
   - TorchSharp.LongTensor.CSub(System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Data
   - TorchSharp.LongTensor.Dimensions
-  - TorchSharp.LongTensor.Dispose
   - TorchSharp.LongTensor.Dispose(System.Boolean)
+  - TorchSharp.LongTensor.Dispose
   - TorchSharp.LongTensor.Div(System.Int64)
   - TorchSharp.LongTensor.Div(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Dot(TorchSharp.LongTensor)
@@ -43,6 +43,8 @@ items:
   - TorchSharp.LongTensor.Fmod(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.GetTensorDimension(System.Int32)
   - TorchSharp.LongTensor.GetTensorStride(System.Int32)
+  - TorchSharp.LongTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)
+  - TorchSharp.LongTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
   - TorchSharp.LongTensor.Item(System.Int64)
   - TorchSharp.LongTensor.Item(System.Int64,System.Int64)
   - TorchSharp.LongTensor.Item(System.Int64,System.Int64,System.Int64)
@@ -284,6 +286,33 @@ items:
       description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.Add*
   exceptions: []
+- uid: TorchSharp.LongTensor.BitAnd(System.Int64)
+  id: BitAnd(System.Int64)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: BitAnd(Int64)
+  nameWithType: LongTensor.BitAnd(Int64)
+  fullName: LongTensor.BitAnd(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
+  syntax:
+    content: public TorchSharp.LongTensor BitAnd (long value);
+    parameters:
+    - id: value
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.LongTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.LongTensor.BitAnd*
+  exceptions: []
 - uid: TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   id: BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
@@ -318,60 +347,6 @@ items:
       description: The tensor where the result will be placed
   overload: TorchSharp.LongTensor.BitAnd*
   exceptions: []
-- uid: TorchSharp.LongTensor.BitAnd(System.Int64)
-  id: BitAnd(System.Int64)
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: BitAnd(Int64)
-  nameWithType: LongTensor.BitAnd(Int64)
-  fullName: LongTensor.BitAnd(Int64)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the BitAnd operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
-  syntax:
-    content: public TorchSharp.LongTensor BitAnd (long value);
-    parameters:
-    - id: value
-      type: System.Int64
-      description: To be added.
-    return:
-      type: TorchSharp.LongTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.LongTensor.BitAnd*
-  exceptions: []
-- uid: TorchSharp.LongTensor.BitOr(System.Int64)
-  id: BitOr(System.Int64)
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: BitOr(Int64)
-  nameWithType: LongTensor.BitOr(Int64)
-  fullName: LongTensor.BitOr(Int64)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the BitOr operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitOr(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
-  syntax:
-    content: public TorchSharp.LongTensor BitOr (long value);
-    parameters:
-    - id: value
-      type: System.Int64
-      description: To be added.
-    return:
-      type: TorchSharp.LongTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.LongTensor.BitOr*
-  exceptions: []
 - uid: TorchSharp.LongTensor.BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   id: BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
@@ -404,6 +379,33 @@ items:
     - id: result
       type: TorchSharp.LongTensor
       description: The tensor where the result will be placed
+  overload: TorchSharp.LongTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.LongTensor.BitOr(System.Int64)
+  id: BitOr(System.Int64)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: BitOr(Int64)
+  nameWithType: LongTensor.BitOr(Int64)
+  fullName: LongTensor.BitOr(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitOr(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
+  syntax:
+    content: public TorchSharp.LongTensor BitOr (long value);
+    parameters:
+    - id: value
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.LongTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.LongTensor.BitOr*
   exceptions: []
 - uid: TorchSharp.LongTensor.BitXor(System.Int64)
@@ -617,33 +619,6 @@ items:
       description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.LongTensor.CFMod*
   exceptions: []
-- uid: TorchSharp.LongTensor.Clamp(System.Int64)
-  id: Clamp(System.Int64)
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: Clamp(Int64)
-  nameWithType: LongTensor.Clamp(Int64)
-  fullName: LongTensor.Clamp(Int64)
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: >-
-    Performs the Clamp operation on each element of the tensor with the
-                  <see paramref="value"></see> and returns a new tensor with the result.
-  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
-  syntax:
-    content: public TorchSharp.LongTensor Clamp (long value);
-    parameters:
-    - id: value
-      type: System.Int64
-      description: To be added.
-    return:
-      type: TorchSharp.LongTensor
-      description: This returns a new tensor with the same shape as the tensor this operates on.
-  overload: TorchSharp.LongTensor.Clamp*
-  exceptions: []
 - uid: TorchSharp.LongTensor.Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   id: Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
@@ -676,6 +651,33 @@ items:
     - id: result
       type: TorchSharp.LongTensor
       description: The tensor where the result will be placed
+  overload: TorchSharp.LongTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.LongTensor.Clamp(System.Int64)
+  id: Clamp(System.Int64)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: Clamp(Int64)
+  nameWithType: LongTensor.Clamp(Int64)
+  fullName: LongTensor.Clamp(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.LongTensor, Long, PytorchSharp.Long)\"></xref>."
+  syntax:
+    content: public TorchSharp.LongTensor Clamp (long value);
+    parameters:
+    - id: value
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.LongTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
   overload: TorchSharp.LongTensor.Clamp*
   exceptions: []
 - uid: TorchSharp.LongTensor.Clone
@@ -865,24 +867,6 @@ items:
       description: To be added.
   overload: TorchSharp.LongTensor.Dimensions*
   exceptions: []
-- uid: TorchSharp.LongTensor.Dispose
-  id: Dispose
-  parent: TorchSharp.LongTensor
-  langs:
-  - csharp
-  name: Dispose()
-  nameWithType: LongTensor.Dispose()
-  fullName: LongTensor.Dispose()
-  type: Method
-  assemblies:
-  - TorchSharp
-  namespace: TorchSharp
-  summary: Releases the tensor and its associated data.
-  syntax:
-    content: public void Dispose ();
-    parameters: []
-  overload: TorchSharp.LongTensor.Dispose*
-  exceptions: []
 - uid: TorchSharp.LongTensor.Dispose(System.Boolean)
   id: Dispose(System.Boolean)
   parent: TorchSharp.LongTensor
@@ -902,6 +886,24 @@ items:
     - id: disposing
       type: System.Boolean
       description: To be added.
+  overload: TorchSharp.LongTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.LongTensor.Dispose
+  id: Dispose
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: Dispose()
+  nameWithType: LongTensor.Dispose()
+  fullName: LongTensor.Dispose()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Releases the tensor and its associated data.
+  syntax:
+    content: public void Dispose ();
+    parameters: []
   overload: TorchSharp.LongTensor.Dispose*
   exceptions: []
 - uid: TorchSharp.LongTensor.Div(System.Int64)
@@ -1136,6 +1138,60 @@ items:
       type: System.Int64
       description: To be added.
   overload: TorchSharp.LongTensor.GetTensorStride*
+  exceptions: []
+- uid: TorchSharp.LongTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)
+  id: IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: IndexCopy(Int32, LongTensor, LongTensor)
+  nameWithType: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+  fullName: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Copies the elements of tensor into the original tensor by selecting the indices in the order \n              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown."
+  syntax:
+    content: public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: Dimension to select for the copy
+    - id: index
+      type: TorchSharp.LongTensor
+      description: Entries to copy
+    - id: src
+      type: TorchSharp.LongTensor
+      description: Tensor to copy the data from.
+  overload: TorchSharp.LongTensor.IndexCopy*
+  exceptions: []
+- uid: TorchSharp.LongTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  id: IndexSelect(System.Int32,TorchSharp.LongTensor)
+  parent: TorchSharp.LongTensor
+  langs:
+  - csharp
+  name: IndexSelect(Int32, LongTensor)
+  nameWithType: LongTensor.IndexSelect(Int32, LongTensor)
+  fullName: LongTensor.IndexSelect(Int32, LongTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Returns a new Tensor which indexes the original Tensor along dimension dim\n              using the entries in index.  The returned Tensor has the same number of dimensions as the \n              original Tensor. The returned Tensor does not use the same storage as the original Tensor."
+  syntax:
+    content: public TorchSharp.LongTensor IndexSelect (int dim, TorchSharp.LongTensor index);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: Dimension to select
+    - id: index
+      type: TorchSharp.LongTensor
+      description: Entries to extract
+    return:
+      type: TorchSharp.LongTensor
+      description: To be added.
+  overload: TorchSharp.LongTensor.IndexSelect*
   exceptions: []
 - uid: TorchSharp.LongTensor.Item(System.Int64)
   id: Item(System.Int64)
@@ -2163,30 +2219,30 @@ references:
   name: Add(LongTensor, Int64, LongTensor)
   nameWithType: LongTensor.Add(LongTensor, Int64, LongTensor)
   fullName: LongTensor.Add(LongTensor, Int64, LongTensor)
-- uid: TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: BitAnd(LongTensor, Int64, LongTensor)
-  nameWithType: LongTensor.BitAnd(LongTensor, Int64, LongTensor)
-  fullName: LongTensor.BitAnd(LongTensor, Int64, LongTensor)
 - uid: TorchSharp.LongTensor.BitAnd(System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
   name: BitAnd(Int64)
   nameWithType: LongTensor.BitAnd(Int64)
   fullName: LongTensor.BitAnd(Int64)
-- uid: TorchSharp.LongTensor.BitOr(System.Int64)
+- uid: TorchSharp.LongTensor.BitAnd(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
   isExternal: false
-  name: BitOr(Int64)
-  nameWithType: LongTensor.BitOr(Int64)
-  fullName: LongTensor.BitOr(Int64)
+  name: BitAnd(LongTensor, Int64, LongTensor)
+  nameWithType: LongTensor.BitAnd(LongTensor, Int64, LongTensor)
+  fullName: LongTensor.BitAnd(LongTensor, Int64, LongTensor)
 - uid: TorchSharp.LongTensor.BitOr(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
   isExternal: false
   name: BitOr(LongTensor, Int64, LongTensor)
   nameWithType: LongTensor.BitOr(LongTensor, Int64, LongTensor)
   fullName: LongTensor.BitOr(LongTensor, Int64, LongTensor)
+- uid: TorchSharp.LongTensor.BitOr(System.Int64)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: BitOr(Int64)
+  nameWithType: LongTensor.BitOr(Int64)
+  fullName: LongTensor.BitOr(Int64)
 - uid: TorchSharp.LongTensor.BitXor(System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2235,18 +2291,18 @@ references:
   name: CFMod(LongTensor)
   nameWithType: LongTensor.CFMod(LongTensor)
   fullName: LongTensor.CFMod(LongTensor)
-- uid: TorchSharp.LongTensor.Clamp(System.Int64)
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: Clamp(Int64)
-  nameWithType: LongTensor.Clamp(Int64)
-  fullName: LongTensor.Clamp(Int64)
 - uid: TorchSharp.LongTensor.Clamp(TorchSharp.LongTensor,System.Int64,TorchSharp.LongTensor)
   parent: TorchSharp.LongTensor
   isExternal: false
   name: Clamp(LongTensor, Int64, LongTensor)
   nameWithType: LongTensor.Clamp(LongTensor, Int64, LongTensor)
   fullName: LongTensor.Clamp(LongTensor, Int64, LongTensor)
+- uid: TorchSharp.LongTensor.Clamp(System.Int64)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: Clamp(Int64)
+  nameWithType: LongTensor.Clamp(Int64)
+  fullName: LongTensor.Clamp(Int64)
 - uid: TorchSharp.LongTensor.Clone
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2315,12 +2371,6 @@ references:
   name: Int32
   nameWithType: Int32
   fullName: System.Int32
-- uid: TorchSharp.LongTensor.Dispose
-  parent: TorchSharp.LongTensor
-  isExternal: false
-  name: Dispose()
-  nameWithType: LongTensor.Dispose()
-  fullName: LongTensor.Dispose()
 - uid: TorchSharp.LongTensor.Dispose(System.Boolean)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2333,6 +2383,12 @@ references:
   name: Boolean
   nameWithType: Boolean
   fullName: System.Boolean
+- uid: TorchSharp.LongTensor.Dispose
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: Dispose()
+  nameWithType: LongTensor.Dispose()
+  fullName: LongTensor.Dispose()
 - uid: TorchSharp.LongTensor.Div(System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2387,6 +2443,18 @@ references:
   name: GetTensorStride(Int32)
   nameWithType: LongTensor.GetTensorStride(Int32)
   fullName: LongTensor.GetTensorStride(Int32)
+- uid: TorchSharp.LongTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.LongTensor)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: IndexCopy(Int32, LongTensor, LongTensor)
+  nameWithType: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+  fullName: LongTensor.IndexCopy(Int32, LongTensor, LongTensor)
+- uid: TorchSharp.LongTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: IndexSelect(Int32, LongTensor)
+  nameWithType: LongTensor.IndexSelect(Int32, LongTensor)
+  fullName: LongTensor.IndexSelect(Int32, LongTensor)
 - uid: TorchSharp.LongTensor.Item(System.Int64)
   parent: TorchSharp.LongTensor
   isExternal: false
@@ -2809,6 +2877,18 @@ references:
   name: GetTensorStride
   nameWithType: LongTensor.GetTensorStride
   fullName: LongTensor.GetTensorStride
+- uid: TorchSharp.LongTensor.IndexCopy*
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: IndexCopy
+  nameWithType: LongTensor.IndexCopy
+  fullName: LongTensor.IndexCopy
+- uid: TorchSharp.LongTensor.IndexSelect*
+  parent: TorchSharp.LongTensor
+  isExternal: false
+  name: IndexSelect
+  nameWithType: LongTensor.IndexSelect
+  fullName: LongTensor.IndexSelect
 - uid: TorchSharp.LongTensor.Item*
   parent: TorchSharp.LongTensor
   isExternal: false

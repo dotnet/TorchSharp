@@ -1020,6 +1020,58 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="IndexCopy">
+      <MemberSignature Language="C#" Value="public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.ByteTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void IndexCopy(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.ByteTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.ByteTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select for the copy</param>
+        <param name="index">Entries to copy</param>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexSelect">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor IndexSelect (int dim, TorchSharp.LongTensor index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor IndexSelect(int32 dim, class TorchSharp.LongTensor index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select</param>
+        <param name="index">Entries to extract</param>
+        <summary>
+              Returns a new Tensor which indexes the original Tensor along dimension dim
+              using the entries in index.  The returned Tensor has the same number of dimensions as the 
+              original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public byte this[long x0] { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 Item(int64)" />

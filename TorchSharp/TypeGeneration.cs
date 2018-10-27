@@ -164,7 +164,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THByteTensor_new ();
@@ -1458,6 +1458,47 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public ByteTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new ByteTensor ();
+            THByteTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THByteTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 
     /// <summary>
@@ -1619,7 +1660,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THShortTensor_new ();
@@ -2913,6 +2954,47 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public ShortTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new ShortTensor ();
+            THShortTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THShortTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 
     /// <summary>
@@ -3074,7 +3156,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THIntTensor_new ();
@@ -4368,6 +4450,47 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public IntTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new IntTensor ();
+            THIntTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THIntTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 
     /// <summary>
@@ -4529,7 +4652,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THLongTensor_new ();
@@ -5823,6 +5946,47 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public LongTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new LongTensor ();
+            THLongTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THLongTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 
     /// <summary>
@@ -5984,7 +6148,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_new ();
@@ -7836,6 +8000,47 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public DoubleTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new DoubleTensor ();
+            THDoubleTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THDoubleTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 
     /// <summary>
@@ -7997,7 +8202,7 @@ namespace TorchSharp {
                     return true;
                 }
         }
-        HType handle;
+        internal HType handle;
         
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_new ();
@@ -9849,5 +10054,46 @@ namespace TorchSharp {
 
 
 
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
+        
+        /// <summary>
+        ///   Returns a new Tensor which indexes the original Tensor along dimension dim
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+        /// </summary>
+        /// <param name="dim">Dimension to select</param>
+        /// <param name="index">Entries to extract</param>
+        public FloatTensor IndexSelect (int dim, LongTensor index)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            var res = new FloatTensor ();
+            THFloatTensor_indexSelect (res.handle, handle, dim, index.handle);
+            return res;
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexCopy (int dim, LongTensor index, FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            
+            
+            THFloatTensor_indexCopy (handle, dim, index.handle, src.handle);
+        }
     }
 }
