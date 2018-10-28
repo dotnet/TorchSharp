@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchSharp", "TorchSharp\To
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchSharp.Workbooks", "TorchSharp.Workbooks\TorchSharp.Workbooks.csproj", "{DBFD70CE-3E19-4128-8B7E-4314B42A5F19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +21,9 @@ Global
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBFD70CE-3E19-4128-8B7E-4314B42A5F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBFD70CE-3E19-4128-8B7E-4314B42A5F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBFD70CE-3E19-4128-8B7E-4314B42A5F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBFD70CE-3E19-4128-8B7E-4314B42A5F19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

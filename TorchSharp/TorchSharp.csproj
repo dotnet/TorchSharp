@@ -26,6 +26,17 @@
     <DebugType></DebugType>
     <DocumentationFile>bin\Release\netstandard2.0\TorchSharp.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\TorchSharp.Workbooks\bin\Release\netstandard2.0\TorchSharp.Workbooks.dll" PackagePath="xamarin.interactive" Pack="true"/>
+    <None Include="..\TorchSharp.Workbooks\bin\Release\netstandard2.0\TensorIntegration.js" PackagePath="xamarin.interactive" Pack="true"/>
+    <None Include="..\TorchSharp.Workbooks\bin\Release\netstandard2.0\TensorIntegration.css" PackagePath="xamarin.interactive" Pack="true"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TorchSharp.Workbooks\TorchSharp.Workbooks.csproj"/>
+  </ItemGroup>
+
   <ItemGroup>
     <None Remove="PreprocessedT4Template.tt" />
   </ItemGroup>
