@@ -1,0 +1,23 @@
+---
+uti: com.xamarin.workbook
+id: 4fe47419-3dff-4775-b1ba-c80c295d9388
+title: TorchWorkbook
+platforms:
+- DotNetCore
+---
+
+```csharp
+#r "/cvs/TorchSharp/TorchSharp.Workbooks/bin/Release/netstandard2.0/TorchSharp.Workbooks.dll"
+```
+
+```csharp
+#r "/cvs/TorchSharp/TorchSharp/bin/Release/netstandard2.0/TorchSharp.dll"
+```
+
+```csharp
+using TorchSharp;
+```
+
+```csharp
+var x = new FloatTensor ();
+```
