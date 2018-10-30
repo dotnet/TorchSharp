@@ -1,9 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.csproj", "{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,5 +22,15 @@ Global
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1CD4B0CA-1FA3-4B48-98AB-9159551782D8}
 	EndGlobalSection
 EndGlobal
