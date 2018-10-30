@@ -6,9 +6,11 @@
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="PreprocessedT4Template.tt" />
@@ -31,5 +33,9 @@
     <Compile Update="TypeGeneration.cs">
       <DependentUpon>TypeGeneration.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Tensors" Version="0.1.0-preview2-181025-1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
   </ItemGroup>
 </Project>
