@@ -174,17 +174,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THByteTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THByteTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THByteTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THByteTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THByteTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
@@ -1641,17 +1642,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THShortTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THShortTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THShortTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THShortTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THShortTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
@@ -3108,17 +3110,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THIntTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THIntTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THIntTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THIntTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THIntTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
@@ -4575,17 +4578,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THLongTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THLongTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THLongTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THLongTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THLongTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
@@ -6042,17 +6046,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THDoubleTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THDoubleTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THDoubleTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THDoubleTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
@@ -8067,17 +8072,18 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_new ();
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize1d (long size0);
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize2d (long size0, long size1);
 
-		[DllImport ("caffe2")]
-		extern static HType THFloatTensor_newWithSize3d (long size0, long size1, long size2);
+        [DllImport ("caffe2")]
+        extern static HType THFloatTensor_newWithSize3d (long size0, long size1, long size2);
 
-		[DllImport ("caffe2")]
-		extern static HType THFloatTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        [DllImport ("caffe2")]
+        extern static HType THFloatTensor_newWithSize4d (long size0, long size1, long size2, long size3);
+
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
