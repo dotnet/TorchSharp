@@ -1,8 +1,12 @@
+[![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
+
 Status
 ======
 
 Currently I am binding the Tensor APIs, opportunities to bind other APIs
 are wide open.
+
+[API Documentation](https://xamarin.github.io/TorchSharp/api/TorchSharp.html)
 
 Running this
 ============

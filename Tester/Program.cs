@@ -25,5 +25,14 @@ class MainClass {
 		var y = x.Add (100);
 		Dump (y);
 #endif
+		for (int i = 0; i < 1000; i++) {
+			using (var a = new FloatTensor (1000)){
+				using (var c = new FloatTensor (1000)) {
+					var d = a.Add (10);
+					a.CAdd (0, d);
+					d.Dispose ();
+				}
+			}
+		}
 	}
 }

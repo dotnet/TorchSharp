@@ -18,6 +18,9 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static IntPtr THGenerator_new ();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:TorchSharp.RandomGenerator"/> class.
+		/// </summary>
 		public RandomGenerator ()
 		{
 			handle = THGenerator_new ();
@@ -26,8 +29,16 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static int THGeneratorState_isValid (IntPtr handle);
 
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="T:TorchSharp.RandomGenerator"/> is valid.
+		/// </summary>
+		/// <value><c>true</c> if is valid; otherwise, <c>false</c>.</value>
 		public bool IsValid => THGeneratorState_isValid (handle) != 0;
 
+		/// <summary>
+		/// Dispose the specified disposing.
+		/// </summary>
+		/// <param name="disposing">If set to <c>true</c> disposing.</param>
 		protected virtual void Dispose (bool disposing)
 		{
 			if (handle != IntPtr.Zero) {
@@ -36,12 +47,22 @@ namespace TorchSharp {
 			}
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="T:TorchSharp.RandomGenerator"/> is reclaimed by garbage collection.
+		/// </summary>
 		~RandomGenerator()
 		{
 			Dispose (false);
 		}
 
-		// This code added to correctly implement the disposable pattern.
+		/// <summary>
+		/// Releases all resource used by the <see cref="T:TorchSharp.RandomGenerator"/> object.
+		/// </summary>
+		/// <remarks>Call Dispose when you are finished using the <see cref="T:TorchSharp.RandomGenerator"/>. This
+		/// method leaves the <see cref="T:TorchSharp.RandomGenerator"/> in an unusable state. After
+		/// calling this method, you must release all references to the <see cref="T:TorchSharp.RandomGenerator"/>
+		/// so the garbage collector can reclaim the memory that the <see cref="T:TorchSharp.RandomGenerator"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -150,7 +171,8 @@ namespace TorchSharp {
 		/// <summary>
 		///  Returns a random number from a Cauchy distribution.
 		/// </summary>
-		/// <param name="lambda">Must be a positive number</param>
+		/// <param name="median"></param>
+		/// <param name="sigma"></param>
 		/// <remarks>
 		/// The Cauchy density is $p(x) = sigma/(pi*(sigma^2 + (x-median)^2))$
 		/// </remarks>

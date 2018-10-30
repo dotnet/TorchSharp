@@ -1,0 +1,3077 @@
+### YamlMime:ManagedReference
+items:
+- uid: TorchSharp.ByteTensor
+  id: ByteTensor
+  children:
+  - TorchSharp.ByteTensor.#ctor
+  - TorchSharp.ByteTensor.#ctor(System.Int64)
+  - TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Add(System.Byte)
+  - TorchSharp.ByteTensor.Add(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.BitAnd(System.Byte)
+  - TorchSharp.ByteTensor.BitAnd(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.BitOr(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.BitOr(System.Byte)
+  - TorchSharp.ByteTensor.BitXor(System.Byte)
+  - TorchSharp.ByteTensor.BitXor(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CAdd(System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CBitAnd(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CBitOr(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CBitXor(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CDiv(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CFMod(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Clamp(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Clamp(System.Byte)
+  - TorchSharp.ByteTensor.Clone
+  - TorchSharp.ByteTensor.CLShift(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CMul(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CPow(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CRemainder(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.CSub(System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Data
+  - TorchSharp.ByteTensor.Dimensions
+  - TorchSharp.ByteTensor.Dispose(System.Boolean)
+  - TorchSharp.ByteTensor.Dispose
+  - TorchSharp.ByteTensor.Div(System.Byte)
+  - TorchSharp.ByteTensor.Div(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Dot(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Fill(System.Byte)
+  - TorchSharp.ByteTensor.Finalize
+  - TorchSharp.ByteTensor.Fmod(System.Byte)
+  - TorchSharp.ByteTensor.Fmod(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.GetTensorDimension(System.Int32)
+  - TorchSharp.ByteTensor.GetTensorStride(System.Int32)
+  - TorchSharp.ByteTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  - TorchSharp.ByteTensor.Item(System.Int64)
+  - TorchSharp.ByteTensor.Item(System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.LShift(System.Byte)
+  - TorchSharp.ByteTensor.LShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.MaxAll
+  - TorchSharp.ByteTensor.MeanAll
+  - TorchSharp.ByteTensor.MedianAll
+  - TorchSharp.ByteTensor.MinAll
+  - TorchSharp.ByteTensor.Mul(System.Byte)
+  - TorchSharp.ByteTensor.Mul(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.ProdAll
+  - TorchSharp.ByteTensor.Random(System.Int64)
+  - TorchSharp.ByteTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  - TorchSharp.ByteTensor.Remainder(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Remainder(System.Byte)
+  - TorchSharp.ByteTensor.Resize1d(System.Int64)
+  - TorchSharp.ByteTensor.Resize2d(System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.ResizeAs(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.RShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.RShift(System.Byte)
+  - TorchSharp.ByteTensor.Select(System.Int32,System.Int64)
+  - TorchSharp.ByteTensor.Set(TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.Shape
+  - TorchSharp.ByteTensor.Storage
+  - TorchSharp.ByteTensor.Sub(System.Byte)
+  - TorchSharp.ByteTensor.Sub(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  - TorchSharp.ByteTensor.SumAll
+  - TorchSharp.ByteTensor.ToString
+  - TorchSharp.ByteTensor.Transpose(System.Int32,System.Int32)
+  - TorchSharp.ByteTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  - TorchSharp.ByteTensor.ZeroFill
+  langs:
+  - csharp
+  name: ByteTensor
+  nameWithType: ByteTensor
+  fullName: TorchSharp.ByteTensor
+  type: Class
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Tensor of type Byte.
+  remarks: >-
+    <p>
+                    Use the default constructor to create an empty tensor, or invoke one of the
+                    constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+                    create a tensor for the desired number of dimensions.
+                  </p>
+  syntax:
+    content: 'public class ByteTensor : IDisposable'
+  inheritance:
+  - System.Object
+  implements:
+  - System.IDisposable
+  inheritedMembers: []
+- uid: TorchSharp.ByteTensor.#ctor
+  id: '#ctor'
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ByteTensor()
+  nameWithType: ByteTensor.ByteTensor()
+  fullName: ByteTensor.ByteTensor()
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates an empty tensor.
+  syntax:
+    content: public ByteTensor ();
+    parameters: []
+  overload: TorchSharp.ByteTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64)
+  id: '#ctor(System.Int64)'
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ByteTensor(Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64)
+  fullName: ByteTensor.ByteTensor(Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 1D tensor of the specified size.
+  syntax:
+    content: public ByteTensor (long size0);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+  overload: TorchSharp.ByteTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64)'
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ByteTensor(Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 2D tensor of the specified size.
+  syntax:
+    content: public ByteTensor (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+  overload: TorchSharp.ByteTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ByteTensor(Int64, Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 3D tensor of the specified size.
+  syntax:
+    content: public ByteTensor (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+  overload: TorchSharp.ByteTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: '#ctor(System.Int64,System.Int64,System.Int64,System.Int64)'
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ByteTensor(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
+  type: Constructor
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Creates a 4D tensor of the specified size.
+  syntax:
+    content: public ByteTensor (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: Size for the first dimension.
+    - id: size1
+      type: System.Int64
+      description: Size for the second dimension.
+    - id: size2
+      type: System.Int64
+      description: Size for the third dimension.
+    - id: size3
+      type: System.Int64
+      description: Size for the fourth dimension.
+  overload: TorchSharp.ByteTensor.#ctor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Add(System.Byte)
+  id: Add(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Add(Byte)
+  nameWithType: ByteTensor.Add(Byte)
+  fullName: ByteTensor.Add(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Add(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Add (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Add*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Add(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Add(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Add(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Add(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Add(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Add operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Add operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Add (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Add*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitAnd(System.Byte)
+  id: BitAnd(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitAnd(Byte)
+  nameWithType: ByteTensor.BitAnd(Byte)
+  fullName: ByteTensor.BitAnd(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitAnd(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor BitAnd (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitAnd(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: BitAnd(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitAnd(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitAnd(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitAnd(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitAnd operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitAnd operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitAnd (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.BitAnd*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitOr(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: BitOr(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitOr(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitOr(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitOr(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitOr operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitOr (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitOr(System.Byte)
+  id: BitOr(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitOr(Byte)
+  nameWithType: ByteTensor.BitOr(Byte)
+  fullName: ByteTensor.BitOr(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitOr operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitOr(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor BitOr (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.BitOr*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitXor(System.Byte)
+  id: BitXor(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitXor(Byte)
+  nameWithType: ByteTensor.BitXor(Byte)
+  fullName: ByteTensor.BitXor(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.BitXor(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor BitXor (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.BitXor(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: BitXor(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: BitXor(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitXor(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitXor(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the BitXor operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the BitXor operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void BitXor (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.BitXor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CAdd(System.Byte,TorchSharp.ByteTensor)
+  id: CAdd(System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CAdd(Byte, ByteTensor)
+  nameWithType: ByteTensor.CAdd(Byte, ByteTensor)
+  fullName: ByteTensor.CAdd(Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CAdd operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.ByteTensor CAdd (byte value, TorchSharp.ByteTensor src);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CAdd*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CBitAnd(TorchSharp.ByteTensor)
+  id: CBitAnd(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CBitAnd(ByteTensor)
+  nameWithType: ByteTensor.CBitAnd(ByteTensor)
+  fullName: ByteTensor.CBitAnd(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitAnd of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CBitAnd (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CBitAnd*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CBitOr(TorchSharp.ByteTensor)
+  id: CBitOr(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CBitOr(ByteTensor)
+  nameWithType: ByteTensor.CBitOr(ByteTensor)
+  fullName: ByteTensor.CBitOr(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitOr of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CBitOr (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CBitOr*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CBitXor(TorchSharp.ByteTensor)
+  id: CBitXor(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CBitXor(ByteTensor)
+  nameWithType: ByteTensor.CBitXor(ByteTensor)
+  fullName: ByteTensor.CBitXor(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CBitXor of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CBitXor (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CBitXor*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CDiv(TorchSharp.ByteTensor)
+  id: CDiv(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CDiv(ByteTensor)
+  nameWithType: ByteTensor.CDiv(ByteTensor)
+  fullName: ByteTensor.CDiv(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CDiv of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CDiv (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CDiv*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CFMod(TorchSharp.ByteTensor)
+  id: CFMod(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CFMod(ByteTensor)
+  nameWithType: ByteTensor.CFMod(ByteTensor)
+  fullName: ByteTensor.CFMod(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CFMod of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CFMod (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CFMod*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Clamp(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Clamp(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Clamp(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Clamp(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Clamp(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Clamp operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Clamp (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Clamp(System.Byte)
+  id: Clamp(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Clamp(Byte)
+  nameWithType: ByteTensor.Clamp(Byte)
+  fullName: ByteTensor.Clamp(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Clamp operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Clamp(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Clamp (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Clamp*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Clone
+  id: Clone
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Clone()
+  nameWithType: ByteTensor.Clone()
+  fullName: ByteTensor.Clone()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a deep clone of the tensor
+  syntax:
+    content: public TorchSharp.ByteTensor Clone ();
+    parameters: []
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Clone*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CLShift(TorchSharp.ByteTensor)
+  id: CLShift(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CLShift(ByteTensor)
+  nameWithType: ByteTensor.CLShift(ByteTensor)
+  fullName: ByteTensor.CLShift(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CLShift of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CLShift (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CLShift*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CMul(TorchSharp.ByteTensor)
+  id: CMul(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CMul(ByteTensor)
+  nameWithType: ByteTensor.CMul(ByteTensor)
+  fullName: ByteTensor.CMul(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CMul of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CMul (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CMul*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CPow(TorchSharp.ByteTensor)
+  id: CPow(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CPow(ByteTensor)
+  nameWithType: ByteTensor.CPow(ByteTensor)
+  fullName: ByteTensor.CPow(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CPow of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CPow (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CPow*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CRemainder(TorchSharp.ByteTensor)
+  id: CRemainder(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CRemainder(ByteTensor)
+  nameWithType: ByteTensor.CRemainder(ByteTensor)
+  fullName: ByteTensor.CRemainder(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Performs an CRemainder of the tensor with the provided \n              <see paramref=\"src\"></see> tensor and returns a new tensor with the result."
+  syntax:
+    content: public TorchSharp.ByteTensor CRemainder (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CRemainder*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.CSub(System.Byte,TorchSharp.ByteTensor)
+  id: CSub(System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: CSub(Byte, ByteTensor)
+  nameWithType: ByteTensor.CSub(Byte, ByteTensor)
+  fullName: ByteTensor.CSub(Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the CSub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+                  where the result is t[idx] + value * src[idx]
+  syntax:
+    content: public TorchSharp.ByteTensor CSub (byte value, TorchSharp.ByteTensor src);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.CSub*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Data
+  id: Data
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Data
+  nameWithType: ByteTensor.Data
+  fullName: ByteTensor.Data
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a pointer to the unmanaged data managed by this tensor.
+  syntax:
+    content: public byte* Data { get; }
+    return:
+      type: System.Byte*
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Data*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Dimensions
+  id: Dimensions
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Dimensions
+  nameWithType: ByteTensor.Dimensions
+  fullName: ByteTensor.Dimensions
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the number of dimensions for this tensor
+  syntax:
+    content: public int Dimensions { get; }
+    return:
+      type: System.Int32
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Dimensions*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Dispose(System.Boolean)
+  id: Dispose(System.Boolean)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Dispose(Boolean)
+  nameWithType: ByteTensor.Dispose(Boolean)
+  fullName: ByteTensor.Dispose(Boolean)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Implements the .NET Dispose pattern.
+  syntax:
+    content: protected void Dispose (bool disposing);
+    parameters:
+    - id: disposing
+      type: System.Boolean
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Dispose
+  id: Dispose
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Dispose()
+  nameWithType: ByteTensor.Dispose()
+  fullName: ByteTensor.Dispose()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Releases the tensor and its associated data.
+  syntax:
+    content: public void Dispose ();
+    parameters: []
+  overload: TorchSharp.ByteTensor.Dispose*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Div(System.Byte)
+  id: Div(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Div(Byte)
+  nameWithType: ByteTensor.Div(Byte)
+  fullName: ByteTensor.Div(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Div(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Div (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Div*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Div(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Div(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Div(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Div(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Div(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Div operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Div operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Div (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Div*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Dot(TorchSharp.ByteTensor)
+  id: Dot(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Dot(ByteTensor)
+  nameWithType: ByteTensor.Dot(ByteTensor)
+  fullName: ByteTensor.Dot(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor product between this tensor and the provided one
+  syntax:
+    content: public long Dot (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: To be added.
+    return:
+      type: System.Int64
+      description: The dot product
+  overload: TorchSharp.ByteTensor.Dot*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Fill(System.Byte)
+  id: Fill(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Fill(Byte)
+  nameWithType: ByteTensor.Fill(Byte)
+  fullName: ByteTensor.Fill(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with the specified value
+  syntax:
+    content: public void Fill (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Fill*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Finalize
+  id: Finalize
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Finalize()
+  nameWithType: ByteTensor.Finalize()
+  fullName: ByteTensor.Finalize()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Finalizer for ~ByteTensor
+  syntax:
+    content: ~ByteTensor ();
+    parameters: []
+  overload: TorchSharp.ByteTensor.Finalize*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Fmod(System.Byte)
+  id: Fmod(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Fmod(Byte)
+  nameWithType: ByteTensor.Fmod(Byte)
+  fullName: ByteTensor.Fmod(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Fmod(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Fmod (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Fmod(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Fmod(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Fmod(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Fmod(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Fmod(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Fmod operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Fmod operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Fmod (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Fmod*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.GetTensorDimension(System.Int32)
+  id: GetTensorDimension(System.Int32)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: GetTensorDimension(Int32)
+  nameWithType: ByteTensor.GetTensorDimension(Int32)
+  fullName: ByteTensor.GetTensorDimension(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the size of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorDimension (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ByteTensor.GetTensorDimension*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.GetTensorStride(System.Int32)
+  id: GetTensorStride(System.Int32)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: GetTensorStride(Int32)
+  nameWithType: ByteTensor.GetTensorStride(Int32)
+  fullName: ByteTensor.GetTensorStride(Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Retrieves the stride of the specified dimension in the tensor.
+  syntax:
+    content: public long GetTensorStride (int dim);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    return:
+      type: System.Int64
+      description: To be added.
+  overload: TorchSharp.ByteTensor.GetTensorStride*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ByteTensor)
+  id: IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: IndexCopy(Int32, LongTensor, ByteTensor)
+  nameWithType: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+  fullName: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Copies the elements of tensor into the original tensor by selecting the indices in the order \n              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown."
+  syntax:
+    content: public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.ByteTensor src);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: Dimension to select for the copy
+    - id: index
+      type: TorchSharp.LongTensor
+      description: Entries to copy
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: Tensor to copy the data from.
+  overload: TorchSharp.ByteTensor.IndexCopy*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  id: IndexSelect(System.Int32,TorchSharp.LongTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: IndexSelect(Int32, LongTensor)
+  nameWithType: ByteTensor.IndexSelect(Int32, LongTensor)
+  fullName: ByteTensor.IndexSelect(Int32, LongTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: "Returns a new Tensor which indexes the original Tensor along dimension dim\n              using the entries in index.  The returned Tensor has the same number of dimensions as the \n              original Tensor. The returned Tensor does not use the same storage as the original Tensor."
+  syntax:
+    content: public TorchSharp.ByteTensor IndexSelect (int dim, TorchSharp.LongTensor index);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: Dimension to select
+    - id: index
+      type: TorchSharp.LongTensor
+      description: Entries to extract
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.IndexSelect*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Item(System.Int64)
+  id: Item(System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Item(Int64)
+  nameWithType: ByteTensor.Item(Int64)
+  fullName: ByteTensor.Item(Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public byte this[long x0] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index to access.
+    return:
+      type: System.Byte
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public byte this[long x0, long x1] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index in the first dimension to access.
+    - id: x1
+      type: System.Int64
+      description: Index in the second dimension to access.
+    return:
+      type: System.Byte
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public byte this[long x0, long x1, long x2] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index in the first dimension to access.
+    - id: x1
+      type: System.Int64
+      description: Index in the second dimension to access.
+    - id: x2
+      type: System.Int64
+      description: Index in the third dimension to access.
+    return:
+      type: System.Byte
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64, Int64, Int64)
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Access to element at the specified position in the tensor
+  syntax:
+    content: public byte this[long x0, long x1, long x2, long x3] { get; set; }
+    parameters:
+    - id: x0
+      type: System.Int64
+      description: Index in the first dimension to access.
+    - id: x1
+      type: System.Int64
+      description: Index in the second dimension to access.
+    - id: x2
+      type: System.Int64
+      description: Index in the third dimension to access.
+    - id: x3
+      type: System.Int64
+      description: Index in the fourth dimension to access.
+    return:
+      type: System.Byte
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Item*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.LShift(System.Byte)
+  id: LShift(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: LShift(Byte)
+  nameWithType: ByteTensor.LShift(Byte)
+  fullName: ByteTensor.LShift(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.LShift(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor LShift (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.LShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: LShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: LShift(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.LShift(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.LShift(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the LShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the LShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void LShift (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.LShift*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.MaxAll
+  id: MaxAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: MaxAll()
+  nameWithType: ByteTensor.MaxAll()
+  fullName: ByteTensor.MaxAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the maximum value of the elements in the tensor.
+  syntax:
+    content: public byte MaxAll ();
+    parameters: []
+    return:
+      type: System.Byte
+      description: The maximum value of the tensor.
+  overload: TorchSharp.ByteTensor.MaxAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.MeanAll
+  id: MeanAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: MeanAll()
+  nameWithType: ByteTensor.MeanAll()
+  fullName: ByteTensor.MeanAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the mean of the elements in the tensor.
+  syntax:
+    content: public long MeanAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The mean of the tensor.
+  overload: TorchSharp.ByteTensor.MeanAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.MedianAll
+  id: MedianAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: MedianAll()
+  nameWithType: ByteTensor.MedianAll()
+  fullName: ByteTensor.MedianAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the median of the elements in the tensor.
+  syntax:
+    content: public byte MedianAll ();
+    parameters: []
+    return:
+      type: System.Byte
+      description: The median of the tensor.
+  overload: TorchSharp.ByteTensor.MedianAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.MinAll
+  id: MinAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: MinAll()
+  nameWithType: ByteTensor.MinAll()
+  fullName: ByteTensor.MinAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the minimum value of the elements in the tensor.
+  syntax:
+    content: public byte MinAll ();
+    parameters: []
+    return:
+      type: System.Byte
+      description: The minimum value of the tensor.
+  overload: TorchSharp.ByteTensor.MinAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Mul(System.Byte)
+  id: Mul(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Mul(Byte)
+  nameWithType: ByteTensor.Mul(Byte)
+  fullName: ByteTensor.Mul(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Mul(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Mul (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Mul(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Mul(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Mul(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Mul(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Mul(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Mul operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Mul operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Mul (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Mul*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  id: Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: ByteTensor.Narrow(Int32, Int64, Int64)
+  fullName: ByteTensor.Narrow(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: 'Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.'
+  syntax:
+    content: public TorchSharp.ByteTensor Narrow (int dim, long firstIndex, long size);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: The dimension to narrow
+    - id: firstIndex
+      type: System.Int64
+      description: Initial index to narrow
+    - id: size
+      type: System.Int64
+      description: Number of elements
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Narrow*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.ProdAll
+  id: ProdAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ProdAll()
+  nameWithType: ByteTensor.ProdAll()
+  fullName: ByteTensor.ProdAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the product of the elements in the tensor.
+  syntax:
+    content: public long ProdAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The product of the tensor.
+  overload: TorchSharp.ByteTensor.ProdAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Random(System.Int64)
+  id: Random(System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Random(Int64)
+  nameWithType: ByteTensor.Random(Int64)
+  fullName: ByteTensor.Random(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+  syntax:
+    content: public void Random (long n);
+    parameters:
+    - id: n
+      type: System.Int64
+      description: The upper limit for the values to be generated
+  overload: TorchSharp.ByteTensor.Random*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  id: Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Random(RandomGenerator, Int64)
+  nameWithType: ByteTensor.Random(RandomGenerator, Int64)
+  fullName: ByteTensor.Random(RandomGenerator, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Populates the tensor with random values from 0 to n, using the provided random source generator.
+  syntax:
+    content: public void Random (TorchSharp.RandomGenerator source, long n);
+    parameters:
+    - id: source
+      type: TorchSharp.RandomGenerator
+      description: The random generator source
+    - id: n
+      type: System.Int64
+      description: The upper limit for the values to be generated
+  overload: TorchSharp.ByteTensor.Random*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Remainder(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Remainder(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Remainder(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Remainder(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Remainder(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Remainder operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Remainder (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Remainder(System.Byte)
+  id: Remainder(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Remainder(Byte)
+  nameWithType: ByteTensor.Remainder(Byte)
+  fullName: ByteTensor.Remainder(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Remainder operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Remainder(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Remainder (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Remainder*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Resize1d(System.Int64)
+  id: Resize1d(System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Resize1d(Int64)
+  nameWithType: ByteTensor.Resize1d(Int64)
+  fullName: ByteTensor.Resize1d(Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void Resize1d (long size);
+    parameters:
+    - id: size
+      type: System.Int64
+      description: The desired new size for the first dimension of the tensor.
+  overload: TorchSharp.ByteTensor.Resize1d*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Resize2d(System.Int64,System.Int64)
+  id: Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Resize2d(Int64, Int64)
+  nameWithType: ByteTensor.Resize2d(Int64, Int64)
+  fullName: ByteTensor.Resize2d(Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void Resize2d (long size0, long size1);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: The desired new size for the first dimension of the tensor.
+    - id: size1
+      type: System.Int64
+      description: The desired new size for the second dimension of the tensor.
+  overload: TorchSharp.ByteTensor.Resize2d*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  id: Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize3d(Int64, Int64, Int64)
+  fullName: ByteTensor.Resize3d(Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void Resize3d (long size0, long size1, long size2);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: The desired new size for the first dimension of the tensor.
+    - id: size1
+      type: System.Int64
+      description: The desired new size for the second dimension of the tensor.
+    - id: size2
+      type: System.Int64
+      description: The desired new size for the third dimension of the tensor.
+  overload: TorchSharp.ByteTensor.Resize3d*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Resize4d(Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void Resize4d (long size0, long size1, long size2, long size3);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: The desired new size for the first dimension of the tensor.
+    - id: size1
+      type: System.Int64
+      description: The desired new size for the second dimension of the tensor.
+    - id: size2
+      type: System.Int64
+      description: The desired new size for the third dimension of the tensor.
+    - id: size3
+      type: System.Int64
+      description: The desired new size for the fourth dimension of the tensor.
+  overload: TorchSharp.ByteTensor.Resize4d*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  id: Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void Resize5d (long size0, long size1, long size2, long size3, long size4);
+    parameters:
+    - id: size0
+      type: System.Int64
+      description: The desired new size for the first dimension of the tensor.
+    - id: size1
+      type: System.Int64
+      description: The desired new size for the second dimension of the tensor.
+    - id: size2
+      type: System.Int64
+      description: The desired new size for the third dimension of the tensor.
+    - id: size3
+      type: System.Int64
+      description: The desired new size for the fourth dimension of the tensor.
+    - id: size4
+      type: System.Int64
+      description: The desired new size for the fifth dimension of the tensor.
+  overload: TorchSharp.ByteTensor.Resize5d*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.ResizeAs(TorchSharp.ByteTensor)
+  id: ResizeAs(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ResizeAs(ByteTensor)
+  nameWithType: ByteTensor.ResizeAs(ByteTensor)
+  fullName: ByteTensor.ResizeAs(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
+  syntax:
+    content: public void ResizeAs (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: The source tensor whose shape will be mirrored by this tensor.
+  overload: TorchSharp.ByteTensor.ResizeAs*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.RShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: RShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: RShift(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.RShift(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.RShift(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the RShift operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void RShift (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.RShift(System.Byte)
+  id: RShift(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: RShift(Byte)
+  nameWithType: ByteTensor.RShift(Byte)
+  fullName: ByteTensor.RShift(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the RShift operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.RShift(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor RShift (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.RShift*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Select(System.Int32,System.Int64)
+  id: Select(System.Int32,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Select(Int32, Int64)
+  nameWithType: ByteTensor.Select(Int32, Int64)
+  fullName: ByteTensor.Select(Int32, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
+  remarks: 'The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.'
+  syntax:
+    content: public TorchSharp.ByteTensor Select (int dim, long slideIndex);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: Dimension to select
+    - id: slideIndex
+      type: System.Int64
+      description: Beginning of the tensor slice
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Select*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Set(TorchSharp.ByteTensor)
+  id: Set(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Set(ByteTensor)
+  nameWithType: ByteTensor.Set(ByteTensor)
+  fullName: ByteTensor.Set(ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.
+  syntax:
+    content: public void Set (TorchSharp.ByteTensor src);
+    parameters:
+    - id: src
+      type: TorchSharp.ByteTensor
+      description: The source tensor which contains the data..
+  overload: TorchSharp.ByteTensor.Set*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Shape
+  id: Shape
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Shape
+  nameWithType: ByteTensor.Shape
+  fullName: ByteTensor.Shape
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+  remarks: >-
+    An array of size 0 is used for constants, an array of size 1 is used
+                    for single-dimension arrays, where the dimension is the value of the
+                    first element.   And so on.
+  syntax:
+    content: public long[] Shape { get; }
+    return:
+      type: System.Int64[]
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Shape*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Storage
+  id: Storage
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Storage
+  nameWithType: ByteTensor.Storage
+  fullName: ByteTensor.Storage
+  type: Property
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the associated storage for this tensor
+  syntax:
+    content: public TorchSharp.ByteStorage Storage { get; }
+    return:
+      type: TorchSharp.ByteStorage
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Storage*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Sub(System.Byte)
+  id: Sub(System.Byte)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Sub(Byte)
+  nameWithType: ByteTensor.Sub(Byte)
+  fullName: ByteTensor.Sub(Byte)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the tensor with the
+                  <see paramref="value"></see> and returns a new tensor with the result.
+  remarks: "If you want to avoid the allocation of a new tensor, you can use the \n              alternative method <xref href=\"PytorchSharp.Sub(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)\"></xref>."
+  syntax:
+    content: public TorchSharp.ByteTensor Sub (byte value);
+    parameters:
+    - id: value
+      type: System.Byte
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: This returns a new tensor with the same shape as the tensor this operates on.
+  overload: TorchSharp.ByteTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Sub(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  id: Sub(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Sub(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Sub(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Sub(ByteTensor, Byte, ByteTensor)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: >-
+    Performs the Sub operation on each element of the source with the
+                  provided scalar.   The result tensor specified as the last parameters
+                  is resized to match the source.
+  remarks: >-
+    For each element in the <see paramref="source"></see> performs the Sub operation
+                   with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+                   tensor.
+  syntax:
+    content: public static void Sub (TorchSharp.ByteTensor source, byte value, TorchSharp.ByteTensor result);
+    parameters:
+    - id: source
+      type: TorchSharp.ByteTensor
+      description: Source tensor on which the operation will take place.
+    - id: value
+      type: System.Byte
+      description: The scalar value that the operation uses.
+    - id: result
+      type: TorchSharp.ByteTensor
+      description: The tensor where the result will be placed
+  overload: TorchSharp.ByteTensor.Sub*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.SumAll
+  id: SumAll
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: SumAll()
+  nameWithType: ByteTensor.SumAll()
+  fullName: ByteTensor.SumAll()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns the sum of the elements in the tensor.
+  syntax:
+    content: public long SumAll ();
+    parameters: []
+    return:
+      type: System.Int64
+      description: The sum of the tensor.
+  overload: TorchSharp.ByteTensor.SumAll*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.ToString
+  id: ToString
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ToString()
+  nameWithType: ByteTensor.ToString()
+  fullName: ByteTensor.ToString()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a debuggable version of the tensor, in this case the tensor shape
+  syntax:
+    content: public override string ToString ();
+    parameters: []
+    return:
+      type: System.String
+      description: To be added.
+  overload: TorchSharp.ByteTensor.ToString*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Transpose(System.Int32,System.Int32)
+  id: Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Transpose(Int32, Int32)
+  nameWithType: ByteTensor.Transpose(Int32, Int32)
+  fullName: ByteTensor.Transpose(Int32, Int32)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a tensor where dimensions dim1 and dim2 have been swapped.
+  syntax:
+    content: public TorchSharp.ByteTensor Transpose (int dim1, int dim2);
+    parameters:
+    - id: dim1
+      type: System.Int32
+      description: First dimension
+    - id: dim2
+      type: System.Int32
+      description: Second dimension
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Transpose*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  id: Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: ByteTensor.Unfold(Int32, Int64, Int64)
+  fullName: ByteTensor.Unfold(Int32, Int64, Int64)
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
+  syntax:
+    content: public TorchSharp.ByteTensor Unfold (int dim, long size, long step);
+    parameters:
+    - id: dim
+      type: System.Int32
+      description: To be added.
+    - id: size
+      type: System.Int64
+      description: To be added.
+    - id: step
+      type: System.Int64
+      description: To be added.
+    return:
+      type: TorchSharp.ByteTensor
+      description: To be added.
+  overload: TorchSharp.ByteTensor.Unfold*
+  exceptions: []
+- uid: TorchSharp.ByteTensor.ZeroFill
+  id: ZeroFill
+  parent: TorchSharp.ByteTensor
+  langs:
+  - csharp
+  name: ZeroFill()
+  nameWithType: ByteTensor.ZeroFill()
+  fullName: ByteTensor.ZeroFill()
+  type: Method
+  assemblies:
+  - TorchSharp
+  namespace: TorchSharp
+  summary: Fills the tensor with zeros
+  syntax:
+    content: public void ZeroFill ();
+    parameters: []
+  overload: TorchSharp.ByteTensor.ZeroFill*
+  exceptions: []
+references:
+- uid: System.Object
+  parent: System
+  isExternal: true
+  name: Object
+  nameWithType: Object
+  fullName: System.Object
+- uid: TorchSharp.ByteTensor.#ctor
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor()
+  nameWithType: ByteTensor.ByteTensor()
+  fullName: ByteTensor.ByteTensor()
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor(Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64)
+  fullName: ByteTensor.ByteTensor(Int64)
+- uid: System.Int64
+  parent: System
+  isExternal: true
+  name: Int64
+  nameWithType: Int64
+  fullName: System.Int64
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor(Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64)
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor(Int64, Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.ByteTensor(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.Add(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Add(Byte)
+  nameWithType: ByteTensor.Add(Byte)
+  fullName: ByteTensor.Add(Byte)
+- uid: TorchSharp.ByteTensor
+  parent: TorchSharp
+  isExternal: false
+  name: ByteTensor
+  nameWithType: ByteTensor
+  fullName: TorchSharp.ByteTensor
+- uid: System.Byte
+  parent: System
+  isExternal: true
+  name: Byte
+  nameWithType: Byte
+  fullName: System.Byte
+- uid: TorchSharp.ByteTensor.Add(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Add(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Add(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Add(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.BitAnd(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitAnd(Byte)
+  nameWithType: ByteTensor.BitAnd(Byte)
+  fullName: ByteTensor.BitAnd(Byte)
+- uid: TorchSharp.ByteTensor.BitAnd(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitAnd(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitAnd(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitAnd(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.BitOr(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitOr(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitOr(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitOr(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.BitOr(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitOr(Byte)
+  nameWithType: ByteTensor.BitOr(Byte)
+  fullName: ByteTensor.BitOr(Byte)
+- uid: TorchSharp.ByteTensor.BitXor(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitXor(Byte)
+  nameWithType: ByteTensor.BitXor(Byte)
+  fullName: ByteTensor.BitXor(Byte)
+- uid: TorchSharp.ByteTensor.BitXor(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitXor(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.BitXor(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.BitXor(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.CAdd(System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CAdd(Byte, ByteTensor)
+  nameWithType: ByteTensor.CAdd(Byte, ByteTensor)
+  fullName: ByteTensor.CAdd(Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.CBitAnd(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitAnd(ByteTensor)
+  nameWithType: ByteTensor.CBitAnd(ByteTensor)
+  fullName: ByteTensor.CBitAnd(ByteTensor)
+- uid: TorchSharp.ByteTensor.CBitOr(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitOr(ByteTensor)
+  nameWithType: ByteTensor.CBitOr(ByteTensor)
+  fullName: ByteTensor.CBitOr(ByteTensor)
+- uid: TorchSharp.ByteTensor.CBitXor(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitXor(ByteTensor)
+  nameWithType: ByteTensor.CBitXor(ByteTensor)
+  fullName: ByteTensor.CBitXor(ByteTensor)
+- uid: TorchSharp.ByteTensor.CDiv(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CDiv(ByteTensor)
+  nameWithType: ByteTensor.CDiv(ByteTensor)
+  fullName: ByteTensor.CDiv(ByteTensor)
+- uid: TorchSharp.ByteTensor.CFMod(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CFMod(ByteTensor)
+  nameWithType: ByteTensor.CFMod(ByteTensor)
+  fullName: ByteTensor.CFMod(ByteTensor)
+- uid: TorchSharp.ByteTensor.Clamp(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Clamp(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Clamp(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Clamp(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.Clamp(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Clamp(Byte)
+  nameWithType: ByteTensor.Clamp(Byte)
+  fullName: ByteTensor.Clamp(Byte)
+- uid: TorchSharp.ByteTensor.Clone
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Clone()
+  nameWithType: ByteTensor.Clone()
+  fullName: ByteTensor.Clone()
+- uid: TorchSharp.ByteTensor.CLShift(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CLShift(ByteTensor)
+  nameWithType: ByteTensor.CLShift(ByteTensor)
+  fullName: ByteTensor.CLShift(ByteTensor)
+- uid: TorchSharp.ByteTensor.CMul(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CMul(ByteTensor)
+  nameWithType: ByteTensor.CMul(ByteTensor)
+  fullName: ByteTensor.CMul(ByteTensor)
+- uid: TorchSharp.ByteTensor.CPow(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CPow(ByteTensor)
+  nameWithType: ByteTensor.CPow(ByteTensor)
+  fullName: ByteTensor.CPow(ByteTensor)
+- uid: TorchSharp.ByteTensor.CRemainder(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CRemainder(ByteTensor)
+  nameWithType: ByteTensor.CRemainder(ByteTensor)
+  fullName: ByteTensor.CRemainder(ByteTensor)
+- uid: TorchSharp.ByteTensor.CSub(System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CSub(Byte, ByteTensor)
+  nameWithType: ByteTensor.CSub(Byte, ByteTensor)
+  fullName: ByteTensor.CSub(Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.Data
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Data
+  nameWithType: ByteTensor.Data
+  fullName: ByteTensor.Data
+- uid: System.Byte*
+  parent: System
+  isExternal: true
+  name: Byte*
+  nameWithType: Byte*
+  fullName: System.Byte*
+  spec.csharp:
+  - uid: System.Byte
+    name: Byte
+    nameWithType: Byte
+    fullName: System.Byte
+  - name: '*'
+    nameWithType: '*'
+    fullName: '*'
+- uid: TorchSharp.ByteTensor.Dimensions
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: ByteTensor.Dimensions
+  fullName: ByteTensor.Dimensions
+- uid: System.Int32
+  parent: System
+  isExternal: true
+  name: Int32
+  nameWithType: Int32
+  fullName: System.Int32
+- uid: TorchSharp.ByteTensor.Dispose(System.Boolean)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dispose(Boolean)
+  nameWithType: ByteTensor.Dispose(Boolean)
+  fullName: ByteTensor.Dispose(Boolean)
+- uid: System.Boolean
+  parent: System
+  isExternal: true
+  name: Boolean
+  nameWithType: Boolean
+  fullName: System.Boolean
+- uid: TorchSharp.ByteTensor.Dispose
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dispose()
+  nameWithType: ByteTensor.Dispose()
+  fullName: ByteTensor.Dispose()
+- uid: TorchSharp.ByteTensor.Div(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Div(Byte)
+  nameWithType: ByteTensor.Div(Byte)
+  fullName: ByteTensor.Div(Byte)
+- uid: TorchSharp.ByteTensor.Div(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Div(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Div(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Div(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.Dot(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dot(ByteTensor)
+  nameWithType: ByteTensor.Dot(ByteTensor)
+  fullName: ByteTensor.Dot(ByteTensor)
+- uid: TorchSharp.ByteTensor.Fill(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Fill(Byte)
+  nameWithType: ByteTensor.Fill(Byte)
+  fullName: ByteTensor.Fill(Byte)
+- uid: TorchSharp.ByteTensor.Finalize
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Finalize()
+  nameWithType: ByteTensor.Finalize()
+  fullName: ByteTensor.Finalize()
+- uid: TorchSharp.ByteTensor.Fmod(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Fmod(Byte)
+  nameWithType: ByteTensor.Fmod(Byte)
+  fullName: ByteTensor.Fmod(Byte)
+- uid: TorchSharp.ByteTensor.Fmod(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Fmod(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Fmod(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Fmod(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.GetTensorDimension(System.Int32)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: GetTensorDimension(Int32)
+  nameWithType: ByteTensor.GetTensorDimension(Int32)
+  fullName: ByteTensor.GetTensorDimension(Int32)
+- uid: TorchSharp.ByteTensor.GetTensorStride(System.Int32)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: GetTensorStride(Int32)
+  nameWithType: ByteTensor.GetTensorStride(Int32)
+  fullName: ByteTensor.GetTensorStride(Int32)
+- uid: TorchSharp.ByteTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: IndexCopy(Int32, LongTensor, ByteTensor)
+  nameWithType: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+  fullName: ByteTensor.IndexCopy(Int32, LongTensor, ByteTensor)
+- uid: TorchSharp.LongTensor
+  parent: TorchSharp
+  isExternal: false
+  name: LongTensor
+  nameWithType: LongTensor
+  fullName: TorchSharp.LongTensor
+- uid: TorchSharp.ByteTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: IndexSelect(Int32, LongTensor)
+  nameWithType: ByteTensor.IndexSelect(Int32, LongTensor)
+  fullName: ByteTensor.IndexSelect(Int32, LongTensor)
+- uid: TorchSharp.ByteTensor.Item(System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Item(Int64)
+  nameWithType: ByteTensor.Item(Int64)
+  fullName: ByteTensor.Item(Int64)
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Item(Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64)
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Item(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Item(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Item(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.LShift(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: LShift(Byte)
+  nameWithType: ByteTensor.LShift(Byte)
+  fullName: ByteTensor.LShift(Byte)
+- uid: TorchSharp.ByteTensor.LShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: LShift(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.LShift(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.LShift(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.MaxAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MaxAll()
+  nameWithType: ByteTensor.MaxAll()
+  fullName: ByteTensor.MaxAll()
+- uid: TorchSharp.ByteTensor.MeanAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MeanAll()
+  nameWithType: ByteTensor.MeanAll()
+  fullName: ByteTensor.MeanAll()
+- uid: TorchSharp.ByteTensor.MedianAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MedianAll()
+  nameWithType: ByteTensor.MedianAll()
+  fullName: ByteTensor.MedianAll()
+- uid: TorchSharp.ByteTensor.MinAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MinAll()
+  nameWithType: ByteTensor.MinAll()
+  fullName: ByteTensor.MinAll()
+- uid: TorchSharp.ByteTensor.Mul(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Mul(Byte)
+  nameWithType: ByteTensor.Mul(Byte)
+  fullName: ByteTensor.Mul(Byte)
+- uid: TorchSharp.ByteTensor.Mul(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Mul(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Mul(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Mul(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.Narrow(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Narrow(Int32, Int64, Int64)
+  nameWithType: ByteTensor.Narrow(Int32, Int64, Int64)
+  fullName: ByteTensor.Narrow(Int32, Int64, Int64)
+- uid: TorchSharp.ByteTensor.ProdAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ProdAll()
+  nameWithType: ByteTensor.ProdAll()
+  fullName: ByteTensor.ProdAll()
+- uid: TorchSharp.ByteTensor.Random(System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Random(Int64)
+  nameWithType: ByteTensor.Random(Int64)
+  fullName: ByteTensor.Random(Int64)
+- uid: TorchSharp.ByteTensor.Random(TorchSharp.RandomGenerator,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Random(RandomGenerator, Int64)
+  nameWithType: ByteTensor.Random(RandomGenerator, Int64)
+  fullName: ByteTensor.Random(RandomGenerator, Int64)
+- uid: TorchSharp.RandomGenerator
+  parent: TorchSharp
+  isExternal: false
+  name: RandomGenerator
+  nameWithType: RandomGenerator
+  fullName: TorchSharp.RandomGenerator
+- uid: TorchSharp.ByteTensor.Remainder(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Remainder(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Remainder(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Remainder(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.Remainder(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Remainder(Byte)
+  nameWithType: ByteTensor.Remainder(Byte)
+  fullName: ByteTensor.Remainder(Byte)
+- uid: TorchSharp.ByteTensor.Resize1d(System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize1d(Int64)
+  nameWithType: ByteTensor.Resize1d(Int64)
+  fullName: ByteTensor.Resize1d(Int64)
+- uid: TorchSharp.ByteTensor.Resize2d(System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize2d(Int64, Int64)
+  nameWithType: ByteTensor.Resize2d(Int64, Int64)
+  fullName: ByteTensor.Resize2d(Int64, Int64)
+- uid: TorchSharp.ByteTensor.Resize3d(System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize3d(Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize3d(Int64, Int64, Int64)
+  fullName: ByteTensor.Resize3d(Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize4d(Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize4d(Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Resize4d(Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize5d(Int64, Int64, Int64, Int64, Int64)
+  nameWithType: ByteTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+  fullName: ByteTensor.Resize5d(Int64, Int64, Int64, Int64, Int64)
+- uid: TorchSharp.ByteTensor.ResizeAs(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ResizeAs(ByteTensor)
+  nameWithType: ByteTensor.ResizeAs(ByteTensor)
+  fullName: ByteTensor.ResizeAs(ByteTensor)
+- uid: TorchSharp.ByteTensor.RShift(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: RShift(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.RShift(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.RShift(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.RShift(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: RShift(Byte)
+  nameWithType: ByteTensor.RShift(Byte)
+  fullName: ByteTensor.RShift(Byte)
+- uid: TorchSharp.ByteTensor.Select(System.Int32,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Select(Int32, Int64)
+  nameWithType: ByteTensor.Select(Int32, Int64)
+  fullName: ByteTensor.Select(Int32, Int64)
+- uid: TorchSharp.ByteTensor.Set(TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Set(ByteTensor)
+  nameWithType: ByteTensor.Set(ByteTensor)
+  fullName: ByteTensor.Set(ByteTensor)
+- uid: TorchSharp.ByteTensor.Shape
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Shape
+  nameWithType: ByteTensor.Shape
+  fullName: ByteTensor.Shape
+- uid: System.Int64[]
+  parent: System
+  isExternal: true
+  name: Int64[]
+  nameWithType: Int64[]
+  fullName: System.Int64[]
+  spec.csharp:
+  - uid: System.Int64
+    name: Int64
+    nameWithType: Int64
+    fullName: System.Int64
+  - name: '[]'
+    nameWithType: '[]'
+    fullName: '[]'
+- uid: TorchSharp.ByteTensor.Storage
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Storage
+  nameWithType: ByteTensor.Storage
+  fullName: ByteTensor.Storage
+- uid: TorchSharp.ByteStorage
+  parent: TorchSharp
+  isExternal: false
+  name: ByteStorage
+  nameWithType: ByteStorage
+  fullName: TorchSharp.ByteStorage
+- uid: TorchSharp.ByteTensor.Sub(System.Byte)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Sub(Byte)
+  nameWithType: ByteTensor.Sub(Byte)
+  fullName: ByteTensor.Sub(Byte)
+- uid: TorchSharp.ByteTensor.Sub(TorchSharp.ByteTensor,System.Byte,TorchSharp.ByteTensor)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Sub(ByteTensor, Byte, ByteTensor)
+  nameWithType: ByteTensor.Sub(ByteTensor, Byte, ByteTensor)
+  fullName: ByteTensor.Sub(ByteTensor, Byte, ByteTensor)
+- uid: TorchSharp.ByteTensor.SumAll
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: SumAll()
+  nameWithType: ByteTensor.SumAll()
+  fullName: ByteTensor.SumAll()
+- uid: TorchSharp.ByteTensor.ToString
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ToString()
+  nameWithType: ByteTensor.ToString()
+  fullName: ByteTensor.ToString()
+- uid: System.String
+  parent: System
+  isExternal: true
+  name: String
+  nameWithType: String
+  fullName: System.String
+- uid: TorchSharp.ByteTensor.Transpose(System.Int32,System.Int32)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Transpose(Int32, Int32)
+  nameWithType: ByteTensor.Transpose(Int32, Int32)
+  fullName: ByteTensor.Transpose(Int32, Int32)
+- uid: TorchSharp.ByteTensor.Unfold(System.Int32,System.Int64,System.Int64)
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Unfold(Int32, Int64, Int64)
+  nameWithType: ByteTensor.Unfold(Int32, Int64, Int64)
+  fullName: ByteTensor.Unfold(Int32, Int64, Int64)
+- uid: TorchSharp.ByteTensor.ZeroFill
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ZeroFill()
+  nameWithType: ByteTensor.ZeroFill()
+  fullName: ByteTensor.ZeroFill()
+- uid: TorchSharp.ByteTensor.#ctor*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ByteTensor
+  nameWithType: ByteTensor.ByteTensor
+  fullName: ByteTensor.ByteTensor
+- uid: TorchSharp.ByteTensor.Add*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Add
+  nameWithType: ByteTensor.Add
+  fullName: ByteTensor.Add
+- uid: TorchSharp.ByteTensor.BitAnd*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitAnd
+  nameWithType: ByteTensor.BitAnd
+  fullName: ByteTensor.BitAnd
+- uid: TorchSharp.ByteTensor.BitOr*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitOr
+  nameWithType: ByteTensor.BitOr
+  fullName: ByteTensor.BitOr
+- uid: TorchSharp.ByteTensor.BitXor*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: BitXor
+  nameWithType: ByteTensor.BitXor
+  fullName: ByteTensor.BitXor
+- uid: TorchSharp.ByteTensor.CAdd*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CAdd
+  nameWithType: ByteTensor.CAdd
+  fullName: ByteTensor.CAdd
+- uid: TorchSharp.ByteTensor.CBitAnd*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitAnd
+  nameWithType: ByteTensor.CBitAnd
+  fullName: ByteTensor.CBitAnd
+- uid: TorchSharp.ByteTensor.CBitOr*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitOr
+  nameWithType: ByteTensor.CBitOr
+  fullName: ByteTensor.CBitOr
+- uid: TorchSharp.ByteTensor.CBitXor*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CBitXor
+  nameWithType: ByteTensor.CBitXor
+  fullName: ByteTensor.CBitXor
+- uid: TorchSharp.ByteTensor.CDiv*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CDiv
+  nameWithType: ByteTensor.CDiv
+  fullName: ByteTensor.CDiv
+- uid: TorchSharp.ByteTensor.CFMod*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CFMod
+  nameWithType: ByteTensor.CFMod
+  fullName: ByteTensor.CFMod
+- uid: TorchSharp.ByteTensor.Clamp*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Clamp
+  nameWithType: ByteTensor.Clamp
+  fullName: ByteTensor.Clamp
+- uid: TorchSharp.ByteTensor.Clone*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Clone
+  nameWithType: ByteTensor.Clone
+  fullName: ByteTensor.Clone
+- uid: TorchSharp.ByteTensor.CLShift*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CLShift
+  nameWithType: ByteTensor.CLShift
+  fullName: ByteTensor.CLShift
+- uid: TorchSharp.ByteTensor.CMul*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CMul
+  nameWithType: ByteTensor.CMul
+  fullName: ByteTensor.CMul
+- uid: TorchSharp.ByteTensor.CPow*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CPow
+  nameWithType: ByteTensor.CPow
+  fullName: ByteTensor.CPow
+- uid: TorchSharp.ByteTensor.CRemainder*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CRemainder
+  nameWithType: ByteTensor.CRemainder
+  fullName: ByteTensor.CRemainder
+- uid: TorchSharp.ByteTensor.CSub*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: CSub
+  nameWithType: ByteTensor.CSub
+  fullName: ByteTensor.CSub
+- uid: TorchSharp.ByteTensor.Data*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Data
+  nameWithType: ByteTensor.Data
+  fullName: ByteTensor.Data
+- uid: TorchSharp.ByteTensor.Dimensions*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dimensions
+  nameWithType: ByteTensor.Dimensions
+  fullName: ByteTensor.Dimensions
+- uid: TorchSharp.ByteTensor.Dispose*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dispose
+  nameWithType: ByteTensor.Dispose
+  fullName: ByteTensor.Dispose
+- uid: TorchSharp.ByteTensor.Div*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Div
+  nameWithType: ByteTensor.Div
+  fullName: ByteTensor.Div
+- uid: TorchSharp.ByteTensor.Dot*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Dot
+  nameWithType: ByteTensor.Dot
+  fullName: ByteTensor.Dot
+- uid: TorchSharp.ByteTensor.Fill*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Fill
+  nameWithType: ByteTensor.Fill
+  fullName: ByteTensor.Fill
+- uid: TorchSharp.ByteTensor.Finalize*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Finalize
+  nameWithType: ByteTensor.Finalize
+  fullName: ByteTensor.Finalize
+- uid: TorchSharp.ByteTensor.Fmod*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Fmod
+  nameWithType: ByteTensor.Fmod
+  fullName: ByteTensor.Fmod
+- uid: TorchSharp.ByteTensor.GetTensorDimension*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: GetTensorDimension
+  nameWithType: ByteTensor.GetTensorDimension
+  fullName: ByteTensor.GetTensorDimension
+- uid: TorchSharp.ByteTensor.GetTensorStride*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: GetTensorStride
+  nameWithType: ByteTensor.GetTensorStride
+  fullName: ByteTensor.GetTensorStride
+- uid: TorchSharp.ByteTensor.IndexCopy*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: IndexCopy
+  nameWithType: ByteTensor.IndexCopy
+  fullName: ByteTensor.IndexCopy
+- uid: TorchSharp.ByteTensor.IndexSelect*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: IndexSelect
+  nameWithType: ByteTensor.IndexSelect
+  fullName: ByteTensor.IndexSelect
+- uid: TorchSharp.ByteTensor.Item*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Item
+  nameWithType: ByteTensor.Item
+  fullName: ByteTensor.Item
+- uid: TorchSharp.ByteTensor.LShift*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: LShift
+  nameWithType: ByteTensor.LShift
+  fullName: ByteTensor.LShift
+- uid: TorchSharp.ByteTensor.MaxAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MaxAll
+  nameWithType: ByteTensor.MaxAll
+  fullName: ByteTensor.MaxAll
+- uid: TorchSharp.ByteTensor.MeanAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MeanAll
+  nameWithType: ByteTensor.MeanAll
+  fullName: ByteTensor.MeanAll
+- uid: TorchSharp.ByteTensor.MedianAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MedianAll
+  nameWithType: ByteTensor.MedianAll
+  fullName: ByteTensor.MedianAll
+- uid: TorchSharp.ByteTensor.MinAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: MinAll
+  nameWithType: ByteTensor.MinAll
+  fullName: ByteTensor.MinAll
+- uid: TorchSharp.ByteTensor.Mul*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Mul
+  nameWithType: ByteTensor.Mul
+  fullName: ByteTensor.Mul
+- uid: TorchSharp.ByteTensor.Narrow*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Narrow
+  nameWithType: ByteTensor.Narrow
+  fullName: ByteTensor.Narrow
+- uid: TorchSharp.ByteTensor.ProdAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ProdAll
+  nameWithType: ByteTensor.ProdAll
+  fullName: ByteTensor.ProdAll
+- uid: TorchSharp.ByteTensor.Random*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Random
+  nameWithType: ByteTensor.Random
+  fullName: ByteTensor.Random
+- uid: TorchSharp.ByteTensor.Remainder*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Remainder
+  nameWithType: ByteTensor.Remainder
+  fullName: ByteTensor.Remainder
+- uid: TorchSharp.ByteTensor.Resize1d*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize1d
+  nameWithType: ByteTensor.Resize1d
+  fullName: ByteTensor.Resize1d
+- uid: TorchSharp.ByteTensor.Resize2d*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize2d
+  nameWithType: ByteTensor.Resize2d
+  fullName: ByteTensor.Resize2d
+- uid: TorchSharp.ByteTensor.Resize3d*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize3d
+  nameWithType: ByteTensor.Resize3d
+  fullName: ByteTensor.Resize3d
+- uid: TorchSharp.ByteTensor.Resize4d*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize4d
+  nameWithType: ByteTensor.Resize4d
+  fullName: ByteTensor.Resize4d
+- uid: TorchSharp.ByteTensor.Resize5d*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Resize5d
+  nameWithType: ByteTensor.Resize5d
+  fullName: ByteTensor.Resize5d
+- uid: TorchSharp.ByteTensor.ResizeAs*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ResizeAs
+  nameWithType: ByteTensor.ResizeAs
+  fullName: ByteTensor.ResizeAs
+- uid: TorchSharp.ByteTensor.RShift*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: RShift
+  nameWithType: ByteTensor.RShift
+  fullName: ByteTensor.RShift
+- uid: TorchSharp.ByteTensor.Select*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Select
+  nameWithType: ByteTensor.Select
+  fullName: ByteTensor.Select
+- uid: TorchSharp.ByteTensor.Set*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Set
+  nameWithType: ByteTensor.Set
+  fullName: ByteTensor.Set
+- uid: TorchSharp.ByteTensor.Shape*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Shape
+  nameWithType: ByteTensor.Shape
+  fullName: ByteTensor.Shape
+- uid: TorchSharp.ByteTensor.Storage*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Storage
+  nameWithType: ByteTensor.Storage
+  fullName: ByteTensor.Storage
+- uid: TorchSharp.ByteTensor.Sub*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Sub
+  nameWithType: ByteTensor.Sub
+  fullName: ByteTensor.Sub
+- uid: TorchSharp.ByteTensor.SumAll*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: SumAll
+  nameWithType: ByteTensor.SumAll
+  fullName: ByteTensor.SumAll
+- uid: TorchSharp.ByteTensor.ToString*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ToString
+  nameWithType: ByteTensor.ToString
+  fullName: ByteTensor.ToString
+- uid: TorchSharp.ByteTensor.Transpose*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Transpose
+  nameWithType: ByteTensor.Transpose
+  fullName: ByteTensor.Transpose
+- uid: TorchSharp.ByteTensor.Unfold*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: Unfold
+  nameWithType: ByteTensor.Unfold
+  fullName: ByteTensor.Unfold
+- uid: TorchSharp.ByteTensor.ZeroFill*
+  parent: TorchSharp.ByteTensor
+  isExternal: false
+  name: ZeroFill
+  nameWithType: ByteTensor.ZeroFill
+  fullName: ByteTensor.ZeroFill
+- uid: System.IDisposable
+  parent: System
+  isExternal: true
+  name: IDisposable
+  nameWithType: IDisposable
+  fullName: System.IDisposable

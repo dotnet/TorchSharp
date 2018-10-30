@@ -1,0 +1,3407 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class IntTensor
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class IntTensor
+   ">
+    <meta name="generator" content="docfx 2.18.2.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="TorchSharp.IntTensor">
+  
+  
+  <h1 id="TorchSharp_IntTensor" data-uid="TorchSharp.IntTensor">Class IntTensor
+  </h1>
+  <div class="markdown level0 summary"><p>Tensor of type Int.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">IntTensor</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="../TorchSharp.html">TorchSharp</a></h6>
+  <h6><strong>Assembly</strong>: TorchSharp.dll</h6>
+  <h5 id="TorchSharp_IntTensor_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class IntTensor : IDisposable</code></pre>
+  </div>
+  <h5 id="TorchSharp_IntTensor_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>
+                Use the default constructor to create an empty tensor, or invoke one of the
+                constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+                create a tensor for the desired number of dimensions.
+              </p></div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="TorchSharp_IntTensor__ctor_" data-uid="TorchSharp.IntTensor.#ctor*"></a>
+  <h4 id="TorchSharp_IntTensor__ctor" data-uid="TorchSharp.IntTensor.#ctor">IntTensor()</h4>
+  <div class="markdown level1 summary"><p>Creates an empty tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IntTensor ();</code></pre>
+  </div>
+  
+  
+  <a id="TorchSharp_IntTensor__ctor_" data-uid="TorchSharp.IntTensor.#ctor*"></a>
+  <h4 id="TorchSharp_IntTensor__ctor_System_Int64_" data-uid="TorchSharp.IntTensor.#ctor(System.Int64)">IntTensor(Int64)</h4>
+  <div class="markdown level1 summary"><p>Creates a 1D tensor of the specified size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IntTensor (long size0);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>Size for the first dimension.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor__ctor_" data-uid="TorchSharp.IntTensor.#ctor*"></a>
+  <h4 id="TorchSharp_IntTensor__ctor_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.#ctor(System.Int64,System.Int64)">IntTensor(Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Creates a 2D tensor of the specified size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IntTensor (long size0, long size1);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>Size for the first dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>Size for the second dimension.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor__ctor_" data-uid="TorchSharp.IntTensor.#ctor*"></a>
+  <h4 id="TorchSharp_IntTensor__ctor_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64)">IntTensor(Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Creates a 3D tensor of the specified size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IntTensor (long size0, long size1, long size2);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>Size for the first dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>Size for the second dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size2</span></td>
+        <td><p>Size for the third dimension.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor__ctor_" data-uid="TorchSharp.IntTensor.#ctor*"></a>
+  <h4 id="TorchSharp_IntTensor__ctor_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.#ctor(System.Int64,System.Int64,System.Int64,System.Int64)">IntTensor(Int64, Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Creates a 4D tensor of the specified size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IntTensor (long size0, long size1, long size2, long size3);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>Size for the first dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>Size for the second dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size2</span></td>
+        <td><p>Size for the third dimension.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size3</span></td>
+        <td><p>Size for the fourth dimension.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="TorchSharp_IntTensor_Data_" data-uid="TorchSharp.IntTensor.Data*"></a>
+  <h4 id="TorchSharp_IntTensor_Data" data-uid="TorchSharp.IntTensor.Data">Data</h4>
+  <div class="markdown level1 summary"><p>Returns a pointer to the unmanaged data managed by this tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int* Data { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span>*</td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Dimensions_" data-uid="TorchSharp.IntTensor.Dimensions*"></a>
+  <h4 id="TorchSharp_IntTensor_Dimensions" data-uid="TorchSharp.IntTensor.Dimensions">Dimensions</h4>
+  <div class="markdown level1 summary"><p>Returns the number of dimensions for this tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Dimensions { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Item_" data-uid="TorchSharp.IntTensor.Item*"></a>
+  <h4 id="TorchSharp_IntTensor_Item_System_Int64_" data-uid="TorchSharp.IntTensor.Item(System.Int64)">Item(Int64)</h4>
+  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[long x0] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x0</span></td>
+        <td><p>Index to access.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Item_" data-uid="TorchSharp.IntTensor.Item*"></a>
+  <h4 id="TorchSharp_IntTensor_Item_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Item(System.Int64,System.Int64)">Item(Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[long x0, long x1] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x0</span></td>
+        <td><p>Index in the first dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x1</span></td>
+        <td><p>Index in the second dimension to access.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Item_" data-uid="TorchSharp.IntTensor.Item*"></a>
+  <h4 id="TorchSharp_IntTensor_Item_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64)">Item(Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[long x0, long x1, long x2] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x0</span></td>
+        <td><p>Index in the first dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x1</span></td>
+        <td><p>Index in the second dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x2</span></td>
+        <td><p>Index in the third dimension to access.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Item_" data-uid="TorchSharp.IntTensor.Item*"></a>
+  <h4 id="TorchSharp_IntTensor_Item_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Item(System.Int64,System.Int64,System.Int64,System.Int64)">Item(Int64, Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Access to element at the specified position in the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[long x0, long x1, long x2, long x3] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x0</span></td>
+        <td><p>Index in the first dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x1</span></td>
+        <td><p>Index in the second dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x2</span></td>
+        <td><p>Index in the third dimension to access.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">x3</span></td>
+        <td><p>Index in the fourth dimension to access.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Shape_" data-uid="TorchSharp.IntTensor.Shape*"></a>
+  <h4 id="TorchSharp_IntTensor_Shape" data-uid="TorchSharp.IntTensor.Shape">Shape</h4>
+  <div class="markdown level1 summary"><p>Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long[] Shape { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span>[]</td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Shape_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>An array of size 0 is used for constants, an array of size 1 is used
+                for single-dimension arrays, where the dimension is the value of the
+                first element.   And so on.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Storage_" data-uid="TorchSharp.IntTensor.Storage*"></a>
+  <h4 id="TorchSharp_IntTensor_Storage" data-uid="TorchSharp.IntTensor.Storage">Storage</h4>
+  <div class="markdown level1 summary"><p>Returns the associated storage for this tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntStorage Storage { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntStorage.html">IntStorage</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="TorchSharp_IntTensor_Add_" data-uid="TorchSharp.IntTensor.Add*"></a>
+  <h4 id="TorchSharp_IntTensor_Add_System_Int32_" data-uid="TorchSharp.IntTensor.Add(System.Int32)">Add(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Add operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Add (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Add_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Add(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Add_" data-uid="TorchSharp.IntTensor.Add*"></a>
+  <h4 id="TorchSharp_IntTensor_Add_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Add(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Add(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Add operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Add (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Add_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Add operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitAnd_" data-uid="TorchSharp.IntTensor.BitAnd*"></a>
+  <h4 id="TorchSharp_IntTensor_BitAnd_System_Int32_" data-uid="TorchSharp.IntTensor.BitAnd(System.Int32)">BitAnd(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor BitAnd (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitAnd_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.BitAnd(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitAnd_" data-uid="TorchSharp.IntTensor.BitAnd*"></a>
+  <h4 id="TorchSharp_IntTensor_BitAnd_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.BitAnd(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">BitAnd(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitAnd operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void BitAnd (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitAnd_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitAnd operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitOr_" data-uid="TorchSharp.IntTensor.BitOr*"></a>
+  <h4 id="TorchSharp_IntTensor_BitOr_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.BitOr(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">BitOr(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitOr operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void BitOr (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitOr_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitOr operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitOr_" data-uid="TorchSharp.IntTensor.BitOr*"></a>
+  <h4 id="TorchSharp_IntTensor_BitOr_System_Int32_" data-uid="TorchSharp.IntTensor.BitOr(System.Int32)">BitOr(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitOr operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor BitOr (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitOr_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.BitOr(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitXor_" data-uid="TorchSharp.IntTensor.BitXor*"></a>
+  <h4 id="TorchSharp_IntTensor_BitXor_System_Int32_" data-uid="TorchSharp.IntTensor.BitXor(System.Int32)">BitXor(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitXor operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor BitXor (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitXor_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.BitXor(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_BitXor_" data-uid="TorchSharp.IntTensor.BitXor*"></a>
+  <h4 id="TorchSharp_IntTensor_BitXor_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.BitXor(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">BitXor(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the BitXor operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void BitXor (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_BitXor_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the BitXor operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_CAdd_" data-uid="TorchSharp.IntTensor.CAdd*"></a>
+  <h4 id="TorchSharp_IntTensor_CAdd_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CAdd(System.Int32,TorchSharp.IntTensor)">CAdd(Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the CAdd operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.
+              where the result is t[idx] + value * src[idx]</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CAdd (int value, TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CBitAnd_" data-uid="TorchSharp.IntTensor.CBitAnd*"></a>
+  <h4 id="TorchSharp_IntTensor_CBitAnd_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CBitAnd(TorchSharp.IntTensor)">CBitAnd(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CBitAnd of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CBitAnd (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CBitOr_" data-uid="TorchSharp.IntTensor.CBitOr*"></a>
+  <h4 id="TorchSharp_IntTensor_CBitOr_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CBitOr(TorchSharp.IntTensor)">CBitOr(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CBitOr of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CBitOr (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CBitXor_" data-uid="TorchSharp.IntTensor.CBitXor*"></a>
+  <h4 id="TorchSharp_IntTensor_CBitXor_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CBitXor(TorchSharp.IntTensor)">CBitXor(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CBitXor of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CBitXor (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CDiv_" data-uid="TorchSharp.IntTensor.CDiv*"></a>
+  <h4 id="TorchSharp_IntTensor_CDiv_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CDiv(TorchSharp.IntTensor)">CDiv(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CDiv of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CDiv (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CFMod_" data-uid="TorchSharp.IntTensor.CFMod*"></a>
+  <h4 id="TorchSharp_IntTensor_CFMod_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CFMod(TorchSharp.IntTensor)">CFMod(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CFMod of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CFMod (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Clamp_" data-uid="TorchSharp.IntTensor.Clamp*"></a>
+  <h4 id="TorchSharp_IntTensor_Clamp_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Clamp(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Clamp(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Clamp operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Clamp (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Clamp_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Clamp operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Clamp_" data-uid="TorchSharp.IntTensor.Clamp*"></a>
+  <h4 id="TorchSharp_IntTensor_Clamp_System_Int32_" data-uid="TorchSharp.IntTensor.Clamp(System.Int32)">Clamp(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Clamp operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Clamp (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Clamp_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Clamp(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Clone_" data-uid="TorchSharp.IntTensor.Clone*"></a>
+  <h4 id="TorchSharp_IntTensor_Clone" data-uid="TorchSharp.IntTensor.Clone">Clone()</h4>
+  <div class="markdown level1 summary"><p>Returns a deep clone of the tensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Clone ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CLShift_" data-uid="TorchSharp.IntTensor.CLShift*"></a>
+  <h4 id="TorchSharp_IntTensor_CLShift_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CLShift(TorchSharp.IntTensor)">CLShift(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CLShift of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CLShift (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CMul_" data-uid="TorchSharp.IntTensor.CMul*"></a>
+  <h4 id="TorchSharp_IntTensor_CMul_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CMul(TorchSharp.IntTensor)">CMul(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CMul of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CMul (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CPow_" data-uid="TorchSharp.IntTensor.CPow*"></a>
+  <h4 id="TorchSharp_IntTensor_CPow_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CPow(TorchSharp.IntTensor)">CPow(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CPow of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CPow (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CRemainder_" data-uid="TorchSharp.IntTensor.CRemainder*"></a>
+  <h4 id="TorchSharp_IntTensor_CRemainder_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CRemainder(TorchSharp.IntTensor)">CRemainder(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs an CRemainder of the tensor with the provided 
+              <see paramref="src"></see> tensor and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CRemainder (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_CSub_" data-uid="TorchSharp.IntTensor.CSub*"></a>
+  <h4 id="TorchSharp_IntTensor_CSub_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.CSub(System.Int32,TorchSharp.IntTensor)">CSub(Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the CSub operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.
+              where the result is t[idx] + value * src[idx]</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor CSub (int value, TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Dispose_" data-uid="TorchSharp.IntTensor.Dispose*"></a>
+  <h4 id="TorchSharp_IntTensor_Dispose_System_Boolean_" data-uid="TorchSharp.IntTensor.Dispose(System.Boolean)">Dispose(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Implements the .NET Dispose pattern.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void Dispose (bool disposing);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">disposing</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Dispose_" data-uid="TorchSharp.IntTensor.Dispose*"></a>
+  <h4 id="TorchSharp_IntTensor_Dispose" data-uid="TorchSharp.IntTensor.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Releases the tensor and its associated data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose ();</code></pre>
+  </div>
+  
+  
+  <a id="TorchSharp_IntTensor_Div_" data-uid="TorchSharp.IntTensor.Div*"></a>
+  <h4 id="TorchSharp_IntTensor_Div_System_Int32_" data-uid="TorchSharp.IntTensor.Div(System.Int32)">Div(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Div operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Div (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Div_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Div(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Div_" data-uid="TorchSharp.IntTensor.Div*"></a>
+  <h4 id="TorchSharp_IntTensor_Div_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Div(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Div(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Div operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Div (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Div_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Div operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Dot_" data-uid="TorchSharp.IntTensor.Dot*"></a>
+  <h4 id="TorchSharp_IntTensor_Dot_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Dot(TorchSharp.IntTensor)">Dot(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Returns the tensor product between this tensor and the provided one</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long Dot (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>The dot product</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Fill_" data-uid="TorchSharp.IntTensor.Fill*"></a>
+  <h4 id="TorchSharp_IntTensor_Fill_System_Int32_" data-uid="TorchSharp.IntTensor.Fill(System.Int32)">Fill(Int32)</h4>
+  <div class="markdown level1 summary"><p>Fills the tensor with the specified value</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Fill (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Finalize_" data-uid="TorchSharp.IntTensor.Finalize*"></a>
+  <h4 id="TorchSharp_IntTensor_Finalize" data-uid="TorchSharp.IntTensor.Finalize">Finalize()</h4>
+  <div class="markdown level1 summary"><p>Finalizer for ~IntTensor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">~IntTensor ();</code></pre>
+  </div>
+  
+  
+  <a id="TorchSharp_IntTensor_Fmod_" data-uid="TorchSharp.IntTensor.Fmod*"></a>
+  <h4 id="TorchSharp_IntTensor_Fmod_System_Int32_" data-uid="TorchSharp.IntTensor.Fmod(System.Int32)">Fmod(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Fmod operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Fmod (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Fmod_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Fmod(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Fmod_" data-uid="TorchSharp.IntTensor.Fmod*"></a>
+  <h4 id="TorchSharp_IntTensor_Fmod_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Fmod(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Fmod(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Fmod operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Fmod (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Fmod_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Fmod operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_GetTensorDimension_" data-uid="TorchSharp.IntTensor.GetTensorDimension*"></a>
+  <h4 id="TorchSharp_IntTensor_GetTensorDimension_System_Int32_" data-uid="TorchSharp.IntTensor.GetTensorDimension(System.Int32)">GetTensorDimension(Int32)</h4>
+  <div class="markdown level1 summary"><p>Retrieves the size of the specified dimension in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long GetTensorDimension (int dim);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_GetTensorStride_" data-uid="TorchSharp.IntTensor.GetTensorStride*"></a>
+  <h4 id="TorchSharp_IntTensor_GetTensorStride_System_Int32_" data-uid="TorchSharp.IntTensor.GetTensorStride(System.Int32)">GetTensorStride(Int32)</h4>
+  <div class="markdown level1 summary"><p>Retrieves the stride of the specified dimension in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long GetTensorStride (int dim);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_IndexCopy_" data-uid="TorchSharp.IntTensor.IndexCopy*"></a>
+  <h4 id="TorchSharp_IntTensor_IndexCopy_System_Int32_TorchSharp_LongTensor_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.IndexCopy(System.Int32,TorchSharp.LongTensor,TorchSharp.IntTensor)">IndexCopy(Int32, LongTensor, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Copies the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>Dimension to select for the copy</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Entries to copy</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>Tensor to copy the data from.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_IndexSelect_" data-uid="TorchSharp.IntTensor.IndexSelect*"></a>
+  <h4 id="TorchSharp_IntTensor_IndexSelect_System_Int32_TorchSharp_LongTensor_" data-uid="TorchSharp.IntTensor.IndexSelect(System.Int32,TorchSharp.LongTensor)">IndexSelect(Int32, LongTensor)</h4>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which indexes the original Tensor along dimension dim
+              using the entries in index.  The returned Tensor has the same number of dimensions as the 
+              original Tensor. The returned Tensor does not use the same storage as the original Tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor IndexSelect (int dim, TorchSharp.LongTensor index);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>Dimension to select</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.LongTensor.html">LongTensor</a></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Entries to extract</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_LShift_" data-uid="TorchSharp.IntTensor.LShift*"></a>
+  <h4 id="TorchSharp_IntTensor_LShift_System_Int32_" data-uid="TorchSharp.IntTensor.LShift(System.Int32)">LShift(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the LShift operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor LShift (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_LShift_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.LShift(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_LShift_" data-uid="TorchSharp.IntTensor.LShift*"></a>
+  <h4 id="TorchSharp_IntTensor_LShift_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.LShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">LShift(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the LShift operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void LShift (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_LShift_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the LShift operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_MaxAll_" data-uid="TorchSharp.IntTensor.MaxAll*"></a>
+  <h4 id="TorchSharp_IntTensor_MaxAll" data-uid="TorchSharp.IntTensor.MaxAll">MaxAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the maximum value of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MaxAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The maximum value of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_MeanAll_" data-uid="TorchSharp.IntTensor.MeanAll*"></a>
+  <h4 id="TorchSharp_IntTensor_MeanAll" data-uid="TorchSharp.IntTensor.MeanAll">MeanAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the mean of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long MeanAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>The mean of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_MedianAll_" data-uid="TorchSharp.IntTensor.MedianAll*"></a>
+  <h4 id="TorchSharp_IntTensor_MedianAll" data-uid="TorchSharp.IntTensor.MedianAll">MedianAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the median of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MedianAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The median of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_MinAll_" data-uid="TorchSharp.IntTensor.MinAll*"></a>
+  <h4 id="TorchSharp_IntTensor_MinAll" data-uid="TorchSharp.IntTensor.MinAll">MinAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the minimum value of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MinAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The minimum value of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Mul_" data-uid="TorchSharp.IntTensor.Mul*"></a>
+  <h4 id="TorchSharp_IntTensor_Mul_System_Int32_" data-uid="TorchSharp.IntTensor.Mul(System.Int32)">Mul(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Mul operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Mul (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Mul_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Mul(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Mul_" data-uid="TorchSharp.IntTensor.Mul*"></a>
+  <h4 id="TorchSharp_IntTensor_Mul_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Mul(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Mul(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Mul operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Mul (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Mul_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Mul operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Narrow_" data-uid="TorchSharp.IntTensor.Narrow*"></a>
+  <h4 id="TorchSharp_IntTensor_Narrow_System_Int32_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Narrow(System.Int32,System.Int64,System.Int64)">Narrow(Int32, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Narrow (int dim, long firstIndex, long size);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>The dimension to narrow</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">firstIndex</span></td>
+        <td><p>Initial index to narrow</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>Number of elements</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_ProdAll_" data-uid="TorchSharp.IntTensor.ProdAll*"></a>
+  <h4 id="TorchSharp_IntTensor_ProdAll" data-uid="TorchSharp.IntTensor.ProdAll">ProdAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the product of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long ProdAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>The product of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Random_" data-uid="TorchSharp.IntTensor.Random*"></a>
+  <h4 id="TorchSharp_IntTensor_Random_System_Int64_" data-uid="TorchSharp.IntTensor.Random(System.Int64)">Random(Int64)</h4>
+  <div class="markdown level1 summary"><p>Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Random (long n);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">n</span></td>
+        <td><p>The upper limit for the values to be generated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Random_" data-uid="TorchSharp.IntTensor.Random*"></a>
+  <h4 id="TorchSharp_IntTensor_Random_TorchSharp_RandomGenerator_System_Int64_" data-uid="TorchSharp.IntTensor.Random(TorchSharp.RandomGenerator,System.Int64)">Random(RandomGenerator, Int64)</h4>
+  <div class="markdown level1 summary"><p>Populates the tensor with random values from 0 to n, using the provided random source generator.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Random (TorchSharp.RandomGenerator source, long n);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.RandomGenerator.html">RandomGenerator</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>The random generator source</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">n</span></td>
+        <td><p>The upper limit for the values to be generated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Remainder_" data-uid="TorchSharp.IntTensor.Remainder*"></a>
+  <h4 id="TorchSharp_IntTensor_Remainder_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Remainder(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Remainder(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Remainder operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Remainder (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Remainder_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Remainder operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Remainder_" data-uid="TorchSharp.IntTensor.Remainder*"></a>
+  <h4 id="TorchSharp_IntTensor_Remainder_System_Int32_" data-uid="TorchSharp.IntTensor.Remainder(System.Int32)">Remainder(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Remainder operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Remainder (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Remainder_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Remainder(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Resize1d_" data-uid="TorchSharp.IntTensor.Resize1d*"></a>
+  <h4 id="TorchSharp_IntTensor_Resize1d_System_Int64_" data-uid="TorchSharp.IntTensor.Resize1d(System.Int64)">Resize1d(Int64)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize1d (long size);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Resize2d_" data-uid="TorchSharp.IntTensor.Resize2d*"></a>
+  <h4 id="TorchSharp_IntTensor_Resize2d_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Resize2d(System.Int64,System.Int64)">Resize2d(Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize2d (long size0, long size1);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Resize3d_" data-uid="TorchSharp.IntTensor.Resize3d*"></a>
+  <h4 id="TorchSharp_IntTensor_Resize3d_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Resize3d(System.Int64,System.Int64,System.Int64)">Resize3d(Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize3d (long size0, long size1, long size2);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size2</span></td>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Resize4d_" data-uid="TorchSharp.IntTensor.Resize4d*"></a>
+  <h4 id="TorchSharp_IntTensor_Resize4d_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Resize4d(System.Int64,System.Int64,System.Int64,System.Int64)">Resize4d(Int64, Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize4d (long size0, long size1, long size2, long size3);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size2</span></td>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size3</span></td>
+        <td><p>The desired new size for the fourth dimension of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Resize5d_" data-uid="TorchSharp.IntTensor.Resize5d*"></a>
+  <h4 id="TorchSharp_IntTensor_Resize5d_System_Int64_System_Int64_System_Int64_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Resize5d(System.Int64,System.Int64,System.Int64,System.Int64,System.Int64)">Resize5d(Int64, Int64, Int64, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Resize5d (long size0, long size1, long size2, long size3, long size4);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size0</span></td>
+        <td><p>The desired new size for the first dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size1</span></td>
+        <td><p>The desired new size for the second dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size2</span></td>
+        <td><p>The desired new size for the third dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size3</span></td>
+        <td><p>The desired new size for the fourth dimension of the tensor.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size4</span></td>
+        <td><p>The desired new size for the fifth dimension of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_ResizeAs_" data-uid="TorchSharp.IntTensor.ResizeAs*"></a>
+  <h4 id="TorchSharp_IntTensor_ResizeAs_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.ResizeAs(TorchSharp.IntTensor)">ResizeAs(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResizeAs (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>The source tensor whose shape will be mirrored by this tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_RShift_" data-uid="TorchSharp.IntTensor.RShift*"></a>
+  <h4 id="TorchSharp_IntTensor_RShift_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.RShift(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">RShift(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the RShift operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RShift (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_RShift_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the RShift operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_RShift_" data-uid="TorchSharp.IntTensor.RShift*"></a>
+  <h4 id="TorchSharp_IntTensor_RShift_System_Int32_" data-uid="TorchSharp.IntTensor.RShift(System.Int32)">RShift(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the RShift operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor RShift (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_RShift_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.RShift(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Select_" data-uid="TorchSharp.IntTensor.Select*"></a>
+  <h4 id="TorchSharp_IntTensor_Select_System_Int32_System_Int64_" data-uid="TorchSharp.IntTensor.Select(System.Int32,System.Int64)">Select(Int32, Int64)</h4>
+  <div class="markdown level1 summary"><p>Returns a new Tensor which is a tensor slice at the given index in the dimension dim.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Select (int dim, long slideIndex);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>Dimension to select</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">slideIndex</span></td>
+        <td><p>Beginning of the tensor slice</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Select_System_Int32_System_Int64__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Set_" data-uid="TorchSharp.IntTensor.Set*"></a>
+  <h4 id="TorchSharp_IntTensor_Set_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Set(TorchSharp.IntTensor)">Set(IntTensor)</h4>
+  <div class="markdown level1 summary"><p>The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Set (TorchSharp.IntTensor src);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">src</span></td>
+        <td><p>The source tensor which contains the data..</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Sub_" data-uid="TorchSharp.IntTensor.Sub*"></a>
+  <h4 id="TorchSharp_IntTensor_Sub_System_Int32_" data-uid="TorchSharp.IntTensor.Sub(System.Int32)">Sub(Int32)</h4>
+  <div class="markdown level1 summary"><p>Performs the Sub operation on each element of the tensor with the
+              <see paramref="value"></see> and returns a new tensor with the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Sub (int value);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>This returns a new tensor with the same shape as the tensor this operates on.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Sub_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <span class="xref">PytorchSharp.Sub(PytorchSharp.IntTensor, Int, PytorchSharp.Int)</span>.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_Sub_" data-uid="TorchSharp.IntTensor.Sub*"></a>
+  <h4 id="TorchSharp_IntTensor_Sub_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor_" data-uid="TorchSharp.IntTensor.Sub(TorchSharp.IntTensor,System.Int32,TorchSharp.IntTensor)">Sub(IntTensor, Int32, IntTensor)</h4>
+  <div class="markdown level1 summary"><p>Performs the Sub operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Sub (TorchSharp.IntTensor source, int value, TorchSharp.IntTensor result);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">source</span></td>
+        <td><p>Source tensor on which the operation will take place.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The scalar value that the operation uses.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><span class="parametername">result</span></td>
+        <td><p>The tensor where the result will be placed</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="TorchSharp_IntTensor_Sub_TorchSharp_IntTensor_System_Int32_TorchSharp_IntTensor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>For each element in the <see paramref="source"></see> performs the Sub operation
+               with <see paramref="value"></see>.   The result is stored in the <see paramref="result"></see>
+               tensor.</p>
+</div>
+  
+  
+  <a id="TorchSharp_IntTensor_SumAll_" data-uid="TorchSharp.IntTensor.SumAll*"></a>
+  <h4 id="TorchSharp_IntTensor_SumAll" data-uid="TorchSharp.IntTensor.SumAll">SumAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the sum of the elements in the tensor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long SumAll ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><p>The sum of the tensor.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_ToString_" data-uid="TorchSharp.IntTensor.ToString*"></a>
+  <h4 id="TorchSharp_IntTensor_ToString" data-uid="TorchSharp.IntTensor.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns a debuggable version of the tensor, in this case the tensor shape</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString ();</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Transpose_" data-uid="TorchSharp.IntTensor.Transpose*"></a>
+  <h4 id="TorchSharp_IntTensor_Transpose_System_Int32_System_Int32_" data-uid="TorchSharp.IntTensor.Transpose(System.Int32,System.Int32)">Transpose(Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Returns a tensor where dimensions dim1 and dim2 have been swapped.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Transpose (int dim1, int dim2);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim1</span></td>
+        <td><p>First dimension</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim2</span></td>
+        <td><p>Second dimension</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_Unfold_" data-uid="TorchSharp.IntTensor.Unfold*"></a>
+  <h4 id="TorchSharp_IntTensor_Unfold_System_Int32_System_Int64_System_Int64_" data-uid="TorchSharp.IntTensor.Unfold(System.Int32,System.Int64,System.Int64)">Unfold(Int32, Int64, Int64)</h4>
+  <div class="markdown level1 summary"><p>Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TorchSharp.IntTensor Unfold (int dim, long size, long step);</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dim</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">step</span></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="TorchSharp.IntTensor.html">IntTensor</a></td>
+        <td><p>To be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="TorchSharp_IntTensor_ZeroFill_" data-uid="TorchSharp.IntTensor.ZeroFill*"></a>
+  <h4 id="TorchSharp_IntTensor_ZeroFill" data-uid="TorchSharp.IntTensor.ZeroFill">ZeroFill()</h4>
+  <div class="markdown level1 summary"><p>Fills the tensor with zeros</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ZeroFill ();</code></pre>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

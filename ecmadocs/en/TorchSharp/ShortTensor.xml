@@ -1,0 +1,1990 @@
+<Type Name="ShortTensor" FullName="TorchSharp.ShortTensor">
+  <TypeSignature Language="C#" Value="public class ShortTensor : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ShortTensor extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>TorchSharp</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+              Tensor of type Short.
+            </summary>
+    <remarks>
+      <para>
+                Use the default constructor to create an empty tensor, or invoke one of the
+                constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
+                create a tensor for the desired number of dimensions.
+              </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ShortTensor ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+               Creates an empty tensor.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ShortTensor (long size0);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size0) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">Size for the first dimension.</param>
+        <summary>
+               Creates a 1D tensor of the specified size.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ShortTensor (long size0, long size1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size0, int64 size1) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">Size for the first dimension.</param>
+        <param name="size1">Size for the second dimension.</param>
+        <summary>
+               Creates a 2D tensor of the specified size.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ShortTensor (long size0, long size1, long size2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size0, int64 size1, int64 size2) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">Size for the first dimension.</param>
+        <param name="size1">Size for the second dimension.</param>
+        <param name="size2">Size for the third dimension.</param>
+        <summary>
+               Creates a 3D tensor of the specified size.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ShortTensor (long size0, long size1, long size2, long size3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size0, int64 size1, int64 size2, int64 size3) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+        <Parameter Name="size3" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">Size for the first dimension.</param>
+        <param name="size1">Size for the second dimension.</param>
+        <param name="size2">Size for the third dimension.</param>
+        <param name="size3">Size for the fourth dimension.</param>
+        <summary>
+               Creates a 4D tensor of the specified size.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Add (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Add(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Add operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Add(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public static void Add (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Add(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Add operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Add operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitAnd">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor BitAnd (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor BitAnd(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the BitAnd operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.BitAnd(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitAnd">
+      <MemberSignature Language="C#" Value="public static void BitAnd (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void BitAnd(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the BitAnd operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the BitAnd operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitOr">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor BitOr (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor BitOr(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the BitOr operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.BitOr(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitOr">
+      <MemberSignature Language="C#" Value="public static void BitOr (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void BitOr(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the BitOr operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the BitOr operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitXor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor BitXor (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor BitXor(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the BitXor operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.BitXor(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BitXor">
+      <MemberSignature Language="C#" Value="public static void BitXor (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void BitXor(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the BitXor operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the BitXor operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CAdd">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CAdd (short value, TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CAdd(int16 value, class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs the CAdd operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+              where the result is t[idx] + value * src[idx]
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CBitAnd">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CBitAnd (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CBitAnd(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CBitAnd of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CBitOr">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CBitOr (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CBitOr(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CBitOr of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CBitXor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CBitXor (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CBitXor(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CBitXor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CDiv">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CDiv (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CDiv(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CDiv of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CFMod">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CFMod (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CFMod(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CFMod of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clamp">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Clamp (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Clamp(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Clamp operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clamp">
+      <MemberSignature Language="C#" Value="public static void Clamp (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Clamp(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Clamp operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Clamp operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns a deep clone of the tensor
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CLShift">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CLShift (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CLShift(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CLShift of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CMul">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CMul (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CMul(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CMul of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CPow">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CPow (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CPow(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CPow of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CRemainder">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CRemainder (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CRemainder(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs an CRemainder of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CSub">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor CSub (short value, TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor CSub(int16 value, class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="src">To be added.</param>
+        <summary>
+              Performs the CSub operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+              where the result is t[idx] + value * src[idx]
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Data">
+      <MemberSignature Language="C#" Value="public short* Data { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16* Data" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16*</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+             Returns a pointer to the unmanaged data managed by this tensor.
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dimensions">
+      <MemberSignature Language="C#" Value="public int Dimensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Dimensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+             Returns the number of dimensions for this tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Releases the tensor and its associated data.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">To be added.</param>
+        <summary>
+              Implements the .NET Dispose pattern.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Div">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Div (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Div(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Div operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Div(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Div">
+      <MemberSignature Language="C#" Value="public static void Div (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Div(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Div operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Div operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dot">
+      <MemberSignature Language="C#" Value="public long Dot (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 Dot(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">To be added.</param>
+        <summary>
+              Returns the tensor product between this tensor and the provided one
+            </summary>
+        <returns>
+              The dot product
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fill">
+      <MemberSignature Language="C#" Value="public void Fill (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Fill(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+             Fills the tensor with the specified value
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~ShortTensor ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Finalizer for ~ShortTensor
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fmod">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Fmod (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Fmod(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Fmod operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Fmod(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fmod">
+      <MemberSignature Language="C#" Value="public static void Fmod (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Fmod(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Fmod operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Fmod operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTensorDimension">
+      <MemberSignature Language="C#" Value="public long GetTensorDimension (int dim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetTensorDimension(int32 dim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dim">To be added.</param>
+        <summary>
+             Retrieves the size of the specified dimension in the tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTensorStride">
+      <MemberSignature Language="C#" Value="public long GetTensorStride (int dim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetTensorStride(int32 dim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dim">To be added.</param>
+        <summary>
+             Retrieves the stride of the specified dimension in the tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexCopy">
+      <MemberSignature Language="C#" Value="public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void IndexCopy(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select for the copy</param>
+        <param name="index">Entries to copy</param>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexSelect">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor IndexSelect (int dim, TorchSharp.LongTensor index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor IndexSelect(int32 dim, class TorchSharp.LongTensor index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select</param>
+        <param name="index">Entries to extract</param>
+        <summary>
+              Returns a new Tensor which indexes the original Tensor along dimension dim
+              using the entries in index.  The returned Tensor has the same number of dimensions as the 
+              original Tensor. The returned Tensor does not use the same storage as the original Tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public short this[long x0] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 Item(int64)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x0" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="x0">Index to access.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public short this[long x0, long x1] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 Item(int64, int64)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x0" Type="System.Int64" />
+        <Parameter Name="x1" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public short this[long x0, long x1, long x2] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 Item(int64, int64, int64)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x0" Type="System.Int64" />
+        <Parameter Name="x1" Type="System.Int64" />
+        <Parameter Name="x2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
+        <param name="x2">Index in the third dimension to access.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public short this[long x0, long x1, long x2, long x3] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 Item(int64, int64, int64, int64)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x0" Type="System.Int64" />
+        <Parameter Name="x1" Type="System.Int64" />
+        <Parameter Name="x2" Type="System.Int64" />
+        <Parameter Name="x3" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="x0">Index in the first dimension to access.</param>
+        <param name="x1">Index in the second dimension to access.</param>
+        <param name="x2">Index in the third dimension to access.</param>
+        <param name="x3">Index in the fourth dimension to access.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LShift">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor LShift (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor LShift(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the LShift operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.LShift(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LShift">
+      <MemberSignature Language="C#" Value="public static void LShift (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void LShift(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the LShift operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the LShift operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxAll">
+      <MemberSignature Language="C#" Value="public short MaxAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int16 MaxAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the maximum value of the elements in the tensor.
+            </summary>
+        <returns>
+              The maximum value of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MeanAll">
+      <MemberSignature Language="C#" Value="public long MeanAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 MeanAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the mean of the elements in the tensor.
+            </summary>
+        <returns>
+              The mean of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MedianAll">
+      <MemberSignature Language="C#" Value="public short MedianAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int16 MedianAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the median of the elements in the tensor.
+            </summary>
+        <returns>
+              The median of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MinAll">
+      <MemberSignature Language="C#" Value="public short MinAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int16 MinAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the minimum value of the elements in the tensor.
+            </summary>
+        <returns>
+              The minimum value of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mul">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Mul (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Mul(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Mul operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Mul(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mul">
+      <MemberSignature Language="C#" Value="public static void Mul (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Mul(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Mul operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Mul operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Narrow">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Narrow (int dim, long firstIndex, long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Narrow(int32 dim, int64 firstIndex, int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="firstIndex" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dim">The dimension to narrow</param>
+        <param name="firstIndex">Initial index to narrow</param>
+        <param name="size">Number of elements</param>
+        <summary>
+            Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ProdAll">
+      <MemberSignature Language="C#" Value="public long ProdAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 ProdAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the product of the elements in the tensor.
+            </summary>
+        <returns>
+              The product of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Random">
+      <MemberSignature Language="C#" Value="public void Random (long n);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Random(int64 n) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="n" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="n">The upper limit for the values to be generated</param>
+        <summary>
+             Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Random">
+      <MemberSignature Language="C#" Value="public void Random (TorchSharp.RandomGenerator source, long n);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Random(class TorchSharp.RandomGenerator source, int64 n) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+        <Parameter Name="n" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <param name="n">The upper limit for the values to be generated</param>
+        <summary>
+             Populates the tensor with random values from 0 to n, using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remainder">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Remainder (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Remainder(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Remainder operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Remainder(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remainder">
+      <MemberSignature Language="C#" Value="public static void Remainder (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Remainder(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Remainder operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Remainder operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resize1d">
+      <MemberSignature Language="C#" Value="public void Resize1d (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resize1d(int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size">The desired new size for the first dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resize2d">
+      <MemberSignature Language="C#" Value="public void Resize2d (long size0, long size1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resize2d(int64 size0, int64 size1) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be two dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resize3d">
+      <MemberSignature Language="C#" Value="public void Resize3d (long size0, long size1, long size2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resize3d(int64 size0, int64 size1, int64 size2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resize4d">
+      <MemberSignature Language="C#" Value="public void Resize4d (long size0, long size1, long size2, long size3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resize4d(int64 size0, int64 size1, int64 size2, int64 size3) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+        <Parameter Name="size3" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <param name="size3">The desired new size for the fourth dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be four dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resize5d">
+      <MemberSignature Language="C#" Value="public void Resize5d (long size0, long size1, long size2, long size3, long size4);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resize5d(int64 size0, int64 size1, int64 size2, int64 size3, int64 size4) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+        <Parameter Name="size3" Type="System.Int64" />
+        <Parameter Name="size4" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size0">The desired new size for the first dimension of the tensor.</param>
+        <param name="size1">The desired new size for the second dimension of the tensor.</param>
+        <param name="size2">The desired new size for the third dimension of the tensor.</param>
+        <param name="size3">The desired new size for the fourth dimension of the tensor.</param>
+        <param name="size4">The desired new size for the fifth dimension of the tensor.</param>
+        <summary>
+              Resizes the tensor to be five dimensional with the specified size, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ResizeAs">
+      <MemberSignature Language="C#" Value="public void ResizeAs (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResizeAs(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The source tensor whose shape will be mirrored by this tensor.</param>
+        <summary>
+              Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RShift">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor RShift (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor RShift(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the RShift operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.RShift(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RShift">
+      <MemberSignature Language="C#" Value="public static void RShift (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RShift(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the RShift operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the RShift operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Select">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Select (int dim, long slideIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Select(int32 dim, int64 slideIndex) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="slideIndex" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select</param>
+        <param name="slideIndex">Beginning of the tensor slice</param>
+        <summary>
+              Returns a new Tensor which is a tensor slice at the given index in the dimension dim. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+              The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Set">
+      <MemberSignature Language="C#" Value="public void Set (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Set(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The source tensor which contains the data..</param>
+        <summary>
+              The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.   
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Shape">
+      <MemberSignature Language="C#" Value="public long[] Shape { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64[] Shape" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+            </summary>
+        <value>To be added.</value>
+        <remarks>
+                An array of size 0 is used for constants, an array of size 1 is used
+                for single-dimension arrays, where the dimension is the value of the
+                first element.   And so on.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Storage">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortStorage Storage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class TorchSharp.ShortStorage Storage" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortStorage</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+             Returns the associated storage for this tensor
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sub">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Sub (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Sub(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>
+              Performs the Sub operation on each element of the tensor with the
+              <see paramref="value" /> and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>
+              If you want to avoid the allocation of a new tensor, you can use the 
+              alternative method <see cref="M:PytorchSharp.Sub(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sub">
+      <MemberSignature Language="C#" Value="public static void Sub (TorchSharp.ShortTensor source, short value, TorchSharp.ShortTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sub(class TorchSharp.ShortTensor source, int16 value, class TorchSharp.ShortTensor result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.ShortTensor" />
+        <Parameter Name="value" Type="System.Int16" />
+        <Parameter Name="result" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="source">Source tensor on which the operation will take place.</param>
+        <param name="value">The scalar value that the operation uses.</param>
+        <param name="result">The tensor where the result will be placed</param>
+        <summary>
+              Performs the Sub operation on each element of the source with the
+              provided scalar.   The result tensor specified as the last parameters
+              is resized to match the source.
+            </summary>
+        <remarks>
+               For each element in the <see paramref="source" /> performs the Sub operation
+               with <see paramref="value" />.   The result is stored in the <see paramref="result" />
+               tensor.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SumAll">
+      <MemberSignature Language="C#" Value="public long SumAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 SumAll() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns the sum of the elements in the tensor.
+            </summary>
+        <returns>
+              The sum of the tensor.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Returns a debuggable version of the tensor, in this case the tensor shape
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Transpose">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Transpose (int dim1, int dim2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Transpose(int32 dim1, int32 dim2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim1" Type="System.Int32" />
+        <Parameter Name="dim2" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dim1">First dimension</param>
+        <param name="dim2">Second dimension</param>
+        <summary>
+            Returns a tensor where dimensions dim1 and dim2 have been swapped. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unfold">
+      <MemberSignature Language="C#" Value="public TorchSharp.ShortTensor Unfold (int dim, long size, long step);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ShortTensor Unfold(int32 dim, int64 size, int64 step) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ShortTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="size" Type="System.Int64" />
+        <Parameter Name="step" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dim">
+        </param>
+        <param name="size">
+        </param>
+        <param name="step">
+        </param>
+        <summary>
+              Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ZeroFill">
+      <MemberSignature Language="C#" Value="public void ZeroFill ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ZeroFill() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Fills the tensor with zeros
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

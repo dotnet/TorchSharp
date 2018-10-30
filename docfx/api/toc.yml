@@ -1,0 +1,30 @@
+### YamlMime:TableOfContent
+- uid: TorchSharp
+  name: TorchSharp
+  items:
+  - uid: TorchSharp.ByteStorage
+    name: ByteStorage
+  - uid: TorchSharp.ByteTensor
+    name: ByteTensor
+  - uid: TorchSharp.DoubleStorage
+    name: DoubleStorage
+  - uid: TorchSharp.DoubleTensor
+    name: DoubleTensor
+  - uid: TorchSharp.FloatStorage
+    name: FloatStorage
+  - uid: TorchSharp.FloatTensor
+    name: FloatTensor
+  - uid: TorchSharp.IntStorage
+    name: IntStorage
+  - uid: TorchSharp.IntTensor
+    name: IntTensor
+  - uid: TorchSharp.LongStorage
+    name: LongStorage
+  - uid: TorchSharp.LongTensor
+    name: LongTensor
+  - uid: TorchSharp.RandomGenerator
+    name: RandomGenerator
+  - uid: TorchSharp.ShortStorage
+    name: ShortStorage
+  - uid: TorchSharp.ShortTensor
+    name: ShortTensor
