@@ -194,9 +194,17 @@ foreach (var type in new [] {
         
         [DllImport ("caffe2")]
 		extern static HType TH<#=tname#>Tensor_new ();
+
+		[DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize2d (long size0, long size1);
+
+		[DllImport ("caffe2")]
 		extern static HType TH<#=tname#>Tensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
 		extern static HType TH<#=tname#>Tensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
         ///    Creates a 1-4D tensor of the specified size(s).
@@ -254,7 +262,6 @@ foreach (var type in new [] {
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_zero (HType handle);
@@ -811,6 +818,7 @@ foreach (var type in new [] {
 #> 
         [DllImport ("caffe2")]
         extern static <#=ret#> TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result);
+
         /// <summary>
         ///   Returns the <#=doc#> of the elements in the tensor.
         /// </summary>
@@ -821,8 +829,6 @@ foreach (var type in new [] {
         {
             return TH<#=tname#>Tensor_<#=op.ToLower()#> (this.handle);
         }
-
-
 <#          } /* foreach */ #>
 
         [DllImport ("caffe2")]
@@ -839,8 +845,7 @@ foreach (var type in new [] {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new <#=tname#>Tensor ();
             TH<#=tname#>Tensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -862,7 +867,6 @@ foreach (var type in new [] {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             TH<#=tname#>Tensor_indexCopy (handle, dim, index.handle, src.handle);
         }

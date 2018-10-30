@@ -142,40 +142,29 @@ namespace TorchSharp {
     /// </remarks>
     public class ByteTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THByteTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THByteTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THByteTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THByteTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THByteTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public ByteTensor ()
-        {
-            handle = THByteTensor_new ();
-        }
         
         internal ByteTensor (HType handle)
         {
@@ -183,55 +172,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THByteTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THByteTensor_new ();
 
-        public ByteTensor (long size0)
-        {
-            handle = THByteTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THByteTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THByteTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THByteTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public ByteTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public ByteTensor (params long[] dims)
         {
-            handle = THByteTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THByteTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public ByteTensor (long size0, long size1, long size2)
-        {
-            handle = THByteTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THByteTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public ByteTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THByteTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THByteTensor_new ();
+                    break;
+				case 1: 
+					handle = THByteTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -256,12 +236,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THByteTensor_zero (HType handle);
@@ -1370,6 +1349,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static byte THByteTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -1380,11 +1360,10 @@ namespace TorchSharp {
         {
             return THByteTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static byte THByteTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -1395,11 +1374,10 @@ namespace TorchSharp {
         {
             return THByteTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static byte THByteTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -1410,11 +1388,10 @@ namespace TorchSharp {
         {
             return THByteTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THByteTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -1425,11 +1402,10 @@ namespace TorchSharp {
         {
             return THByteTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THByteTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -1440,11 +1416,10 @@ namespace TorchSharp {
         {
             return THByteTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THByteTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -1455,8 +1430,6 @@ namespace TorchSharp {
         {
             return THByteTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -1472,8 +1445,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new ByteTensor ();
             THByteTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -1495,7 +1467,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THByteTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
@@ -1638,40 +1609,29 @@ namespace TorchSharp {
     /// </remarks>
     public class ShortTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THShortTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THShortTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THShortTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THShortTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THShortTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public ShortTensor ()
-        {
-            handle = THShortTensor_new ();
-        }
         
         internal ShortTensor (HType handle)
         {
@@ -1679,55 +1639,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THShortTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THShortTensor_new ();
 
-        public ShortTensor (long size0)
-        {
-            handle = THShortTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THShortTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THShortTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THShortTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public ShortTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public ShortTensor (params long[] dims)
         {
-            handle = THShortTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THShortTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public ShortTensor (long size0, long size1, long size2)
-        {
-            handle = THShortTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THShortTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public ShortTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THShortTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THShortTensor_new ();
+                    break;
+				case 1: 
+					handle = THShortTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -1752,12 +1703,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THShortTensor_zero (HType handle);
@@ -2866,6 +2816,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static short THShortTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -2876,11 +2827,10 @@ namespace TorchSharp {
         {
             return THShortTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static short THShortTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -2891,11 +2841,10 @@ namespace TorchSharp {
         {
             return THShortTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static short THShortTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -2906,11 +2855,10 @@ namespace TorchSharp {
         {
             return THShortTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THShortTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -2921,11 +2869,10 @@ namespace TorchSharp {
         {
             return THShortTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THShortTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -2936,11 +2883,10 @@ namespace TorchSharp {
         {
             return THShortTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THShortTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -2951,8 +2897,6 @@ namespace TorchSharp {
         {
             return THShortTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -2968,8 +2912,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new ShortTensor ();
             THShortTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -2991,7 +2934,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THShortTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
@@ -3134,40 +3076,29 @@ namespace TorchSharp {
     /// </remarks>
     public class IntTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THIntTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THIntTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THIntTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THIntTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THIntTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public IntTensor ()
-        {
-            handle = THIntTensor_new ();
-        }
         
         internal IntTensor (HType handle)
         {
@@ -3175,55 +3106,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THIntTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THIntTensor_new ();
 
-        public IntTensor (long size0)
-        {
-            handle = THIntTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THIntTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THIntTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THIntTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public IntTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public IntTensor (params long[] dims)
         {
-            handle = THIntTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THIntTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public IntTensor (long size0, long size1, long size2)
-        {
-            handle = THIntTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THIntTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public IntTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THIntTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THIntTensor_new ();
+                    break;
+				case 1: 
+					handle = THIntTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -3248,12 +3170,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THIntTensor_zero (HType handle);
@@ -4362,6 +4283,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static int THIntTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -4372,11 +4294,10 @@ namespace TorchSharp {
         {
             return THIntTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static int THIntTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -4387,11 +4308,10 @@ namespace TorchSharp {
         {
             return THIntTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static int THIntTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -4402,11 +4322,10 @@ namespace TorchSharp {
         {
             return THIntTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THIntTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -4417,11 +4336,10 @@ namespace TorchSharp {
         {
             return THIntTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THIntTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -4432,11 +4350,10 @@ namespace TorchSharp {
         {
             return THIntTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THIntTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -4447,8 +4364,6 @@ namespace TorchSharp {
         {
             return THIntTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -4464,8 +4379,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new IntTensor ();
             THIntTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -4487,7 +4401,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THIntTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
@@ -4630,40 +4543,29 @@ namespace TorchSharp {
     /// </remarks>
     public class LongTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THLongTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THLongTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THLongTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THLongTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THLongTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public LongTensor ()
-        {
-            handle = THLongTensor_new ();
-        }
         
         internal LongTensor (HType handle)
         {
@@ -4671,55 +4573,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THLongTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THLongTensor_new ();
 
-        public LongTensor (long size0)
-        {
-            handle = THLongTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THLongTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THLongTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THLongTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public LongTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public LongTensor (params long[] dims)
         {
-            handle = THLongTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THLongTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public LongTensor (long size0, long size1, long size2)
-        {
-            handle = THLongTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THLongTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public LongTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THLongTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THLongTensor_new ();
+                    break;
+				case 1: 
+					handle = THLongTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -4744,12 +4637,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THLongTensor_zero (HType handle);
@@ -5858,6 +5750,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -5868,11 +5761,10 @@ namespace TorchSharp {
         {
             return THLongTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -5883,11 +5775,10 @@ namespace TorchSharp {
         {
             return THLongTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -5898,11 +5789,10 @@ namespace TorchSharp {
         {
             return THLongTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -5913,11 +5803,10 @@ namespace TorchSharp {
         {
             return THLongTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -5928,11 +5817,10 @@ namespace TorchSharp {
         {
             return THLongTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -5943,8 +5831,6 @@ namespace TorchSharp {
         {
             return THLongTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -5960,8 +5846,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new LongTensor ();
             THLongTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -5983,7 +5868,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THLongTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
@@ -6126,40 +6010,29 @@ namespace TorchSharp {
     /// </remarks>
     public class DoubleTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THDoubleTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THDoubleTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THDoubleTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THDoubleTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THDoubleTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public DoubleTensor ()
-        {
-            handle = THDoubleTensor_new ();
-        }
         
         internal DoubleTensor (HType handle)
         {
@@ -6167,55 +6040,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THDoubleTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THDoubleTensor_new ();
 
-        public DoubleTensor (long size0)
-        {
-            handle = THDoubleTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THDoubleTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THDoubleTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THDoubleTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public DoubleTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public DoubleTensor (params long[] dims)
         {
-            handle = THDoubleTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THDoubleTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public DoubleTensor (long size0, long size1, long size2)
-        {
-            handle = THDoubleTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THDoubleTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public DoubleTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THDoubleTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THDoubleTensor_new ();
+                    break;
+				case 1: 
+					handle = THDoubleTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -6240,12 +6104,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_zero (HType handle);
@@ -7912,6 +7775,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -7922,11 +7786,10 @@ namespace TorchSharp {
         {
             return THDoubleTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -7937,11 +7800,10 @@ namespace TorchSharp {
         {
             return THDoubleTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -7952,11 +7814,10 @@ namespace TorchSharp {
         {
             return THDoubleTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -7967,11 +7828,10 @@ namespace TorchSharp {
         {
             return THDoubleTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -7982,11 +7842,10 @@ namespace TorchSharp {
         {
             return THDoubleTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -7997,8 +7856,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -8014,8 +7871,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new DoubleTensor ();
             THDoubleTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -8037,7 +7893,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THDoubleTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
@@ -8180,40 +8035,29 @@ namespace TorchSharp {
     /// </remarks>
     public class FloatTensor : IDisposable {
         internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
-                {
-                    SetHandle (preexistingHandle);
-                }
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            {
+                SetHandle (preexistingHandle);
+            }
 
-                // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
-                {
-                }
+            // This is just for marshalling
+            internal HType () : base (IntPtr.Zero, true)
+            {
+            }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+            public override bool IsInvalid => handle == (IntPtr) 0;
 
-                [DllImport ("caffe2")]
-                extern static void THFloatTensor_free (IntPtr handle);
+            [DllImport ("caffe2")]
+            extern static void THFloatTensor_free (IntPtr handle);
                 
-                protected override bool ReleaseHandle ()
-                {
-                    THFloatTensor_free (handle);
-                    handle = IntPtr.Zero;
-                    return true;
-                }
+            protected override bool ReleaseHandle ()
+            {
+                THFloatTensor_free (handle);
+                handle = IntPtr.Zero;
+                return true;
+            }
         }
         internal HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType THFloatTensor_new ();
-        
-        /// <summary>
-        ///    Creates an empty tensor.
-        /// </summary>
-        public FloatTensor ()
-        {
-            handle = THFloatTensor_new ();
-        }
         
         internal FloatTensor (HType handle)
         {
@@ -8221,55 +8065,46 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-        extern static HType THFloatTensor_newWithSize1d (long size0);
-        /// <summary>
-        ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
-        /// <param name="size0">Size for the first dimension.</param>
+		extern static HType THFloatTensor_new ();
 
-        public FloatTensor (long size0)
-        {
-            handle = THFloatTensor_newWithSize1d (size0);
-        }
-        
-        [DllImport ("caffe2")]
+		[DllImport ("caffe2")]
+        extern static HType THFloatTensor_newWithSize1d (long size0);
+
+		[DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize2d (long size0, long size1);
-        
+
+		[DllImport ("caffe2")]
+		extern static HType THFloatTensor_newWithSize3d (long size0, long size1, long size2);
+
+		[DllImport ("caffe2")]
+		extern static HType THFloatTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        public FloatTensor (long size0, long size1)
+        ///    Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+
+        public FloatTensor (params long[] dims)
         {
-            handle = THFloatTensor_newWithSize2d (size0, size1);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THFloatTensor_newWithSize3d (long size0, long size1, long size2);
-        /// <summary>
-        ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        public FloatTensor (long size0, long size1, long size2)
-        {
-            handle = THFloatTensor_newWithSize3d (size0, size1, size2);
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType THFloatTensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        /// <summary>
-        ///    Creates a 4D tensor of the specified size.
-        /// </summary>
-        /// <param name="size0">Size for the first dimension.</param>
-        /// <param name="size1">Size for the second dimension.</param>
-        /// <param name="size2">Size for the third dimension.</param>
-        /// <param name="size3">Size for the fourth dimension.</param>
-        public FloatTensor (long size0, long size1, long size2, long size3)
-        {
-            handle = THFloatTensor_newWithSize4d (size0, size1, size2, size3);
+			switch (dims.Length)
+			{
+				case 0:
+					handle = THFloatTensor_new ();
+                    break;
+				case 1: 
+					handle = THFloatTensor_newWithSize1d (dims[0]);
+                    break;
+				case 2: 
+					handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
+					break;
+				case 3: 
+					handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+					break;
+				case 4: 
+					handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+					break;
+				default:
+					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+			}
         }
         
         /// <summary>
@@ -8294,12 +8129,11 @@ namespace TorchSharp {
         /// </summary>
         protected void Dispose (bool disposing)
         {
-            if (disposing){
+            if (disposing) {
                 handle.Dispose ();
                 handle = null;
             }
         }
-        
         
         [DllImport ("caffe2")]
         extern static void THFloatTensor_zero (HType handle);
@@ -9966,6 +9800,7 @@ namespace TorchSharp {
  
         [DllImport ("caffe2")]
         extern static float THFloatTensor_minall (HType result);
+
         /// <summary>
         ///   Returns the minimum value of the elements in the tensor.
         /// </summary>
@@ -9976,11 +9811,10 @@ namespace TorchSharp {
         {
             return THFloatTensor_minall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static float THFloatTensor_maxall (HType result);
+
         /// <summary>
         ///   Returns the maximum value of the elements in the tensor.
         /// </summary>
@@ -9991,11 +9825,10 @@ namespace TorchSharp {
         {
             return THFloatTensor_maxall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static float THFloatTensor_medianall (HType result);
+
         /// <summary>
         ///   Returns the median of the elements in the tensor.
         /// </summary>
@@ -10006,11 +9839,10 @@ namespace TorchSharp {
         {
             return THFloatTensor_medianall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THFloatTensor_sumall (HType result);
+
         /// <summary>
         ///   Returns the sum of the elements in the tensor.
         /// </summary>
@@ -10021,11 +9853,10 @@ namespace TorchSharp {
         {
             return THFloatTensor_sumall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THFloatTensor_prodall (HType result);
+
         /// <summary>
         ///   Returns the product of the elements in the tensor.
         /// </summary>
@@ -10036,11 +9867,10 @@ namespace TorchSharp {
         {
             return THFloatTensor_prodall (this.handle);
         }
-
-
  
         [DllImport ("caffe2")]
         extern static double THFloatTensor_meanall (HType result);
+
         /// <summary>
         ///   Returns the mean of the elements in the tensor.
         /// </summary>
@@ -10051,8 +9881,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_meanall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -10068,8 +9896,7 @@ namespace TorchSharp {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
-            
+             
             var res = new FloatTensor ();
             THFloatTensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
@@ -10091,7 +9918,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
             
             THFloatTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
