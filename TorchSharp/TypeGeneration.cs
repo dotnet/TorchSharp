@@ -172,7 +172,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THByteTensor_new ();
+        extern static HType THByteTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize1d (long size0);
@@ -186,32 +186,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THByteTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public ByteTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THByteTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THByteTensor_new ();
                     break;
-				case 1: 
-					handle = THByteTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THByteTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -1639,7 +1639,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THShortTensor_new ();
+        extern static HType THShortTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize1d (long size0);
@@ -1653,32 +1653,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THShortTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public ShortTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THShortTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THShortTensor_new ();
                     break;
-				case 1: 
-					handle = THShortTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THShortTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -3106,7 +3106,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THIntTensor_new ();
+        extern static HType THIntTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize1d (long size0);
@@ -3120,32 +3120,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THIntTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public IntTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THIntTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THIntTensor_new ();
                     break;
-				case 1: 
-					handle = THIntTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THIntTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -4573,7 +4573,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THLongTensor_new ();
+        extern static HType THLongTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize1d (long size0);
@@ -4587,32 +4587,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THLongTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public LongTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THLongTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THLongTensor_new ();
                     break;
-				case 1: 
-					handle = THLongTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THLongTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -6040,7 +6040,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THDoubleTensor_new ();
+        extern static HType THDoubleTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize1d (long size0);
@@ -6054,32 +6054,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THDoubleTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public DoubleTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THDoubleTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THDoubleTensor_new ();
                     break;
-				case 1: 
-					handle = THDoubleTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THDoubleTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -8065,7 +8065,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THFloatTensor_new ();
+        extern static HType THFloatTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize1d (long size0);
@@ -8079,32 +8079,32 @@ namespace TorchSharp {
 		[DllImport ("caffe2")]
 		extern static HType THFloatTensor_newWithSize4d (long size0, long size1, long size2, long size3);
         /// <summary>
-        ///    Creates a 1-4D tensor of the specified size(s).
+        ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
 
         public FloatTensor (params long[] dims)
         {
-			switch (dims.Length)
-			{
-				case 0:
-					handle = THFloatTensor_new ();
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THFloatTensor_new ();
                     break;
-				case 1: 
-					handle = THFloatTensor_newWithSize1d (dims[0]);
+	            case 1: 
+		            handle = THFloatTensor_newWithSize1d (dims[0]);
                     break;
-				case 2: 
-					handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
-					break;
-				case 3: 
-					handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-					break;
-				case 4: 
-					handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-					break;
-				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
-			}
+	            case 2: 
+		            handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
