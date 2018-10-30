@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics.Tensors;
 
 namespace TorchSharp
@@ -7,11 +8,16 @@ namespace TorchSharp
     {
         FloatTensor inner;
 
-        public static unsafe FloatTorchTensor Create(int length)
+        /// <summary>
+        ///   Utility methos to create a TorchTensor.
+        /// </summary>
+        /// <param name="length">The desired length for the dimension of the tensor.</param>
+
+        public static unsafe FloatTorchTensor Create(params int[] sizes)
         {
-            var inner = new FloatTensor(length);
-            var mem = new NativeMemory<float>((void*)inner.Data, length);
-            return new FloatTorchTensor(mem.Memory, new int[] { length }, inner);
+            var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
+            var mem = new NativeMemory<float>((void*)inner.Data, sizes.Aggregate((a, b) => a * b));
+            return new FloatTorchTensor(mem.Memory, sizes, inner);
         }
 
         public FloatTorchTensor(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
