@@ -8,6 +8,14 @@ namespace Test
     public class FloatTorchTensorUnitTest
     {
         [TestMethod]
+        public void TestCreation0D()
+        {
+            var x = FloatTorchTensor.Create();
+
+            Assert.AreNotEqual(x, null);
+        }
+
+        [TestMethod]
         public void TestCreation1D()
         {
             var x = FloatTorchTensor.Create(10);
