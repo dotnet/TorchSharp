@@ -4,19 +4,18 @@ using System.Numerics.Tensors;
 
 namespace TorchSharp
 {
-    public class FloatTorchTensor : DenseTensor<float>
+    public sealed class FloatTorchTensor : DenseTensor<float>
     {
-        FloatTensor inner;
+        private readonly FloatTensor inner;
 
         /// <summary>
         ///   Utility method to create an empty TorchTensor.
+        ///   This is currently failing because SNT does not support zero-size tensors
         /// </summary>
         public static unsafe FloatTorchTensor Create()
         {
             var inner = new FloatTensor();
-            // Note that for the moment we need to create a tensors of size 1 because
-            // SNT does not support zero-size tensors (for the moment)
-            return new FloatTorchTensor(new Memory<float>(), new int[1] { 1 }, inner);
+            return new FloatTorchTensor(new Memory<float>(), new int[1] { 0 }, inner);
         }
 
         /// <summary>
@@ -40,9 +39,14 @@ namespace TorchSharp
             this.inner = inner;
         }
 
-        public void Fill(int value)
+        /// <summary>
+        /// Creates a shallow copy of this tensor, with new backing storage.
+        /// </summary>
+        /// <returns>A shallow copy of this tensor.</returns>
+        public override Tensor<float> Clone()
         {
-            inner.Fill(value);
+            var innerClone = new FloatTensor(inner.Shape);
+            return new FloatTorchTensor(Buffer.ToArray(), Dimensions, inner);
         }
     }
 }
