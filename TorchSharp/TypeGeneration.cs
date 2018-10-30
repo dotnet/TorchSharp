@@ -172,7 +172,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THByteTensor_new ();
+        extern static HType THByteTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize1d (long size0);
@@ -210,7 +210,7 @@ namespace TorchSharp {
 					handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
@@ -1639,7 +1639,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THShortTensor_new ();
+        extern static HType THShortTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize1d (long size0);
@@ -1677,7 +1677,7 @@ namespace TorchSharp {
 					handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
@@ -3106,7 +3106,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THIntTensor_new ();
+        extern static HType THIntTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize1d (long size0);
@@ -3144,7 +3144,7 @@ namespace TorchSharp {
 					handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
@@ -4573,7 +4573,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THLongTensor_new ();
+        extern static HType THLongTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize1d (long size0);
@@ -4611,7 +4611,7 @@ namespace TorchSharp {
 					handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
@@ -6040,7 +6040,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THDoubleTensor_new ();
+        extern static HType THDoubleTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize1d (long size0);
@@ -6078,7 +6078,7 @@ namespace TorchSharp {
 					handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
@@ -8065,7 +8065,7 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
-		extern static HType THFloatTensor_new ();
+        extern static HType THFloatTensor_new ();
 
 		[DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize1d (long size0);
@@ -8103,7 +8103,7 @@ namespace TorchSharp {
 					handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 					break;
 				default:
-					throw new NotImplementedException("Maximum number of dimensions for tensor creation is 4.");
+					throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
 			}
         }
         
