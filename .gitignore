@@ -6,3 +6,4 @@ bin
 *.exe
 *pdb
 *trx
+.DS_Store
