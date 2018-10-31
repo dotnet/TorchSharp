@@ -194,18 +194,68 @@ foreach (var type in new [] {
         
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
+        
+        /// <summary>
+        ///    Creates an empty tensor.
+        /// </summary>
+        public <#=tname#>Tensor ()
+        {
+            handle = TH<#=tname#>Tensor_new ();
+        }
 
 		[DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
 
+        /// <summary>
+        ///    Creates a 1D tensor of the specified size.
+        /// </summary>    
+        /// <param name="size0">Size for the first dimension.</param>
+         public <#=tname#>Tensor (long size0)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize1d (size0);
+        }
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize2d (long size0, long size1);
+        
+        /// <summary>
+        ///    Creates a 2D tensor of the specified size.
+        /// </summary>        
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize2d (size0, size1);
+        }
 
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize3d (long size0, long size1, long size2);
 
+        /// <summary>
+        ///    Creates a 3D tensor of the specified size.
+        /// </summary>        
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        /// <param name="size2">Size for the third dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1, long size2)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize3d (size0, size1, size2);
+        }
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize4d (long size0, long size1, long size2, long size3);
+        
+        /// <summary>
+        ///    Creates a 4D tensor of the specified size.
+        /// </summary>
+        /// <param name="size0">Size for the first dimension.</param>
+        /// <param name="size1">Size for the second dimension.</param>
+        /// <param name="size2">Size for the third dimension.</param>
+        /// <param name="size3">Size for the fourth dimension.</param>
+        public <#=tname#>Tensor (long size0, long size1, long size2, long size3)
+        {
+            handle = TH<#=tname#>Tensor_newWithSize4d (size0, size1, size2, size3);
+        }
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
