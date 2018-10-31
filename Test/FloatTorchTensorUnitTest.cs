@@ -2,8 +2,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Numerics.Tensors;
+using TorchSharp;
 
-namespace TorchSharp.Tests
+namespace TorchTensor.Tests
 {
     [TestClass]
     public class FloatTorchTensorUnitTest

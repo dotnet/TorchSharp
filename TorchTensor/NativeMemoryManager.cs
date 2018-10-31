@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System;
 
-namespace TorchSharp
+namespace TorchTensor
 {
     public class NativeMemory<T> : MemoryManager<T>
     {

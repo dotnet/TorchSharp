@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics.Tensors;
+using TorchSharp;
 
-namespace TorchSharp
+namespace TorchTensor
 {
     public sealed class FloatTorchTensor : DenseTensor<float>
     {

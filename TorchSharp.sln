@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples", "Samples\Samples.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{E7F84891-DAB7-42C1-A2AE-25B2151E1C85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchDotNet", "TorchDotNet\TorchDotNet.csproj", "{D4E402A3-4073-4484-85E1-9D67F6289648}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchTensor", "TorchTensor\TorchTensor.csproj", "{D4E402A3-4073-4484-85E1-9D67F6289648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
