@@ -19,8 +19,8 @@ namespace TorchTensor.Tests
         public void TestCreation1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
-            
-             Assert.AreNotEqual(x, null);
+
+            Assert.AreNotEqual(x, null);
         }
 
         [TestMethod]
@@ -152,7 +152,7 @@ namespace TorchTensor.Tests
         {
             var x = FloatTorchTensorMockup.Create(10, 10);
             var rand = new Random();
-            
+
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
@@ -169,6 +169,24 @@ namespace TorchTensor.Tests
                     Assert.AreEqual(x[i, j], x.Get(i, j));
                 }
             }
+        }
+
+        [TestMethod]
+        public void TestClone1D()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10);
+            x.Fill(1f);
+
+            Tensor<float> y = x.Clone();
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(x[i], y[i]);
+            }
+
+            y[5] = 0f;
+
+            Assert.AreNotEqual(x[5], y[5]);
         }
     }
 }

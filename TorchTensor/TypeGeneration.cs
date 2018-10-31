@@ -12,7 +12,7 @@ namespace TorchTensor
         /// <summary>
         ///   Utility method to create a TorchTensor.
         ///   This is currently failing if the input parameter is empty because SNT 
-        ///   does not support zero-size tensors
+        ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
         public static unsafe FloatTorchTensor Create(params int[] sizes)
@@ -38,6 +38,18 @@ namespace TorchTensor
         public FloatTorchTensor(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
         {
             this.inner = inner;
+        }
+
+        /// <summary>
+        /// Creates a shallow copy of this tensor, with new backing storage.
+        /// </summary>
+        /// <returns>A shallow copy of this tensor.</returns>
+        public unsafe override Tensor<float> Clone()
+        {
+            var innerClone = inner.Clone();
+            var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
+
+            return new FloatTorchTensor(mem.Memory, Dimensions, inner);
         }
     }
 }

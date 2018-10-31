@@ -24,6 +24,10 @@ namespace TorchTensor
             this.length = length;
         }
 
+        /// <summary>
+        /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+        /// from here will through a "double free or corruption" error.
+        /// <summary>
         ~NativeMemory()
         {
             Dispose(false);
@@ -83,9 +87,12 @@ namespace TorchTensor
                 return;
             }
 
-            // typically this would call into a native method appropriate for the platform
-            Marshal.FreeHGlobal(memory);
-            memory = IntPtr.Zero;
+            if (disposing)
+            {
+                // typically this would call into a native method appropriate for the platform
+                Marshal.FreeHGlobal(memory);
+                memory = IntPtr.Zero;
+            }
 
             IsDisposed = true;
         }
