@@ -25,129 +25,130 @@ foreach (var type in new [] {
         // In the future, we should add HalfFloat (16-bit float)
         bool isFloat = type.Storage == "double" || type.Storage == "float";
 #>
+    public partial class <#=tname#>Tensor : IDisposable {
+        /// <summary>
+        ///    The storage class provides a mechanism to access the underlying data representation for tensors.
+        /// </summary>
+        public class <#=tname#>Storage : IDisposable {
+            internal sealed class HType : SafeHandle {
+                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle (preexistingHandle);
+                }
+                
+                public override bool IsInvalid => handle == (IntPtr) 0;
+                // This is just for marshalling
+                internal HType () : base (IntPtr.Zero, true)
+                {
+                }
+                
+                [DllImport ("caffe2")]
+                extern static void TH<#=tname#>Storage_free (IntPtr handle);
+            
+                
+                protected override bool ReleaseHandle ()
+                {
+                    TH<#=tname#>Storage_free (handle);
+                    handle = IntPtr.Zero;
+                    return true;
+                }
+            }
 
-    /// <summary>
-    ///    The storage class provides a mechanism to access the underlying data representation for tensors.
-    /// </summary>
-    public class <#=tname#>Storage : IDisposable {
-        internal sealed class HType : SafeHandle {
-            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+            HType handle;
+            
+            [DllImport ("caffe2")]
+            extern static HType TH<#=tname#>Storage_new ();
+            
+            /// <summary>
+            ///   Initializes an empty <#=tname#>Storage instance.
+            /// </summary>
+            public <#=tname#>Storage ()
             {
-                SetHandle (preexistingHandle);
+                handle = TH<#=tname#>Storage_new ();
             }
             
-            public override bool IsInvalid => handle == (IntPtr) 0;
-            // This is just for marshalling
-            internal HType () : base (IntPtr.Zero, true)
+            internal <#=tname#>Storage (HType fromHandle)
             {
+                this.handle = fromHandle;
             }
             
             [DllImport ("caffe2")]
-            extern static void TH<#=tname#>Storage_free (IntPtr handle);
-        
+            extern static HType TH<#=tname#>Storage_new_withSize (IntPtr size);
             
-            protected override bool ReleaseHandle ()
+            /// <summary>
+            ///   Initializes a <#=tname#>Storage instance with the specified size.
+            /// </summary>        
+            /// <param name="size">The desired number of elements in the storage</param>
+            public <#=tname#>Storage (long size)
             {
-                TH<#=tname#>Storage_free (handle);
-                handle = IntPtr.Zero;
-                return true;
+                handle = TH<#=tname#>Storage_new_withSize ((IntPtr) size);
             }
-        }
+            
+            /// <summary>
+            /// Finalizer
+            /// </summary>
+            ~<#=tname#>Storage ()
+            {
+                Dispose (false);
+            }
+            
+            /// <summary>
+            ///   Releases the storage.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+            
+            /// <summary>
+            ///   Implements the .NET Dispose pattern.
+            /// </summary>
+            protected void Dispose (bool disposing)
+            {
+                if (disposing){
+                    handle.Dispose ();
+                    handle = null;
+                }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static <#=ttype#> TH<#=tname#>Storage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
+            [DllImport ("caffe2")]
+            extern static void TH<#=tname#>Storage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  <#=ttype#> value);
+            
+            /// <summary>
+            /// </summary>
+            public <#=ttype#> this [long index] {
+                get => TH<#=tname#>Storage_get (handle, (IntPtr) (index));
+                set {
+                    TH<#=tname#>Storage_set (handle, (IntPtr) (index), value);
+                }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static <#=ttype#> TH<#=tname#>Storage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
+            
+            /// <summary>
+            ///   Changes the size of this storage to the new requested size.
+            /// </summary>
+            /// <param name="size">The desired new size.</param>
+            public void Resize (ulong size)
+            {
+                TH<#=tname#>Storage_resize (handle, (UIntPtr) size);
+            }
 
-        HType handle;
-        
-        [DllImport ("caffe2")]
-        extern static HType TH<#=tname#>Storage_new ();
-        
-        /// <summary>
-        ///   Initializes an empty <#=tname#>Storage instance.
-        /// </summary>
-        public <#=tname#>Storage ()
-        {
-            handle = TH<#=tname#>Storage_new ();
-        }
-        
-        internal <#=tname#>Storage (HType fromHandle)
-        {
-            this.handle = fromHandle;
-        }
-        
-        [DllImport ("caffe2")]
-        extern static HType TH<#=tname#>Storage_new_withSize (IntPtr size);
-        
-        /// <summary>
-        ///   Initializes a <#=tname#>Storage instance with the specified size.
-        /// </summary>        
-        /// <param name="size">The desired number of elements in the storage</param>
-        public <#=tname#>Storage (long size)
-        {
-            handle = TH<#=tname#>Storage_new_withSize ((IntPtr) size);
-        }
-        
-        /// <summary>
-        /// Finalizer
-        /// </summary>
-        ~<#=tname#>Storage ()
-        {
-            Dispose (false);
-        }
-        
-        /// <summary>
-        ///   Releases the storage.
-        /// </summary>        
-        public void Dispose ()
-        {
-            Dispose (true);
-            GC.SuppressFinalize (this);
-        }
-        
-        /// <summary>
-        ///   Implements the .NET Dispose pattern.
-        /// </summary>
-        protected void Dispose (bool disposing)
-        {
-            if (disposing){
-                handle.Dispose ();
-                handle = null;
+            [DllImport ("caffe2")]
+            extern static void TH<#=tname#>Storage_fill (HType handle, <#=ttype#> value);
+            
+            /// <summary>
+            ///   Fills every element of the storage with the specified value.
+            /// </summary>
+            /// <param name="value">Value used for each element</param>
+            public void Fill (<#=ttype#> value)
+            {
+                TH<#=tname#>Storage_fill (handle, value);
             }
-        }
-        
-        [DllImport ("caffe2")]
-        extern static <#=ttype#> TH<#=tname#>Storage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-        [DllImport ("caffe2")]
-        extern static void TH<#=tname#>Storage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  <#=ttype#> value);
-        
-        /// <summary>
-        /// </summary>
-        public <#=ttype#> this [long index] {
-            get => TH<#=tname#>Storage_get (handle, (IntPtr) (index));
-            set {
-                TH<#=tname#>Storage_set (handle, (IntPtr) (index), value);
-            }
-        }
-        
-        [DllImport ("caffe2")]
-        extern static <#=ttype#> TH<#=tname#>Storage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
-        
-        /// <summary>
-        ///   Changes the size of this storage to the new requested size.
-        /// </summary>
-        /// <param name="size">The desired new size.</param>
-        public void Resize (ulong size)
-        {
-            TH<#=tname#>Storage_resize (handle, (UIntPtr) size);
-        }
-
-        [DllImport ("caffe2")]
-        extern static void TH<#=tname#>Storage_fill (HType handle, <#=ttype#> value);
-        
-        /// <summary>
-        ///   Fills every element of the storage with the specified value.
-        /// </summary>
-        /// <param name="value">Value used for each element</param>
-        public void Fill (<#=ttype#> value)
-        {
-            TH<#=tname#>Storage_fill (handle, value);
         }
     }
     
@@ -161,7 +162,7 @@ foreach (var type in new [] {
     ///     create a tensor for the desired number of dimensions.
     ///   </para>
     /// </remarks>
-    public class <#=tname#>Tensor : IDisposable {
+    public partial class <#=tname#>Tensor : IDisposable {
         internal sealed class HType : SafeHandle {
             public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
             {
