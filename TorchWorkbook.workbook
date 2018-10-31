@@ -7,11 +7,11 @@ platforms:
 ---
 
 ```csharp
-#r "/cvs/TorchSharp/TorchSharp.Workbooks/bin/Release/netstandard2.0/TorchSharp.Workbooks.dll"
+#r "TorchSharp/bin/Debug/netstandard2.0/TorchSharp.dll"
 ```
 
 ```csharp
-#r "/cvs/TorchSharp/TorchSharp/bin/Release/netstandard2.0/TorchSharp.dll"
+#r "TorchSharp.Workbooks/bin/Debug/netstandard2.0/TorchSharp.Workbooks.dll"
 ```
 
 ```csharp
