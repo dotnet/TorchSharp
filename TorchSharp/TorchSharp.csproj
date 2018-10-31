@@ -46,10 +46,6 @@
     <Compile Remove="Handle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Numerics.Tensors" Version="0.1.0-preview*" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="TypeGeneration.cs">
       <DependentUpon>TypeGeneration.tt</DependentUpon>
     </Compile>
