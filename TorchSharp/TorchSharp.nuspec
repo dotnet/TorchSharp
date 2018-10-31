@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>TorchSharp</id>
+    <version>0.1.0</version>
+    <authors>Miguel de Icaza</authors>
+    <owners>Miguel de Icaza</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/xamarin/TorchSharp/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/xamarin/TorchSharp/</projectUrl>
+    <description>.NET Bindings for Torch</description>
+    <tags>machine-learning, torch, pytorch, xamarin, .net, c#, f#</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Interactive;
 using Xamarin.Interactive.Representations;
+using Xamarin.Interactive.Logging;
 
 [assembly: AgentIntegration (typeof (TorchSharp.Workbooks.TensorIntegration))]
 
@@ -20,6 +21,8 @@ namespace TorchSharp.Workbooks {
 
 		public void IntegrateWith (IAgent agent)
 		{
+			Log.Debug ("Tensor", "Loading");
+
 			agent.RepresentationManager.AddProvider (new TensorRepresentationProvider ());
 		}
 	}
