@@ -20,7 +20,7 @@ var TensorRenderer = (function () {
   TensorRenderer.prototype.render = function (target) {
     console.log("TensorRenderer: render %O to %O", this.renderState, target)
     var elem = document.createElement("div");
-    elem.innerHTML = "<strong>Tensor: <em>" + this.renderState.source.Name + "</em></strong>";
+    elem.innerHTML = "<strong>Tensor dimensions: <em>" + this.renderState.source.Dimensions + "</em></strong>";
     target.inlineTarget.appendChild(elem);
   }
 
@@ -29,7 +29,7 @@ var TensorRenderer = (function () {
 
 xamarin.interactive.RendererRegistry.registerRenderer(
   function (source) {
-    if (source.$type === "TorchSharp.FloatTensor")
+    if (source.$type === "TorchSharp.Workbooks.FloatTensorRepresentation")
       return new TensorRenderer;
   }
 );

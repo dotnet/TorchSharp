@@ -28,4 +28,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+  </ItemGroup>
 </Project>
