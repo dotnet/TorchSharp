@@ -131,7 +131,7 @@ namespace TorchTensor.Tests
                 }
 
                 var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
-                var mem = new NativeMemory<float>((void*)inner.Data, memLen);
+                var mem = new NativeMemory<float>(inner.Data, memLen);
 
                 return new FloatTorchTensorMockup(mem.Memory, shape, inner);
             }
@@ -187,6 +187,62 @@ namespace TorchTensor.Tests
             y[5] = 0f;
 
             Assert.AreNotEqual(x[5], y[5]);
+        }
+
+        [TestMethod]
+        public void TestClone2D()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10, 10);
+            x.Fill(1f);
+
+            Tensor<float> y = x.Clone();
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i, j]);
+                }
+            }
+
+            y[5, 5] = 0f;
+
+            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+        }
+
+        [TestMethod]
+        public void TestCloneEmpty1D()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10);
+            x.Fill(1f);
+
+            Tensor<float> y = x.CloneEmpty();
+
+            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], 0f);
+            }
+        }
+
+        [TestMethod]
+        public void TestCloneEmpty2D()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10, 10);
+            x.Fill(1f);
+
+            Tensor<float> y = x.CloneEmpty();
+
+            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[0]; j++)
+                {
+                    Assert.AreEqual(y[i, j], 0f);
+                }
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace TorchTensor
 {
     public sealed class FloatTorchTensor : DenseTensor<float>
     {
-        internal readonly FloatTensor inner;
+        internal readonly object inner;
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
@@ -30,7 +30,7 @@ namespace TorchTensor
             }
 
             var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
-            var mem = new NativeMemory<float>((void*)inner.Data, memLen);
+            var mem = new NativeMemory<float>(inner.Data, memLen);
 
             return new FloatTorchTensor(mem.Memory, shape, inner);
         }
@@ -46,10 +46,32 @@ namespace TorchTensor
         /// <returns>A shallow copy of this tensor.</returns>
         public unsafe override Tensor<float> Clone()
         {
-            var innerClone = inner.Clone();
+            var typedInner = inner as FloatTensor;
+            var innerClone = typedInner.Clone();
             var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
 
-            return new FloatTorchTensor(mem.Memory, Dimensions, inner);
+            return new FloatTorchTensor(mem.Memory, Dimensions, innerClone);
+        }
+
+        /// <summary>
+        /// Creates a new Tensor of a different type with the specified dimensions and the same layout as this tensor with elements initialized to their default value.
+        /// </summary>
+        /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
+        /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
+        /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
+        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        {
+            switch (true)
+            {
+                case bool _ when typeof(TResult) == typeof(float):
+                    var typedInner = inner as FloatTensor;
+                    var innerClone = new FloatTensor(typedInner.Shape);
+                    innerClone.Fill(default);
+                    var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
+
+                    return new FloatTorchTensor(mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                default: throw new NotImplementedException("Only cloning floats is currently implemented.");
+            }
         }
     }
 }
