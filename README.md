@@ -1,5 +1,12 @@
 [![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
 
+Discussions
+===========
+
+We have a chat room here:
+
+https://gitter.im/xamarin/TorchSharp
+
 Status
 ======
 
