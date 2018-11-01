@@ -318,6 +318,34 @@ foreach (var type in new [] {
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public <#=tname#>Tensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = TH<#=tname#>Tensor_new ();
+                    break;
+	            case 1: 
+		            handle = TH<#=tname#>Tensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~<#=tname#>Tensor
         /// </summary>
         ~<#=tname#>Tensor ()
@@ -430,7 +458,7 @@ foreach (var type in new [] {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe <#=ttype#> *Data => (<#=ttype#>*) TH<#=tname#>Tensor_data (handle);
+        public override unsafe void *Data => (void*)TH<#=tname#>Tensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newClone (SafeHandle handle);

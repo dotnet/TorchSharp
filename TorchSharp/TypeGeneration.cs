@@ -293,6 +293,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public ByteTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THByteTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THByteTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~ByteTensor
         /// </summary>
         ~ByteTensor ()
@@ -405,7 +433,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe byte *Data => (byte*) THByteTensor_data (handle);
+        public override unsafe void *Data => (void*)THByteTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THByteTensor_newClone (SafeHandle handle);
@@ -1781,6 +1809,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public ShortTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THShortTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THShortTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~ShortTensor
         /// </summary>
         ~ShortTensor ()
@@ -1893,7 +1949,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe short *Data => (short*) THShortTensor_data (handle);
+        public override unsafe void *Data => (void*)THShortTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THShortTensor_newClone (SafeHandle handle);
@@ -3269,6 +3325,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public IntTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THIntTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THIntTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~IntTensor
         /// </summary>
         ~IntTensor ()
@@ -3381,7 +3465,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe int *Data => (int*) THIntTensor_data (handle);
+        public override unsafe void *Data => (void*)THIntTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THIntTensor_newClone (SafeHandle handle);
@@ -4757,6 +4841,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public LongTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THLongTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THLongTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~LongTensor
         /// </summary>
         ~LongTensor ()
@@ -4869,7 +4981,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe long *Data => (long*) THLongTensor_data (handle);
+        public override unsafe void *Data => (void*)THLongTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THLongTensor_newClone (SafeHandle handle);
@@ -6245,6 +6357,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public DoubleTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THDoubleTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THDoubleTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~DoubleTensor
         /// </summary>
         ~DoubleTensor ()
@@ -6357,7 +6497,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe double *Data => (double*) THDoubleTensor_data (handle);
+        public override unsafe void *Data => (void*)THDoubleTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_newClone (SafeHandle handle);
@@ -8291,6 +8431,34 @@ public abstract class Tensor<T> : IDisposable
         }
         
         /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public FloatTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+	            case 0:
+		            handle = THFloatTensor_new ();
+                    break;
+	            case 1: 
+		            handle = THFloatTensor_newWithSize1d (dims[0]);
+                    break;
+	            case 2: 
+		            handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+	            case 3: 
+		            handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+	            case 4: 
+		            handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+	            default:
+		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
+        /// <summary>
         ///  Finalizer for ~FloatTensor
         /// </summary>
         ~FloatTensor ()
@@ -8403,7 +8571,7 @@ public abstract class Tensor<T> : IDisposable
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public override unsafe float *Data => (float*) THFloatTensor_data (handle);
+        public override unsafe void *Data => (void*)THFloatTensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_newClone (SafeHandle handle);
