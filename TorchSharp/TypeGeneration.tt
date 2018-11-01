@@ -851,7 +851,43 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ } #>
 
+<#
+        // Idiom Op (Result, T, Scalar, Source2)
+            if (isFloat){
+#>                
         [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_pow (HType result, HType x, <#=ttype#> y);
+
+        /// <summary>
+        ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
+        /// </summary>
+		/// <param 
+        /// <param name="y">The exponent.</param>
+        public <#=tname#>Tensor Pow (<#=ttype#> y)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_pow (result.handle, this.handle, y);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_tpow (HType result, <#=ttype#> x, HType y);
+
+        /// <summary>
+        ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
+        /// </summary>
+		/// <param 
+        /// <param name="x">The base.</param>
+        public <#=tname#>Tensor TPow (<#=ttype#> x)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_tpow (result.handle, x, this.handle);
+            return result;
+        }
+
+<#          } /* if */ #>
+
+		[DllImport ("caffe2")]
         extern static <#=accreal#> TH<#=tname#>Tensor_dot (HType self, HType other);
         
         /// <summary>
