@@ -6,7 +6,7 @@ using System;
 
 namespace TorchTensor
 {
-    public class NativeMemory<T> : MemoryManager<T>
+    internal class NativeMemory<T> : MemoryManager<T>
     {
         private int refCount = 0;
         private IntPtr memory;

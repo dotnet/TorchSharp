@@ -112,45 +112,12 @@ namespace TorchTensor.Tests
             }
         }
 
-        internal class FloatTorchTensorMockup : DenseTensor<float>
-        {
-            private readonly FloatTensor inner;
-
-            public static unsafe FloatTorchTensorMockup Create(params int[] sizes)
-            {
-                var memLen = 0;
-                var shape = sizes;
-
-                if (sizes.Length == 0)
-                {
-                    shape = new int[] { 0 };
-                }
-                else
-                {
-                    memLen = sizes.Aggregate((a, b) => a * b);
-                }
-
-                var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
-                var mem = new NativeMemory<float>(inner.Data, memLen);
-
-                return new FloatTorchTensorMockup(mem.Memory, shape, inner);
-            }
-
-            public FloatTorchTensorMockup(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
-            {
-                this.inner = inner;
-            }
-
-            public float Get(long x0, long x1)
-            {
-                return inner[x0, x1];
-            }
-        }
+        
 
         [TestMethod]
         public void TestFillEquivalance2D()
         {
-            var x = FloatTorchTensorMockup.Create(10, 10);
+            var x = FloatTorchTensor.Create(10, 10);
             var rand = new Random();
 
             for (int i = 0; i < x.Dimensions[0]; i++)
@@ -166,7 +133,7 @@ namespace TorchTensor.Tests
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.Get(i, j));
+                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
