@@ -1,9 +1,15 @@
-﻿using System;
+﻿
+
+
+
+
+using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Text;
 
 namespace TorchSharp {
+
     public partial class ByteTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -287,6 +293,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THByteTensor_maskedFill (HType handle1, ByteTensor.HType handle2, byte value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, byte value)
+        {
+            THByteTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, ByteTensor src)
+        {
+            THByteTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, ByteTensor src)
+        {
+            THByteTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static ByteStorage.HType THByteTensor_storage (HType handle);
 
         /// <summary>
@@ -405,6 +456,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public ByteTensor Unfold (int dim, long size, long step) => new ByteTensor (THByteTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THByteTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (ByteTensor src, int dimension)
+        {
+            THByteTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (ByteTensor src, int dimension)
+        {
+            THByteTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_resize1d (HType handle, long size);
         
@@ -1130,6 +1217,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cadd (HType result, HType t, byte value, HType src);
@@ -1169,6 +1257,8 @@ namespace TorchSharp {
             THByteTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
 
 
 
@@ -1368,6 +1458,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static byte THByteTensor_minall (HType result);
@@ -1459,6 +1550,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -1501,6 +1593,7 @@ namespace TorchSharp {
             THByteTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
     public partial class ShortTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -1784,6 +1877,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THShortTensor_maskedFill (HType handle1, ByteTensor.HType handle2, short value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, short value)
+        {
+            THShortTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, ShortTensor src)
+        {
+            THShortTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, ShortTensor src)
+        {
+            THShortTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static ShortStorage.HType THShortTensor_storage (HType handle);
 
         /// <summary>
@@ -1902,6 +2040,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public ShortTensor Unfold (int dim, long size, long step) => new ShortTensor (THShortTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THShortTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (ShortTensor src, int dimension)
+        {
+            THShortTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (ShortTensor src, int dimension)
+        {
+            THShortTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_resize1d (HType handle, long size);
         
@@ -2627,6 +2801,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cadd (HType result, HType t, short value, HType src);
@@ -2666,6 +2841,8 @@ namespace TorchSharp {
             THShortTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
 
 
 
@@ -2865,6 +3042,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static short THShortTensor_minall (HType result);
@@ -2956,6 +3134,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -2998,6 +3177,7 @@ namespace TorchSharp {
             THShortTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
     public partial class IntTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -3281,6 +3461,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THIntTensor_maskedFill (HType handle1, ByteTensor.HType handle2, int value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, int value)
+        {
+            THIntTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, IntTensor src)
+        {
+            THIntTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, IntTensor src)
+        {
+            THIntTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static IntStorage.HType THIntTensor_storage (HType handle);
 
         /// <summary>
@@ -3399,6 +3624,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public IntTensor Unfold (int dim, long size, long step) => new IntTensor (THIntTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THIntTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (IntTensor src, int dimension)
+        {
+            THIntTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (IntTensor src, int dimension)
+        {
+            THIntTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_resize1d (HType handle, long size);
         
@@ -4124,6 +4385,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cadd (HType result, HType t, int value, HType src);
@@ -4163,6 +4425,8 @@ namespace TorchSharp {
             THIntTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
 
 
 
@@ -4362,6 +4626,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static int THIntTensor_minall (HType result);
@@ -4453,6 +4718,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -4495,6 +4761,7 @@ namespace TorchSharp {
             THIntTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
     public partial class LongTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -4778,6 +5045,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THLongTensor_maskedFill (HType handle1, ByteTensor.HType handle2, long value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, long value)
+        {
+            THLongTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, LongTensor src)
+        {
+            THLongTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, LongTensor src)
+        {
+            THLongTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static LongStorage.HType THLongTensor_storage (HType handle);
 
         /// <summary>
@@ -4896,6 +5208,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public LongTensor Unfold (int dim, long size, long step) => new LongTensor (THLongTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THLongTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (LongTensor src, int dimension)
+        {
+            THLongTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (LongTensor src, int dimension)
+        {
+            THLongTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_resize1d (HType handle, long size);
         
@@ -5621,6 +5969,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cadd (HType result, HType t, long value, HType src);
@@ -5660,6 +6009,8 @@ namespace TorchSharp {
             THLongTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
 
 
 
@@ -5859,6 +6210,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static long THLongTensor_minall (HType result);
@@ -5950,6 +6302,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -5992,6 +6345,7 @@ namespace TorchSharp {
             THLongTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
     public partial class DoubleTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -6275,6 +6629,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THDoubleTensor_maskedFill (HType handle1, ByteTensor.HType handle2, double value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, double value)
+        {
+            THDoubleTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, DoubleTensor src)
+        {
+            THDoubleTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, DoubleTensor src)
+        {
+            THDoubleTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static DoubleStorage.HType THDoubleTensor_storage (HType handle);
 
         /// <summary>
@@ -6393,6 +6792,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public DoubleTensor Unfold (int dim, long size, long step) => new DoubleTensor (THDoubleTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THDoubleTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (DoubleTensor src, int dimension)
+        {
+            THDoubleTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (DoubleTensor src, int dimension)
+        {
+            THDoubleTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_resize1d (HType handle, long size);
         
@@ -7030,6 +7465,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cadd (HType result, HType t, double value, HType src);
@@ -7069,6 +7505,7 @@ namespace TorchSharp {
             THDoubleTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
 
 
                 
@@ -7718,6 +8155,7 @@ namespace TorchSharp {
         }
 
 
+
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_dot (HType self, HType other);
         
@@ -7914,6 +8352,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_minall (HType result);
@@ -8005,6 +8444,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -8047,6 +8487,7 @@ namespace TorchSharp {
             THDoubleTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
     public partial class FloatTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -8330,6 +8771,51 @@ namespace TorchSharp {
         }
         
         [DllImport ("caffe2")]
+        extern static void THFloatTensor_maskedFill (HType handle1, ByteTensor.HType handle2, float value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, float value)
+        {
+            THFloatTensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, FloatTensor src)
+        {
+            THFloatTensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, FloatTensor src)
+        {
+            THFloatTensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static FloatStorage.HType THFloatTensor_storage (HType handle);
 
         /// <summary>
@@ -8448,6 +8934,42 @@ namespace TorchSharp {
         /// <param name="step"></param>
         public FloatTensor Unfold (int dim, long size, long step) => new FloatTensor (THFloatTensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            THFloatTensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (FloatTensor src, int dimension)
+        {
+            THFloatTensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (FloatTensor src, int dimension)
+        {
+            THFloatTensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_resize1d (HType handle, long size);
         
@@ -9085,6 +9607,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cadd (HType result, HType t, float value, HType src);
@@ -9124,6 +9647,7 @@ namespace TorchSharp {
             THFloatTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
 
 
                 
@@ -9773,6 +10297,7 @@ namespace TorchSharp {
         }
 
 
+
         [DllImport ("caffe2")]
         extern static double THFloatTensor_dot (HType self, HType other);
         
@@ -9969,6 +10494,7 @@ namespace TorchSharp {
             return result;
         }
 
+
  
         [DllImport ("caffe2")]
         extern static float THFloatTensor_minall (HType result);
@@ -10060,6 +10586,7 @@ namespace TorchSharp {
 
 
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -10102,4 +10629,5 @@ namespace TorchSharp {
             THFloatTensor_indexCopy (handle, dim, index.handle, src.handle);
         }
     }
+
 }
