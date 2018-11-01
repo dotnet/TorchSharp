@@ -311,10 +311,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, ByteTensor src)
         {
@@ -325,12 +325,13 @@ namespace TorchSharp {
         extern static void THByteTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, ByteTensor src)
         {
@@ -1895,10 +1896,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, ShortTensor src)
         {
@@ -1909,12 +1910,13 @@ namespace TorchSharp {
         extern static void THShortTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, ShortTensor src)
         {
@@ -3479,10 +3481,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, IntTensor src)
         {
@@ -3493,12 +3495,13 @@ namespace TorchSharp {
         extern static void THIntTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, IntTensor src)
         {
@@ -5063,10 +5066,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, LongTensor src)
         {
@@ -5077,12 +5080,13 @@ namespace TorchSharp {
         extern static void THLongTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, LongTensor src)
         {
@@ -6647,10 +6651,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, DoubleTensor src)
         {
@@ -6661,12 +6665,13 @@ namespace TorchSharp {
         extern static void THDoubleTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, DoubleTensor src)
         {
@@ -8789,10 +8794,10 @@ namespace TorchSharp {
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedCopy (ByteTensor mask, FloatTensor src)
         {
@@ -8803,12 +8808,13 @@ namespace TorchSharp {
         extern static void THFloatTensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
         
         /// <summary>
-        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
-        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
         /// <param name="src">The source tensor.</param>
         /// <remarks>
-        ///  There must be at least as many elements in the source tensors as there are 1s in the mask.
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
         /// </remarks>
         public void MaskedSelect (ByteTensor mask, FloatTensor src)
         {
