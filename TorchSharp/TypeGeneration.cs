@@ -1312,7 +1312,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static long THByteTensor_dot (HType self, HType other);
         
         /// <summary>
@@ -3254,7 +3254,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static long THShortTensor_dot (HType self, HType other);
         
         /// <summary>
@@ -5196,7 +5196,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static long THIntTensor_dot (HType self, HType other);
         
         /// <summary>
@@ -7138,7 +7138,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static long THLongTensor_dot (HType self, HType other);
         
         /// <summary>
@@ -9755,7 +9755,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="y">The exponent.</param>
         public DoubleTensor Pow (double y)
         {
@@ -9770,7 +9770,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="x">The base.</param>
         public DoubleTensor TPow (double x)
         {
@@ -9781,7 +9781,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static double THDoubleTensor_dot (HType self, HType other);
         
         /// <summary>
@@ -12398,7 +12398,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="y">The exponent.</param>
         public FloatTensor Pow (float y)
         {
@@ -12413,7 +12413,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="x">The base.</param>
         public FloatTensor TPow (float x)
         {
@@ -12424,7 +12424,7 @@ namespace TorchSharp {
 
 
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static double THFloatTensor_dot (HType self, HType other);
         
         /// <summary>

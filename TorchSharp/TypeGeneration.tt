@@ -733,7 +733,7 @@ foreach (var type in new [] {
 
 <#
         // Float-specific random distributions.
-            if (isFloat){                    
+            if (isFloat) {                    
 #>
 #if false
         [DllImport ("caffe2")]
@@ -1023,7 +1023,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="y">The exponent.</param>
         public <#=tname#>Tensor Pow (<#=ttype#> y)
         {
@@ -1038,7 +1038,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-		/// <param 
+        /// <param 
         /// <param name="x">The base.</param>
         public <#=tname#>Tensor TPow (<#=ttype#> x)
         {
@@ -1049,7 +1049,7 @@ foreach (var type in new [] {
 
 <#          } /* if */ #>
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static <#=accreal#> TH<#=tname#>Tensor_dot (HType self, HType other);
         
         /// <summary>
