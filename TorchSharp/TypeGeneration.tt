@@ -291,7 +291,7 @@ foreach (var type in new [] {
         extern static long TH<#=tname#>Tensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -695,7 +695,6 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -710,7 +709,8 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -725,7 +725,7 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -755,7 +755,7 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -782,8 +782,10 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_bernoulli_<#=tname#>Tensor (HType self, IntPtr thgenerator, HType p);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="p"></param>
         public void BernoulliTensor (RandomGenerator source, <#=tname#>Tensor p)
         {
             TH<#=tname#>Tensor_bernoulli_<#=tname#>Tensor(this.handle, source.handle, p.handle);
@@ -794,8 +796,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_uniform (HType self, IntPtr thgenerator, double min, double max);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="min">The lower bound for the random number range.</param>
+        /// <param name="max">The upper bound for the random number range.</param>
         public void Uniform (RandomGenerator source, double min, double max)
         {
             TH<#=tname#>Tensor_uniform(this.handle, source.handle, min, max);
@@ -805,8 +810,10 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_exponential (HType self, IntPtr thgenerator, double lambda);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a exponential distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="lambda"></param>
         public void Exponential (RandomGenerator source, double lambda)
         {
             TH<#=tname#>Tensor_exponential(this.handle, source.handle, lambda);
@@ -816,8 +823,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Cauchy-Lorentz distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="median"></param>
+        /// <param name="sigma"></param>
         public void Cauchy (RandomGenerator source, double median, double sigma)
         {
             TH<#=tname#>Tensor_cauchy(this.handle, source.handle, median, sigma);
@@ -827,8 +837,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a log-normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void LogNormal (RandomGenerator source, double mean, double stdv)
         {
             TH<#=tname#>Tensor_logNormal(this.handle, source.handle, mean, stdv);
@@ -838,8 +851,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void Normal (RandomGenerator source, double mean, double stdv)
         {
             TH<#=tname#>Tensor_normal(this.handle, source.handle, mean, stdv);
@@ -849,8 +865,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void NormalMeans (RandomGenerator source, <#=tname#>Tensor means, double stdv)
         {
             TH<#=tname#>Tensor_normal_means(this.handle, source.handle, means.handle, stdv);
@@ -860,8 +879,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdvs">The standard deviations of the distribution.</param>
         public void NormalStdvs (RandomGenerator source, double mean, <#=tname#>Tensor stdvs)
         {
             TH<#=tname#>Tensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
@@ -871,8 +893,11 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdvs">The standards deviation of the distribution.</param>
         public void NormalMeansStdvs (RandomGenerator source, <#=tname#>Tensor means, <#=tname#>Tensor stdvs)
         {
             TH<#=tname#>Tensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
@@ -882,16 +907,20 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a multinomial distribution.
         /// </summary>
-        public void NormalMeansStdvs (RandomGenerator source, <#=tname#>Tensor prob_dist, int n_sample, int with_replacement)
+        /// <param name="source">The random generator source</param>
+        /// <param name="prob_dist">The probability for each bucket.</param>
+        /// <param name="n_sample">The number of samples to generate.</param>
+        /// <param name="with_replacement"></param>
+        public void Multinomial (RandomGenerator source, <#=tname#>Tensor prob_dist, int n_sample, int with_replacement)
         {
             TH<#=tname#>Tensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 <#          } /* if */ #>
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -1665,6 +1694,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compares all the elements of the tensor using '<#=doc#>' and returns the result as an integer, either 0 or 1. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor <#=op#> (int dimension, int keepdim)
         {
             var result = new <#=tname#>Tensor ();
@@ -1687,6 +1718,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor <#=op#> (int dimension, int keepdim)
         {
             var result = new <#=tname#>Tensor ();
@@ -1700,6 +1733,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Computes the cumulative <#=doc#> of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public <#=tname#>Tensor Cumulative<#=op#> (int dimension)
         {
             var result = new <#=tname#>Tensor ();
@@ -1724,12 +1758,15 @@ foreach (var type in new [] {
         /// <summary>
         ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<<#=tname#>Tensor,LongTensor> <#=op#> (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<<#=tname#>Tensor, LongTensor> <#=op#> (int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
             TH<#=tname#>Tensor_<#=cname#> (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<<#=tname#>Tensor,LongTensor>(values, indices);
+            return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 <#          } /* foreach */ #>     
 
@@ -1739,12 +1776,16 @@ foreach (var type in new [] {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<<#=tname#>Tensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<<#=tname#>Tensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
             TH<#=tname#>Tensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<<#=tname#>Tensor,LongTensor>(values, indices);
+            return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -1775,8 +1816,9 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public <#=tname#>Tensor CrossProduct (<#=tname#>Tensor other)
         {
             var result = new <#=tname#>Tensor();
@@ -1790,6 +1832,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public <#=tname#>Tensor Diagonal (int k)
         {
             var result = new <#=tname#>Tensor();
@@ -1803,6 +1846,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static <#=tname#>Tensor Eye (long m, long n)
         {
             var result = new <#=tname#>Tensor();
@@ -1816,6 +1861,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static <#=tname#>Tensor Range (<#=accreal#> xmin, <#=accreal#> xmax, <#=accreal#> step)
         {
             var result = new <#=tname#>Tensor();
@@ -1829,6 +1877,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static <#=tname#>Tensor ARange (<#=accreal#> xmin, <#=accreal#> xmax, <#=accreal#> step)
         {
             var result = new <#=tname#>Tensor();
@@ -1842,12 +1893,15 @@ foreach (var type in new [] {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<<#=tname#>Tensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<<#=tname#>Tensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
             TH<#=tname#>Tensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<<#=tname#>Tensor,LongTensor>(values, indices);
+            return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -1856,12 +1910,17 @@ foreach (var type in new [] {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<<#=tname#>Tensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<<#=tname#>Tensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
             TH<#=tname#>Tensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<<#=tname#>Tensor,LongTensor>(values, indices);
+            return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -1870,6 +1929,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public <#=tname#>Tensor TriL (long k)
         {
             var result = new <#=tname#>Tensor ();
@@ -1883,6 +1943,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public <#=tname#>Tensor TriU (long k)
         {
             var result = new <#=tname#>Tensor ();
@@ -1896,6 +1957,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public <#=tname#>Tensor Concatenate (<#=tname#>Tensor other, int dimension)
         {
             var result = new <#=tname#>Tensor ();
@@ -1910,6 +1973,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static <#=tname#>Tensor Concatenate (IEnumerable<<#=tname#>Tensor> tensors, int dimension)
         {
             var result = new <#=tname#>Tensor ();
@@ -1927,6 +1992,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor Mean (int dimension, int keepdim)
         {
             var result = new <#=tname#>Tensor();
@@ -1940,6 +2007,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor Std (int dimension, int biased, int keepdim)
         {
             var result = new <#=tname#>Tensor();
@@ -1953,6 +2023,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the variance of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor Var (int dimension, int biased, int keepdim)
         {
             var result = new <#=tname#>Tensor();
@@ -1966,6 +2039,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor Norm (<#=ttype#> value,  int dimension, int keepdim)
         {
             var result = new <#=tname#>Tensor();
@@ -1979,6 +2054,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="maxnorm"></param>
         public <#=tname#>Tensor Renorm (<#=ttype#> value,  int dimension, <#=ttype#> maxnorm)
         {
             var result = new <#=tname#>Tensor();
@@ -1992,6 +2069,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the dist of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="other">The other tensor.</param>
+        /// <param name="value"></param>
         public <#=accreal#> Dist (<#=tname#>Tensor other, <#=ttype#> value)
         {
             if (other == null)
@@ -2005,6 +2084,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public <#=tname#>Tensor Histc (long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue)
         {
             var result = new <#=tname#>Tensor();
@@ -2018,6 +2100,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public <#=tname#>Tensor BHistc (long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue)
         {
             var result = new <#=tname#>Tensor();
@@ -2042,6 +2127,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the variance of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public <#=accreal#> VarAll (int biased)
         {
             return TH<#=tname#>Tensor_varall (this.handle, biased);
@@ -2053,6 +2139,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public <#=accreal#> StdAll (int biased)
         {
             return TH<#=tname#>Tensor_stdall (this.handle, biased);
@@ -2064,6 +2151,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the norm of all tensor elements. 
         /// </summary>
+        /// <param name="value"></param>
         public <#=accreal#> NormAll (<#=ttype#> value)
         {
             return TH<#=tname#>Tensor_normall (this.handle, value);
@@ -2075,6 +2163,8 @@ foreach (var type in new [] {
         /// <summary>
         ///    DirichletGrad
         /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="total"></param>
         public <#=tname#>Tensor DirichletGrad (<#=tname#>Tensor alpha, <#=tname#>Tensor total)
         {
             var result = new <#=tname#>Tensor();

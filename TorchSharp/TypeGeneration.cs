@@ -275,7 +275,7 @@ namespace TorchSharp {
         extern static long THByteTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -679,7 +679,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -694,7 +693,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -709,7 +709,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -739,7 +739,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -760,7 +760,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -2710,6 +2710,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ByteTensor LogicalAnd (int dimension, int keepdim)
         {
             var result = new ByteTensor ();
@@ -2723,6 +2725,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ByteTensor LogicalAny (int dimension, int keepdim)
         {
             var result = new ByteTensor ();
@@ -2737,6 +2741,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ByteTensor Sum (int dimension, int keepdim)
         {
             var result = new ByteTensor ();
@@ -2750,6 +2756,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public ByteTensor CumulativeSum (int dimension)
         {
             var result = new ByteTensor ();
@@ -2763,6 +2770,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ByteTensor Prod (int dimension, int keepdim)
         {
             var result = new ByteTensor ();
@@ -2776,6 +2785,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public ByteTensor CumulativeProd (int dimension)
         {
             var result = new ByteTensor ();
@@ -2790,12 +2800,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2804,12 +2817,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2818,12 +2834,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2832,12 +2851,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
      
 
@@ -2847,12 +2869,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<ByteTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2883,8 +2909,9 @@ namespace TorchSharp {
         extern static void THByteTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public ByteTensor CrossProduct (ByteTensor other)
         {
             var result = new ByteTensor();
@@ -2898,6 +2925,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public ByteTensor Diagonal (int k)
         {
             var result = new ByteTensor();
@@ -2911,6 +2939,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static ByteTensor Eye (long m, long n)
         {
             var result = new ByteTensor();
@@ -2924,6 +2954,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static ByteTensor Range (long xmin, long xmax, long step)
         {
             var result = new ByteTensor();
@@ -2937,6 +2970,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static ByteTensor ARange (long xmin, long xmax, long step)
         {
             var result = new ByteTensor();
@@ -2950,12 +2986,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2964,12 +3003,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ByteTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
             THByteTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<ByteTensor,LongTensor>(values, indices);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -2978,6 +3022,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public ByteTensor TriL (long k)
         {
             var result = new ByteTensor ();
@@ -2991,6 +3036,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public ByteTensor TriU (long k)
         {
             var result = new ByteTensor ();
@@ -3004,6 +3050,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public ByteTensor Concatenate (ByteTensor other, int dimension)
         {
             var result = new ByteTensor ();
@@ -3018,6 +3066,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static ByteTensor Concatenate (IEnumerable<ByteTensor> tensors, int dimension)
         {
             var result = new ByteTensor ();
@@ -3292,7 +3342,7 @@ namespace TorchSharp {
         extern static long THShortTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -3696,7 +3746,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -3711,7 +3760,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -3726,7 +3776,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -3756,7 +3806,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -3777,7 +3827,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -5706,6 +5756,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ShortTensor Sum (int dimension, int keepdim)
         {
             var result = new ShortTensor ();
@@ -5719,6 +5771,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public ShortTensor CumulativeSum (int dimension)
         {
             var result = new ShortTensor ();
@@ -5732,6 +5785,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public ShortTensor Prod (int dimension, int keepdim)
         {
             var result = new ShortTensor ();
@@ -5745,6 +5800,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public ShortTensor CumulativeProd (int dimension)
         {
             var result = new ShortTensor ();
@@ -5759,12 +5815,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5773,12 +5832,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5787,12 +5849,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5801,12 +5866,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
      
 
@@ -5816,12 +5884,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<ShortTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5852,8 +5924,9 @@ namespace TorchSharp {
         extern static void THShortTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public ShortTensor CrossProduct (ShortTensor other)
         {
             var result = new ShortTensor();
@@ -5867,6 +5940,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public ShortTensor Diagonal (int k)
         {
             var result = new ShortTensor();
@@ -5880,6 +5954,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static ShortTensor Eye (long m, long n)
         {
             var result = new ShortTensor();
@@ -5893,6 +5969,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static ShortTensor Range (long xmin, long xmax, long step)
         {
             var result = new ShortTensor();
@@ -5906,6 +5985,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static ShortTensor ARange (long xmin, long xmax, long step)
         {
             var result = new ShortTensor();
@@ -5919,12 +6001,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5933,12 +6018,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<ShortTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
             THShortTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<ShortTensor,LongTensor>(values, indices);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -5947,6 +6037,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public ShortTensor TriL (long k)
         {
             var result = new ShortTensor ();
@@ -5960,6 +6051,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public ShortTensor TriU (long k)
         {
             var result = new ShortTensor ();
@@ -5973,6 +6065,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public ShortTensor Concatenate (ShortTensor other, int dimension)
         {
             var result = new ShortTensor ();
@@ -5987,6 +6081,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static ShortTensor Concatenate (IEnumerable<ShortTensor> tensors, int dimension)
         {
             var result = new ShortTensor ();
@@ -6261,7 +6357,7 @@ namespace TorchSharp {
         extern static long THIntTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -6665,7 +6761,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -6680,7 +6775,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -6695,7 +6791,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -6725,7 +6821,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -6746,7 +6842,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -8675,6 +8771,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public IntTensor Sum (int dimension, int keepdim)
         {
             var result = new IntTensor ();
@@ -8688,6 +8786,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public IntTensor CumulativeSum (int dimension)
         {
             var result = new IntTensor ();
@@ -8701,6 +8800,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public IntTensor Prod (int dimension, int keepdim)
         {
             var result = new IntTensor ();
@@ -8714,6 +8815,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public IntTensor CumulativeProd (int dimension)
         {
             var result = new IntTensor ();
@@ -8728,12 +8830,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8742,12 +8847,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8756,12 +8864,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8770,12 +8881,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
      
 
@@ -8785,12 +8899,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<IntTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8821,8 +8939,9 @@ namespace TorchSharp {
         extern static void THIntTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public IntTensor CrossProduct (IntTensor other)
         {
             var result = new IntTensor();
@@ -8836,6 +8955,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public IntTensor Diagonal (int k)
         {
             var result = new IntTensor();
@@ -8849,6 +8969,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static IntTensor Eye (long m, long n)
         {
             var result = new IntTensor();
@@ -8862,6 +8984,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static IntTensor Range (long xmin, long xmax, long step)
         {
             var result = new IntTensor();
@@ -8875,6 +9000,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static IntTensor ARange (long xmin, long xmax, long step)
         {
             var result = new IntTensor();
@@ -8888,12 +9016,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8902,12 +9033,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<IntTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
             THIntTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<IntTensor,LongTensor>(values, indices);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -8916,6 +9052,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public IntTensor TriL (long k)
         {
             var result = new IntTensor ();
@@ -8929,6 +9066,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public IntTensor TriU (long k)
         {
             var result = new IntTensor ();
@@ -8942,6 +9080,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public IntTensor Concatenate (IntTensor other, int dimension)
         {
             var result = new IntTensor ();
@@ -8956,6 +9096,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static IntTensor Concatenate (IEnumerable<IntTensor> tensors, int dimension)
         {
             var result = new IntTensor ();
@@ -9230,7 +9372,7 @@ namespace TorchSharp {
         extern static long THLongTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -9634,7 +9776,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -9649,7 +9790,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -9664,7 +9806,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -9694,7 +9836,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -9715,7 +9857,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -11644,6 +11786,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public LongTensor Sum (int dimension, int keepdim)
         {
             var result = new LongTensor ();
@@ -11657,6 +11801,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public LongTensor CumulativeSum (int dimension)
         {
             var result = new LongTensor ();
@@ -11670,6 +11815,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public LongTensor Prod (int dimension, int keepdim)
         {
             var result = new LongTensor ();
@@ -11683,6 +11830,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public LongTensor CumulativeProd (int dimension)
         {
             var result = new LongTensor ();
@@ -11697,12 +11845,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11711,12 +11862,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11725,12 +11879,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11739,12 +11896,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
      
 
@@ -11754,12 +11914,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<LongTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11790,8 +11954,9 @@ namespace TorchSharp {
         extern static void THLongTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public LongTensor CrossProduct (LongTensor other)
         {
             var result = new LongTensor();
@@ -11805,6 +11970,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public LongTensor Diagonal (int k)
         {
             var result = new LongTensor();
@@ -11818,6 +11984,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static LongTensor Eye (long m, long n)
         {
             var result = new LongTensor();
@@ -11831,6 +11999,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static LongTensor Range (long xmin, long xmax, long step)
         {
             var result = new LongTensor();
@@ -11844,6 +12015,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static LongTensor ARange (long xmin, long xmax, long step)
         {
             var result = new LongTensor();
@@ -11857,12 +12031,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11871,12 +12048,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<LongTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
             THLongTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<LongTensor,LongTensor>(values, indices);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -11885,6 +12067,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public LongTensor TriL (long k)
         {
             var result = new LongTensor ();
@@ -11898,6 +12081,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public LongTensor TriU (long k)
         {
             var result = new LongTensor ();
@@ -11911,6 +12095,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public LongTensor Concatenate (LongTensor other, int dimension)
         {
             var result = new LongTensor ();
@@ -11925,6 +12111,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static LongTensor Concatenate (IEnumerable<LongTensor> tensors, int dimension)
         {
             var result = new LongTensor ();
@@ -12199,7 +12387,7 @@ namespace TorchSharp {
         extern static long THDoubleTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -12603,7 +12791,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -12618,7 +12805,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -12633,7 +12821,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -12663,7 +12851,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -12687,8 +12875,10 @@ namespace TorchSharp {
         extern static void THDoubleTensor_bernoulli_DoubleTensor (HType self, IntPtr thgenerator, HType p);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="p"></param>
         public void BernoulliTensor (RandomGenerator source, DoubleTensor p)
         {
             THDoubleTensor_bernoulli_DoubleTensor(this.handle, source.handle, p.handle);
@@ -12699,8 +12889,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_uniform (HType self, IntPtr thgenerator, double min, double max);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="min">The lower bound for the random number range.</param>
+        /// <param name="max">The upper bound for the random number range.</param>
         public void Uniform (RandomGenerator source, double min, double max)
         {
             THDoubleTensor_uniform(this.handle, source.handle, min, max);
@@ -12710,8 +12903,10 @@ namespace TorchSharp {
         extern static void THDoubleTensor_exponential (HType self, IntPtr thgenerator, double lambda);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a exponential distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="lambda"></param>
         public void Exponential (RandomGenerator source, double lambda)
         {
             THDoubleTensor_exponential(this.handle, source.handle, lambda);
@@ -12721,8 +12916,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Cauchy-Lorentz distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="median"></param>
+        /// <param name="sigma"></param>
         public void Cauchy (RandomGenerator source, double median, double sigma)
         {
             THDoubleTensor_cauchy(this.handle, source.handle, median, sigma);
@@ -12732,8 +12930,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a log-normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void LogNormal (RandomGenerator source, double mean, double stdv)
         {
             THDoubleTensor_logNormal(this.handle, source.handle, mean, stdv);
@@ -12743,8 +12944,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void Normal (RandomGenerator source, double mean, double stdv)
         {
             THDoubleTensor_normal(this.handle, source.handle, mean, stdv);
@@ -12754,8 +12958,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void NormalMeans (RandomGenerator source, DoubleTensor means, double stdv)
         {
             THDoubleTensor_normal_means(this.handle, source.handle, means.handle, stdv);
@@ -12765,8 +12972,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdvs">The standard deviations of the distribution.</param>
         public void NormalStdvs (RandomGenerator source, double mean, DoubleTensor stdvs)
         {
             THDoubleTensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
@@ -12776,8 +12986,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdvs">The standards deviation of the distribution.</param>
         public void NormalMeansStdvs (RandomGenerator source, DoubleTensor means, DoubleTensor stdvs)
         {
             THDoubleTensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
@@ -12787,16 +13000,20 @@ namespace TorchSharp {
         extern static void THDoubleTensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a multinomial distribution.
         /// </summary>
-        public void NormalMeansStdvs (RandomGenerator source, DoubleTensor prob_dist, int n_sample, int with_replacement)
+        /// <param name="source">The random generator source</param>
+        /// <param name="prob_dist">The probability for each bucket.</param>
+        /// <param name="n_sample">The number of samples to generate.</param>
+        /// <param name="with_replacement"></param>
+        public void Multinomial (RandomGenerator source, DoubleTensor prob_dist, int n_sample, int with_replacement)
         {
             THDoubleTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -15322,6 +15539,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Sum (int dimension, int keepdim)
         {
             var result = new DoubleTensor ();
@@ -15335,6 +15554,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public DoubleTensor CumulativeSum (int dimension)
         {
             var result = new DoubleTensor ();
@@ -15348,6 +15568,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Prod (int dimension, int keepdim)
         {
             var result = new DoubleTensor ();
@@ -15361,6 +15583,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public DoubleTensor CumulativeProd (int dimension)
         {
             var result = new DoubleTensor ();
@@ -15375,12 +15598,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15389,12 +15615,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15403,12 +15632,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15417,12 +15649,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
      
 
@@ -15432,12 +15667,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15468,8 +15707,9 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public DoubleTensor CrossProduct (DoubleTensor other)
         {
             var result = new DoubleTensor();
@@ -15483,6 +15723,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public DoubleTensor Diagonal (int k)
         {
             var result = new DoubleTensor();
@@ -15496,6 +15737,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static DoubleTensor Eye (long m, long n)
         {
             var result = new DoubleTensor();
@@ -15509,6 +15752,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static DoubleTensor Range (double xmin, double xmax, double step)
         {
             var result = new DoubleTensor();
@@ -15522,6 +15768,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static DoubleTensor ARange (double xmin, double xmax, double step)
         {
             var result = new DoubleTensor();
@@ -15535,12 +15784,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15549,12 +15801,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<DoubleTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
             THDoubleTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<DoubleTensor,LongTensor>(values, indices);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -15563,6 +15820,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public DoubleTensor TriL (long k)
         {
             var result = new DoubleTensor ();
@@ -15576,6 +15834,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public DoubleTensor TriU (long k)
         {
             var result = new DoubleTensor ();
@@ -15589,6 +15848,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public DoubleTensor Concatenate (DoubleTensor other, int dimension)
         {
             var result = new DoubleTensor ();
@@ -15603,6 +15864,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static DoubleTensor Concatenate (IEnumerable<DoubleTensor> tensors, int dimension)
         {
             var result = new DoubleTensor ();
@@ -15618,6 +15881,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Mean (int dimension, int keepdim)
         {
             var result = new DoubleTensor();
@@ -15631,6 +15896,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Std (int dimension, int biased, int keepdim)
         {
             var result = new DoubleTensor();
@@ -15644,6 +15912,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the variance of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Var (int dimension, int biased, int keepdim)
         {
             var result = new DoubleTensor();
@@ -15657,6 +15928,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Norm (double value,  int dimension, int keepdim)
         {
             var result = new DoubleTensor();
@@ -15670,6 +15943,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="maxnorm"></param>
         public DoubleTensor Renorm (double value,  int dimension, double maxnorm)
         {
             var result = new DoubleTensor();
@@ -15683,6 +15958,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the dist of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="other">The other tensor.</param>
+        /// <param name="value"></param>
         public double Dist (DoubleTensor other, double value)
         {
             if (other == null)
@@ -15696,6 +15973,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public DoubleTensor Histc (long nbins, double minvalue, double maxvalue)
         {
             var result = new DoubleTensor();
@@ -15709,6 +15989,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public DoubleTensor BHistc (long nbins, double minvalue, double maxvalue)
         {
             var result = new DoubleTensor();
@@ -15733,6 +16016,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the variance of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public double VarAll (int biased)
         {
             return THDoubleTensor_varall (this.handle, biased);
@@ -15744,6 +16028,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public double StdAll (int biased)
         {
             return THDoubleTensor_stdall (this.handle, biased);
@@ -15755,6 +16040,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements. 
         /// </summary>
+        /// <param name="value"></param>
         public double NormAll (double value)
         {
             return THDoubleTensor_normall (this.handle, value);
@@ -15766,6 +16052,8 @@ namespace TorchSharp {
         /// <summary>
         ///    DirichletGrad
         /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="total"></param>
         public DoubleTensor DirichletGrad (DoubleTensor alpha, DoubleTensor total)
         {
             var result = new DoubleTensor();
@@ -16038,7 +16326,7 @@ namespace TorchSharp {
         extern static long THFloatTensor_numel (HType handle);
      
         /// <summary>
-        ///  Fills the tensor with zeros
+        ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements ()
         {
@@ -16442,7 +16730,6 @@ namespace TorchSharp {
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -16457,7 +16744,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -16472,7 +16760,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
@@ -16502,7 +16790,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -16526,8 +16814,10 @@ namespace TorchSharp {
         extern static void THFloatTensor_bernoulli_FloatTensor (HType self, IntPtr thgenerator, HType p);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="p"></param>
         public void BernoulliTensor (RandomGenerator source, FloatTensor p)
         {
             THFloatTensor_bernoulli_FloatTensor(this.handle, source.handle, p.handle);
@@ -16538,8 +16828,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_uniform (HType self, IntPtr thgenerator, double min, double max);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="min">The lower bound for the random number range.</param>
+        /// <param name="max">The upper bound for the random number range.</param>
         public void Uniform (RandomGenerator source, double min, double max)
         {
             THFloatTensor_uniform(this.handle, source.handle, min, max);
@@ -16549,8 +16842,10 @@ namespace TorchSharp {
         extern static void THFloatTensor_exponential (HType self, IntPtr thgenerator, double lambda);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a exponential distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="lambda"></param>
         public void Exponential (RandomGenerator source, double lambda)
         {
             THFloatTensor_exponential(this.handle, source.handle, lambda);
@@ -16560,8 +16855,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Cauchy-Lorentz distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="median"></param>
+        /// <param name="sigma"></param>
         public void Cauchy (RandomGenerator source, double median, double sigma)
         {
             THFloatTensor_cauchy(this.handle, source.handle, median, sigma);
@@ -16571,8 +16869,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a log-normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void LogNormal (RandomGenerator source, double mean, double stdv)
         {
             THFloatTensor_logNormal(this.handle, source.handle, mean, stdv);
@@ -16582,8 +16883,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void Normal (RandomGenerator source, double mean, double stdv)
         {
             THFloatTensor_normal(this.handle, source.handle, mean, stdv);
@@ -16593,8 +16897,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void NormalMeans (RandomGenerator source, FloatTensor means, double stdv)
         {
             THFloatTensor_normal_means(this.handle, source.handle, means.handle, stdv);
@@ -16604,8 +16911,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdvs">The standard deviations of the distribution.</param>
         public void NormalStdvs (RandomGenerator source, double mean, FloatTensor stdvs)
         {
             THFloatTensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
@@ -16615,8 +16925,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdvs">The standards deviation of the distribution.</param>
         public void NormalMeansStdvs (RandomGenerator source, FloatTensor means, FloatTensor stdvs)
         {
             THFloatTensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
@@ -16626,16 +16939,20 @@ namespace TorchSharp {
         extern static void THFloatTensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a multinomial distribution.
         /// </summary>
-        public void NormalMeansStdvs (RandomGenerator source, FloatTensor prob_dist, int n_sample, int with_replacement)
+        /// <param name="source">The random generator source</param>
+        /// <param name="prob_dist">The probability for each bucket.</param>
+        /// <param name="n_sample">The number of samples to generate.</param>
+        /// <param name="with_replacement"></param>
+        public void Multinomial (RandomGenerator source, FloatTensor prob_dist, int n_sample, int with_replacement)
         {
             THFloatTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -19161,6 +19478,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Sum (int dimension, int keepdim)
         {
             var result = new FloatTensor ();
@@ -19174,6 +19493,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public FloatTensor CumulativeSum (int dimension)
         {
             var result = new FloatTensor ();
@@ -19187,6 +19507,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Prod (int dimension, int keepdim)
         {
             var result = new FloatTensor ();
@@ -19200,6 +19522,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
         public FloatTensor CumulativeProd (int dimension)
         {
             var result = new FloatTensor ();
@@ -19214,12 +19537,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> Max (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Max (int dimension, int keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19228,12 +19554,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> Min (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Min (int dimension, int keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19242,12 +19571,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> Mode (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Mode (int dimension, int keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19256,12 +19588,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> Median (int dimension, int keepdim)
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Median (int dimension, int keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
      
 
@@ -19271,12 +19606,16 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> KthValue (long k, int dimension, int keepdim)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<FloatTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19307,8 +19646,9 @@ namespace TorchSharp {
         extern static void THFloatTensor_cross (HType result, HType a, HType b);
         
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the cross product of two tensors. 
         /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
         public FloatTensor CrossProduct (FloatTensor other)
         {
             var result = new FloatTensor();
@@ -19322,6 +19662,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Gets the diagonal of the tensor. 
         /// </summary>
+        /// <param name="k"></param>
         public FloatTensor Diagonal (int k)
         {
             var result = new FloatTensor();
@@ -19335,6 +19676,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Eye. 
         /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
         public static FloatTensor Eye (long m, long n)
         {
             var result = new FloatTensor();
@@ -19348,6 +19691,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static FloatTensor Range (double xmin, double xmax, double step)
         {
             var result = new FloatTensor();
@@ -19361,6 +19707,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
         public static FloatTensor ARange (double xmin, double xmax, double step)
         {
             var result = new FloatTensor();
@@ -19374,12 +19723,15 @@ namespace TorchSharp {
         /// <summary>
         ///   Sorts the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> Sort (int dimension, int descending)
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19388,12 +19740,17 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        public System.Tuple<FloatTensor,LongTensor> TopK (long k, int dim, int dir, int sorted)
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
             THFloatTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
-            return new System.Tuple<FloatTensor,LongTensor>(values, indices);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
         [DllImport ("caffe2")]
@@ -19402,6 +19759,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public FloatTensor TriL (long k)
         {
             var result = new FloatTensor ();
@@ -19415,6 +19773,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
+        /// <param name="k">The value for 'k'.</param>
         public FloatTensor TriU (long k)
         {
             var result = new FloatTensor ();
@@ -19428,6 +19787,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public FloatTensor Concatenate (FloatTensor other, int dimension)
         {
             var result = new FloatTensor ();
@@ -19442,6 +19803,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
         public static FloatTensor Concatenate (IEnumerable<FloatTensor> tensors, int dimension)
         {
             var result = new FloatTensor ();
@@ -19457,6 +19820,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Mean (int dimension, int keepdim)
         {
             var result = new FloatTensor();
@@ -19470,6 +19835,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Std (int dimension, int biased, int keepdim)
         {
             var result = new FloatTensor();
@@ -19483,6 +19851,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the variance of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Var (int dimension, int biased, int keepdim)
         {
             var result = new FloatTensor();
@@ -19496,6 +19867,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Norm (float value,  int dimension, int keepdim)
         {
             var result = new FloatTensor();
@@ -19509,6 +19882,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="maxnorm"></param>
         public FloatTensor Renorm (float value,  int dimension, float maxnorm)
         {
             var result = new FloatTensor();
@@ -19522,6 +19897,8 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the dist of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="other">The other tensor.</param>
+        /// <param name="value"></param>
         public double Dist (FloatTensor other, float value)
         {
             if (other == null)
@@ -19535,6 +19912,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public FloatTensor Histc (long nbins, float minvalue, float maxvalue)
         {
             var result = new FloatTensor();
@@ -19548,6 +19928,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Create a histogram of all tensor elements. 
         /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
         public FloatTensor BHistc (long nbins, float minvalue, float maxvalue)
         {
             var result = new FloatTensor();
@@ -19572,6 +19955,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the variance of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public double VarAll (int biased)
         {
             return THFloatTensor_varall (this.handle, biased);
@@ -19583,6 +19967,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
+        /// <param name="biased"></param>
         public double StdAll (int biased)
         {
             return THFloatTensor_stdall (this.handle, biased);
@@ -19594,6 +19979,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements. 
         /// </summary>
+        /// <param name="value"></param>
         public double NormAll (float value)
         {
             return THFloatTensor_normall (this.handle, value);
@@ -19605,6 +19991,8 @@ namespace TorchSharp {
         /// <summary>
         ///    DirichletGrad
         /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="total"></param>
         public FloatTensor DirichletGrad (FloatTensor alpha, FloatTensor total)
         {
             var result = new FloatTensor();
