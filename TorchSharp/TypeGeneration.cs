@@ -183,7 +183,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THByteTensor_newWithSize1d (long size0);
 
         /// <summary>
@@ -2181,7 +2181,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THShortTensor_newWithSize1d (long size0);
 
         /// <summary>
@@ -4179,7 +4179,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THIntTensor_newWithSize1d (long size0);
 
         /// <summary>
@@ -6177,7 +6177,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THLongTensor_newWithSize1d (long size0);
 
         /// <summary>
@@ -8175,7 +8175,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THDoubleTensor_newWithSize1d (long size0);
 
         /// <summary>
@@ -10873,7 +10873,7 @@ namespace TorchSharp {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType THFloatTensor_newWithSize1d (long size0);
 
         /// <summary>

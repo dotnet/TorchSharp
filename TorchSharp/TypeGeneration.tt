@@ -204,7 +204,7 @@ foreach (var type in new [] {
             this.handle = handle;
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
 
         /// <summary>
