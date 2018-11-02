@@ -24,20 +24,16 @@ namespace TorchTensor
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
         public static unsafe FloatTorchTensor Create(params int[] sizes)
         {
-            var memLen = 0;
+            var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
 
             if (sizes.Length == 0)
             {
                 shape = new int[] { 0 };
             }
-            else
-            {
-                memLen = sizes.Aggregate((a, b) => a * b);
-            }
 
             var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
-            var mem = new NativeMemory<float>(inner.Data, memLen);
+            var mem = new NativeMemory<float>(inner.Data, totLength);
 
             return new FloatTorchTensor(mem.Memory, shape, inner);
         }
@@ -82,11 +78,38 @@ namespace TorchTensor
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public override Tensor<float> Reshape(ReadOnlySpan<int> dimensions)
+        public unsafe override Tensor<float> Reshape(ReadOnlySpan<int> dimensions)
         {
+            if (dimensions.Length == 0)
+            {
+                throw new ArgumentException("Dimensions must contain elements.", nameof(dimensions));
+            }
+
+            var newSize = Utils.GetTotalLength(dimensions);
+
+            if (newSize != Length)
+            {
+                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
+            }
+
             var typedInner = inner as FloatTensor;
-            // This requires newWithStorage on the torchSharp side
-            return null;
+            FloatTensor reshapedTensor;
+            NativeMemory<float> mem;
+
+            switch (dimensions.Length)
+            {
+                case 1:
+                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
+                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    break;
+                case 2:
+                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    break;
+                default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
+            }
+
+            return new FloatTorchTensor(mem.Memory, dimensions, reshapedTensor);
         }
     }
 }

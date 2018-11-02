@@ -32,11 +32,35 @@ namespace TorchTensor.Tests
         }
 
         [TestMethod]
+        public void TestShapeAndStrides2D()
+        {
+            var x = FloatTorchTensor.Create(10, 10);
+
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+        }
+
+        [TestMethod]
         public void TestCreation3D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10, 3);
 
             Assert.AreNotEqual(x, null);
+        }
+
+        [TestMethod]
+        public void TestShapeAndStrides3D()
+        {
+            var x = FloatTorchTensor.Create(10, 10, 3);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
         }
 
         [TestMethod]
@@ -48,7 +72,19 @@ namespace TorchTensor.Tests
         }
 
         [TestMethod]
-        public void TestFill1d()
+        public void TestShapeAndStrides4D()
+        {
+            var x = FloatTorchTensor.Create(10, 10, 3, 10);
+
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+        }
+
+        [TestMethod]
+        public void TestFill1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
             x.Fill(30.0f);
@@ -60,7 +96,7 @@ namespace TorchTensor.Tests
         }
 
         [TestMethod]
-        public void TestFill2d()
+        public void TestFill2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
             x.Fill(30.0f);
@@ -112,19 +148,16 @@ namespace TorchTensor.Tests
             }
         }
 
-        
-
         [TestMethod]
         public void TestFillEquivalance2D()
         {
             var x = FloatTorchTensor.Create(10, 10);
-            var rand = new Random();
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    var tmp = (float)rand.NextDouble();
+                    float tmp = i + j;
                     x[i, j] = tmp;
                 }
             }
@@ -208,6 +241,126 @@ namespace TorchTensor.Tests
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
                     Assert.AreEqual(y[i, j], 0f);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape1DFail()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10);
+            x.Fill(1f);
+
+            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+        }
+
+        [TestMethod]
+        public void TestReshape1D()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                x[i] = i;
+            }
+
+            Tensor<float> y = x.Reshape(new int[] { 10 });
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], i);
+                Assert.AreEqual(x[i], i);
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape1DPointToTheSameStorage()
+        {
+            Tensor<float> x = FloatTorchTensor.Create(10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                x[i] = i;
+            }
+
+            Tensor<float> y = x.Reshape(new int[] { 10 });
+
+            y[5] = 0;
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], x[i]);
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape2D()
+        {
+            var x = FloatTorchTensor.Create(5, 10);
+
+            var y = x.Reshape(new int[] { 10, 5 });
+
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+
+            Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
+            Equals(x.Strides.ToArray(), new int[] { 1, 10 });
+            Equals(y.Dimensions.ToArray(), new int[] { 10, 5 });
+            Equals(y.Strides.ToArray(), new int[] { 1, 5 });
+        }
+
+        [TestMethod]
+        public void TestReshape2D2()
+        {
+            var x = FloatTorchTensor.Create(5, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    float tmp = i + j;
+                    x[i, j] = tmp;
+                }
+            }
+
+            Tensor<float> y = x.Reshape(new int[] { 10, 5 });
+
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape2DPointToTheSameStorage()
+        {
+            var x = FloatTorchTensor.Create(5, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    float tmp = i + j;
+                    x[i, j] = tmp;
+                }
+            }
+
+            Tensor<float> y = x.Reshape(new int[] { 10, 5 });
+
+            x[4, 9] = 0;
+            y[3, 4] = 0;
+
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
