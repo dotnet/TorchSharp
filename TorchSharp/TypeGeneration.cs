@@ -1103,50 +1103,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THByteTensor_clamp (HType result, HType source, byte value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (ByteTensor source, byte value, ByteTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THByteTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)"/>.
-        /// </remarks>
-        public ByteTensor Clamp (byte value)
-        {
-            var result = new ByteTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THByteTensor_bitand (HType result, HType source, byte value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -2072,6 +2028,61 @@ namespace TorchSharp {
         {
             var result = new ByteTensor ();
             THByteTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_add_scaled (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor AddScaled (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_sub_scaled (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor SubScaled (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_clamp (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor Clamp (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -3760,50 +3771,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THShortTensor_clamp (HType result, HType source, short value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (ShortTensor source, short value, ShortTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THShortTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)"/>.
-        /// </remarks>
-        public ShortTensor Clamp (short value)
-        {
-            var result = new ShortTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THShortTensor_bitand (HType result, HType source, short value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -4729,6 +4696,61 @@ namespace TorchSharp {
         {
             var result = new ShortTensor ();
             THShortTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_add_scaled (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor AddScaled (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_sub_scaled (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor SubScaled (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_clamp (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor Clamp (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -6369,50 +6391,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THIntTensor_clamp (HType result, HType source, int value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (IntTensor source, int value, IntTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THIntTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.IntTensor, Int, PytorchSharp.Int)"/>.
-        /// </remarks>
-        public IntTensor Clamp (int value)
-        {
-            var result = new IntTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THIntTensor_bitand (HType result, HType source, int value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -7338,6 +7316,61 @@ namespace TorchSharp {
         {
             var result = new IntTensor ();
             THIntTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_add_scaled (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor AddScaled (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_sub_scaled (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor SubScaled (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_clamp (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor Clamp (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -8978,50 +9011,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THLongTensor_clamp (HType result, HType source, long value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (LongTensor source, long value, LongTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THLongTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.LongTensor, Long, PytorchSharp.Long)"/>.
-        /// </remarks>
-        public LongTensor Clamp (long value)
-        {
-            var result = new LongTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THLongTensor_bitand (HType result, HType source, long value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -9947,6 +9936,61 @@ namespace TorchSharp {
         {
             var result = new LongTensor ();
             THLongTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_add_scaled (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor AddScaled (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_sub_scaled (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor SubScaled (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_clamp (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor Clamp (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -11699,50 +11743,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THDoubleTensor_clamp (HType result, HType source, double value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (DoubleTensor source, double value, DoubleTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THDoubleTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)"/>.
-        /// </remarks>
-        public DoubleTensor Clamp (double value)
-        {
-            var result = new DoubleTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THDoubleTensor_bitand (HType result, HType source, double value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -13223,6 +13223,61 @@ namespace TorchSharp {
         {
             var result = new DoubleTensor ();
             THDoubleTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_add_scaled (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor AddScaled (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_sub_scaled (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor SubScaled (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_clamp (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor Clamp (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -15178,50 +15233,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THFloatTensor_clamp (HType result, HType source, float value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (FloatTensor source, float value, FloatTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THFloatTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)"/>.
-        /// </remarks>
-        public FloatTensor Clamp (float value)
-        {
-            var result = new FloatTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THFloatTensor_bitand (HType result, HType source, float value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -16702,6 +16713,61 @@ namespace TorchSharp {
         {
             var result = new FloatTensor ();
             THFloatTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_add_scaled (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor AddScaled (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_sub_scaled (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor SubScaled (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_clamp (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor Clamp (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 

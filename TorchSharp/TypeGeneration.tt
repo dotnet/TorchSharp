@@ -884,7 +884,7 @@ foreach (var type in new [] {
         // Idiom Op (Target, Source, Scalar)
         
             foreach (var op in new [] 
-                { "Add", "Sub", "Mul", "Div", "LShift", "RShift", "Fmod", "Remainder", "Clamp", "BitAnd", "BitOr", "BitXor"}){
+                { "Add", "Sub", "Mul", "Div", "LShift", "RShift", "Fmod", "Remainder", "BitAnd", "BitOr", "BitXor"}){
                 
                 // BitOr and BitXor not supported for floating point values, rather than
                 // letting the runtime assert, do not surface the API.
@@ -1196,6 +1196,39 @@ foreach (var type in new [] {
         {
             var result = new <#=resultType#> ();
             TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, src);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+<#
+        // Idiom Op (Result, Tensor, scalar, scalar 
+        
+            foreach (var opdoc in new [] { 
+                new { Name="AddScaled", CName= "add_scaled", Doc="" },
+                new { Name="SubScaled", CName= "sub_scaled", Doc="" },
+                new { Name="Clamp", CName= "", Doc="Clip the input elements to a range." },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+                var cname = (string.IsNullOrEmpty(opdoc.CName)) ? op.ToLower() : opdoc.CName;
+                var resultType = tname +"Tensor";
+                var resultHType = "HType";
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=cname#> (HType result, HType t, <#=ttype#> value1, <#=ttype#> value2);
+        
+        /// <summary>
+        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=resultType#> <#=op#> (<#=ttype#> value1, <#=ttype#> value2)
+        {
+            var result = new <#=resultType#> ();
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, value1, value2);
             return result;
         }
 
