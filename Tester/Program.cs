@@ -41,7 +41,7 @@ class MainClass {
 		c = a.OnesLike();
 		b = a.OnesLike();
 		Dump(b, nameof(b));
-		c = c.SubScaled(4.0f, 2.5f);
+		c = FloatTensor.ARange(1.23,17.0,1.5);
 		Dump (c, nameof(c));
 
 		var bytes = new ByteTensor (10);
@@ -53,6 +53,12 @@ class MainClass {
 			c[i] = 100*i;
 			bytes[i] = (byte)(10*i);
 		}
+
+		Dump (b, nameof(b));
+		Dump (c, nameof(c));
+
+		var e = c.Concatenate(b,0);
+		Dump(e, nameof(e));
 
 		Dump (a, nameof(a));
 		Dump (b, nameof(b));
