@@ -308,6 +308,52 @@ foreach (var type in new [] {
         }
         
         [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_maskedFill (HType handle1, ByteTensor.HType handle2, <#=ttype#> value);
+        
+        /// <summary>
+        ///  Fills the tensor with the specified value at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        /// <param name="value">The value to write at the indicated locations.</param>
+        public void MaskedFill (ByteTensor mask, <#=ttype#> value)
+        {
+            TH<#=tname#>Tensor_maskedFill (handle, mask.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor to the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedCopy (ByteTensor mask, <#=tname#>Tensor src)
+        {
+            TH<#=tname#>Tensor_maskedCopy (handle, mask.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
+        
+        /// <summary>
+        ///  Copies elements from the source tensor at the locations indicated by the mask.
+        /// </summary>
+        /// <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
+        /// <param name="src">The source tensor.</param>
+        /// <remarks>
+        ///  There will be as many elements in the tensor as there are 1s in the mask.
+        ///  There must be at least as many elements in the source tensor as there are 1s in the mask.
+        /// </remarks>
+        public void MaskedSelect (ByteTensor mask, <#=tname#>Tensor src)
+        {
+            TH<#=tname#>Tensor_maskedSelect (handle, src.handle, mask.handle);
+        }
+
+        [DllImport ("caffe2")]
         extern static <#=tname#>Storage.HType TH<#=tname#>Tensor_storage (HType handle);
 
         /// <summary>
@@ -426,6 +472,42 @@ foreach (var type in new [] {
         /// <param name="step"></param>
         public <#=tname#>Tensor Unfold (int dim, long size, long step) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newUnfold (handle, dim, size, step));
         
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_squeeze (HType handle, HType src);
+        
+        /// <summary>
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze ()
+        {
+            TH<#=tname#>Tensor_squeeze (handle, handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_squeeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Squeeze the tensor, by removing the specified dimension.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Squeeze1d (<#=tname#>Tensor src, int dimension)
+        {
+            TH<#=tname#>Tensor_squeeze1d (handle, src.handle, dimension);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_unsqueeze1d (HType handle, HType src, int dimension);
+        
+        /// <summary>
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        /// </summary>
+        /// <param name="src">The source tensor which contains the data..</param>
+        public void Unsqueeze1d (<#=tname#>Tensor src, int dimension)
+        {
+            TH<#=tname#>Tensor_unsqueeze1d (handle, src.handle, dimension);
+        }
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resize1d (HType handle, long size);
         
@@ -580,18 +662,63 @@ foreach (var type in new [] {
         }
         
         [DllImport ("caffe2")]
-        extern static <#=ttype#> TH<#=tname#>Tensor_randperm (HType handle, IntPtr thgenerator, long n);
+        extern static <#=ttype#> TH<#=tname#>Tensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="n">The upper limit for the values to be generated</param>
-        public void Random (RandomGenerator source, long n)
+        public void Random (RandomGenerator source)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
-            TH<#=tname#>Tensor_randperm (handle, source.handle, n);
+            TH<#=tname#>Tensor_random (handle, source.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void ClampedRandom (RandomGenerator source, long min, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            TH<#=tname#>Tensor_clampedRandom (handle, source.handle, min, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void CappedRandom (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            TH<#=tname#>Tensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=ttype#> TH<#=tname#>Tensor_geometric (HType handle, IntPtr thgenerator, double p);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Geometric (RandomGenerator source, double p)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            TH<#=tname#>Tensor_geometric (handle, source.handle, p);
         }
         
         /// <summary>
@@ -601,8 +728,125 @@ foreach (var type in new [] {
         public void Random (long n)
         {
             using (var r = new RandomGenerator ())
-                Random (r, n);
+                CappedRandom (r, n);
         }
+
+<#
+        // Float-specific random distributions.
+            if (isFloat) {                    
+#>
+#if false
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_bernoulli_<#=tname#>Tensor (HType self, IntPtr thgenerator, HType p);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void BernoulliTensor (RandomGenerator source, <#=tname#>Tensor p)
+        {
+            TH<#=tname#>Tensor_bernoulli_<#=tname#>Tensor(this.handle, source.handle, p.handle);
+        }
+#endif
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_uniform (HType self, IntPtr thgenerator, double min, double max);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void Uniform (RandomGenerator source, double min, double max)
+        {
+            TH<#=tname#>Tensor_uniform(this.handle, source.handle, min, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_exponential (HType self, IntPtr thgenerator, double lambda);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void Exponential (RandomGenerator source, double lambda)
+        {
+            TH<#=tname#>Tensor_exponential(this.handle, source.handle, lambda);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void Cauchy (RandomGenerator source, double median, double sigma)
+        {
+            TH<#=tname#>Tensor_cauchy(this.handle, source.handle, median, sigma);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void LogNormal (RandomGenerator source, double mean, double stdv)
+        {
+            TH<#=tname#>Tensor_logNormal(this.handle, source.handle, mean, stdv);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void Normal (RandomGenerator source, double mean, double stdv)
+        {
+            TH<#=tname#>Tensor_normal(this.handle, source.handle, mean, stdv);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void NormalMeans (RandomGenerator source, <#=tname#>Tensor means, double stdv)
+        {
+            TH<#=tname#>Tensor_normal_means(this.handle, source.handle, means.handle, stdv);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void NormalStdvs (RandomGenerator source, double mean, <#=tname#>Tensor stdvs)
+        {
+            TH<#=tname#>Tensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void NormalMeansStdvs (RandomGenerator source, <#=tname#>Tensor means, <#=tname#>Tensor stdvs)
+        {
+            TH<#=tname#>Tensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
+
+        /// <summary>
+        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        /// </summary>
+        public void NormalMeansStdvs (RandomGenerator source, <#=tname#>Tensor prob_dist, int n_sample, int with_replacement)
+        {
+            TH<#=tname#>Tensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
+        }
+<#          } /* if */ #>
         
         /// <summary>
         ///   Returns a debuggable version of the tensor, in this case the tensor shape
@@ -769,6 +1013,42 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ } #>
 
+<#
+        // Idiom Op (Result, T, Scalar, Source2)
+            if (isFloat){
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_pow (HType result, HType x, <#=ttype#> y);
+
+        /// <summary>
+        ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
+        /// </summary>
+        /// <param 
+        /// <param name="y">The exponent.</param>
+        public <#=tname#>Tensor Pow (<#=ttype#> y)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_pow (result.handle, this.handle, y);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_tpow (HType result, <#=ttype#> x, HType y);
+
+        /// <summary>
+        ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
+        /// </summary>
+        /// <param 
+        /// <param name="x">The base.</param>
+        public <#=tname#>Tensor TPow (<#=ttype#> x)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_tpow (result.handle, x, this.handle);
+            return result;
+        }
+
+<#          } /* if */ #>
+
         [DllImport ("caffe2")]
         extern static <#=accreal#> TH<#=tname#>Tensor_dot (HType self, HType other);
         
@@ -785,6 +1065,28 @@ foreach (var type in new [] {
            
             return TH<#=tname#>Tensor_dot (this.handle, src.handle);
         }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_match (HType result, HType m1, HType m2, <#=ttype#> gain);
+        
+        /// <summary>
+        ///   
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="src1"></param>
+        /// <param name="src2"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor Match (<#=tname#>Tensor m2, <#=ttype#> gain)
+        {
+            if (m2 == null)
+                throw new ArgumentNullException (nameof (m2));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_match (result.handle, this.handle, m2.handle, gain);
+            return result;
+        }
+
 <#
         // Idiom Op (Result, Tensor, Tensor 
         
@@ -824,6 +1126,81 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ #>
 <#
+        // Idiom Op (Result, Tensor, Scalar, Tensor, Tensor)
+        
+            foreach (var opdoc in new [] { 
+                new { Name="AddCMul", Doc="" },
+                new { Name="AddCDiv", Doc="" },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, <#=ttype#> value, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs <#=op#> of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="src1"></param>
+        /// <param name="src2"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> value, <#=tname#>Tensor src1, <#=tname#>Tensor src2)
+        {
+            if (src1 == null)
+                throw new ArgumentNullException (nameof (src1));
+            if (src2 == null)
+                throw new ArgumentNullException (nameof (src2));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle, value, src1.handle, src2.handle);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+<#
+        // Idiom Op (Result, Scalar, Tensor, Scalar, Tensor, Tensor)
+        
+            foreach (var opdoc in new [] { 
+                new { Name="AddMV", Doc="" },
+                new { Name="AddMM", Doc="" },
+                new { Name="AddR", Doc="" },
+                new { Name="AddBMM", Doc="" },
+                new { Name="BAddBMM", Doc="" },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> beta, HType t, <#=ttype#> alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs <#=op#> of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="src1"></param>
+        /// <param name="src2"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> beta, <#=ttype#> alpha, <#=tname#>Tensor src1, <#=tname#>Tensor src2)
+        {
+            if (src1 == null)
+                throw new ArgumentNullException (nameof (src1));
+            if (src2 == null)
+                throw new ArgumentNullException (nameof (src2));
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+<#
         // Idiom Op (Result, Tensor, Tensor 
         
             foreach (var opdoc in new [] { 
@@ -850,8 +1227,6 @@ foreach (var type in new [] {
         {
             return TH<#=tname#>Tensor_<#=op.ToLower()#> (this.handle);
         }
-
-
 <#          } /* foreach */ #>
 
         [DllImport ("caffe2")]
@@ -895,6 +1270,44 @@ foreach (var type in new [] {
             
             TH<#=tname#>Tensor_indexCopy (handle, dim, index.handle, src.handle);
         }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_copy (HType tensor, HType src);
+        
+        /// <summary>
+        ///   Copies the elements of a tensor into the original tensor. 
+        ///   The shape of the tensors must exactly match or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void Copy (<#=tname#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            TH<#=tname#>Tensor_copy (this.handle, src.handle);
+        }
+
+<#
+        foreach (var srcType in new string [] { "Byte", "Short", "Int", "Long", "Float", "Double" }) {
+#>
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_copy<#=srcType#> (HType tensor, <#=srcType#>Tensor.HType src);
+        
+        /// <summary>
+        ///   Copies the elements of a <#=srcType.ToLower()#> tensor into the original tensor. 
+        ///   The shape of the tensors must exactly match or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the copy</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void Copy<#=srcType#> (<#=srcType#>Tensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            TH<#=tname#>Tensor_copy<#=srcType#> (this.handle, src.handle);
+        }
+<#          } /* foreach */ #>        
     }
 <#
 }
