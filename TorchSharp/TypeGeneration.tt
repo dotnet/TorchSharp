@@ -24,6 +24,7 @@ foreach (var type in new [] {
         
         // In the future, we should add HalfFloat (16-bit float)
         bool isFloat = type.Storage == "double" || type.Storage == "float";
+        bool isByte = type.Storage == "byte";
 #>
     public partial class <#=tname#>Tensor : IDisposable {
         /// <summary>
@@ -978,15 +979,17 @@ foreach (var type in new [] {
                 new { FloatOnly=true,  Name="Erfc", Doc="" },
                 new { FloatOnly=true,  Name="Erfinv", Doc="" },
                 new { FloatOnly=true,  Name="Sqrt", Doc="square root" },
-                new { FloatOnly=true,  Name="Rsqrt", Doc="reciprocal of the square root" },
-                new { FloatOnly=true,  Name="Ceil", Doc="values rounded up to the nearest integer" },
-                new { FloatOnly=true,  Name="Floor", Doc="values rounded down to the nearest integer" },
-                new { FloatOnly=true,  Name="Round", Doc="values rounded to the nearest integer" },
-                new { FloatOnly=false, Name="Abs", Doc="absolute values" },
-                new { FloatOnly=true,  Name="Trunc", Doc="truncated integer values" },
-                new { FloatOnly=true,  Name="Frac", Doc="fractional portion" },
-                new { FloatOnly=false, Name="cinv", Doc="inverse value (1/x)" },
-                new { FloatOnly=false, Name="neg", Doc="inverted sign " },
+                new { FloatOnly=true,  Name="Rsqrt", Doc="reciprocal of the square root of the elements of" },
+                new { FloatOnly=true,  Name="Ceil", Doc="values rounded up to the nearest integer of the elements of" },
+                new { FloatOnly=true,  Name="Floor", Doc="values rounded down to the nearest integer of the elements of" },
+                new { FloatOnly=true,  Name="Round", Doc="values rounded to the nearest integer of the elements of" },
+                new { FloatOnly=false, Name="Abs", Doc="absolute values of the elements of" },
+                new { FloatOnly=true,  Name="Trunc", Doc="truncated integer values of the elements of" },
+                new { FloatOnly=true,  Name="Frac", Doc="fractional portion of the elements of" },
+                new { FloatOnly=false, Name="cinv", Doc="inverse value (1/x) of the elements of" },
+                new { FloatOnly=false, Name="neg", Doc="inverted sign of the elements of" },
+                new { FloatOnly=false, Name="ZerosLike", Doc="zero-filled values of the same type as " },
+                new { FloatOnly=false, Name="OnesLike", Doc="one-filled values of the same type as" },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc == "" ? opdoc.Name : opdoc.Doc;
@@ -1015,7 +1018,7 @@ foreach (var type in new [] {
 
 <#
         // Idiom Op (Result, T, Scalar, Source2)
-            if (isFloat){
+            if (isFloat) {
 #>                
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_pow (HType result, HType x, <#=ttype#> y);
@@ -1289,6 +1292,39 @@ foreach (var type in new [] {
         }
 <#          } /* foreach */ #>
 
+<#
+        // Idiom Op (Result, Scalar, Scalar, Long)
+            if (isFloat) {
+            foreach (var opdoc in new [] { 
+                new { Name="Linspace", Doc="" },
+                new { Name="Logspace", Doc="" },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> a, <#=ttype#> b, long n);
+        
+        /// <summary>
+        ///   Performs <#=op#> of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> a, <#=ttype#> b, long n)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, a, b, n);
+            return result;
+        }
+
+<#          } /* foreach */ }#>
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -1367,7 +1403,54 @@ foreach (var type in new [] {
                 throw new ArgumentNullException (nameof (src));
             TH<#=tname#>Tensor_copy<#=srcType#> (this.handle, src.handle);
         }
+
 <#          } /* foreach */ #>        
+<#
+            if (isByte) {
+            foreach (var opdoc in new [] { 
+                new { Name="LogicalAndAll", CName="logicalAndAll", Doc="AND" },
+                new { Name="LogicalAnyAll", CName="logicalAnyAll", Doc="OR" }
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+                var cname = opdoc.CName;
+#>
+        [DllImport ("caffe2")]
+        extern static int TH<#=tname#>Tensor_<#=cname#> (HType self);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public int <#=op#> ()
+        {
+            return TH<#=tname#>Tensor_<#=cname#> (this.handle);
+        }
+
+<#          } /* foreach */ } #>        
+<#
+            if (isByte) {
+            foreach (var opdoc in new [] { 
+                new { Name="LogicalAnd", CName="logicalAnd", Doc="AND" },
+                new { Name="LogicalAny", CName="logicalAny", Doc="OR" }
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+                var cname = opdoc.CName;
+#>
+        [DllImport ("caffe2")]
+        extern static int TH<#=tname#>Tensor_<#=cname#> (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public <#=tname#>Tensor <#=op#> (int dimension, int keepdim)
+        {
+            var result = new <#=tname#>Tensor ();
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+<#          } /* foreach */ } #>        
     }
 <#
 }

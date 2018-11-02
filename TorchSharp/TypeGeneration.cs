@@ -2320,6 +2320,8 @@ namespace TorchSharp {
         }
 
 
+
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -2397,6 +2399,7 @@ namespace TorchSharp {
             THByteTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -2413,6 +2416,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -2431,6 +2435,7 @@ namespace TorchSharp {
             THByteTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -2447,6 +2452,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -2465,6 +2471,7 @@ namespace TorchSharp {
             THByteTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -2481,6 +2488,61 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAndAll (HType self);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public int LogicalAndAll ()
+        {
+            return THByteTensor_logicalAndAll (this.handle);
+        }
+
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAnyAll (HType self);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public int LogicalAnyAll ()
+        {
+            return THByteTensor_logicalAnyAll (this.handle);
+        }
+
+        
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAnd (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public ByteTensor LogicalAnd (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAny (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public ByteTensor LogicalAny (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_logicalAny (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
         
     }
 
@@ -4794,6 +4856,8 @@ namespace TorchSharp {
         }
 
 
+
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -4871,6 +4935,7 @@ namespace TorchSharp {
             THShortTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -4887,6 +4952,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -4905,6 +4971,7 @@ namespace TorchSharp {
             THShortTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -4921,6 +4988,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -4939,6 +5007,7 @@ namespace TorchSharp {
             THShortTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -4955,6 +5024,9 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+        
         
     }
 
@@ -7268,6 +7340,8 @@ namespace TorchSharp {
         }
 
 
+
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -7345,6 +7419,7 @@ namespace TorchSharp {
             THIntTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -7361,6 +7436,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -7379,6 +7455,7 @@ namespace TorchSharp {
             THIntTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -7395,6 +7472,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -7413,6 +7491,7 @@ namespace TorchSharp {
             THIntTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -7429,6 +7508,9 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+        
         
     }
 
@@ -9742,6 +9824,8 @@ namespace TorchSharp {
         }
 
 
+
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -9819,6 +9903,7 @@ namespace TorchSharp {
             THLongTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -9835,6 +9920,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -9853,6 +9939,7 @@ namespace TorchSharp {
             THLongTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -9869,6 +9956,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -9887,6 +9975,7 @@ namespace TorchSharp {
             THLongTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -9903,6 +9992,9 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+        
         
     }
 
@@ -11874,6 +11966,44 @@ namespace TorchSharp {
             return result;
         }
 
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_zeroslike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor ZerosLike (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_zeroslike (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_oneslike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor OnesLike (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_oneslike (result.handle, this.handle);
+            return result;
+        }
+
 
 
                 
@@ -12917,6 +13047,50 @@ namespace TorchSharp {
         }
 
 
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_linspace (HType result, double a, double b, long n);
+        
+        /// <summary>
+        ///   Performs Linspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor Linspace (double a, double b, long n)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_linspace (result.handle, a, b, n);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_logspace (HType result, double a, double b, long n);
+        
+        /// <summary>
+        ///   Performs Logspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor Logspace (double a, double b, long n)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_logspace (result.handle, a, b, n);
+            return result;
+        }
+
+
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -12994,6 +13168,7 @@ namespace TorchSharp {
             THDoubleTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -13010,6 +13185,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -13028,6 +13204,7 @@ namespace TorchSharp {
             THDoubleTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -13044,6 +13221,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -13062,6 +13240,7 @@ namespace TorchSharp {
             THDoubleTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -13078,6 +13257,9 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+        
         
     }
 
@@ -15049,6 +15231,44 @@ namespace TorchSharp {
             return result;
         }
 
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_zeroslike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor ZerosLike (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_zeroslike (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_oneslike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor OnesLike (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_oneslike (result.handle, this.handle);
+            return result;
+        }
+
 
 
                 
@@ -16092,6 +16312,50 @@ namespace TorchSharp {
         }
 
 
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_linspace (HType result, float a, float b, long n);
+        
+        /// <summary>
+        ///   Performs Linspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor Linspace (float a, float b, long n)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_linspace (result.handle, a, b, n);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_logspace (HType result, float a, float b, long n);
+        
+        /// <summary>
+        ///   Performs Logspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor Logspace (float a, float b, long n)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_logspace (result.handle, a, b, n);
+            return result;
+        }
+
+
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
         
@@ -16169,6 +16433,7 @@ namespace TorchSharp {
             THFloatTensor_copyByte (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -16185,6 +16450,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyShort (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyInt (HType tensor, IntTensor.HType src);
@@ -16203,6 +16469,7 @@ namespace TorchSharp {
             THFloatTensor_copyInt (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -16219,6 +16486,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyLong (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyFloat (HType tensor, FloatTensor.HType src);
@@ -16237,6 +16505,7 @@ namespace TorchSharp {
             THFloatTensor_copyFloat (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -16253,6 +16522,9 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyDouble (this.handle, src.handle);
         }
+
+        
+        
         
     }
 
