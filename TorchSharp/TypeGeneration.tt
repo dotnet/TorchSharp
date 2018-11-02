@@ -1228,6 +1228,33 @@ foreach (var type in new [] {
         }
 
 <#          } /* foreach */ #>
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_lerp (HType result, HType self, HType other, <#=ttype#> weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public <#=tname#>Tensor LERP (<#=tname#>Tensor other, <#=ttype#> weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int TH<#=tname#>Tensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (<#=tname#>Tensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return TH<#=tname#>Tensor_equal (this.handle, other.handle);
+        }
 <#
         // Idiom Op (Result, Tensor, scalar, scalar 
         

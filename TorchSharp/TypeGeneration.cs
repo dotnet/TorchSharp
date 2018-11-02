@@ -2060,6 +2060,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public ByteTensor LERP (ByteTensor other, byte weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new ByteTensor();
+            THByteTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (ByteTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THByteTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_add_scaled (HType result, HType t, byte value1, byte value2);
@@ -2986,7 +3013,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -2997,6 +3025,7 @@ namespace TorchSharp {
             THByteTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
      
     }
 
@@ -5048,6 +5077,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public ShortTensor LERP (ShortTensor other, short weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new ShortTensor();
+            THShortTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THShortTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (ShortTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THShortTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_add_scaled (HType result, HType t, short value1, short value2);
@@ -5926,7 +5982,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -5937,6 +5994,7 @@ namespace TorchSharp {
             THShortTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
      
     }
 
@@ -7988,6 +8046,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public IntTensor LERP (IntTensor other, int weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new IntTensor();
+            THIntTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (IntTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THIntTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_add_scaled (HType result, HType t, int value1, int value2);
@@ -8866,7 +8951,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -8877,6 +8963,7 @@ namespace TorchSharp {
             THIntTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
      
     }
 
@@ -10928,6 +11015,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public LongTensor LERP (LongTensor other, long weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new LongTensor();
+            THLongTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THLongTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (LongTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THLongTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_add_scaled (HType result, HType t, long value1, long value2);
@@ -11806,7 +11920,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -11817,6 +11932,7 @@ namespace TorchSharp {
             THLongTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
      
     }
 
@@ -14535,6 +14651,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public DoubleTensor LERP (DoubleTensor other, double weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new DoubleTensor();
+            THDoubleTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THDoubleTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (DoubleTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THDoubleTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_add_scaled (HType result, HType t, double value1, double value2);
@@ -15455,7 +15598,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -15466,6 +15610,7 @@ namespace TorchSharp {
             THDoubleTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mean (HType result, HType self, int dimension, int keepdim);
@@ -18345,6 +18490,33 @@ namespace TorchSharp {
         }
 
 
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public FloatTensor LERP (FloatTensor other, float weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new FloatTensor();
+            THFloatTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THFloatTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (FloatTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THFloatTensor_equal (this.handle, other.handle);
+        }
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_add_scaled (HType result, HType t, float value1, float value2);
@@ -19265,7 +19437,8 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_catArray (HType result, HType[] ta, int count, int dimension);
-        
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -19276,6 +19449,7 @@ namespace TorchSharp {
             THFloatTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
             return result;
         }
+#endif
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mean (HType result, HType self, int dimension, int keepdim);
