@@ -1272,7 +1272,6 @@ foreach (var type in new [] {
                 new { Name="MedianAll", Doc="median", Ret=ttype },
                 new { Name="SumAll", Doc="sum", Ret=accreal},
                 new { Name="ProdAll", Doc="product", Ret=accreal },
-                new { Name="MeanAll", Doc="mean", Ret=accreal },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
@@ -1425,7 +1424,6 @@ foreach (var type in new [] {
         {
             return TH<#=tname#>Tensor_<#=cname#> (this.handle);
         }
-
 <#          } /* foreach */ } #>        
 <#
             if (isByte) {
@@ -1449,8 +1447,159 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim);
             return result;
         }
+<#          } /* foreach */ } #>     
+<#
+            if (isFloat) {
+#>
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_mean (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compute the mean of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=tname#>Tensor Mean (int dimension, int keepdim)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_mean (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
 
-<#          } /* foreach */ } #>        
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_std (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=tname#>Tensor Std (int dimension, int biased, int keepdim)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_var (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=tname#>Tensor Var (int dimension, int biased, int keepdim)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_norm (HType result, HType self, <#=ttype#> value,  int dimension, int keepdim);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=tname#>Tensor Norm (<#=ttype#> value,  int dimension, int keepdim)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_renorm (HType result, HType self, <#=ttype#> value,  int dimension, <#=ttype#> maxnorm);
+
+        /// <summary>
+        ///   Compute the renorm of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=tname#>Tensor Renorm (<#=ttype#> value,  int dimension, <#=ttype#> maxnorm)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_renorm (result.handle, this.handle, value, dimension, maxnorm);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_dist (HType a, HType b, <#=ttype#> value);
+
+        /// <summary>
+        ///   Compute the dist of all tensor elements along the given dimension. 
+        /// </summary>
+        public <#=accreal#> Dist (<#=tname#>Tensor other, <#=ttype#> value)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return TH<#=tname#>Tensor_dist (this.handle, other.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_histc (HType hist, HType self, long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        public <#=tname#>Tensor Histc (long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_histc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_bhistc (HType hist, HType self, long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        public <#=tname#>Tensor BHistc (long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue)
+        {
+            var result = new <#=tname#>Tensor();
+            TH<#=tname#>Tensor_bhistc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_meanall (HType self);
+
+        /// <summary>
+        ///   Compute the mean of all tensor elements. 
+        /// </summary>
+        public <#=accreal#> MeanAll ()
+        {
+            return TH<#=tname#>Tensor_meanall (this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_varall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements. 
+        /// </summary>
+        public <#=accreal#> VarAll (int biased)
+        {
+            return TH<#=tname#>Tensor_varall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_stdall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements. 
+        /// </summary>
+        public <#=accreal#> StdAll (int biased)
+        {
+            return TH<#=tname#>Tensor_stdall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static <#=accreal#> TH<#=tname#>Tensor_normall (HType self, <#=ttype#> value);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements. 
+        /// </summary>
+        public <#=accreal#> NormAll (<#=ttype#> value)
+        {
+            return TH<#=tname#>Tensor_normall (this.handle, value);
+        }
+
+<#          } /* if (isFloat) */ #>     
     }
 <#
 }
