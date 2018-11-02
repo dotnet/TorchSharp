@@ -1086,27 +1086,43 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
 <#
         // Idiom Op (Result, Tensor, Tensor 
         
             foreach (var opdoc in new [] { 
-                new { Name="CMul", Doc="element wise multiplication" },
-                new { Name="CPow", Doc="element-wise power operation" },
-                new { Name="CDiv", Doc="element-wise division " },
-                new { Name="CLShift", Doc="left shift operation of each element" },
-                new { Name="CFMod", Doc="element-wide remainder of the division (rounded towards zero)" },
-                new { Name="CRemainder", Doc="element-wise remainder of the division (rounded to nearest)" },
-                new { Name="CBitAnd", Doc="bitwise and operation of each element " },
-                new { Name="CBitOr", Doc="bitwise or operation of each element " },
-                new { Name="CBitXor", Doc="bitwise xor operation of each element " },
+                new { Name="CMul", CName= "", ByteResult=false, Doc="element wise multiplication" },
+                new { Name="CPow", CName= "", ByteResult=false, Doc="element-wise power operation" },
+                new { Name="CDiv", CName= "", ByteResult=false, Doc="element-wise division " },
+                new { Name="CLShift", CName= "", ByteResult=false, Doc="left shift operation of each element" },
+                new { Name="CFMod", CName= "", ByteResult=false, Doc="element-wide remainder of the division (rounded towards zero)" },
+                new { Name="CRemainder", CName= "", ByteResult=false, Doc="element-wise remainder of the division (rounded to nearest)" },
+                new { Name="CBitAnd", CName= "", ByteResult=false, Doc="bitwise and operation of each element " },
+                new { Name="CBitOr", CName= "", ByteResult=false, Doc="bitwise or operation of each element " },
+                new { Name="CBitXor", CName= "", ByteResult=false, Doc="bitwise xor operation of each element " },
+                new { Name="CMax", CName= "", ByteResult=false, Doc="" },
+                new { Name="CMin", CName= "", ByteResult=false, Doc="" },
+                new { Name="LtTensor", CName= "ltTensor", ByteResult=true, Doc="Compare two tensors for '<' and produce a byte tensor with the logical result." },
+                new { Name="LeTensor", CName= "leTensor", ByteResult=true, Doc="Compare two tensors for '<=' and produce a byte tensor with the logical result." },
+                new { Name="GtTensor", CName= "gtTensor", ByteResult=true, Doc="Compare two tensors for '>' and produce a byte tensor with the logical result." },
+                new { Name="GeTensor", CName= "geTensor", ByteResult=true, Doc="Compare two tensors for '>=' and produce a byte tensor with the logical result." },
+                new { Name="EqTensor", CName= "eqTensor", ByteResult=true, Doc="Compare two tensors for equality and produce a byte tensor with the logical result." },
+                new { Name="NeTensor", CName= "neTensor", ByteResult=true, Doc="Compare two tensors and inequality and produce a byte tensor with the logical result." },
+                new { Name="LtTensorT", CName= "ltTensorT", ByteResult=false, Doc="Compare two tensors for '<' and produce a tensor with the logical result." },
+                new { Name="LeTensorT", CName= "leTensorT", ByteResult=false, Doc="Compare two tensors for '<=' and produce a tensor with the logical result." },
+                new { Name="GtTensorT", CName= "gtTensorT", ByteResult=false, Doc="Compare two tensors for '>' and produce a tensor with the logical result." },
+                new { Name="GeTensorT", CName= "geTensorT", ByteResult=false, Doc="Compare two tensors for '>=' and produce a tensor with the logical result." },
+                new { Name="EqTensorT", CName= "eqTensorT", ByteResult=false, Doc="Compare two tensors for equality and produce a tensor with the logical result." },
+                new { Name="NeTensorT", CName= "neTensorT", ByteResult=false, Doc="Compare two tensors and inequality and produce a tensor with the logical result." },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
-            
+                var cname = (string.IsNullOrEmpty(opdoc.CName)) ? op.ToLower() : opdoc.CName;
+                var resultType = opdoc.ByteResult ? "ByteTensor" : tname +"Tensor";
+                var resultHType = opdoc.ByteResult ? "ByteTensor.HType" : "HType";
+
 #>                
         [DllImport ("caffe2")]
-        extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, HType src);
+        extern static void TH<#=tname#>Tensor_<#=cname#> (<#=resultHType#> result, HType t, HType src);
         
         /// <summary>
         ///   Performs an <#=op#> of the tensor with the provided 
@@ -1115,12 +1131,56 @@ foreach (var type in new [] {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public <#=tname#>Tensor <#=op#> (<#=tname#>Tensor src)
+        public <#=resultType#> <#=op#> (<#=tname#>Tensor src)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
-            var result = new <#=tname#>Tensor ();
-            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, this.handle, src.handle);
+            var result = new <#=resultType#> ();
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+<#          } /* foreach */ #>
+<#
+        // Idiom Op (Result, Tensor, scalar 
+        
+            foreach (var opdoc in new [] { 
+                new { Name="CMaxValue", CName= "", ByteResult=false, Doc="" },
+                new { Name="CMinValue", CName= "", ByteResult=false, Doc="" },
+                new { Name="LtValue", CName= "ltValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<' and produce a byte tensor with the logical result." },
+                new { Name="LeValue", CName= "leValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<=' and produce a byte tensor with the logical result." },
+                new { Name="GtValue", CName= "gtValue", ByteResult=true, Doc="Compare a tensor and a scalar for '>' and produce a byte tensor with the logical result." },
+                new { Name="GeValue", CName= "geValue", ByteResult=true, Doc="Compare a tensor and a scalar for '>=' and produce a byte tensor with the logical result." },
+                new { Name="EqValue", CName= "eqValue", ByteResult=true, Doc="Compare a tensor and a scalar for equality and produce a byte tensor with the logical result." },
+                new { Name="NeValue", CName= "neValue", ByteResult=true, Doc="Compare a tensor and a scalar and inequality and produce a byte tensor with the logical result." },
+                new { Name="LtValueT", CName= "ltValueT", ByteResult=false, Doc="Compare a tensor and a scalar for '<' and produce a tensor with the logical result." },
+                new { Name="LeValueT", CName= "leValueT", ByteResult=false, Doc="Compare a tensor and a scalar for '<=' and produce a tensor with the logical result." },
+                new { Name="GtValueT", CName= "gtValueT", ByteResult=false, Doc="Compare a tensor and a scalar for '>' and produce a tensor with the logical result." },
+                new { Name="GeValueT", CName= "geValueT", ByteResult=false, Doc="Compare a tensor and a scalar for '>=' and produce a tensor with the logical result." },
+                new { Name="EqValueT", CName= "eqValueT", ByteResult=false, Doc="Compare a tensor and a scalar for equality and produce a tensor with the logical result." },
+                new { Name="NeValueT", CName= "neValueT", ByteResult=false, Doc="Compare a tensor and a scalar and inequality and produce a tensor with the logical result." },
+                }){
+                var op = opdoc.Name;
+                var doc = opdoc.Doc;
+                var cname = (string.IsNullOrEmpty(opdoc.CName)) ? op.ToLower() : opdoc.CName;
+                var resultType = opdoc.ByteResult ? "ByteTensor" : tname +"Tensor";
+                var resultHType = opdoc.ByteResult ? "ByteTensor.HType" : "HType";
+            
+#>                
+        [DllImport ("caffe2")]
+        extern static void TH<#=tname#>Tensor_<#=cname#> (<#=resultHType#> result, HType t, <#=ttype#> value);
+        
+        /// <summary>
+        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public <#=resultType#> <#=op#> (<#=ttype#> src)
+        {
+            var result = new <#=resultType#> ();
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, src);
             return result;
         }
 
