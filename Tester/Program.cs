@@ -15,7 +15,7 @@ class MainClass {
 		var b = new FloatTensor (10);
 		b.Fill (30);
 		Dump (b);
-		x.Random (new RandomGenerator (), 10);
+		x.Random (new RandomGenerator ());
 		FloatTensor.Add (x, 100, b);
 		Dump (x);
 		Dump (b);
