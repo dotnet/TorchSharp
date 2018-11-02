@@ -865,7 +865,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -879,7 +879,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="mean">The mean of the distribution.</param>
@@ -893,7 +893,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means and standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -1910,7 +1910,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -1929,7 +1929,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public <#=tname#>Tensor TriL (long k)
         {
             var result = new <#=tname#>Tensor ();
@@ -1943,7 +1943,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public <#=tname#>Tensor TriU (long k)
         {
             var result = new <#=tname#>Tensor ();

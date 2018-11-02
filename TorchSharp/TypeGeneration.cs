@@ -3003,7 +3003,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -3022,7 +3022,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public ByteTensor TriL (long k)
         {
             var result = new ByteTensor ();
@@ -3036,7 +3036,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public ByteTensor TriU (long k)
         {
             var result = new ByteTensor ();
@@ -6018,7 +6018,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -6037,7 +6037,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public ShortTensor TriL (long k)
         {
             var result = new ShortTensor ();
@@ -6051,7 +6051,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public ShortTensor TriU (long k)
         {
             var result = new ShortTensor ();
@@ -9033,7 +9033,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -9052,7 +9052,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public IntTensor TriL (long k)
         {
             var result = new IntTensor ();
@@ -9066,7 +9066,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public IntTensor TriU (long k)
         {
             var result = new IntTensor ();
@@ -12048,7 +12048,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -12067,7 +12067,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public LongTensor TriL (long k)
         {
             var result = new LongTensor ();
@@ -12081,7 +12081,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public LongTensor TriU (long k)
         {
             var result = new LongTensor ();
@@ -12958,7 +12958,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -12972,7 +12972,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="mean">The mean of the distribution.</param>
@@ -12986,7 +12986,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means and standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -15801,7 +15801,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -15820,7 +15820,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public DoubleTensor TriL (long k)
         {
             var result = new DoubleTensor ();
@@ -15834,7 +15834,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public DoubleTensor TriU (long k)
         {
             var result = new DoubleTensor ();
@@ -16897,7 +16897,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -16911,7 +16911,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="mean">The mean of the distribution.</param>
@@ -16925,7 +16925,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Fills the tensor with values according to a normal distribution.
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means and standard deviations.
         /// </summary>
         /// <param name="source">The random generator source</param>
         /// <param name="means">The means of the distribution.</param>
@@ -19740,7 +19740,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Finds the top k of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
@@ -19759,7 +19759,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Lower triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public FloatTensor TriL (long k)
         {
             var result = new FloatTensor ();
@@ -19773,7 +19773,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Upper triangle. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k"></param>
         public FloatTensor TriU (long k)
         {
             var result = new FloatTensor ();
