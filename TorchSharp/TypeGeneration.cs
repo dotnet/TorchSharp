@@ -512,8 +512,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public ByteTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new ByteTensor(THByteTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
@@ -2510,8 +2510,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public ShortTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new ShortTensor(THShortTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
@@ -4508,8 +4508,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public IntTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new IntTensor(THIntTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
@@ -6506,8 +6506,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public LongTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new LongTensor(THLongTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
@@ -8504,8 +8504,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public DoubleTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new DoubleTensor(THDoubleTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
@@ -11202,8 +11202,8 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the forth dimension.</param>     
-        /// <param name="stride3">Stride of the forth dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
         public FloatTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new FloatTensor(THFloatTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
