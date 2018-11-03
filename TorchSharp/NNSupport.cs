@@ -1,3 +1,8 @@
+//
+// Internal bindings to support the NN bindings of Torch
+//
+//
+
 using System;
 using System.Runtime.InteropServices;
 namespace TorchSharp {
