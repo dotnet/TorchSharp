@@ -574,7 +574,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
         public void Squeeze ()
         {
             TH<#=tname#>Tensor_squeeze (handle, handle);
@@ -586,7 +585,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
+        /// <param name="src">The source tensor which contains the data.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (<#=tname#>Tensor src, int dimension)
         {
             TH<#=tname#>Tensor_squeeze1d (handle, src.handle, dimension);
@@ -598,7 +598,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
+        /// <param name="src">The source tensor which contains the data.</param>
+        /// <param name="dimension">The dimension to remove.</param>        
         public void Unsqueeze1d (<#=tname#>Tensor src, int dimension)
         {
             TH<#=tname#>Tensor_unsqueeze1d (handle, src.handle, dimension);
@@ -809,8 +810,8 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -1164,7 +1165,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
         /// </summary>
-        /// <param 
         /// <param name="y">The exponent.</param>
         public <#=tname#>Tensor Pow (<#=ttype#> y)
         {
@@ -1179,7 +1179,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public <#=tname#>Tensor TPow (<#=ttype#> x)
         {
@@ -1210,12 +1209,6 @@ foreach (var type in new [] {
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_match (HType result, HType m1, HType m2, <#=ttype#> gain);
         
-        /// <summary>
-        ///   
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1828,7 +1821,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> <#=op#> (int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
@@ -1847,7 +1840,7 @@ foreach (var type in new [] {
         /// <param name="k">The value for 'k'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
@@ -1963,7 +1956,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
-        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new <#=tname#>Tensor ();
@@ -1982,7 +1975,7 @@ foreach (var type in new [] {
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
-        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new <#=tname#>Tensor ();
