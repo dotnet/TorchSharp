@@ -16425,6 +16425,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Norm (double value,  int dimension, int keepdim)
@@ -16440,6 +16441,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="maxnorm"></param>
         public DoubleTensor Renorm (double value,  int dimension, double maxnorm)
@@ -20462,6 +20464,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Norm (float value,  int dimension, int keepdim)
@@ -20477,6 +20480,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="maxnorm"></param>
         public FloatTensor Renorm (float value,  int dimension, float maxnorm)

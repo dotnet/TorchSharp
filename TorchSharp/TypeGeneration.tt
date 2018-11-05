@@ -2127,6 +2127,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public <#=tname#>Tensor Norm (<#=ttype#> value,  int dimension, int keepdim)
@@ -2142,6 +2143,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="maxnorm"></param>
         public <#=tname#>Tensor Renorm (<#=ttype#> value,  int dimension, <#=ttype#> maxnorm)
