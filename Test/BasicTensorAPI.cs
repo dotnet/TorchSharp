@@ -174,7 +174,7 @@ namespace Test
         }
 
         
-        private bool IsApproximatelyEqual(float expected, float actual)
+        internal static bool IsApproximatelyEqual(float expected, float actual)
         {
             if (expected < 0.0f)
             {
@@ -189,7 +189,7 @@ namespace Test
                 return actual >= min && actual <= max;
             }
         }
-        private bool IsApproximatelyEqual(double expected, double actual)
+        internal static bool IsApproximatelyEqual(double expected, double actual)
         {
             if (expected < 0.0)
             {
@@ -375,6 +375,31 @@ namespace Test
             for (var i = 0; i < x1.Shape[0]; ++i)
             {
                 Assert.IsTrue(IsApproximatelyEqual(Math.Tanh(x1[i]),(double)xtan[i]));
+            }
+        }
+
+        [TestMethod]
+        public void FloatTensorPower()
+        {
+            var x1 = FloatTensor.Range(2f, 15f, 1f);
+
+            Assert.IsNotNull(x1);
+            Assert.AreEqual(1,x1.Shape.Length);
+
+            var x2 = x1.Pow(2.0f);
+            Assert.AreEqual(x1.Shape.Length,x2.Shape.Length);
+            Assert.AreEqual(x1.Shape[0],x2.Shape[0]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.IsTrue(IsApproximatelyEqual(Math.Pow(x1[i],2.0f),(double)x2[i]));
+            }
+
+            var x3 = x1.TPow(2.0f);
+            Assert.AreEqual(x1.Shape.Length,x3.Shape.Length);
+            Assert.AreEqual(x1.Shape[0],x3.Shape[0]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.IsTrue(IsApproximatelyEqual(Math.Pow(2.0f, x1[i]),(double)x3[i]));
             }
         }
 
@@ -634,6 +659,31 @@ namespace Test
             for (var i = 0; i < x1.Shape[0]; ++i)
             {
                 Assert.IsTrue(IsApproximatelyEqual(Math.Tanh(x1[i]),(double)xtan[i]));
+            }
+        }
+
+        [TestMethod]
+        public void DoubleTensorPower()
+        {
+            var x1 = DoubleTensor.Range(2f, 15f, 1f);
+
+            Assert.IsNotNull(x1);
+            Assert.AreEqual(1,x1.Shape.Length);
+
+            var x2 = x1.Pow(2.0f);
+            Assert.AreEqual(x1.Shape.Length,x2.Shape.Length);
+            Assert.AreEqual(x1.Shape[0],x2.Shape[0]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.IsTrue(IsApproximatelyEqual(Math.Pow(x1[i],2.0f),x2[i]));
+            }
+
+            var x3 = x1.TPow(2.0f);
+            Assert.AreEqual(x1.Shape.Length,x3.Shape.Length);
+            Assert.AreEqual(x1.Shape[0],x3.Shape[0]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.IsTrue(IsApproximatelyEqual(Math.Pow(2.0f, x1[i]),x3[i]));
             }
         }
 

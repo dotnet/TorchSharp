@@ -1890,7 +1890,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THByteTensor_cmaxvalue (HType result, HType t, byte value);
+        extern static void THByteTensor_cmaxValue (HType result, HType t, byte value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -1903,13 +1903,13 @@ namespace TorchSharp {
         public ByteTensor CMaxValue (byte src)
         {
             var result = new ByteTensor ();
-            THByteTensor_cmaxvalue (result.handle, this.handle, src);
+            THByteTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THByteTensor_cminvalue (HType result, HType t, byte value);
+        extern static void THByteTensor_cminValue (HType result, HType t, byte value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -1922,7 +1922,7 @@ namespace TorchSharp {
         public ByteTensor CMinValue (byte src)
         {
             var result = new ByteTensor ();
-            THByteTensor_cminvalue (result.handle, this.handle, src);
+            THByteTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 
@@ -5055,7 +5055,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THShortTensor_cmaxvalue (HType result, HType t, short value);
+        extern static void THShortTensor_cmaxValue (HType result, HType t, short value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -5068,13 +5068,13 @@ namespace TorchSharp {
         public ShortTensor CMaxValue (short src)
         {
             var result = new ShortTensor ();
-            THShortTensor_cmaxvalue (result.handle, this.handle, src);
+            THShortTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THShortTensor_cminvalue (HType result, HType t, short value);
+        extern static void THShortTensor_cminValue (HType result, HType t, short value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -5087,7 +5087,7 @@ namespace TorchSharp {
         public ShortTensor CMinValue (short src)
         {
             var result = new ShortTensor ();
-            THShortTensor_cminvalue (result.handle, this.handle, src);
+            THShortTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 
@@ -8172,7 +8172,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THIntTensor_cmaxvalue (HType result, HType t, int value);
+        extern static void THIntTensor_cmaxValue (HType result, HType t, int value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -8185,13 +8185,13 @@ namespace TorchSharp {
         public IntTensor CMaxValue (int src)
         {
             var result = new IntTensor ();
-            THIntTensor_cmaxvalue (result.handle, this.handle, src);
+            THIntTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THIntTensor_cminvalue (HType result, HType t, int value);
+        extern static void THIntTensor_cminValue (HType result, HType t, int value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -8204,7 +8204,7 @@ namespace TorchSharp {
         public IntTensor CMinValue (int src)
         {
             var result = new IntTensor ();
-            THIntTensor_cminvalue (result.handle, this.handle, src);
+            THIntTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 
@@ -11289,7 +11289,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THLongTensor_cmaxvalue (HType result, HType t, long value);
+        extern static void THLongTensor_cmaxValue (HType result, HType t, long value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -11302,13 +11302,13 @@ namespace TorchSharp {
         public LongTensor CMaxValue (long src)
         {
             var result = new LongTensor ();
-            THLongTensor_cmaxvalue (result.handle, this.handle, src);
+            THLongTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THLongTensor_cminvalue (HType result, HType t, long value);
+        extern static void THLongTensor_cminValue (HType result, HType t, long value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -11321,7 +11321,7 @@ namespace TorchSharp {
         public LongTensor CMinValue (long src)
         {
             var result = new LongTensor ();
-            THLongTensor_cminvalue (result.handle, this.handle, src);
+            THLongTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 
@@ -15099,7 +15099,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THDoubleTensor_cmaxvalue (HType result, HType t, double value);
+        extern static void THDoubleTensor_cmaxValue (HType result, HType t, double value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -15112,13 +15112,13 @@ namespace TorchSharp {
         public DoubleTensor CMaxValue (double src)
         {
             var result = new DoubleTensor ();
-            THDoubleTensor_cmaxvalue (result.handle, this.handle, src);
+            THDoubleTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THDoubleTensor_cminvalue (HType result, HType t, double value);
+        extern static void THDoubleTensor_cminValue (HType result, HType t, double value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -15131,7 +15131,7 @@ namespace TorchSharp {
         public DoubleTensor CMinValue (double src)
         {
             var result = new DoubleTensor ();
-            THDoubleTensor_cminvalue (result.handle, this.handle, src);
+            THDoubleTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 
@@ -19138,7 +19138,7 @@ namespace TorchSharp {
 
                 
         [DllImport ("caffe2")]
-        extern static void THFloatTensor_cmaxvalue (HType result, HType t, float value);
+        extern static void THFloatTensor_cmaxValue (HType result, HType t, float value);
         
         /// <summary>
         ///   Performs an CMaxValue of the tensor with the provided 
@@ -19151,13 +19151,13 @@ namespace TorchSharp {
         public FloatTensor CMaxValue (float src)
         {
             var result = new FloatTensor ();
-            THFloatTensor_cmaxvalue (result.handle, this.handle, src);
+            THFloatTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
 
                 
         [DllImport ("caffe2")]
-        extern static void THFloatTensor_cminvalue (HType result, HType t, float value);
+        extern static void THFloatTensor_cminValue (HType result, HType t, float value);
         
         /// <summary>
         ///   Performs an CMinValue of the tensor with the provided 
@@ -19170,7 +19170,7 @@ namespace TorchSharp {
         public FloatTensor CMinValue (float src)
         {
             var result = new FloatTensor ();
-            THFloatTensor_cminvalue (result.handle, this.handle, src);
+            THFloatTensor_cminValue (result.handle, this.handle, src);
             return result;
         }
 

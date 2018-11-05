@@ -1286,8 +1286,8 @@ foreach (var type in new [] {
         // Idiom Op (Result, Tensor, scalar 
         
             foreach (var opdoc in new [] { 
-                new { Name="CMaxValue", CName= "", ByteResult=false, Doc="" },
-                new { Name="CMinValue", CName= "", ByteResult=false, Doc="" },
+                new { Name="CMaxValue", CName= "cmaxValue", ByteResult=false, Doc="" },
+                new { Name="CMinValue", CName= "cminValue", ByteResult=false, Doc="" },
                 new { Name="LtValue", CName= "ltValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<' and produce a byte tensor with the logical result." },
                 new { Name="LeValue", CName= "leValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<=' and produce a byte tensor with the logical result." },
                 new { Name="GtValue", CName= "gtValue", ByteResult=true, Doc="Compare a tensor and a scalar for '>' and produce a byte tensor with the logical result." },
