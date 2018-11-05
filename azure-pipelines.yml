@@ -8,7 +8,9 @@ variables:
 steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
-    dotnet test Test --configuration Release --logger trx
+    curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+    unzip libtorch-shared-with-deps-latest.zip
+    LD_LIBRARY_PATH=`pwd`/libtorch/lib dotnet test Test --configuration Release --logger trx
     dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
 
 - task: PublishTestResults@2
