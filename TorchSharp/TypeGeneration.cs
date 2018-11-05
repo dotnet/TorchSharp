@@ -788,7 +788,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -3953,7 +3953,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -7070,7 +7070,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -10187,7 +10187,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -13304,7 +13304,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -14568,7 +14568,6 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public DoubleTensor TPow (double x)
         {
@@ -17342,7 +17341,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void Randperm (RandomGenerator source, long max)
         {
             if (source == null)
@@ -18606,7 +18605,6 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public FloatTensor TPow (float x)
         {
