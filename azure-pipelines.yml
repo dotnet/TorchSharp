@@ -6,23 +6,22 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: Build@1
-  displayName: Build package
-  script: |
+- script: |
     dotnet build --configuration $(buildConfiguration)
+  displayName: Build
 
-- task: Build@2
-  displayName: Prepare native libtorch
+- script: |
     curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
     unzip libtorch-shared-with-deps-latest.zip
+  displayName: Download and setup libtorch
 
-- task: Test@1
-  displayName: Run Tests
+- script: |
     LD_LIBRARY_PATH=`pwd`/libtorch/lib dotnet test Test --configuration Release --logger trx
+  displayName: Run tests
 
-- task: Publish@1
-  displayName: dotnet publish artifacts
+- script: |
     dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+  displayName: dotnet publish
 
 - task: PublishTestResults@2
   inputs:
