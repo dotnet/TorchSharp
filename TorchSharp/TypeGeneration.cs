@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Text;
@@ -264,6 +266,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THByteTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THByteTensor_zero (HType handle);
@@ -286,6 +300,19 @@ namespace TorchSharp {
         {
             THByteTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THByteTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THByteTensor_maskedFill (HType handle1, ByteTensor.HType handle2, byte value);
@@ -712,10 +739,9 @@ namespace TorchSharp {
         extern static byte THByteTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -727,10 +753,11 @@ namespace TorchSharp {
         extern static byte THByteTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -742,15 +769,30 @@ namespace TorchSharp {
         extern static byte THByteTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THByteTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static byte THByteTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THByteTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -760,7 +802,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -780,7 +822,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -1151,50 +1193,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THByteTensor_clamp (HType result, HType source, byte value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (ByteTensor source, byte value, ByteTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THByteTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.ByteTensor, Byte, PytorchSharp.Byte)"/>.
-        /// </remarks>
-        public ByteTensor Clamp (byte value)
-        {
-            var result = new ByteTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THByteTensor_bitand (HType result, HType source, byte value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -1406,7 +1404,6 @@ namespace TorchSharp {
             THByteTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmul (HType result, HType t, HType src);
@@ -1584,6 +1581,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new ByteTensor ();
             THByteTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor CMax (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor CMin (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensorT (ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THByteTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cmaxvalue (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor CMaxValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cminvalue (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor CMinValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_ltValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_leValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_gtValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_geValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_eqValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_neValue (ByteTensor.HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_ltValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_leValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_gtValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_geValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_eqValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_neValueT (HType result, HType t, byte value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValueT (byte src)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public ByteTensor LERP (ByteTensor other, byte weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new ByteTensor();
+            THByteTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (ByteTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THByteTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_add_scaled (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor AddScaled (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_sub_scaled (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor SubScaled (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_clamp (HType result, HType t, byte value1, byte value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor Clamp (byte value1, byte value2)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -1832,20 +2442,7 @@ namespace TorchSharp {
         {
             return THByteTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static long THByteTensor_meanall (HType result);
 
-        /// <summary>
-        ///   Returns the mean of the elements in the tensor.
-        /// </summary>
-        /// <returns>
-        ///   The mean of the tensor.
-        /// </returns>
-        public long MeanAll ()
-        {
-            return THByteTensor_meanall (this.handle);
-        }
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -1888,6 +2485,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THByteTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_indexFill (HType tensor, int dim, LongTensor.HType index, byte value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, byte value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (ByteTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, ByteTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (ByteTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, ByteTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_scatterFill (HType self, int dim, LongTensor.HType index, byte value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, byte value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THByteTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THByteTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -1920,6 +2641,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -1936,6 +2658,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -1952,6 +2675,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -1968,6 +2692,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -1984,6 +2709,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -2000,7 +2726,395 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAndAll (HType self);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public int LogicalAndAll ()
+        {
+            return THByteTensor_logicalAndAll (this.handle);
+        }
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAnyAll (HType self);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        public int LogicalAnyAll ()
+        {
+            return THByteTensor_logicalAnyAll (this.handle);
+        }
+        
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAnd (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ByteTensor LogicalAnd (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static int THByteTensor_logicalAny (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ByteTensor LogicalAny (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_logicalAny (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ByteTensor Sum (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public ByteTensor CumulativeSum (int dimension)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ByteTensor Prod (int dimension, int keepdim)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public ByteTensor CumulativeProd (int dimension)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<ByteTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static long THByteTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public long Trace ()
+        {
+            return THByteTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public ByteTensor Sign ()
+        {
+            var result = new ByteTensor();
+            THByteTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public ByteTensor CrossProduct (ByteTensor other)
+        {
+            var result = new ByteTensor();
+            THByteTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ByteTensor Diagonal (int k)
+        {
+            var result = new ByteTensor();
+            THByteTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static ByteTensor Eye (long m, long n)
+        {
+            var result = new ByteTensor();
+            THByteTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_range (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static ByteTensor Range (long xmin, long xmax, long step)
+        {
+            var result = new ByteTensor();
+            THByteTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_arange (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static ByteTensor ARange (long xmin, long xmax, long step)
+        {
+            var result = new ByteTensor();
+            THByteTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<ByteTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new ByteTensor ();
+            var indices = new LongTensor ();
+            THByteTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<ByteTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ByteTensor TriL (long k)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ByteTensor TriU (long k)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public ByteTensor Concatenate (ByteTensor other, int dimension)
+        {
+            var result = new ByteTensor ();
+            THByteTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static ByteTensor Concatenate (IEnumerable<ByteTensor> tensors, int dimension)
+        {
+            var result = new ByteTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THByteTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+     
     }
     public partial class ShortTensor : IDisposable {
         /// <summary>
@@ -2262,6 +3376,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THShortTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THShortTensor_zero (HType handle);
@@ -2284,6 +3410,19 @@ namespace TorchSharp {
         {
             THShortTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THShortTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THShortTensor_maskedFill (HType handle1, ByteTensor.HType handle2, short value);
@@ -2710,10 +3849,9 @@ namespace TorchSharp {
         extern static short THShortTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -2725,10 +3863,11 @@ namespace TorchSharp {
         extern static short THShortTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -2740,15 +3879,30 @@ namespace TorchSharp {
         extern static short THShortTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THShortTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static short THShortTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THShortTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -2758,7 +3912,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -2778,7 +3932,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -3149,50 +4303,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THShortTensor_clamp (HType result, HType source, short value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (ShortTensor source, short value, ShortTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THShortTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.ShortTensor, Short, PytorchSharp.Short)"/>.
-        /// </remarks>
-        public ShortTensor Clamp (short value)
-        {
-            var result = new ShortTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THShortTensor_bitand (HType result, HType source, short value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -3404,7 +4514,6 @@ namespace TorchSharp {
             THShortTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmul (HType result, HType t, HType src);
@@ -3582,6 +4691,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new ShortTensor ();
             THShortTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor CMax (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor CMin (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THShortTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor LtTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor LeTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor GtTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor GeTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor EqTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor NeTensorT (ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ShortTensor ();
+            THShortTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cmaxvalue (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor CMaxValue (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cminvalue (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor CMinValue (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_ltValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_leValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_gtValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_geValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_eqValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_neValue (ByteTensor.HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (short src)
+        {
+            var result = new ByteTensor ();
+            THShortTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_ltValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor LtValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_leValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor LeValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_gtValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor GtValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_geValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor GeValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_eqValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor EqValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_neValueT (HType result, HType t, short value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor NeValueT (short src)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public ShortTensor LERP (ShortTensor other, short weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new ShortTensor();
+            THShortTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THShortTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (ShortTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THShortTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_add_scaled (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor AddScaled (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_sub_scaled (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor SubScaled (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_clamp (HType result, HType t, short value1, short value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ShortTensor Clamp (short value1, short value2)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -3830,20 +5552,7 @@ namespace TorchSharp {
         {
             return THShortTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static long THShortTensor_meanall (HType result);
 
-        /// <summary>
-        ///   Returns the mean of the elements in the tensor.
-        /// </summary>
-        /// <returns>
-        ///   The mean of the tensor.
-        /// </returns>
-        public long MeanAll ()
-        {
-            return THShortTensor_meanall (this.handle);
-        }
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -3886,6 +5595,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THShortTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_indexFill (HType tensor, int dim, LongTensor.HType index, short value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, short value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (ShortTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, ShortTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (ShortTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, ShortTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_scatterFill (HType self, int dim, LongTensor.HType index, short value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, short value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THShortTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THShortTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -3918,6 +5751,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -3934,6 +5768,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -3950,6 +5785,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -3966,6 +5802,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -3982,6 +5819,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -3998,7 +5836,347 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        
+     
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ShortTensor Sum (int dimension, int keepdim)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public ShortTensor CumulativeSum (int dimension)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public ShortTensor Prod (int dimension, int keepdim)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public ShortTensor CumulativeProd (int dimension)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<ShortTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static long THShortTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public long Trace ()
+        {
+            return THShortTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public ShortTensor Sign ()
+        {
+            var result = new ShortTensor();
+            THShortTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public ShortTensor CrossProduct (ShortTensor other)
+        {
+            var result = new ShortTensor();
+            THShortTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ShortTensor Diagonal (int k)
+        {
+            var result = new ShortTensor();
+            THShortTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static ShortTensor Eye (long m, long n)
+        {
+            var result = new ShortTensor();
+            THShortTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_range (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static ShortTensor Range (long xmin, long xmax, long step)
+        {
+            var result = new ShortTensor();
+            THShortTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_arange (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static ShortTensor ARange (long xmin, long xmax, long step)
+        {
+            var result = new ShortTensor();
+            THShortTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<ShortTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new ShortTensor ();
+            var indices = new LongTensor ();
+            THShortTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<ShortTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ShortTensor TriL (long k)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public ShortTensor TriU (long k)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public ShortTensor Concatenate (ShortTensor other, int dimension)
+        {
+            var result = new ShortTensor ();
+            THShortTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static ShortTensor Concatenate (IEnumerable<ShortTensor> tensors, int dimension)
+        {
+            var result = new ShortTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THShortTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+     
     }
     public partial class IntTensor : IDisposable {
         /// <summary>
@@ -4260,6 +6438,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THIntTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THIntTensor_zero (HType handle);
@@ -4282,6 +6472,19 @@ namespace TorchSharp {
         {
             THIntTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THIntTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THIntTensor_maskedFill (HType handle1, ByteTensor.HType handle2, int value);
@@ -4708,10 +6911,9 @@ namespace TorchSharp {
         extern static int THIntTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -4723,10 +6925,11 @@ namespace TorchSharp {
         extern static int THIntTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -4738,15 +6941,30 @@ namespace TorchSharp {
         extern static int THIntTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THIntTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THIntTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -4756,7 +6974,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -4776,7 +6994,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -5147,50 +7365,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THIntTensor_clamp (HType result, HType source, int value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (IntTensor source, int value, IntTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THIntTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.IntTensor, Int, PytorchSharp.Int)"/>.
-        /// </remarks>
-        public IntTensor Clamp (int value)
-        {
-            var result = new IntTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THIntTensor_bitand (HType result, HType source, int value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -5402,7 +7576,6 @@ namespace TorchSharp {
             THIntTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmul (HType result, HType t, HType src);
@@ -5580,6 +7753,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new IntTensor ();
             THIntTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor CMax (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor CMin (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THIntTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor LtTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor LeTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor GtTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor GeTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor EqTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor NeTensorT (IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new IntTensor ();
+            THIntTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cmaxvalue (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor CMaxValue (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cminvalue (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor CMinValue (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_ltValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_leValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_gtValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_geValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_eqValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_neValue (ByteTensor.HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (int src)
+        {
+            var result = new ByteTensor ();
+            THIntTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_ltValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor LtValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_leValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor LeValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_gtValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor GtValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_geValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor GeValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_eqValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor EqValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_neValueT (HType result, HType t, int value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor NeValueT (int src)
+        {
+            var result = new IntTensor ();
+            THIntTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public IntTensor LERP (IntTensor other, int weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new IntTensor();
+            THIntTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THIntTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (IntTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THIntTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_add_scaled (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor AddScaled (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_sub_scaled (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor SubScaled (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_clamp (HType result, HType t, int value1, int value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public IntTensor Clamp (int value1, int value2)
+        {
+            var result = new IntTensor ();
+            THIntTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -5828,20 +8614,7 @@ namespace TorchSharp {
         {
             return THIntTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static long THIntTensor_meanall (HType result);
 
-        /// <summary>
-        ///   Returns the mean of the elements in the tensor.
-        /// </summary>
-        /// <returns>
-        ///   The mean of the tensor.
-        /// </returns>
-        public long MeanAll ()
-        {
-            return THIntTensor_meanall (this.handle);
-        }
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -5884,6 +8657,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THIntTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_indexFill (HType tensor, int dim, LongTensor.HType index, int value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, int value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (IntTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, IntTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (IntTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, IntTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_scatterFill (HType self, int dim, LongTensor.HType index, int value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, int value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THIntTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THIntTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -5916,6 +8813,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -5932,6 +8830,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -5948,6 +8847,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -5964,6 +8864,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -5980,6 +8881,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -5996,7 +8898,347 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        
+     
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public IntTensor Sum (int dimension, int keepdim)
+        {
+            var result = new IntTensor ();
+            THIntTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public IntTensor CumulativeSum (int dimension)
+        {
+            var result = new IntTensor ();
+            THIntTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public IntTensor Prod (int dimension, int keepdim)
+        {
+            var result = new IntTensor ();
+            THIntTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public IntTensor CumulativeProd (int dimension)
+        {
+            var result = new IntTensor ();
+            THIntTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<IntTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static long THIntTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public long Trace ()
+        {
+            return THIntTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public IntTensor Sign ()
+        {
+            var result = new IntTensor();
+            THIntTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public IntTensor CrossProduct (IntTensor other)
+        {
+            var result = new IntTensor();
+            THIntTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public IntTensor Diagonal (int k)
+        {
+            var result = new IntTensor();
+            THIntTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static IntTensor Eye (long m, long n)
+        {
+            var result = new IntTensor();
+            THIntTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_range (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static IntTensor Range (long xmin, long xmax, long step)
+        {
+            var result = new IntTensor();
+            THIntTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_arange (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static IntTensor ARange (long xmin, long xmax, long step)
+        {
+            var result = new IntTensor();
+            THIntTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<IntTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new IntTensor ();
+            var indices = new LongTensor ();
+            THIntTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<IntTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public IntTensor TriL (long k)
+        {
+            var result = new IntTensor ();
+            THIntTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public IntTensor TriU (long k)
+        {
+            var result = new IntTensor ();
+            THIntTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public IntTensor Concatenate (IntTensor other, int dimension)
+        {
+            var result = new IntTensor ();
+            THIntTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static IntTensor Concatenate (IEnumerable<IntTensor> tensors, int dimension)
+        {
+            var result = new IntTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THIntTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+     
     }
     public partial class LongTensor : IDisposable {
         /// <summary>
@@ -6258,6 +9500,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THLongTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THLongTensor_zero (HType handle);
@@ -6280,6 +9534,19 @@ namespace TorchSharp {
         {
             THLongTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THLongTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THLongTensor_maskedFill (HType handle1, ByteTensor.HType handle2, long value);
@@ -6706,10 +9973,9 @@ namespace TorchSharp {
         extern static long THLongTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -6721,10 +9987,11 @@ namespace TorchSharp {
         extern static long THLongTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -6736,15 +10003,30 @@ namespace TorchSharp {
         extern static long THLongTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THLongTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THLongTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -6754,7 +10036,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -6774,7 +10056,7 @@ namespace TorchSharp {
 
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -7145,50 +10427,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THLongTensor_clamp (HType result, HType source, long value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (LongTensor source, long value, LongTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THLongTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.LongTensor, Long, PytorchSharp.Long)"/>.
-        /// </remarks>
-        public LongTensor Clamp (long value)
-        {
-            var result = new LongTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THLongTensor_bitand (HType result, HType source, long value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -7400,7 +10638,6 @@ namespace TorchSharp {
             THLongTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmul (HType result, HType t, HType src);
@@ -7578,6 +10815,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new LongTensor ();
             THLongTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor CMax (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor CMin (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THLongTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor LtTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor LeTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor GtTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor GeTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor EqTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor NeTensorT (LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new LongTensor ();
+            THLongTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cmaxvalue (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor CMaxValue (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cminvalue (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor CMinValue (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_ltValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_leValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_gtValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_geValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_eqValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_neValue (ByteTensor.HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (long src)
+        {
+            var result = new ByteTensor ();
+            THLongTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_ltValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor LtValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_leValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor LeValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_gtValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor GtValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_geValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor GeValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_eqValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor EqValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_neValueT (HType result, HType t, long value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor NeValueT (long src)
+        {
+            var result = new LongTensor ();
+            THLongTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public LongTensor LERP (LongTensor other, long weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new LongTensor();
+            THLongTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THLongTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (LongTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THLongTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_add_scaled (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor AddScaled (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_sub_scaled (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor SubScaled (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_clamp (HType result, HType t, long value1, long value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public LongTensor Clamp (long value1, long value2)
+        {
+            var result = new LongTensor ();
+            THLongTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -7826,20 +11676,7 @@ namespace TorchSharp {
         {
             return THLongTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static long THLongTensor_meanall (HType result);
 
-        /// <summary>
-        ///   Returns the mean of the elements in the tensor.
-        /// </summary>
-        /// <returns>
-        ///   The mean of the tensor.
-        /// </returns>
-        public long MeanAll ()
-        {
-            return THLongTensor_meanall (this.handle);
-        }
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -7882,6 +11719,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THLongTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_indexFill (HType tensor, int dim, LongTensor.HType index, long value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, long value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (LongTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, LongTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (LongTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, LongTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_scatterFill (HType self, int dim, LongTensor.HType index, long value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, long value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THLongTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THLongTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -7914,6 +11875,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -7930,6 +11892,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -7946,6 +11909,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -7962,6 +11926,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -7978,6 +11943,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -7994,7 +11960,347 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        
+     
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public LongTensor Sum (int dimension, int keepdim)
+        {
+            var result = new LongTensor ();
+            THLongTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public LongTensor CumulativeSum (int dimension)
+        {
+            var result = new LongTensor ();
+            THLongTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public LongTensor Prod (int dimension, int keepdim)
+        {
+            var result = new LongTensor ();
+            THLongTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public LongTensor CumulativeProd (int dimension)
+        {
+            var result = new LongTensor ();
+            THLongTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<LongTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static long THLongTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public long Trace ()
+        {
+            return THLongTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public LongTensor Sign ()
+        {
+            var result = new LongTensor();
+            THLongTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public LongTensor CrossProduct (LongTensor other)
+        {
+            var result = new LongTensor();
+            THLongTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public LongTensor Diagonal (int k)
+        {
+            var result = new LongTensor();
+            THLongTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static LongTensor Eye (long m, long n)
+        {
+            var result = new LongTensor();
+            THLongTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_range (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static LongTensor Range (long xmin, long xmax, long step)
+        {
+            var result = new LongTensor();
+            THLongTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_arange (HType result, long xmin, long xmax, long step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static LongTensor ARange (long xmin, long xmax, long step)
+        {
+            var result = new LongTensor();
+            THLongTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<LongTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new LongTensor ();
+            var indices = new LongTensor ();
+            THLongTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<LongTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public LongTensor TriL (long k)
+        {
+            var result = new LongTensor ();
+            THLongTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public LongTensor TriU (long k)
+        {
+            var result = new LongTensor ();
+            THLongTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public LongTensor Concatenate (LongTensor other, int dimension)
+        {
+            var result = new LongTensor ();
+            THLongTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static LongTensor Concatenate (IEnumerable<LongTensor> tensors, int dimension)
+        {
+            var result = new LongTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THLongTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+     
     }
     public partial class DoubleTensor : IDisposable {
         /// <summary>
@@ -8256,6 +12562,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THDoubleTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THDoubleTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_zero (HType handle);
@@ -8278,6 +12596,19 @@ namespace TorchSharp {
         {
             THDoubleTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THDoubleTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_maskedFill (HType handle1, ByteTensor.HType handle2, double value);
@@ -8704,10 +13035,9 @@ namespace TorchSharp {
         extern static double THDoubleTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -8719,10 +13049,11 @@ namespace TorchSharp {
         extern static double THDoubleTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -8734,15 +13065,30 @@ namespace TorchSharp {
         extern static double THDoubleTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THDoubleTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THDoubleTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -8752,7 +13098,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -8775,8 +13121,10 @@ namespace TorchSharp {
         extern static void THDoubleTensor_bernoulli_DoubleTensor (HType self, IntPtr thgenerator, HType p);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="p"></param>
         public void BernoulliTensor (RandomGenerator source, DoubleTensor p)
         {
             THDoubleTensor_bernoulli_DoubleTensor(this.handle, source.handle, p.handle);
@@ -8787,8 +13135,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_uniform (HType self, IntPtr thgenerator, double min, double max);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="min">The lower bound for the random number range.</param>
+        /// <param name="max">The upper bound for the random number range.</param>
         public void Uniform (RandomGenerator source, double min, double max)
         {
             THDoubleTensor_uniform(this.handle, source.handle, min, max);
@@ -8798,8 +13149,10 @@ namespace TorchSharp {
         extern static void THDoubleTensor_exponential (HType self, IntPtr thgenerator, double lambda);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a exponential distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="lambda"></param>
         public void Exponential (RandomGenerator source, double lambda)
         {
             THDoubleTensor_exponential(this.handle, source.handle, lambda);
@@ -8809,8 +13162,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Cauchy-Lorentz distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="median"></param>
+        /// <param name="sigma"></param>
         public void Cauchy (RandomGenerator source, double median, double sigma)
         {
             THDoubleTensor_cauchy(this.handle, source.handle, median, sigma);
@@ -8820,8 +13176,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a log-normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void LogNormal (RandomGenerator source, double mean, double stdv)
         {
             THDoubleTensor_logNormal(this.handle, source.handle, mean, stdv);
@@ -8831,8 +13190,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void Normal (RandomGenerator source, double mean, double stdv)
         {
             THDoubleTensor_normal(this.handle, source.handle, mean, stdv);
@@ -8842,8 +13204,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void NormalMeans (RandomGenerator source, DoubleTensor means, double stdv)
         {
             THDoubleTensor_normal_means(this.handle, source.handle, means.handle, stdv);
@@ -8853,8 +13218,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple standard deviations.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdvs">The standard deviations of the distribution.</param>
         public void NormalStdvs (RandomGenerator source, double mean, DoubleTensor stdvs)
         {
             THDoubleTensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
@@ -8864,8 +13232,11 @@ namespace TorchSharp {
         extern static void THDoubleTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means and standard deviations.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdvs">The standards deviation of the distribution.</param>
         public void NormalMeansStdvs (RandomGenerator source, DoubleTensor means, DoubleTensor stdvs)
         {
             THDoubleTensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
@@ -8875,15 +13246,19 @@ namespace TorchSharp {
         extern static void THDoubleTensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a multinomial distribution.
         /// </summary>
-        public void NormalMeansStdvs (RandomGenerator source, DoubleTensor prob_dist, int n_sample, int with_replacement)
+        /// <param name="source">The random generator source</param>
+        /// <param name="prob_dist">The probability for each bucket.</param>
+        /// <param name="n_sample">The number of samples to generate.</param>
+        /// <param name="with_replacement"></param>
+        public void Multinomial (RandomGenerator source, DoubleTensor prob_dist, int n_sample, int with_replacement)
         {
             THDoubleTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -9254,50 +13629,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THDoubleTensor_clamp (HType result, HType source, double value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (DoubleTensor source, double value, DoubleTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THDoubleTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.DoubleTensor, Double, PytorchSharp.Double)"/>.
-        /// </remarks>
-        public DoubleTensor Clamp (double value)
-        {
-            var result = new DoubleTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THDoubleTensor_bitand (HType result, HType source, double value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -9392,10 +13723,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Sigmoid (DoubleTensor src)
+        public DoubleTensor Sigmoid ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_sigmoid (result.handle, this.handle);
             return result;
@@ -9411,10 +13740,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Log (DoubleTensor src)
+        public DoubleTensor Log ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_log (result.handle, this.handle);
             return result;
@@ -9430,10 +13757,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Lgamma (DoubleTensor src)
+        public DoubleTensor Lgamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_lgamma (result.handle, this.handle);
             return result;
@@ -9449,10 +13774,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Digamma (DoubleTensor src)
+        public DoubleTensor Digamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_digamma (result.handle, this.handle);
             return result;
@@ -9468,10 +13791,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Trigamma (DoubleTensor src)
+        public DoubleTensor Trigamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_trigamma (result.handle, this.handle);
             return result;
@@ -9487,10 +13808,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Polygamma (DoubleTensor src)
+        public DoubleTensor Polygamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_polygamma (result.handle, this.handle);
             return result;
@@ -9506,10 +13825,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Log10 (DoubleTensor src)
+        public DoubleTensor Log10 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_log10 (result.handle, this.handle);
             return result;
@@ -9525,10 +13842,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Log1p (DoubleTensor src)
+        public DoubleTensor Log1p ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_log1p (result.handle, this.handle);
             return result;
@@ -9544,10 +13859,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Log2 (DoubleTensor src)
+        public DoubleTensor Log2 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_log2 (result.handle, this.handle);
             return result;
@@ -9563,10 +13876,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Exp (DoubleTensor src)
+        public DoubleTensor Exp ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_exp (result.handle, this.handle);
             return result;
@@ -9582,10 +13893,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Expm1 (DoubleTensor src)
+        public DoubleTensor Expm1 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_expm1 (result.handle, this.handle);
             return result;
@@ -9601,10 +13910,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Cos (DoubleTensor src)
+        public DoubleTensor Cos ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_cos (result.handle, this.handle);
             return result;
@@ -9620,10 +13927,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Acos (DoubleTensor src)
+        public DoubleTensor Acos ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_acos (result.handle, this.handle);
             return result;
@@ -9639,10 +13944,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Cosh (DoubleTensor src)
+        public DoubleTensor Cosh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_cosh (result.handle, this.handle);
             return result;
@@ -9658,10 +13961,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Sin (DoubleTensor src)
+        public DoubleTensor Sin ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_sin (result.handle, this.handle);
             return result;
@@ -9677,10 +13978,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Asin (DoubleTensor src)
+        public DoubleTensor Asin ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_asin (result.handle, this.handle);
             return result;
@@ -9696,10 +13995,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Sinh (DoubleTensor src)
+        public DoubleTensor Sinh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_sinh (result.handle, this.handle);
             return result;
@@ -9715,10 +14012,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Tan (DoubleTensor src)
+        public DoubleTensor Tan ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_tan (result.handle, this.handle);
             return result;
@@ -9734,10 +14029,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Atan (DoubleTensor src)
+        public DoubleTensor Atan ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_atan (result.handle, this.handle);
             return result;
@@ -9753,10 +14046,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Atan2 (DoubleTensor src)
+        public DoubleTensor Atan2 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_atan2 (result.handle, this.handle);
             return result;
@@ -9772,10 +14063,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Tanh (DoubleTensor src)
+        public DoubleTensor Tanh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_tanh (result.handle, this.handle);
             return result;
@@ -9791,10 +14080,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Erf (DoubleTensor src)
+        public DoubleTensor Erf ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_erf (result.handle, this.handle);
             return result;
@@ -9810,10 +14097,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Erfc (DoubleTensor src)
+        public DoubleTensor Erfc ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_erfc (result.handle, this.handle);
             return result;
@@ -9829,10 +14114,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Erfinv (DoubleTensor src)
+        public DoubleTensor Erfinv ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_erfinv (result.handle, this.handle);
             return result;
@@ -9848,10 +14131,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Sqrt (DoubleTensor src)
+        public DoubleTensor Sqrt ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_sqrt (result.handle, this.handle);
             return result;
@@ -9867,10 +14148,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Rsqrt (DoubleTensor src)
+        public DoubleTensor Rsqrt ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_rsqrt (result.handle, this.handle);
             return result;
@@ -9886,10 +14165,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Ceil (DoubleTensor src)
+        public DoubleTensor Ceil ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_ceil (result.handle, this.handle);
             return result;
@@ -9905,10 +14182,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Floor (DoubleTensor src)
+        public DoubleTensor Floor ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_floor (result.handle, this.handle);
             return result;
@@ -9924,10 +14199,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Round (DoubleTensor src)
+        public DoubleTensor Round ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_round (result.handle, this.handle);
             return result;
@@ -9943,10 +14216,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Abs (DoubleTensor src)
+        public DoubleTensor Abs ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_abs (result.handle, this.handle);
             return result;
@@ -9962,10 +14233,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Trunc (DoubleTensor src)
+        public DoubleTensor Trunc ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_trunc (result.handle, this.handle);
             return result;
@@ -9981,10 +14250,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor Frac (DoubleTensor src)
+        public DoubleTensor Frac ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_frac (result.handle, this.handle);
             return result;
@@ -10000,10 +14267,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor cinv (DoubleTensor src)
+        public DoubleTensor cinv ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_cinv (result.handle, this.handle);
             return result;
@@ -10019,12 +14284,44 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public DoubleTensor neg (DoubleTensor src)
+        public DoubleTensor neg ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_neg (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_zerosLike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor ZerosLike ()
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_zerosLike (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_onesLike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor OnesLike ()
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_onesLike (result.handle, this.handle);
             return result;
         }
 
@@ -10098,7 +14395,6 @@ namespace TorchSharp {
             THDoubleTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmul (HType result, HType t, HType src);
@@ -10276,6 +14572,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new DoubleTensor ();
             THDoubleTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor CMax (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor CMin (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THDoubleTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor LtTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor LeTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor GtTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor GeTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor EqTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor NeTensorT (DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new DoubleTensor ();
+            THDoubleTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cmaxvalue (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor CMaxValue (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cminvalue (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor CMinValue (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_ltValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_leValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_gtValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_geValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_eqValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_neValue (ByteTensor.HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (double src)
+        {
+            var result = new ByteTensor ();
+            THDoubleTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_ltValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor LtValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_leValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor LeValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_gtValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor GtValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_geValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor GeValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_eqValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor EqValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_neValueT (HType result, HType t, double value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor NeValueT (double src)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public DoubleTensor LERP (DoubleTensor other, double weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new DoubleTensor();
+            THDoubleTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THDoubleTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (DoubleTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THDoubleTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_add_scaled (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor AddScaled (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_sub_scaled (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor SubScaled (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_clamp (HType result, HType t, double value1, double value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor Clamp (double value1, double value2)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -10524,20 +15433,49 @@ namespace TorchSharp {
         {
             return THDoubleTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static double THDoubleTensor_meanall (HType result);
 
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_linspace (HType result, double a, double b, long n);
+        
         /// <summary>
-        ///   Returns the mean of the elements in the tensor.
+        ///   Performs Linspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
         /// <returns>
-        ///   The mean of the tensor.
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public double MeanAll ()
+        public DoubleTensor Linspace (double a, double b, long n)
         {
-            return THDoubleTensor_meanall (this.handle);
+            var result = new DoubleTensor ();
+            THDoubleTensor_linspace (result.handle, a, b, n);
+            return result;
         }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_logspace (HType result, double a, double b, long n);
+        
+        /// <summary>
+        ///   Performs Logspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public DoubleTensor Logspace (double a, double b, long n)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_logspace (result.handle, a, b, n);
+            return result;
+        }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -10580,6 +15518,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THDoubleTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_indexFill (HType tensor, int dim, LongTensor.HType index, double value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, double value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (DoubleTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, DoubleTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (DoubleTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, DoubleTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_scatterFill (HType self, int dim, LongTensor.HType index, double value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, double value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THDoubleTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THDoubleTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -10612,6 +15674,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -10628,6 +15691,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -10644,6 +15708,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -10660,6 +15725,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -10676,6 +15742,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -10692,7 +15759,532 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        
+     
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Sum (int dimension, int keepdim)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public DoubleTensor CumulativeSum (int dimension)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Prod (int dimension, int keepdim)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public DoubleTensor CumulativeProd (int dimension)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public double Trace ()
+        {
+            return THDoubleTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public DoubleTensor Sign ()
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public DoubleTensor CrossProduct (DoubleTensor other)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public DoubleTensor Diagonal (int k)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static DoubleTensor Eye (long m, long n)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_range (HType result, double xmin, double xmax, double step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static DoubleTensor Range (double xmin, double xmax, double step)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_arange (HType result, double xmin, double xmax, double step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static DoubleTensor ARange (double xmin, double xmax, double step)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<DoubleTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new DoubleTensor ();
+            var indices = new LongTensor ();
+            THDoubleTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public DoubleTensor TriL (long k)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public DoubleTensor TriU (long k)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public DoubleTensor Concatenate (DoubleTensor other, int dimension)
+        {
+            var result = new DoubleTensor ();
+            THDoubleTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static DoubleTensor Concatenate (IEnumerable<DoubleTensor> tensors, int dimension)
+        {
+            var result = new DoubleTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THDoubleTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_mean (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compute the mean of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Mean (int dimension, int keepdim)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_mean (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_std (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Std (int dimension, int biased, int keepdim)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_var (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Var (int dimension, int biased, int keepdim)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_norm (HType result, HType self, double value,  int dimension, int keepdim);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public DoubleTensor Norm (double value,  int dimension, int keepdim)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_renorm (HType result, HType self, double value,  int dimension, double maxnorm);
+
+        /// <summary>
+        ///   Compute the renorm of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="maxnorm"></param>
+        public DoubleTensor Renorm (double value,  int dimension, double maxnorm)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_renorm (result.handle, this.handle, value, dimension, maxnorm);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_dist (HType a, HType b, double value);
+
+        /// <summary>
+        ///   Compute the dist of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="other">The other tensor.</param>
+        /// <param name="value"></param>
+        public double Dist (DoubleTensor other, double value)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THDoubleTensor_dist (this.handle, other.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_histc (HType hist, HType self, long nbins, double minvalue, double maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
+        public DoubleTensor Histc (long nbins, double minvalue, double maxvalue)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_histc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_bhistc (HType hist, HType self, long nbins, double minvalue, double maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
+        public DoubleTensor BHistc (long nbins, double minvalue, double maxvalue)
+        {
+            var result = new DoubleTensor();
+            THDoubleTensor_bhistc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_meanall (HType self);
+
+        /// <summary>
+        ///   Compute the mean of all tensor elements. 
+        /// </summary>
+        public double MeanAll ()
+        {
+            return THDoubleTensor_meanall (this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_varall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements. 
+        /// </summary>
+        /// <param name="biased"></param>
+        public double VarAll (int biased)
+        {
+            return THDoubleTensor_varall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_stdall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements. 
+        /// </summary>
+        /// <param name="biased"></param>
+        public double StdAll (int biased)
+        {
+            return THDoubleTensor_stdall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THDoubleTensor_normall (HType self, double value);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements. 
+        /// </summary>
+        /// <param name="value"></param>
+        public double NormAll (double value)
+        {
+            return THDoubleTensor_normall (this.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THDoubledirichlet_grad (HType self, HType x, HType alpha, HType total);
+        
+        /// <summary>
+        ///    DirichletGrad
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="total"></param>
+        public DoubleTensor DirichletGrad (DoubleTensor alpha, DoubleTensor total)
+        {
+            var result = new DoubleTensor();
+            THDoubledirichlet_grad (result.handle, this.handle, alpha.handle, total.handle);
+            return result;
+        }
+     
     }
     public partial class FloatTensor : IDisposable {
         /// <summary>
@@ -10954,6 +16546,18 @@ namespace TorchSharp {
                 handle = null;
             }
         }
+
+        [DllImport ("caffe2")]
+        extern static long THFloatTensor_numel (HType handle);
+     
+        /// <summary>
+        ///  Get the number of elements in the tensor.
+        /// </summary>
+        public long NumElements ()
+        {
+            return THFloatTensor_numel (handle);
+        }   
+
         
         [DllImport ("caffe2")]
         extern static void THFloatTensor_zero (HType handle);
@@ -10976,6 +16580,19 @@ namespace TorchSharp {
         {
             THFloatTensor_fill (handle, value);
         }
+        
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_nonzero (LongTensor.HType subscript, HType handle);
+     
+        /// <summary>
+        ///  Finds the indices of all non-zero elements.
+        /// </summary>
+        public LongTensor NonZero ()
+        {
+            var result = new LongTensor();
+            THFloatTensor_nonzero (result.handle, this.handle);
+            return result;
+        }   
         
         [DllImport ("caffe2")]
         extern static void THFloatTensor_maskedFill (HType handle1, ByteTensor.HType handle2, float value);
@@ -11402,10 +17019,9 @@ namespace TorchSharp {
         extern static float THFloatTensor_random (HType handle, IntPtr thgenerator);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (RandomGenerator source)
         {
             if (source == null)
@@ -11417,10 +17033,11 @@ namespace TorchSharp {
         extern static float THFloatTensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="min">The lower limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void ClampedRandom (RandomGenerator source, long min, long max)
         {
             if (source == null)
@@ -11432,15 +17049,30 @@ namespace TorchSharp {
         extern static float THFloatTensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
         
         /// <summary>
-        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="max">The upper limit for the values to be generated</param>
         public void CappedRandom (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
             THFloatTensor_cappedRandom (handle, source.handle, max);
+        }
+
+        [DllImport ("caffe2")]
+        extern static float THFloatTensor_randperm (HType handle, IntPtr thgenerator, long max);
+        
+        /// <summary>
+        ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
+        /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="n">The upper limit for the values to be generated</param>
+        public void Randperm (RandomGenerator source, long max)
+        {
+            if (source == null)
+                throw new ArgumentNullException (nameof (source));
+            THFloatTensor_randperm (handle, source.handle, max);
         }
 
         [DllImport ("caffe2")]
@@ -11450,7 +17082,7 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
+        /// <param name="p"></param>
         public void Geometric (RandomGenerator source, double p)
         {
             if (source == null)
@@ -11473,8 +17105,10 @@ namespace TorchSharp {
         extern static void THFloatTensor_bernoulli_FloatTensor (HType self, IntPtr thgenerator, HType p);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="p"></param>
         public void BernoulliTensor (RandomGenerator source, FloatTensor p)
         {
             THFloatTensor_bernoulli_FloatTensor(this.handle, source.handle, p.handle);
@@ -11485,8 +17119,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_uniform (HType self, IntPtr thgenerator, double min, double max);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Bernoulli distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="min">The lower bound for the random number range.</param>
+        /// <param name="max">The upper bound for the random number range.</param>
         public void Uniform (RandomGenerator source, double min, double max)
         {
             THFloatTensor_uniform(this.handle, source.handle, min, max);
@@ -11496,8 +17133,10 @@ namespace TorchSharp {
         extern static void THFloatTensor_exponential (HType self, IntPtr thgenerator, double lambda);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a exponential distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="lambda"></param>
         public void Exponential (RandomGenerator source, double lambda)
         {
             THFloatTensor_exponential(this.handle, source.handle, lambda);
@@ -11507,8 +17146,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_cauchy (HType self, IntPtr thgenerator, double median, double sigma);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a Cauchy-Lorentz distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="median"></param>
+        /// <param name="sigma"></param>
         public void Cauchy (RandomGenerator source, double median, double sigma)
         {
             THFloatTensor_cauchy(this.handle, source.handle, median, sigma);
@@ -11518,8 +17160,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_logNormal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a log-normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void LogNormal (RandomGenerator source, double mean, double stdv)
         {
             THFloatTensor_logNormal(this.handle, source.handle, mean, stdv);
@@ -11529,8 +17174,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal (HType self, IntPtr thgenerator, double mean, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void Normal (RandomGenerator source, double mean, double stdv)
         {
             THFloatTensor_normal(this.handle, source.handle, mean, stdv);
@@ -11540,8 +17188,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means (HType self, IntPtr thgenerator, HType means, double stdv);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdv">The standard deviation of the distribution.</param>
         public void NormalMeans (RandomGenerator source, FloatTensor means, double stdv)
         {
             THFloatTensor_normal_means(this.handle, source.handle, means.handle, stdv);
@@ -11551,8 +17202,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_stddevs (HType self, IntPtr thgenerator, double mean, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple standard deviations.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="mean">The mean of the distribution.</param>
+        /// <param name="stdvs">The standard deviations of the distribution.</param>
         public void NormalStdvs (RandomGenerator source, double mean, FloatTensor stdvs)
         {
             THFloatTensor_normal_stddevs(this.handle, source.handle, mean, stdvs.handle);
@@ -11562,8 +17216,11 @@ namespace TorchSharp {
         extern static void THFloatTensor_normal_means_stddevs (HType self, IntPtr thgenerator, HType means, HType stdvs);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a normal distribution. This version uses multiple means and standard deviations.
         /// </summary>
+        /// <param name="source">The random generator source</param>
+        /// <param name="means">The means of the distribution.</param>
+        /// <param name="stdvs">The standards deviation of the distribution.</param>
         public void NormalMeansStdvs (RandomGenerator source, FloatTensor means, FloatTensor stdvs)
         {
             THFloatTensor_normal_means_stddevs(this.handle, source.handle, means.handle, stdvs.handle);
@@ -11573,15 +17230,19 @@ namespace TorchSharp {
         extern static void THFloatTensor_multinomial (HType self, IntPtr thgenerator, HType prob_dist, int n_sample, int with_replacement);
 
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Fills the tensor with values according to a multinomial distribution.
         /// </summary>
-        public void NormalMeansStdvs (RandomGenerator source, FloatTensor prob_dist, int n_sample, int with_replacement)
+        /// <param name="source">The random generator source</param>
+        /// <param name="prob_dist">The probability for each bucket.</param>
+        /// <param name="n_sample">The number of samples to generate.</param>
+        /// <param name="with_replacement"></param>
+        public void Multinomial (RandomGenerator source, FloatTensor prob_dist, int n_sample, int with_replacement)
         {
             THFloatTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
         
         /// <summary>
-        ///   Returns a debuggable version of the tensor, in this case the tensor shape
+        ///   Get a string representation of the tensor.
         /// </summary>
         public override string ToString ()
         {
@@ -11952,50 +17613,6 @@ namespace TorchSharp {
         }
                 
         [DllImport ("caffe2")]
-        extern static void THFloatTensor_clamp (HType result, HType source, float value);
-        
-        // Not married to xthis yet - we have a few ways of solving this, sometimes
-        // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
-        // which can also be surprising
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the source with the
-        ///   provided scalar.   The result tensor specified as the last parameters
-        ///   is resized to match the source.
-        /// </summary>
-        /// <remarks>
-        ///    For each element in the <see paramref="source"/> performs the Clamp operation
-        ///    with <see paramref="value"/>.   The result is stored in the <see paramref="result"/>
-        ///    tensor.
-        /// </remarks>
-        /// <param name="source">Source tensor on which the operation will take place.</param>
-        /// <param name="value">The scalar value that the operation uses.</param>
-        /// <param name="result">The tensor where the result will be placed</param>
-        public static void Clamp (FloatTensor source, float value, FloatTensor result)
-        {
-            // Arguments swapped to match Func<.., TResult> 
-            THFloatTensor_clamp (result.handle, source.handle, value);
-        }
-        
-        /// <summary>
-        ///   Performs the Clamp operation on each element of the tensor with the
-        ///   <see paramref="value"/> and returns a new tensor with the result.
-        /// </summary>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
-        ///   alternative method <see cref="M:PytorchSharp.Clamp(PytorchSharp.FloatTensor, Float, PytorchSharp.Float)"/>.
-        /// </remarks>
-        public FloatTensor Clamp (float value)
-        {
-            var result = new FloatTensor ();
-            Clamp (this, value, result);
-            return result;
-        }
-                
-        [DllImport ("caffe2")]
         extern static void THFloatTensor_bitand (HType result, HType source, float value);
         
         // Not married to xthis yet - we have a few ways of solving this, sometimes
@@ -12090,10 +17707,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Sigmoid (FloatTensor src)
+        public FloatTensor Sigmoid ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_sigmoid (result.handle, this.handle);
             return result;
@@ -12109,10 +17724,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Log (FloatTensor src)
+        public FloatTensor Log ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_log (result.handle, this.handle);
             return result;
@@ -12128,10 +17741,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Lgamma (FloatTensor src)
+        public FloatTensor Lgamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_lgamma (result.handle, this.handle);
             return result;
@@ -12147,10 +17758,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Digamma (FloatTensor src)
+        public FloatTensor Digamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_digamma (result.handle, this.handle);
             return result;
@@ -12166,10 +17775,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Trigamma (FloatTensor src)
+        public FloatTensor Trigamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_trigamma (result.handle, this.handle);
             return result;
@@ -12185,10 +17792,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Polygamma (FloatTensor src)
+        public FloatTensor Polygamma ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_polygamma (result.handle, this.handle);
             return result;
@@ -12204,10 +17809,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Log10 (FloatTensor src)
+        public FloatTensor Log10 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_log10 (result.handle, this.handle);
             return result;
@@ -12223,10 +17826,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Log1p (FloatTensor src)
+        public FloatTensor Log1p ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_log1p (result.handle, this.handle);
             return result;
@@ -12242,10 +17843,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Log2 (FloatTensor src)
+        public FloatTensor Log2 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_log2 (result.handle, this.handle);
             return result;
@@ -12261,10 +17860,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Exp (FloatTensor src)
+        public FloatTensor Exp ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_exp (result.handle, this.handle);
             return result;
@@ -12280,10 +17877,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Expm1 (FloatTensor src)
+        public FloatTensor Expm1 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_expm1 (result.handle, this.handle);
             return result;
@@ -12299,10 +17894,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Cos (FloatTensor src)
+        public FloatTensor Cos ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_cos (result.handle, this.handle);
             return result;
@@ -12318,10 +17911,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Acos (FloatTensor src)
+        public FloatTensor Acos ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_acos (result.handle, this.handle);
             return result;
@@ -12337,10 +17928,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Cosh (FloatTensor src)
+        public FloatTensor Cosh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_cosh (result.handle, this.handle);
             return result;
@@ -12356,10 +17945,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Sin (FloatTensor src)
+        public FloatTensor Sin ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_sin (result.handle, this.handle);
             return result;
@@ -12375,10 +17962,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Asin (FloatTensor src)
+        public FloatTensor Asin ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_asin (result.handle, this.handle);
             return result;
@@ -12394,10 +17979,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Sinh (FloatTensor src)
+        public FloatTensor Sinh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_sinh (result.handle, this.handle);
             return result;
@@ -12413,10 +17996,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Tan (FloatTensor src)
+        public FloatTensor Tan ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_tan (result.handle, this.handle);
             return result;
@@ -12432,10 +18013,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Atan (FloatTensor src)
+        public FloatTensor Atan ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_atan (result.handle, this.handle);
             return result;
@@ -12451,10 +18030,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Atan2 (FloatTensor src)
+        public FloatTensor Atan2 ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_atan2 (result.handle, this.handle);
             return result;
@@ -12470,10 +18047,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Tanh (FloatTensor src)
+        public FloatTensor Tanh ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_tanh (result.handle, this.handle);
             return result;
@@ -12489,10 +18064,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Erf (FloatTensor src)
+        public FloatTensor Erf ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_erf (result.handle, this.handle);
             return result;
@@ -12508,10 +18081,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Erfc (FloatTensor src)
+        public FloatTensor Erfc ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_erfc (result.handle, this.handle);
             return result;
@@ -12527,10 +18098,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Erfinv (FloatTensor src)
+        public FloatTensor Erfinv ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_erfinv (result.handle, this.handle);
             return result;
@@ -12546,10 +18115,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Sqrt (FloatTensor src)
+        public FloatTensor Sqrt ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_sqrt (result.handle, this.handle);
             return result;
@@ -12565,10 +18132,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Rsqrt (FloatTensor src)
+        public FloatTensor Rsqrt ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_rsqrt (result.handle, this.handle);
             return result;
@@ -12584,10 +18149,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Ceil (FloatTensor src)
+        public FloatTensor Ceil ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_ceil (result.handle, this.handle);
             return result;
@@ -12603,10 +18166,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Floor (FloatTensor src)
+        public FloatTensor Floor ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_floor (result.handle, this.handle);
             return result;
@@ -12622,10 +18183,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Round (FloatTensor src)
+        public FloatTensor Round ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_round (result.handle, this.handle);
             return result;
@@ -12641,10 +18200,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Abs (FloatTensor src)
+        public FloatTensor Abs ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_abs (result.handle, this.handle);
             return result;
@@ -12660,10 +18217,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Trunc (FloatTensor src)
+        public FloatTensor Trunc ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_trunc (result.handle, this.handle);
             return result;
@@ -12679,10 +18234,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor Frac (FloatTensor src)
+        public FloatTensor Frac ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_frac (result.handle, this.handle);
             return result;
@@ -12698,10 +18251,8 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor cinv (FloatTensor src)
+        public FloatTensor cinv ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_cinv (result.handle, this.handle);
             return result;
@@ -12717,12 +18268,44 @@ namespace TorchSharp {
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public FloatTensor neg (FloatTensor src)
+        public FloatTensor neg ()
         {
-            if (src == null)
-                throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_neg (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_zerosLike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor ZerosLike ()
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_zerosLike (result.handle, this.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_onesLike (HType result, HType t);
+        
+        /// <summary>
+        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor OnesLike ()
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_onesLike (result.handle, this.handle);
             return result;
         }
 
@@ -12796,7 +18379,6 @@ namespace TorchSharp {
             THFloatTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmul (HType result, HType t, HType src);
@@ -12974,6 +18556,619 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             var result = new FloatTensor ();
             THFloatTensor_cbitxor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cmax (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMax of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor CMax (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_cmax (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cmin (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an CMin of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor CMin (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_cmin (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_ltTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_leTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_leTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_gtTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_geTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_geTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_eqTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_neTensor (ByteTensor.HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensor of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeTensor (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new ByteTensor ();
+            THFloatTensor_neTensor (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_ltTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor LtTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_ltTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_leTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an LeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor LeTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_leTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_gtTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GtTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor GtTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_gtTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_geTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an GeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor GeTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_geTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_eqTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an EqTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor EqTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_eqTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_neTensorT (HType result, HType t, HType src);
+        
+        /// <summary>
+        ///   Performs an NeTensorT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor NeTensorT (FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            var result = new FloatTensor ();
+            THFloatTensor_neTensorT (result.handle, this.handle, src.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cmaxvalue (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an CMaxValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor CMaxValue (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_cmaxvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cminvalue (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an CMinValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor CMinValue (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_cminvalue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_ltValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an LtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LtValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_ltValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_leValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an LeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor LeValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_leValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_gtValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an GtValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GtValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_gtValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_geValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an GeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor GeValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_geValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_eqValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an EqValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor EqValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_eqValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_neValue (ByteTensor.HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an NeValue of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public ByteTensor NeValue (float src)
+        {
+            var result = new ByteTensor ();
+            THFloatTensor_neValue (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_ltValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an LtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor LtValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_ltValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_leValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an LeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor LeValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_leValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_gtValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an GtValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor GtValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_gtValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_geValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an GeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor GeValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_geValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_eqValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an EqValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor EqValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_eqValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_neValueT (HType result, HType t, float value);
+        
+        /// <summary>
+        ///   Performs an NeValueT of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor NeValueT (float src)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_neValueT (result.handle, this.handle, src);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
+        
+        /// <summary>
+        ///   LERP
+        /// </summary>
+        public FloatTensor LERP (FloatTensor other, float weight)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            var result = new FloatTensor();
+            THFloatTensor_lerp (result.handle, this.handle, other.handle, weight);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static int THFloatTensor_equal (HType t, HType src);
+        
+        /// <summary>
+        ///   Compare the tensor with another for complete equality.
+        /// </summary>
+        public int Equal (FloatTensor other)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THFloatTensor_equal (this.handle, other.handle);
+        }
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_add_scaled (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an AddScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor AddScaled (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_add_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_sub_scaled (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an SubScaled of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor SubScaled (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_sub_scaled (result.handle, this.handle, value1, value2);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_clamp (HType result, HType t, float value1, float value2);
+        
+        /// <summary>
+        ///   Performs an Clamp of the tensor with the provided 
+        ///   <see paramref="src"/> tensor and returns a new tensor with the result.
+        /// </summary>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor Clamp (float value1, float value2)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
 
@@ -13222,20 +19417,49 @@ namespace TorchSharp {
         {
             return THFloatTensor_prodall (this.handle);
         }
- 
-        [DllImport ("caffe2")]
-        extern static double THFloatTensor_meanall (HType result);
 
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_linspace (HType result, float a, float b, long n);
+        
         /// <summary>
-        ///   Returns the mean of the elements in the tensor.
+        ///   Performs Linspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
         /// <returns>
-        ///   The mean of the tensor.
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
-        public double MeanAll ()
+        public FloatTensor Linspace (float a, float b, long n)
         {
-            return THFloatTensor_meanall (this.handle);
+            var result = new FloatTensor ();
+            THFloatTensor_linspace (result.handle, a, b, n);
+            return result;
         }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_logspace (HType result, float a, float b, long n);
+        
+        /// <summary>
+        ///   Performs Logspace of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="n"></param>
+        /// <returns>
+        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        /// </returns>
+        public FloatTensor Logspace (float a, float b, long n)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_logspace (result.handle, a, b, n);
+            return result;
+        }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
@@ -13278,6 +19502,130 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
+        extern static void THFloatTensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
+        
+        /// <summary>
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the add</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="src">Tensor to copy the data from.</param>
+        public void IndexAdd (int dim, LongTensor index, FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_indexAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_indexFill (HType tensor, int dim, LongTensor.HType index, float value);
+        
+        /// <summary>
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+        /// </summary>
+        /// <param name="dim">Dimension to select for the fill</param>
+        /// <param name="index">Entries to copy</param>
+        /// <param name="value">The value to write.</param>
+        public void IndexFill (int dim, LongTensor index, float value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_indexFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_take (HType self, HType src, LongTensor.HType index);
+
+        /// <summary>
+        ///   Take
+        /// </summary>
+        public void Take (FloatTensor src, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_take (handle, src.handle, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_put (HType self, LongTensor.HType index, HType src, int accumulate);
+
+        /// <summary>
+        ///   Put
+        /// </summary>
+        public void Put (LongTensor index, FloatTensor src, int accumulate)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_put (handle, index.handle, src.handle, accumulate);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_gather (HType self, HType src, int dim, LongTensor.HType index);
+
+        /// <summary>
+        ///   Gather
+        /// </summary>
+        public void Gather (FloatTensor src, int dim, LongTensor index)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_gather (handle, src.handle, dim, index.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_scatter (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   Scatter
+        /// </summary>
+        public void Scatter (int dim, LongTensor index, FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_scatter (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_scatterAdd (HType self, int dim, LongTensor.HType index, HType src);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterAdd (int dim, LongTensor index, FloatTensor src)
+        {
+            if (src == null)
+                throw new ArgumentNullException (nameof (src));
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_scatterAdd (handle, dim, index.handle, src.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_scatterFill (HType self, int dim, LongTensor.HType index, float value);
+
+        /// <summary>
+        ///   ScatterAdd
+        /// </summary>
+        public void ScatterFill (int dim, LongTensor index, float value)
+        {
+            if (index == null)
+                throw new ArgumentNullException (nameof (index));
+            THFloatTensor_scatterFill (handle, dim, index.handle, value);
+        }
+
+        [DllImport ("caffe2")]
         extern static void THFloatTensor_copy (HType tensor, HType src);
         
         /// <summary>
@@ -13310,6 +19658,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyByte (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyShort (HType tensor, ShortTensor.HType src);
         
@@ -13326,6 +19675,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyShort (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -13342,6 +19692,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyInt (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyLong (HType tensor, LongTensor.HType src);
         
@@ -13358,6 +19709,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyLong (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -13374,6 +19726,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyFloat (this.handle, src.handle);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyDouble (HType tensor, DoubleTensor.HType src);
         
@@ -13390,6 +19743,531 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyDouble (this.handle, src.handle);
         }
+
         
+        
+     
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_sum (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Sum (int dimension, int keepdim)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_sum (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cumsum (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public FloatTensor CumulativeSum (int dimension)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_cumsum (result.handle, this.handle, dimension);
+            return result;
+        }
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_prod (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Prod (int dimension, int keepdim)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_prod (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cumprod (HType result, HType self, int dimension);
+        
+        /// <summary>
+        ///   Computes the cumulative product of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        public FloatTensor CumulativeProd (int dimension)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_cumprod (result.handle, this.handle, dimension);
+            return result;
+        }
+     
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the max of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Max (int dimension, int keepdim)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the min of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Min (int dimension, int keepdim)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the mode of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Mode (int dimension, int keepdim)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the median of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Median (int dimension, int keepdim)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+     
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The value for 'k'.</param>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        public System.Tuple<FloatTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_trace (HType self);
+        
+        /// <summary>
+        ///   Computes the trace of the tensor. 
+        /// </summary>
+        public double Trace ()
+        {
+            return THFloatTensor_trace(this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_sign (HType result, HType self);
+        
+        /// <summary>
+        ///   Computes the sign of the tensor. 
+        /// </summary>
+        public FloatTensor Sign ()
+        {
+            var result = new FloatTensor();
+            THFloatTensor_sign(result.handle, this.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cross (HType result, HType a, HType b);
+        
+        /// <summary>
+        ///   Computes the cross product of two tensors. 
+        /// </summary>
+        /// <param name="other">The right-hand-side tensor.</param>
+        public FloatTensor CrossProduct (FloatTensor other)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_cross(result.handle, this.handle, other.handle);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_diag (HType result, HType self, int k);
+        
+        /// <summary>
+        ///   Gets the diagonal of the tensor. 
+        /// </summary>
+        /// <param name="k"></param>
+        public FloatTensor Diagonal (int k)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_diag(result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_eye (HType result, long m, long n);
+        
+        /// <summary>
+        ///   Eye. 
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        public static FloatTensor Eye (long m, long n)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_eye(result.handle, m, n);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_range (HType result, double xmin, double xmax, double step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static FloatTensor Range (double xmin, double xmax, double step)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_range(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_arange (HType result, double xmin, double xmax, double step);
+        
+        /// <summary>
+        ///   Create a range spanning from xmin to xmax, with 'step' between each value.
+        /// </summary>
+        /// <param name="xmin">The lower bound of the range.</param>
+        /// <param name="xmax">The upper bound of the range.</param>
+        /// <param name="step">The value step.</param>
+        public static FloatTensor ARange (double xmin, double xmax, double step)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_arange(result.handle, xmin, xmax, step);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
+        
+        /// <summary>
+        ///   Sorts the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along.</param>
+        /// <param name="descending">0 if ascending, 1 if descending.</param>
+        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> Sort (int dimension, int descending)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
+        
+        /// <summary>
+        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        /// </summary>
+        /// <param name="k">The number of elements to fetch.</param>
+        /// <param name="dim">The dimension along which to sort and find k elements.</param>
+        /// <param name="dir">0 if ascending, 1 if descending.</param>
+        /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        public System.Tuple<FloatTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        {
+            var values = new FloatTensor ();
+            var indices = new LongTensor ();
+            THFloatTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            return new System.Tuple<FloatTensor, LongTensor>(values, indices);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_tril (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Lower triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public FloatTensor TriL (long k)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_tril (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_triu (HType result, HType self, long k);
+        
+        /// <summary>
+        ///   Upper triangle. 
+        /// </summary>
+        /// <param name="k"></param>
+        public FloatTensor TriU (long k)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_triu (result.handle, this.handle, k);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_cat (HType result, HType ta, HType tb, int dimension);
+        
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="other">The second tensor.</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public FloatTensor Concatenate (FloatTensor other, int dimension)
+        {
+            var result = new FloatTensor ();
+            THFloatTensor_cat (result.handle, this.handle, other.handle, dimension);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_catArray (HType result, HType[] ta, int count, int dimension);
+#if false        
+// NOTE: We need to determine the right marshalling for an array of handles.
+        /// <summary>
+        ///   Concatenate tensors along the given dimesion.
+        /// </summary>
+        /// <param name="tensors">A collection of tensors..</param>
+        /// <param name="dimension">The dimension along which to concatenate.</param>
+        public static FloatTensor Concatenate (IEnumerable<FloatTensor> tensors, int dimension)
+        {
+            var result = new FloatTensor ();
+            var handleArray = tensors.Select(t => t.handle).ToArray();
+            THFloatTensor_catArray (result.handle, handleArray, (int)handleArray.Length, dimension);
+            return result;
+        }
+#endif
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_mean (HType result, HType self, int dimension, int keepdim);
+        
+        /// <summary>
+        ///   Compute the mean of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Mean (int dimension, int keepdim)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_mean (result.handle, this.handle, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_std (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Std (int dimension, int biased, int keepdim)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_var (HType result, HType self, int dimension, int biased, int keepdim);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="biased"></param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Var (int dimension, int biased, int keepdim)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_norm (HType result, HType self, float value,  int dimension, int keepdim);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        public FloatTensor Norm (float value,  int dimension, int keepdim)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_renorm (HType result, HType self, float value,  int dimension, float maxnorm);
+
+        /// <summary>
+        ///   Compute the renorm of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="dimension">The dimension to process along.</param>
+        /// <param name="maxnorm"></param>
+        public FloatTensor Renorm (float value,  int dimension, float maxnorm)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_renorm (result.handle, this.handle, value, dimension, maxnorm);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_dist (HType a, HType b, float value);
+
+        /// <summary>
+        ///   Compute the dist of all tensor elements along the given dimension. 
+        /// </summary>
+        /// <param name="other">The other tensor.</param>
+        /// <param name="value"></param>
+        public double Dist (FloatTensor other, float value)
+        {
+            if (other == null)
+                throw new ArgumentNullException (nameof (other));
+            return THFloatTensor_dist (this.handle, other.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_histc (HType hist, HType self, long nbins, float minvalue, float maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
+        public FloatTensor Histc (long nbins, float minvalue, float maxvalue)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_histc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_bhistc (HType hist, HType self, long nbins, float minvalue, float maxvalue);
+
+        /// <summary>
+        ///   Create a histogram of all tensor elements. 
+        /// </summary>
+        /// <param name="nbins">The number of bins in the output histogram.</param>
+        /// <param name="minvalue">Only consider values equal to or greater than this.</param>
+        /// <param name="maxvalue">Only consider values equal to or less than this.</param>
+        public FloatTensor BHistc (long nbins, float minvalue, float maxvalue)
+        {
+            var result = new FloatTensor();
+            THFloatTensor_bhistc (result.handle, this.handle, nbins, minvalue, maxvalue);
+            return result;
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_meanall (HType self);
+
+        /// <summary>
+        ///   Compute the mean of all tensor elements. 
+        /// </summary>
+        public double MeanAll ()
+        {
+            return THFloatTensor_meanall (this.handle);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_varall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the variance of all tensor elements. 
+        /// </summary>
+        /// <param name="biased"></param>
+        public double VarAll (int biased)
+        {
+            return THFloatTensor_varall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_stdall (HType self, int biased);
+
+        /// <summary>
+        ///   Compute the standard deviation of all tensor elements. 
+        /// </summary>
+        /// <param name="biased"></param>
+        public double StdAll (int biased)
+        {
+            return THFloatTensor_stdall (this.handle, biased);
+        }
+
+        [DllImport ("caffe2")]
+        extern static double THFloatTensor_normall (HType self, float value);
+
+        /// <summary>
+        ///   Compute the norm of all tensor elements. 
+        /// </summary>
+        /// <param name="value"></param>
+        public double NormAll (float value)
+        {
+            return THFloatTensor_normall (this.handle, value);
+        }
+
+        [DllImport ("caffe2")]
+        extern static void THFloatdirichlet_grad (HType self, HType x, HType alpha, HType total);
+        
+        /// <summary>
+        ///    DirichletGrad
+        /// </summary>
+        /// <param name="alpha"></param>
+        /// <param name="total"></param>
+        public FloatTensor DirichletGrad (FloatTensor alpha, FloatTensor total)
+        {
+            var result = new FloatTensor();
+            THFloatdirichlet_grad (result.handle, this.handle, alpha.handle, total.handle);
+            return result;
+        }
+     
     }
 }
