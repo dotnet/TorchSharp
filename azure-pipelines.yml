@@ -11,16 +11,16 @@ steps:
   script: |
     dotnet build --configuration $(buildConfiguration)
 
--task: Build@2
+- task: Build@2
   displayName: Prepare native libtorch
     curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
     unzip libtorch-shared-with-deps-latest.zip
 
--task: Test@1
+- task: Test@1
   displayName: Run Tests
     LD_LIBRARY_PATH=`pwd`/libtorch/lib dotnet test Test --configuration Release --logger trx
 
--task: Publish@1
+- task: Publish@1
   displayName: dotnet publish artifacts
     dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
 
