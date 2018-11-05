@@ -574,7 +574,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
         public void Squeeze ()
         {
             TH<#=tname#>Tensor_squeeze (handle, handle);
@@ -586,7 +585,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
+        /// <param name="src">The source tensor which contains the data.</param>
+        /// <param name="dimension">The dimension to squeeze.</param>
         public void Squeeze1d (<#=tname#>Tensor src, int dimension)
         {
             TH<#=tname#>Tensor_squeeze1d (handle, src.handle, dimension);
@@ -598,7 +598,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
-        /// <param name="src">The source tensor which contains the data..</param>
+        /// <param name="src">The source tensor which contains the data.</param>
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (<#=tname#>Tensor src, int dimension)
         {
             TH<#=tname#>Tensor_unsqueeze1d (handle, src.handle, dimension);
@@ -1164,7 +1165,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="this"/> raised to the power of <see paramref="y"/>.
         /// </summary>
-        /// <param 
         /// <param name="y">The exponent.</param>
         public <#=tname#>Tensor Pow (<#=ttype#> y)
         {
@@ -1196,6 +1196,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -1213,9 +1214,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1269,6 +1269,7 @@ foreach (var type in new [] {
         ///   Performs an <#=op#> of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1315,6 +1316,7 @@ foreach (var type in new [] {
         ///   Performs an <#=op#> of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1332,6 +1334,8 @@ foreach (var type in new [] {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public <#=tname#>Tensor LERP (<#=tname#>Tensor other, <#=ttype#> weight)
         {
             if (other == null)
@@ -1347,6 +1351,7 @@ foreach (var type in new [] {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (<#=tname#>Tensor other)
         {
             if (other == null)
@@ -1375,6 +1380,8 @@ foreach (var type in new [] {
         ///   Performs an <#=op#> of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1443,7 +1450,8 @@ foreach (var type in new [] {
         ///   Performs <#=op#> of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -1604,7 +1612,9 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (<#=tname#>Tensor src, LongTensor index)
         {
             if (src == null)
@@ -1620,6 +1630,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, <#=tname#>Tensor src, int accumulate)
         {
             if (src == null)
@@ -1635,6 +1648,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (<#=tname#>Tensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -1650,6 +1666,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, <#=tname#>Tensor src)
         {
             if (src == null)
@@ -1665,6 +1684,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, <#=tname#>Tensor src)
         {
             if (src == null)
@@ -1680,6 +1702,9 @@ foreach (var type in new [] {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, <#=ttype#> value)
         {
             if (index == null)
@@ -1694,8 +1719,6 @@ foreach (var type in new [] {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (<#=tname#>Tensor src)
         {
@@ -1714,8 +1737,6 @@ foreach (var type in new [] {
         ///   Copies the elements of a <#=srcType.ToLower()#> tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy<#=srcType#> (<#=srcType#>Tensor src)
         {
@@ -1828,7 +1849,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        /// <returns>A tuple containing the values and indices of the resulting elements.<returns>
+        /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> <#=op#> (int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
@@ -1844,10 +1865,10 @@ foreach (var type in new [] {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        /// <returns>A tuple containing the values and indices of the kth element of each dimension.<returns>
+        /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> KthValue (long k, int dimension, int keepdim)
         {
             var values = new <#=tname#>Tensor ();
@@ -1963,7 +1984,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
-        /// <returns>A tuple containing the values and indices of the sorted elements.<returns>
+        /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> Sort (int dimension, int descending)
         {
             var values = new <#=tname#>Tensor ();
@@ -1982,7 +2003,7 @@ foreach (var type in new [] {
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
-        /// <returns>A tuple containing the values and indices of the top 'k' elements.<returns>
+        /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
         public System.Tuple<<#=tname#>Tensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
         {
             var values = new <#=tname#>Tensor ();
