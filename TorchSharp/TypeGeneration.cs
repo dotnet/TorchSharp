@@ -577,7 +577,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (ByteTensor src, int dimension)
         {
             THByteTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -1374,6 +1374,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -1388,6 +1389,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THByteTensor_match (HType result, HType m1, HType m2, byte gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1407,6 +1413,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1427,6 +1434,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1447,6 +1455,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1467,6 +1476,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1487,6 +1497,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1507,6 +1518,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1527,6 +1539,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1547,6 +1560,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1567,6 +1581,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1587,6 +1602,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1607,6 +1623,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1627,6 +1644,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1647,6 +1665,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1667,6 +1686,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1687,6 +1707,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1707,6 +1728,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1727,6 +1749,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1747,6 +1770,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1767,6 +1791,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1787,6 +1812,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1807,6 +1833,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1827,6 +1854,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1847,6 +1875,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1867,6 +1896,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1885,6 +1915,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1903,6 +1934,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1921,6 +1953,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1939,6 +1972,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1957,6 +1991,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1975,6 +2010,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -1993,6 +2029,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2011,6 +2048,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2029,6 +2067,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2047,6 +2086,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2065,6 +2105,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2083,6 +2124,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2101,6 +2143,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2117,6 +2160,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public ByteTensor LERP (ByteTensor other, byte weight)
         {
             if (other == null)
@@ -2132,6 +2177,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (ByteTensor other)
         {
             if (other == null)
@@ -2146,6 +2192,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2164,6 +2212,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2182,6 +2232,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -2250,7 +2302,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -2275,7 +2328,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -2300,7 +2354,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -2325,7 +2380,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -2350,7 +2406,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -2520,7 +2577,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (ByteTensor src, LongTensor index)
         {
             if (src == null)
@@ -2536,6 +2595,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, ByteTensor src, int accumulate)
         {
             if (src == null)
@@ -2551,6 +2613,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (ByteTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -2566,6 +2631,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, ByteTensor src)
         {
             if (src == null)
@@ -2581,6 +2649,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, ByteTensor src)
         {
             if (src == null)
@@ -2596,6 +2667,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, byte value)
         {
             if (index == null)
@@ -2610,8 +2684,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (ByteTensor src)
         {
@@ -2627,8 +2699,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -2644,8 +2714,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -2661,8 +2729,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -2678,8 +2744,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -2695,8 +2759,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -2712,8 +2774,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -2902,7 +2962,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -3682,7 +3742,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (ShortTensor src, int dimension)
         {
             THShortTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -4479,6 +4539,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -4493,6 +4554,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THShortTensor_match (HType result, HType m1, HType m2, short gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4512,6 +4578,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4532,6 +4599,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4552,6 +4620,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4572,6 +4641,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4592,6 +4662,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4612,6 +4683,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4632,6 +4704,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4652,6 +4725,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4672,6 +4746,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4692,6 +4767,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4712,6 +4788,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4732,6 +4809,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4752,6 +4830,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4772,6 +4851,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4792,6 +4872,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4812,6 +4893,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4832,6 +4914,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4852,6 +4935,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4872,6 +4956,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4892,6 +4977,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4912,6 +4998,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4932,6 +5019,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4952,6 +5040,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4972,6 +5061,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -4990,6 +5080,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5008,6 +5099,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5026,6 +5118,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5044,6 +5137,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5062,6 +5156,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5080,6 +5175,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5098,6 +5194,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5116,6 +5213,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5134,6 +5232,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5152,6 +5251,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5170,6 +5270,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5188,6 +5289,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5206,6 +5308,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5222,6 +5325,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public ShortTensor LERP (ShortTensor other, short weight)
         {
             if (other == null)
@@ -5237,6 +5342,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (ShortTensor other)
         {
             if (other == null)
@@ -5251,6 +5357,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5269,6 +5377,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5287,6 +5397,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -5355,7 +5467,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -5380,7 +5493,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -5405,7 +5519,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -5430,7 +5545,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -5455,7 +5571,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -5625,7 +5742,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (ShortTensor src, LongTensor index)
         {
             if (src == null)
@@ -5641,6 +5760,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, ShortTensor src, int accumulate)
         {
             if (src == null)
@@ -5656,6 +5778,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (ShortTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -5671,6 +5796,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, ShortTensor src)
         {
             if (src == null)
@@ -5686,6 +5814,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, ShortTensor src)
         {
             if (src == null)
@@ -5701,6 +5832,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, short value)
         {
             if (index == null)
@@ -5715,8 +5849,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (ShortTensor src)
         {
@@ -5732,8 +5864,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -5749,8 +5879,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -5766,8 +5894,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -5783,8 +5909,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -5800,8 +5924,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -5817,8 +5939,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -5959,7 +6079,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -6739,7 +6859,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (IntTensor src, int dimension)
         {
             THIntTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -7536,6 +7656,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -7550,6 +7671,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THIntTensor_match (HType result, HType m1, HType m2, int gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7569,6 +7695,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7589,6 +7716,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7609,6 +7737,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7629,6 +7758,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7649,6 +7779,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7669,6 +7800,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7689,6 +7821,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7709,6 +7842,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7729,6 +7863,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7749,6 +7884,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7769,6 +7905,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7789,6 +7926,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7809,6 +7947,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7829,6 +7968,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7849,6 +7989,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7869,6 +8010,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7889,6 +8031,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7909,6 +8052,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7929,6 +8073,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7949,6 +8094,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7969,6 +8115,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -7989,6 +8136,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8009,6 +8157,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8029,6 +8178,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8047,6 +8197,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8065,6 +8216,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8083,6 +8235,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8101,6 +8254,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8119,6 +8273,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8137,6 +8292,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8155,6 +8311,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8173,6 +8330,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8191,6 +8349,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8209,6 +8368,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8227,6 +8387,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8245,6 +8406,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8263,6 +8425,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8279,6 +8442,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public IntTensor LERP (IntTensor other, int weight)
         {
             if (other == null)
@@ -8294,6 +8459,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (IntTensor other)
         {
             if (other == null)
@@ -8308,6 +8474,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8326,6 +8494,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8344,6 +8514,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -8412,7 +8584,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -8437,7 +8610,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -8462,7 +8636,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -8487,7 +8662,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -8512,7 +8688,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -8682,7 +8859,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (IntTensor src, LongTensor index)
         {
             if (src == null)
@@ -8698,6 +8877,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, IntTensor src, int accumulate)
         {
             if (src == null)
@@ -8713,6 +8895,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (IntTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -8728,6 +8913,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, IntTensor src)
         {
             if (src == null)
@@ -8743,6 +8931,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, IntTensor src)
         {
             if (src == null)
@@ -8758,6 +8949,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, int value)
         {
             if (index == null)
@@ -8772,8 +8966,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (IntTensor src)
         {
@@ -8789,8 +8981,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -8806,8 +8996,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -8823,8 +9011,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -8840,8 +9026,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -8857,8 +9041,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -8874,8 +9056,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -9016,7 +9196,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -9796,7 +9976,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (LongTensor src, int dimension)
         {
             THLongTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -10593,6 +10773,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -10607,6 +10788,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THLongTensor_match (HType result, HType m1, HType m2, long gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10626,6 +10812,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10646,6 +10833,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10666,6 +10854,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10686,6 +10875,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10706,6 +10896,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10726,6 +10917,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10746,6 +10938,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10766,6 +10959,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10786,6 +10980,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10806,6 +11001,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10826,6 +11022,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10846,6 +11043,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10866,6 +11064,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10886,6 +11085,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10906,6 +11106,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10926,6 +11127,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10946,6 +11148,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10966,6 +11169,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -10986,6 +11190,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11006,6 +11211,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11026,6 +11232,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11046,6 +11253,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11066,6 +11274,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11086,6 +11295,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11104,6 +11314,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11122,6 +11333,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11140,6 +11352,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11158,6 +11371,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11176,6 +11390,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11194,6 +11409,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11212,6 +11428,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11230,6 +11447,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11248,6 +11466,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11266,6 +11485,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11284,6 +11504,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11302,6 +11523,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11320,6 +11542,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11336,6 +11559,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public LongTensor LERP (LongTensor other, long weight)
         {
             if (other == null)
@@ -11351,6 +11576,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (LongTensor other)
         {
             if (other == null)
@@ -11365,6 +11591,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11383,6 +11611,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11401,6 +11631,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -11469,7 +11701,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -11494,7 +11727,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -11519,7 +11753,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -11544,7 +11779,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -11569,7 +11805,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -11739,7 +11976,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (LongTensor src, LongTensor index)
         {
             if (src == null)
@@ -11755,6 +11994,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, LongTensor src, int accumulate)
         {
             if (src == null)
@@ -11770,6 +12012,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (LongTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -11785,6 +12030,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, LongTensor src)
         {
             if (src == null)
@@ -11800,6 +12048,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, LongTensor src)
         {
             if (src == null)
@@ -11815,6 +12066,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, long value)
         {
             if (index == null)
@@ -11829,8 +12083,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (LongTensor src)
         {
@@ -11846,8 +12098,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -11863,8 +12113,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -11880,8 +12128,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -11897,8 +12143,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -11914,8 +12158,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -11931,8 +12173,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -12073,7 +12313,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -12853,7 +13093,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (DoubleTensor src, int dimension)
         {
             THDoubleTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -14343,6 +14583,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -14357,6 +14598,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_match (HType result, HType m1, HType m2, double gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14376,6 +14622,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14396,6 +14643,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14416,6 +14664,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14436,6 +14685,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14456,6 +14706,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14476,6 +14727,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14496,6 +14748,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14516,6 +14769,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14536,6 +14790,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14556,6 +14811,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14576,6 +14832,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14596,6 +14853,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14616,6 +14874,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14636,6 +14895,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14656,6 +14916,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14676,6 +14937,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14696,6 +14958,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14716,6 +14979,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14736,6 +15000,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14756,6 +15021,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14776,6 +15042,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14796,6 +15063,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14816,6 +15084,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14836,6 +15105,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14854,6 +15124,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14872,6 +15143,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14890,6 +15162,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14908,6 +15181,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14926,6 +15200,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14944,6 +15219,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14962,6 +15238,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14980,6 +15257,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -14998,6 +15276,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15016,6 +15295,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15034,6 +15314,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15052,6 +15333,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15070,6 +15352,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15086,6 +15369,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public DoubleTensor LERP (DoubleTensor other, double weight)
         {
             if (other == null)
@@ -15101,6 +15386,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (DoubleTensor other)
         {
             if (other == null)
@@ -15115,6 +15401,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15133,6 +15421,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15151,6 +15441,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -15219,7 +15511,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -15244,7 +15537,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -15269,7 +15563,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -15294,7 +15589,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -15319,7 +15615,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -15531,7 +15828,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (DoubleTensor src, LongTensor index)
         {
             if (src == null)
@@ -15547,6 +15846,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, DoubleTensor src, int accumulate)
         {
             if (src == null)
@@ -15562,6 +15864,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (DoubleTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -15577,6 +15882,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, DoubleTensor src)
         {
             if (src == null)
@@ -15592,6 +15900,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, DoubleTensor src)
         {
             if (src == null)
@@ -15607,6 +15918,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, double value)
         {
             if (index == null)
@@ -15621,8 +15935,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (DoubleTensor src)
         {
@@ -15638,8 +15950,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -15655,8 +15965,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -15672,8 +15980,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -15689,8 +15995,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -15706,8 +16010,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -15723,8 +16025,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -15865,7 +16165,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -16125,6 +16425,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public DoubleTensor Norm (double value,  int dimension, int keepdim)
@@ -16140,6 +16441,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="maxnorm"></param>
         public DoubleTensor Renorm (double value,  int dimension, double maxnorm)
@@ -16830,7 +17132,7 @@ namespace TorchSharp {
         ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to remove.</param>        
+        /// <param name="dimension">The dimension to insert.</param>
         public void Unsqueeze1d (FloatTensor src, int dimension)
         {
             THFloatTensor_unsqueeze1d (handle, src.handle, dimension);
@@ -18320,6 +18622,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   The dot product
         /// </returns>
@@ -18334,6 +18637,11 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THFloatTensor_match (HType result, HType m1, HType m2, float gain);
         
+        /// <summary>
+        ///   Match
+        /// </summary>
+        /// <param name="m2"></param>
+        /// <param name="gain"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18353,6 +18661,7 @@ namespace TorchSharp {
         ///   Performs an CMul of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18373,6 +18682,7 @@ namespace TorchSharp {
         ///   Performs an CPow of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18393,6 +18703,7 @@ namespace TorchSharp {
         ///   Performs an CDiv of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18413,6 +18724,7 @@ namespace TorchSharp {
         ///   Performs an CLShift of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18433,6 +18745,7 @@ namespace TorchSharp {
         ///   Performs an CFMod of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18453,6 +18766,7 @@ namespace TorchSharp {
         ///   Performs an CRemainder of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18473,6 +18787,7 @@ namespace TorchSharp {
         ///   Performs an CBitAnd of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18493,6 +18808,7 @@ namespace TorchSharp {
         ///   Performs an CBitOr of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18513,6 +18829,7 @@ namespace TorchSharp {
         ///   Performs an CBitXor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18533,6 +18850,7 @@ namespace TorchSharp {
         ///   Performs an CMax of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18553,6 +18871,7 @@ namespace TorchSharp {
         ///   Performs an CMin of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18573,6 +18892,7 @@ namespace TorchSharp {
         ///   Performs an LtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18593,6 +18913,7 @@ namespace TorchSharp {
         ///   Performs an LeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18613,6 +18934,7 @@ namespace TorchSharp {
         ///   Performs an GtTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18633,6 +18955,7 @@ namespace TorchSharp {
         ///   Performs an GeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18653,6 +18976,7 @@ namespace TorchSharp {
         ///   Performs an EqTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18673,6 +18997,7 @@ namespace TorchSharp {
         ///   Performs an NeTensor of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18693,6 +19018,7 @@ namespace TorchSharp {
         ///   Performs an LtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18713,6 +19039,7 @@ namespace TorchSharp {
         ///   Performs an LeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18733,6 +19060,7 @@ namespace TorchSharp {
         ///   Performs an GtTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18753,6 +19081,7 @@ namespace TorchSharp {
         ///   Performs an GeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18773,6 +19102,7 @@ namespace TorchSharp {
         ///   Performs an EqTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18793,6 +19123,7 @@ namespace TorchSharp {
         ///   Performs an NeTensorT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18813,6 +19144,7 @@ namespace TorchSharp {
         ///   Performs an CMaxValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18831,6 +19163,7 @@ namespace TorchSharp {
         ///   Performs an CMinValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18849,6 +19182,7 @@ namespace TorchSharp {
         ///   Performs an LtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18867,6 +19201,7 @@ namespace TorchSharp {
         ///   Performs an LeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18885,6 +19220,7 @@ namespace TorchSharp {
         ///   Performs an GtValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18903,6 +19239,7 @@ namespace TorchSharp {
         ///   Performs an GeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18921,6 +19258,7 @@ namespace TorchSharp {
         ///   Performs an EqValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18939,6 +19277,7 @@ namespace TorchSharp {
         ///   Performs an NeValue of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18957,6 +19296,7 @@ namespace TorchSharp {
         ///   Performs an LtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18975,6 +19315,7 @@ namespace TorchSharp {
         ///   Performs an LeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -18993,6 +19334,7 @@ namespace TorchSharp {
         ///   Performs an GtValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19011,6 +19353,7 @@ namespace TorchSharp {
         ///   Performs an GeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19029,6 +19372,7 @@ namespace TorchSharp {
         ///   Performs an EqValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19047,6 +19391,7 @@ namespace TorchSharp {
         ///   Performs an NeValueT of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="src">The right-hand-side operand.</param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19063,6 +19408,8 @@ namespace TorchSharp {
         /// <summary>
         ///   LERP
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
+        /// <param name="weight"></param>
         public FloatTensor LERP (FloatTensor other, float weight)
         {
             if (other == null)
@@ -19078,6 +19425,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
+        /// <param name="other">The right-hand-side operand.</param>
         public int Equal (FloatTensor other)
         {
             if (other == null)
@@ -19092,6 +19440,8 @@ namespace TorchSharp {
         ///   Performs an AddScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19110,6 +19460,8 @@ namespace TorchSharp {
         ///   Performs an SubScaled of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19128,6 +19480,8 @@ namespace TorchSharp {
         ///   Performs an Clamp of the tensor with the provided 
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
@@ -19196,7 +19550,8 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -19221,7 +19576,8 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -19246,7 +19602,8 @@ namespace TorchSharp {
         ///   Performs AddR of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -19271,7 +19628,8 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -19296,7 +19654,8 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="beta"></param>
+        /// <param name="alpha"></param>
         /// <param name="src1"></param>
         /// <param name="src2"></param>
         /// <returns>
@@ -19508,7 +19867,9 @@ namespace TorchSharp {
 
         /// <summary>
         ///   Take
-        /// </summary>
+        /// </summary>        
+        /// <param name="src"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Take (FloatTensor src, LongTensor index)
         {
             if (src == null)
@@ -19524,6 +19885,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Put
         /// </summary>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
+        /// <param name="accumulate"></param>
         public void Put (LongTensor index, FloatTensor src, int accumulate)
         {
             if (src == null)
@@ -19539,6 +19903,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Gather
         /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
         public void Gather (FloatTensor src, int dim, LongTensor index)
         {
             if (src == null)
@@ -19554,6 +19921,9 @@ namespace TorchSharp {
         /// <summary>
         ///   Scatter
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void Scatter (int dim, LongTensor index, FloatTensor src)
         {
             if (src == null)
@@ -19569,6 +19939,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="src"></param>
         public void ScatterAdd (int dim, LongTensor index, FloatTensor src)
         {
             if (src == null)
@@ -19584,6 +19957,9 @@ namespace TorchSharp {
         /// <summary>
         ///   ScatterAdd
         /// </summary>
+        /// <param name="dim"></param>
+        /// <param name="index">Indices of entries to copy.</param>
+        /// <param name="value"></param>
         public void ScatterFill (int dim, LongTensor index, float value)
         {
             if (index == null)
@@ -19598,8 +19974,6 @@ namespace TorchSharp {
         ///   Copies the elements of a tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void Copy (FloatTensor src)
         {
@@ -19615,8 +19989,6 @@ namespace TorchSharp {
         ///   Copies the elements of a byte tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyByte (ByteTensor src)
         {
@@ -19632,8 +20004,6 @@ namespace TorchSharp {
         ///   Copies the elements of a short tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyShort (ShortTensor src)
         {
@@ -19649,8 +20019,6 @@ namespace TorchSharp {
         ///   Copies the elements of a int tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyInt (IntTensor src)
         {
@@ -19666,8 +20034,6 @@ namespace TorchSharp {
         ///   Copies the elements of a long tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyLong (LongTensor src)
         {
@@ -19683,8 +20049,6 @@ namespace TorchSharp {
         ///   Copies the elements of a float tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyFloat (FloatTensor src)
         {
@@ -19700,8 +20064,6 @@ namespace TorchSharp {
         ///   Copies the elements of a double tensor into the original tensor. 
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
-        /// <param name="dim">Dimension to select for the copy</param>
-        /// <param name="index">Entries to copy</param>
         /// <param name="src">Tensor to copy the data from.</param>
         public void CopyDouble (DoubleTensor src)
         {
@@ -19842,7 +20204,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Computes the kth value of all the elements of the tensor along the given dimension. 
         /// </summary>
-        /// <param name="k">The value for 'k'.</param>
+        /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
@@ -20102,6 +20464,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the norm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
         public FloatTensor Norm (float value,  int dimension, int keepdim)
@@ -20117,6 +20480,7 @@ namespace TorchSharp {
         /// <summary>
         ///   Compute the renorm of all tensor elements along the given dimension. 
         /// </summary>
+        /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="maxnorm"></param>
         public FloatTensor Renorm (float value,  int dimension, float maxnorm)
