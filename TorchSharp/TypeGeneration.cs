@@ -564,7 +564,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (ByteTensor src, int dimension)
         {
             THByteTensor_squeeze1d (handle, src.handle, dimension);
@@ -788,8 +788,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -1390,7 +1390,7 @@ namespace TorchSharp {
         extern static void THByteTensor_match (HType result, HType m1, HType m2, byte gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
@@ -3729,7 +3729,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (ShortTensor src, int dimension)
         {
             THShortTensor_squeeze1d (handle, src.handle, dimension);
@@ -3953,8 +3953,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -4555,7 +4555,7 @@ namespace TorchSharp {
         extern static void THShortTensor_match (HType result, HType m1, HType m2, short gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
@@ -6846,7 +6846,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (IntTensor src, int dimension)
         {
             THIntTensor_squeeze1d (handle, src.handle, dimension);
@@ -7070,8 +7070,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -7672,7 +7672,7 @@ namespace TorchSharp {
         extern static void THIntTensor_match (HType result, HType m1, HType m2, int gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
@@ -9963,7 +9963,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (LongTensor src, int dimension)
         {
             THLongTensor_squeeze1d (handle, src.handle, dimension);
@@ -10187,8 +10187,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -10789,7 +10789,7 @@ namespace TorchSharp {
         extern static void THLongTensor_match (HType result, HType m1, HType m2, long gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
@@ -13080,7 +13080,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (DoubleTensor src, int dimension)
         {
             THDoubleTensor_squeeze1d (handle, src.handle, dimension);
@@ -13304,8 +13304,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -14568,7 +14568,6 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public DoubleTensor TPow (double x)
         {
@@ -14600,7 +14599,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_match (HType result, HType m1, HType m2, double gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
@@ -17118,7 +17117,7 @@ namespace TorchSharp {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (FloatTensor src, int dimension)
         {
             THFloatTensor_squeeze1d (handle, src.handle, dimension);
@@ -17342,8 +17341,8 @@ namespace TorchSharp {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -18606,7 +18605,6 @@ namespace TorchSharp {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public FloatTensor TPow (float x)
         {
@@ -18638,7 +18636,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_match (HType result, HType m1, HType m2, float gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>

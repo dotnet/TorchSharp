@@ -586,7 +586,7 @@ foreach (var type in new [] {
         ///   Squeeze the tensor, by removing the specified dimension.   
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
-        /// <param name="dimension">The dimension to squeeze.</param>
+        /// <param name="dimension">The dimension to remove.</param>
         public void Squeeze1d (<#=tname#>Tensor src, int dimension)
         {
             TH<#=tname#>Tensor_squeeze1d (handle, src.handle, dimension);
@@ -810,8 +810,8 @@ foreach (var type in new [] {
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
         /// <param name="source">The random generator source</param>
-        /// <param name="n">The upper limit for the values to be generated</param>
-        public void Randperm (RandomGenerator source, long max)
+        /// <param name="max">The upper limit for the values to be generated</param>
+        public void RandPerm (RandomGenerator source, long max)
         {
             if (source == null)
                 throw new ArgumentNullException (nameof (source));
@@ -1179,7 +1179,6 @@ foreach (var type in new [] {
         /// <summary>
         ///   Returns a new tensor with <see paramref="x"/> raised to the power of <see paramref="this"/>.
         /// </summary>
-        /// <param 
         /// <param name="x">The base.</param>
         public <#=tname#>Tensor TPow (<#=ttype#> x)
         {
@@ -1212,7 +1211,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_match (HType result, HType m1, HType m2, <#=ttype#> gain);
         
         /// <summary>
-        ///   
+        ///   Match
         /// </summary>
         /// <param name="m2"></param>
         /// <param name="gain"></param>
