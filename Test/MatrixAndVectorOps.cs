@@ -188,7 +188,6 @@ namespace Test
             Assert.AreEqual(715f, dot);
         }
 
-#if false
         [TestMethod]
         public void CrossProductFloat()
         {
@@ -206,7 +205,6 @@ namespace Test
             Assert.AreEqual(8, cross[1]);
             Assert.AreEqual(-4, cross[0]);
         }
-#endif
         [TestMethod]
         public void CMulFloat()
         {
@@ -1213,7 +1211,6 @@ namespace Test
             Assert.AreEqual(715, dot);
         }
 
-#if false
         [TestMethod]
         public void CrossProductDouble()
         {
@@ -1232,7 +1229,6 @@ namespace Test
             Assert.AreEqual(8, cross[1]);
             Assert.AreEqual(-4, cross[0]);
         }
-#endif
 
         [TestMethod]
         public void CMulDouble()
