@@ -490,6 +490,19 @@ namespace Test
                 Assert.AreEqual(0, x3[i]);
             }
         }
+
+        [TestMethod]
+        public void SignFloat()
+        {
+            var x1 = FloatTensor.Range(-15f, 15f, 1f);
+            var x2 = x1.Sign();
+
+            for (var i = 0; i < x2.Shape[0]; ++i)
+            {
+                var sign = (x1[i] < 0) ? -1f : (x1[i] == 0) ? 0f : 1f;
+                Assert.AreEqual(sign, x2[i]);
+            }
+        }
     
         [TestMethod]
         public void DoubleTensorLog()
@@ -772,6 +785,19 @@ namespace Test
             {
                 Assert.AreEqual(1, x2[i]);
                 Assert.AreEqual(0, x3[i]);
+            }
+        }
+
+        [TestMethod]
+        public void SignDouble()
+        {
+            var x1 = DoubleTensor.Range(-15f, 15f, 1f);
+            var x2 = x1.Sign();
+
+            for (var i = 0; i < x2.Shape[0]; ++i)
+            {
+                var sign = (x1[i] < 0) ? -1 : (x1[i] == 0) ? 0 : 1;
+                Assert.AreEqual(sign, x2[i]);
             }
         }
     }

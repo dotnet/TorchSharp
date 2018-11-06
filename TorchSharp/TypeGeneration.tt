@@ -1918,9 +1918,9 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public <#=tname#>Tensor Diagonal (int k)
         {
             var result = new <#=tname#>Tensor();
@@ -1932,10 +1932,10 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static <#=tname#>Tensor Eye (long m, long n)
         {
             var result = new <#=tname#>Tensor();

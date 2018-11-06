@@ -8,6 +8,169 @@ namespace Test
     [TestClass]
     public class MatrixAndVectorOps
     {
+#region Float Tests
+        [TestMethod]
+        public void SumFloat1d()
+        {
+            var x1 = new FloatTensor (10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = 2*i+1;
+            }
+
+            var x3 = x1.Sum(0,true);
+            Assert.AreEqual(1,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[0]);
+            Assert.AreEqual(100f, x3[0]);
+
+            var x4 = x1.Sum(0,false);
+            Assert.AreEqual(0,x4.Shape.Length);
+            // 0-dim tensors still have a single value, which can be fetched.
+            Assert.AreEqual(100f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void SumFloat2d()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Sum(1,true);
+            Assert.AreEqual(2,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(100f, x3[i,0]);
+            }
+
+            var x4 = x1.Sum(1,false);
+            Assert.AreEqual(1,x4.Shape.Length);
+            Assert.AreEqual(10,x4.Shape[0]);
+            Assert.AreEqual(100f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void ProdFloat1d()
+        {
+            var x1 = new FloatTensor (10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = 2*i+1;
+            }
+
+            var x3 = x1.Prod(0,true);
+            Assert.AreEqual(1,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[0]);
+            Assert.AreEqual(654729075f, x3[0]);
+
+            var x4 = x1.Prod(0,false);
+            Assert.AreEqual(0,x4.Shape.Length);
+            // 0-dim tensors still have a single value, which can be fetched.
+            Assert.AreEqual(654729075f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void ProdFloat2d()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Prod(1,true);
+            Assert.AreEqual(2,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(654729075f, x3[i,0]);
+            }
+
+            var x4 = x1.Prod(1,false);
+            Assert.AreEqual(1,x4.Shape.Length);
+            Assert.AreEqual(10,x4.Shape[0]);
+            Assert.AreEqual(654729075f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void MaxFloat()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Max(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(19f, x3.Item1[i,0]);
+                Assert.AreEqual(9,   x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Max(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(19f, x4.Item1[0]);            
+            Assert.AreEqual(9, x4.Item2[0]);
+        }
+
+        [TestMethod]
+        public void MinFloat()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Min(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(1f, x3.Item1[i,0]);
+                Assert.AreEqual(0,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Min(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(1f, x4.Item1[0]);            
+            Assert.AreEqual(0,  x4.Item2[0]);            
+        }
+        
         [TestMethod]
         public void DotProductFloat()
         {
@@ -23,6 +186,80 @@ namespace Test
             var dot = x1.Dot(x2);
 
             Assert.AreEqual(715f, dot);
+        }
+
+        [TestMethod]
+        public void CrossProductFloat()
+        {
+            var x1 = new FloatTensor (3);
+            var x2 = new FloatTensor (3);
+
+            for (var i = 0; i < x2.Shape[0]; ++i)
+            {
+                x1[i] = i+1;
+                x2[i] = 3-i;
+            }
+
+            var cross = x1.CrossProduct(x2);
+            Assert.AreEqual(-4, cross[0]);
+            Assert.AreEqual(8, cross[1]);
+            Assert.AreEqual(-4, cross[0]);
+        }
+
+        [TestMethod]
+        public void DiagFloat()
+        {
+            var x1 = new FloatTensor (9);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = i+1;
+            }
+
+            x1.Resize2d(3,3);
+
+            var diag0 = x1.Diagonal(0);
+            var diag1 = x1.Diagonal(1);
+            
+            Assert.AreEqual(1, diag0.Shape.Length);
+            Assert.AreEqual(3, diag0.Shape[0]);
+            Assert.AreEqual(1, diag1.Shape.Length);
+            Assert.AreEqual(2, diag1.Shape[0]);
+
+            Assert.AreEqual(1, diag0[0]);
+            Assert.AreEqual(5, diag0[1]);
+            Assert.AreEqual(9, diag0[2]);
+
+            Assert.AreEqual(2, diag1[0]);
+            Assert.AreEqual(6, diag1[1]);
+        }
+
+        [TestMethod]
+        public void IdentityFloat()
+        {
+            var x1 = FloatTensor.Eye(10,10);
+
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 10; ++j)
+                {
+                    if (i == j)
+                        Assert.AreEqual(1,x1[i,j]);
+                    else
+                        Assert.AreEqual(0,x1[i,j]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void RangeFloat()
+        {
+            var x1 = FloatTensor.Range(0f, 100f, 1f);
+
+            for (int i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(i, x1[i]);
+            }
         }
 
         [TestMethod]
@@ -649,6 +886,372 @@ namespace Test
         }
 
         [TestMethod]
+        public void ModeFloat()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+                x1[i,5] = 17;
+            }
+
+            var x3 = x1.Mode(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(17, x3.Item1[i,0]);
+                Assert.AreEqual(8,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Mode(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(17, x4.Item1[0]);            
+            Assert.AreEqual(8, x4.Item2[0]);            
+        }
+
+        [TestMethod]
+        public void MedianFloat()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+                x1[i,5] = 17;
+            }
+
+            var x3 = x1.Median(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(9, x3.Item1[i,0]);
+                Assert.AreEqual(4,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Median(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(9, x4.Item1[0]);            
+            Assert.AreEqual(4, x4.Item2[0]);            
+        }
+
+        [TestMethod]
+        public void kthValueFloat()
+        {
+            var x1 = new FloatTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.KthValue(7,1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(x1[0,6], x3.Item1[i,0]);
+                Assert.AreEqual(6, x3.Item2[i,0]);
+            }
+
+            var x4 = x1.KthValue(3,1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(x1[0,2], x4.Item1[0]);            
+            Assert.AreEqual(2, x4.Item2[0]);            
+        }
+#endregion
+
+#region Double Tests
+        [TestMethod]
+        public void SumDouble1d()
+        {
+            var x1 = new DoubleTensor (10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = 2*i+1;
+            }
+
+            var x3 = x1.Sum(0,true);
+            Assert.AreEqual(1,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[0]);
+            Assert.AreEqual(100f, x3[0]);
+
+            var x4 = x1.Sum(0,false);
+            Assert.AreEqual(0,x4.Shape.Length);
+            // 0-dim tensors still have a single value, which can be fetched.
+            Assert.AreEqual(100f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void SumDouble2d()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Sum(1,true);
+            Assert.AreEqual(2,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(100f, x3[i,0]);
+            }
+
+            var x4 = x1.Sum(1,false);
+            Assert.AreEqual(1,x4.Shape.Length);
+            Assert.AreEqual(10,x4.Shape[0]);
+            Assert.AreEqual(100f, x4[0]);            
+        }
+
+        [TestMethod]
+        public void ProdDouble1d()
+        {
+            var x1 = new DoubleTensor (10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = 2*i+1;
+            }
+
+            var x3 = x1.Prod(0,true);
+            Assert.AreEqual(1,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[0]);
+            Assert.AreEqual(654729075, x3[0]);
+
+            var x4 = x1.Prod(0,false);
+            Assert.AreEqual(0,x4.Shape.Length);
+            // 0-dim tensors still have a single value, which can be fetched.
+            Assert.AreEqual(654729075, x4[0]);            
+        }
+
+        [TestMethod]
+        public void ProdDouble2d()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Prod(1,true);
+            Assert.AreEqual(2,x3.Shape.Length);
+            Assert.AreEqual(1,x3.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(654729075, x3[i,0]);
+            }
+
+            var x4 = x1.Prod(1,false);
+            Assert.AreEqual(1,x4.Shape.Length);
+            Assert.AreEqual(10,x4.Shape[0]);
+            Assert.AreEqual(654729075, x4[0]);            
+        }
+
+        [TestMethod]
+        public void MaxDouble()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Max(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(19, x3.Item1[i,0]);
+                Assert.AreEqual(9,   x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Max(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(19, x4.Item1[0]);            
+            Assert.AreEqual(9, x4.Item2[0]);
+        }
+
+        [TestMethod]
+        public void MinDouble()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.Min(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(1, x3.Item1[i,0]);
+                Assert.AreEqual(0,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Min(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(1, x4.Item1[0]);            
+            Assert.AreEqual(0,  x4.Item2[0]);            
+        }
+
+        [TestMethod]
+        public void ModeDouble()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+                x1[i,5] = 17;
+            }
+
+            var x3 = x1.Mode(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(17, x3.Item1[i,0]);
+                Assert.AreEqual(8,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Mode(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(17, x4.Item1[0]);            
+            Assert.AreEqual(8, x4.Item2[0]);            
+        }
+
+        [TestMethod]
+        public void MedianDouble()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+                x1[i,5] = 17;
+            }
+
+            var x3 = x1.Median(1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(9, x3.Item1[i,0]);
+                Assert.AreEqual(4,  x3.Item2[i,0]);
+            }
+
+            var x4 = x1.Median(1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(9, x4.Item1[0]);            
+            Assert.AreEqual(4, x4.Item2[0]);            
+        }
+
+        [TestMethod]
+        public void kthValueDouble()
+        {
+            var x1 = new DoubleTensor (10,10);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                for (var j = 0; j < x1.Shape[0]; ++j)
+                {
+                     x1[i,j] = 2*j+1;
+                }   
+            }
+
+            var x3 = x1.KthValue(7,1,true);
+            Assert.AreEqual(2,x3.Item1.Shape.Length);
+            Assert.AreEqual(1,x3.Item1.Shape[1]);
+            Assert.AreEqual(2,x3.Item2.Shape.Length);
+            Assert.AreEqual(1,x3.Item2.Shape[1]);
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(x1[0,6], x3.Item1[i,0]);
+                Assert.AreEqual(6, x3.Item2[i,0]);
+            }
+
+            var x4 = x1.KthValue(3,1,false);
+            Assert.AreEqual(1, x4.Item1.Shape.Length);
+            Assert.AreEqual(10,x4.Item1.Shape[0]);
+            Assert.AreEqual(1, x4.Item2.Shape.Length);
+            Assert.AreEqual(10,x4.Item2.Shape[0]);
+            Assert.AreEqual(x1[0,2], x4.Item1[0]);            
+            Assert.AreEqual(2, x4.Item2[0]);            
+        }
+
+        [TestMethod]
         public void DotProductDouble()
         {
             var x1 = new DoubleTensor (10);
@@ -663,6 +1266,80 @@ namespace Test
             var dot = x1.Dot(x2);
 
             Assert.AreEqual(715, dot);
+        }
+
+        [TestMethod]
+        public void CrossProductDouble()
+        {
+            var x1 = new DoubleTensor (3);
+            var x2 = new DoubleTensor (3);
+
+            for (var i = 0; i < x2.Shape[0]; ++i)
+            {
+                x1[i] = i+1;
+                x2[i] = 3-i;
+            }
+
+            var cross = x1.CrossProduct(x2);
+            Assert.AreEqual(-4, cross[0]);
+            Assert.AreEqual(8, cross[1]);
+            Assert.AreEqual(-4, cross[0]);
+        }
+
+        [TestMethod]
+        public void DiagDouble()
+        {
+            var x1 = new DoubleTensor (9);
+
+            for (var i = 0; i < x1.Shape[0]; ++i)
+            {
+                x1[i] = i+1;
+            }
+
+            x1.Resize2d(3,3);
+
+            var diag0 = x1.Diagonal(0);
+            var diag1 = x1.Diagonal(1);
+            
+            Assert.AreEqual(1, diag0.Shape.Length);
+            Assert.AreEqual(3, diag0.Shape[0]);
+            Assert.AreEqual(1, diag1.Shape.Length);
+            Assert.AreEqual(2, diag1.Shape[0]);
+
+            Assert.AreEqual(1, diag0[0]);
+            Assert.AreEqual(5, diag0[1]);
+            Assert.AreEqual(9, diag0[2]);
+
+            Assert.AreEqual(2, diag1[0]);
+            Assert.AreEqual(6, diag1[1]);
+        }
+
+        [TestMethod]
+        public void IdentityDouble()
+        {
+            var x1 = DoubleTensor.Eye(10,10);
+
+            for (int i = 0; i < 10; ++i)
+            {
+                for (int j = 0; j < 10; ++j)
+                {
+                    if (i == j)
+                        Assert.AreEqual(1,x1[i,j]);
+                    else
+                        Assert.AreEqual(0,x1[i,j]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void RangeDouble()
+        {
+            var x1 = DoubleTensor.Range(0f, 100f, 1f);
+
+            for (int i = 0; i < x1.Shape[0]; ++i)
+            {
+                Assert.AreEqual(i, x1[i]);
+            }
         }
 
         [TestMethod]
@@ -1287,5 +1964,6 @@ namespace Test
                 Assert.IsTrue(BasicTensorAPI.IsApproximatelyEqual(Math.Pow(x1[i],x2[i]),x3[i]));
             }
         }
+    #endregion
     }
 }
