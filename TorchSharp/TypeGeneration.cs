@@ -3014,16 +3014,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THByteTensor_cross (HType result, HType a, HType b);
+        extern static void THByteTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public ByteTensor CrossProduct (ByteTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public ByteTensor CrossProduct (ByteTensor other, int dimension = -1)
         {
             var result = new ByteTensor();
-            THByteTensor_cross(result.handle, this.handle, other.handle);
+            THByteTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -3031,9 +3032,9 @@ namespace TorchSharp {
         extern static void THByteTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public ByteTensor Diagonal (int k)
         {
             var result = new ByteTensor();
@@ -3045,10 +3046,10 @@ namespace TorchSharp {
         extern static void THByteTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static ByteTensor Eye (long m, long n)
         {
             var result = new ByteTensor();
@@ -6146,16 +6147,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THShortTensor_cross (HType result, HType a, HType b);
+        extern static void THShortTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public ShortTensor CrossProduct (ShortTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public ShortTensor CrossProduct (ShortTensor other, int dimension = -1)
         {
             var result = new ShortTensor();
-            THShortTensor_cross(result.handle, this.handle, other.handle);
+            THShortTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -6163,9 +6165,9 @@ namespace TorchSharp {
         extern static void THShortTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public ShortTensor Diagonal (int k)
         {
             var result = new ShortTensor();
@@ -6177,10 +6179,10 @@ namespace TorchSharp {
         extern static void THShortTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static ShortTensor Eye (long m, long n)
         {
             var result = new ShortTensor();
@@ -9278,16 +9280,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THIntTensor_cross (HType result, HType a, HType b);
+        extern static void THIntTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public IntTensor CrossProduct (IntTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public IntTensor CrossProduct (IntTensor other, int dimension = -1)
         {
             var result = new IntTensor();
-            THIntTensor_cross(result.handle, this.handle, other.handle);
+            THIntTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -9295,9 +9298,9 @@ namespace TorchSharp {
         extern static void THIntTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public IntTensor Diagonal (int k)
         {
             var result = new IntTensor();
@@ -9309,10 +9312,10 @@ namespace TorchSharp {
         extern static void THIntTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static IntTensor Eye (long m, long n)
         {
             var result = new IntTensor();
@@ -12410,16 +12413,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THLongTensor_cross (HType result, HType a, HType b);
+        extern static void THLongTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public LongTensor CrossProduct (LongTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public LongTensor CrossProduct (LongTensor other, int dimension = -1)
         {
             var result = new LongTensor();
-            THLongTensor_cross(result.handle, this.handle, other.handle);
+            THLongTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -12427,9 +12431,9 @@ namespace TorchSharp {
         extern static void THLongTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public LongTensor Diagonal (int k)
         {
             var result = new LongTensor();
@@ -12441,10 +12445,10 @@ namespace TorchSharp {
         extern static void THLongTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static LongTensor Eye (long m, long n)
         {
             var result = new LongTensor();
@@ -16277,16 +16281,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THDoubleTensor_cross (HType result, HType a, HType b);
+        extern static void THDoubleTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public DoubleTensor CrossProduct (DoubleTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public DoubleTensor CrossProduct (DoubleTensor other, int dimension = -1)
         {
             var result = new DoubleTensor();
-            THDoubleTensor_cross(result.handle, this.handle, other.handle);
+            THDoubleTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -16294,9 +16299,9 @@ namespace TorchSharp {
         extern static void THDoubleTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public DoubleTensor Diagonal (int k)
         {
             var result = new DoubleTensor();
@@ -16308,10 +16313,10 @@ namespace TorchSharp {
         extern static void THDoubleTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static DoubleTensor Eye (long m, long n)
         {
             var result = new DoubleTensor();
@@ -20331,16 +20336,17 @@ namespace TorchSharp {
         }
 
         [DllImport ("caffe2")]
-        extern static void THFloatTensor_cross (HType result, HType a, HType b);
+        extern static void THFloatTensor_cross (HType result, HType a, HType b, int dim);
         
         /// <summary>
         ///   Computes the cross product of two tensors. 
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
-        public FloatTensor CrossProduct (FloatTensor other)
+        /// <param name="dimension">The dimension to take the cross-product in.</param>
+        public FloatTensor CrossProduct (FloatTensor other, int dimension = -1)
         {
             var result = new FloatTensor();
-            THFloatTensor_cross(result.handle, this.handle, other.handle);
+            THFloatTensor_cross(result.handle, this.handle, other.handle, dimension);
             return result;
         }
 
@@ -20348,9 +20354,9 @@ namespace TorchSharp {
         extern static void THFloatTensor_diag (HType result, HType self, int k);
         
         /// <summary>
-        ///   Gets the diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor. 
         /// </summary>
-        /// <param name="k"></param>
+        /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public FloatTensor Diagonal (int k)
         {
             var result = new FloatTensor();
@@ -20362,10 +20368,10 @@ namespace TorchSharp {
         extern static void THFloatTensor_eye (HType result, long m, long n);
         
         /// <summary>
-        ///   Eye. 
+        ///   Create an identity matrix of shape m x n.
         /// </summary>
-        /// <param name="m"></param>
-        /// <param name="n"></param>
+        /// <param name="m">The number of rows</param>
+        /// <param name="n">The number of columns</param>
         public static FloatTensor Eye (long m, long n)
         {
             var result = new FloatTensor();
