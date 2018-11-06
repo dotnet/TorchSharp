@@ -1,17 +1,33 @@
-﻿using System;
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
 using System.Linq;
 using System.Numerics.Tensors;
 using TorchSharp;
 
-namespace Torch.SNT
+namespace Torch.SNT 
 {
-    public sealed class FloatTorchTensor : DenseTensor<float>
+<#
+foreach (var type in new [] { 
+    new { ApiName = "Byte", Storage = "byte", AccReal="long" }, 
+    new { ApiName = "Short", Storage = "short", AccReal="long" },   
+    new { ApiName = "Int", Storage = "int",  AccReal="long"},
+    new { ApiName = "Long", Storage = "long", AccReal="long" },
+    new { ApiName = "Double", Storage = "double", AccReal="double" },
+    new { ApiName = "Float", Storage = "float", AccReal="double" },
+     }) {
+        string tname = type.ApiName;
+#>
+    public sealed class <#=tname#>TorchTensor : DenseTensor<<#=tname.ToLower()#>>
     {
         internal readonly object inner;
 
-        public FloatTensor TorchSharpTensor => inner as FloatTensor;
+        public <#=tname#>Tensor TorchSharpTensor => inner as <#=tname#>Tensor;
 
-        public FloatTorchTensor(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
+        public <#=tname#>TorchTensor(Memory<<#=tname.ToLower()#>> memory, ReadOnlySpan<int> dimensions, <#=tname#>Tensor inner) : base(memory, dimensions)
         {
             this.inner = inner;
         }
@@ -22,7 +38,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe FloatTorchTensor Create(params int[] sizes)
+        public static unsafe <#=tname#>TorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -32,23 +48,23 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = new FloatTensor().Create(sizes.Select(x => (long)x).ToArray());
-            var mem = new NativeMemory<float>(inner.Data, totLength);
+            var inner = Create<#=tname#>Tensor(sizes.Select(x => (long)x).ToArray());
+            var mem = new NativeMemory<<#=tname.ToLower()#>>(inner.Data, totLength);
 
-            return new FloatTorchTensor(mem.Memory, shape, inner);
+            return new <#=tname#>TorchTensor(mem.Memory, shape, inner);
         }
 
         /// <summary>
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<float> Clone()
+        public unsafe override Tensor<<#=tname.ToLower()#>> Clone()
         {
-            var typedInner = inner as FloatTensor;
+            var typedInner = inner as <#=tname#>Tensor;
             var innerClone = typedInner.Clone();
-            var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
+            var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
 
-            return new FloatTorchTensor(mem.Memory, Dimensions, innerClone);
+            return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone);
         }
 
         /// <summary>
@@ -59,17 +75,17 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as FloatTensor;
+            var typedInner = inner as <#=tname#>Tensor;
 
             switch (true)
             {
-                case bool _ when typeof(TResult) == typeof(float):
-                    var innerClone = new FloatTensor().Create(typedInner.Shape[0]);
+                case bool _ when typeof(TResult) == typeof(<#=tname.ToLower()#>):
+                    var innerClone = Create<#=tname#>Tensor(typedInner.Shape);
                     innerClone.Fill(default);
-                    var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
+                    var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
 
-                    return new FloatTorchTensor(mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException("Only cloning floats is currently implemented.");
+                    return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                default: throw new NotImplementedException("Only cloning <#=tname.ToLower()#>s is currently implemented.");
             }
         }
 
@@ -78,7 +94,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<float> Reshape(ReadOnlySpan<int> dimensions)
+        public unsafe override Tensor<<#=tname.ToLower()#>> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -92,53 +108,50 @@ namespace Torch.SNT
                 throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as FloatTensor;
-            FloatTensor reshapedTensor;
-            NativeMemory<float> mem;
+            var typedInner = inner as <#=tname#>Tensor;
+            <#=tname#>Tensor reshapedTensor;
+            NativeMemory<<#=tname.ToLower()#>> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
                     reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
                     break;
                 case 2:
                     reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new FloatTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new <#=tname#>TorchTensor(mem.Memory, dimensions, reshapedTensor);
         }
-    }
 
-}
-    namespace TorchSharp
-    {
-        internal static class ExtensionMethods
-    {
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
-        public static FloatTensor Create(this FloatTensor ten, params long[] dims)
+        internal static <#=tname#>Tensor Create<#=tname#>Tensor(params long[] dims)
         {
             switch (dims.Length)
             {
                 case 0:
-                    return ten;
+                    return new <#=tname#>Tensor();
                 case 1:
-                    return new FloatTensor(dims[0]);
+                    return new <#=tname#>Tensor(dims[0]);
                 case 2:
-                    return new FloatTensor(dims[0], dims[1]);
+                    return new <#=tname#>Tensor(dims[0], dims[1]);
                 case 3:
-                    return new FloatTensor(dims[0], dims[1], dims[2]);
+                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2]);
                 case 4:
-                    return new FloatTensor(dims[0], dims[1], dims[2], dims[3]);
+                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2], dims[3]);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
         }
     }
+<#
+}
+#>
 }
