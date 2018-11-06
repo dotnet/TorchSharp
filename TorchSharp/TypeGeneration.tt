@@ -1432,15 +1432,56 @@ foreach (var type in new [] {
         // Idiom Op (Result, Scalar, Tensor, Scalar, Tensor, Tensor)
         
             foreach (var opdoc in new [] { 
-                new { Name="AddMV", Doc="" },
-                new { Name="AddMM", Doc="" },
-                new { Name="AddR", Doc="" },
-                new { Name="AddBMM", Doc="" },
-                new { Name="BAddBMM", Doc="" },
+                new { 
+                    Name="AddMV", Doc="Performs a matrix-vector product of the matrix mat and the vector vec.  This vector tensor is added to the final result.", 
+                    arg1="mat", arg1Doc="Matrix to be multiplied",
+                    arg2="vec", arg2Doc="Vector to be multiplied",
+                    Remarks="<para>If mat is a (n×m) tensor, vec is a 1-D tensor of size m, then tensor must be broadcastable with a 1-D tensor of size n and out will be 1-D tensor of size n.</para>\n"+
+                            "<para>alpha and beta are scaling factors on matrix-vector product between mat and vec and the added tensor tensor respectively.</para>\n" +
+                            "<para>For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.</para>",
+                    Returns="β tensor+α (mat@vec)"
+                    },
+                new { 
+                    Name="AddMM", Doc="Performs a matrix multiplication of the matrices mat1 and mat2. This matrix tensor is added to the final result.",
+                    arg1="mat1", arg1Doc="First matrix to  be multiplied",
+                    arg2="mat2", arg2Doc="Second matrix to  be multiplied",
+                    Remarks="<para>If mat1 is a (n×m) tensor, mat2 is a (m×p) tensor, then this tensor must be broadcastable with a (n×p) tensor and out will be a (n×p) tensor.</para>\n" +
+                            "<para>alpha and beta are scaling factors on matrix-vector product between mat1 and :attr`mat2` and the added matrix mat respectively.</para>",
+                    Returns="β mat+α (mat1i@mat2i)"
+                    },
+                new { 
+                    Name="AddBMM", Doc="Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step (all matrix multiplications get accumulated along the first dimension).  This tensor is added to the final result.",
+                    arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
+                    arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
+                    Remarks="",
+                    Returns="β mat+α (∑i=0bbatch1i@batch2i)"
+                    },
+                new { 
+                    Name="AddR", Doc="Performs the outer-product of vectors vec1 and vec2 and adds it to the matrix represented by this tensor." ,
+                    arg1="vec1", arg1Doc="the first vector of the outer product",
+                    arg2="vec2", arg2Doc="the second vector of the outer product",
+                    Remarks="",
+                    Returns="β mat+α (vec1⊗vec2)"
+                    },
+                new { 
+                    Name="BAddBMM", Doc="Performs a batch matrix-matrix product of matrices in batch1 and batch2.  This tensor is added to the final result.",
+                    arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
+                    arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
+                    Remarks="",
+                    Returns="β mati+α (batch1i@batch2i)"
+                    },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
-            
+                var arg1 = opdoc.arg1;
+                var arg2 = opdoc.arg2;
+                var arg1Doc = opdoc.arg1Doc;
+                var arg2Doc = opdoc.arg2Doc;
+                var returns = opdoc.Returns;
+                var remarks = "";
+                foreach (var j in opdoc.Returns.Split ('\n')) 
+                    remarks += "/// " + j + "\n";
+                remarks.Trim ();
 #>                
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> beta, HType t, <#=ttype#> alpha, HType src1, HType src2);
@@ -1449,21 +1490,23 @@ foreach (var type in new [] {
         ///   Performs <#=op#> of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for <#=arg1#>x<#=arg2#> (α)</param>
+        /// <param name="<#=arg1#>"><#=arg1Doc#></param>
+        /// <param name="<#=arg2#>"><#=arg2Doc#></param>
+        /// <remarks>
+        <#=remarks#>        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   <#=returns#>
         /// </returns>
-        public <#=tname#>Tensor <#=op#> (<#=ttype#> beta, <#=ttype#> alpha, <#=tname#>Tensor src1, <#=tname#>Tensor src2)
+        public <#=tname#>Tensor <#=op#> (<#=ttype#> beta, <#=ttype#> alpha, <#=tname#>Tensor <#=arg1#>, <#=tname#>Tensor <#=arg2#>)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (<#=arg1#> == null)
+                throw new ArgumentNullException (nameof (<#=arg1#>));
+            if (<#=arg2#> == null)
+                throw new ArgumentNullException (nameof (<#=arg2#>));
             var result = new <#=tname#>Tensor ();
-            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, beta, this.handle, alpha, <#=arg1#>.handle, <#=arg2#>.handle);
             return result;
         }
 

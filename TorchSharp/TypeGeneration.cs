@@ -2302,21 +2302,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public ByteTensor AddMV (byte beta, byte alpha, ByteTensor src1, ByteTensor src2)
+        public ByteTensor AddMV (byte beta, byte alpha, ByteTensor mat, ByteTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new ByteTensor ();
-            THByteTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THByteTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -2328,47 +2331,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public ByteTensor AddMM (byte beta, byte alpha, ByteTensor src1, ByteTensor src2)
+        public ByteTensor AddMM (byte beta, byte alpha, ByteTensor mat1, ByteTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new ByteTensor ();
-            THByteTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THByteTensor_addr (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public ByteTensor AddR (byte beta, byte alpha, ByteTensor src1, ByteTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new ByteTensor ();
-            THByteTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THByteTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -2380,21 +2360,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public ByteTensor AddBMM (byte beta, byte alpha, ByteTensor src1, ByteTensor src2)
+        public ByteTensor AddBMM (byte beta, byte alpha, ByteTensor batch1, ByteTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new ByteTensor ();
-            THByteTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THByteTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THByteTensor_addr (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public ByteTensor AddR (byte beta, byte alpha, ByteTensor vec1, ByteTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new ByteTensor ();
+            THByteTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -2406,21 +2418,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public ByteTensor BAddBMM (byte beta, byte alpha, ByteTensor src1, ByteTensor src2)
+        public ByteTensor BAddBMM (byte beta, byte alpha, ByteTensor batch1, ByteTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new ByteTensor ();
-            THByteTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THByteTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
@@ -5467,21 +5482,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public ShortTensor AddMV (short beta, short alpha, ShortTensor src1, ShortTensor src2)
+        public ShortTensor AddMV (short beta, short alpha, ShortTensor mat, ShortTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new ShortTensor ();
-            THShortTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THShortTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -5493,47 +5511,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public ShortTensor AddMM (short beta, short alpha, ShortTensor src1, ShortTensor src2)
+        public ShortTensor AddMM (short beta, short alpha, ShortTensor mat1, ShortTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new ShortTensor ();
-            THShortTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THShortTensor_addr (HType result, short beta, HType t, short alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public ShortTensor AddR (short beta, short alpha, ShortTensor src1, ShortTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new ShortTensor ();
-            THShortTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THShortTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -5545,21 +5540,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public ShortTensor AddBMM (short beta, short alpha, ShortTensor src1, ShortTensor src2)
+        public ShortTensor AddBMM (short beta, short alpha, ShortTensor batch1, ShortTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new ShortTensor ();
-            THShortTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THShortTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THShortTensor_addr (HType result, short beta, HType t, short alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public ShortTensor AddR (short beta, short alpha, ShortTensor vec1, ShortTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new ShortTensor ();
+            THShortTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -5571,21 +5598,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public ShortTensor BAddBMM (short beta, short alpha, ShortTensor src1, ShortTensor src2)
+        public ShortTensor BAddBMM (short beta, short alpha, ShortTensor batch1, ShortTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new ShortTensor ();
-            THShortTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THShortTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
@@ -8584,21 +8614,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public IntTensor AddMV (int beta, int alpha, IntTensor src1, IntTensor src2)
+        public IntTensor AddMV (int beta, int alpha, IntTensor mat, IntTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new IntTensor ();
-            THIntTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THIntTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -8610,47 +8643,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public IntTensor AddMM (int beta, int alpha, IntTensor src1, IntTensor src2)
+        public IntTensor AddMM (int beta, int alpha, IntTensor mat1, IntTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new IntTensor ();
-            THIntTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THIntTensor_addr (HType result, int beta, HType t, int alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public IntTensor AddR (int beta, int alpha, IntTensor src1, IntTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new IntTensor ();
-            THIntTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THIntTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -8662,21 +8672,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public IntTensor AddBMM (int beta, int alpha, IntTensor src1, IntTensor src2)
+        public IntTensor AddBMM (int beta, int alpha, IntTensor batch1, IntTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new IntTensor ();
-            THIntTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THIntTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THIntTensor_addr (HType result, int beta, HType t, int alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public IntTensor AddR (int beta, int alpha, IntTensor vec1, IntTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new IntTensor ();
+            THIntTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -8688,21 +8730,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public IntTensor BAddBMM (int beta, int alpha, IntTensor src1, IntTensor src2)
+        public IntTensor BAddBMM (int beta, int alpha, IntTensor batch1, IntTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new IntTensor ();
-            THIntTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THIntTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
@@ -11701,21 +11746,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public LongTensor AddMV (long beta, long alpha, LongTensor src1, LongTensor src2)
+        public LongTensor AddMV (long beta, long alpha, LongTensor mat, LongTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new LongTensor ();
-            THLongTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THLongTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -11727,47 +11775,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public LongTensor AddMM (long beta, long alpha, LongTensor src1, LongTensor src2)
+        public LongTensor AddMM (long beta, long alpha, LongTensor mat1, LongTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new LongTensor ();
-            THLongTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THLongTensor_addr (HType result, long beta, HType t, long alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public LongTensor AddR (long beta, long alpha, LongTensor src1, LongTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new LongTensor ();
-            THLongTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THLongTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -11779,21 +11804,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public LongTensor AddBMM (long beta, long alpha, LongTensor src1, LongTensor src2)
+        public LongTensor AddBMM (long beta, long alpha, LongTensor batch1, LongTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new LongTensor ();
-            THLongTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THLongTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THLongTensor_addr (HType result, long beta, HType t, long alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public LongTensor AddR (long beta, long alpha, LongTensor vec1, LongTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new LongTensor ();
+            THLongTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -11805,21 +11862,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public LongTensor BAddBMM (long beta, long alpha, LongTensor src1, LongTensor src2)
+        public LongTensor BAddBMM (long beta, long alpha, LongTensor batch1, LongTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new LongTensor ();
-            THLongTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THLongTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
@@ -15511,21 +15571,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public DoubleTensor AddMV (double beta, double alpha, DoubleTensor src1, DoubleTensor src2)
+        public DoubleTensor AddMV (double beta, double alpha, DoubleTensor mat, DoubleTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new DoubleTensor ();
-            THDoubleTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THDoubleTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -15537,47 +15600,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public DoubleTensor AddMM (double beta, double alpha, DoubleTensor src1, DoubleTensor src2)
+        public DoubleTensor AddMM (double beta, double alpha, DoubleTensor mat1, DoubleTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new DoubleTensor ();
-            THDoubleTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THDoubleTensor_addr (HType result, double beta, HType t, double alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public DoubleTensor AddR (double beta, double alpha, DoubleTensor src1, DoubleTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new DoubleTensor ();
-            THDoubleTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THDoubleTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -15589,21 +15629,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public DoubleTensor AddBMM (double beta, double alpha, DoubleTensor src1, DoubleTensor src2)
+        public DoubleTensor AddBMM (double beta, double alpha, DoubleTensor batch1, DoubleTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new DoubleTensor ();
-            THDoubleTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THDoubleTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THDoubleTensor_addr (HType result, double beta, HType t, double alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public DoubleTensor AddR (double beta, double alpha, DoubleTensor vec1, DoubleTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new DoubleTensor ();
+            THDoubleTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -15615,21 +15687,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public DoubleTensor BAddBMM (double beta, double alpha, DoubleTensor src1, DoubleTensor src2)
+        public DoubleTensor BAddBMM (double beta, double alpha, DoubleTensor batch1, DoubleTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new DoubleTensor ();
-            THDoubleTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THDoubleTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
@@ -19550,21 +19625,24 @@ namespace TorchSharp {
         ///   Performs AddMV of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for matxvec (α)</param>
+        /// <param name="mat">Matrix to be multiplied</param>
+        /// <param name="vec">Vector to be multiplied</param>
+        /// <remarks>
+        /// β tensor+α (mat@vec)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β tensor+α (mat@vec)
         /// </returns>
-        public FloatTensor AddMV (float beta, float alpha, FloatTensor src1, FloatTensor src2)
+        public FloatTensor AddMV (float beta, float alpha, FloatTensor mat, FloatTensor vec)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat == null)
+                throw new ArgumentNullException (nameof (mat));
+            if (vec == null)
+                throw new ArgumentNullException (nameof (vec));
             var result = new FloatTensor ();
-            THFloatTensor_addmv (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THFloatTensor_addmv (result.handle, beta, this.handle, alpha, mat.handle, vec.handle);
             return result;
         }
 
@@ -19576,47 +19654,24 @@ namespace TorchSharp {
         ///   Performs AddMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        /// <param name="mat1">First matrix to  be multiplied</param>
+        /// <param name="mat2">Second matrix to  be multiplied</param>
+        /// <remarks>
+        /// β mat+α (mat1i@mat2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (mat1i@mat2i)
         /// </returns>
-        public FloatTensor AddMM (float beta, float alpha, FloatTensor src1, FloatTensor src2)
+        public FloatTensor AddMM (float beta, float alpha, FloatTensor mat1, FloatTensor mat2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (mat1 == null)
+                throw new ArgumentNullException (nameof (mat1));
+            if (mat2 == null)
+                throw new ArgumentNullException (nameof (mat2));
             var result = new FloatTensor ();
-            THFloatTensor_addmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
-            return result;
-        }
-
-                
-        [DllImport ("caffe2")]
-        extern static void THFloatTensor_addr (HType result, float beta, HType t, float alpha, HType src1, HType src2);
-        
-        /// <summary>
-        ///   Performs AddR of the tensor with the provided 
-        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
-        /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
-        /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
-        /// </returns>
-        public FloatTensor AddR (float beta, float alpha, FloatTensor src1, FloatTensor src2)
-        {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
-            var result = new FloatTensor ();
-            THFloatTensor_addr (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THFloatTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
 
@@ -19628,21 +19683,53 @@ namespace TorchSharp {
         ///   Performs AddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mat+α (∑i=0bbatch1i@batch2i)
         /// </returns>
-        public FloatTensor AddBMM (float beta, float alpha, FloatTensor src1, FloatTensor src2)
+        public FloatTensor AddBMM (float beta, float alpha, FloatTensor batch1, FloatTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new FloatTensor ();
-            THFloatTensor_addbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THFloatTensor_addbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
+            return result;
+        }
+
+                
+        [DllImport ("caffe2")]
+        extern static void THFloatTensor_addr (HType result, float beta, HType t, float alpha, HType src1, HType src2);
+        
+        /// <summary>
+        ///   Performs AddR of the tensor with the provided 
+        ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
+        /// </summary>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        /// <param name="vec1">the first vector of the outer product</param>
+        /// <param name="vec2">the second vector of the outer product</param>
+        /// <remarks>
+        /// β mat+α (vec1⊗vec2)
+        /// </remarks>
+        /// <returns>
+        ///   β mat+α (vec1⊗vec2)
+        /// </returns>
+        public FloatTensor AddR (float beta, float alpha, FloatTensor vec1, FloatTensor vec2)
+        {
+            if (vec1 == null)
+                throw new ArgumentNullException (nameof (vec1));
+            if (vec2 == null)
+                throw new ArgumentNullException (nameof (vec2));
+            var result = new FloatTensor ();
+            THFloatTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
 
@@ -19654,21 +19741,24 @@ namespace TorchSharp {
         ///   Performs BAddBMM of the tensor with the provided 
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="alpha"></param>
-        /// <param name="src1"></param>
-        /// <param name="src2"></param>
+        /// <param name="beta">Multiplier for this tensor (β).</param>
+        /// <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        /// <param name="batch1">the first batch of matrices to be multiplied</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        /// <remarks>
+        /// β mati+α (batch1i@batch2i)
+        /// </remarks>
         /// <returns>
-        ///   This returns a new tensor with the same shape as the tensor this operates on.
+        ///   β mati+α (batch1i@batch2i)
         /// </returns>
-        public FloatTensor BAddBMM (float beta, float alpha, FloatTensor src1, FloatTensor src2)
+        public FloatTensor BAddBMM (float beta, float alpha, FloatTensor batch1, FloatTensor batch2)
         {
-            if (src1 == null)
-                throw new ArgumentNullException (nameof (src1));
-            if (src2 == null)
-                throw new ArgumentNullException (nameof (src2));
+            if (batch1 == null)
+                throw new ArgumentNullException (nameof (batch1));
+            if (batch2 == null)
+                throw new ArgumentNullException (nameof (batch2));
             var result = new FloatTensor ();
-            THFloatTensor_baddbmm (result.handle, beta, this.handle, alpha, src1.handle, src2.handle);
+            THFloatTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
 
