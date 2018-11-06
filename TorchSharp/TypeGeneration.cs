@@ -2308,7 +2308,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -2338,7 +2337,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -2368,7 +2366,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -2398,7 +2395,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -2428,7 +2424,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -5493,7 +5488,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -5523,7 +5517,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -5553,7 +5546,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -5583,7 +5575,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -5613,7 +5604,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -8630,7 +8620,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -8660,7 +8649,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -8690,7 +8678,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -8720,7 +8707,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -8750,7 +8736,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -11767,7 +11752,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -11797,7 +11781,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -11827,7 +11810,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -11857,7 +11839,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -11887,7 +11868,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -15597,7 +15577,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -15627,7 +15606,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -15657,7 +15635,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -15687,7 +15664,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -15717,7 +15693,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -19656,7 +19631,6 @@ namespace TorchSharp {
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
         /// β tensor+α (mat@vec)
-
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -19686,7 +19660,6 @@ namespace TorchSharp {
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
         /// β mat+α (mat1i@mat2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -19716,7 +19689,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mat+α (∑i=0bbatch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -19746,7 +19718,6 @@ namespace TorchSharp {
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
         /// β mat+α (vec1⊗vec2)
-
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -19776,7 +19747,6 @@ namespace TorchSharp {
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
         /// β mati+α (batch1i@batch2i)
-
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)

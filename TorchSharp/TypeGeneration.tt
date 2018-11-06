@@ -1481,6 +1481,7 @@ foreach (var type in new [] {
                 var remarks = "";
                 foreach (var j in opdoc.Returns.Split ('\n')) 
                     remarks += "/// " + j + "\n";
+                remarks.Trim ();
 #>                
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> beta, HType t, <#=ttype#> alpha, HType src1, HType src2);
@@ -1494,8 +1495,7 @@ foreach (var type in new [] {
         /// <param name="<#=arg1#>"><#=arg1Doc#></param>
         /// <param name="<#=arg2#>"><#=arg2Doc#></param>
         /// <remarks>
-        <#=remarks#>
-        /// </remarks>
+        <#=remarks#>        /// </remarks>
         /// <returns>
         ///   <#=returns#>
         /// </returns>
