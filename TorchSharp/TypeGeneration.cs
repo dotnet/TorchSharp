@@ -2178,11 +2178,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (ByteTensor other)
+        public bool Equal (ByteTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THByteTensor_equal (this.handle, other.handle);
+            return 0 != THByteTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -2598,13 +2598,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, ByteTensor src, int accumulate)
+        public void Put (LongTensor index, ByteTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THByteTensor_put (handle, index.handle, src.handle, accumulate);
+            THByteTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -2787,49 +2787,49 @@ namespace TorchSharp {
         extern static int THByteTensor_logicalAndAll (HType self);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        ///   Compares all the elements of the tensor using 'AND' and returns the Boolean result. 
         /// </summary>
-        public int LogicalAndAll ()
+        public bool LogicalAndAll ()
         {
-            return THByteTensor_logicalAndAll (this.handle);
+            return 0 != THByteTensor_logicalAndAll(this.handle);
         }
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnyAll (HType self);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        ///   Compares all the elements of the tensor using 'OR' and returns the Boolean result. 
         /// </summary>
-        public int LogicalAnyAll ()
+        public bool LogicalAnyAll ()
         {
-            return THByteTensor_logicalAnyAll (this.handle);
+            return 0 != THByteTensor_logicalAnyAll(this.handle);
         }
         
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnd (HType result, HType self, int dimension, int keepdim);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using 'AND' and returns the result as an integer, either 0 or 1. 
+        ///   Compares two tensors element-wise and returns the Boolean result tensor encoded as a byte: 0 or 1. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ByteTensor LogicalAnd (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ByteTensor LogicalAnd (int dimension, bool keepdim)
         {
             var result = new ByteTensor ();
-            THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim);
+            THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAny (HType result, HType self, int dimension, int keepdim);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using 'OR' and returns the result as an integer, either 0 or 1. 
+        ///   Compares two tensors element-wise and returns the Boolean result tensor encoded as a byte: 0 or 1. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ByteTensor LogicalAny (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ByteTensor LogicalAny (int dimension, bool keepdim)
         {
             var result = new ByteTensor ();
-            THByteTensor_logicalAny (result.handle, this.handle, dimension, keepdim);
+            THByteTensor_logicalAny (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
      
@@ -2840,11 +2840,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ByteTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ByteTensor Sum (int dimension, bool keepdim)
         {
             var result = new ByteTensor ();
-            THByteTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THByteTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -2868,11 +2868,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ByteTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ByteTensor Prod (int dimension, bool keepdim)
         {
             var result = new ByteTensor ();
-            THByteTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THByteTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -2897,13 +2897,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<ByteTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -2913,13 +2913,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<ByteTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -2929,13 +2929,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<ByteTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -2945,13 +2945,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<ByteTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THByteTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
      
@@ -2964,13 +2964,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<ByteTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<ByteTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THByteTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
@@ -3082,11 +3082,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<ByteTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THByteTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
@@ -3101,11 +3101,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<ByteTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<ByteTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new ByteTensor ();
             var indices = new LongTensor ();
-            THByteTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THByteTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
 
@@ -5343,11 +5343,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (ShortTensor other)
+        public bool Equal (ShortTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THShortTensor_equal (this.handle, other.handle);
+            return 0 != THShortTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -5763,13 +5763,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, ShortTensor src, int accumulate)
+        public void Put (LongTensor index, ShortTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THShortTensor_put (handle, index.handle, src.handle, accumulate);
+            THShortTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -5957,11 +5957,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ShortTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ShortTensor Sum (int dimension, bool keepdim)
         {
             var result = new ShortTensor ();
-            THShortTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THShortTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -5985,11 +5985,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public ShortTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public ShortTensor Prod (int dimension, bool keepdim)
         {
             var result = new ShortTensor ();
-            THShortTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THShortTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -6014,13 +6014,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<ShortTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -6030,13 +6030,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<ShortTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -6046,13 +6046,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<ShortTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -6062,13 +6062,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<ShortTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THShortTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
      
@@ -6081,13 +6081,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<ShortTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<ShortTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THShortTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
@@ -6199,11 +6199,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<ShortTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THShortTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
@@ -6218,11 +6218,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<ShortTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<ShortTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new ShortTensor ();
             var indices = new LongTensor ();
-            THShortTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THShortTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
 
@@ -8460,11 +8460,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (IntTensor other)
+        public bool Equal (IntTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THIntTensor_equal (this.handle, other.handle);
+            return 0 != THIntTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -8880,13 +8880,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, IntTensor src, int accumulate)
+        public void Put (LongTensor index, IntTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THIntTensor_put (handle, index.handle, src.handle, accumulate);
+            THIntTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -9074,11 +9074,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public IntTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public IntTensor Sum (int dimension, bool keepdim)
         {
             var result = new IntTensor ();
-            THIntTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THIntTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -9102,11 +9102,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public IntTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public IntTensor Prod (int dimension, bool keepdim)
         {
             var result = new IntTensor ();
-            THIntTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THIntTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -9131,13 +9131,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<IntTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -9147,13 +9147,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<IntTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -9163,13 +9163,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<IntTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -9179,13 +9179,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<IntTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THIntTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
      
@@ -9198,13 +9198,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<IntTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<IntTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THIntTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
@@ -9316,11 +9316,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<IntTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THIntTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
@@ -9335,11 +9335,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<IntTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<IntTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new IntTensor ();
             var indices = new LongTensor ();
-            THIntTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THIntTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
 
@@ -11577,11 +11577,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (LongTensor other)
+        public bool Equal (LongTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THLongTensor_equal (this.handle, other.handle);
+            return 0 != THLongTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -11997,13 +11997,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, LongTensor src, int accumulate)
+        public void Put (LongTensor index, LongTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THLongTensor_put (handle, index.handle, src.handle, accumulate);
+            THLongTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -12191,11 +12191,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public LongTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public LongTensor Sum (int dimension, bool keepdim)
         {
             var result = new LongTensor ();
-            THLongTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THLongTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -12219,11 +12219,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public LongTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public LongTensor Prod (int dimension, bool keepdim)
         {
             var result = new LongTensor ();
-            THLongTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THLongTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -12248,13 +12248,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<LongTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -12264,13 +12264,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<LongTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -12280,13 +12280,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<LongTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -12296,13 +12296,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<LongTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THLongTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
      
@@ -12315,13 +12315,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<LongTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<LongTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THLongTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
@@ -12433,11 +12433,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<LongTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THLongTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
@@ -12452,11 +12452,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<LongTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<LongTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new LongTensor ();
             var indices = new LongTensor ();
-            THLongTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THLongTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
 
@@ -15387,11 +15387,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (DoubleTensor other)
+        public bool Equal (DoubleTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THDoubleTensor_equal (this.handle, other.handle);
+            return 0 != THDoubleTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -15849,13 +15849,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, DoubleTensor src, int accumulate)
+        public void Put (LongTensor index, DoubleTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THDoubleTensor_put (handle, index.handle, src.handle, accumulate);
+            THDoubleTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -16043,11 +16043,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Sum (int dimension, bool keepdim)
         {
             var result = new DoubleTensor ();
-            THDoubleTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -16071,11 +16071,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Prod (int dimension, bool keepdim)
         {
             var result = new DoubleTensor ();
-            THDoubleTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -16100,13 +16100,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<DoubleTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -16116,13 +16116,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<DoubleTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -16132,13 +16132,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<DoubleTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -16148,13 +16148,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<DoubleTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
      
@@ -16167,13 +16167,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<DoubleTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THDoubleTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
@@ -16285,11 +16285,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<DoubleTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THDoubleTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
@@ -16304,11 +16304,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<DoubleTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<DoubleTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new DoubleTensor ();
             var indices = new LongTensor ();
-            THDoubleTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THDoubleTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
 
@@ -16379,11 +16379,11 @@ namespace TorchSharp {
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Mean (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Mean (int dimension, bool keepdim)
         {
             var result = new DoubleTensor();
-            THDoubleTensor_mean (result.handle, this.handle, dimension, keepdim);
+            THDoubleTensor_mean (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -16395,11 +16395,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Std (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Std (int dimension, bool biased, bool keepdim)
         {
             var result = new DoubleTensor();
-            THDoubleTensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            THDoubleTensor_std (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -16411,11 +16411,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Var (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Var (int dimension, bool biased, bool keepdim)
         {
             var result = new DoubleTensor();
-            THDoubleTensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            THDoubleTensor_var (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -16427,11 +16427,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public DoubleTensor Norm (double value,  int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public DoubleTensor Norm (double value,  int dimension, bool keepdim)
         {
             var result = new DoubleTensor();
-            THDoubleTensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            THDoubleTensor_norm (result.handle, this.handle, value, dimension, keepdim?1:0);
             return result;
         }
 
@@ -16516,9 +16516,9 @@ namespace TorchSharp {
         ///   Compute the variance of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public double VarAll (int biased)
+        public double VarAll (bool biased)
         {
-            return THDoubleTensor_varall (this.handle, biased);
+            return THDoubleTensor_varall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -16528,9 +16528,9 @@ namespace TorchSharp {
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public double StdAll (int biased)
+        public double StdAll (bool biased)
         {
-            return THDoubleTensor_stdall (this.handle, biased);
+            return THDoubleTensor_stdall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -19426,11 +19426,11 @@ namespace TorchSharp {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (FloatTensor other)
+        public bool Equal (FloatTensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return THFloatTensor_equal (this.handle, other.handle);
+            return 0 != THFloatTensor_equal (this.handle, other.handle);
         }
                 
         [DllImport ("caffe2")]
@@ -19888,13 +19888,13 @@ namespace TorchSharp {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, FloatTensor src, int accumulate)
+        public void Put (LongTensor index, FloatTensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            THFloatTensor_put (handle, index.handle, src.handle, accumulate);
+            THFloatTensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -20082,11 +20082,11 @@ namespace TorchSharp {
         ///   Computes the sum of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Sum (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Sum (int dimension, bool keepdim)
         {
             var result = new FloatTensor ();
-            THFloatTensor_sum (result.handle, this.handle, dimension, keepdim);
+            THFloatTensor_sum (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -20110,11 +20110,11 @@ namespace TorchSharp {
         ///   Computes the product of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Prod (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Prod (int dimension, bool keepdim)
         {
             var result = new FloatTensor ();
-            THFloatTensor_prod (result.handle, this.handle, dimension, keepdim);
+            THFloatTensor_prod (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -20139,13 +20139,13 @@ namespace TorchSharp {
         ///   Computes the max of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> Max (int dimension, int keepdim)
+        public System.Tuple<FloatTensor, LongTensor> Max (int dimension, bool keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -20155,13 +20155,13 @@ namespace TorchSharp {
         ///   Computes the min of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> Min (int dimension, int keepdim)
+        public System.Tuple<FloatTensor, LongTensor> Min (int dimension, bool keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -20171,13 +20171,13 @@ namespace TorchSharp {
         ///   Computes the mode of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> Mode (int dimension, int keepdim)
+        public System.Tuple<FloatTensor, LongTensor> Mode (int dimension, bool keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
         [DllImport ("caffe2")]
@@ -20187,13 +20187,13 @@ namespace TorchSharp {
         ///   Computes the median of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> Median (int dimension, int keepdim)
+        public System.Tuple<FloatTensor, LongTensor> Median (int dimension, bool keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim);
+            THFloatTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
      
@@ -20206,13 +20206,13 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<FloatTensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<FloatTensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            THFloatTensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
@@ -20324,11 +20324,11 @@ namespace TorchSharp {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<FloatTensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            THFloatTensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
@@ -20343,11 +20343,11 @@ namespace TorchSharp {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<FloatTensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<FloatTensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new FloatTensor ();
             var indices = new LongTensor ();
-            THFloatTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            THFloatTensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
 
@@ -20418,11 +20418,11 @@ namespace TorchSharp {
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Mean (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Mean (int dimension, bool keepdim)
         {
             var result = new FloatTensor();
-            THFloatTensor_mean (result.handle, this.handle, dimension, keepdim);
+            THFloatTensor_mean (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -20434,11 +20434,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Std (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Std (int dimension, bool biased, bool keepdim)
         {
             var result = new FloatTensor();
-            THFloatTensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            THFloatTensor_std (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -20450,11 +20450,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Var (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Var (int dimension, bool biased, bool keepdim)
         {
             var result = new FloatTensor();
-            THFloatTensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            THFloatTensor_var (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -20466,11 +20466,11 @@ namespace TorchSharp {
         /// </summary>
         /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public FloatTensor Norm (float value,  int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public FloatTensor Norm (float value,  int dimension, bool keepdim)
         {
             var result = new FloatTensor();
-            THFloatTensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            THFloatTensor_norm (result.handle, this.handle, value, dimension, keepdim?1:0);
             return result;
         }
 
@@ -20555,9 +20555,9 @@ namespace TorchSharp {
         ///   Compute the variance of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public double VarAll (int biased)
+        public double VarAll (bool biased)
         {
-            return THFloatTensor_varall (this.handle, biased);
+            return THFloatTensor_varall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -20567,9 +20567,9 @@ namespace TorchSharp {
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public double StdAll (int biased)
+        public double StdAll (bool biased)
         {
-            return THFloatTensor_stdall (this.handle, biased);
+            return THFloatTensor_stdall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
