@@ -1,8 +1,3 @@
-
-
-
-
-
 using System;
 using System.Linq;
 using System.Numerics.Tensors;
@@ -10,11 +5,16 @@ using TorchSharp;
 
 namespace Torch.SNT 
 {
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch ByteTensor as a System.Numerics DensorTensor of byte
+    /// </summary>
     public sealed class ByteTorchTensor : DenseTensor<byte>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public ByteTensor TorchSharpTensor => inner as ByteTensor;
 
         public ByteTorchTensor(Memory<byte> memory, ReadOnlySpan<int> dimensions, ByteTensor inner) : base(memory, dimensions)
@@ -141,11 +141,16 @@ namespace Torch.SNT
             }
         }
     }
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch ShortTensor as a System.Numerics DensorTensor of short
+    /// </summary>
     public sealed class ShortTorchTensor : DenseTensor<short>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public ShortTensor TorchSharpTensor => inner as ShortTensor;
 
         public ShortTorchTensor(Memory<short> memory, ReadOnlySpan<int> dimensions, ShortTensor inner) : base(memory, dimensions)
@@ -272,11 +277,16 @@ namespace Torch.SNT
             }
         }
     }
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch IntTensor as a System.Numerics DensorTensor of int
+    /// </summary>
     public sealed class IntTorchTensor : DenseTensor<int>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public IntTensor TorchSharpTensor => inner as IntTensor;
 
         public IntTorchTensor(Memory<int> memory, ReadOnlySpan<int> dimensions, IntTensor inner) : base(memory, dimensions)
@@ -403,11 +413,16 @@ namespace Torch.SNT
             }
         }
     }
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch LongTensor as a System.Numerics DensorTensor of long
+    /// </summary>
     public sealed class LongTorchTensor : DenseTensor<long>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public LongTensor TorchSharpTensor => inner as LongTensor;
 
         public LongTorchTensor(Memory<long> memory, ReadOnlySpan<int> dimensions, LongTensor inner) : base(memory, dimensions)
@@ -534,11 +549,16 @@ namespace Torch.SNT
             }
         }
     }
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch DoubleTensor as a System.Numerics DensorTensor of double
+    /// </summary>
     public sealed class DoubleTorchTensor : DenseTensor<double>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public DoubleTensor TorchSharpTensor => inner as DoubleTensor;
 
         public DoubleTorchTensor(Memory<double> memory, ReadOnlySpan<int> dimensions, DoubleTensor inner) : base(memory, dimensions)
@@ -665,11 +685,16 @@ namespace Torch.SNT
             }
         }
     }
-
+    /// <summary>
+    ///   Wrapper class used to surface a Torch FloatTensor as a System.Numerics DensorTensor of float
+    /// </summary>
     public sealed class FloatTorchTensor : DenseTensor<float>
     {
-        internal readonly object inner;
+        private readonly object inner;
 
+        /// <summary>
+        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        /// </summary>
         public FloatTensor TorchSharpTensor => inner as FloatTensor;
 
         public FloatTorchTensor(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
@@ -796,5 +821,4 @@ namespace Torch.SNT
             }
         }
     }
-
 }

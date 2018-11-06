@@ -9,7 +9,7 @@ namespace Torch.SNT
     /// <summary>
     ///   Class used to wrap the native memory of a Torch Tensor.  
     /// </summary>
-    internal class NativeMemory<T> : MemoryManager<T>
+    internal sealed class NativeMemory<T> : MemoryManager<T>
     {
         private int refCount = 0;
         private IntPtr memory;
@@ -17,14 +17,17 @@ namespace Torch.SNT
 
         public NativeMemory(IntPtr memory, int length)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be negative.");
+            }
+
             this.memory = memory;
             this.length = length;
         }
 
-        public unsafe NativeMemory(void* memory, int length)
+        public unsafe NativeMemory(void* memory, int length) : this((IntPtr)memory, length)
         {
-            this.memory = (IntPtr)memory;
-            this.length = length;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace Torch.SNT
             unsafe
             {
                 Retain();
-                if ((uint)elementIndex > length) throw new ArgumentOutOfRangeException(nameof(elementIndex));
+                if ((uint)elementIndex > length) throw new ArgumentOutOfRangeException(nameof(elementIndex), "Index out of array bound.");
                 void* pointer = Unsafe.Add<T>((void*)memory, elementIndex);
                 return new MemoryHandle(pointer, default, this);
             }

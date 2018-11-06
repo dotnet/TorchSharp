@@ -7,7 +7,7 @@ using Torch.SNT;
 namespace Torch.SNT
 {
     [TestClass]
-    public class FloatTorchTensorUnitTest
+    public class TorchTensorUnitTestGenerator
     {
         [TestMethod]
         public void TestCreation0D()
