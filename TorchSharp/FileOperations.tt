@@ -1,0 +1,61 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+using System.Text;
+using TorchSharp;
+
+namespace Torch.IO {
+
+	public abstract partial class THFile : IDisposable
+	{
+<#
+foreach (var type in new [] { 
+    new { ApiName = "Byte", AccReal="byte" }, 
+    new { ApiName = "Short", AccReal="short" },   
+    new { ApiName = "Int", AccReal="int"},
+    new { ApiName = "Long", AccReal="long" },
+    new { ApiName = "Double", AccReal="double" },
+    new { ApiName = "Float", AccReal="float" },
+     }){
+        string tname = type.ApiName;
+        string accreal = type.AccReal;
+#>
+        [DllImport("caffe2")] extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
+		/// <summary>
+		///   Read one <#=accreal#> from the file.
+		/// </summary>
+		/// <returns>A <#=accreal#> read from the current file position.</returns>
+        public <#=accreal#> Read<#=tname#>() { return THFile_read<#=tname#>Scalar(this.handle); }
+
+        [DllImport("caffe2")] extern static void THFile_write<#=tname#>Scalar(HType self, <#=accreal#> scalar);
+		/// <summary>
+		///   Write one <#=accreal#> to the file.
+		/// </summary>
+		/// <param name="value">A <#=accreal#> to write at the current file position.</param>
+        public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(this.handle, value); }
+
+        [DllImport("caffe2")] extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+		/// <summary>
+		///   Read <#=accreal#>s from the file into the given storage.
+		/// </summary>
+		/// <returns>A <#=accreal#> read from the current file position.</returns>
+        public long Read<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+		/// <summary>
+		///   Write <#=accreal#>s to the file from the given storage.
+		/// </summary>
+		/// <param name="value">A <#=accreal#> to write at the current file position.</param>
+        public long Write<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+
+
+<# } /* foreach */ #>
+	}
+}

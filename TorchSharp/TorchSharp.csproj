@@ -34,6 +34,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TypeGeneration.cs</LastGenOutput>
     </None>
+    <None Update="FileOperations.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FileOperations.cs</LastGenOutput>
+    </None>
     <None Update="Generator.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>Generator.cs</LastGenOutput>
@@ -48,5 +52,13 @@
     <Compile Update="TypeGeneration.cs">
       <DependentUpon>TypeGeneration.tt</DependentUpon>
     </Compile>
+    <Compile Update="FileOperations.cs">
+      <DependentUpon>FileOperations.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>
