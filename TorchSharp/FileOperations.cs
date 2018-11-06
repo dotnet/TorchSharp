@@ -8,7 +8,7 @@ using TorchSharp;
 
 namespace Torch.IO {
 
-	public abstract partial class THFile : IDisposable
+	public abstract partial class File : IDisposable
 	{
         [DllImport("caffe2")] extern static byte THFile_readByteScalar(HType self);
 		/// <summary>

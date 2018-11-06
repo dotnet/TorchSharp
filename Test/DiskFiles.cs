@@ -5,19 +5,12 @@ using Torch.IO;
 namespace Test
 {
     [TestClass]
-    public class MemoryFiles
+    public class DiskFiles
     {
         [TestMethod]
-        public void CreateStorage()
+        public void CreateWritableDiskFile()
         {
-            var storage = new MemoryFile.CharStorage(256);
-            Assert.IsNotNull(storage);
-        }
-
-        [TestMethod]
-        public void CreateWritableMemoryFile()
-        {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("test1.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsFalse(file.CanRead);
             Assert.IsTrue(file.CanWrite);
@@ -27,91 +20,63 @@ namespace Test
         }
 
         [TestMethod]
-        public void CreateReadableMemoryFile()
+        public void CreateReadWritableDiskFile()
         {
-            var file = new Torch.IO.MemoryFile("r");
-            Assert.IsNotNull(file);
-            Assert.IsTrue(file.CanRead);
-            Assert.IsFalse(file.CanWrite);
-        }
-
-        
-        [TestMethod]
-        public void CreateReadWritableMemoryFile()
-        {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("test2.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanRead);
             Assert.IsTrue(file.CanWrite);
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
-        public void SeekInMemoryFile()
+        public void WriteByteToDiskFile()
         {
-            var storage = new MemoryFile.CharStorage(256);
-            Assert.IsNotNull(storage);
-            var file = new Torch.IO.MemoryFile(storage, "w");
-            Assert.IsNotNull(file);
-            Assert.IsFalse(file.CanRead);
-            Assert.IsTrue(file.CanWrite);
-
-            file.Seek(150);
-            Assert.AreEqual(150, file.Position);
-
-            file.Seek(15);
-            Assert.AreEqual(15, file.Position);
-        }
-
-        [TestMethod]
-        public void SeekToEndInMemoryFile()
-        {
-            var storage = new MemoryFile.CharStorage(256);
-            Assert.IsNotNull(storage);
-            var file = new Torch.IO.MemoryFile(storage, "w");
-            Assert.IsNotNull(file);
-            Assert.IsFalse(file.CanRead);
-            Assert.IsTrue(file.CanWrite);
-
-            file.SeekEnd();
-            Assert.AreEqual(255, file.Position);
-        }
-
-        [TestMethod]
-        public void WriteByteToMemoryFile()
-        {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("test3.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteByte(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadByteViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("test4.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteByte(13);
             file.WriteByte(17);
+
             file.Seek(0);
             var rd = file.ReadByte();
             Assert.AreEqual(13,rd);
             rd = file.ReadByte();
             Assert.AreEqual(17, rd);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteShortToMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("test5.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
+            file.WriteShort(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadShortViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("test6.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteShort(13);
@@ -126,16 +91,19 @@ namespace Test
         [TestMethod]
         public void WriteIntToMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("test7.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteInt(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadIntViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("test8.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteInt(13);
@@ -145,21 +113,27 @@ namespace Test
             Assert.AreEqual(13, rd);
             rd = file.ReadInt();
             Assert.AreEqual(17, rd);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteLongToMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("test9.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteLong(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadLongViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("testA.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteLong(13);
@@ -169,21 +143,27 @@ namespace Test
             Assert.AreEqual(13, rd);
             rd = file.ReadLong();
             Assert.AreEqual(17, rd);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteFloatToMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("testB.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteFloat(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadFloatViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("testC.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteFloat(13);
@@ -193,21 +173,27 @@ namespace Test
             Assert.AreEqual(13, rd);
             rd = file.ReadFloat();
             Assert.AreEqual(17, rd);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteDoubleToMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("w");
+            var file = new Torch.IO.DiskFile("testD.dat", "w");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteDouble(17);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
 
         [TestMethod]
         public void WriteAndReadDoubleViaMemoryFile()
         {
-            var file = new Torch.IO.MemoryFile("rw");
+            var file = new Torch.IO.DiskFile("testE.dat", "rw");
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
             file.WriteDouble(13);
@@ -217,6 +203,9 @@ namespace Test
             Assert.AreEqual(13, rd);
             rd = file.ReadDouble();
             Assert.AreEqual(17, rd);
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
         }
     }
 }

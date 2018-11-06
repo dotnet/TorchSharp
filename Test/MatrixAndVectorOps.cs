@@ -188,16 +188,17 @@ namespace Test
             Assert.AreEqual(715f, dot);
         }
 
+#if false
         [TestMethod]
         public void CrossProductFloat()
         {
-            var x1 = new FloatTensor (3);
-            var x2 = new FloatTensor (3);
+            var x1 = new FloatTensor(3);
+            var x2 = new FloatTensor(3);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
-                x1[i] = i+1;
-                x2[i] = 3-i;
+                x1[i] = i + 1;
+                x2[i] = 3 - i;
             }
 
             var cross = x1.CrossProduct(x2);
@@ -205,7 +206,7 @@ namespace Test
             Assert.AreEqual(8, cross[1]);
             Assert.AreEqual(-4, cross[0]);
         }
-
+#endif
         [TestMethod]
         public void CMulFloat()
         {
@@ -1212,16 +1213,18 @@ namespace Test
             Assert.AreEqual(715, dot);
         }
 
+#if false
         [TestMethod]
         public void CrossProductDouble()
         {
-            var x1 = new DoubleTensor (3);
-            var x2 = new DoubleTensor (3);
+            
+            var x1 = new DoubleTensor(3);
+            var x2 = new DoubleTensor(3);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
-                x1[i] = i+1;
-                x2[i] = 3-i;
+                x1[i] = i + 1;
+                x2[i] = 3 - i;
             }
 
             var cross = x1.CrossProduct(x2);
@@ -1229,6 +1232,7 @@ namespace Test
             Assert.AreEqual(8, cross[1]);
             Assert.AreEqual(-4, cross[0]);
         }
+#endif
 
         [TestMethod]
         public void CMulDouble()
@@ -1852,6 +1856,6 @@ namespace Test
                 Assert.IsTrue(BasicTensorAPI.IsApproximatelyEqual(Math.Pow(x1[i],x2[i]),x3[i]));
             }
         }
-    #endregion
+#endregion
     }
 }
