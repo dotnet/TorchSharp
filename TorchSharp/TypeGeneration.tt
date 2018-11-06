@@ -1286,8 +1286,8 @@ foreach (var type in new [] {
         // Idiom Op (Result, Tensor, scalar 
         
             foreach (var opdoc in new [] { 
-                new { Name="CMaxValue", CName= "", ByteResult=false, Doc="" },
-                new { Name="CMinValue", CName= "", ByteResult=false, Doc="" },
+                new { Name="CMaxValue", CName= "cmaxValue", ByteResult=false, Doc="" },
+                new { Name="CMinValue", CName= "cminValue", ByteResult=false, Doc="" },
                 new { Name="LtValue", CName= "ltValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<' and produce a byte tensor with the logical result." },
                 new { Name="LeValue", CName= "leValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<=' and produce a byte tensor with the logical result." },
                 new { Name="GtValue", CName= "gtValue", ByteResult=true, Doc="Compare a tensor and a scalar for '>' and produce a byte tensor with the logical result." },
@@ -1351,11 +1351,11 @@ foreach (var type in new [] {
         ///   Compare the tensor with another for complete equality.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        public int Equal (<#=tname#>Tensor other)
+        public bool Equal (<#=tname#>Tensor other)
         {
             if (other == null)
                 throw new ArgumentNullException (nameof (other));
-            return TH<#=tname#>Tensor_equal (this.handle, other.handle);
+            return 0 != TH<#=tname#>Tensor_equal (this.handle, other.handle);
         }
 <#
         // Idiom Op (Result, Tensor, scalar, scalar 
@@ -1632,13 +1632,13 @@ foreach (var type in new [] {
         /// <param name="index">Indices of entries to copy.</param>
         /// <param name="src"></param>
         /// <param name="accumulate"></param>
-        public void Put (LongTensor index, <#=tname#>Tensor src, int accumulate)
+        public void Put (LongTensor index, <#=tname#>Tensor src, bool accumulate)
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            TH<#=tname#>Tensor_put (handle, index.handle, src.handle, accumulate);
+            TH<#=tname#>Tensor_put (handle, index.handle, src.handle, accumulate?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -1759,11 +1759,11 @@ foreach (var type in new [] {
         extern static int TH<#=tname#>Tensor_<#=cname#> (HType self);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the result as an integer, either 0 or 1. 
+        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the Boolean result. 
         /// </summary>
-        public int <#=op#> ()
+        public bool <#=op#> ()
         {
-            return TH<#=tname#>Tensor_<#=cname#> (this.handle);
+            return 0 != TH<#=tname#>Tensor_<#=cname#>(this.handle);
         }
 <#          } /* foreach */ } #>        
 <#
@@ -1780,14 +1780,14 @@ foreach (var type in new [] {
         extern static int TH<#=tname#>Tensor_<#=cname#> (HType result, HType self, int dimension, int keepdim);
         
         /// <summary>
-        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the result as an integer, either 0 or 1. 
+        ///   Compares two tensors element-wise and returns the Boolean result tensor encoded as a byte: 0 or 1. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor <#=op#> (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor <#=op#> (int dimension, bool keepdim)
         {
             var result = new <#=tname#>Tensor ();
-            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim);
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 <#          } /* foreach */ } #>     
@@ -1807,11 +1807,11 @@ foreach (var type in new [] {
         ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor <#=op#> (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor <#=op#> (int dimension, bool keepdim)
         {
             var result = new <#=tname#>Tensor ();
-            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim);
+            TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -1847,13 +1847,13 @@ foreach (var type in new [] {
         ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the resulting elements.</returns>
-        public System.Tuple<<#=tname#>Tensor, LongTensor> <#=op#> (int dimension, int keepdim)
+        public System.Tuple<<#=tname#>Tensor, LongTensor> <#=op#> (int dimension, bool keepdim)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
-            TH<#=tname#>Tensor_<#=cname#> (values.handle, indices.handle, this.handle, dimension, keepdim);
+            TH<#=tname#>Tensor_<#=cname#> (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 <#          } /* foreach */ #>     
@@ -1866,13 +1866,13 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
         /// <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
-        public System.Tuple<<#=tname#>Tensor, LongTensor> KthValue (long k, int dimension, int keepdim)
+        public System.Tuple<<#=tname#>Tensor, LongTensor> KthValue (long k, int dimension, bool keepdim)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
-            TH<#=tname#>Tensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim);
+            TH<#=tname#>Tensor_kthvalue (values.handle, indices.handle, this.handle, k, dimension, keepdim?1:0);
             return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
@@ -1984,11 +1984,11 @@ foreach (var type in new [] {
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
         /// <returns>A tuple containing the values and indices of the sorted elements.</returns>
-        public System.Tuple<<#=tname#>Tensor, LongTensor> Sort (int dimension, int descending)
+        public System.Tuple<<#=tname#>Tensor, LongTensor> Sort (int dimension, bool descending)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
-            TH<#=tname#>Tensor_sort (values.handle, indices.handle, this.handle, dimension, descending);
+            TH<#=tname#>Tensor_sort (values.handle, indices.handle, this.handle, dimension, descending?1:0);
             return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
@@ -2003,11 +2003,11 @@ foreach (var type in new [] {
         /// <param name="dir">0 if ascending, 1 if descending.</param>
         /// <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
         /// <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
-        public System.Tuple<<#=tname#>Tensor, LongTensor> TopK (long k, int dim, int dir, int sorted)
+        public System.Tuple<<#=tname#>Tensor, LongTensor> TopK (long k, int dim, int dir, bool sorted)
         {
             var values = new <#=tname#>Tensor ();
             var indices = new LongTensor ();
-            TH<#=tname#>Tensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted);
+            TH<#=tname#>Tensor_topk (values.handle, indices.handle, this.handle, k, dim, dir, sorted?1:0);
             return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
 
@@ -2081,11 +2081,11 @@ foreach (var type in new [] {
         ///   Compute the mean of all tensor elements along the given dimension. 
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor Mean (int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor Mean (int dimension, bool keepdim)
         {
             var result = new <#=tname#>Tensor();
-            TH<#=tname#>Tensor_mean (result.handle, this.handle, dimension, keepdim);
+            TH<#=tname#>Tensor_mean (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
 
@@ -2097,11 +2097,11 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor Std (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor Std (int dimension, bool biased, bool keepdim)
         {
             var result = new <#=tname#>Tensor();
-            TH<#=tname#>Tensor_std (result.handle, this.handle, dimension, biased, keepdim);
+            TH<#=tname#>Tensor_std (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -2113,11 +2113,11 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor Var (int dimension, int biased, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor Var (int dimension, bool biased, bool keepdim)
         {
             var result = new <#=tname#>Tensor();
-            TH<#=tname#>Tensor_var (result.handle, this.handle, dimension, biased, keepdim);
+            TH<#=tname#>Tensor_var (result.handle, this.handle, dimension, biased?1:0, keepdim?1:0);
             return result;
         }
 
@@ -2129,11 +2129,11 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
-        /// <param name="keepdim">1 if the reduction dimension should be kept, 0 otherwise.</param>
-        public <#=tname#>Tensor Norm (<#=ttype#> value,  int dimension, int keepdim)
+        /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        public <#=tname#>Tensor Norm (<#=ttype#> value,  int dimension, bool keepdim)
         {
             var result = new <#=tname#>Tensor();
-            TH<#=tname#>Tensor_norm (result.handle, this.handle, value, dimension, keepdim);
+            TH<#=tname#>Tensor_norm (result.handle, this.handle, value, dimension, keepdim?1:0);
             return result;
         }
 
@@ -2218,9 +2218,9 @@ foreach (var type in new [] {
         ///   Compute the variance of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public <#=accreal#> VarAll (int biased)
+        public <#=accreal#> VarAll (bool biased)
         {
-            return TH<#=tname#>Tensor_varall (this.handle, biased);
+            return TH<#=tname#>Tensor_varall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
@@ -2230,9 +2230,9 @@ foreach (var type in new [] {
         ///   Compute the standard deviation of all tensor elements. 
         /// </summary>
         /// <param name="biased"></param>
-        public <#=accreal#> StdAll (int biased)
+        public <#=accreal#> StdAll (bool biased)
         {
-            return TH<#=tname#>Tensor_stdall (this.handle, biased);
+            return TH<#=tname#>Tensor_stdall (this.handle, biased?1:0);
         }
 
         [DllImport ("caffe2")]
