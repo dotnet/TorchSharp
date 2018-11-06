@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SNT", "SNT\SNT.csproj", "{D4E402A3-4073-4484-85E1-9D67F6289648}"
 EndProject
