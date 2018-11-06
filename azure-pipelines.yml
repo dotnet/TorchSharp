@@ -29,4 +29,7 @@ steps:
     testResultsFiles: '**/*.trx'
 
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+
+
 
