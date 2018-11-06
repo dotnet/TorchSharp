@@ -1,0 +1,17 @@
+﻿<#+
+    public struct TorchTypeDef {
+
+        public string ApiName;
+        public string Storage;
+        public string AccReal;
+
+        public static readonly TorchTypeDef[] Types = {
+            new TorchTypeDef { ApiName = "Byte",   Storage = "byte",   AccReal = "long"   },
+            new TorchTypeDef { ApiName = "Short",  Storage = "short",  AccReal = "long"   },
+            new TorchTypeDef { ApiName = "Int",    Storage = "int",    AccReal = "long"   },
+            new TorchTypeDef { ApiName = "Long",   Storage = "long",   AccReal = "long"   },
+            new TorchTypeDef { ApiName = "Double", Storage = "double", AccReal = "double" },
+            new TorchTypeDef { ApiName = "Float",  Storage = "float",  AccReal = "double" },
+        };
+    }
+#>

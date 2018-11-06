@@ -1,0 +1,131 @@
+﻿<#@ Template Language="C#" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Output Extension=".generated.cs" #>
+<#@ Include File="Types.ttinclude" #>
+
+using System;
+using System.Runtime.InteropServices;
+
+namespace TorchSharp {
+<#
+foreach (var type in TorchTypeDef.Types) {
+
+    string tName = type.ApiName;
+    string tType = type.Storage;
+    string tAccReal = type.AccReal;
+
+    string tTypePtr = "IntPtr"; // "HType";
+#>
+    public partial class <#=tName#>Tensor : IDisposable {
+
+        // *** Level 1
+
+        // TH_API void TH<#=tName#>Blas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_swap(
+            long n,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tTypePtr#> y,
+            long incy);
+
+        // TH_API void TH<#=tName#>Blas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_scal(
+            long n,
+            <#=tType#> a,
+            <#=tTypePtr#> x,
+            long incx);
+
+        // TH_API void TH<#=tName#>Blas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_copy(
+            long n,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tTypePtr#> y,
+            long incy);
+
+        // TH_API void TH<#=tName#>Blas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_axpy(
+            long n,
+            <#=tType#> a,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tTypePtr#> y,
+            long incy);
+
+        // TH_API scalar_t TH<#=tName#>Blas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        [DllImport ("caffe2")]
+        extern static <#=tType#> TH<#=tName#>Blas_dot(
+            long n,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tTypePtr#> y,
+            long incy);
+
+        // *** Level 2
+
+        // TH_API void TH<#=tName#>Blas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_gemv(
+            byte trans,
+            long m,
+            long n,
+            <#=tType#> alpha,
+            <#=tTypePtr#> a,
+            long lda,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tType#> beta,
+            <#=tTypePtr#> y,
+            long incy);
+
+        // TH_API void TH<#=tName#>Blas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_ger(
+            long m,
+            long n,
+            <#=tType#> alpha,
+            <#=tTypePtr#> x,
+            long incx,
+            <#=tTypePtr#> y,
+            long incy,
+            <#=tTypePtr#> a,
+            long lda);
+
+        // *** Level 3
+
+        // TH_API void TH<#=tName#>Blas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
+        [DllImport ("caffe2")]
+        extern static void TH<#=tName#>Blas_gemm(
+            byte transa,
+            byte transb,
+            long m,
+            long n,
+            long k,
+            <#=tType#> alpha,
+            <#=tTypePtr#> a,
+            long lda,
+            <#=tTypePtr#> b,
+            long ldb,
+            <#=tType#> beta,
+            <#=tTypePtr#> c,
+            long ldc);
+    } // class <#=tName#>Tensor
+<# } #>
+} // namespace TorchSharp
