@@ -6,6 +6,9 @@ using System;
 
 namespace Torch.SNT
 {
+    /// <summary>
+    ///   Class used to wrap the native memory of a Torch Tensor.  
+    /// </summary>
     internal class NativeMemory<T> : MemoryManager<T>
     {
         private int refCount = 0;
@@ -25,6 +28,7 @@ namespace Torch.SNT
         }
 
         /// <summary>
+        /// Destructor for the native memory.
         /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
         /// from here will through a "double free or corruption" error.
         /// <summary>
@@ -33,20 +37,21 @@ namespace Torch.SNT
             Dispose(false);
         }
 
-        public static NativeMemory<T> Allocate(int length)
-        {
-            // typically this would call into a native method appropriate for the platform
-            // or the constructors above would be used to wrap the native pointer
-            IntPtr memory = Marshal.AllocHGlobal(Marshal.SizeOf<T>() * length);
-            return new NativeMemory<T>(memory, length);
-        }
-
+        /// <summary>
+        /// Whether the memory is disposed or not
+        /// </summary>
         public bool IsDisposed { get; private set; } = false;
 
-        public unsafe override Span<T> GetSpan() => new Span<T>((void*)memory, length);
+        /// <summary>
+        /// Returns a span wrapping the underlying memory.
+        /// Remember to Unpin the memory once the span is disposed.
+        /// </summary>
+        public unsafe override Span<T> GetSpan() => new Span<T>(Pin().Pointer, length);
 
-        protected bool IsRetained => refCount > 0;
-
+        /// <summary>
+        /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+        /// </summary>
+        /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
         public override MemoryHandle Pin(int elementIndex = 0)
         {
             unsafe
@@ -58,26 +63,12 @@ namespace Torch.SNT
             }
         }
 
-        public bool Release()
+        /// <summary>
+        /// Lets the garbage collector know that the object is free to be moved now.
+        /// </summary>
+        public override void Unpin()
         {
-            int newRefCount = Interlocked.Decrement(ref refCount);
-
-            if (newRefCount < 0)
-            {
-                throw new InvalidOperationException("Unmatched Release/Retain");
-            }
-
-            return newRefCount != 0;
-        }
-
-        public void Retain()
-        {
-            if (IsDisposed)
-            {
-                throw new ObjectDisposedException(nameof(NativeMemory<T>));
-            }
-
-            Interlocked.Increment(ref refCount);
+            Release();
         }
 
         protected override void Dispose(bool disposing)
@@ -89,24 +80,35 @@ namespace Torch.SNT
 
             if (disposing)
             {
-                // typically this would call into a native method appropriate for the platform
+                // Typically this would call into a native method appropriate for the platform
                 Marshal.FreeHGlobal(memory);
                 memory = IntPtr.Zero;
+                length = 0;
             }
 
             IsDisposed = true;
         }
 
-        protected override bool TryGetArray(out ArraySegment<T> arraySegment)
+        private bool Release()
         {
-            // cannot expose managed array
-            arraySegment = default;
-            return false;
+            int newRefCount = Interlocked.Decrement(ref refCount);
+
+            if (newRefCount < 0)
+            {
+                throw new InvalidOperationException("Unmatched Release/Retain");
+            }
+
+            return newRefCount != 0;
         }
 
-        public override void Unpin()
+        private void Retain()
         {
-            Release();
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(nameof(NativeMemory<T>));
+            }
+
+            Interlocked.Increment(ref refCount);
         }
     }
 }
