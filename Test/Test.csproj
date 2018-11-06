@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+    <ProjectReference Include="..\SNT\SNT.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ namespace Torch.SNT
     {
         internal readonly object inner;
 
-        public FloatTensor TorchSharpTensor =>  inner as FloatTensor;
+        public FloatTensor TorchSharpTensor => inner as FloatTensor;
 
         public FloatTorchTensor(Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base(memory, dimensions)
         {
@@ -32,7 +32,7 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = new FloatTensor(sizes.Select(x => (long)x).ToArray());
+            var inner = new FloatTensor().Create(sizes.Select(x => (long)x).ToArray());
             var mem = new NativeMemory<float>(inner.Data, totLength);
 
             return new FloatTorchTensor(mem.Memory, shape, inner);
@@ -64,7 +64,7 @@ namespace Torch.SNT
             switch (true)
             {
                 case bool _ when typeof(TResult) == typeof(float):
-                    var innerClone = new FloatTensor(typedInner.Shape);
+                    var innerClone = new FloatTensor().Create(typedInner.Shape[0]);
                     innerClone.Fill(default);
                     var mem = new NativeMemory<float>(innerClone.Data, Buffer.Length);
 
@@ -110,6 +110,35 @@ namespace Torch.SNT
             }
 
             return new FloatTorchTensor(mem.Memory, dimensions, reshapedTensor);
+        }
+    }
+
+}
+    namespace TorchSharp
+    {
+        internal static class ExtensionMethods
+    {
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public static FloatTensor Create(this FloatTensor ten, params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    return ten;
+                case 1:
+                    return new FloatTensor(dims[0]);
+                case 2:
+                    return new FloatTensor(dims[0], dims[1]);
+                case 3:
+                    return new FloatTensor(dims[0], dims[1], dims[2]);
+                case 4:
+                    return new FloatTensor(dims[0], dims[1], dims[2], dims[3]);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
     }
 }
