@@ -2259,6 +2259,7 @@ namespace TorchSharp {
 		extern static void unfolded_acc(DoubleTensor.HType finput, DoubleTensor.HType input, int kW, int kH, int dW, int dH, int padW, int padH, int nInputPlane, int inputWidth, int inputHeight, int osizeW, int outputHeight);
 		/// <summary>
 		/// </summary>
+		/// <param name="finput"></param>
 		/// <param name="input"></param>
 		/// <param name="kW"></param>
 		/// <param name="kH"></param>
@@ -2284,6 +2285,7 @@ namespace TorchSharp {
 		extern static void unfolded_copy(DoubleTensor.HType finput, DoubleTensor.HType input, int kW, int kH, int dW, int dH, int padW, int padH, int nInputPlane, int inputWidth, int inputHeight, int outputWidth, int outputHeight);
 		/// <summary>
 		/// </summary>
+		/// <param name="finput"></param>
 		/// <param name="input"></param>
 		/// <param name="kW"></param>
 		/// <param name="kH"></param>
@@ -5660,6 +5662,7 @@ namespace TorchSharp {
 		extern static void unfolded_acc(FloatTensor.HType finput, FloatTensor.HType input, int kW, int kH, int dW, int dH, int padW, int padH, int nInputPlane, int inputWidth, int inputHeight, int osizeW, int outputHeight);
 		/// <summary>
 		/// </summary>
+		/// <param name="finput"></param>
 		/// <param name="input"></param>
 		/// <param name="kW"></param>
 		/// <param name="kH"></param>
@@ -5685,6 +5688,7 @@ namespace TorchSharp {
 		extern static void unfolded_copy(FloatTensor.HType finput, FloatTensor.HType input, int kW, int kH, int dW, int dH, int padW, int padH, int nInputPlane, int inputWidth, int inputHeight, int outputWidth, int outputHeight);
 		/// <summary>
 		/// </summary>
+		/// <param name="finput"></param>
 		/// <param name="input"></param>
 		/// <param name="kW"></param>
 		/// <param name="kH"></param>
