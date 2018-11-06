@@ -1436,38 +1436,44 @@ foreach (var type in new [] {
                     Name="AddMV", Doc="Performs a matrix-vector product of the matrix mat and the vector vec.  This vector tensor is added to the final result.", 
                     arg1="mat", arg1Doc="Matrix to be multiplied",
                     arg2="vec", arg2Doc="Vector to be multiplied",
-                    Remarks="<para>If mat is a (n×m) tensor, vec is a 1-D tensor of size m, then tensor must be broadcastable with a 1-D tensor of size n and out will be 1-D tensor of size n.</para>\n"+
-                            "<para>alpha and beta are scaling factors on matrix-vector product between mat and vec and the added tensor tensor respectively.</para>\n" +
-                            "<para>For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.</para>",
+                    Remarks="If mat is a (n×m) tensor, vec is a 1-D tensor of size m, then tensor must be broadcastable with a 1-D tensor of size n and out will be 1-D tensor of size n.\n"+
+                            "alpha and beta are scaling factors on matrix-vector product between mat and vec and the added tensor tensor respectively.\n" +
+                            "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.",
                     Returns="β tensor+α (mat@vec)"
                     },
                 new { 
                     Name="AddMM", Doc="Performs a matrix multiplication of the matrices mat1 and mat2. This matrix tensor is added to the final result.",
                     arg1="mat1", arg1Doc="First matrix to  be multiplied",
                     arg2="mat2", arg2Doc="Second matrix to  be multiplied",
-                    Remarks="<para>If mat1 is a (n×m) tensor, mat2 is a (m×p) tensor, then this tensor must be broadcastable with a (n×p) tensor and out will be a (n×p) tensor.</para>\n" +
-                            "<para>alpha and beta are scaling factors on matrix-vector product between mat1 and :attr`mat2` and the added matrix mat respectively.</para>",
+                    Remarks="If mat1 is a (n×m) tensor, mat2 is a (m×p) tensor, then this tensor must be broadcastable with a (n×p) tensor and out will be a (n×p) tensor.\n" +
+                            "alpha and beta are scaling factors on matrix-vector product between mat1 and :attr`mat2` and the added matrix mat respectively.",
                     Returns="β mat+α (mat1i@mat2i)"
                     },
                 new { 
                     Name="AddBMM", Doc="Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step (all matrix multiplications get accumulated along the first dimension).  This tensor is added to the final result.",
                     arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
                     arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
-                    Remarks="",
+                    Remarks="batch1 and batch2 must be 3-D tensors each containing the same number of matrices.\n" +
+                            "If batch1 is a (b×n×m) tensor, batch2 is a (b×m×p) tensor, the tensor instance must be broadcastable with a (n×p) tensor and out will be a (n×p) tensor.\n" +
+                            "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.",
                     Returns="β mat+α (∑i=0bbatch1i@batch2i)"
                     },
                 new { 
                     Name="AddR", Doc="Performs the outer-product of vectors vec1 and vec2 and adds it to the matrix represented by this tensor." ,
                     arg1="vec1", arg1Doc="the first vector of the outer product",
                     arg2="vec2", arg2Doc="the second vector of the outer product",
-                    Remarks="",
+                    Remarks="Optional values beta and alpha are scaling factors on the outer product between vec1 and vec2 and the added matrix mat respectively.\n" +
+                    "If vec1 is a vector of size n and vec2 is a vector of size m, then mat must be broadcastable with a matrix of size (n×m) and out will be a matrix of size (n×m).\n" +
+                    "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers",
                     Returns="β mat+α (vec1⊗vec2)"
                     },
                 new { 
                     Name="BAddBMM", Doc="Performs a batch matrix-matrix product of matrices in batch1 and batch2.  This tensor is added to the final result.",
                     arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
                     arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
-                    Remarks="",
+                    Remarks="batch1 and batch2 must be 3-D tensors each containing the same number of matrices." +
+                    "If batch1 is a (b×n×m) tensor, batch2 is a (b×m×p) tensor, then instance tensor must be broadcastable with a (b×n×p) tensor and out will be a (b×n×p) tensor. Both alpha and beta mean the same as the scaling factors used in Addbmm()." +
+                    "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.",
                     Returns="β mati+α (batch1i@batch2i)"
                     },
                 }){
@@ -1480,7 +1486,7 @@ foreach (var type in new [] {
                 var returns = opdoc.Returns;
                 var remarks = "";
                 foreach (var j in opdoc.Returns.Split ('\n')) 
-                    remarks += "/// " + j + "\n";
+                    remarks += "/// <para>" + j + "</para>\n";
                 remarks.Trim ();
 #>                
         [DllImport ("caffe2")]
