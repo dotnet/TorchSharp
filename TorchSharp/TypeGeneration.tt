@@ -1094,30 +1094,30 @@ foreach (var type in new [] {
         // Idiom Op (Result)
             if (isFloat){
             foreach (var opdoc in new [] { 
-                new { FloatOnly=true,  Name="Sigmoid", CName="", Doc="sigmoid" },
-                new { FloatOnly=true,  Name="Log", CName="", Doc="natural logarithm" },
+                new { FloatOnly=true,  Name="Sigmoid", CName="", Doc="sigmoid of the elements of" },
+                new { FloatOnly=true,  Name="Log", CName="", Doc="natural logarithm of the elements of" },
                 new { FloatOnly=true,  Name="Lgamma", CName="", Doc="" },
                 new { FloatOnly=true,  Name="Digamma", CName="", Doc="" },
                 new { FloatOnly=true,  Name="Trigamma", CName="", Doc="" },
                 new { FloatOnly=true,  Name="Polygamma", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Log10", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Log1p", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Log2", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Exp", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Expm1", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Cos", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Acos", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Cosh", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Sin", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Asin", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Sinh", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Tan", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Atan", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Atan2", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Tanh", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Erf", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Erfc", CName="", Doc="" },
-                new { FloatOnly=true,  Name="Erfinv", CName="", Doc="" },
+                new { FloatOnly=true,  Name="Log10", CName="", Doc="ten-based logarithm of the elements of" },
+                new { FloatOnly=true,  Name="Log1p", CName="", Doc="logarithm of 1 + each element of" },
+                new { FloatOnly=true,  Name="Log2", CName="", Doc="two-based logarithm of the elements of" },
+                new { FloatOnly=true,  Name="Exp", CName="", Doc="exponential of the elements of" },
+                new { FloatOnly=true,  Name="Expm1", CName="", Doc="the exponential of the elements minus 1 of" },
+                new { FloatOnly=true,  Name="Cos", CName="", Doc="cosine of each element of" },
+                new { FloatOnly=true,  Name="Acos", CName="", Doc="arccosine of each element of" },
+                new { FloatOnly=true,  Name="Cosh", CName="", Doc="hyerbolic cosine of each element of" },
+                new { FloatOnly=true,  Name="Sin", CName="", Doc="sine of each element of" },
+                new { FloatOnly=true,  Name="Asin", CName="", Doc="arcsine of each element of" },
+                new { FloatOnly=true,  Name="Sinh", CName="", Doc="hyperbolic sine of each element of" },
+                new { FloatOnly=true,  Name="Tan", CName="", Doc="tangent of each element of" },
+                new { FloatOnly=true,  Name="Atan", CName="", Doc="arctangent of each element of" },
+                new { FloatOnly=true,  Name="Atan2", CName="", Doc="arctangent of each element of" },
+                new { FloatOnly=true,  Name="Tanh", CName="", Doc="hyperbolic tangent of each element of" },
+                new { FloatOnly=true,  Name="Erf", CName="", Doc="error function of each element of" },
+                new { FloatOnly=true,  Name="Erfc", CName="", Doc="complementary error function of each element of" },
+                new { FloatOnly=true,  Name="Erfinv", CName="", Doc="inverse error function of each element of" },
                 new { FloatOnly=true,  Name="Sqrt", CName="", Doc="square root" },
                 new { FloatOnly=true,  Name="Rsqrt", CName="", Doc="reciprocal of the square root of the elements of" },
                 new { FloatOnly=true,  Name="Ceil", CName="", Doc="values rounded up to the nearest integer of the elements of" },
@@ -1141,7 +1141,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_<#=cname#> (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the <#=op#> of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the <#=doc#> <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
