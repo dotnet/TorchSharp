@@ -71,13 +71,19 @@ namespace Torch.IO
             }
         }
 
-        [DllImport("caffe2")] extern static int THFile_isOpened(HType self);
-        [DllImport("caffe2")] extern static int THFile_isReadable(HType self);
-        [DllImport("caffe2")] extern static int THFile_isWritable(HType self);
-        [DllImport("caffe2")] extern static void THFile_seek(HType self, long position);
-        [DllImport("caffe2")] extern static void THFile_seekEnd(HType self);
+        [DllImport("caffe2")]
+        extern static int THFile_isOpened(HType self);
+        [DllImport("caffe2")]
+        extern static int THFile_isReadable(HType self);
+        [DllImport("caffe2")]
+        extern static int THFile_isWritable(HType self);
+        [DllImport("caffe2")]
+        extern static void THFile_seek(HType self, long position);
+        [DllImport("caffe2")]
+        extern static void THFile_seekEnd(HType self);
 
-        [DllImport("caffe2")] extern static long THFile_position(HType self);
+        [DllImport("caffe2")]
+        extern static long THFile_position(HType self);
 
         /// <summary>
         ///   The open status of the file.
@@ -111,7 +117,8 @@ namespace Torch.IO
         public long Position { get { return THFile_position(this.handle); } }
 
 
-        [DllImport("caffe2")] extern static void THFile_close(HType self);
+        [DllImport("caffe2")]
+        extern static void THFile_close(HType self);
 
         /// <summary>
         ///   Close the file.

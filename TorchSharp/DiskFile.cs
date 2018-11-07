@@ -6,10 +6,12 @@ using Microsoft.Win32.SafeHandles;
 using System.Text;
 
 namespace Torch.IO {
-    public class DiskFile  : File {
+    public class DiskFile : File {
 
-        [DllImport("caffe2")] extern static File.HType THDiskFile_new(string name, string mode, int isQuiet);
-        [DllImport("caffe2")] extern static File.HType THPipeFile_new(string name, string mode, int isQuiet);
+        [DllImport("caffe2")]
+        extern static File.HType THDiskFile_new(string name, string mode, int isQuiet);
+        [DllImport("caffe2")]
+        extern static File.HType THPipeFile_new(string name, string mode, int isQuiet);
 
         /// <summary>
         ///   Create a disk file. 
@@ -25,19 +27,65 @@ namespace Torch.IO {
                 THDiskFile_new(name, mode, isQuiet ? 1 : 0);
         }
 
-        [DllImport("caffe2")] extern static string THDiskFile_name(File.HType self);
+        [DllImport("caffe2")]
+        extern static string THDiskFile_name(File.HType self);
 
         /// <summary>
         ///   The file name.
         /// </summary>
-        public string Name {  get { return THDiskFile_name(this.handle); } }
+        public string Name { get { return THDiskFile_name(this.handle); } }
 
-        [DllImport("caffe2")] extern static int THDiskFile_isLittleEndianCPU();
-        [DllImport("caffe2")] extern static int THDiskFile_isBigEndianCPU();
-        [DllImport("caffe2")] extern static void THDiskFile_nativeEndianEncoding(File.HType self);
-        [DllImport("caffe2")] extern static void THDiskFile_littleEndianEncoding(File.HType self);
-        [DllImport("caffe2")] extern static void THDiskFile_bigEndianEncoding(File.HType self);
-        [DllImport("caffe2")] extern static void THDiskFile_longSize(File.HType self, int size);
+        [DllImport("caffe2")]
+        extern static int THDiskFile_isLittleEndianCPU();
+
+        /// <summary>
+        ///   Is the native byte order little-endian?
+        /// </summary>
+        public static bool IsLittleEndianCPU {  get { return 0 != THDiskFile_isLittleEndianCPU(); } }
+
+        [DllImport("caffe2")]
+        extern static int THDiskFile_isBigEndianCPU();
+
+        /// <summary>
+        ///   Is the native byte order big-endian?
+        /// </summary>
+        public static bool IsBigEndianCPU { get { return 0 != THDiskFile_isBigEndianCPU(); } }
+
+        [DllImport("caffe2")]
+        extern static void THDiskFile_nativeEndianEncoding(File.HType self);
+
+        /// <summary>
+        ///   Use the native byte order for encoding multi-byte data when writing to the file.
+        /// </summary>
+        public void UseNativeEndianEncoding()
+        {
+            THDiskFile_nativeEndianEncoding(this.handle);
+        }
+
+        [DllImport("caffe2")]
+        extern static void THDiskFile_littleEndianEncoding(File.HType self);
+
+        /// <summary>
+        ///   Use the little-endian byte order for encoding multi-byte data when writing to the file.
+        /// </summary>
+        public void UseLittleEndianEncoding()
+        {
+            THDiskFile_littleEndianEncoding(this.handle);
+        }
+
+        [DllImport("caffe2")]
+        extern static void THDiskFile_bigEndianEncoding(File.HType self);
+
+        /// <summary>
+        ///   Use the big-endian byte order for encoding multi-byte data when writing to the file.
+        /// </summary>
+        public void UseBigEndianEncoding()
+        {
+            THDiskFile_bigEndianEncoding(this.handle);
+        }
+
+        [DllImport("caffe2")]
+        extern static void THDiskFile_longSize(File.HType self, int size);
 
         /// <summary>
         ///    Sets the size of long values.
@@ -45,6 +93,7 @@ namespace Torch.IO {
         /// <remarks>Should be one of 0, 4, or 8.</remarks>
         public int LongSize { set { THDiskFile_longSize(this.handle, value); } }
 
-        [DllImport("caffe2")] extern static void THDiskFile_noBuffer(File.HType self);
+        [DllImport("caffe2")]
+        extern static void THDiskFile_noBuffer(File.HType self);
     }
 }
