@@ -45,14 +45,16 @@ foreach (var type in new [] {
 		/// <summary>
 		///   Read <#=accreal#>s from the file into the given storage.
 		/// </summary>
-		/// <returns>A <#=accreal#> read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long Read<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 		/// <summary>
 		///   Write <#=accreal#>s to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A <#=accreal#> to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long Write<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
 
 

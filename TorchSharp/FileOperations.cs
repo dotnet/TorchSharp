@@ -8,7 +8,7 @@ using TorchSharp;
 
 namespace Torch.IO {
 
-	public abstract partial class File : IDisposable
+	public abstract partial class THFile : IDisposable
 	{
         [DllImport("caffe2")] extern static byte THFile_readByteScalar(HType self);
 		/// <summary>
@@ -28,14 +28,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read bytes from the file into the given storage.
 		/// </summary>
-		/// <returns>A byte read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadByte(ByteTensor.ByteStorage storage) { return THFile_readByte(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeByte(HType self, ByteTensor.ByteStorage.HType storage);
 		/// <summary>
 		///   Write bytes to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A byte to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteByte(ByteTensor.ByteStorage storage) { return THFile_writeByte(this.handle, storage.handle); }
 
 
@@ -57,14 +59,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read shorts from the file into the given storage.
 		/// </summary>
-		/// <returns>A short read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadShort(ShortTensor.ShortStorage storage) { return THFile_readShort(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeShort(HType self, ShortTensor.ShortStorage.HType storage);
 		/// <summary>
 		///   Write shorts to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A short to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteShort(ShortTensor.ShortStorage storage) { return THFile_writeShort(this.handle, storage.handle); }
 
 
@@ -86,14 +90,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read ints from the file into the given storage.
 		/// </summary>
-		/// <returns>A int read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadInt(IntTensor.IntStorage storage) { return THFile_readInt(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeInt(HType self, IntTensor.IntStorage.HType storage);
 		/// <summary>
 		///   Write ints to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A int to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteInt(IntTensor.IntStorage storage) { return THFile_writeInt(this.handle, storage.handle); }
 
 
@@ -115,14 +121,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read longs from the file into the given storage.
 		/// </summary>
-		/// <returns>A long read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadLong(LongTensor.LongStorage storage) { return THFile_readLong(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeLong(HType self, LongTensor.LongStorage.HType storage);
 		/// <summary>
 		///   Write longs to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A long to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteLong(LongTensor.LongStorage storage) { return THFile_writeLong(this.handle, storage.handle); }
 
 
@@ -144,14 +152,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read doubles from the file into the given storage.
 		/// </summary>
-		/// <returns>A double read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadDouble(DoubleTensor.DoubleStorage storage) { return THFile_readDouble(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
 		/// <summary>
 		///   Write doubles to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A double to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteDouble(DoubleTensor.DoubleStorage storage) { return THFile_writeDouble(this.handle, storage.handle); }
 
 
@@ -173,14 +183,16 @@ namespace Torch.IO {
 		/// <summary>
 		///   Read floats from the file into the given storage.
 		/// </summary>
-		/// <returns>A float read from the current file position.</returns>
+		/// <param name="storage">A storage object to read data into.</param>
+		/// <returns>The number of bytes read.</returns>
         public long ReadFloat(FloatTensor.FloatStorage storage) { return THFile_readFloat(this.handle, storage.handle); }
 
         [DllImport("caffe2")] extern static long THFile_writeFloat(HType self, FloatTensor.FloatStorage.HType storage);
 		/// <summary>
 		///   Write floats to the file from the given storage.
 		/// </summary>
-		/// <param name="value">A float to write at the current file position.</param>
+		/// <param name="storage">A storage object fetch data from.</param>
+		/// <returns>The number of bytes written.</returns>
         public long WriteFloat(FloatTensor.FloatStorage storage) { return THFile_writeFloat(this.handle, storage.handle); }
 
 
