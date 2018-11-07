@@ -50,6 +50,7 @@ namespace Test
         {
             var storage = new MemoryFile.CharStorage(256);
             Assert.IsNotNull(storage);
+            storage.Fill(0);
             var file = new Torch.IO.MemoryFile(storage, "w");
             Assert.IsNotNull(file);
             Assert.IsFalse(file.CanRead);
@@ -67,6 +68,7 @@ namespace Test
         {
             var storage = new MemoryFile.CharStorage(256);
             Assert.IsNotNull(storage);
+            storage.Fill(0);
             var file = new Torch.IO.MemoryFile(storage, "w");
             Assert.IsNotNull(file);
             Assert.IsFalse(file.CanRead);
