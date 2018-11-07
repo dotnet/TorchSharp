@@ -3,16 +3,16 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Numerics.Tensors;
-using TorchSharp;
+using Torch.SNT;
 
 namespace Torch.SNT 
 {
 <#
 foreach (var type in new [] { 
-    new { ApiName = "Byte", Storage = "byte", AccReal="long" },
     new { ApiName = "Short", Storage = "short", AccReal="long" },   
     new { ApiName = "Int", Storage = "int",  AccReal="long"},
     new { ApiName = "Long", Storage = "long", AccReal="long" },
@@ -21,139 +21,362 @@ foreach (var type in new [] {
      }) {
         string tname = type.ApiName;
 #>
-    /// <summary>
-    ///   Wrapper class used to surface a Torch <#=tname#>Tensor as a System.Numerics DensorTensor of <#=tname.ToLower()#>
-    /// </summary>
-    public sealed class <#=tname#>TorchTensor : DenseTensor<<#=tname.ToLower()#>>
+    [TestClass]
+    public class <#=tname#>TorchTensorUnitTestGenerator
     {
-        private readonly object inner;
-
-        /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
-        /// </summary>
-        public <#=tname#>Tensor TorchSharpTensor => inner as <#=tname#>Tensor;
-
-        public <#=tname#>TorchTensor(Memory<<#=tname.ToLower()#>> memory, ReadOnlySpan<int> dimensions, <#=tname#>Tensor inner) : base(memory, dimensions)
+        [TestMethod]
+        public void TestCreation<#=tname#>0D()
         {
-            this.inner = inner;
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => <#=tname#>TorchTensor.Create());
         }
 
-        /// <summary>
-        ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
-        ///   does not support zero-size tensors.
-        /// </summary>
-        /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe <#=tname#>TorchTensor Create(params int[] sizes)
+        [TestMethod]
+        public void TestCreation<#=tname#>1D()
         {
-            var totLength = Utils.GetTotalLength(sizes);
-            var shape = sizes;
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
 
-            if (sizes.Length == 0)
+            Assert.AreNotEqual(x, null);
+        }
+
+        [TestMethod]
+        public void TestCreation<#=tname#>2D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
+
+            Assert.AreNotEqual(x, null);
+        }
+
+        [TestMethod]
+        public void TestShapeAndStrides<#=tname#>2D()
+        {
+            var x = <#=tname#>TorchTensor.Create(10, 10);
+
+            for (int i = 0; i < 2; i++)
             {
-                shape = new int[] { 0 };
-            }
-
-            var inner = Create<#=tname#>Tensor(sizes.Select(x => (long)x).ToArray());
-            var mem = new NativeMemory<<#=tname.ToLower()#>>(inner.Data, totLength);
-
-            return new <#=tname#>TorchTensor(mem.Memory, shape, inner);
-        }
-
-        /// <summary>
-        /// Creates a shallow copy of this tensor, with new backing storage.
-        /// </summary>
-        /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<<#=tname.ToLower()#>> Clone()
-        {
-            var typedInner = inner as <#=tname#>Tensor;
-            var innerClone = typedInner.Clone();
-            var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
-
-            return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone);
-        }
-
-        /// <summary>
-        /// Creates a new Tensor of a different type with the specified dimensions and the same layout as this tensor with elements initialized to their default value.
-        /// </summary>
-        /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
-        /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
-        /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
-        {
-            var typedInner = inner as <#=tname#>Tensor;
-
-            switch (true)
-            {
-                case bool _ when typeof(TResult) == typeof(<#=tname.ToLower()#>):
-                    var innerClone = Create<#=tname#>Tensor(typedInner.Shape);
-                    innerClone.Fill(default);
-                    var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
-
-                    return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException("Only cloning <#=tname.ToLower()#>s is currently implemented.");
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        /// <summary>
-        /// Reshapes the current tensor to new dimensions, using the same backing storage.
-        /// </summary>
-        /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
-        /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<<#=tname.ToLower()#>> Reshape(ReadOnlySpan<int> dimensions)
+        [TestMethod]
+        public void TestCreation<#=tname#>3D()
         {
-            if (dimensions.Length == 0)
-            {
-                throw new ArgumentException("Dimensions must contain elements.", nameof(dimensions));
-            }
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10, 3);
 
-            var newSize = Utils.GetTotalLength(dimensions);
-
-            if (newSize != Length)
-            {
-                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
-            }
-
-            var typedInner = inner as <#=tname#>Tensor;
-            <#=tname#>Tensor reshapedTensor;
-            NativeMemory<<#=tname.ToLower()#>> mem;
-
-            switch (dimensions.Length)
-            {
-                case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
-                    break;
-                case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
-                    break;
-                default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
-            }
-
-            return new <#=tname#>TorchTensor(mem.Memory, dimensions, reshapedTensor);
+            Assert.AreNotEqual(x, null);
         }
 
-        /// <summary>
-        ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
-        /// <param name="dims">Sizes for the dimensions.</param>
-        internal static <#=tname#>Tensor Create<#=tname#>Tensor(params long[] dims)
+        [TestMethod]
+        public void TestShapeAndStrides<#=tname#>3D()
         {
-            switch (dims.Length)
+            var x = <#=tname#>TorchTensor.Create(10, 10, 3);
+
+            for (int i = 0; i < 3; i++)
             {
-                case 0:
-                    return new <#=tname#>Tensor();
-                case 1:
-                    return new <#=tname#>Tensor(dims[0]);
-                case 2:
-                    return new <#=tname#>Tensor(dims[0], dims[1]);
-                case 3:
-                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2]);
-                case 4:
-                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2], dims[3]);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+        }
+
+        [TestMethod]
+        public void TestCreation<#=tname#>4D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10, 3, 10);
+
+            Assert.AreNotEqual(x, null);
+        }
+
+        [TestMethod]
+        public void TestShapeAndStrides<#=tname#>4D()
+        {
+            var x = <#=tname#>TorchTensor.Create(10, 10, 3, 10);
+
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+        }
+
+        [TestMethod]
+        public void TestFill<#=tname#>1D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+            x.Fill((<#=tname.ToLower()#>)30);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(x[i], 30);
+            }
+        }
+
+        [TestMethod]
+        public void TestFill<#=tname#>2D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
+            x.Fill((<#=tname.ToLower()#>)30);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    Assert.AreEqual(x[i, j], 30);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestFillBySet<#=tname#>1D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                x[i] = (<#=tname.ToLower()#>)30;
+            }
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(x[i], (<#=tname.ToLower()#>)30);
+            }
+        }
+
+        [TestMethod]
+        public void TestFillBySet<#=tname#>2D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    x[i, j] = (<#=tname.ToLower()#>)30;
+                }
+            }
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    Assert.AreEqual(x[i, j], (<#=tname.ToLower()#>)30);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestFillEquivalance<#=tname#>2D()
+        {
+            var x = <#=tname#>TorchTensor.Create(10, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    <#=tname.ToLower()#> tmp = (<#=tname.ToLower()#>)(i + j);
+                    x[i, j] = tmp;
+                }
+            }
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestClone<#=tname#>1D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+            x.Fill((<#=tname.ToLower()#>)1);
+
+            Tensor<<#=tname.ToLower()#>> y = x.Clone();
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(x[i], y[i]);
+            }
+
+            y[5] = (<#=tname.ToLower()#>)0;
+
+            Assert.AreNotEqual(x[5], y[5]);
+        }
+
+        [TestMethod]
+        public void TestClone<#=tname#>2D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
+            x.Fill((<#=tname.ToLower()#>)1);
+
+            Tensor<<#=tname.ToLower()#>> y = x.Clone();
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i, j]);
+                }
+            }
+
+            y[5, 5] = (<#=tname.ToLower()#>)0;
+
+            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+        }
+
+        [TestMethod]
+        public void TestCloneEmpty<#=tname#>1D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+            x.Fill((<#=tname.ToLower()#>)1);
+
+            Tensor<<#=tname.ToLower()#>> y = x.CloneEmpty();
+
+            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], (<#=tname.ToLower()#>)0);
+            }
+        }
+
+        [TestMethod]
+        public void TestCloneEmpty<#=tname#>2D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
+            x.Fill((<#=tname.ToLower()#>)1);
+
+            Tensor<<#=tname.ToLower()#>> y = x.CloneEmpty();
+
+            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[0]; j++)
+                {
+                    Assert.AreEqual(y[i, j], (<#=tname.ToLower()#>)0);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape<#=tname#>1DFail()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+            x.Fill((<#=tname.ToLower()#>)1);
+
+            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+        }
+
+        [TestMethod]
+        public void TestReshape<#=tname#>1D()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                x[i] = (<#=tname.ToLower()#>)i;
+            }
+
+            Tensor<<#=tname.ToLower()#>> y = x.Reshape(new int[] { 10 });
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], (<#=tname.ToLower()#>)i);
+                Assert.AreEqual(x[i], (<#=tname.ToLower()#>)i);
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape<#=tname#>1DPointToTheSameStorage()
+        {
+            Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                x[i] = (<#=tname.ToLower()#>)i;
+            }
+
+            Tensor<<#=tname.ToLower()#>> y = x.Reshape(new int[] { 10 });
+
+            y[5] = (<#=tname.ToLower()#>)0;
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                Assert.AreEqual(y[i], x[i]);
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape<#=tname#>2D()
+        {
+            var x = <#=tname#>TorchTensor.Create(5, 10);
+
+            var y = x.Reshape(new int[] { 10, 5 });
+
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+            }
+
+            Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
+            Equals(x.Strides.ToArray(), new int[] { 1, 10 });
+            Equals(y.Dimensions.ToArray(), new int[] { 10, 5 });
+            Equals(y.Strides.ToArray(), new int[] { 1, 5 });
+        }
+
+        [TestMethod]
+        public void TestReshape2<#=tname#>D2()
+        {
+            var x = <#=tname#>TorchTensor.Create(5, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    <#=tname.ToLower()#> tmp = (<#=tname.ToLower()#>)(i + j);
+                    x[i, j] = tmp;
+                }
+            }
+
+            Tensor<<#=tname.ToLower()#>> y = x.Reshape(new int[] { 10, 5 });
+
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshape<#=tname#>2DPointToTheSameStorage()
+        {
+            var x = <#=tname#>TorchTensor.Create(5, 10);
+
+            for (int i = 0; i < x.Dimensions[0]; i++)
+            {
+                for (int j = 0; j < x.Dimensions[1]; j++)
+                {
+                    <#=tname.ToLower()#> tmp = (<#=tname.ToLower()#>)(i + j);
+                    x[i, j] = tmp;
+                }
+            }
+
+            Tensor<<#=tname.ToLower()#>> y = x.Reshape(new int[] { 10, 5 });
+
+            x[4, 9] = 0;
+            y[3, 4] = 0;
+
+            for (int i = 0; i < 1; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                }
             }
         }
     }
