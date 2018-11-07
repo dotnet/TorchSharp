@@ -2158,10 +2158,14 @@ namespace TorchSharp {
         extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ByteTensor LERP (ByteTensor other, byte weight)
         {
             if (other == null)
@@ -5339,10 +5343,14 @@ namespace TorchSharp {
         extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ShortTensor LERP (ShortTensor other, short weight)
         {
             if (other == null)
@@ -8472,10 +8480,14 @@ namespace TorchSharp {
         extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public IntTensor LERP (IntTensor other, int weight)
         {
             if (other == null)
@@ -11605,10 +11617,14 @@ namespace TorchSharp {
         extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public LongTensor LERP (LongTensor other, long weight)
         {
             if (other == null)
@@ -15431,10 +15447,14 @@ namespace TorchSharp {
         extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public DoubleTensor LERP (DoubleTensor other, double weight)
         {
             if (other == null)
@@ -19486,10 +19506,14 @@ namespace TorchSharp {
         extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public FloatTensor LERP (FloatTensor other, float weight)
         {
             if (other == null)

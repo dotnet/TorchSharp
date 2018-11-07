@@ -1331,10 +1331,14 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_lerp (HType result, HType self, HType other, <#=ttype#> weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public <#=tname#>Tensor LERP (<#=tname#>Tensor other, <#=ttype#> weight)
         {
             if (other == null)
