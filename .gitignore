@@ -1,9 +1,9 @@
 *~
-.vs
-.vscode
-obj
-bin
+.vs/
+.vscode/
+obj/
+bin/
 *.exe
-*pdb
-*trx
-
+*.pdb
+*.trx
+.*.sw*
