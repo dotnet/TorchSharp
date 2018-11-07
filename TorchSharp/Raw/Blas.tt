@@ -16,12 +16,20 @@ foreach (var type in TorchTypeDef.Types) {
 
     string tTypePtr = "IntPtr"; // "HType";
 #>
+
     public partial class <#=tName#>Tensor : IDisposable {
 
         // *** Level 1
 
-        // TH_API void TH<#=tName#>Blas_(swap)(
-        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>swap</c> function for <#=tName#> type.
+        /// Swap x and y.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        /// TH_API void THBlas_(swap)(
+        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_swap(
             long n,
@@ -30,8 +38,15 @@ foreach (var type in TorchTypeDef.Types) {
             <#=tTypePtr#> y,
             long incy);
 
-        // TH_API void TH<#=tName#>Blas_(scal)(
-        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>scal</c> function for <#=tName#> type.
+        /// Evaluate <c>x = a*x</c>.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        /// TH_API void THBlas_(scal)(
+        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_scal(
             long n,
@@ -39,8 +54,15 @@ foreach (var type in TorchTypeDef.Types) {
             <#=tTypePtr#> x,
             long incx);
 
-        // TH_API void TH<#=tName#>Blas_(copy)(
-        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>copy</c> function for <#=tName#> type.
+        /// Copy x into y.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        /// TH_API void THBlas_(copy)(
+        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_copy(
             long n,
@@ -49,8 +71,15 @@ foreach (var type in TorchTypeDef.Types) {
             <#=tTypePtr#> y,
             long incy);
 
-        // TH_API void TH<#=tName#>Blas_(axpy)(
-        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>axpy</c> function for <#=tName#> type.
+        /// Evaluate <c>y = a*x + y</c>.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        /// TH_API void THBlas_(axpy)(
+        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_axpy(
             long n,
@@ -60,8 +89,15 @@ foreach (var type in TorchTypeDef.Types) {
             <#=tTypePtr#> y,
             long incy);
 
-        // TH_API scalar_t TH<#=tName#>Blas_(dot)(
-        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>dot</c> function for <#=tName#> type.
+        /// Evaluate the dot product.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        /// TH_API scalar_t THBlas_(dot)(
+        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
+        /// </code>
         [DllImport ("caffe2")]
         extern static <#=tType#> TH<#=tName#>Blas_dot(
             long n,
@@ -72,10 +108,17 @@ foreach (var type in TorchTypeDef.Types) {
 
         // *** Level 2
 
-        // TH_API void TH<#=tName#>Blas_(gemv)(
-        //     char trans, int64_t m, int64_t n, scalar_t alpha,
-        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        //     scalar_t beta, scalar_t *y, int64_t incy);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>gemv</c> function for <#=tName#> type.
+        /// Matrix-vector multiplication.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        // TH_API void THBlas_(gemv)(
+        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
+        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        ///     scalar_t beta, scalar_t *y, int64_t incy);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_gemv(
             byte trans,
@@ -90,9 +133,16 @@ foreach (var type in TorchTypeDef.Types) {
             <#=tTypePtr#> y,
             long incy);
 
-        // TH_API void TH<#=tName#>Blas_(ger)(
-        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>ger</c> function for <#=tName#> type.
+        ///  Rank 1 operation <c>A := alpha*x*y' + A</c>
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        // TH_API void THBlas_(ger)(
+        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_ger(
             long m,
@@ -107,10 +157,17 @@ foreach (var type in TorchTypeDef.Types) {
 
         // *** Level 3
 
-        // TH_API void TH<#=tName#>Blas_(gemm)(
-        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        //     scalar_t beta, scalar_t *c, int64_t ldc);
+        /// <summary>
+        /// <a href="http://www.netlib.org/blas/#_blas_routines">BLAS</a> <c>gemm</c> function for <#=tName#> type.
+        /// Matrix-matrix multiplication.
+        /// </summary>
+        /// Corresponds to the following TH definition:
+        /// <code>
+        // TH_API void THBlas_(gemm)(
+        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        ///     scalar_t beta, scalar_t *c, int64_t ldc);
+        /// </code>
         [DllImport ("caffe2")]
         extern static void TH<#=tName#>Blas_gemm(
             byte transa,
