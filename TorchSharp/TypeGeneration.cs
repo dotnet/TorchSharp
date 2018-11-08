@@ -2158,10 +2158,14 @@ namespace TorchSharp {
         extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ByteTensor LERP (ByteTensor other, byte weight)
         {
             if (other == null)
@@ -2307,7 +2311,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -2336,7 +2340,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -2365,7 +2369,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -2394,7 +2398,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -2423,7 +2427,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -5339,10 +5343,14 @@ namespace TorchSharp {
         extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ShortTensor LERP (ShortTensor other, short weight)
         {
             if (other == null)
@@ -5488,7 +5496,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -5517,7 +5525,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -5546,7 +5554,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -5575,7 +5583,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -5604,7 +5612,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -8472,10 +8480,14 @@ namespace TorchSharp {
         extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public IntTensor LERP (IntTensor other, int weight)
         {
             if (other == null)
@@ -8621,7 +8633,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -8650,7 +8662,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -8679,7 +8691,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -8708,7 +8720,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -8737,7 +8749,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -11605,10 +11617,14 @@ namespace TorchSharp {
         extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public LongTensor LERP (LongTensor other, long weight)
         {
             if (other == null)
@@ -11754,7 +11770,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -11783,7 +11799,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -11812,7 +11828,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -11841,7 +11857,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -11870,7 +11886,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -14003,7 +14019,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sigmoid (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sigmoid of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sigmoid of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14020,7 +14036,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the natural logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14037,7 +14053,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_lgamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Lgamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Lgamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14054,7 +14070,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_digamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Digamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Digamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14071,7 +14087,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_trigamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trigamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Trigamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14088,7 +14104,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_polygamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Polygamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Polygamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14105,7 +14121,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log10 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log10 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the ten-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14122,7 +14138,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log1p (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log1p of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the logarithm of 1 + each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14139,7 +14155,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the two-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14156,7 +14172,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_exp (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Exp of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the exponential of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14173,7 +14189,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_expm1 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Expm1 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the the exponential of the elements minus 1 of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14190,7 +14206,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14207,7 +14223,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_acos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Acos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arccosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14224,7 +14240,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cosh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cosh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyerbolic cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14241,7 +14257,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14258,7 +14274,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_asin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Asin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arcsine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14275,7 +14291,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sinh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sinh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14292,7 +14308,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_tan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14309,7 +14325,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_atan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14326,7 +14342,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_atan2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14343,7 +14359,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_tanh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tanh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14360,7 +14376,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erf (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erf of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14377,7 +14393,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erfc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the complementary error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14394,7 +14410,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erfinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14411,7 +14427,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the square root <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14428,7 +14444,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_rsqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Rsqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the reciprocal of the square root of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14445,7 +14461,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_ceil (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Ceil of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded up to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14462,7 +14478,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_floor (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Floor of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded down to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14479,7 +14495,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_round (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Round of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14496,7 +14512,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_abs (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Abs of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the absolute values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14513,7 +14529,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_trunc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trunc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the truncated integer values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14530,7 +14546,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_frac (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Frac of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the fractional portion of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14547,7 +14563,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse value (1/x) of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14564,7 +14580,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_neg (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverted sign of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14581,7 +14597,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_zerosLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the zero-filled values of the same type as  <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14598,7 +14614,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_onesLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the one-filled values of the same type as <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -15431,10 +15447,14 @@ namespace TorchSharp {
         extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public DoubleTensor LERP (DoubleTensor other, double weight)
         {
             if (other == null)
@@ -15580,7 +15600,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -15609,7 +15629,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -15638,7 +15658,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -15667,7 +15687,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -15696,7 +15716,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -18058,7 +18078,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sigmoid (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sigmoid of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sigmoid of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18075,7 +18095,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the natural logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18092,7 +18112,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_lgamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Lgamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Lgamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18109,7 +18129,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_digamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Digamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Digamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18126,7 +18146,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_trigamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trigamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Trigamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18143,7 +18163,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_polygamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Polygamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Polygamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18160,7 +18180,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log10 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log10 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the ten-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18177,7 +18197,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log1p (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log1p of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the logarithm of 1 + each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18194,7 +18214,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the two-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18211,7 +18231,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_exp (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Exp of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the exponential of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18228,7 +18248,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_expm1 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Expm1 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the the exponential of the elements minus 1 of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18245,7 +18265,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18262,7 +18282,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_acos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Acos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arccosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18279,7 +18299,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cosh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cosh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyerbolic cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18296,7 +18316,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18313,7 +18333,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_asin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Asin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arcsine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18330,7 +18350,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sinh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sinh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18347,7 +18367,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_tan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18364,7 +18384,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_atan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18381,7 +18401,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_atan2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18398,7 +18418,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_tanh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tanh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18415,7 +18435,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erf (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erf of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18432,7 +18452,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erfc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the complementary error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18449,7 +18469,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erfinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18466,7 +18486,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the square root <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18483,7 +18503,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_rsqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Rsqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the reciprocal of the square root of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18500,7 +18520,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_ceil (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Ceil of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded up to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18517,7 +18537,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_floor (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Floor of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded down to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18534,7 +18554,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_round (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Round of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18551,7 +18571,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_abs (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Abs of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the absolute values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18568,7 +18588,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_trunc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trunc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the truncated integer values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18585,7 +18605,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_frac (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Frac of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the fractional portion of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18602,7 +18622,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse value (1/x) of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18619,7 +18639,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_neg (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverted sign of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18636,7 +18656,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_zerosLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the zero-filled values of the same type as  <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18653,7 +18673,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_onesLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the one-filled values of the same type as <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -19486,10 +19506,14 @@ namespace TorchSharp {
         extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public FloatTensor LERP (FloatTensor other, float weight)
         {
             if (other == null)
@@ -19635,7 +19659,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -19664,7 +19688,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -19693,7 +19717,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -19722,7 +19746,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -19751,7 +19775,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
