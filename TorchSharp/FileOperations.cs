@@ -1,9 +1,4 @@
-
-
-
-
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -15,7 +10,6 @@ namespace Torch.IO {
 
     public abstract partial class File : IDisposable
     {
-
         [DllImport("caffe2")] 
         extern static byte THFile_readByteScalar(HType self);
 
@@ -53,7 +47,6 @@ namespace Torch.IO {
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of bytes written.</returns>
         public long WriteByte(ByteTensor.ByteStorage storage) { return THFile_writeByte(this.handle, storage.handle); }
-
 
 
         [DllImport("caffe2")] 
@@ -95,7 +88,6 @@ namespace Torch.IO {
         public long WriteShort(ShortTensor.ShortStorage storage) { return THFile_writeShort(this.handle, storage.handle); }
 
 
-
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
 
@@ -133,7 +125,6 @@ namespace Torch.IO {
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of bytes written.</returns>
         public long WriteInt(IntTensor.IntStorage storage) { return THFile_writeInt(this.handle, storage.handle); }
-
 
 
         [DllImport("caffe2")] 
@@ -175,7 +166,6 @@ namespace Torch.IO {
         public long WriteLong(LongTensor.LongStorage storage) { return THFile_writeLong(this.handle, storage.handle); }
 
 
-
         [DllImport("caffe2")] 
         extern static double THFile_readDoubleScalar(HType self);
 
@@ -215,7 +205,6 @@ namespace Torch.IO {
         public long WriteDouble(DoubleTensor.DoubleStorage storage) { return THFile_writeDouble(this.handle, storage.handle); }
 
 
-
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
 
@@ -253,7 +242,6 @@ namespace Torch.IO {
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of bytes written.</returns>
         public long WriteFloat(FloatTensor.FloatStorage storage) { return THFile_writeFloat(this.handle, storage.handle); }
-
 
 
     }
