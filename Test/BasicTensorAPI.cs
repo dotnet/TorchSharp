@@ -1,8 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TorchSharp;
 using System;
-using System.Text;
-using System.Diagnostics;
 
 namespace Test
 {
@@ -187,15 +185,18 @@ namespace Test
         public void TestReshapeFloat1D()
         {
             var x = new FloatTensor(10);
+
             for (int i = 0; i < x.Shape[0]; i++)
             {
-                x[i] = (float)i;
+                x[i] = i;
             }
+
             var y = x.NewWithStorage1d((UIntPtr)0, 10, 1);
+
             for (int i = 0; i < x.Shape[0]; i++)
             {
-                Assert.AreEqual(y[i], (float)i);
-                Assert.AreEqual(x[i], (float)i);
+                Assert.AreEqual(y[i], i);
+                Assert.AreEqual(x[i], i);
             }
         }
 
@@ -205,10 +206,13 @@ namespace Test
             var x = new FloatTensor(10);
             for (int i = 0; i < x.Shape[0]; i++)
             {
-                x[i] = (float)i;
+                x[i] = i;
             }
+
             var y = x.NewWithStorage1d((UIntPtr)0, 10, 1);
-            y[5] = (float)0;
+
+            y[5] = 0;
+
             for (int i = 0; i < x.Shape[0]; i++)
             {
                 Assert.AreEqual(y[i], x[i]);
@@ -233,8 +237,7 @@ namespace Test
             {
                 for (int j = 0; j < x.Shape[1]; j++)
                 {
-                    float tmp = (float)(i + j);
-                    x[i, j] = tmp;
+                    x[i, j] = i + j;
                 }
             }
             var y = x.NewWithStorage2d((UIntPtr)0, 10, 5, 5, 1);
@@ -247,26 +250,84 @@ namespace Test
                 }
             }
         }
+
         [TestMethod]
         public void TestReshapeFloat2DPointToTheSameStorage()
         {
             var x = new FloatTensor(5, 10);
+
             for (int i = 0; i < x.Shape[0]; i++)
             {
                 for (int j = 0; j < x.Shape[1]; j++)
                 {
-                    float tmp = (float)(i + j);
+                    float tmp = i + j;
                     x[i, j] = tmp;
                 }
             }
+
             var y = x.NewWithStorage2d((UIntPtr)0, 10, 5, 5, 1);
+
             x[4, 9] = 0;
             y[3, 4] = 0;
+
             for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
                     Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshapeFloat3DPointToTheSameStorage()
+        {
+            var x = new FloatTensor(10, 10, 10);
+
+            x.Fill(1);
+
+            var y = x.NewWithStorage1d((UIntPtr)0, 1000, 1);
+
+            y[5] = 0;
+
+            int count = 0;
+
+            for (int i = 0; i < x.Shape[0]; i++)
+            {
+                for (int j = 0; j < x.Shape[1]; j++)
+                {
+                    for (int k = 0; k < x.Shape[2]; k++)
+                    {
+                        Assert.AreEqual(x[i, j, k], y[count++]);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestReshapeFloat4DPointToTheSameStorage()
+        {
+            var x = new FloatTensor(10, 10, 10, 5);
+
+            x.Fill(1);
+
+            var y = x.NewWithStorage1d((UIntPtr)0, 5000, 1);
+
+            y[567] = 0;
+
+            int count = 0;
+
+            for (int i = 0; i < x.Shape[0]; i++)
+            {
+                for (int j = 0; j < x.Shape[1]; j++)
+                {
+                    for (int k = 0; k < x.Shape[2]; k++)
+                    {
+                        for (int l = 0; l < x.Shape[3]; l++)
+                        {
+                            Assert.AreEqual(x[i, j, k, l], y[count++]);
+                        }
+                    }
                 }
             }
         }
