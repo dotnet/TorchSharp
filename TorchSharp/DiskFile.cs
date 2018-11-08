@@ -22,9 +22,15 @@ namespace Torch.IO {
         /// <param name="isQuiet"></param>
         public DiskFile(string name, string mode, bool isPipe = false, bool isQuiet = false)
         {
+            var binary = mode.IndexOf('b') != -1;
+            if (binary)
+            {
+                mode = mode.Replace("b","");
+            }
             this.handle = isPipe ?
                 THPipeFile_new(name, mode, isQuiet ? 1 : 0) :
                 THDiskFile_new(name, mode, isQuiet ? 1 : 0);
+            this.IsBinary = binary;
         }
 
         [DllImport("caffe2")]

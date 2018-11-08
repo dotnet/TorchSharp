@@ -54,7 +54,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THByteStorage_new_withSize (IntPtr size);
+            extern static HType THByteStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a ByteStorage instance with the specified size.
@@ -62,7 +62,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public ByteStorage (long size)
             {
-                handle = THByteStorage_new_withSize ((IntPtr) size);
+                handle = THByteStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -273,16 +273,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THByteTensor_numel (handle);
-        }   
-
+        public long NumElements => THByteTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THByteTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -3239,7 +3235,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THShortStorage_new_withSize (IntPtr size);
+            extern static HType THShortStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a ShortStorage instance with the specified size.
@@ -3247,7 +3243,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public ShortStorage (long size)
             {
-                handle = THShortStorage_new_withSize ((IntPtr) size);
+                handle = THShortStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -3458,16 +3454,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THShortTensor_numel (handle);
-        }   
-
+        public long NumElements => THShortTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THShortTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -6376,7 +6368,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THIntStorage_new_withSize (IntPtr size);
+            extern static HType THIntStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a IntStorage instance with the specified size.
@@ -6384,7 +6376,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public IntStorage (long size)
             {
-                handle = THIntStorage_new_withSize ((IntPtr) size);
+                handle = THIntStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -6595,16 +6587,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THIntTensor_numel (handle);
-        }   
-
+        public long NumElements => THIntTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THIntTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -9513,7 +9501,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THLongStorage_new_withSize (IntPtr size);
+            extern static HType THLongStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a LongStorage instance with the specified size.
@@ -9521,7 +9509,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public LongStorage (long size)
             {
-                handle = THLongStorage_new_withSize ((IntPtr) size);
+                handle = THLongStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -9732,16 +9720,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THLongTensor_numel (handle);
-        }   
-
+        public long NumElements => THLongTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THLongTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -12650,7 +12634,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THDoubleStorage_new_withSize (IntPtr size);
+            extern static HType THDoubleStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a DoubleStorage instance with the specified size.
@@ -12658,7 +12642,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public DoubleStorage (long size)
             {
-                handle = THDoubleStorage_new_withSize ((IntPtr) size);
+                handle = THDoubleStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -12869,16 +12853,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THDoubleTensor_numel (handle);
-        }   
-
+        public long NumElements => THDoubleTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -16709,7 +16689,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THFloatStorage_new_withSize (IntPtr size);
+            extern static HType THFloatStorage_newWithSize (IntPtr size);
             
             /// <summary>
             ///   Initializes a FloatStorage instance with the specified size.
@@ -16717,7 +16697,7 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public FloatStorage (long size)
             {
-                handle = THFloatStorage_new_withSize ((IntPtr) size);
+                handle = THFloatStorage_newWithSize ((IntPtr) size);
             }
             
             /// <summary>
@@ -16928,16 +16908,12 @@ namespace TorchSharp {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return THFloatTensor_numel (handle);
-        }   
-
+        public long NumElements => THFloatTensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void THFloatTensor_zero (HType handle);
      
-        /// <summary>
+        /// <summary>``
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()

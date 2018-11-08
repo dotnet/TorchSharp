@@ -84,6 +84,9 @@ namespace Torch.IO
         [DllImport("caffe2")]
         extern static int THFile_hasError(HType self);
         [DllImport("caffe2")]
+        extern static void THFile_synchronize(HType self);
+        
+        [DllImport("caffe2")]
         extern static void THFile_seek(HType self, long position);
         [DllImport("caffe2")]
         extern static void THFile_seekEnd(HType self);
@@ -147,6 +150,10 @@ namespace Torch.IO
         /// </summary>
         public long Position { get { return THFile_position(this.handle); } }
 
+        /// <summary>
+        ///   Flush everything to disk.
+        /// </summary>
+        public void Flush() { THFile_synchronize(this.handle); }
 
         [DllImport("caffe2")]
         extern static void THFile_close(HType self);

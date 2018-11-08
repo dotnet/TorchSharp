@@ -52,8 +52,8 @@ foreach (var type in new [] {
 		///   Read <#=accreal#>s from the file into the given storage.
 		/// </summary>
 		/// <param name="storage">A storage object to read data into.</param>
-		/// <returns>The number of bytes read.</returns>
-        public long Read<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
+		/// <returns>The number of <#=accreal#>s read.</returns>
+        public long Read<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
 		extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
@@ -62,8 +62,8 @@ foreach (var type in new [] {
 		///   Write <#=accreal#>s to the file from the given storage.
 		/// </summary>
 		/// <param name="storage">A storage object fetch data from.</param>
-		/// <returns>The number of bytes written.</returns>
-        public long Write<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+		/// <returns>The number of <#=accreal#>s written.</returns>
+        public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
 
 		[DllImport("caffe2")] 
 		extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
@@ -78,7 +78,7 @@ foreach (var type in new [] {
 		{
 			if (n > data.Length)
 				throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-			var dest = Marshal.AllocHGlobal(n);
+			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
 			var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
 			return readItems;
@@ -96,7 +96,7 @@ foreach (var type in new [] {
 		{
 			n = (n == -1) ? data.Length : Math.Min(n, data.Length);
 
-			var dest = Marshal.AllocHGlobal(n);
+			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);			
 			return wroteItems;
