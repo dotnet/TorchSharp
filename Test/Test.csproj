@@ -17,4 +17,19 @@
     <ProjectReference Include="..\SNT\SNT.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TorchTensorUnitTestGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TorchTensorUnitTestGenerator.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="TorchTensorUnitTestGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TorchTensorUnitTestGenerator.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
