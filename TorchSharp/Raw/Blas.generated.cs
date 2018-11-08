@@ -8,16 +8,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THByteBlas_swap(
             long n,
@@ -26,16 +22,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THByteBlas_scal(
             long n,
@@ -43,16 +35,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THByteBlas_copy(
             long n,
@@ -61,16 +49,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THByteBlas_axpy(
             long n,
@@ -80,16 +64,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static byte THByteBlas_dot(
             long n,
@@ -100,18 +80,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THByteBlas_gemv(
             byte trans,
@@ -126,17 +102,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THByteBlas_ger(
             long m,
@@ -151,18 +123,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THByteBlas_gemm(
             byte transa,
@@ -184,16 +152,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THShortBlas_swap(
             long n,
@@ -202,16 +166,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THShortBlas_scal(
             long n,
@@ -219,16 +179,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THShortBlas_copy(
             long n,
@@ -237,16 +193,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THShortBlas_axpy(
             long n,
@@ -256,16 +208,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static short THShortBlas_dot(
             long n,
@@ -276,18 +224,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THShortBlas_gemv(
             byte trans,
@@ -302,17 +246,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THShortBlas_ger(
             long m,
@@ -327,18 +267,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THShortBlas_gemm(
             byte transa,
@@ -360,16 +296,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THIntBlas_swap(
             long n,
@@ -378,16 +310,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THIntBlas_scal(
             long n,
@@ -395,16 +323,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THIntBlas_copy(
             long n,
@@ -413,16 +337,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THIntBlas_axpy(
             long n,
@@ -432,16 +352,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static int THIntBlas_dot(
             long n,
@@ -452,18 +368,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THIntBlas_gemv(
             byte trans,
@@ -478,17 +390,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THIntBlas_ger(
             long m,
@@ -503,18 +411,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THIntBlas_gemm(
             byte transa,
@@ -536,16 +440,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THLongBlas_swap(
             long n,
@@ -554,16 +454,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THLongBlas_scal(
             long n,
@@ -571,16 +467,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THLongBlas_copy(
             long n,
@@ -589,16 +481,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THLongBlas_axpy(
             long n,
@@ -608,16 +496,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static long THLongBlas_dot(
             long n,
@@ -628,18 +512,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THLongBlas_gemv(
             byte trans,
@@ -654,17 +534,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THLongBlas_ger(
             long m,
@@ -679,18 +555,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THLongBlas_gemm(
             byte transa,
@@ -712,16 +584,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_swap(
             long n,
@@ -730,16 +598,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_scal(
             long n,
@@ -747,16 +611,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_copy(
             long n,
@@ -765,16 +625,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_axpy(
             long n,
@@ -784,16 +640,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static double THDoubleBlas_dot(
             long n,
@@ -804,18 +656,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_gemv(
             byte trans,
@@ -830,17 +678,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_ger(
             long m,
@@ -855,18 +699,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_gemm(
             byte transa,
@@ -888,16 +728,12 @@ namespace TorchSharp {
 
         // *** Level 1
 
-        /// <summary>
-        /// Swap x and y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(swap)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Swap x and y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(swap)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_swap(
             long n,
@@ -906,16 +742,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>x = a*x</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(scal)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
-        /// </code>
-        /// </remarks>
+        // Evaluate x = a * x
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(scal)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_scal(
             long n,
@@ -923,16 +755,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ x,
             long incx);
 
-        /// <summary>
-        /// Copy x into y.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(copy)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Copy x into y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(copy)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_copy(
             long n,
@@ -941,16 +769,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate <c>y = a*x + y</c>.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(axpy)(
-        ///     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate y = a * x + y.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(axpy)(
+        //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_axpy(
             long n,
@@ -960,16 +784,12 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Evaluate the dot product.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API scalar_t THBlas_(dot)(
-        ///     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Evaluate the dot product.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API scalar_t THBlas_(dot)(
+        //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static float THFloatBlas_dot(
             long n,
@@ -980,18 +800,14 @@ namespace TorchSharp {
 
         // *** Level 2
 
-        /// <summary>
-        /// Matrix-vector multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemv)(
-        ///     char trans, int64_t m, int64_t n, scalar_t alpha,
-        ///     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
-        ///     scalar_t beta, scalar_t *y, int64_t incy);
-        /// </code>
-        /// </remarks>
+        // Matrix-vector multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemv)(
+        //     char trans, int64_t m, int64_t n, scalar_t alpha,
+        //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
+        //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_gemv(
             byte trans,
@@ -1006,17 +822,13 @@ namespace TorchSharp {
             IntPtr /* scalar_t* */ y,
             long incy);
 
-        /// <summary>
-        /// Rank 1 operation <c>A := alpha*x*y' + A</c>
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(ger)(
-        ///     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
-        ///     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
-        /// </code>
-        /// </remarks>
+        // Rank 1 operation A := alpha * x * y' + A
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(ger)(
+        //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
+        //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_ger(
             long m,
@@ -1031,18 +843,14 @@ namespace TorchSharp {
 
         // *** Level 3
 
-        /// <summary>
-        /// Matrix-matrix multiplication.
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the following TH declaration:
-        /// <code>
-        /// TH_API void THBlas_(gemm)(
-        ///     char transa, char transb, int64_t m, int64_t n, int64_t k,
-        ///     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
-        ///     scalar_t beta, scalar_t *c, int64_t ldc);
-        /// </code>
-        /// </remarks>
+        // Matrix-matrix multiplication.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THBlas_(gemm)(
+        //     char transa, char transb, int64_t m, int64_t n, int64_t k,
+        //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
+        //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
         extern static void THFloatBlas_gemm(
             byte transa,
