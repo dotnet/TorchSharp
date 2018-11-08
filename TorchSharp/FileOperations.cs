@@ -64,6 +64,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(byte));
 			var readItems = THFile_readByteRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -82,6 +83,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(byte));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeByteRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
         [DllImport("caffe2")] 
@@ -138,6 +140,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(short));
 			var readItems = THFile_readShortRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -156,6 +159,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(short));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeShortRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
         [DllImport("caffe2")] 
@@ -212,6 +216,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(int));
 			var readItems = THFile_readIntRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -230,6 +235,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(int));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeIntRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
         [DllImport("caffe2")] 
@@ -286,6 +292,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(long));
 			var readItems = THFile_readLongRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -304,6 +311,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(long));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeLongRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
         [DllImport("caffe2")] 
@@ -360,6 +368,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(float));
 			var readItems = THFile_readFloatRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -378,6 +387,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(float));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeFloatRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
         [DllImport("caffe2")] 
@@ -434,6 +444,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(double));
 			var readItems = THFile_readDoubleRaw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -452,6 +463,7 @@ namespace Torch.IO {
 			var dest = Marshal.AllocHGlobal(n*sizeof(double));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_writeDoubleRaw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
 	}

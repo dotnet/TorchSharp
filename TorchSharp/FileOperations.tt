@@ -81,6 +81,7 @@ foreach (var type in new [] {
 			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
 			var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);			
 			Marshal.Copy(dest, data, 0, (int)readItems);
+			Marshal.FreeHGlobal(dest);
 			return readItems;
 		}
 
@@ -99,6 +100,7 @@ foreach (var type in new [] {
 			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
 			Marshal.Copy(data, 0, dest, n);
 			var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);			
+			Marshal.FreeHGlobal(dest);
 			return wroteItems;
 		}
 <# } /* foreach */ #>
