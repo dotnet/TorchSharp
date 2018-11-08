@@ -5,10 +5,16 @@
         public readonly string Storage;
         public readonly string Acc;
 
-        public TorchTypeDef(string name, string storage, string acc) {
+        public readonly bool IsInt;
+        public readonly bool IsFloat;
+
+        private TorchTypeDef(string name, string storage, string acc) {
             this.Name = name;
             this.Storage = storage;
             this.Acc = acc;
+
+            this.IsInt = name == "Short" || name == "Int" || name == "Long";
+            this.IsFloat = name == "Float" || name == "Double";
         }
 
         public static readonly TorchTypeDef[] Types = {
