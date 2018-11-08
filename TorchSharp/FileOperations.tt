@@ -13,8 +13,8 @@ using TorchSharp;
 
 namespace Torch.IO {
 
-	public abstract partial class File : IDisposable
-	{
+    public abstract partial class File : IDisposable
+    {
 <#
 foreach (var type in new [] { 
     new { ApiName = "Byte", AccReal="byte" }, 
@@ -28,62 +28,62 @@ foreach (var type in new [] {
         string accreal = type.AccReal;
 #>
         [DllImport("caffe2")] 
-		extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
+        extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
 
-		/// <summary>
-		///   Read one <#=accreal#> from the file.
-		/// </summary>
-		/// <returns>A <#=accreal#> read from the current file position.</returns>
+        /// <summary>
+        ///   Read one <#=accreal#> from the file.
+        /// </summary>
+        /// <returns>A <#=accreal#> read from the current file position.</returns>
         public <#=accreal#> Read<#=tname#>() { return THFile_read<#=tname#>Scalar(this.handle); }
 
         [DllImport("caffe2")] 
-		extern static void THFile_write<#=tname#>Scalar(HType self, <#=accreal#> scalar);
+        extern static void THFile_write<#=tname#>Scalar(HType self, <#=accreal#> scalar);
 
-		/// <summary>
-		///   Write one <#=accreal#> to the file.
-		/// </summary>
-		/// <param name="value">A <#=accreal#> to write at the current file position.</param>
+        /// <summary>
+        ///   Write one <#=accreal#> to the file.
+        /// </summary>
+        /// <param name="value">A <#=accreal#> to write at the current file position.</param>
         public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(this.handle, value); }
 
         [DllImport("caffe2")] 
-		extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+        extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
-		/// <summary>
-		///   Read <#=accreal#>s from the file into the given storage.
-		/// </summary>
-		/// <param name="storage">A storage object to read data into.</param>
-		/// <returns>The number of <#=accreal#>s read.</returns>
+        /// <summary>
+        ///   Read <#=accreal#>s from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of <#=accreal#>s read.</returns>
         public long Read<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
-		extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+        extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
-		/// <summary>
-		///   Write <#=accreal#>s to the file from the given storage.
-		/// </summary>
-		/// <param name="storage">A storage object fetch data from.</param>
-		/// <returns>The number of <#=accreal#>s written.</returns>
+        /// <summary>
+        ///   Write <#=accreal#>s to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
-		
-		/// <summary>
-		///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
-		/// </summary>
-		/// <param name="data">An array to place the data in after reading it from the file.</param>
-		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
-		/// <returns>The number of <#=accreal#>s read.</returns>
-		public long Read<#=tname#>s(<#=accreal#>[] data, int n)
-		{
-			if (n > data.Length)
-				throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
-			var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);			
-			Marshal.Copy(dest, data, 0, (int)readItems);
-			Marshal.FreeHGlobal(dest);
-			return readItems;
-		}
+        [DllImport("caffe2")] 
+        extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+        /// <returns>The number of <#=accreal#>s read.</returns>
+        public long Read<#=tname#>s(<#=accreal#>[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
+            var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);            
+            Marshal.Copy(dest, data, 0, (int)readItems);
+            Marshal.FreeHGlobal(dest);
+            return readItems;
+        }
 
 		/// <summary>
 		///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
@@ -99,14 +99,14 @@ foreach (var type in new [] {
 		[DllImport("caffe2")] 
 		extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
 
-		/// <summary>
-		///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
-		/// </summary>
-		/// <param name="data">An array containing data to be written to the file.</param>
-		/// <returns>The number of <#=accreal#>s written.</returns>
-		public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
-		{
-			n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+        /// <summary>
+        ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <returns>The number of <#=accreal#>s written.</returns>
+        public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
 
 			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
 			Marshal.Copy(data, 0, dest, n);
@@ -125,5 +125,5 @@ foreach (var type in new [] {
 			return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
 		}
 <# } /* foreach */ #>
-	}
+    }
 }

@@ -73,40 +73,17 @@ namespace Torch.IO
 
         [DllImport("caffe2")]
         extern static int THFile_isOpened(HType self);
-        [DllImport("caffe2")]
-        extern static int THFile_isReadable(HType self);
-        [DllImport("caffe2")]
-        extern static int THFile_isWritable(HType self);
-[       DllImport("caffe2")]
-        extern static int THFile_isBinary(HType self);
-        [DllImport("caffe2")]
-        extern static int THFile_isAutoSpacing(HType self);
-        [DllImport("caffe2")]
-        extern static int THFile_hasError(HType self);
-        [DllImport("caffe2")]
-        extern static void THFile_synchronize(HType self);
-        
-        [DllImport("caffe2")]
-        extern static void THFile_seek(HType self, long position);
-        [DllImport("caffe2")]
-        extern static void THFile_seekEnd(HType self);
-
-        [DllImport("caffe2")]
-        extern static void THFile_binary(HType self);
-        [DllImport("caffe2")]
-        extern static void THFile_ascii(HType self);
-        [DllImport("caffe2")]
-        extern static void THFile_autoSpacing(HType self);
-        [DllImport("caffe2")]
-        extern static void THFile_noAutoSpacing(HType self);
-
-        [DllImport("caffe2")]
-        extern static long THFile_position(HType self);
 
         /// <summary>
         ///   The open status of the file.
         /// </summary>
         public bool IsOpen { get { return 0 != THFile_isOpened(this.handle); } }
+
+[       DllImport("caffe2")]
+        extern static int THFile_isBinary(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_binary(HType self);
 
         /// <summary>
         ///   Set/get the binary file mode.
@@ -116,6 +93,9 @@ namespace Torch.IO
             set { if (value) { THFile_binary(this.handle); } else { THFile_ascii(this.handle); }} 
         }
 
+        [DllImport("caffe2")]
+        extern static void THFile_ascii(HType self);
+
         /// <summary>
         ///   Set/get the text file mode.
         /// </summary>
@@ -124,15 +104,24 @@ namespace Torch.IO
             set { if (value) { THFile_ascii(this.handle); } else { THFile_binary(this.handle); }} 
         }
         
+        [DllImport("caffe2")]
+        extern static int THFile_isReadable(HType self);
+        
         /// <summary>
         ///   The readability status of the file.
         /// </summary>
         public bool CanRead { get { return 0 != THFile_isReadable(this.handle); } }
 
+        [DllImport("caffe2")]
+        extern static int THFile_isWritable(HType self);
+
         /// <summary>
         ///   The writability status of the file.
         /// </summary>
         public bool CanWrite { get { return 0 != THFile_isWritable(this.handle); } }
+
+        [DllImport("caffe2")]
+        extern static void THFile_seek(HType self, long position);
 
         /// <summary>
         ///   Seek to the given position, counted from the beginning of the file.
@@ -140,15 +129,24 @@ namespace Torch.IO
         /// <param name="position"></param>
         public void Seek(long position) { THFile_seek(this.handle, position); }
 
+        [DllImport("caffe2")]
+        extern static void THFile_seekEnd(HType self);
+
         /// <summary>
         ///   Seek to the last position of the file. 
         /// </summary>
         public void SeekEnd() { THFile_seekEnd(this.handle); }
 
+        [DllImport("caffe2")]
+        extern static long THFile_position(HType self);
+
         /// <summary>
         ///   The current file position.
         /// </summary>
         public long Position { get { return THFile_position(this.handle); } }
+
+        [DllImport("caffe2")]
+        extern static void THFile_synchronize(HType self);       
 
         /// <summary>
         ///   Flush everything to disk.
@@ -162,6 +160,5 @@ namespace Torch.IO
         ///   Close the file.
         /// </summary>
         public void Close() { THFile_close(this.handle); }
-
     }
 }
