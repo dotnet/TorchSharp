@@ -25,6 +25,29 @@ namespace Test
         }
 
         [TestMethod]
+        public void GetFloatTensorData()
+        {
+            const int size = 10;
+            var storage0 = new TorchSharp.FloatTensor.FloatStorage(2*size);
+            
+            var x1 = new FloatTensor(size);
+            var x2 = FloatTensor.NewWithStorage1d(storage0,IntPtr.Zero,size,1);      
+            var x3 = x2.NewWithStorage1d((IntPtr)size,size,1);      
+
+            Assert.AreNotEqual(IntPtr.Zero,x1.Data);
+            Assert.AreNotEqual(IntPtr.Zero,x2.Data);
+            Assert.AreNotEqual(IntPtr.Zero,x3.Data);
+
+            Assert.AreNotEqual(IntPtr.Zero,x1.Storage);
+            Assert.AreNotEqual(IntPtr.Zero,x2.Storage);
+            Assert.AreNotEqual(IntPtr.Zero,x3.Storage);
+
+            Assert.AreNotEqual(storage0,x1.Storage);
+            Assert.AreEqual(storage0,x2.Storage);
+            Assert.AreEqual(storage0,x3.Storage);
+        }
+
+        [TestMethod]
         public void ReshapeFloatTensor()
         {
             var x2 = new FloatTensor (200);
