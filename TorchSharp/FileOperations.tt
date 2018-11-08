@@ -85,6 +85,17 @@ foreach (var type in new [] {
 			return readItems;
 		}
 
+		/// <summary>
+		///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
+		/// </summary>
+		/// <param name="data">An array to place the data in after reading it from the file.</param>
+		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+		/// <returns>The number of <#=accreal#>s read.</returns>
+		public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
+		{
+			return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+		}
+
 		[DllImport("caffe2")] 
 		extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
 
@@ -102,6 +113,16 @@ foreach (var type in new [] {
 			var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);			
 			Marshal.FreeHGlobal(dest);
 			return wroteItems;
+		}
+
+		/// <summary>
+		///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
+		/// </summary>
+		/// <param name="data">An array containing data to be written to the file.</param>
+		/// <returns>The number of <#=accreal#>s written.</returns>
+		public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
+		{
+			return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
 		}
 <# } /* foreach */ #>
 	}
