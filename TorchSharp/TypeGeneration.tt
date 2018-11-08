@@ -501,7 +501,7 @@ foreach (var type in new [] {
         public <#=tname#>Tensor Unfold (int dim, long size, long step) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType TH<#=tname#>Tensor_newWithStorage1d(<#=tname#>Storage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType TH<#=tname#>Tensor_newWithStorage1d(<#=tname#>Storage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -509,13 +509,13 @@ foreach (var type in new [] {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public <#=tname#>Tensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public <#=tname#>Tensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType TH<#=tname#>Tensor_newWithStorage2d(<#=tname#>Storage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType TH<#=tname#>Tensor_newWithStorage2d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -525,13 +525,13 @@ foreach (var type in new [] {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public <#=tname#>Tensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public <#=tname#>Tensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType TH<#=tname#>Tensor_newWithStorage3d(<#=tname#>Storage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType TH<#=tname#>Tensor_newWithStorage3d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -543,13 +543,13 @@ foreach (var type in new [] {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public <#=tname#>Tensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public <#=tname#>Tensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType TH<#=tname#>Tensor_newWithStorage4d(<#=tname#>Storage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType TH<#=tname#>Tensor_newWithStorage4d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -563,7 +563,7 @@ foreach (var type in new [] {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public <#=tname#>Tensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public <#=tname#>Tensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }

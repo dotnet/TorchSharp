@@ -479,7 +479,7 @@ namespace TorchSharp {
         public ByteTensor Unfold (int dim, long size, long step) => new ByteTensor (THByteTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THByteTensor_newWithStorage1d(ByteStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THByteTensor_newWithStorage1d(ByteStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -487,13 +487,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public ByteTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public ByteTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new ByteTensor(THByteTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THByteTensor_newWithStorage2d(ByteStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THByteTensor_newWithStorage2d(ByteStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -503,13 +503,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public ByteTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public ByteTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new ByteTensor(THByteTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THByteTensor_newWithStorage3d(ByteStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THByteTensor_newWithStorage3d(ByteStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -521,13 +521,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public ByteTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public ByteTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new ByteTensor(THByteTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THByteTensor_newWithStorage4d(ByteStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THByteTensor_newWithStorage4d(ByteStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -541,7 +541,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public ByteTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public ByteTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new ByteTensor(THByteTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
@@ -3660,7 +3660,7 @@ namespace TorchSharp {
         public ShortTensor Unfold (int dim, long size, long step) => new ShortTensor (THShortTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THShortTensor_newWithStorage1d(ShortStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THShortTensor_newWithStorage1d(ShortStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -3668,13 +3668,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public ShortTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public ShortTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new ShortTensor(THShortTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THShortTensor_newWithStorage2d(ShortStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THShortTensor_newWithStorage2d(ShortStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -3684,13 +3684,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public ShortTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public ShortTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new ShortTensor(THShortTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THShortTensor_newWithStorage3d(ShortStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THShortTensor_newWithStorage3d(ShortStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -3702,13 +3702,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public ShortTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public ShortTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new ShortTensor(THShortTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THShortTensor_newWithStorage4d(ShortStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THShortTensor_newWithStorage4d(ShortStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -3722,7 +3722,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public ShortTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public ShortTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new ShortTensor(THShortTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
@@ -6793,7 +6793,7 @@ namespace TorchSharp {
         public IntTensor Unfold (int dim, long size, long step) => new IntTensor (THIntTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THIntTensor_newWithStorage1d(IntStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THIntTensor_newWithStorage1d(IntStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -6801,13 +6801,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public IntTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public IntTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new IntTensor(THIntTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THIntTensor_newWithStorage2d(IntStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THIntTensor_newWithStorage2d(IntStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -6817,13 +6817,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public IntTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public IntTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new IntTensor(THIntTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THIntTensor_newWithStorage3d(IntStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THIntTensor_newWithStorage3d(IntStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -6835,13 +6835,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public IntTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public IntTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new IntTensor(THIntTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THIntTensor_newWithStorage4d(IntStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THIntTensor_newWithStorage4d(IntStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -6855,7 +6855,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public IntTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public IntTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new IntTensor(THIntTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
@@ -9926,7 +9926,7 @@ namespace TorchSharp {
         public LongTensor Unfold (int dim, long size, long step) => new LongTensor (THLongTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THLongTensor_newWithStorage1d(LongStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THLongTensor_newWithStorage1d(LongStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -9934,13 +9934,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public LongTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public LongTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new LongTensor(THLongTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THLongTensor_newWithStorage2d(LongStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THLongTensor_newWithStorage2d(LongStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -9950,13 +9950,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public LongTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public LongTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new LongTensor(THLongTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THLongTensor_newWithStorage3d(LongStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THLongTensor_newWithStorage3d(LongStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -9968,13 +9968,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public LongTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public LongTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new LongTensor(THLongTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THLongTensor_newWithStorage4d(LongStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THLongTensor_newWithStorage4d(LongStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -9988,7 +9988,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public LongTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public LongTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new LongTensor(THLongTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
@@ -13059,7 +13059,7 @@ namespace TorchSharp {
         public DoubleTensor Unfold (int dim, long size, long step) => new DoubleTensor (THDoubleTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THDoubleTensor_newWithStorage1d(DoubleStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THDoubleTensor_newWithStorage1d(DoubleStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -13067,13 +13067,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public DoubleTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public DoubleTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new DoubleTensor(THDoubleTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THDoubleTensor_newWithStorage2d(DoubleStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THDoubleTensor_newWithStorage2d(DoubleStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -13083,13 +13083,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public DoubleTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public DoubleTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new DoubleTensor(THDoubleTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THDoubleTensor_newWithStorage3d(DoubleStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THDoubleTensor_newWithStorage3d(DoubleStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -13101,13 +13101,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public DoubleTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public DoubleTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new DoubleTensor(THDoubleTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THDoubleTensor_newWithStorage4d(DoubleStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THDoubleTensor_newWithStorage4d(DoubleStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -13121,7 +13121,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public DoubleTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public DoubleTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new DoubleTensor(THDoubleTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
@@ -17114,7 +17114,7 @@ namespace TorchSharp {
         public FloatTensor Unfold (int dim, long size, long step) => new FloatTensor (THFloatTensor_newUnfold (handle, dim, size, step));
         
         [DllImport("caffe2")]
-        extern static HType THFloatTensor_newWithStorage1d(FloatStorage.HType handle, IntPtr offset, long size, long stride);
+        extern static HType THFloatTensor_newWithStorage1d(FloatStorage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -17122,13 +17122,13 @@ namespace TorchSharp {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size">Size of the first dimension.</param>     
         /// <param name="stride">Stride of the first dimension.</param>          
-        public FloatTensor NewWithStorage1d(IntPtr offset, long size, long stride)
+        public FloatTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return new FloatTensor(THFloatTensor_newWithStorage1d(Storage.handle, offset, size, stride));
         }
 
         [DllImport("caffe2")]
-        extern static HType THFloatTensor_newWithStorage2d(FloatStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1);
+        extern static HType THFloatTensor_newWithStorage2d(FloatStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -17138,13 +17138,13 @@ namespace TorchSharp {
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>     
         /// <param name="stride1">Stride of the second dimension.</param>
-        public FloatTensor NewWithStorage2d(IntPtr offset, long size0, long stride0, long size1, long stride1)
+        public FloatTensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             return new FloatTensor(THFloatTensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
         }
 
         [DllImport("caffe2")]
-        extern static HType THFloatTensor_newWithStorage3d(FloatStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
+        extern static HType THFloatTensor_newWithStorage3d(FloatStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -17156,13 +17156,13 @@ namespace TorchSharp {
         /// <param name="stride1">Stride of the second dimension.</param>
         /// <param name="size2">Size of the third dimension.</param>     
         /// <param name="stride2">Stride of the third dimension.</param>
-        public FloatTensor NewWithStorage3d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        public FloatTensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             return new FloatTensor(THFloatTensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
         }
 
         [DllImport("caffe2")]
-        extern static HType THFloatTensor_newWithStorage4d(FloatStorage.HType handle, IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
+        extern static HType THFloatTensor_newWithStorage4d(FloatStorage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
@@ -17176,7 +17176,7 @@ namespace TorchSharp {
         /// <param name="stride2">Stride of the third dimension.</param>
         /// <param name="size3">Size of the fourth dimension.</param>     
         /// <param name="stride3">Stride of the fourth dimension.</param>
-        public FloatTensor NewWithStorage4d(IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        public FloatTensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             return new FloatTensor(THFloatTensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
         }
