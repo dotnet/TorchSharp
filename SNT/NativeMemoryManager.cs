@@ -49,7 +49,13 @@ namespace Torch.SNT
         /// Returns a span wrapping the underlying memory.
         /// Remember to Unpin the memory once the span is disposed.
         /// </summary>
-        public unsafe override Span<T> GetSpan() => new Span<T>(memory.ToPointer(), length);
+        public override Span<T> GetSpan()
+        {
+            unsafe
+            {
+                return new Span<T>(memory.ToPointer(), length);
+            }
+        }
 
         /// <summary>
         /// Returns a handle to the memory that has been pinned and hence its address can be taken.
