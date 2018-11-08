@@ -207,14 +207,14 @@ foreach (var type in new [] {
             handle = TH<#=tname#>Tensor_new ();
         }
 
-		[DllImport ("caffe2")]
+        [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
 
         /// <summary>
         ///    Creates a 1D tensor of the specified size.
         /// </summary>    
         /// <param name="size0">Size for the first dimension.</param>
-         public <#=tname#>Tensor (long size0)
+        public <#=tname#>Tensor (long size0)
         {
             handle = TH<#=tname#>Tensor_newWithSize1d (size0);
         }
@@ -269,23 +269,23 @@ foreach (var type in new [] {
         {
             switch (dims.Length)
             {
-	            case 0:
-		            handle = TH<#=tname#>Tensor_new ();
+                case 0:
+                    handle = TH<#=tname#>Tensor_new ();
                     break;
-	            case 1: 
-		            handle = TH<#=tname#>Tensor_newWithSize1d (dims[0]);
+                case 1: 
+                    handle = TH<#=tname#>Tensor_newWithSize1d (dims[0]);
                     break;
-	            case 2: 
-		            handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
+                case 2: 
+                    handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
 		            break;
-	            case 3: 
-		            handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
+                case 3: 
+                    handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
 		            break;
-	            case 4: 
-		            handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+                case 4: 
+                    handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
-	            default:
-		            throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
         }
         

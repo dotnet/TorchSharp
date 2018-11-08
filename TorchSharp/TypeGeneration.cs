@@ -169,6 +169,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal ByteTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THByteTensor_new ();
         
@@ -178,11 +183,6 @@ namespace TorchSharp {
         public ByteTensor ()
         {
             handle = THByteTensor_new ();
-        }
-
-        internal ByteTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -237,6 +237,34 @@ namespace TorchSharp {
         public ByteTensor (long size0, long size1, long size2, long size3)
         {
             handle = THByteTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public ByteTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THByteTensor_new ();
+                    break;
+                case 1: 
+                    handle = THByteTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -400,7 +428,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -3350,6 +3378,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal ShortTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THShortTensor_new ();
         
@@ -3359,11 +3392,6 @@ namespace TorchSharp {
         public ShortTensor ()
         {
             handle = THShortTensor_new ();
-        }
-
-        internal ShortTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -3418,6 +3446,34 @@ namespace TorchSharp {
         public ShortTensor (long size0, long size1, long size2, long size3)
         {
             handle = THShortTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public ShortTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THShortTensor_new ();
+                    break;
+                case 1: 
+                    handle = THShortTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -3581,7 +3637,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -6483,6 +6539,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal IntTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THIntTensor_new ();
         
@@ -6492,11 +6553,6 @@ namespace TorchSharp {
         public IntTensor ()
         {
             handle = THIntTensor_new ();
-        }
-
-        internal IntTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -6551,6 +6607,34 @@ namespace TorchSharp {
         public IntTensor (long size0, long size1, long size2, long size3)
         {
             handle = THIntTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public IntTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THIntTensor_new ();
+                    break;
+                case 1: 
+                    handle = THIntTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -6714,7 +6798,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -9616,6 +9700,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal LongTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THLongTensor_new ();
         
@@ -9625,11 +9714,6 @@ namespace TorchSharp {
         public LongTensor ()
         {
             handle = THLongTensor_new ();
-        }
-
-        internal LongTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -9684,6 +9768,34 @@ namespace TorchSharp {
         public LongTensor (long size0, long size1, long size2, long size3)
         {
             handle = THLongTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public LongTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THLongTensor_new ();
+                    break;
+                case 1: 
+                    handle = THLongTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -9847,7 +9959,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -12749,6 +12861,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal DoubleTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_new ();
         
@@ -12758,11 +12875,6 @@ namespace TorchSharp {
         public DoubleTensor ()
         {
             handle = THDoubleTensor_new ();
-        }
-
-        internal DoubleTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -12817,6 +12929,34 @@ namespace TorchSharp {
         public DoubleTensor (long size0, long size1, long size2, long size3)
         {
             handle = THDoubleTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public DoubleTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THDoubleTensor_new ();
+                    break;
+                case 1: 
+                    handle = THDoubleTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -12980,7 +13120,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -16804,6 +16944,11 @@ namespace TorchSharp {
         }
         internal HType handle;
         
+        internal FloatTensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_new ();
         
@@ -16813,11 +16958,6 @@ namespace TorchSharp {
         public FloatTensor ()
         {
             handle = THFloatTensor_new ();
-        }
-
-        internal FloatTensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -16872,6 +17012,34 @@ namespace TorchSharp {
         public FloatTensor (long size0, long size1, long size2, long size3)
         {
             handle = THFloatTensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public FloatTensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = THFloatTensor_new ();
+                    break;
+                case 1: 
+                    handle = THFloatTensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -17035,7 +17203,7 @@ namespace TorchSharp {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
