@@ -1,17 +1,26 @@
 ﻿<#+
-    public struct TorchTypeDef {
+    public class TorchTypeDef {
 
-        public string ApiName;
-        public string Storage;
-        public string AccReal;
+        public readonly string Name;
+        public readonly string Storage;
+        public readonly string Acc;
+
+        public TorchTypeDef(string name, string storage, string acc) {
+            this.Name = name;
+            this.Storage = storage;
+            this.Acc = acc;
+        }
 
         public static readonly TorchTypeDef[] Types = {
-            new TorchTypeDef { ApiName = "Byte",   Storage = "byte",   AccReal = "long"   },
-            new TorchTypeDef { ApiName = "Short",  Storage = "short",  AccReal = "long"   },
-            new TorchTypeDef { ApiName = "Int",    Storage = "int",    AccReal = "long"   },
-            new TorchTypeDef { ApiName = "Long",   Storage = "long",   AccReal = "long"   },
-            new TorchTypeDef { ApiName = "Double", Storage = "double", AccReal = "double" },
-            new TorchTypeDef { ApiName = "Float",  Storage = "float",  AccReal = "double" },
+            new TorchTypeDef("Byte",   "byte",   "long"  ),
+            new TorchTypeDef("Short",  "short",  "long"  ),
+            new TorchTypeDef("Int",    "int",    "long"  ),
+            new TorchTypeDef("Long",   "long",   "long"  ),
+            new TorchTypeDef("Double", "double", "double"),
+            new TorchTypeDef("Float",  "float",  "double"),
         };
+
+        public readonly string Ptr = "IntPtr /* scalar_t* */"; // "HType";
+        public readonly string PtrDiff = "int /* ptrdiff_t */";
     }
 #>

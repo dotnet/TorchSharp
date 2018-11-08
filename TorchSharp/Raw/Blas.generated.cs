@@ -21,9 +21,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THByteBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace TorchSharp {
         extern static void THByteBlas_scal(
             long n,
             byte a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THByteBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -75,9 +75,9 @@ namespace TorchSharp {
         extern static void THByteBlas_axpy(
             long n,
             byte a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static byte THByteBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -118,12 +118,12 @@ namespace TorchSharp {
             long m,
             long n,
             byte alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             byte beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -142,11 +142,11 @@ namespace TorchSharp {
             long m,
             long n,
             byte alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -171,12 +171,12 @@ namespace TorchSharp {
             long n,
             long k,
             byte alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             byte beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class ByteTensor
 
@@ -197,9 +197,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THShortBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace TorchSharp {
         extern static void THShortBlas_scal(
             long n,
             short a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -232,9 +232,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THShortBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -251,9 +251,9 @@ namespace TorchSharp {
         extern static void THShortBlas_axpy(
             long n,
             short a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -269,9 +269,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static short THShortBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -294,12 +294,12 @@ namespace TorchSharp {
             long m,
             long n,
             short alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             short beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -318,11 +318,11 @@ namespace TorchSharp {
             long m,
             long n,
             short alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -347,12 +347,12 @@ namespace TorchSharp {
             long n,
             long k,
             short alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             short beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class ShortTensor
 
@@ -373,9 +373,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THIntBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace TorchSharp {
         extern static void THIntBlas_scal(
             long n,
             int a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -408,9 +408,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THIntBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -427,9 +427,9 @@ namespace TorchSharp {
         extern static void THIntBlas_axpy(
             long n,
             int a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -445,9 +445,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static int THIntBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -470,12 +470,12 @@ namespace TorchSharp {
             long m,
             long n,
             int alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             int beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -494,11 +494,11 @@ namespace TorchSharp {
             long m,
             long n,
             int alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -523,12 +523,12 @@ namespace TorchSharp {
             long n,
             long k,
             int alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             int beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class IntTensor
 
@@ -549,9 +549,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THLongBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -568,7 +568,7 @@ namespace TorchSharp {
         extern static void THLongBlas_scal(
             long n,
             long a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -584,9 +584,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THLongBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -603,9 +603,9 @@ namespace TorchSharp {
         extern static void THLongBlas_axpy(
             long n,
             long a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -621,9 +621,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static long THLongBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -646,12 +646,12 @@ namespace TorchSharp {
             long m,
             long n,
             long alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             long beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -670,11 +670,11 @@ namespace TorchSharp {
             long m,
             long n,
             long alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -699,12 +699,12 @@ namespace TorchSharp {
             long n,
             long k,
             long alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             long beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class LongTensor
 
@@ -725,9 +725,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -744,7 +744,7 @@ namespace TorchSharp {
         extern static void THDoubleBlas_scal(
             long n,
             double a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -760,9 +760,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THDoubleBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -779,9 +779,9 @@ namespace TorchSharp {
         extern static void THDoubleBlas_axpy(
             long n,
             double a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -797,9 +797,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static double THDoubleBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -822,12 +822,12 @@ namespace TorchSharp {
             long m,
             long n,
             double alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             double beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -846,11 +846,11 @@ namespace TorchSharp {
             long m,
             long n,
             double alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -875,12 +875,12 @@ namespace TorchSharp {
             long n,
             long k,
             double alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             double beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class DoubleTensor
 
@@ -901,9 +901,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THFloatBlas_swap(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -920,7 +920,7 @@ namespace TorchSharp {
         extern static void THFloatBlas_scal(
             long n,
             float a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx);
 
         /// <summary>
@@ -936,9 +936,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THFloatBlas_copy(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -955,9 +955,9 @@ namespace TorchSharp {
         extern static void THFloatBlas_axpy(
             long n,
             float a,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -973,9 +973,9 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static float THFloatBlas_dot(
             long n,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         // *** Level 2
@@ -998,12 +998,12 @@ namespace TorchSharp {
             long m,
             long n,
             float alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
             float beta,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy);
 
         /// <summary>
@@ -1022,11 +1022,11 @@ namespace TorchSharp {
             long m,
             long n,
             float alpha,
-            IntPtr x,
+            IntPtr /* scalar_t* */ x,
             long incx,
-            IntPtr y,
+            IntPtr /* scalar_t* */ y,
             long incy,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda);
 
         // *** Level 3
@@ -1051,12 +1051,12 @@ namespace TorchSharp {
             long n,
             long k,
             float alpha,
-            IntPtr a,
+            IntPtr /* scalar_t* */ a,
             long lda,
-            IntPtr b,
+            IntPtr /* scalar_t* */ b,
             long ldb,
             float beta,
-            IntPtr c,
+            IntPtr /* scalar_t* */ c,
             long ldc);
     } // class FloatTensor
 } // namespace TorchSharp

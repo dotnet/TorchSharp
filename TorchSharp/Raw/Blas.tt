@@ -9,13 +9,9 @@ using System.Runtime.InteropServices;
 namespace TorchSharp {
 <#
 foreach (var type in TorchTypeDef.Types) {
-
-    string tName = type.ApiName;
-    string tType = type.Storage;
-    string tTypePtr = "IntPtr"; // "HType";
 #>
 
-    public partial class <#=tName#>Tensor : IDisposable {
+    public partial class <#=type.Name#>Tensor : IDisposable {
 
         // *** Level 1
 
@@ -30,11 +26,11 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_swap(
+        extern static void TH<#=type.Name#>Blas_swap(
             long n,
-            <#=tTypePtr#> x,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tTypePtr#> y,
+            <#=type.Ptr#> y,
             long incy);
 
         /// <summary>
@@ -48,10 +44,10 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_scal(
+        extern static void TH<#=type.Name#>Blas_scal(
             long n,
-            <#=tType#> a,
-            <#=tTypePtr#> x,
+            <#=type.Storage#> a,
+            <#=type.Ptr#> x,
             long incx);
 
         /// <summary>
@@ -65,11 +61,11 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_copy(
+        extern static void TH<#=type.Name#>Blas_copy(
             long n,
-            <#=tTypePtr#> x,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tTypePtr#> y,
+            <#=type.Ptr#> y,
             long incy);
 
         /// <summary>
@@ -83,12 +79,12 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_axpy(
+        extern static void TH<#=type.Name#>Blas_axpy(
             long n,
-            <#=tType#> a,
-            <#=tTypePtr#> x,
+            <#=type.Storage#> a,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tTypePtr#> y,
+            <#=type.Ptr#> y,
             long incy);
 
         /// <summary>
@@ -102,11 +98,11 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static <#=tType#> TH<#=tName#>Blas_dot(
+        extern static <#=type.Storage#> TH<#=type.Name#>Blas_dot(
             long n,
-            <#=tTypePtr#> x,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tTypePtr#> y,
+            <#=type.Ptr#> y,
             long incy);
 
         // *** Level 2
@@ -124,17 +120,17 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_gemv(
+        extern static void TH<#=type.Name#>Blas_gemv(
             byte trans,
             long m,
             long n,
-            <#=tType#> alpha,
-            <#=tTypePtr#> a,
+            <#=type.Storage#> alpha,
+            <#=type.Ptr#> a,
             long lda,
-            <#=tTypePtr#> x,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tType#> beta,
-            <#=tTypePtr#> y,
+            <#=type.Storage#> beta,
+            <#=type.Ptr#> y,
             long incy);
 
         /// <summary>
@@ -149,15 +145,15 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_ger(
+        extern static void TH<#=type.Name#>Blas_ger(
             long m,
             long n,
-            <#=tType#> alpha,
-            <#=tTypePtr#> x,
+            <#=type.Storage#> alpha,
+            <#=type.Ptr#> x,
             long incx,
-            <#=tTypePtr#> y,
+            <#=type.Ptr#> y,
             long incy,
-            <#=tTypePtr#> a,
+            <#=type.Ptr#> a,
             long lda);
 
         // *** Level 3
@@ -175,20 +171,20 @@ foreach (var type in TorchTypeDef.Types) {
         /// </code>
         /// </remarks>
         [DllImport ("caffe2")]
-        extern static void TH<#=tName#>Blas_gemm(
+        extern static void TH<#=type.Name#>Blas_gemm(
             byte transa,
             byte transb,
             long m,
             long n,
             long k,
-            <#=tType#> alpha,
-            <#=tTypePtr#> a,
+            <#=type.Storage#> alpha,
+            <#=type.Ptr#> a,
             long lda,
-            <#=tTypePtr#> b,
+            <#=type.Ptr#> b,
             long ldb,
-            <#=tType#> beta,
-            <#=tTypePtr#> c,
+            <#=type.Storage#> beta,
+            <#=type.Ptr#> c,
             long ldc);
-    } // class <#=tName#>Tensor
+    } // class <#=type.Name#>Tensor
 <# } #>
 } // namespace TorchSharp
