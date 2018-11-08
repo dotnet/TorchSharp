@@ -49,7 +49,7 @@ namespace Torch.SNT
         /// Returns a span wrapping the underlying memory.
         /// Remember to Unpin the memory once the span is disposed.
         /// </summary>
-        public unsafe override Span<T> GetSpan() => new Span<T>(Pin().Pointer, length);
+        public unsafe override Span<T> GetSpan() => new Span<T>(memory.ToPointer(), length);
 
         /// <summary>
         /// Returns a handle to the memory that has been pinned and hence its address can be taken.
@@ -74,12 +74,28 @@ namespace Torch.SNT
             Release();
         }
 
+        /// <summary>
+        ///   Releases the tensor and its associated data.
+        /// </summary>        
+        public void Dispose()
+        {
+            Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (IsDisposed)
             {
                 return;
             }
+
+            if (!Equals(refCount, 0))
+            {
+                throw new InvalidOperationException("Disposing over unmatched Release/Retain");
+            }
+
+            IsDisposed = true;
 
             if (disposing)
             {
@@ -88,8 +104,6 @@ namespace Torch.SNT
                 memory = IntPtr.Zero;
                 length = 0;
             }
-
-            IsDisposed = true;
         }
 
         private bool Release()

@@ -116,22 +116,19 @@ foreach (var type in new [] {
 
             var typedInner = inner as <#=tname#>Tensor;
             <#=tname#>Tensor reshapedTensor;
-            NativeMemory<<#=tname.ToLower()#>> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<<#=tname.ToLower()#>>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new <#=tname#>TorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new <#=tname#>TorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>

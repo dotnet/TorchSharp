@@ -100,22 +100,19 @@ namespace Torch.SNT
 
             var typedInner = inner as ByteTensor;
             ByteTensor reshapedTensor;
-            NativeMemory<byte> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<byte>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<byte>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new ByteTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new ByteTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
@@ -236,22 +233,19 @@ namespace Torch.SNT
 
             var typedInner = inner as ShortTensor;
             ShortTensor reshapedTensor;
-            NativeMemory<short> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<short>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<short>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new ShortTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new ShortTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
@@ -372,22 +366,19 @@ namespace Torch.SNT
 
             var typedInner = inner as IntTensor;
             IntTensor reshapedTensor;
-            NativeMemory<int> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<int>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<int>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new IntTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new IntTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
@@ -508,22 +499,19 @@ namespace Torch.SNT
 
             var typedInner = inner as LongTensor;
             LongTensor reshapedTensor;
-            NativeMemory<long> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<long>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<long>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new LongTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new LongTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
@@ -644,22 +632,19 @@ namespace Torch.SNT
 
             var typedInner = inner as DoubleTensor;
             DoubleTensor reshapedTensor;
-            NativeMemory<double> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<double>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<double>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new DoubleTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new DoubleTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
@@ -780,22 +765,19 @@ namespace Torch.SNT
 
             var typedInner = inner as FloatTensor;
             FloatTensor reshapedTensor;
-            NativeMemory<float> mem;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(IntPtr.Zero, dimensions[0], 1);
-                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(IntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
-                    mem = new NativeMemory<float>(reshapedTensor.Data, Buffer.Length);
+                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
                 default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new FloatTorchTensor(mem.Memory, dimensions, reshapedTensor);
+            return new FloatTorchTensor(Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
