@@ -86,10 +86,9 @@ foreach (var type in new [] {
         }
 
 		/// <summary>
-		///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
+		///   Read <#=accreal#>s from the file into the given <#=accreal#> tensor.
 		/// </summary>
-		/// <param name="data">An array to place the data in after reading it from the file.</param>
-		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
 		/// <returns>The number of <#=accreal#>s read.</returns>
 		public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
 		{
@@ -103,6 +102,7 @@ foreach (var type in new [] {
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
@@ -116,9 +116,9 @@ foreach (var type in new [] {
 		}
 
 		/// <summary>
-		///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
+		///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
 		/// </summary>
-		/// <param name="data">An array containing data to be written to the file.</param>
+		/// <param name="tensor">A tensor containing data to be written to the file.</param>
 		/// <returns>The number of <#=accreal#>s written.</returns>
 		public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
 		{
