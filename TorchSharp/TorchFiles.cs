@@ -77,10 +77,25 @@ namespace Torch.IO
         extern static int THFile_isReadable(HType self);
         [DllImport("caffe2")]
         extern static int THFile_isWritable(HType self);
+[       DllImport("caffe2")]
+        extern static int THFile_isBinary(HType self);
+        [DllImport("caffe2")]
+        extern static int THFile_isAutoSpacing(HType self);
+        [DllImport("caffe2")]
+        extern static int THFile_hasError(HType self);
         [DllImport("caffe2")]
         extern static void THFile_seek(HType self, long position);
         [DllImport("caffe2")]
         extern static void THFile_seekEnd(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_binary(HType self);
+        [DllImport("caffe2")]
+        extern static void THFile_ascii(HType self);
+        [DllImport("caffe2")]
+        extern static void THFile_autoSpacing(HType self);
+        [DllImport("caffe2")]
+        extern static void THFile_noAutoSpacing(HType self);
 
         [DllImport("caffe2")]
         extern static long THFile_position(HType self);
@@ -90,6 +105,22 @@ namespace Torch.IO
         /// </summary>
         public bool IsOpen { get { return 0 != THFile_isOpened(this.handle); } }
 
+        /// <summary>
+        ///   Set/get the binary file mode.
+        /// </summary>
+        public bool IsBinary { 
+            get { return 0 != THFile_isBinary(this.handle); } 
+            set { if (value) { THFile_binary(this.handle); } else { THFile_ascii(this.handle); }} 
+        }
+
+        /// <summary>
+        ///   Set/get the text file mode.
+        /// </summary>
+        public bool IsAscii { 
+            get { return 0 == THFile_isBinary(this.handle); } 
+            set { if (value) { THFile_ascii(this.handle); } else { THFile_binary(this.handle); }} 
+        }
+        
         /// <summary>
         ///   The readability status of the file.
         /// </summary>

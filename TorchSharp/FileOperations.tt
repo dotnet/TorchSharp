@@ -21,8 +21,8 @@ foreach (var type in new [] {
     new { ApiName = "Short", AccReal="short" },   
     new { ApiName = "Int", AccReal="int"},
     new { ApiName = "Long", AccReal="long" },
-    new { ApiName = "Double", AccReal="double" },
     new { ApiName = "Float", AccReal="float" },
+    new { ApiName = "Double", AccReal="double" },
      }){
         string tname = type.ApiName;
         string accreal = type.AccReal;
@@ -65,7 +65,42 @@ foreach (var type in new [] {
 		/// <returns>The number of bytes written.</returns>
         public long Write<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
 
+		[DllImport("caffe2")] 
+		extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
+		
+		/// <summary>
+		///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
+		/// </summary>
+		/// <param name="data">An array to place the data in after reading it from the file.</param>
+		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+		/// <returns>The number of <#=accreal#>s read.</returns>
+		public long Read<#=tname#>s(<#=accreal#>[] data, int n)
+		{
+			if (n > data.Length)
+				throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+			var dest = Marshal.AllocHGlobal(n);
+			var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);			
+			Marshal.Copy(dest, data, 0, (int)readItems);
+			return readItems;
+		}
 
+		[DllImport("caffe2")] 
+		extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
+
+		/// <summary>
+		///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
+		/// </summary>
+		/// <param name="data">An array containing data to be written to the file.</param>
+		/// <returns>The number of <#=accreal#>s written.</returns>
+		public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
+		{
+			n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+
+			var dest = Marshal.AllocHGlobal(n);
+			Marshal.Copy(data, 0, dest, n);
+			var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);			
+			return wroteItems;
+		}
 <# } /* foreach */ #>
 	}
 }
