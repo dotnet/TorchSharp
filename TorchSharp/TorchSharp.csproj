@@ -38,6 +38,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Raw/Blas.generated.cs</LastGenOutput>
     </None>
+    <None Update="Raw/Lapack.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Lapack.generated.cs</LastGenOutput>
+    </None>
     <None Update="FileOperations.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>FileOperations.cs</LastGenOutput>
@@ -61,6 +65,10 @@
     <Compile Update="Raw/Blas.generated.cs">
       <DependentUpon>Raw/Types.ttinclude</DependentUpon>
       <DependentUpon>Raw/Blas.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Raw/Lapack.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Lapack.tt</DependentUpon>
     </Compile>
     <Compile Update="FileOperations.cs">
       <DependentUpon>FileOperations.tt</DependentUpon>
