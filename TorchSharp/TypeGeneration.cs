@@ -33,6 +33,14 @@ namespace TorchSharp {
                     handle = IntPtr.Zero;
                     return true;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
             }
 
             internal HType handle;
@@ -3299,6 +3307,14 @@ namespace TorchSharp {
                     handle = IntPtr.Zero;
                     return true;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
             }
 
             internal HType handle;
@@ -6516,6 +6532,14 @@ namespace TorchSharp {
                     THIntStorage_free (handle);
                     handle = IntPtr.Zero;
                     return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
                 }
             }
 
@@ -9735,6 +9759,14 @@ namespace TorchSharp {
                     handle = IntPtr.Zero;
                     return true;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
             }
 
             internal HType handle;
@@ -12952,6 +12984,14 @@ namespace TorchSharp {
                     THDoubleStorage_free (handle);
                     handle = IntPtr.Zero;
                     return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
                 }
             }
 
@@ -17092,6 +17132,14 @@ namespace TorchSharp {
                     THFloatStorage_free (handle);
                     handle = IntPtr.Zero;
                     return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
                 }
             }
 

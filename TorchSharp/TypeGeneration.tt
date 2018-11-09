@@ -55,6 +55,14 @@ foreach (var type in new [] {
                     handle = IntPtr.Zero;
                     return true;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
             }
 
             internal HType handle;
