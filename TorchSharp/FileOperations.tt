@@ -21,8 +21,8 @@ foreach (var type in new [] {
     new { ApiName = "Short", AccReal="short" },   
     new { ApiName = "Int", AccReal="int"},
     new { ApiName = "Long", AccReal="long" },
-    new { ApiName = "Double", AccReal="double" },
     new { ApiName = "Float", AccReal="float" },
+    new { ApiName = "Double", AccReal="double" },
      }){
         string tname = type.ApiName;
         string accreal = type.AccReal;
@@ -52,8 +52,8 @@ foreach (var type in new [] {
         ///   Read <#=accreal#>s from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long Read<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
+        /// <returns>The number of <#=accreal#>s read.</returns>
+        public long Read<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
@@ -62,10 +62,53 @@ foreach (var type in new [] {
         ///   Write <#=accreal#>s to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long Write<#=tname#>(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+        /// <returns>The number of <#=accreal#>s written.</returns>
+        public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+        /// <returns>The number of <#=accreal#>s read.</returns>
+        public long Read<#=tname#>s(<#=accreal#>[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var readItems = THFile_read<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of <#=accreal#>s to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of <#=accreal#>s written.</returns>
+        public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var writtenItems = THFile_write<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
 <# } /* foreach */ #>
     }
 }

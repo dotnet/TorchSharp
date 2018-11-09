@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -36,7 +36,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
         /// <returns>The number of bytes read.</returns>
-        public long ReadByte(ByteTensor.ByteStorage storage) { return THFile_readByte(this.handle, storage.handle); }
+        public long ReadBytes(ByteTensor.ByteStorage storage) { return THFile_readByte(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_writeByte(HType self, ByteTensor.ByteStorage.HType storage);
@@ -46,9 +46,52 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of bytes written.</returns>
-        public long WriteByte(ByteTensor.ByteStorage storage) { return THFile_writeByte(this.handle, storage.handle); }
+        public long WriteBytes(ByteTensor.ByteStorage storage) { return THFile_writeByte(this.handle, storage.handle); }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_readByteRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read bytes from the file into the given byte array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of bytes to read.</param>
+        /// <returns>The number of bytes read.</returns>
+        public long ReadBytes(byte[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var readItems = THFile_readByteRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_writeByteRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write bytes to the file from the given byte array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of bytes to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of bytes written.</returns>
+        public long WriteBytes(byte[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var writtenItems = THFile_writeByteRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
 
@@ -74,8 +117,8 @@ namespace Torch.IO {
         ///   Read shorts from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadShort(ShortTensor.ShortStorage storage) { return THFile_readShort(this.handle, storage.handle); }
+        /// <returns>The number of shorts read.</returns>
+        public long ReadShorts(ShortTensor.ShortStorage storage) { return THFile_readShort(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_writeShort(HType self, ShortTensor.ShortStorage.HType storage);
@@ -84,10 +127,53 @@ namespace Torch.IO {
         ///   Write shorts to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteShort(ShortTensor.ShortStorage storage) { return THFile_writeShort(this.handle, storage.handle); }
+        /// <returns>The number of shorts written.</returns>
+        public long WriteShorts(ShortTensor.ShortStorage storage) { return THFile_writeShort(this.handle, storage.handle); }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_readShortRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read shorts from the file into the given short array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of shorts to read.</param>
+        /// <returns>The number of shorts read.</returns>
+        public long ReadShorts(short[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var readItems = THFile_readShortRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_writeShortRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write shorts to the file from the given short array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of shorts to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of shorts written.</returns>
+        public long WriteShorts(short[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var writtenItems = THFile_writeShortRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
 
@@ -113,8 +199,8 @@ namespace Torch.IO {
         ///   Read ints from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadInt(IntTensor.IntStorage storage) { return THFile_readInt(this.handle, storage.handle); }
+        /// <returns>The number of ints read.</returns>
+        public long ReadInts(IntTensor.IntStorage storage) { return THFile_readInt(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_writeInt(HType self, IntTensor.IntStorage.HType storage);
@@ -123,10 +209,53 @@ namespace Torch.IO {
         ///   Write ints to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteInt(IntTensor.IntStorage storage) { return THFile_writeInt(this.handle, storage.handle); }
+        /// <returns>The number of ints written.</returns>
+        public long WriteInts(IntTensor.IntStorage storage) { return THFile_writeInt(this.handle, storage.handle); }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_readIntRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read ints from the file into the given int array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of ints to read.</param>
+        /// <returns>The number of ints read.</returns>
+        public long ReadInts(int[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var readItems = THFile_readIntRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_writeIntRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write ints to the file from the given int array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of ints to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of ints written.</returns>
+        public long WriteInts(int[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var writtenItems = THFile_writeIntRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static long THFile_readLongScalar(HType self);
 
@@ -152,8 +281,8 @@ namespace Torch.IO {
         ///   Read longs from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadLong(LongTensor.LongStorage storage) { return THFile_readLong(this.handle, storage.handle); }
+        /// <returns>The number of longs read.</returns>
+        public long ReadLongs(LongTensor.LongStorage storage) { return THFile_readLong(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_writeLong(HType self, LongTensor.LongStorage.HType storage);
@@ -162,49 +291,53 @@ namespace Torch.IO {
         ///   Write longs to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteLong(LongTensor.LongStorage storage) { return THFile_writeLong(this.handle, storage.handle); }
-
-
-        [DllImport("caffe2")] 
-        extern static double THFile_readDoubleScalar(HType self);
-
-        /// <summary>
-        ///   Read one double from the file.
-        /// </summary>
-        /// <returns>A double read from the current file position.</returns>
-        public double ReadDouble() { return THFile_readDoubleScalar(this.handle); }
+        /// <returns>The number of longs written.</returns>
+        public long WriteLongs(LongTensor.LongStorage storage) { return THFile_writeLong(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
-        extern static void THFile_writeDoubleScalar(HType self, double scalar);
-
+        extern static long THFile_readLongRaw(HType self, IntPtr data, long n);
+        
         /// <summary>
-        ///   Write one double to the file.
+        ///   Read longs from the file into the given long array.
         /// </summary>
-        /// <param name="value">A double to write at the current file position.</param>
-        public void WriteDouble(double value) { THFile_writeDoubleScalar(this.handle, value); }
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of longs to read.</param>
+        /// <returns>The number of longs read.</returns>
+        public long ReadLongs(long[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var readItems = THFile_readLongRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
         [DllImport("caffe2")] 
-        extern static long THFile_readDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
+        extern static long THFile_writeLongRaw(HType self, IntPtr data, long n);
 
         /// <summary>
-        ///   Read doubles from the file into the given storage.
+        ///   Write longs to the file from the given long array.
         /// </summary>
-        /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadDouble(DoubleTensor.DoubleStorage storage) { return THFile_readDouble(this.handle, storage.handle); }
-
-        [DllImport("caffe2")] 
-        extern static long THFile_writeDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
-
-        /// <summary>
-        ///   Write doubles to the file from the given storage.
-        /// </summary>
-        /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteDouble(DoubleTensor.DoubleStorage storage) { return THFile_writeDouble(this.handle, storage.handle); }
-
-
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of longs to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of longs written.</returns>
+        public long WriteLongs(long[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var writtenItems = THFile_writeLongRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
 
@@ -230,8 +363,8 @@ namespace Torch.IO {
         ///   Read floats from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadFloat(FloatTensor.FloatStorage storage) { return THFile_readFloat(this.handle, storage.handle); }
+        /// <returns>The number of floats read.</returns>
+        public long ReadFloats(FloatTensor.FloatStorage storage) { return THFile_readFloat(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
         extern static long THFile_writeFloat(HType self, FloatTensor.FloatStorage.HType storage);
@@ -240,9 +373,134 @@ namespace Torch.IO {
         ///   Write floats to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteFloat(FloatTensor.FloatStorage storage) { return THFile_writeFloat(this.handle, storage.handle); }
+        /// <returns>The number of floats written.</returns>
+        public long WriteFloats(FloatTensor.FloatStorage storage) { return THFile_writeFloat(this.handle, storage.handle); }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_readFloatRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read floats from the file into the given float array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of floats to read.</param>
+        /// <returns>The number of floats read.</returns>
+        public long ReadFloats(float[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var readItems = THFile_readFloatRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
 
+        [DllImport("caffe2")] 
+        extern static long THFile_writeFloatRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write floats to the file from the given float array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of floats to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of floats written.</returns>
+        public long WriteFloats(float[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var writtenItems = THFile_writeFloatRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
+        [DllImport("caffe2")] 
+        extern static double THFile_readDoubleScalar(HType self);
+
+        /// <summary>
+        ///   Read one double from the file.
+        /// </summary>
+        /// <returns>A double read from the current file position.</returns>
+        public double ReadDouble() { return THFile_readDoubleScalar(this.handle); }
+
+        [DllImport("caffe2")] 
+        extern static void THFile_writeDoubleScalar(HType self, double scalar);
+
+        /// <summary>
+        ///   Write one double to the file.
+        /// </summary>
+        /// <param name="value">A double to write at the current file position.</param>
+        public void WriteDouble(double value) { THFile_writeDoubleScalar(this.handle, value); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
+
+        /// <summary>
+        ///   Read doubles from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of doubles read.</returns>
+        public long ReadDoubles(DoubleTensor.DoubleStorage storage) { return THFile_readDouble(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
+
+        /// <summary>
+        ///   Write doubles to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of doubles written.</returns>
+        public long WriteDoubles(DoubleTensor.DoubleStorage storage) { return THFile_writeDouble(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readDoubleRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read doubles from the file into the given double array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of doubles to read.</param>
+        /// <returns>The number of doubles read.</returns>
+        public long ReadDoubles(double[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var readItems = THFile_readDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeDoubleRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write doubles to the file from the given double array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of doubles to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of doubles written.</returns>
+        public long WriteDoubles(double[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var writtenItems = THFile_writeDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
     }
 }
