@@ -490,7 +490,7 @@ foreach (var type in new [] {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public unsafe <#=ttype#> *Data => (<#=ttype#>*) TH<#=tname#>Tensor_data (handle);
+        public IntPtr Data => TH<#=tname#>Tensor_data (handle);
         
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newClone (HType handle);

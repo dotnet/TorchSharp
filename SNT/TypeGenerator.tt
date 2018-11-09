@@ -44,7 +44,7 @@ foreach (var type in new [] {
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe <#=tname#>TorchTensor Create(params int[] sizes)
+        public static <#=tname#>TorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -64,7 +64,7 @@ foreach (var type in new [] {
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<<#=tname.ToLower()#>> Clone()
+        public override Tensor<<#=tname.ToLower()#>> Clone()
         {
             var typedInner = inner as <#=tname#>Tensor;
             var innerClone = typedInner.Clone();
@@ -79,7 +79,7 @@ foreach (var type in new [] {
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as <#=tname#>Tensor;
 
@@ -100,7 +100,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<<#=tname.ToLower()#>> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<<#=tname.ToLower()#>> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {

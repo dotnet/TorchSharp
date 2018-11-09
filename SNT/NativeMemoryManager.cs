@@ -26,10 +26,6 @@ namespace Torch.SNT
             this.length = length;
         }
 
-        public unsafe NativeMemory(void* memory, int length) : this((IntPtr)memory, length)
-        {
-        }
-
         /// <summary>
         /// Destructor for the native memory.
         /// The Tensor memory lifecycle is managed by Torch. Disposing the memory

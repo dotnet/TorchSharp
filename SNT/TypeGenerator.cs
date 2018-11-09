@@ -28,7 +28,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe ByteTorchTensor Create(params int[] sizes)
+        public static ByteTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -48,7 +48,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<byte> Clone()
+        public override Tensor<byte> Clone()
         {
             var typedInner = inner as ByteTensor;
             var innerClone = typedInner.Clone();
@@ -63,7 +63,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as ByteTensor;
 
@@ -84,7 +84,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<byte> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<byte> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -161,7 +161,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe ShortTorchTensor Create(params int[] sizes)
+        public static ShortTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -181,7 +181,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<short> Clone()
+        public override Tensor<short> Clone()
         {
             var typedInner = inner as ShortTensor;
             var innerClone = typedInner.Clone();
@@ -196,7 +196,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as ShortTensor;
 
@@ -217,7 +217,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<short> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<short> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -294,7 +294,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe IntTorchTensor Create(params int[] sizes)
+        public static IntTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -314,7 +314,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<int> Clone()
+        public override Tensor<int> Clone()
         {
             var typedInner = inner as IntTensor;
             var innerClone = typedInner.Clone();
@@ -329,7 +329,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as IntTensor;
 
@@ -350,7 +350,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<int> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<int> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -427,7 +427,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe LongTorchTensor Create(params int[] sizes)
+        public static LongTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -447,7 +447,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<long> Clone()
+        public override Tensor<long> Clone()
         {
             var typedInner = inner as LongTensor;
             var innerClone = typedInner.Clone();
@@ -462,7 +462,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as LongTensor;
 
@@ -483,7 +483,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<long> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<long> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -560,7 +560,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe DoubleTorchTensor Create(params int[] sizes)
+        public static DoubleTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -580,7 +580,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<double> Clone()
+        public override Tensor<double> Clone()
         {
             var typedInner = inner as DoubleTensor;
             var innerClone = typedInner.Clone();
@@ -595,7 +595,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as DoubleTensor;
 
@@ -616,7 +616,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<double> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<double> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
@@ -693,7 +693,7 @@ namespace Torch.SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static unsafe FloatTorchTensor Create(params int[] sizes)
+        public static FloatTorchTensor Create(params int[] sizes)
         {
             var totLength = Utils.GetTotalLength(sizes);
             var shape = sizes;
@@ -713,7 +713,7 @@ namespace Torch.SNT
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public unsafe override Tensor<float> Clone()
+        public override Tensor<float> Clone()
         {
             var typedInner = inner as FloatTensor;
             var innerClone = typedInner.Clone();
@@ -728,7 +728,7 @@ namespace Torch.SNT
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override unsafe Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as FloatTensor;
 
@@ -749,7 +749,7 @@ namespace Torch.SNT
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public unsafe override Tensor<float> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<float> Reshape(ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
