@@ -209,6 +209,14 @@ foreach (var type in new [] {
                 TH<#=tname#>Tensor_free (handle);
                 return true;
             }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
+            }
         }
 
         internal HType handle;

@@ -32,6 +32,7 @@ namespace TorchSharp {
                 
                 [DllImport ("caffe2")]
                 extern static void THByteStorage_free (IntPtr handle);
+            
                 
                 protected override bool ReleaseHandle ()
                 {
@@ -191,6 +192,14 @@ namespace TorchSharp {
             {
                 THByteTensor_free (handle);
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
             }
         }
 
@@ -3439,6 +3448,14 @@ namespace TorchSharp {
                 THShortTensor_free (handle);
                 return true;
             }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
+            }
         }
 
         internal HType handle;
@@ -6633,6 +6650,14 @@ namespace TorchSharp {
             {
                 THIntTensor_free (handle);
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
             }
         }
 
@@ -9829,6 +9854,14 @@ namespace TorchSharp {
                 THLongTensor_free (handle);
                 return true;
             }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
+            }
         }
 
         internal HType handle;
@@ -13023,6 +13056,14 @@ namespace TorchSharp {
             {
                 THDoubleTensor_free (handle);
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
             }
         }
 
@@ -17142,6 +17183,14 @@ namespace TorchSharp {
             {
                 THFloatTensor_free (handle);
                 return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle ();
+                }
             }
         }
 
