@@ -78,11 +78,14 @@ foreach (var type in new [] {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
-            var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var readItems = THFile_read<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -97,12 +100,14 @@ foreach (var type in new [] {
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var writtenItems = THFile_write<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
 <# } /* foreach */ #>
     }

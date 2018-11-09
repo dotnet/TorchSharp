@@ -61,11 +61,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(byte));
-            var readItems = THFile_readByteRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var readItems = THFile_readByteRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -80,12 +83,14 @@ namespace Torch.IO {
         public long WriteBytes(byte[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(byte));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeByteRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var writtenItems = THFile_writeByteRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
@@ -138,11 +143,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(short));
-            var readItems = THFile_readShortRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var readItems = THFile_readShortRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -157,12 +165,14 @@ namespace Torch.IO {
         public long WriteShorts(short[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(short));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeShortRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var writtenItems = THFile_writeShortRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
@@ -215,11 +225,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(int));
-            var readItems = THFile_readIntRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var readItems = THFile_readIntRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -234,12 +247,14 @@ namespace Torch.IO {
         public long WriteInts(int[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(int));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeIntRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var writtenItems = THFile_writeIntRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
         [DllImport("caffe2")] 
         extern static long THFile_readLongScalar(HType self);
@@ -292,11 +307,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(long));
-            var readItems = THFile_readLongRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var readItems = THFile_readLongRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -311,12 +329,14 @@ namespace Torch.IO {
         public long WriteLongs(long[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(long));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeLongRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var writtenItems = THFile_writeLongRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
@@ -369,11 +389,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(float));
-            var readItems = THFile_readFloatRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var readItems = THFile_readFloatRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -388,12 +411,14 @@ namespace Torch.IO {
         public long WriteFloats(float[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(float));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeFloatRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var writtenItems = THFile_writeFloatRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
         [DllImport("caffe2")] 
         extern static double THFile_readDoubleScalar(HType self);
@@ -446,11 +471,14 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(double));
-            var readItems = THFile_readDoubleRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var readItems = THFile_readDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
         [DllImport("caffe2")] 
@@ -465,12 +493,14 @@ namespace Torch.IO {
         public long WriteDoubles(double[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-            var dest = Marshal.AllocHGlobal(n*sizeof(double));
-            Marshal.Copy(data, 0, dest, n);
-            var wroteItems = THFile_writeDoubleRaw(this.handle, dest, n);            
-            Marshal.FreeHGlobal(dest);
-            return wroteItems;
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var writtenItems = THFile_writeDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
         }
     }
 }
