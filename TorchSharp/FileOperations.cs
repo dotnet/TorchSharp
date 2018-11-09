@@ -71,18 +71,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read bytes from the file into the given byte tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of bytes read.</returns>
-		public long ReadTensor(TorchSharp.ByteTensor tensor)
-		{
-			return THFile_readByteRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read bytes from the file into the given byte tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of bytes read.</returns>
+        public long ReadTensor(TorchSharp.ByteTensor tensor)
+        {
+            return THFile_readByteRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeByteRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeByteRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write bytes to the file from the given byte array.
@@ -102,15 +102,15 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write bytes to the file from the given byte tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of bytes written.</returns>
-		public long WriteTensor(TorchSharp.ByteTensor tensor)
-		{
-			return THFile_writeByteRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write bytes to the file from the given byte tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of bytes written.</returns>
+        public long WriteTensor(TorchSharp.ByteTensor tensor)
+        {
+            return THFile_writeByteRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
 
@@ -172,18 +172,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read shorts from the file into the given short tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of shorts read.</returns>
-		public long ReadTensor(TorchSharp.ShortTensor tensor)
-		{
-			return THFile_readShortRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read shorts from the file into the given short tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of shorts read.</returns>
+        public long ReadTensor(TorchSharp.ShortTensor tensor)
+        {
+            return THFile_readShortRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeShortRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeShortRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write shorts to the file from the given short array.
@@ -203,15 +203,15 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write shorts to the file from the given short tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of shorts written.</returns>
-		public long WriteTensor(TorchSharp.ShortTensor tensor)
-		{
-			return THFile_writeShortRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write shorts to the file from the given short tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of shorts written.</returns>
+        public long WriteTensor(TorchSharp.ShortTensor tensor)
+        {
+            return THFile_writeShortRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
 
@@ -273,18 +273,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read ints from the file into the given int tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of ints read.</returns>
-		public long ReadTensor(TorchSharp.IntTensor tensor)
-		{
-			return THFile_readIntRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read ints from the file into the given int tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of ints read.</returns>
+        public long ReadTensor(TorchSharp.IntTensor tensor)
+        {
+            return THFile_readIntRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeIntRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeIntRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write ints to the file from the given int array.
@@ -304,15 +304,15 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write ints to the file from the given int tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of ints written.</returns>
-		public long WriteTensor(TorchSharp.IntTensor tensor)
-		{
-			return THFile_writeIntRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write ints to the file from the given int tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of ints written.</returns>
+        public long WriteTensor(TorchSharp.IntTensor tensor)
+        {
+            return THFile_writeIntRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
         [DllImport("caffe2")] 
         extern static long THFile_readLongScalar(HType self);
 
@@ -374,18 +374,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read longs from the file into the given long tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of longs read.</returns>
-		public long ReadTensor(TorchSharp.LongTensor tensor)
-		{
-			return THFile_readLongRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read longs from the file into the given long tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of longs read.</returns>
+        public long ReadTensor(TorchSharp.LongTensor tensor)
+        {
+            return THFile_readLongRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeLongRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeLongRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write longs to the file from the given long array.
@@ -405,15 +405,15 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write longs to the file from the given long tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of longs written.</returns>
-		public long WriteTensor(TorchSharp.LongTensor tensor)
-		{
-			return THFile_writeLongRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write longs to the file from the given long tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of longs written.</returns>
+        public long WriteTensor(TorchSharp.LongTensor tensor)
+        {
+            return THFile_writeLongRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
 
@@ -475,18 +475,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read floats from the file into the given float tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of floats read.</returns>
-		public long ReadTensor(TorchSharp.FloatTensor tensor)
-		{
-			return THFile_readFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read floats from the file into the given float tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of floats read.</returns>
+        public long ReadTensor(TorchSharp.FloatTensor tensor)
+        {
+            return THFile_readFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeFloatRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeFloatRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write floats to the file from the given float array.
@@ -506,15 +506,15 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write floats to the file from the given float tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of floats written.</returns>
-		public long WriteTensor(TorchSharp.FloatTensor tensor)
-		{
-			return THFile_writeFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write floats to the file from the given float tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of floats written.</returns>
+        public long WriteTensor(TorchSharp.FloatTensor tensor)
+        {
+            return THFile_writeFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
         [DllImport("caffe2")] 
         extern static double THFile_readDoubleScalar(HType self);
 
@@ -576,18 +576,18 @@ namespace Torch.IO {
             }
         }
 
-		/// <summary>
-		///   Read doubles from the file into the given double tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of doubles read.</returns>
-		public long ReadTensor(TorchSharp.DoubleTensor tensor)
-		{
-			return THFile_readDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read doubles from the file into the given double tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of doubles read.</returns>
+        public long ReadTensor(TorchSharp.DoubleTensor tensor)
+        {
+            return THFile_readDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_writeDoubleRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeDoubleRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write doubles to the file from the given double array.
@@ -607,14 +607,14 @@ namespace Torch.IO {
                 }
             }
         }
-		/// <summary>
-		///   Write doubles to the file from the given double tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of doubles written.</returns>
-		public long WriteTensor(TorchSharp.DoubleTensor tensor)
-		{
-			return THFile_writeDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write doubles to the file from the given double tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of doubles written.</returns>
+        public long WriteTensor(TorchSharp.DoubleTensor tensor)
+        {
+            return THFile_writeDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
     }
 }

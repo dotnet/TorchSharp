@@ -88,18 +88,18 @@ foreach (var type in new [] {
             }
         }
 
-		/// <summary>
-		///   Read <#=accreal#>s from the file into the given <#=accreal#> tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of <#=accreal#>s read.</returns>
-		public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
-		{
-			return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Read <#=accreal#>s from the file into the given <#=accreal#> tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of <#=accreal#>s read.</returns>
+        public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
+        {
+            return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 
-		[DllImport("caffe2")] 
-		extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
@@ -119,15 +119,15 @@ foreach (var type in new [] {
                 }
             }
         }
-		/// <summary>
-		///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of <#=accreal#>s written.</returns>
-		public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
-		{
-			return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+        /// <summary>
+        ///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of <#=accreal#>s written.</returns>
+        public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
+        {
+            return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+        }
 <# } /* foreach */ #>
     }
 }
