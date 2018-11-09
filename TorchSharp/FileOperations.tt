@@ -105,7 +105,7 @@ foreach (var type in new [] {
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-        /// <param name="n">The number of <#=accreal#>s to write.</param>
+        /// <param name="n">The number of <#=accreal#>s to write. Pass -1 (default) to write the whole array.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
