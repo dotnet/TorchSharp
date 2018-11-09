@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
-	internal static class Blas {
+    internal static class Blas {
 <#
 foreach (var type in TorchTypeDef.Types) {
 #>
