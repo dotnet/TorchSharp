@@ -1,0 +1,32 @@
+﻿<#+
+    public class TorchTypeDef {
+
+        public readonly string Name;
+        public readonly string Storage;
+        public readonly string Acc;
+
+        public readonly bool IsInt;
+        public readonly bool IsFloat;
+
+        private TorchTypeDef(string name, string storage, string acc) {
+            this.Name = name;
+            this.Storage = storage;
+            this.Acc = acc;
+
+            this.IsInt = name == "Short" || name == "Int" || name == "Long";
+            this.IsFloat = name == "Float" || name == "Double";
+        }
+
+        public static readonly TorchTypeDef[] Types = {
+            new TorchTypeDef("Byte",   "byte",   "long"  ),
+            new TorchTypeDef("Short",  "short",  "long"  ),
+            new TorchTypeDef("Int",    "int",    "long"  ),
+            new TorchTypeDef("Long",   "long",   "long"  ),
+            new TorchTypeDef("Double", "double", "double"),
+            new TorchTypeDef("Float",  "float",  "double"),
+        };
+
+        public readonly string Ptr = "IntPtr /* scalar_t* */"; // "HType";
+        public readonly string PtrDiff = "int /* ptrdiff_t */";
+    }
+#>
