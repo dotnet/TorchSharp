@@ -1,10 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchSharp", "TorchSharp\TorchSharp.csproj", "{E47E6785-B43B-49E9-A360-DB23B5E21C35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SNT", "SNT\SNT.csproj", "{D4E402A3-4073-4484-85E1-9D67F6289648}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{66DFCBC1-34CF-48DB-88E0-91D853AEAEE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,15 @@ Global
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511BA459-F8F4-44EB-A94B-C0DC1463CD4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66DFCBC1-34CF-48DB-88E0-91D853AEAEE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66DFCBC1-34CF-48DB-88E0-91D853AEAEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66DFCBC1-34CF-48DB-88E0-91D853AEAEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66DFCBC1-34CF-48DB-88E0-91D853AEAEE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F026BE7E-6A95-4B6D-A0FE-2848B7935D1E}
 	EndGlobalSection
 EndGlobal

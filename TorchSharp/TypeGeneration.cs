@@ -1,4 +1,9 @@
-﻿using System;
+﻿
+
+
+
+
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -6,6 +11,7 @@ using Microsoft.Win32.SafeHandles;
 using System.Text;
 
 namespace TorchSharp {
+
     public partial class ByteTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -17,7 +23,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -25,12 +32,10 @@ namespace TorchSharp {
                 
                 [DllImport ("caffe2")]
                 extern static void THByteStorage_free (IntPtr handle);
-            
                 
                 protected override bool ReleaseHandle ()
                 {
                     THByteStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -54,7 +59,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THByteStorage_new_withSize (IntPtr size);
+            extern static HType THByteStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a ByteStorage instance with the specified size.
@@ -62,9 +67,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public ByteStorage (long size)
             {
-                handle = THByteStorage_new_withSize ((IntPtr) size);
+                handle = THByteStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -87,9 +92,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -107,6 +112,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THByteStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THByteStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THByteStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THByteStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static byte THByteStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -163,11 +190,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THByteTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal ByteStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THByteTensor_new ();
@@ -263,7 +291,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -366,8 +394,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public ByteStorage Storage => new ByteStorage (THByteTensor_storage (handle));
+        public ByteStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new ByteStorage (THByteTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THByteTensor_nDimension (HType handle);
@@ -820,6 +858,7 @@ namespace TorchSharp {
             using (var r = new RandomGenerator ())
                 CappedRandom (r, n);
         }
+
 
         
         /// <summary>
@@ -1325,6 +1364,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cadd (HType result, HType t, byte value, HType src);
@@ -1364,6 +1404,9 @@ namespace TorchSharp {
             THByteTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
+
 
 
 
@@ -1888,6 +1931,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmaxValue (HType result, HType t, byte value);
@@ -2154,14 +2198,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ByteTensor LERP (ByteTensor other, byte weight)
         {
             if (other == null)
@@ -2244,6 +2293,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_addcmul (HType result, HType t, byte value, HType src1, HType src2);
@@ -2294,6 +2344,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THByteTensor_addmv (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
@@ -2307,7 +2358,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -2336,7 +2387,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -2365,7 +2416,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -2394,7 +2445,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -2423,7 +2474,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -2438,6 +2489,7 @@ namespace TorchSharp {
             THByteTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -2509,6 +2561,8 @@ namespace TorchSharp {
         {
             return THByteTensor_prodall (this.handle);
         }
+
+
 
 
         [DllImport ("caffe2")]
@@ -2707,6 +2761,7 @@ namespace TorchSharp {
             THByteTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -2721,6 +2776,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -2737,6 +2793,7 @@ namespace TorchSharp {
             THByteTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -2751,6 +2808,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -2767,6 +2825,7 @@ namespace TorchSharp {
             THByteTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -2781,6 +2840,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -2798,6 +2858,7 @@ namespace TorchSharp {
         }
 
         
+
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAndAll (HType self);
         
@@ -2808,6 +2869,7 @@ namespace TorchSharp {
         {
             return 0 != THByteTensor_logicalAndAll(this.handle);
         }
+
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnyAll (HType self);
         
@@ -2819,6 +2881,7 @@ namespace TorchSharp {
             return 0 != THByteTensor_logicalAnyAll(this.handle);
         }
         
+
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnd (HType result, HType self, int dimension, int keepdim);
         
@@ -2833,6 +2896,7 @@ namespace TorchSharp {
             THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAny (HType result, HType self, int dimension, int keepdim);
         
@@ -2848,6 +2912,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -2876,6 +2941,7 @@ namespace TorchSharp {
             THByteTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -2905,6 +2971,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -2921,6 +2988,7 @@ namespace TorchSharp {
             THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -2937,6 +3005,7 @@ namespace TorchSharp {
             THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -2953,6 +3022,7 @@ namespace TorchSharp {
             THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THByteTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -3187,6 +3257,7 @@ namespace TorchSharp {
 #endif
      
     }
+
     public partial class ShortTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -3198,7 +3269,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -3211,7 +3283,6 @@ namespace TorchSharp {
                 protected override bool ReleaseHandle ()
                 {
                     THShortStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -3235,7 +3306,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THShortStorage_new_withSize (IntPtr size);
+            extern static HType THShortStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a ShortStorage instance with the specified size.
@@ -3243,9 +3314,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public ShortStorage (long size)
             {
-                handle = THShortStorage_new_withSize ((IntPtr) size);
+                handle = THShortStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -3268,9 +3339,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -3288,6 +3359,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THShortStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THShortStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THShortStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THShortStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static short THShortStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -3344,11 +3437,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THShortTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal ShortStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THShortTensor_new ();
@@ -3444,7 +3538,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -3547,8 +3641,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public ShortStorage Storage => new ShortStorage (THShortTensor_storage (handle));
+        public ShortStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new ShortStorage (THShortTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THShortTensor_nDimension (HType handle);
@@ -4001,6 +4105,7 @@ namespace TorchSharp {
             using (var r = new RandomGenerator ())
                 CappedRandom (r, n);
         }
+
 
         
         /// <summary>
@@ -4506,6 +4611,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cadd (HType result, HType t, short value, HType src);
@@ -4545,6 +4651,9 @@ namespace TorchSharp {
             THShortTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
+
 
 
 
@@ -5069,6 +5178,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmaxValue (HType result, HType t, short value);
@@ -5335,14 +5445,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public ShortTensor LERP (ShortTensor other, short weight)
         {
             if (other == null)
@@ -5425,6 +5540,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_addcmul (HType result, HType t, short value, HType src1, HType src2);
@@ -5475,6 +5591,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THShortTensor_addmv (HType result, short beta, HType t, short alpha, HType src1, HType src2);
@@ -5488,7 +5605,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -5517,7 +5634,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -5546,7 +5663,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -5575,7 +5692,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -5604,7 +5721,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -5619,6 +5736,7 @@ namespace TorchSharp {
             THShortTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -5690,6 +5808,8 @@ namespace TorchSharp {
         {
             return THShortTensor_prodall (this.handle);
         }
+
+
 
 
         [DllImport ("caffe2")]
@@ -5888,6 +6008,7 @@ namespace TorchSharp {
             THShortTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -5902,6 +6023,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -5918,6 +6040,7 @@ namespace TorchSharp {
             THShortTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -5932,6 +6055,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -5948,6 +6072,7 @@ namespace TorchSharp {
             THShortTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -5962,6 +6087,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -5981,6 +6107,7 @@ namespace TorchSharp {
         
         
      
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -6009,6 +6136,7 @@ namespace TorchSharp {
             THShortTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -6038,6 +6166,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -6054,6 +6183,7 @@ namespace TorchSharp {
             THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -6070,6 +6200,7 @@ namespace TorchSharp {
             THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -6086,6 +6217,7 @@ namespace TorchSharp {
             THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THShortTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -6320,6 +6452,7 @@ namespace TorchSharp {
 #endif
      
     }
+
     public partial class IntTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -6331,7 +6464,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -6344,7 +6478,6 @@ namespace TorchSharp {
                 protected override bool ReleaseHandle ()
                 {
                     THIntStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -6368,7 +6501,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THIntStorage_new_withSize (IntPtr size);
+            extern static HType THIntStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a IntStorage instance with the specified size.
@@ -6376,9 +6509,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public IntStorage (long size)
             {
-                handle = THIntStorage_new_withSize ((IntPtr) size);
+                handle = THIntStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -6401,9 +6534,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -6421,6 +6554,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THIntStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THIntStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THIntStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THIntStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static int THIntStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -6477,11 +6632,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THIntTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal IntStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THIntTensor_new ();
@@ -6577,7 +6733,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -6680,8 +6836,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public IntStorage Storage => new IntStorage (THIntTensor_storage (handle));
+        public IntStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new IntStorage (THIntTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THIntTensor_nDimension (HType handle);
@@ -7134,6 +7300,7 @@ namespace TorchSharp {
             using (var r = new RandomGenerator ())
                 CappedRandom (r, n);
         }
+
 
         
         /// <summary>
@@ -7639,6 +7806,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cadd (HType result, HType t, int value, HType src);
@@ -7678,6 +7846,9 @@ namespace TorchSharp {
             THIntTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
+
 
 
 
@@ -8202,6 +8373,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmaxValue (HType result, HType t, int value);
@@ -8468,14 +8640,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public IntTensor LERP (IntTensor other, int weight)
         {
             if (other == null)
@@ -8558,6 +8735,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_addcmul (HType result, HType t, int value, HType src1, HType src2);
@@ -8608,6 +8786,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THIntTensor_addmv (HType result, int beta, HType t, int alpha, HType src1, HType src2);
@@ -8621,7 +8800,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -8650,7 +8829,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -8679,7 +8858,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -8708,7 +8887,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -8737,7 +8916,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -8752,6 +8931,7 @@ namespace TorchSharp {
             THIntTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -8823,6 +9003,8 @@ namespace TorchSharp {
         {
             return THIntTensor_prodall (this.handle);
         }
+
+
 
 
         [DllImport ("caffe2")]
@@ -9021,6 +9203,7 @@ namespace TorchSharp {
             THIntTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -9035,6 +9218,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -9051,6 +9235,7 @@ namespace TorchSharp {
             THIntTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -9065,6 +9250,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -9081,6 +9267,7 @@ namespace TorchSharp {
             THIntTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -9095,6 +9282,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -9114,6 +9302,7 @@ namespace TorchSharp {
         
         
      
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -9142,6 +9331,7 @@ namespace TorchSharp {
             THIntTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -9171,6 +9361,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -9187,6 +9378,7 @@ namespace TorchSharp {
             THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -9203,6 +9395,7 @@ namespace TorchSharp {
             THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -9219,6 +9412,7 @@ namespace TorchSharp {
             THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THIntTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -9453,6 +9647,7 @@ namespace TorchSharp {
 #endif
      
     }
+
     public partial class LongTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -9464,7 +9659,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -9477,7 +9673,6 @@ namespace TorchSharp {
                 protected override bool ReleaseHandle ()
                 {
                     THLongStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -9501,7 +9696,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THLongStorage_new_withSize (IntPtr size);
+            extern static HType THLongStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a LongStorage instance with the specified size.
@@ -9509,9 +9704,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public LongStorage (long size)
             {
-                handle = THLongStorage_new_withSize ((IntPtr) size);
+                handle = THLongStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -9534,9 +9729,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -9554,6 +9749,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THLongStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THLongStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THLongStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THLongStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static long THLongStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -9610,11 +9827,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THLongTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal LongStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THLongTensor_new ();
@@ -9710,7 +9928,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -9813,8 +10031,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public LongStorage Storage => new LongStorage (THLongTensor_storage (handle));
+        public LongStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new LongStorage (THLongTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THLongTensor_nDimension (HType handle);
@@ -10267,6 +10495,7 @@ namespace TorchSharp {
             using (var r = new RandomGenerator ())
                 CappedRandom (r, n);
         }
+
 
         
         /// <summary>
@@ -10772,6 +11001,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cadd (HType result, HType t, long value, HType src);
@@ -10811,6 +11041,9 @@ namespace TorchSharp {
             THLongTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
+
+
+
 
 
 
@@ -11335,6 +11568,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmaxValue (HType result, HType t, long value);
@@ -11601,14 +11835,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public LongTensor LERP (LongTensor other, long weight)
         {
             if (other == null)
@@ -11691,6 +11930,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_addcmul (HType result, HType t, long value, HType src1, HType src2);
@@ -11741,6 +11981,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THLongTensor_addmv (HType result, long beta, HType t, long alpha, HType src1, HType src2);
@@ -11754,7 +11995,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -11783,7 +12024,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -11812,7 +12053,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -11841,7 +12082,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -11870,7 +12111,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -11885,6 +12126,7 @@ namespace TorchSharp {
             THLongTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -11956,6 +12198,8 @@ namespace TorchSharp {
         {
             return THLongTensor_prodall (this.handle);
         }
+
+
 
 
         [DllImport ("caffe2")]
@@ -12154,6 +12398,7 @@ namespace TorchSharp {
             THLongTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -12168,6 +12413,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -12184,6 +12430,7 @@ namespace TorchSharp {
             THLongTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -12198,6 +12445,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -12214,6 +12462,7 @@ namespace TorchSharp {
             THLongTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -12228,6 +12477,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -12247,6 +12497,7 @@ namespace TorchSharp {
         
         
      
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -12275,6 +12526,7 @@ namespace TorchSharp {
             THLongTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -12304,6 +12556,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -12320,6 +12573,7 @@ namespace TorchSharp {
             THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -12336,6 +12590,7 @@ namespace TorchSharp {
             THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -12352,6 +12607,7 @@ namespace TorchSharp {
             THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THLongTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -12586,6 +12842,7 @@ namespace TorchSharp {
 #endif
      
     }
+
     public partial class DoubleTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -12597,7 +12854,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -12610,7 +12868,6 @@ namespace TorchSharp {
                 protected override bool ReleaseHandle ()
                 {
                     THDoubleStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -12634,7 +12891,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THDoubleStorage_new_withSize (IntPtr size);
+            extern static HType THDoubleStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a DoubleStorage instance with the specified size.
@@ -12642,9 +12899,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public DoubleStorage (long size)
             {
-                handle = THDoubleStorage_new_withSize ((IntPtr) size);
+                handle = THDoubleStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -12667,9 +12924,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -12687,6 +12944,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THDoubleStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THDoubleStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THDoubleStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THDoubleStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static double THDoubleStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -12743,11 +13022,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THDoubleTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal DoubleStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_new ();
@@ -12843,7 +13123,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -12946,8 +13226,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public DoubleStorage Storage => new DoubleStorage (THDoubleTensor_storage (handle));
+        public DoubleStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new DoubleStorage (THDoubleTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THDoubleTensor_nDimension (HType handle);
@@ -13401,6 +13691,7 @@ namespace TorchSharp {
                 CappedRandom (r, n);
         }
 
+
 #if false
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_bernoulli_DoubleTensor (HType self, IntPtr thgenerator, HType p);
@@ -13541,6 +13832,7 @@ namespace TorchSharp {
         {
             THDoubleTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
+
         
         /// <summary>
         ///   Get a string representation of the tensor.
@@ -13957,6 +14249,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cadd (HType result, HType t, double value, HType src);
@@ -13998,12 +14291,13 @@ namespace TorchSharp {
         }
 
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sigmoid (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sigmoid of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sigmoid of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14020,7 +14314,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the natural logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14037,7 +14331,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_lgamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Lgamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Lgamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14054,7 +14348,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_digamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Digamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Digamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14071,7 +14365,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_trigamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trigamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Trigamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14088,7 +14382,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_polygamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Polygamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Polygamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14105,7 +14399,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log10 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log10 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the ten-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14122,7 +14416,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log1p (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log1p of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the logarithm of 1 + each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14139,7 +14433,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_log2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the two-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14156,7 +14450,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_exp (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Exp of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the exponential of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14173,7 +14467,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_expm1 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Expm1 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the the exponential of the elements minus 1 of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14190,7 +14484,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14207,7 +14501,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_acos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Acos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arccosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14224,7 +14518,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cosh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cosh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyerbolic cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14241,7 +14535,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14258,7 +14552,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_asin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Asin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arcsine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14275,7 +14569,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sinh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sinh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14292,7 +14586,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_tan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14309,7 +14603,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_atan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14326,7 +14620,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_atan2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14343,7 +14637,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_tanh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tanh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14360,7 +14654,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erf (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erf of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14377,7 +14671,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erfc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the complementary error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14394,7 +14688,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_erfinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14411,7 +14705,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_sqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the square root <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14428,7 +14722,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_rsqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Rsqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the reciprocal of the square root of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14445,7 +14739,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_ceil (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Ceil of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded up to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14462,7 +14756,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_floor (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Floor of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded down to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14479,7 +14773,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_round (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Round of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14496,7 +14790,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_abs (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Abs of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the absolute values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14513,7 +14807,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_trunc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trunc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the truncated integer values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14530,7 +14824,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_frac (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Frac of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the fractional portion of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14547,7 +14841,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_cinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse value (1/x) of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14564,7 +14858,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_neg (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverted sign of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14581,7 +14875,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_zerosLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the zero-filled values of the same type as  <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14598,7 +14892,7 @@ namespace TorchSharp {
         extern static void THDoubleTensor_onesLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the one-filled values of the same type as <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -14609,6 +14903,7 @@ namespace TorchSharp {
             THDoubleTensor_onesLike (result.handle, this.handle);
             return result;
         }
+
 
 
                 
@@ -14639,6 +14934,7 @@ namespace TorchSharp {
             THDoubleTensor_tpow (result.handle, x, this.handle);
             return result;
         }
+
 
 
         [DllImport ("caffe2")]
@@ -15161,6 +15457,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmaxValue (HType result, HType t, double value);
@@ -15427,14 +15724,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public DoubleTensor LERP (DoubleTensor other, double weight)
         {
             if (other == null)
@@ -15517,6 +15819,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addcmul (HType result, HType t, double value, HType src1, HType src2);
@@ -15567,6 +15870,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addmv (HType result, double beta, HType t, double alpha, HType src1, HType src2);
@@ -15580,7 +15884,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -15609,7 +15913,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -15638,7 +15942,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -15667,7 +15971,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -15696,7 +16000,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -15711,6 +16015,7 @@ namespace TorchSharp {
             THDoubleTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -15783,6 +16088,7 @@ namespace TorchSharp {
             return THDoubleTensor_prodall (this.handle);
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_linspace (HType result, double a, double b, long n);
@@ -15824,6 +16130,7 @@ namespace TorchSharp {
             THDoubleTensor_logspace (result.handle, a, b, n);
             return result;
         }
+
 
 
         [DllImport ("caffe2")]
@@ -16022,6 +16329,7 @@ namespace TorchSharp {
             THDoubleTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -16036,6 +16344,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -16052,6 +16361,7 @@ namespace TorchSharp {
             THDoubleTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -16066,6 +16376,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -16082,6 +16393,7 @@ namespace TorchSharp {
             THDoubleTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -16096,6 +16408,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -16115,6 +16428,7 @@ namespace TorchSharp {
         
         
      
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -16143,6 +16457,7 @@ namespace TorchSharp {
             THDoubleTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -16172,6 +16487,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -16188,6 +16504,7 @@ namespace TorchSharp {
             THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -16204,6 +16521,7 @@ namespace TorchSharp {
             THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -16220,6 +16538,7 @@ namespace TorchSharp {
             THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -16452,6 +16771,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
+
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mean (HType result, HType self, int dimension, int keepdim);
         
@@ -16641,6 +16961,7 @@ namespace TorchSharp {
         }
      
     }
+
     public partial class FloatTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -16652,7 +16973,8 @@ namespace TorchSharp {
                     SetHandle (preexistingHandle);
                 }
                 
-                public override bool IsInvalid => handle == (IntPtr) 0;
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
@@ -16665,7 +16987,6 @@ namespace TorchSharp {
                 protected override bool ReleaseHandle ()
                 {
                     THFloatStorage_free (handle);
-                    handle = IntPtr.Zero;
                     return true;
                 }
             }
@@ -16689,7 +17010,7 @@ namespace TorchSharp {
             }
             
             [DllImport ("caffe2")]
-            extern static HType THFloatStorage_new_withSize (IntPtr size);
+            extern static HType THFloatStorage_newWithSize (UIntPtr size);
             
             /// <summary>
             ///   Initializes a FloatStorage instance with the specified size.
@@ -16697,9 +17018,9 @@ namespace TorchSharp {
             /// <param name="size">The desired number of elements in the storage</param>
             public FloatStorage (long size)
             {
-                handle = THFloatStorage_new_withSize ((IntPtr) size);
+                handle = THFloatStorage_newWithSize ((UIntPtr) size);
             }
-            
+
             /// <summary>
             /// Finalizer
             /// </summary>
@@ -16722,9 +17043,9 @@ namespace TorchSharp {
             /// </summary>
             protected void Dispose (bool disposing)
             {
-                if (disposing){
+                if (disposing) {
                     handle.Dispose ();
-                    handle = null;
+                    handle.SetHandleAsInvalid();
                 }
             }
             
@@ -16742,6 +17063,28 @@ namespace TorchSharp {
                 }
             }
             
+            [DllImport ("caffe2")]
+            extern static UIntPtr THFloatStorage_size (HType handle);
+    
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>  
+            public ulong Size ()
+            {
+                return THFloatStorage_size(handle).ToUInt64();
+            }
+            
+            [DllImport ("caffe2")]
+            extern static void THFloatStorage_retain (HType handle);
+
+            /// <summary>
+            ///   Increment the ref count for this storage.
+            /// </summary>        
+            public void Retain ()
+            {
+                THFloatStorage_retain (handle);
+            }
+
             [DllImport ("caffe2")]
             extern static float THFloatStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
@@ -16798,11 +17141,12 @@ namespace TorchSharp {
             protected override bool ReleaseHandle ()
             {
                 THFloatTensor_free (handle);
-                handle = IntPtr.Zero;
                 return true;
             }
         }
+
         internal HType handle;
+        internal FloatStorage storage;
         
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_new ();
@@ -16898,7 +17242,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle = null;
+                handle.SetHandleAsInvalid();
             }
         }
 
@@ -17001,8 +17345,18 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        
-        public FloatStorage Storage => new FloatStorage (THFloatTensor_storage (handle));
+        public FloatStorage Storage
+        {
+            get
+            {
+                if (storage == null)
+                {
+                    storage = new FloatStorage (THFloatTensor_storage (handle));
+                }
+
+                return storage;
+            }
+        }
         
         [DllImport ("caffe2")]
         extern static int THFloatTensor_nDimension (HType handle);
@@ -17456,6 +17810,7 @@ namespace TorchSharp {
                 CappedRandom (r, n);
         }
 
+
 #if false
         [DllImport ("caffe2")]
         extern static void THFloatTensor_bernoulli_FloatTensor (HType self, IntPtr thgenerator, HType p);
@@ -17596,6 +17951,7 @@ namespace TorchSharp {
         {
             THFloatTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
+
         
         /// <summary>
         ///   Get a string representation of the tensor.
@@ -18012,6 +18368,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cadd (HType result, HType t, float value, HType src);
@@ -18053,12 +18410,13 @@ namespace TorchSharp {
         }
 
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sigmoid (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sigmoid of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sigmoid of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18075,7 +18433,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the natural logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18092,7 +18450,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_lgamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Lgamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Lgamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18109,7 +18467,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_digamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Digamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Digamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18126,7 +18484,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_trigamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trigamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Trigamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18143,7 +18501,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_polygamma (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Polygamma of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the Polygamma <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18160,7 +18518,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log10 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log10 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the ten-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18177,7 +18535,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log1p (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log1p of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the logarithm of 1 + each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18194,7 +18552,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_log2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Log2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the two-based logarithm of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18211,7 +18569,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_exp (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Exp of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the exponential of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18228,7 +18586,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_expm1 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Expm1 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the the exponential of the elements minus 1 of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18245,7 +18603,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18262,7 +18620,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_acos (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Acos of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arccosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18279,7 +18637,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cosh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Cosh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyerbolic cosine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18296,7 +18654,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18313,7 +18671,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_asin (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Asin of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arcsine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18330,7 +18688,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sinh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sinh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic sine of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18347,7 +18705,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_tan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18364,7 +18722,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_atan (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18381,7 +18739,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_atan2 (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Atan2 of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the arctangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18398,7 +18756,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_tanh (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Tanh of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the hyperbolic tangent of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18415,7 +18773,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erf (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erf of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18432,7 +18790,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erfc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the complementary error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18449,7 +18807,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_erfinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Erfinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse error function of each element of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18466,7 +18824,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_sqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Sqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the square root <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18483,7 +18841,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_rsqrt (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Rsqrt of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the reciprocal of the square root of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18500,7 +18858,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_ceil (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Ceil of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded up to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18517,7 +18875,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_floor (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Floor of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded down to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18534,7 +18892,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_round (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Round of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the values rounded to the nearest integer of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18551,7 +18909,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_abs (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Abs of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the absolute values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18568,7 +18926,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_trunc (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Trunc of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the truncated integer values of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18585,7 +18943,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_frac (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the Frac of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the fractional portion of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18602,7 +18960,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_cinv (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the cinv of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverse value (1/x) of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18619,7 +18977,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_neg (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the neg of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the inverted sign of the elements of <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18636,7 +18994,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_zerosLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the ZerosLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the zero-filled values of the same type as  <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18653,7 +19011,7 @@ namespace TorchSharp {
         extern static void THFloatTensor_onesLike (HType result, HType t);
         
         /// <summary>
-        ///   Returns a new tensor with the OnesLike of the elements of <see paramref="src"/>
+        ///   Returns a new tensor with the one-filled values of the same type as <see paramref="src"/>
         /// </summary>
         /// <returns>
         ///   This returns a new tensor with the same shape as the tensor this operates on.
@@ -18664,6 +19022,7 @@ namespace TorchSharp {
             THFloatTensor_onesLike (result.handle, this.handle);
             return result;
         }
+
 
 
                 
@@ -18694,6 +19053,7 @@ namespace TorchSharp {
             THFloatTensor_tpow (result.handle, x, this.handle);
             return result;
         }
+
 
 
         [DllImport ("caffe2")]
@@ -19216,6 +19576,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmaxValue (HType result, HType t, float value);
@@ -19482,14 +19843,19 @@ namespace TorchSharp {
             return result;
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
         
         /// <summary>
-        ///   LERP
+        ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
         /// <param name="other">The right-hand-side operand.</param>
-        /// <param name="weight"></param>
+        /// <param name="weight">The scale factor.</param>
+        /// <returns>The tensor resulting from the linear interpolation.</returns>
+        /// <remarks>
+        ///   The element-wise calculation is: result = this + scale * (this - other)
+        /// </remarks>
         public FloatTensor LERP (FloatTensor other, float weight)
         {
             if (other == null)
@@ -19572,6 +19938,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addcmul (HType result, HType t, float value, HType src1, HType src2);
@@ -19622,6 +19989,7 @@ namespace TorchSharp {
             return result;
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addmv (HType result, float beta, HType t, float alpha, HType src1, HType src2);
@@ -19635,7 +20003,7 @@ namespace TorchSharp {
         /// <param name="mat">Matrix to be multiplied</param>
         /// <param name="vec">Vector to be multiplied</param>
         /// <remarks>
-        /// β tensor+α (mat@vec)
+        /// <para>β tensor+α (mat@vec)</para>
         /// </remarks>
         /// <returns>
         ///   β tensor+α (mat@vec)
@@ -19664,7 +20032,7 @@ namespace TorchSharp {
         /// <param name="mat1">First matrix to  be multiplied</param>
         /// <param name="mat2">Second matrix to  be multiplied</param>
         /// <remarks>
-        /// β mat+α (mat1i@mat2i)
+        /// <para>β mat+α (mat1i@mat2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (mat1i@mat2i)
@@ -19693,7 +20061,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mat+α (∑i=0bbatch1i@batch2i)
+        /// <para>β mat+α (∑i=0bbatch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (∑i=0bbatch1i@batch2i)
@@ -19722,7 +20090,7 @@ namespace TorchSharp {
         /// <param name="vec1">the first vector of the outer product</param>
         /// <param name="vec2">the second vector of the outer product</param>
         /// <remarks>
-        /// β mat+α (vec1⊗vec2)
+        /// <para>β mat+α (vec1⊗vec2)</para>
         /// </remarks>
         /// <returns>
         ///   β mat+α (vec1⊗vec2)
@@ -19751,7 +20119,7 @@ namespace TorchSharp {
         /// <param name="batch1">the first batch of matrices to be multiplied</param>
         /// <param name="batch2">the second batch of matrices to be multiplied</param>
         /// <remarks>
-        /// β mati+α (batch1i@batch2i)
+        /// <para>β mati+α (batch1i@batch2i)</para>
         /// </remarks>
         /// <returns>
         ///   β mati+α (batch1i@batch2i)
@@ -19766,6 +20134,7 @@ namespace TorchSharp {
             THFloatTensor_baddbmm (result.handle, beta, this.handle, alpha, batch1.handle, batch2.handle);
             return result;
         }
+
 
  
         [DllImport ("caffe2")]
@@ -19838,6 +20207,7 @@ namespace TorchSharp {
             return THFloatTensor_prodall (this.handle);
         }
 
+
                 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_linspace (HType result, float a, float b, long n);
@@ -19879,6 +20249,7 @@ namespace TorchSharp {
             THFloatTensor_logspace (result.handle, a, b, n);
             return result;
         }
+
 
 
         [DllImport ("caffe2")]
@@ -20077,6 +20448,7 @@ namespace TorchSharp {
             THFloatTensor_copy (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyByte (HType tensor, ByteTensor.HType src);
         
@@ -20091,6 +20463,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyByte (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -20107,6 +20480,7 @@ namespace TorchSharp {
             THFloatTensor_copyShort (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyInt (HType tensor, IntTensor.HType src);
         
@@ -20121,6 +20495,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyInt (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -20137,6 +20512,7 @@ namespace TorchSharp {
             THFloatTensor_copyLong (this.handle, src.handle);
         }
 
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyFloat (HType tensor, FloatTensor.HType src);
         
@@ -20151,6 +20527,7 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyFloat (this.handle, src.handle);
         }
+
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -20170,6 +20547,7 @@ namespace TorchSharp {
         
         
      
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sum (HType result, HType self, int dimension, int keepdim);
         
@@ -20198,6 +20576,7 @@ namespace TorchSharp {
             THFloatTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_prod (HType result, HType self, int dimension, int keepdim);
         
@@ -20227,6 +20606,7 @@ namespace TorchSharp {
             return result;
         }
      
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -20243,6 +20623,7 @@ namespace TorchSharp {
             THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -20259,6 +20640,7 @@ namespace TorchSharp {
             THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -20275,6 +20657,7 @@ namespace TorchSharp {
             THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
         
@@ -20507,6 +20890,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
+
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mean (HType result, HType self, int dimension, int keepdim);
         
@@ -20696,4 +21080,5 @@ namespace TorchSharp {
         }
      
     }
+
 }
