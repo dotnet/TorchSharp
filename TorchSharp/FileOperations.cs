@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -75,6 +75,7 @@ namespace Torch.IO {
         ///   Write bytes to the file from the given byte array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of bytes to write.</param>
         /// <returns>The number of bytes written.</returns>
         public long WriteBytes(byte[] data, int n = -1)
         {
@@ -151,6 +152,7 @@ namespace Torch.IO {
         ///   Write shorts to the file from the given short array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of shorts to write.</param>
         /// <returns>The number of shorts written.</returns>
         public long WriteShorts(short[] data, int n = -1)
         {
@@ -227,6 +229,7 @@ namespace Torch.IO {
         ///   Write ints to the file from the given int array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of ints to write.</param>
         /// <returns>The number of ints written.</returns>
         public long WriteInts(int[] data, int n = -1)
         {
@@ -303,6 +306,7 @@ namespace Torch.IO {
         ///   Write longs to the file from the given long array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of longs to write.</param>
         /// <returns>The number of longs written.</returns>
         public long WriteLongs(long[] data, int n = -1)
         {
@@ -379,6 +383,7 @@ namespace Torch.IO {
         ///   Write floats to the file from the given float array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of floats to write.</param>
         /// <returns>The number of floats written.</returns>
         public long WriteFloats(float[] data, int n = -1)
         {
@@ -455,6 +460,7 @@ namespace Torch.IO {
         ///   Write doubles to the file from the given double array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of doubles to write.</param>
         /// <returns>The number of doubles written.</returns>
         public long WriteDoubles(double[] data, int n = -1)
         {

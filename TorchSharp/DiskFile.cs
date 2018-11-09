@@ -6,9 +6,12 @@ using Microsoft.Win32.SafeHandles;
 using System.Text;
 
 namespace Torch.IO {
+    /// <summary>
+    ///   Bindings for the native THDiskFile API.
+    /// </summary>
     public class DiskFile : File {
 
-        [DllImport("caffe2")]
+    [DllImport("caffe2")]
         extern static File.HType THDiskFile_new(string name, string mode, int isQuiet);
         [DllImport("caffe2")]
         extern static File.HType THPipeFile_new(string name, string mode, int isQuiet);
