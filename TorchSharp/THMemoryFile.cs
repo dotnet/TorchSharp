@@ -145,7 +145,7 @@ namespace Torch.IO
         /// <summary>
         ///    Creates an empty memory file from an existing storage buffer.
         /// </summary>
-        /// <param name="handle">A storage handle.</param>
+        /// <param name="storage">A storage object.</param>
         /// <param name="mode">Standard POSIX file modes: "r", "w", "rw", etc.</param>
         public MemoryFile(CharStorage storage, string mode)
         {
