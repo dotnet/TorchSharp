@@ -278,7 +278,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THByteTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -476,7 +476,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THByteTensor_newWithStorage1d(ByteStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
@@ -3459,7 +3459,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THShortTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -3657,7 +3657,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THShortTensor_newWithStorage1d(ShortStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
@@ -6592,7 +6592,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THIntTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -6790,7 +6790,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THIntTensor_newWithStorage1d(IntStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
@@ -9725,7 +9725,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THLongTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -9923,7 +9923,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THLongTensor_newWithStorage1d(LongStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
@@ -12858,7 +12858,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -13056,7 +13056,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THDoubleTensor_newWithStorage1d(DoubleStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
@@ -16913,7 +16913,7 @@ namespace TorchSharp {
         [DllImport ("caffe2")]
         extern static void THFloatTensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -17111,7 +17111,7 @@ namespace TorchSharp {
         
         [DllImport("caffe2")]
         extern static HType THFloatTensor_newWithStorage1d(FloatStorage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        

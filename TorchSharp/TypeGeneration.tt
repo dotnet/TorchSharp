@@ -300,7 +300,7 @@ foreach (var type in new [] {
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_zero (HType handle);
      
-        /// <summary>``
+        /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
@@ -498,7 +498,7 @@ foreach (var type in new [] {
         
         [DllImport("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithStorage1d(<#=tname#>Storage.HType handle, IntPtr offset, long size, long stride);
-
+	
         /// <summary>
         ///   Access to element at the specified position in the tensor
         /// </summary>        
