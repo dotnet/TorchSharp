@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Update="TypeGeneration.cs">
       <DependentUpon>TypeGeneration.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Raw/Blas.generated.cs">
       <DependentUpon>Raw/Types.ttinclude</DependentUpon>
@@ -65,5 +67,8 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 </Project>

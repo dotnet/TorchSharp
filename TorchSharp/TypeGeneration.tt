@@ -55,6 +55,14 @@ foreach (var type in new [] {
                     TH<#=tname#>Storage_free (handle);
                     return true;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
             }
 
             internal HType handle;
@@ -318,11 +326,7 @@ foreach (var type in new [] {
         /// <summary>
         ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumElements ()
-        {
-            return TH<#=tname#>Tensor_numel (handle);
-        }   
-
+        public long NumElements => TH<#=tname#>Tensor_numel (handle);
         
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_zero (HType handle);
