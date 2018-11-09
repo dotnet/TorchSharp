@@ -18,18 +18,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TorchTensorUnitTestGenerator.tt">
+    <None Update="SNTUnitTestGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TorchTensorUnitTestGenerator.cs</LastGenOutput>
+      <LastGenOutput>SNTUnitTestGenerator.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="TorchTensorUnitTestGenerator.cs">
+    <Compile Update="SNTUnitTestGenerator.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TorchTensorUnitTestGenerator.tt</DependentUpon>
+      <DependentUpon>SNTUnitTestGenerator.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>
