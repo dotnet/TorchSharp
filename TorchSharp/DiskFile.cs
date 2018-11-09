@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Torch.IO {
     /// <summary>
-    ///   Bindings for the native THDiskFile API.
+    ///   Bindings for THDiskfile native API.
     /// </summary>
     public class DiskFile : File {
 

@@ -78,11 +78,14 @@ foreach (var type in new [] {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
-            var readItems = THFile_read<#=tname#>Raw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var readItems = THFile_read<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
 		/// <summary>
@@ -102,19 +105,20 @@ foreach (var type in new [] {
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of <#=accreal#>s to read.</param>
+        /// <param name="n">The number of <#=accreal#>s to write.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(<#=accreal#>));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_write<#=tname#>Raw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
+            unsafe
+            {
+                fixed (<#=accreal#> *dest = data)
+                {
+                    var writtenItems = THFile_write<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
 		/// <summary>
 		///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
 		/// </summary>

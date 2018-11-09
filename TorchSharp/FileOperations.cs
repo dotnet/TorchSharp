@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -61,52 +61,37 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(byte));
-            var readItems = THFile_readByteRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var readItems = THFile_readByteRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read bytes from the file into the given byte tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of bytes read.</returns>
-		public long ReadTensor(TorchSharp.ByteTensor tensor)
-		{
-			return THFile_readByteRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeByteRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeByteRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write bytes to the file from the given byte array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of bytes to read.</param>
+        /// <param name="n">The number of bytes to write.</param>
         /// <returns>The number of bytes written.</returns>
         public long WriteBytes(byte[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(byte));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeByteRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write bytes to the file from the given byte tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of bytes written.</returns>
-		public long WriteTensor(TorchSharp.ByteTensor tensor)
-		{
-			return THFile_writeByteRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var writtenItems = THFile_writeByteRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
 
@@ -158,52 +143,37 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(short));
-            var readItems = THFile_readShortRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var readItems = THFile_readShortRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read shorts from the file into the given short tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of shorts read.</returns>
-		public long ReadTensor(TorchSharp.ShortTensor tensor)
-		{
-			return THFile_readShortRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeShortRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeShortRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write shorts to the file from the given short array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of shorts to read.</param>
+        /// <param name="n">The number of shorts to write.</param>
         /// <returns>The number of shorts written.</returns>
         public long WriteShorts(short[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(short));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeShortRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write shorts to the file from the given short tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of shorts written.</returns>
-		public long WriteTensor(TorchSharp.ShortTensor tensor)
-		{
-			return THFile_writeShortRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (short *dest = data)
+                {
+                    var writtenItems = THFile_writeShortRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
 
@@ -255,52 +225,37 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(int));
-            var readItems = THFile_readIntRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var readItems = THFile_readIntRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read ints from the file into the given int tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of ints read.</returns>
-		public long ReadTensor(TorchSharp.IntTensor tensor)
-		{
-			return THFile_readIntRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeIntRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeIntRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write ints to the file from the given int array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of ints to read.</param>
+        /// <param name="n">The number of ints to write.</param>
         /// <returns>The number of ints written.</returns>
         public long WriteInts(int[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(int));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeIntRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write ints to the file from the given int tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of ints written.</returns>
-		public long WriteTensor(TorchSharp.IntTensor tensor)
-		{
-			return THFile_writeIntRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (int *dest = data)
+                {
+                    var writtenItems = THFile_writeIntRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static long THFile_readLongScalar(HType self);
 
@@ -352,52 +307,37 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(long));
-            var readItems = THFile_readLongRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var readItems = THFile_readLongRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read longs from the file into the given long tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of longs read.</returns>
-		public long ReadTensor(TorchSharp.LongTensor tensor)
-		{
-			return THFile_readLongRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeLongRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeLongRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write longs to the file from the given long array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of longs to read.</param>
+        /// <param name="n">The number of longs to write.</param>
         /// <returns>The number of longs written.</returns>
         public long WriteLongs(long[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(long));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeLongRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write longs to the file from the given long tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of longs written.</returns>
-		public long WriteTensor(TorchSharp.LongTensor tensor)
-		{
-			return THFile_writeLongRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (long *dest = data)
+                {
+                    var writtenItems = THFile_writeLongRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
 
@@ -449,52 +389,37 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(float));
-            var readItems = THFile_readFloatRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var readItems = THFile_readFloatRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read floats from the file into the given float tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of floats read.</returns>
-		public long ReadTensor(TorchSharp.FloatTensor tensor)
-		{
-			return THFile_readFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeFloatRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeFloatRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write floats to the file from the given float array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of floats to read.</param>
+        /// <param name="n">The number of floats to write.</param>
         /// <returns>The number of floats written.</returns>
         public long WriteFloats(float[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(float));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeFloatRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write floats to the file from the given float tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of floats written.</returns>
-		public long WriteTensor(TorchSharp.FloatTensor tensor)
-		{
-			return THFile_writeFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (float *dest = data)
+                {
+                    var writtenItems = THFile_writeFloatRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
         [DllImport("caffe2")] 
         extern static double THFile_readDoubleScalar(HType self);
 
@@ -546,51 +471,36 @@ namespace Torch.IO {
         {
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
-            var dest = Marshal.AllocHGlobal(n*sizeof(double));
-            var readItems = THFile_readDoubleRaw(this.handle, dest, n);            
-            Marshal.Copy(dest, data, 0, (int)readItems);
-            Marshal.FreeHGlobal(dest);
-            return readItems;
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var readItems = THFile_readDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
         }
 
-		/// <summary>
-		///   Read doubles from the file into the given double tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-		/// <returns>The number of doubles read.</returns>
-		public long ReadTensor(TorchSharp.DoubleTensor tensor)
-		{
-			return THFile_readDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
-
-		[DllImport("caffe2")] 
-		extern static long THFile_writeDoubleRaw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")] 
+        extern static long THFile_writeDoubleRaw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write doubles to the file from the given double array.
         /// </summary>
         /// <param name="data">An array containing data to be written to the file.</param>
-		/// <param name="n">The maximum number of doubles to read.</param>
+        /// <param name="n">The number of doubles to write.</param>
         /// <returns>The number of doubles written.</returns>
         public long WriteDoubles(double[] data, int n = -1)
         {
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
-
-			var dest = Marshal.AllocHGlobal(n*sizeof(double));
-			Marshal.Copy(data, 0, dest, n);
-			var wroteItems = THFile_writeDoubleRaw(this.handle, dest, n);			
-			Marshal.FreeHGlobal(dest);
-			return wroteItems;
-		}
-
-		/// <summary>
-		///   Write doubles to the file from the given double tensor.
-		/// </summary>
-		/// <param name="tensor">A tensor containing data to be written to the file.</param>
-		/// <returns>The number of doubles written.</returns>
-		public long WriteTensor(TorchSharp.DoubleTensor tensor)
-		{
-			return THFile_writeDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
-		}
+            unsafe
+            {
+                fixed (double *dest = data)
+                {
+                    var writtenItems = THFile_writeDoubleRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
     }
 }
