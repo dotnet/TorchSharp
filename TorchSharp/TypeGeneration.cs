@@ -102,18 +102,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THByteStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THByteStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static byte THByteStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THByteStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  byte value);
             
@@ -124,6 +113,16 @@ namespace TorchSharp {
                 set {
                     THByteStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THByteStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THByteStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -198,7 +197,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal ByteStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THByteTensor_new ();
         
@@ -208,13 +208,11 @@ namespace TorchSharp {
         public ByteTensor ()
         {
             handle = THByteTensor_new ();
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
 
         internal ByteTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -227,7 +225,6 @@ namespace TorchSharp {
         public ByteTensor (long size0)
         {
             handle = THByteTensor_newWithSize1d (size0);
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -241,7 +238,6 @@ namespace TorchSharp {
         public ByteTensor (long size0, long size1)
         {
             handle = THByteTensor_newWithSize2d (size0, size1);
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -256,7 +252,6 @@ namespace TorchSharp {
         public ByteTensor (long size0, long size1, long size2)
         {
             handle = THByteTensor_newWithSize3d (size0, size1, size2);
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -272,7 +267,6 @@ namespace TorchSharp {
         public ByteTensor (long size0, long size1, long size2, long size3)
         {
             handle = THByteTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new ByteStorage (THByteTensor_storage(handle));
         }
         
         /// <summary>
@@ -397,9 +391,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public ByteStorage Storage { get; private set; }
+        /// </summary>       
+        public ByteStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new ByteStorage (THByteTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THByteTensor_nDimension (HType handle);
@@ -523,7 +526,7 @@ namespace TorchSharp {
         public static ByteTensor NewWithStorage1d(ByteTensor.ByteStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new ByteTensor(THByteTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -553,7 +556,7 @@ namespace TorchSharp {
         public static ByteTensor NewWithStorage2d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new ByteTensor(THByteTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -587,7 +590,7 @@ namespace TorchSharp {
         public static ByteTensor NewWithStorage3d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new ByteTensor(THByteTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -625,7 +628,7 @@ namespace TorchSharp {
         public ByteTensor NewWithStorage4d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new ByteTensor(THByteTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -3387,18 +3390,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THShortStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THShortStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static short THShortStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THShortStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  short value);
             
@@ -3409,6 +3401,16 @@ namespace TorchSharp {
                 set {
                     THShortStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THShortStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THShortStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -3483,7 +3485,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal ShortStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THShortTensor_new ();
         
@@ -3493,13 +3496,11 @@ namespace TorchSharp {
         public ShortTensor ()
         {
             handle = THShortTensor_new ();
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
 
         internal ShortTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -3512,7 +3513,6 @@ namespace TorchSharp {
         public ShortTensor (long size0)
         {
             handle = THShortTensor_newWithSize1d (size0);
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -3526,7 +3526,6 @@ namespace TorchSharp {
         public ShortTensor (long size0, long size1)
         {
             handle = THShortTensor_newWithSize2d (size0, size1);
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -3541,7 +3540,6 @@ namespace TorchSharp {
         public ShortTensor (long size0, long size1, long size2)
         {
             handle = THShortTensor_newWithSize3d (size0, size1, size2);
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -3557,7 +3555,6 @@ namespace TorchSharp {
         public ShortTensor (long size0, long size1, long size2, long size3)
         {
             handle = THShortTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new ShortStorage (THShortTensor_storage(handle));
         }
         
         /// <summary>
@@ -3682,9 +3679,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public ShortStorage Storage { get; private set; }
+        /// </summary>       
+        public ShortStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new ShortStorage (THShortTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THShortTensor_nDimension (HType handle);
@@ -3808,7 +3814,7 @@ namespace TorchSharp {
         public static ShortTensor NewWithStorage1d(ShortTensor.ShortStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new ShortTensor(THShortTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -3838,7 +3844,7 @@ namespace TorchSharp {
         public static ShortTensor NewWithStorage2d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new ShortTensor(THShortTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -3872,7 +3878,7 @@ namespace TorchSharp {
         public static ShortTensor NewWithStorage3d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new ShortTensor(THShortTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -3910,7 +3916,7 @@ namespace TorchSharp {
         public ShortTensor NewWithStorage4d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new ShortTensor(THShortTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -6624,18 +6630,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THIntStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THIntStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static int THIntStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THIntStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  int value);
             
@@ -6646,6 +6641,16 @@ namespace TorchSharp {
                 set {
                     THIntStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THIntStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THIntStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -6720,7 +6725,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal IntStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THIntTensor_new ();
         
@@ -6730,13 +6736,11 @@ namespace TorchSharp {
         public IntTensor ()
         {
             handle = THIntTensor_new ();
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
 
         internal IntTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -6749,7 +6753,6 @@ namespace TorchSharp {
         public IntTensor (long size0)
         {
             handle = THIntTensor_newWithSize1d (size0);
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -6763,7 +6766,6 @@ namespace TorchSharp {
         public IntTensor (long size0, long size1)
         {
             handle = THIntTensor_newWithSize2d (size0, size1);
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -6778,7 +6780,6 @@ namespace TorchSharp {
         public IntTensor (long size0, long size1, long size2)
         {
             handle = THIntTensor_newWithSize3d (size0, size1, size2);
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -6794,7 +6795,6 @@ namespace TorchSharp {
         public IntTensor (long size0, long size1, long size2, long size3)
         {
             handle = THIntTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new IntStorage (THIntTensor_storage(handle));
         }
         
         /// <summary>
@@ -6919,9 +6919,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public IntStorage Storage { get; private set; }
+        /// </summary>       
+        public IntStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new IntStorage (THIntTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THIntTensor_nDimension (HType handle);
@@ -7045,7 +7054,7 @@ namespace TorchSharp {
         public static IntTensor NewWithStorage1d(IntTensor.IntStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new IntTensor(THIntTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -7075,7 +7084,7 @@ namespace TorchSharp {
         public static IntTensor NewWithStorage2d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new IntTensor(THIntTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -7109,7 +7118,7 @@ namespace TorchSharp {
         public static IntTensor NewWithStorage3d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new IntTensor(THIntTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -7147,7 +7156,7 @@ namespace TorchSharp {
         public IntTensor NewWithStorage4d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new IntTensor(THIntTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -9861,18 +9870,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THLongStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THLongStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static long THLongStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THLongStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  long value);
             
@@ -9883,6 +9881,16 @@ namespace TorchSharp {
                 set {
                     THLongStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THLongStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THLongStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -9957,7 +9965,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal LongStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THLongTensor_new ();
         
@@ -9967,13 +9976,11 @@ namespace TorchSharp {
         public LongTensor ()
         {
             handle = THLongTensor_new ();
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
 
         internal LongTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -9986,7 +9993,6 @@ namespace TorchSharp {
         public LongTensor (long size0)
         {
             handle = THLongTensor_newWithSize1d (size0);
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -10000,7 +10006,6 @@ namespace TorchSharp {
         public LongTensor (long size0, long size1)
         {
             handle = THLongTensor_newWithSize2d (size0, size1);
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -10015,7 +10020,6 @@ namespace TorchSharp {
         public LongTensor (long size0, long size1, long size2)
         {
             handle = THLongTensor_newWithSize3d (size0, size1, size2);
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -10031,7 +10035,6 @@ namespace TorchSharp {
         public LongTensor (long size0, long size1, long size2, long size3)
         {
             handle = THLongTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new LongStorage (THLongTensor_storage(handle));
         }
         
         /// <summary>
@@ -10156,9 +10159,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public LongStorage Storage { get; private set; }
+        /// </summary>       
+        public LongStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new LongStorage (THLongTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THLongTensor_nDimension (HType handle);
@@ -10282,7 +10294,7 @@ namespace TorchSharp {
         public static LongTensor NewWithStorage1d(LongTensor.LongStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new LongTensor(THLongTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -10312,7 +10324,7 @@ namespace TorchSharp {
         public static LongTensor NewWithStorage2d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new LongTensor(THLongTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -10346,7 +10358,7 @@ namespace TorchSharp {
         public static LongTensor NewWithStorage3d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new LongTensor(THLongTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -10384,7 +10396,7 @@ namespace TorchSharp {
         public LongTensor NewWithStorage4d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new LongTensor(THLongTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -13098,18 +13110,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THDoubleStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THDoubleStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static double THDoubleStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THDoubleStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  double value);
             
@@ -13120,6 +13121,16 @@ namespace TorchSharp {
                 set {
                     THDoubleStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THDoubleStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THDoubleStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -13194,7 +13205,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal DoubleStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_new ();
         
@@ -13204,13 +13216,11 @@ namespace TorchSharp {
         public DoubleTensor ()
         {
             handle = THDoubleTensor_new ();
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
 
         internal DoubleTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -13223,7 +13233,6 @@ namespace TorchSharp {
         public DoubleTensor (long size0)
         {
             handle = THDoubleTensor_newWithSize1d (size0);
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -13237,7 +13246,6 @@ namespace TorchSharp {
         public DoubleTensor (long size0, long size1)
         {
             handle = THDoubleTensor_newWithSize2d (size0, size1);
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -13252,7 +13260,6 @@ namespace TorchSharp {
         public DoubleTensor (long size0, long size1, long size2)
         {
             handle = THDoubleTensor_newWithSize3d (size0, size1, size2);
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -13268,7 +13275,6 @@ namespace TorchSharp {
         public DoubleTensor (long size0, long size1, long size2, long size3)
         {
             handle = THDoubleTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new DoubleStorage (THDoubleTensor_storage(handle));
         }
         
         /// <summary>
@@ -13393,9 +13399,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public DoubleStorage Storage { get; private set; }
+        /// </summary>       
+        public DoubleStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new DoubleStorage (THDoubleTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THDoubleTensor_nDimension (HType handle);
@@ -13519,7 +13534,7 @@ namespace TorchSharp {
         public static DoubleTensor NewWithStorage1d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new DoubleTensor(THDoubleTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -13549,7 +13564,7 @@ namespace TorchSharp {
         public static DoubleTensor NewWithStorage2d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new DoubleTensor(THDoubleTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -13583,7 +13598,7 @@ namespace TorchSharp {
         public static DoubleTensor NewWithStorage3d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new DoubleTensor(THDoubleTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -13621,7 +13636,7 @@ namespace TorchSharp {
         public DoubleTensor NewWithStorage4d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new DoubleTensor(THDoubleTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -17257,18 +17272,7 @@ namespace TorchSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THFloatStorage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => THFloatStorage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static float THFloatStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void THFloatStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  float value);
             
@@ -17279,6 +17283,16 @@ namespace TorchSharp {
                 set {
                     THFloatStorage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr THFloatStorage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => THFloatStorage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -17353,7 +17367,8 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        
+        internal FloatStorage storage;
+
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_new ();
         
@@ -17363,13 +17378,11 @@ namespace TorchSharp {
         public FloatTensor ()
         {
             handle = THFloatTensor_new ();
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
 
         internal FloatTensor (HType handle)
         {
             this.handle = handle;
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -17382,7 +17395,6 @@ namespace TorchSharp {
         public FloatTensor (long size0)
         {
             handle = THFloatTensor_newWithSize1d (size0);
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -17396,7 +17408,6 @@ namespace TorchSharp {
         public FloatTensor (long size0, long size1)
         {
             handle = THFloatTensor_newWithSize2d (size0, size1);
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -17411,7 +17422,6 @@ namespace TorchSharp {
         public FloatTensor (long size0, long size1, long size2)
         {
             handle = THFloatTensor_newWithSize3d (size0, size1, size2);
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -17427,7 +17437,6 @@ namespace TorchSharp {
         public FloatTensor (long size0, long size1, long size2, long size3)
         {
             handle = THFloatTensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new FloatStorage (THFloatTensor_storage(handle));
         }
         
         /// <summary>
@@ -17552,9 +17561,18 @@ namespace TorchSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public FloatStorage Storage { get; private set; }
+        /// </summary>       
+        public FloatStorage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new FloatStorage (THFloatTensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int THFloatTensor_nDimension (HType handle);
@@ -17678,7 +17696,7 @@ namespace TorchSharp {
         public static FloatTensor NewWithStorage1d(FloatTensor.FloatStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new FloatTensor(THFloatTensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -17708,7 +17726,7 @@ namespace TorchSharp {
         public static FloatTensor NewWithStorage2d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new FloatTensor(THFloatTensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -17742,7 +17760,7 @@ namespace TorchSharp {
         public static FloatTensor NewWithStorage3d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new FloatTensor(THFloatTensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -17780,7 +17798,7 @@ namespace TorchSharp {
         public FloatTensor NewWithStorage4d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new FloatTensor(THFloatTensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 

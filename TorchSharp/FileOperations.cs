@@ -10,6 +10,7 @@ namespace Torch.IO {
 
     public abstract partial class File : IDisposable
     {
+
         [DllImport("caffe2")] 
         extern static byte THFile_readByteScalar(HType self);
 
@@ -111,6 +112,7 @@ namespace Torch.IO {
         {
             return THFile_writeByteRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
 
@@ -212,6 +214,7 @@ namespace Torch.IO {
         {
             return THFile_writeShortRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
         [DllImport("caffe2")] 
         extern static int THFile_readIntScalar(HType self);
 
@@ -313,6 +316,7 @@ namespace Torch.IO {
         {
             return THFile_writeIntRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
         [DllImport("caffe2")] 
         extern static long THFile_readLongScalar(HType self);
 
@@ -414,6 +418,7 @@ namespace Torch.IO {
         {
             return THFile_writeLongRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
         [DllImport("caffe2")] 
         extern static float THFile_readFloatScalar(HType self);
 
@@ -515,6 +520,7 @@ namespace Torch.IO {
         {
             return THFile_writeFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
         [DllImport("caffe2")] 
         extern static double THFile_readDoubleScalar(HType self);
 

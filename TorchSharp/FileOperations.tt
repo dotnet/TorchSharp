@@ -27,6 +27,7 @@ foreach (var type in new [] {
         string tname = type.ApiName;
         string accreal = type.AccReal;
 #>
+
         [DllImport("caffe2")] 
         extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
 

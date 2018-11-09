@@ -124,18 +124,7 @@ foreach (var type in new [] {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr TH<#=tname#>Storage_size(HType handle);
-
-            /// <summary>
-            ///   Get the size of the storage object.
-            /// </summary>
-            public ulong Size {
-                get => TH<#=tname#>Storage_size(handle).ToUInt64();
-            }
-            
-            [DllImport ("caffe2")]
             extern static <#=ttype#> TH<#=tname#>Storage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Storage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  <#=ttype#> value);
             
@@ -146,6 +135,16 @@ foreach (var type in new [] {
                 set {
                     TH<#=tname#>Storage_set (handle, (IntPtr) (index), value);
                 }
+            }
+            
+            [DllImport ("caffe2")]
+            extern static UIntPtr TH<#=tname#>Storage_size (HType handle); 
+
+            /// <summary>
+            ///   Return the total length of the storage.
+            /// </summary>
+            public ulong Size {
+                get => TH<#=tname#>Storage_size(handle).ToUInt64();
             }
             
             [DllImport ("caffe2")]
@@ -220,7 +219,8 @@ foreach (var type in new [] {
         }
 
         internal HType handle;
-        
+        internal <#=tname#>Storage storage;
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
         
@@ -230,13 +230,11 @@ foreach (var type in new [] {
         public <#=tname#>Tensor ()
         {
             handle = TH<#=tname#>Tensor_new ();
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
 
         internal <#=tname#>Tensor (HType handle)
         {
             this.handle = handle;
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -249,7 +247,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor (long size0)
         {
             handle = TH<#=tname#>Tensor_newWithSize1d (size0);
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -263,7 +260,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor (long size0, long size1)
         {
             handle = TH<#=tname#>Tensor_newWithSize2d (size0, size1);
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -278,7 +274,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor (long size0, long size1, long size2)
         {
             handle = TH<#=tname#>Tensor_newWithSize3d (size0, size1, size2);
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
 
         [DllImport ("caffe2")]
@@ -294,7 +289,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor (long size0, long size1, long size2, long size3)
         {
             handle = TH<#=tname#>Tensor_newWithSize4d (size0, size1, size2, size3);
-            Storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage(handle));
         }
         
         /// <summary>
@@ -419,9 +413,18 @@ foreach (var type in new [] {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
-        
-        public <#=tname#>Storage Storage { get; private set; }
+        /// </summary>       
+        public <#=tname#>Storage Storage 
+        { 
+            get 
+            { 
+                if (storage == null) 
+                { 
+                    storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage (handle)); 
+                } 
+                return storage; 
+            } 
+        } 
         
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_nDimension (HType handle);
@@ -545,7 +548,7 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage1d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size, long stride)
         {
             var result = new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -575,7 +578,7 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage2d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -609,7 +612,7 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage3d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
@@ -647,7 +650,7 @@ foreach (var type in new [] {
         public <#=tname#>Tensor NewWithStorage4d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.Storage = storage;
+            result.storage = storage;
             return result;
         }
 
