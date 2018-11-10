@@ -580,7 +580,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadByteTensorViaMemoryFile()
+        public void WriteAndReadByteTensorViaDiskFile()
         {
             const int size = 10;
 
@@ -614,7 +614,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadShortTensorViaMemoryFile()
+        public void WriteAndReadShortTensorViaDiskFile()
         {
             const int size = 10;
 
@@ -648,7 +648,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadIntTensorViaMemoryFile()
+        public void WriteAndReadIntTensorViaDiskFile()
         {
             const int size = 10;
 
@@ -682,7 +682,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadLongTensorViaMemoryFile()
+        public void WriteAndReadLongTensorViaDiskFile()
         {
             const int size = 10;
 
@@ -716,7 +716,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadFloatTensorViaMemoryFile()
+        public void WriteAndReadFloatTensorViaDiskFile()
         {
             const int size = 10;
 
@@ -750,7 +750,7 @@ namespace Test
         }
 
         [TestMethod]
-        public void WriteAndReadDoubleTensorViaMemoryFile()
+        public void WriteAndReadDoubleTensorViaDiskFile()
         {
             const int size = 10;
 
