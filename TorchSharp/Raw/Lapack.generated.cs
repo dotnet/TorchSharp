@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
+    // High-performance linear algebra operations.
     internal static class Lapack {
 
         // Solve AX=B

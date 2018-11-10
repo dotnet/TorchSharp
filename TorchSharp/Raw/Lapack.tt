@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
+    // High-performance linear algebra operations.
     internal static class Lapack {
 <#
 foreach (var type in TorchTypeDef.Types) {
