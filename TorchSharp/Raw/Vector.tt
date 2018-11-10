@@ -8,21 +8,22 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
+    // Element-wise operations for vectors.
+    // Each scalar_t* pointer can be an offset, and ptrdiff_t
+    // parameters usually has number of elements to operate on.
     internal static class Vector {
 
 <#
 foreach (var type in TorchTypeDef.Types) {
 #>
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void TH<#=type.Name#>Vector_fill(
-            <#=type.Ptr#> x,
-            <#=type.Storage#> c,
-            <#=type.PtrDiff#> n);
+            <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -105,11 +106,8 @@ foreach (var type in TorchTypeDef.Types) {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void TH<#=type.Name#>Vector_normal_fill(
-            <#=type.Ptr#> data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            <#=type.Storage#> mean,
-            <#=type.Storage#> stddev);
+            <#=type.Ptr#> data, long size, IntPtr /* struct THGenerator* */ generator,
+            <#=type.Storage#> mean,<#=type.Storage#> stddev);
 
 <# if (type.IsInt) { #>
         // y = |x| element-wise for n elements

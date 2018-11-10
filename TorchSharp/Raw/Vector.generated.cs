@@ -4,18 +4,19 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
+    // Element-wise operations for vectors.
+    // Each scalar_t* pointer can be an offset, and ptrdiff_t
+    // parameters usually has number of elements to operate on.
     internal static class Vector {
 
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THByteVector_fill(
-            IntPtr /* scalar_t* */ x,
-            byte c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, byte c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -98,22 +99,17 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THByteVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            byte mean,
-            byte stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            byte mean,byte stddev);
 
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THShortVector_fill(
-            IntPtr /* scalar_t* */ x,
-            short c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, short c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -196,11 +192,8 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THShortVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            short mean,
-            short stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            short mean,short stddev);
 
         // y = |x| element-wise for n elements
         //
@@ -211,16 +204,14 @@ namespace TorchSharp.Raw {
         internal extern static void THShortVector_abs(
             IntPtr /* scalar_t* */ y, IntPtr /* scalar_t* */ x, int /* ptrdiff_t */ n);
 
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THIntVector_fill(
-            IntPtr /* scalar_t* */ x,
-            int c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, int c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -303,11 +294,8 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THIntVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            int mean,
-            int stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            int mean,int stddev);
 
         // y = |x| element-wise for n elements
         //
@@ -318,16 +306,14 @@ namespace TorchSharp.Raw {
         internal extern static void THIntVector_abs(
             IntPtr /* scalar_t* */ y, IntPtr /* scalar_t* */ x, int /* ptrdiff_t */ n);
 
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THLongVector_fill(
-            IntPtr /* scalar_t* */ x,
-            long c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, long c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -410,11 +396,8 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THLongVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            long mean,
-            long stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            long mean,long stddev);
 
         // y = |x| element-wise for n elements
         //
@@ -425,16 +408,14 @@ namespace TorchSharp.Raw {
         internal extern static void THLongVector_abs(
             IntPtr /* scalar_t* */ y, IntPtr /* scalar_t* */ x, int /* ptrdiff_t */ n);
 
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THDoubleVector_fill(
-            IntPtr /* scalar_t* */ x,
-            double c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, double c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -517,11 +498,8 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THDoubleVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            double mean,
-            double stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            double mean,double stddev);
 
         // y = x^c element-wise for n elements
         //
@@ -810,16 +788,14 @@ namespace TorchSharp.Raw {
         [DllImport ("caffe2")]
         internal extern static void THDoubleVector_cinv(
             IntPtr /* scalar_t* */ y, IntPtr /* scalar_t* */ x, int /* ptrdiff_t */ n);
-        // Fill n elements of vector x with the value c.
+        // Assign value c to n elements of the vector, starting from pointer x.
         //
         // Corresponds to the following TH declaration:
         //
         // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
         [DllImport ("caffe2")]
         internal extern static void THFloatVector_fill(
-            IntPtr /* scalar_t* */ x,
-            float c,
-            int /* ptrdiff_t */ n);
+            IntPtr /* scalar_t* */ x, float c, int /* ptrdiff_t */ n);
 
         // z = (x + y) + c element-wise for n elements
         //
@@ -902,11 +878,8 @@ namespace TorchSharp.Raw {
         //     const scalar_t mean, const scalar_t stddev);
         [DllImport ("caffe2")]
         internal extern static void THFloatVector_normal_fill(
-            IntPtr /* scalar_t* */ data,
-            long size,
-            IntPtr /* struct THGenerator* */ generator,
-            float mean,
-            float stddev);
+            IntPtr /* scalar_t* */ data, long size, IntPtr /* struct THGenerator* */ generator,
+            float mean,float stddev);
 
         // y = x^c element-wise for n elements
         //
