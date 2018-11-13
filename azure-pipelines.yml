@@ -16,10 +16,6 @@ steps:
   displayName: Download and setup libtorch/Linux
 
 - script: |
-    LD_LIBRARY_PATH=`pwd`/linux/libtorch/lib dotnet test Test --configuration Release --logger trx
-  displayName: Run tests
-
-- script: |
     curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-macos-latest.zip
     unzip -d macos libtorch-macos-latest.zip 'libtorch/lib/*'
   displayName: Download and setup libtorch/Mac
@@ -29,6 +25,10 @@ steps:
     curl -L -o windows/c10.dll https://github.com/xamarin/TorchSharp/releases/download/0.1/c10.dll
     curl -L -o windows/caffe2.dll https://github.com/xamarin/TorchSharp/releases/download/0.1/caffe2.dll
   displayName: Download and setup libtorch/Windows
+
+- script: |
+    LD_LIBRARY_PATH=`pwd`/linux/libtorch/lib dotnet test Test --configuration Release --logger trx
+  displayName: Run tests
 
 - script: |
     dotnet pack
