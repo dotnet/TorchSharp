@@ -11,6 +11,10 @@ steps:
   displayName: Build
 
 - script: |
+    if echo $BUILD_SOURCEBRANCH | grep /release/; then perl -pi -e "s/PackageVersion>.*</PackageVersion>${BUILD_SOURCEBRANCHNAME}</" TorchSharp/TorchSharp.csproj; fi
+  displayName: Update NuGet package version from branch name
+
+- script: |
     curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
     unzip -d linux libtorch-shared-with-deps-latest.zip
   displayName: Download and setup libtorch/Linux
