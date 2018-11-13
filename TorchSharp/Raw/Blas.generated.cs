@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
-	internal static class Blas {
+    internal static class Blas {
 
         // *** Level 1
 
