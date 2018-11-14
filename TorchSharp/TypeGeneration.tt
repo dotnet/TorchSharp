@@ -283,7 +283,7 @@ foreach (var type in new [] {
                     break;
                 case 4: 
                     handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }

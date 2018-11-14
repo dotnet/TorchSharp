@@ -261,7 +261,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
@@ -3470,7 +3470,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
@@ -6631,7 +6631,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
@@ -9792,7 +9792,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
@@ -12953,7 +12953,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
@@ -17036,7 +17036,7 @@ namespace TorchSharp {
                     break;
                 case 4: 
                     handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
-		            break;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
             }
