@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -11,7 +6,6 @@ using Microsoft.Win32.SafeHandles;
 using System.Text;
 
 namespace TorchSharp {
-
     public partial class ByteTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -204,8 +198,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal ByteStorage storage;
-
+        
         internal ByteTensor (HType handle)
         {
             this.handle = handle;
@@ -427,18 +420,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public ByteStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new ByteStorage (THByteTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public ByteStorage Storage => new ByteStorage (THByteTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THByteTensor_nDimension (HType handle);
@@ -893,7 +875,6 @@ namespace TorchSharp {
         }
 
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -912,7 +893,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_add (HType result, HType source, byte value);
 
@@ -956,7 +936,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_sub (HType result, HType source, byte value);
 
@@ -1000,7 +979,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_mul (HType result, HType source, byte value);
 
@@ -1044,7 +1022,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_div (HType result, HType source, byte value);
 
@@ -1088,7 +1065,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_lshift (HType result, HType source, byte value);
 
@@ -1132,7 +1108,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_rshift (HType result, HType source, byte value);
 
@@ -1176,7 +1151,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_fmod (HType result, HType source, byte value);
 
@@ -1220,7 +1194,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_remainder (HType result, HType source, byte value);
 
@@ -1264,7 +1237,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_bitand (HType result, HType source, byte value);
 
@@ -1308,7 +1280,6 @@ namespace TorchSharp {
             BitAnd (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_bitor (HType result, HType source, byte value);
 
@@ -1352,7 +1323,6 @@ namespace TorchSharp {
             BitOr (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_bitxor (HType result, HType source, byte value);
 
@@ -1397,8 +1367,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cadd (HType result, HType t, byte value, HType src);
         /// <summary>
@@ -1418,7 +1386,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_csub (HType result, HType t, byte value, HType src);
         /// <summary>
@@ -1437,9 +1404,6 @@ namespace TorchSharp {
             THByteTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
-
-
-
 
 
 
@@ -1481,7 +1445,6 @@ namespace TorchSharp {
             THByteTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmul (HType result, HType t, HType src);
 
@@ -1501,7 +1464,6 @@ namespace TorchSharp {
             THByteTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cpow (HType result, HType t, HType src);
@@ -1523,7 +1485,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cdiv (HType result, HType t, HType src);
 
@@ -1543,7 +1504,6 @@ namespace TorchSharp {
             THByteTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_clshift (HType result, HType t, HType src);
@@ -1565,7 +1525,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cfmod (HType result, HType t, HType src);
 
@@ -1585,7 +1544,6 @@ namespace TorchSharp {
             THByteTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cremainder (HType result, HType t, HType src);
@@ -1607,7 +1565,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cbitand (HType result, HType t, HType src);
 
@@ -1627,7 +1584,6 @@ namespace TorchSharp {
             THByteTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cbitor (HType result, HType t, HType src);
@@ -1649,7 +1605,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cbitxor (HType result, HType t, HType src);
 
@@ -1669,7 +1624,6 @@ namespace TorchSharp {
             THByteTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmax (HType result, HType t, HType src);
@@ -1691,7 +1645,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmin (HType result, HType t, HType src);
 
@@ -1711,7 +1664,6 @@ namespace TorchSharp {
             THByteTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -1733,7 +1685,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -1753,7 +1704,6 @@ namespace TorchSharp {
             THByteTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -1775,7 +1725,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -1795,7 +1744,6 @@ namespace TorchSharp {
             THByteTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -1817,7 +1765,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -1837,7 +1784,6 @@ namespace TorchSharp {
             THByteTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_ltTensorT (HType result, HType t, HType src);
@@ -1859,7 +1805,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_leTensorT (HType result, HType t, HType src);
 
@@ -1879,7 +1824,6 @@ namespace TorchSharp {
             THByteTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_gtTensorT (HType result, HType t, HType src);
@@ -1901,7 +1845,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_geTensorT (HType result, HType t, HType src);
 
@@ -1921,7 +1864,6 @@ namespace TorchSharp {
             THByteTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_eqTensorT (HType result, HType t, HType src);
@@ -1943,7 +1885,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_neTensorT (HType result, HType t, HType src);
 
@@ -1964,8 +1905,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_cmaxValue (HType result, HType t, byte value);
 
@@ -1983,7 +1922,6 @@ namespace TorchSharp {
             THByteTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_cminValue (HType result, HType t, byte value);
@@ -2003,7 +1941,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_ltValue (ByteTensor.HType result, HType t, byte value);
 
@@ -2021,7 +1958,6 @@ namespace TorchSharp {
             THByteTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_leValue (ByteTensor.HType result, HType t, byte value);
@@ -2041,7 +1977,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_gtValue (ByteTensor.HType result, HType t, byte value);
 
@@ -2059,7 +1994,6 @@ namespace TorchSharp {
             THByteTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_geValue (ByteTensor.HType result, HType t, byte value);
@@ -2079,7 +2013,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_eqValue (ByteTensor.HType result, HType t, byte value);
 
@@ -2097,7 +2030,6 @@ namespace TorchSharp {
             THByteTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_neValue (ByteTensor.HType result, HType t, byte value);
@@ -2117,7 +2049,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_ltValueT (HType result, HType t, byte value);
 
@@ -2135,7 +2066,6 @@ namespace TorchSharp {
             THByteTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_leValueT (HType result, HType t, byte value);
@@ -2155,7 +2085,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_gtValueT (HType result, HType t, byte value);
 
@@ -2173,7 +2102,6 @@ namespace TorchSharp {
             THByteTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_geValueT (HType result, HType t, byte value);
@@ -2193,7 +2121,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_eqValueT (HType result, HType t, byte value);
 
@@ -2212,7 +2139,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_neValueT (HType result, HType t, byte value);
 
@@ -2230,7 +2156,6 @@ namespace TorchSharp {
             THByteTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_lerp (HType result, HType self, HType other, byte weight);
@@ -2266,7 +2191,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THByteTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_add_scaled (HType result, HType t, byte value1, byte value2);
 
@@ -2285,7 +2209,6 @@ namespace TorchSharp {
             THByteTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_sub_scaled (HType result, HType t, byte value1, byte value2);
@@ -2306,7 +2229,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_clamp (HType result, HType t, byte value1, byte value2);
 
@@ -2325,8 +2247,6 @@ namespace TorchSharp {
             THByteTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_addcmul (HType result, HType t, byte value, HType src1, HType src2);
@@ -2352,7 +2272,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_addcdiv (HType result, HType t, byte value, HType src1, HType src2);
 
@@ -2376,8 +2295,6 @@ namespace TorchSharp {
             THByteTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_addmv (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
@@ -2407,7 +2324,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_addmm (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
 
@@ -2435,7 +2351,6 @@ namespace TorchSharp {
             THByteTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_addbmm (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
@@ -2465,7 +2380,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_addr (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
 
@@ -2493,7 +2407,6 @@ namespace TorchSharp {
             THByteTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_baddbmm (HType result, byte beta, HType t, byte alpha, HType src1, HType src2);
@@ -2523,8 +2436,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static byte THByteTensor_minall (HType result);
 
@@ -2538,7 +2449,6 @@ namespace TorchSharp {
         {
             return THByteTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static byte THByteTensor_maxall (HType result);
 
@@ -2552,7 +2462,6 @@ namespace TorchSharp {
         {
             return THByteTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static byte THByteTensor_medianall (HType result);
 
@@ -2566,7 +2475,6 @@ namespace TorchSharp {
         {
             return THByteTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THByteTensor_sumall (HType result);
 
@@ -2580,7 +2488,6 @@ namespace TorchSharp {
         {
             return THByteTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THByteTensor_prodall (HType result);
 
@@ -2594,8 +2501,6 @@ namespace TorchSharp {
         {
             return THByteTensor_prodall (this.handle);
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -2794,7 +2699,6 @@ namespace TorchSharp {
             THByteTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -2809,7 +2713,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -2826,7 +2729,6 @@ namespace TorchSharp {
             THByteTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -2841,7 +2743,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -2858,7 +2759,6 @@ namespace TorchSharp {
             THByteTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -2873,7 +2773,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THByteTensor_copyFloat (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_copyDouble (HType tensor, DoubleTensor.HType src);
@@ -2890,8 +2789,6 @@ namespace TorchSharp {
             THByteTensor_copyDouble (this.handle, src.handle);
         }
 
-
-
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAndAll (HType self);
 
@@ -2902,7 +2799,6 @@ namespace TorchSharp {
         {
             return 0 != THByteTensor_logicalAndAll(this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnyAll (HType self);
 
@@ -2913,8 +2809,6 @@ namespace TorchSharp {
         {
             return 0 != THByteTensor_logicalAnyAll(this.handle);
         }
-
-
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAnd (HType result, HType self, int dimension, int keepdim);
 
@@ -2929,7 +2823,6 @@ namespace TorchSharp {
             THByteTensor_logicalAnd (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static int THByteTensor_logicalAny (HType result, HType self, int dimension, int keepdim);
 
@@ -2944,8 +2837,6 @@ namespace TorchSharp {
             THByteTensor_logicalAny (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_sum (HType result, HType self, int dimension, int keepdim);
 
@@ -2974,7 +2865,6 @@ namespace TorchSharp {
             THByteTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -3003,8 +2893,6 @@ namespace TorchSharp {
             THByteTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -3021,7 +2909,6 @@ namespace TorchSharp {
             THByteTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -3038,7 +2925,6 @@ namespace TorchSharp {
             THByteTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -3055,7 +2941,6 @@ namespace TorchSharp {
             THByteTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THByteTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -3072,7 +2957,6 @@ namespace TorchSharp {
             THByteTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ByteTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THByteTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -3288,9 +3172,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
     }
-
     public partial class ShortTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -3483,8 +3365,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal ShortStorage storage;
-
+        
         internal ShortTensor (HType handle)
         {
             this.handle = handle;
@@ -3706,18 +3587,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public ShortStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new ShortStorage (THShortTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public ShortStorage Storage => new ShortStorage (THShortTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THShortTensor_nDimension (HType handle);
@@ -4172,7 +4042,6 @@ namespace TorchSharp {
         }
 
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -4191,7 +4060,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_add (HType result, HType source, short value);
 
@@ -4235,7 +4103,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_sub (HType result, HType source, short value);
 
@@ -4279,7 +4146,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_mul (HType result, HType source, short value);
 
@@ -4323,7 +4189,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_div (HType result, HType source, short value);
 
@@ -4367,7 +4232,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_lshift (HType result, HType source, short value);
 
@@ -4411,7 +4275,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_rshift (HType result, HType source, short value);
 
@@ -4455,7 +4318,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_fmod (HType result, HType source, short value);
 
@@ -4499,7 +4361,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_remainder (HType result, HType source, short value);
 
@@ -4543,7 +4404,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_bitand (HType result, HType source, short value);
 
@@ -4587,7 +4447,6 @@ namespace TorchSharp {
             BitAnd (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_bitor (HType result, HType source, short value);
 
@@ -4631,7 +4490,6 @@ namespace TorchSharp {
             BitOr (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_bitxor (HType result, HType source, short value);
 
@@ -4676,8 +4534,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cadd (HType result, HType t, short value, HType src);
         /// <summary>
@@ -4697,7 +4553,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_csub (HType result, HType t, short value, HType src);
         /// <summary>
@@ -4716,9 +4571,6 @@ namespace TorchSharp {
             THShortTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
-
-
-
 
 
 
@@ -4760,7 +4612,6 @@ namespace TorchSharp {
             THShortTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmul (HType result, HType t, HType src);
 
@@ -4780,7 +4631,6 @@ namespace TorchSharp {
             THShortTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cpow (HType result, HType t, HType src);
@@ -4802,7 +4652,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cdiv (HType result, HType t, HType src);
 
@@ -4822,7 +4671,6 @@ namespace TorchSharp {
             THShortTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_clshift (HType result, HType t, HType src);
@@ -4844,7 +4692,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cfmod (HType result, HType t, HType src);
 
@@ -4864,7 +4711,6 @@ namespace TorchSharp {
             THShortTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cremainder (HType result, HType t, HType src);
@@ -4886,7 +4732,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cbitand (HType result, HType t, HType src);
 
@@ -4906,7 +4751,6 @@ namespace TorchSharp {
             THShortTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cbitor (HType result, HType t, HType src);
@@ -4928,7 +4772,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cbitxor (HType result, HType t, HType src);
 
@@ -4948,7 +4791,6 @@ namespace TorchSharp {
             THShortTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmax (HType result, HType t, HType src);
@@ -4970,7 +4812,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmin (HType result, HType t, HType src);
 
@@ -4990,7 +4831,6 @@ namespace TorchSharp {
             THShortTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -5012,7 +4852,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -5032,7 +4871,6 @@ namespace TorchSharp {
             THShortTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -5054,7 +4892,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -5074,7 +4911,6 @@ namespace TorchSharp {
             THShortTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -5096,7 +4932,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -5116,7 +4951,6 @@ namespace TorchSharp {
             THShortTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_ltTensorT (HType result, HType t, HType src);
@@ -5138,7 +4972,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_leTensorT (HType result, HType t, HType src);
 
@@ -5158,7 +4991,6 @@ namespace TorchSharp {
             THShortTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_gtTensorT (HType result, HType t, HType src);
@@ -5180,7 +5012,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_geTensorT (HType result, HType t, HType src);
 
@@ -5200,7 +5031,6 @@ namespace TorchSharp {
             THShortTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_eqTensorT (HType result, HType t, HType src);
@@ -5222,7 +5052,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_neTensorT (HType result, HType t, HType src);
 
@@ -5243,8 +5072,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_cmaxValue (HType result, HType t, short value);
 
@@ -5262,7 +5089,6 @@ namespace TorchSharp {
             THShortTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_cminValue (HType result, HType t, short value);
@@ -5282,7 +5108,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_ltValue (ByteTensor.HType result, HType t, short value);
 
@@ -5300,7 +5125,6 @@ namespace TorchSharp {
             THShortTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_leValue (ByteTensor.HType result, HType t, short value);
@@ -5320,7 +5144,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_gtValue (ByteTensor.HType result, HType t, short value);
 
@@ -5338,7 +5161,6 @@ namespace TorchSharp {
             THShortTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_geValue (ByteTensor.HType result, HType t, short value);
@@ -5358,7 +5180,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_eqValue (ByteTensor.HType result, HType t, short value);
 
@@ -5376,7 +5197,6 @@ namespace TorchSharp {
             THShortTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_neValue (ByteTensor.HType result, HType t, short value);
@@ -5396,7 +5216,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_ltValueT (HType result, HType t, short value);
 
@@ -5414,7 +5233,6 @@ namespace TorchSharp {
             THShortTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_leValueT (HType result, HType t, short value);
@@ -5434,7 +5252,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_gtValueT (HType result, HType t, short value);
 
@@ -5452,7 +5269,6 @@ namespace TorchSharp {
             THShortTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_geValueT (HType result, HType t, short value);
@@ -5472,7 +5288,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_eqValueT (HType result, HType t, short value);
 
@@ -5491,7 +5306,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_neValueT (HType result, HType t, short value);
 
@@ -5509,7 +5323,6 @@ namespace TorchSharp {
             THShortTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_lerp (HType result, HType self, HType other, short weight);
@@ -5545,7 +5358,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THShortTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_add_scaled (HType result, HType t, short value1, short value2);
 
@@ -5564,7 +5376,6 @@ namespace TorchSharp {
             THShortTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_sub_scaled (HType result, HType t, short value1, short value2);
@@ -5585,7 +5396,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_clamp (HType result, HType t, short value1, short value2);
 
@@ -5604,8 +5414,6 @@ namespace TorchSharp {
             THShortTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_addcmul (HType result, HType t, short value, HType src1, HType src2);
@@ -5631,7 +5439,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_addcdiv (HType result, HType t, short value, HType src1, HType src2);
 
@@ -5655,8 +5462,6 @@ namespace TorchSharp {
             THShortTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_addmv (HType result, short beta, HType t, short alpha, HType src1, HType src2);
@@ -5686,7 +5491,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_addmm (HType result, short beta, HType t, short alpha, HType src1, HType src2);
 
@@ -5714,7 +5518,6 @@ namespace TorchSharp {
             THShortTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_addbmm (HType result, short beta, HType t, short alpha, HType src1, HType src2);
@@ -5744,7 +5547,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_addr (HType result, short beta, HType t, short alpha, HType src1, HType src2);
 
@@ -5772,7 +5574,6 @@ namespace TorchSharp {
             THShortTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_baddbmm (HType result, short beta, HType t, short alpha, HType src1, HType src2);
@@ -5802,8 +5603,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static short THShortTensor_minall (HType result);
 
@@ -5817,7 +5616,6 @@ namespace TorchSharp {
         {
             return THShortTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static short THShortTensor_maxall (HType result);
 
@@ -5831,7 +5629,6 @@ namespace TorchSharp {
         {
             return THShortTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static short THShortTensor_medianall (HType result);
 
@@ -5845,7 +5642,6 @@ namespace TorchSharp {
         {
             return THShortTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THShortTensor_sumall (HType result);
 
@@ -5859,7 +5655,6 @@ namespace TorchSharp {
         {
             return THShortTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THShortTensor_prodall (HType result);
 
@@ -5873,8 +5668,6 @@ namespace TorchSharp {
         {
             return THShortTensor_prodall (this.handle);
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -6073,7 +5866,6 @@ namespace TorchSharp {
             THShortTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -6088,7 +5880,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -6105,7 +5896,6 @@ namespace TorchSharp {
             THShortTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -6120,7 +5910,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -6137,7 +5926,6 @@ namespace TorchSharp {
             THShortTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -6153,7 +5941,6 @@ namespace TorchSharp {
             THShortTensor_copyFloat (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_copyDouble (HType tensor, DoubleTensor.HType src);
 
@@ -6168,10 +5955,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THShortTensor_copyDouble (this.handle, src.handle);
         }
-
-
-
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_sum (HType result, HType self, int dimension, int keepdim);
@@ -6201,7 +5984,6 @@ namespace TorchSharp {
             THShortTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -6230,8 +6012,6 @@ namespace TorchSharp {
             THShortTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -6248,7 +6028,6 @@ namespace TorchSharp {
             THShortTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -6265,7 +6044,6 @@ namespace TorchSharp {
             THShortTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -6282,7 +6060,6 @@ namespace TorchSharp {
             THShortTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THShortTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -6299,7 +6076,6 @@ namespace TorchSharp {
             THShortTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<ShortTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THShortTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -6515,9 +6291,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
     }
-
     public partial class IntTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -6710,8 +6484,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal IntStorage storage;
-
+        
         internal IntTensor (HType handle)
         {
             this.handle = handle;
@@ -6933,18 +6706,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public IntStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new IntStorage (THIntTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public IntStorage Storage => new IntStorage (THIntTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THIntTensor_nDimension (HType handle);
@@ -7399,7 +7161,6 @@ namespace TorchSharp {
         }
 
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -7418,7 +7179,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_add (HType result, HType source, int value);
 
@@ -7462,7 +7222,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_sub (HType result, HType source, int value);
 
@@ -7506,7 +7265,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_mul (HType result, HType source, int value);
 
@@ -7550,7 +7308,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_div (HType result, HType source, int value);
 
@@ -7594,7 +7351,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_lshift (HType result, HType source, int value);
 
@@ -7638,7 +7394,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_rshift (HType result, HType source, int value);
 
@@ -7682,7 +7437,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_fmod (HType result, HType source, int value);
 
@@ -7726,7 +7480,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_remainder (HType result, HType source, int value);
 
@@ -7770,7 +7523,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_bitand (HType result, HType source, int value);
 
@@ -7814,7 +7566,6 @@ namespace TorchSharp {
             BitAnd (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_bitor (HType result, HType source, int value);
 
@@ -7858,7 +7609,6 @@ namespace TorchSharp {
             BitOr (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_bitxor (HType result, HType source, int value);
 
@@ -7903,8 +7653,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cadd (HType result, HType t, int value, HType src);
         /// <summary>
@@ -7924,7 +7672,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_csub (HType result, HType t, int value, HType src);
         /// <summary>
@@ -7943,9 +7690,6 @@ namespace TorchSharp {
             THIntTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
-
-
-
 
 
 
@@ -7987,7 +7731,6 @@ namespace TorchSharp {
             THIntTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmul (HType result, HType t, HType src);
 
@@ -8007,7 +7750,6 @@ namespace TorchSharp {
             THIntTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cpow (HType result, HType t, HType src);
@@ -8029,7 +7771,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cdiv (HType result, HType t, HType src);
 
@@ -8049,7 +7790,6 @@ namespace TorchSharp {
             THIntTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_clshift (HType result, HType t, HType src);
@@ -8071,7 +7811,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cfmod (HType result, HType t, HType src);
 
@@ -8091,7 +7830,6 @@ namespace TorchSharp {
             THIntTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cremainder (HType result, HType t, HType src);
@@ -8113,7 +7851,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cbitand (HType result, HType t, HType src);
 
@@ -8133,7 +7870,6 @@ namespace TorchSharp {
             THIntTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cbitor (HType result, HType t, HType src);
@@ -8155,7 +7891,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cbitxor (HType result, HType t, HType src);
 
@@ -8175,7 +7910,6 @@ namespace TorchSharp {
             THIntTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmax (HType result, HType t, HType src);
@@ -8197,7 +7931,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmin (HType result, HType t, HType src);
 
@@ -8217,7 +7950,6 @@ namespace TorchSharp {
             THIntTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -8239,7 +7971,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -8259,7 +7990,6 @@ namespace TorchSharp {
             THIntTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -8281,7 +8011,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -8301,7 +8030,6 @@ namespace TorchSharp {
             THIntTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -8323,7 +8051,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -8343,7 +8070,6 @@ namespace TorchSharp {
             THIntTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_ltTensorT (HType result, HType t, HType src);
@@ -8365,7 +8091,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_leTensorT (HType result, HType t, HType src);
 
@@ -8385,7 +8110,6 @@ namespace TorchSharp {
             THIntTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_gtTensorT (HType result, HType t, HType src);
@@ -8407,7 +8131,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_geTensorT (HType result, HType t, HType src);
 
@@ -8427,7 +8150,6 @@ namespace TorchSharp {
             THIntTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_eqTensorT (HType result, HType t, HType src);
@@ -8449,7 +8171,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_neTensorT (HType result, HType t, HType src);
 
@@ -8470,8 +8191,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_cmaxValue (HType result, HType t, int value);
 
@@ -8489,7 +8208,6 @@ namespace TorchSharp {
             THIntTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_cminValue (HType result, HType t, int value);
@@ -8509,7 +8227,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_ltValue (ByteTensor.HType result, HType t, int value);
 
@@ -8527,7 +8244,6 @@ namespace TorchSharp {
             THIntTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_leValue (ByteTensor.HType result, HType t, int value);
@@ -8547,7 +8263,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_gtValue (ByteTensor.HType result, HType t, int value);
 
@@ -8565,7 +8280,6 @@ namespace TorchSharp {
             THIntTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_geValue (ByteTensor.HType result, HType t, int value);
@@ -8585,7 +8299,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_eqValue (ByteTensor.HType result, HType t, int value);
 
@@ -8603,7 +8316,6 @@ namespace TorchSharp {
             THIntTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_neValue (ByteTensor.HType result, HType t, int value);
@@ -8623,7 +8335,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_ltValueT (HType result, HType t, int value);
 
@@ -8641,7 +8352,6 @@ namespace TorchSharp {
             THIntTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_leValueT (HType result, HType t, int value);
@@ -8661,7 +8371,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_gtValueT (HType result, HType t, int value);
 
@@ -8679,7 +8388,6 @@ namespace TorchSharp {
             THIntTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_geValueT (HType result, HType t, int value);
@@ -8699,7 +8407,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_eqValueT (HType result, HType t, int value);
 
@@ -8718,7 +8425,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_neValueT (HType result, HType t, int value);
 
@@ -8736,7 +8442,6 @@ namespace TorchSharp {
             THIntTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_lerp (HType result, HType self, HType other, int weight);
@@ -8772,7 +8477,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THIntTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_add_scaled (HType result, HType t, int value1, int value2);
 
@@ -8791,7 +8495,6 @@ namespace TorchSharp {
             THIntTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_sub_scaled (HType result, HType t, int value1, int value2);
@@ -8812,7 +8515,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_clamp (HType result, HType t, int value1, int value2);
 
@@ -8831,8 +8533,6 @@ namespace TorchSharp {
             THIntTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_addcmul (HType result, HType t, int value, HType src1, HType src2);
@@ -8858,7 +8558,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_addcdiv (HType result, HType t, int value, HType src1, HType src2);
 
@@ -8882,8 +8581,6 @@ namespace TorchSharp {
             THIntTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_addmv (HType result, int beta, HType t, int alpha, HType src1, HType src2);
@@ -8913,7 +8610,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_addmm (HType result, int beta, HType t, int alpha, HType src1, HType src2);
 
@@ -8941,7 +8637,6 @@ namespace TorchSharp {
             THIntTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_addbmm (HType result, int beta, HType t, int alpha, HType src1, HType src2);
@@ -8971,7 +8666,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_addr (HType result, int beta, HType t, int alpha, HType src1, HType src2);
 
@@ -8999,7 +8693,6 @@ namespace TorchSharp {
             THIntTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_baddbmm (HType result, int beta, HType t, int alpha, HType src1, HType src2);
@@ -9029,8 +8722,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static int THIntTensor_minall (HType result);
 
@@ -9044,7 +8735,6 @@ namespace TorchSharp {
         {
             return THIntTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static int THIntTensor_maxall (HType result);
 
@@ -9058,7 +8748,6 @@ namespace TorchSharp {
         {
             return THIntTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static int THIntTensor_medianall (HType result);
 
@@ -9072,7 +8761,6 @@ namespace TorchSharp {
         {
             return THIntTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THIntTensor_sumall (HType result);
 
@@ -9086,7 +8774,6 @@ namespace TorchSharp {
         {
             return THIntTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THIntTensor_prodall (HType result);
 
@@ -9100,8 +8787,6 @@ namespace TorchSharp {
         {
             return THIntTensor_prodall (this.handle);
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -9300,7 +8985,6 @@ namespace TorchSharp {
             THIntTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -9315,7 +8999,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -9332,7 +9015,6 @@ namespace TorchSharp {
             THIntTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -9347,7 +9029,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -9364,7 +9045,6 @@ namespace TorchSharp {
             THIntTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -9380,7 +9060,6 @@ namespace TorchSharp {
             THIntTensor_copyFloat (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_copyDouble (HType tensor, DoubleTensor.HType src);
 
@@ -9395,10 +9074,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THIntTensor_copyDouble (this.handle, src.handle);
         }
-
-
-
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_sum (HType result, HType self, int dimension, int keepdim);
@@ -9428,7 +9103,6 @@ namespace TorchSharp {
             THIntTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -9457,8 +9131,6 @@ namespace TorchSharp {
             THIntTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -9475,7 +9147,6 @@ namespace TorchSharp {
             THIntTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -9492,7 +9163,6 @@ namespace TorchSharp {
             THIntTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -9509,7 +9179,6 @@ namespace TorchSharp {
             THIntTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THIntTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -9526,7 +9195,6 @@ namespace TorchSharp {
             THIntTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<IntTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -9742,9 +9410,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
     }
-
     public partial class LongTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -9937,8 +9603,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal LongStorage storage;
-
+        
         internal LongTensor (HType handle)
         {
             this.handle = handle;
@@ -10160,18 +9825,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public LongStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new LongStorage (THLongTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public LongStorage Storage => new LongStorage (THLongTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THLongTensor_nDimension (HType handle);
@@ -10626,7 +10280,6 @@ namespace TorchSharp {
         }
 
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -10645,7 +10298,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_add (HType result, HType source, long value);
 
@@ -10689,7 +10341,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_sub (HType result, HType source, long value);
 
@@ -10733,7 +10384,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_mul (HType result, HType source, long value);
 
@@ -10777,7 +10427,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_div (HType result, HType source, long value);
 
@@ -10821,7 +10470,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_lshift (HType result, HType source, long value);
 
@@ -10865,7 +10513,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_rshift (HType result, HType source, long value);
 
@@ -10909,7 +10556,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_fmod (HType result, HType source, long value);
 
@@ -10953,7 +10599,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_remainder (HType result, HType source, long value);
 
@@ -10997,7 +10642,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_bitand (HType result, HType source, long value);
 
@@ -11041,7 +10685,6 @@ namespace TorchSharp {
             BitAnd (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_bitor (HType result, HType source, long value);
 
@@ -11085,7 +10728,6 @@ namespace TorchSharp {
             BitOr (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_bitxor (HType result, HType source, long value);
 
@@ -11130,8 +10772,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cadd (HType result, HType t, long value, HType src);
         /// <summary>
@@ -11151,7 +10791,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_csub (HType result, HType t, long value, HType src);
         /// <summary>
@@ -11170,9 +10809,6 @@ namespace TorchSharp {
             THLongTensor_csub (result.handle, this.handle, value, src.handle);
             return result;
         }
-
-
-
 
 
 
@@ -11214,7 +10850,6 @@ namespace TorchSharp {
             THLongTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmul (HType result, HType t, HType src);
 
@@ -11234,7 +10869,6 @@ namespace TorchSharp {
             THLongTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cpow (HType result, HType t, HType src);
@@ -11256,7 +10890,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cdiv (HType result, HType t, HType src);
 
@@ -11276,7 +10909,6 @@ namespace TorchSharp {
             THLongTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_clshift (HType result, HType t, HType src);
@@ -11298,7 +10930,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cfmod (HType result, HType t, HType src);
 
@@ -11318,7 +10949,6 @@ namespace TorchSharp {
             THLongTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cremainder (HType result, HType t, HType src);
@@ -11340,7 +10970,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cbitand (HType result, HType t, HType src);
 
@@ -11360,7 +10989,6 @@ namespace TorchSharp {
             THLongTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cbitor (HType result, HType t, HType src);
@@ -11382,7 +11010,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cbitxor (HType result, HType t, HType src);
 
@@ -11402,7 +11029,6 @@ namespace TorchSharp {
             THLongTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmax (HType result, HType t, HType src);
@@ -11424,7 +11050,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmin (HType result, HType t, HType src);
 
@@ -11444,7 +11069,6 @@ namespace TorchSharp {
             THLongTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -11466,7 +11090,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -11486,7 +11109,6 @@ namespace TorchSharp {
             THLongTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -11508,7 +11130,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -11528,7 +11149,6 @@ namespace TorchSharp {
             THLongTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -11550,7 +11170,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -11570,7 +11189,6 @@ namespace TorchSharp {
             THLongTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_ltTensorT (HType result, HType t, HType src);
@@ -11592,7 +11210,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_leTensorT (HType result, HType t, HType src);
 
@@ -11612,7 +11229,6 @@ namespace TorchSharp {
             THLongTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_gtTensorT (HType result, HType t, HType src);
@@ -11634,7 +11250,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_geTensorT (HType result, HType t, HType src);
 
@@ -11654,7 +11269,6 @@ namespace TorchSharp {
             THLongTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_eqTensorT (HType result, HType t, HType src);
@@ -11676,7 +11290,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_neTensorT (HType result, HType t, HType src);
 
@@ -11697,8 +11310,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_cmaxValue (HType result, HType t, long value);
 
@@ -11716,7 +11327,6 @@ namespace TorchSharp {
             THLongTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_cminValue (HType result, HType t, long value);
@@ -11736,7 +11346,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_ltValue (ByteTensor.HType result, HType t, long value);
 
@@ -11754,7 +11363,6 @@ namespace TorchSharp {
             THLongTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_leValue (ByteTensor.HType result, HType t, long value);
@@ -11774,7 +11382,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_gtValue (ByteTensor.HType result, HType t, long value);
 
@@ -11792,7 +11399,6 @@ namespace TorchSharp {
             THLongTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_geValue (ByteTensor.HType result, HType t, long value);
@@ -11812,7 +11418,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_eqValue (ByteTensor.HType result, HType t, long value);
 
@@ -11830,7 +11435,6 @@ namespace TorchSharp {
             THLongTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_neValue (ByteTensor.HType result, HType t, long value);
@@ -11850,7 +11454,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_ltValueT (HType result, HType t, long value);
 
@@ -11868,7 +11471,6 @@ namespace TorchSharp {
             THLongTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_leValueT (HType result, HType t, long value);
@@ -11888,7 +11490,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_gtValueT (HType result, HType t, long value);
 
@@ -11906,7 +11507,6 @@ namespace TorchSharp {
             THLongTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_geValueT (HType result, HType t, long value);
@@ -11926,7 +11526,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_eqValueT (HType result, HType t, long value);
 
@@ -11945,7 +11544,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_neValueT (HType result, HType t, long value);
 
@@ -11963,7 +11561,6 @@ namespace TorchSharp {
             THLongTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_lerp (HType result, HType self, HType other, long weight);
@@ -11999,7 +11596,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THLongTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_add_scaled (HType result, HType t, long value1, long value2);
 
@@ -12018,7 +11614,6 @@ namespace TorchSharp {
             THLongTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_sub_scaled (HType result, HType t, long value1, long value2);
@@ -12039,7 +11634,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_clamp (HType result, HType t, long value1, long value2);
 
@@ -12058,8 +11652,6 @@ namespace TorchSharp {
             THLongTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_addcmul (HType result, HType t, long value, HType src1, HType src2);
@@ -12085,7 +11677,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_addcdiv (HType result, HType t, long value, HType src1, HType src2);
 
@@ -12109,8 +11700,6 @@ namespace TorchSharp {
             THLongTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_addmv (HType result, long beta, HType t, long alpha, HType src1, HType src2);
@@ -12140,7 +11729,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_addmm (HType result, long beta, HType t, long alpha, HType src1, HType src2);
 
@@ -12168,7 +11756,6 @@ namespace TorchSharp {
             THLongTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_addbmm (HType result, long beta, HType t, long alpha, HType src1, HType src2);
@@ -12198,7 +11785,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_addr (HType result, long beta, HType t, long alpha, HType src1, HType src2);
 
@@ -12226,7 +11812,6 @@ namespace TorchSharp {
             THLongTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_baddbmm (HType result, long beta, HType t, long alpha, HType src1, HType src2);
@@ -12256,8 +11841,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static long THLongTensor_minall (HType result);
 
@@ -12271,7 +11854,6 @@ namespace TorchSharp {
         {
             return THLongTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THLongTensor_maxall (HType result);
 
@@ -12285,7 +11867,6 @@ namespace TorchSharp {
         {
             return THLongTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THLongTensor_medianall (HType result);
 
@@ -12299,7 +11880,6 @@ namespace TorchSharp {
         {
             return THLongTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THLongTensor_sumall (HType result);
 
@@ -12313,7 +11893,6 @@ namespace TorchSharp {
         {
             return THLongTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static long THLongTensor_prodall (HType result);
 
@@ -12327,8 +11906,6 @@ namespace TorchSharp {
         {
             return THLongTensor_prodall (this.handle);
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -12527,7 +12104,6 @@ namespace TorchSharp {
             THLongTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -12542,7 +12118,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -12559,7 +12134,6 @@ namespace TorchSharp {
             THLongTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -12574,7 +12148,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -12591,7 +12164,6 @@ namespace TorchSharp {
             THLongTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -12607,7 +12179,6 @@ namespace TorchSharp {
             THLongTensor_copyFloat (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_copyDouble (HType tensor, DoubleTensor.HType src);
 
@@ -12622,10 +12193,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THLongTensor_copyDouble (this.handle, src.handle);
         }
-
-
-
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_sum (HType result, HType self, int dimension, int keepdim);
@@ -12655,7 +12222,6 @@ namespace TorchSharp {
             THLongTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -12684,8 +12250,6 @@ namespace TorchSharp {
             THLongTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -12702,7 +12266,6 @@ namespace TorchSharp {
             THLongTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -12719,7 +12282,6 @@ namespace TorchSharp {
             THLongTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -12736,7 +12298,6 @@ namespace TorchSharp {
             THLongTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THLongTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -12753,7 +12314,6 @@ namespace TorchSharp {
             THLongTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<LongTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THLongTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -12969,9 +12529,7 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
     }
-
     public partial class DoubleTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -13164,8 +12722,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal DoubleStorage storage;
-
+        
         internal DoubleTensor (HType handle)
         {
             this.handle = handle;
@@ -13387,18 +12944,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public DoubleStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new DoubleStorage (THDoubleTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public DoubleStorage Storage => new DoubleStorage (THDoubleTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THDoubleTensor_nDimension (HType handle);
@@ -13852,7 +13398,6 @@ namespace TorchSharp {
                 CappedRandom (r, n);
         }
 
-
 #if false
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_bernoulli_DoubleTensor (HType self, IntPtr thgenerator, HType p);
@@ -13994,7 +13539,6 @@ namespace TorchSharp {
             THDoubleTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -14013,7 +13557,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_add (HType result, HType source, double value);
 
@@ -14057,7 +13600,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sub (HType result, HType source, double value);
 
@@ -14101,7 +13643,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mul (HType result, HType source, double value);
 
@@ -14145,7 +13686,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_div (HType result, HType source, double value);
 
@@ -14189,7 +13729,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_lshift (HType result, HType source, double value);
 
@@ -14233,7 +13772,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_rshift (HType result, HType source, double value);
 
@@ -14277,7 +13815,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_fmod (HType result, HType source, double value);
 
@@ -14321,7 +13858,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_remainder (HType result, HType source, double value);
 
@@ -14365,7 +13901,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_bitand (HType result, HType source, double value);
 
@@ -14410,8 +13945,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cadd (HType result, HType t, double value, HType src);
         /// <summary>
@@ -14430,7 +13963,6 @@ namespace TorchSharp {
             THDoubleTensor_cadd (result.handle, this.handle, value, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_csub (HType result, HType t, double value, HType src);
@@ -14452,8 +13984,6 @@ namespace TorchSharp {
         }
 
 
-
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sigmoid (HType result, HType t);
 
@@ -14469,7 +13999,6 @@ namespace TorchSharp {
             THDoubleTensor_sigmoid (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_log (HType result, HType t);
@@ -14487,7 +14016,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_lgamma (HType result, HType t);
 
@@ -14503,7 +14031,6 @@ namespace TorchSharp {
             THDoubleTensor_lgamma (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_digamma (HType result, HType t);
@@ -14521,7 +14048,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_trigamma (HType result, HType t);
 
@@ -14537,7 +14063,6 @@ namespace TorchSharp {
             THDoubleTensor_trigamma (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_polygamma (HType result, HType t);
@@ -14555,7 +14080,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_log10 (HType result, HType t);
 
@@ -14571,7 +14095,6 @@ namespace TorchSharp {
             THDoubleTensor_log10 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_log1p (HType result, HType t);
@@ -14589,7 +14112,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_log2 (HType result, HType t);
 
@@ -14605,7 +14127,6 @@ namespace TorchSharp {
             THDoubleTensor_log2 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_exp (HType result, HType t);
@@ -14623,7 +14144,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_expm1 (HType result, HType t);
 
@@ -14639,7 +14159,6 @@ namespace TorchSharp {
             THDoubleTensor_expm1 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cos (HType result, HType t);
@@ -14657,7 +14176,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_acos (HType result, HType t);
 
@@ -14673,7 +14191,6 @@ namespace TorchSharp {
             THDoubleTensor_acos (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cosh (HType result, HType t);
@@ -14691,7 +14208,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sin (HType result, HType t);
 
@@ -14707,7 +14223,6 @@ namespace TorchSharp {
             THDoubleTensor_sin (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_asin (HType result, HType t);
@@ -14725,7 +14240,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sinh (HType result, HType t);
 
@@ -14741,7 +14255,6 @@ namespace TorchSharp {
             THDoubleTensor_sinh (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_tan (HType result, HType t);
@@ -14759,7 +14272,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_atan (HType result, HType t);
 
@@ -14775,7 +14287,6 @@ namespace TorchSharp {
             THDoubleTensor_atan (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_atan2 (HType result, HType t);
@@ -14793,7 +14304,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_tanh (HType result, HType t);
 
@@ -14809,7 +14319,6 @@ namespace TorchSharp {
             THDoubleTensor_tanh (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_erf (HType result, HType t);
@@ -14827,7 +14336,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_erfc (HType result, HType t);
 
@@ -14843,7 +14351,6 @@ namespace TorchSharp {
             THDoubleTensor_erfc (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_erfinv (HType result, HType t);
@@ -14861,7 +14368,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sqrt (HType result, HType t);
 
@@ -14877,7 +14383,6 @@ namespace TorchSharp {
             THDoubleTensor_sqrt (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_rsqrt (HType result, HType t);
@@ -14895,7 +14400,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_ceil (HType result, HType t);
 
@@ -14911,7 +14415,6 @@ namespace TorchSharp {
             THDoubleTensor_ceil (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_floor (HType result, HType t);
@@ -14929,7 +14432,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_round (HType result, HType t);
 
@@ -14945,7 +14447,6 @@ namespace TorchSharp {
             THDoubleTensor_round (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_abs (HType result, HType t);
@@ -14963,7 +14464,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_trunc (HType result, HType t);
 
@@ -14979,7 +14479,6 @@ namespace TorchSharp {
             THDoubleTensor_trunc (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_frac (HType result, HType t);
@@ -14997,7 +14496,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cinv (HType result, HType t);
 
@@ -15013,7 +14511,6 @@ namespace TorchSharp {
             THDoubleTensor_cinv (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_neg (HType result, HType t);
@@ -15031,7 +14528,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_zerosLike (HType result, HType t);
 
@@ -15048,7 +14544,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_onesLike (HType result, HType t);
 
@@ -15064,8 +14559,6 @@ namespace TorchSharp {
             THDoubleTensor_onesLike (result.handle, this.handle);
             return result;
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -15095,7 +14588,6 @@ namespace TorchSharp {
             THDoubleTensor_tpow (result.handle, x, this.handle);
             return result;
         }
-
 
 
         [DllImport ("caffe2")]
@@ -15135,7 +14627,6 @@ namespace TorchSharp {
             THDoubleTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmul (HType result, HType t, HType src);
 
@@ -15155,7 +14646,6 @@ namespace TorchSharp {
             THDoubleTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cpow (HType result, HType t, HType src);
@@ -15177,7 +14667,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cdiv (HType result, HType t, HType src);
 
@@ -15197,7 +14686,6 @@ namespace TorchSharp {
             THDoubleTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_clshift (HType result, HType t, HType src);
@@ -15219,7 +14707,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cfmod (HType result, HType t, HType src);
 
@@ -15239,7 +14726,6 @@ namespace TorchSharp {
             THDoubleTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cremainder (HType result, HType t, HType src);
@@ -15261,7 +14747,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cbitand (HType result, HType t, HType src);
 
@@ -15281,7 +14766,6 @@ namespace TorchSharp {
             THDoubleTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cbitor (HType result, HType t, HType src);
@@ -15303,7 +14787,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cbitxor (HType result, HType t, HType src);
 
@@ -15323,7 +14806,6 @@ namespace TorchSharp {
             THDoubleTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmax (HType result, HType t, HType src);
@@ -15345,7 +14827,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmin (HType result, HType t, HType src);
 
@@ -15365,7 +14846,6 @@ namespace TorchSharp {
             THDoubleTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -15387,7 +14867,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -15407,7 +14886,6 @@ namespace TorchSharp {
             THDoubleTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -15429,7 +14907,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -15449,7 +14926,6 @@ namespace TorchSharp {
             THDoubleTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -15471,7 +14947,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -15491,7 +14966,6 @@ namespace TorchSharp {
             THDoubleTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_ltTensorT (HType result, HType t, HType src);
@@ -15513,7 +14987,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_leTensorT (HType result, HType t, HType src);
 
@@ -15533,7 +15006,6 @@ namespace TorchSharp {
             THDoubleTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_gtTensorT (HType result, HType t, HType src);
@@ -15555,7 +15027,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_geTensorT (HType result, HType t, HType src);
 
@@ -15575,7 +15046,6 @@ namespace TorchSharp {
             THDoubleTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_eqTensorT (HType result, HType t, HType src);
@@ -15597,7 +15067,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_neTensorT (HType result, HType t, HType src);
 
@@ -15618,8 +15087,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cmaxValue (HType result, HType t, double value);
 
@@ -15637,7 +15104,6 @@ namespace TorchSharp {
             THDoubleTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_cminValue (HType result, HType t, double value);
@@ -15657,7 +15123,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_ltValue (ByteTensor.HType result, HType t, double value);
 
@@ -15675,7 +15140,6 @@ namespace TorchSharp {
             THDoubleTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_leValue (ByteTensor.HType result, HType t, double value);
@@ -15695,7 +15159,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_gtValue (ByteTensor.HType result, HType t, double value);
 
@@ -15713,7 +15176,6 @@ namespace TorchSharp {
             THDoubleTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_geValue (ByteTensor.HType result, HType t, double value);
@@ -15733,7 +15195,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_eqValue (ByteTensor.HType result, HType t, double value);
 
@@ -15751,7 +15212,6 @@ namespace TorchSharp {
             THDoubleTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_neValue (ByteTensor.HType result, HType t, double value);
@@ -15771,7 +15231,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_ltValueT (HType result, HType t, double value);
 
@@ -15789,7 +15248,6 @@ namespace TorchSharp {
             THDoubleTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_leValueT (HType result, HType t, double value);
@@ -15809,7 +15267,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_gtValueT (HType result, HType t, double value);
 
@@ -15827,7 +15284,6 @@ namespace TorchSharp {
             THDoubleTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_geValueT (HType result, HType t, double value);
@@ -15847,7 +15303,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_eqValueT (HType result, HType t, double value);
 
@@ -15866,7 +15321,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_neValueT (HType result, HType t, double value);
 
@@ -15884,7 +15338,6 @@ namespace TorchSharp {
             THDoubleTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_lerp (HType result, HType self, HType other, double weight);
@@ -15920,7 +15373,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THDoubleTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_add_scaled (HType result, HType t, double value1, double value2);
 
@@ -15939,7 +15391,6 @@ namespace TorchSharp {
             THDoubleTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sub_scaled (HType result, HType t, double value1, double value2);
@@ -15960,7 +15411,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_clamp (HType result, HType t, double value1, double value2);
 
@@ -15979,8 +15429,6 @@ namespace TorchSharp {
             THDoubleTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addcmul (HType result, HType t, double value, HType src1, HType src2);
@@ -16006,7 +15454,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addcdiv (HType result, HType t, double value, HType src1, HType src2);
 
@@ -16030,8 +15477,6 @@ namespace TorchSharp {
             THDoubleTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addmv (HType result, double beta, HType t, double alpha, HType src1, HType src2);
@@ -16061,7 +15506,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addmm (HType result, double beta, HType t, double alpha, HType src1, HType src2);
 
@@ -16089,7 +15533,6 @@ namespace TorchSharp {
             THDoubleTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addbmm (HType result, double beta, HType t, double alpha, HType src1, HType src2);
@@ -16119,7 +15562,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_addr (HType result, double beta, HType t, double alpha, HType src1, HType src2);
 
@@ -16147,7 +15589,6 @@ namespace TorchSharp {
             THDoubleTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_baddbmm (HType result, double beta, HType t, double alpha, HType src1, HType src2);
@@ -16177,8 +15618,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_minall (HType result);
 
@@ -16192,7 +15631,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_maxall (HType result);
 
@@ -16206,7 +15644,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_medianall (HType result);
 
@@ -16220,7 +15657,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_sumall (HType result);
 
@@ -16234,7 +15670,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THDoubleTensor_prodall (HType result);
 
@@ -16248,8 +15683,6 @@ namespace TorchSharp {
         {
             return THDoubleTensor_prodall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_linspace (HType result, double a, double b, long n);
@@ -16271,7 +15704,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_logspace (HType result, double a, double b, long n);
 
@@ -16291,7 +15723,6 @@ namespace TorchSharp {
             THDoubleTensor_logspace (result.handle, a, b, n);
             return result;
         }
-
 
 
         [DllImport ("caffe2")]
@@ -16490,7 +15921,6 @@ namespace TorchSharp {
             THDoubleTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -16505,7 +15935,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -16522,7 +15951,6 @@ namespace TorchSharp {
             THDoubleTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -16537,7 +15965,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -16554,7 +15981,6 @@ namespace TorchSharp {
             THDoubleTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -16570,7 +15996,6 @@ namespace TorchSharp {
             THDoubleTensor_copyFloat (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_copyDouble (HType tensor, DoubleTensor.HType src);
 
@@ -16585,10 +16010,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THDoubleTensor_copyDouble (this.handle, src.handle);
         }
-
-
-
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_sum (HType result, HType self, int dimension, int keepdim);
@@ -16618,7 +16039,6 @@ namespace TorchSharp {
             THDoubleTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -16647,8 +16067,6 @@ namespace TorchSharp {
             THDoubleTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -16665,7 +16083,6 @@ namespace TorchSharp {
             THDoubleTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -16682,7 +16099,6 @@ namespace TorchSharp {
             THDoubleTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -16699,7 +16115,6 @@ namespace TorchSharp {
             THDoubleTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -16716,7 +16131,6 @@ namespace TorchSharp {
             THDoubleTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<DoubleTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -16932,7 +16346,6 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
         [DllImport ("caffe2")]
         extern static void THDoubleTensor_mean (HType result, HType self, int dimension, int keepdim);
 
@@ -17120,9 +16533,7 @@ namespace TorchSharp {
             THDoubledirichlet_grad (result.handle, this.handle, alpha.handle, total.handle);
             return result;
         }
-
     }
-
     public partial class FloatTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -17315,8 +16726,7 @@ namespace TorchSharp {
         }
 
         internal HType handle;
-        internal FloatStorage storage;
-
+        
         internal FloatTensor (HType handle)
         {
             this.handle = handle;
@@ -17538,18 +16948,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>
-        public FloatStorage Storage
-        {
-            get
-            {
-                if (storage == null)
-                {
-                    storage = new FloatStorage (THFloatTensor_storage (handle));
-                }
-
-                return storage;
-            }
-        }
+        public FloatStorage Storage => new FloatStorage (THFloatTensor_storage (handle));
 
         [DllImport ("caffe2")]
         extern static int THFloatTensor_nDimension (HType handle);
@@ -18003,7 +17402,6 @@ namespace TorchSharp {
                 CappedRandom (r, n);
         }
 
-
 #if false
         [DllImport ("caffe2")]
         extern static void THFloatTensor_bernoulli_FloatTensor (HType self, IntPtr thgenerator, HType p);
@@ -18145,7 +17543,6 @@ namespace TorchSharp {
             THFloatTensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 
-
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -18164,7 +17561,6 @@ namespace TorchSharp {
             sb.Append ("]");
             return sb.ToString ();
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_add (HType result, HType source, float value);
 
@@ -18208,7 +17604,6 @@ namespace TorchSharp {
             Add (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sub (HType result, HType source, float value);
 
@@ -18252,7 +17647,6 @@ namespace TorchSharp {
             Sub (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mul (HType result, HType source, float value);
 
@@ -18296,7 +17690,6 @@ namespace TorchSharp {
             Mul (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_div (HType result, HType source, float value);
 
@@ -18340,7 +17733,6 @@ namespace TorchSharp {
             Div (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_lshift (HType result, HType source, float value);
 
@@ -18384,7 +17776,6 @@ namespace TorchSharp {
             LShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_rshift (HType result, HType source, float value);
 
@@ -18428,7 +17819,6 @@ namespace TorchSharp {
             RShift (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_fmod (HType result, HType source, float value);
 
@@ -18472,7 +17862,6 @@ namespace TorchSharp {
             Fmod (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_remainder (HType result, HType source, float value);
 
@@ -18516,7 +17905,6 @@ namespace TorchSharp {
             Remainder (this, value, result);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_bitand (HType result, HType source, float value);
 
@@ -18561,8 +17949,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cadd (HType result, HType t, float value, HType src);
         /// <summary>
@@ -18581,7 +17967,6 @@ namespace TorchSharp {
             THFloatTensor_cadd (result.handle, this.handle, value, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_csub (HType result, HType t, float value, HType src);
@@ -18603,8 +17988,6 @@ namespace TorchSharp {
         }
 
 
-
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sigmoid (HType result, HType t);
 
@@ -18620,7 +18003,6 @@ namespace TorchSharp {
             THFloatTensor_sigmoid (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_log (HType result, HType t);
@@ -18638,7 +18020,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_lgamma (HType result, HType t);
 
@@ -18654,7 +18035,6 @@ namespace TorchSharp {
             THFloatTensor_lgamma (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_digamma (HType result, HType t);
@@ -18672,7 +18052,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_trigamma (HType result, HType t);
 
@@ -18688,7 +18067,6 @@ namespace TorchSharp {
             THFloatTensor_trigamma (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_polygamma (HType result, HType t);
@@ -18706,7 +18084,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_log10 (HType result, HType t);
 
@@ -18722,7 +18099,6 @@ namespace TorchSharp {
             THFloatTensor_log10 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_log1p (HType result, HType t);
@@ -18740,7 +18116,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_log2 (HType result, HType t);
 
@@ -18756,7 +18131,6 @@ namespace TorchSharp {
             THFloatTensor_log2 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_exp (HType result, HType t);
@@ -18774,7 +18148,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_expm1 (HType result, HType t);
 
@@ -18790,7 +18163,6 @@ namespace TorchSharp {
             THFloatTensor_expm1 (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cos (HType result, HType t);
@@ -18808,7 +18180,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_acos (HType result, HType t);
 
@@ -18824,7 +18195,6 @@ namespace TorchSharp {
             THFloatTensor_acos (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cosh (HType result, HType t);
@@ -18842,7 +18212,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sin (HType result, HType t);
 
@@ -18858,7 +18227,6 @@ namespace TorchSharp {
             THFloatTensor_sin (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_asin (HType result, HType t);
@@ -18876,7 +18244,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sinh (HType result, HType t);
 
@@ -18892,7 +18259,6 @@ namespace TorchSharp {
             THFloatTensor_sinh (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_tan (HType result, HType t);
@@ -18910,7 +18276,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_atan (HType result, HType t);
 
@@ -18926,7 +18291,6 @@ namespace TorchSharp {
             THFloatTensor_atan (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_atan2 (HType result, HType t);
@@ -18944,7 +18308,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_tanh (HType result, HType t);
 
@@ -18960,7 +18323,6 @@ namespace TorchSharp {
             THFloatTensor_tanh (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_erf (HType result, HType t);
@@ -18978,7 +18340,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_erfc (HType result, HType t);
 
@@ -18994,7 +18355,6 @@ namespace TorchSharp {
             THFloatTensor_erfc (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_erfinv (HType result, HType t);
@@ -19012,7 +18372,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sqrt (HType result, HType t);
 
@@ -19028,7 +18387,6 @@ namespace TorchSharp {
             THFloatTensor_sqrt (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_rsqrt (HType result, HType t);
@@ -19046,7 +18404,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_ceil (HType result, HType t);
 
@@ -19062,7 +18419,6 @@ namespace TorchSharp {
             THFloatTensor_ceil (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_floor (HType result, HType t);
@@ -19080,7 +18436,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_round (HType result, HType t);
 
@@ -19096,7 +18451,6 @@ namespace TorchSharp {
             THFloatTensor_round (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_abs (HType result, HType t);
@@ -19114,7 +18468,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_trunc (HType result, HType t);
 
@@ -19130,7 +18483,6 @@ namespace TorchSharp {
             THFloatTensor_trunc (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_frac (HType result, HType t);
@@ -19148,7 +18500,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cinv (HType result, HType t);
 
@@ -19164,7 +18515,6 @@ namespace TorchSharp {
             THFloatTensor_cinv (result.handle, this.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_neg (HType result, HType t);
@@ -19182,7 +18532,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_zerosLike (HType result, HType t);
 
@@ -19199,7 +18548,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_onesLike (HType result, HType t);
 
@@ -19215,8 +18563,6 @@ namespace TorchSharp {
             THFloatTensor_onesLike (result.handle, this.handle);
             return result;
         }
-
-
 
 
         [DllImport ("caffe2")]
@@ -19246,7 +18592,6 @@ namespace TorchSharp {
             THFloatTensor_tpow (result.handle, x, this.handle);
             return result;
         }
-
 
 
         [DllImport ("caffe2")]
@@ -19286,7 +18631,6 @@ namespace TorchSharp {
             THFloatTensor_match (result.handle, this.handle, m2.handle, gain);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmul (HType result, HType t, HType src);
 
@@ -19306,7 +18650,6 @@ namespace TorchSharp {
             THFloatTensor_cmul (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cpow (HType result, HType t, HType src);
@@ -19328,7 +18671,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cdiv (HType result, HType t, HType src);
 
@@ -19348,7 +18690,6 @@ namespace TorchSharp {
             THFloatTensor_cdiv (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_clshift (HType result, HType t, HType src);
@@ -19370,7 +18711,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cfmod (HType result, HType t, HType src);
 
@@ -19390,7 +18730,6 @@ namespace TorchSharp {
             THFloatTensor_cfmod (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cremainder (HType result, HType t, HType src);
@@ -19412,7 +18751,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cbitand (HType result, HType t, HType src);
 
@@ -19432,7 +18770,6 @@ namespace TorchSharp {
             THFloatTensor_cbitand (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cbitor (HType result, HType t, HType src);
@@ -19454,7 +18791,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cbitxor (HType result, HType t, HType src);
 
@@ -19474,7 +18810,6 @@ namespace TorchSharp {
             THFloatTensor_cbitxor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmax (HType result, HType t, HType src);
@@ -19496,7 +18831,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmin (HType result, HType t, HType src);
 
@@ -19516,7 +18850,6 @@ namespace TorchSharp {
             THFloatTensor_cmin (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_ltTensor (ByteTensor.HType result, HType t, HType src);
@@ -19538,7 +18871,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_leTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -19558,7 +18890,6 @@ namespace TorchSharp {
             THFloatTensor_leTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_gtTensor (ByteTensor.HType result, HType t, HType src);
@@ -19580,7 +18911,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_geTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -19600,7 +18930,6 @@ namespace TorchSharp {
             THFloatTensor_geTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_eqTensor (ByteTensor.HType result, HType t, HType src);
@@ -19622,7 +18951,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_neTensor (ByteTensor.HType result, HType t, HType src);
 
@@ -19642,7 +18970,6 @@ namespace TorchSharp {
             THFloatTensor_neTensor (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_ltTensorT (HType result, HType t, HType src);
@@ -19664,7 +18991,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_leTensorT (HType result, HType t, HType src);
 
@@ -19684,7 +19010,6 @@ namespace TorchSharp {
             THFloatTensor_leTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_gtTensorT (HType result, HType t, HType src);
@@ -19706,7 +19031,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_geTensorT (HType result, HType t, HType src);
 
@@ -19726,7 +19050,6 @@ namespace TorchSharp {
             THFloatTensor_geTensorT (result.handle, this.handle, src.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_eqTensorT (HType result, HType t, HType src);
@@ -19748,7 +19071,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_neTensorT (HType result, HType t, HType src);
 
@@ -19769,8 +19091,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cmaxValue (HType result, HType t, float value);
 
@@ -19788,7 +19108,6 @@ namespace TorchSharp {
             THFloatTensor_cmaxValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_cminValue (HType result, HType t, float value);
@@ -19808,7 +19127,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_ltValue (ByteTensor.HType result, HType t, float value);
 
@@ -19826,7 +19144,6 @@ namespace TorchSharp {
             THFloatTensor_ltValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_leValue (ByteTensor.HType result, HType t, float value);
@@ -19846,7 +19163,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_gtValue (ByteTensor.HType result, HType t, float value);
 
@@ -19864,7 +19180,6 @@ namespace TorchSharp {
             THFloatTensor_gtValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_geValue (ByteTensor.HType result, HType t, float value);
@@ -19884,7 +19199,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_eqValue (ByteTensor.HType result, HType t, float value);
 
@@ -19902,7 +19216,6 @@ namespace TorchSharp {
             THFloatTensor_eqValue (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_neValue (ByteTensor.HType result, HType t, float value);
@@ -19922,7 +19235,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_ltValueT (HType result, HType t, float value);
 
@@ -19940,7 +19252,6 @@ namespace TorchSharp {
             THFloatTensor_ltValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_leValueT (HType result, HType t, float value);
@@ -19960,7 +19271,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_gtValueT (HType result, HType t, float value);
 
@@ -19978,7 +19288,6 @@ namespace TorchSharp {
             THFloatTensor_gtValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_geValueT (HType result, HType t, float value);
@@ -19998,7 +19307,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_eqValueT (HType result, HType t, float value);
 
@@ -20017,7 +19325,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_neValueT (HType result, HType t, float value);
 
@@ -20035,7 +19342,6 @@ namespace TorchSharp {
             THFloatTensor_neValueT (result.handle, this.handle, src);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_lerp (HType result, HType self, HType other, float weight);
@@ -20071,7 +19377,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (other));
             return 0 != THFloatTensor_equal (this.handle, other.handle);
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_add_scaled (HType result, HType t, float value1, float value2);
 
@@ -20090,7 +19395,6 @@ namespace TorchSharp {
             THFloatTensor_add_scaled (result.handle, this.handle, value1, value2);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sub_scaled (HType result, HType t, float value1, float value2);
@@ -20111,7 +19415,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_clamp (HType result, HType t, float value1, float value2);
 
@@ -20130,8 +19433,6 @@ namespace TorchSharp {
             THFloatTensor_clamp (result.handle, this.handle, value1, value2);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addcmul (HType result, HType t, float value, HType src1, HType src2);
@@ -20157,7 +19458,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addcdiv (HType result, HType t, float value, HType src1, HType src2);
 
@@ -20181,8 +19481,6 @@ namespace TorchSharp {
             THFloatTensor_addcdiv (result.handle, this.handle, value, src1.handle, src2.handle);
             return result;
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addmv (HType result, float beta, HType t, float alpha, HType src1, HType src2);
@@ -20212,7 +19510,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addmm (HType result, float beta, HType t, float alpha, HType src1, HType src2);
 
@@ -20240,7 +19537,6 @@ namespace TorchSharp {
             THFloatTensor_addmm (result.handle, beta, this.handle, alpha, mat1.handle, mat2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addbmm (HType result, float beta, HType t, float alpha, HType src1, HType src2);
@@ -20270,7 +19566,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_addr (HType result, float beta, HType t, float alpha, HType src1, HType src2);
 
@@ -20298,7 +19593,6 @@ namespace TorchSharp {
             THFloatTensor_addr (result.handle, beta, this.handle, alpha, vec1.handle, vec2.handle);
             return result;
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_baddbmm (HType result, float beta, HType t, float alpha, HType src1, HType src2);
@@ -20328,8 +19622,6 @@ namespace TorchSharp {
             return result;
         }
 
-
-
         [DllImport ("caffe2")]
         extern static float THFloatTensor_minall (HType result);
 
@@ -20343,7 +19635,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_minall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static float THFloatTensor_maxall (HType result);
 
@@ -20357,7 +19648,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_maxall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static float THFloatTensor_medianall (HType result);
 
@@ -20371,7 +19661,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_medianall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THFloatTensor_sumall (HType result);
 
@@ -20385,7 +19674,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_sumall (this.handle);
         }
-
         [DllImport ("caffe2")]
         extern static double THFloatTensor_prodall (HType result);
 
@@ -20399,8 +19687,6 @@ namespace TorchSharp {
         {
             return THFloatTensor_prodall (this.handle);
         }
-
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_linspace (HType result, float a, float b, long n);
@@ -20422,7 +19708,6 @@ namespace TorchSharp {
             return result;
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_logspace (HType result, float a, float b, long n);
 
@@ -20442,7 +19727,6 @@ namespace TorchSharp {
             THFloatTensor_logspace (result.handle, a, b, n);
             return result;
         }
-
 
 
         [DllImport ("caffe2")]
@@ -20641,7 +19925,6 @@ namespace TorchSharp {
             THFloatTensor_copy (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyByte (HType tensor, ByteTensor.HType src);
 
@@ -20656,7 +19939,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyByte (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyShort (HType tensor, ShortTensor.HType src);
@@ -20673,7 +19955,6 @@ namespace TorchSharp {
             THFloatTensor_copyShort (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyInt (HType tensor, IntTensor.HType src);
 
@@ -20688,7 +19969,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyInt (this.handle, src.handle);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyLong (HType tensor, LongTensor.HType src);
@@ -20705,7 +19985,6 @@ namespace TorchSharp {
             THFloatTensor_copyLong (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyFloat (HType tensor, FloatTensor.HType src);
 
@@ -20721,7 +20000,6 @@ namespace TorchSharp {
             THFloatTensor_copyFloat (this.handle, src.handle);
         }
 
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_copyDouble (HType tensor, DoubleTensor.HType src);
 
@@ -20736,10 +20014,6 @@ namespace TorchSharp {
                 throw new ArgumentNullException (nameof (src));
             THFloatTensor_copyDouble (this.handle, src.handle);
         }
-
-
-
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_sum (HType result, HType self, int dimension, int keepdim);
@@ -20769,7 +20043,6 @@ namespace TorchSharp {
             THFloatTensor_cumsum (result.handle, this.handle, dimension);
             return result;
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_prod (HType result, HType self, int dimension, int keepdim);
 
@@ -20798,8 +20071,6 @@ namespace TorchSharp {
             THFloatTensor_cumprod (result.handle, this.handle, dimension);
             return result;
         }
-
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_max (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -20816,7 +20087,6 @@ namespace TorchSharp {
             THFloatTensor_max (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_min (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -20833,7 +20103,6 @@ namespace TorchSharp {
             THFloatTensor_min (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mode (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -20850,7 +20119,6 @@ namespace TorchSharp {
             THFloatTensor_mode (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_median (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
 
@@ -20867,7 +20135,6 @@ namespace TorchSharp {
             THFloatTensor_median (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<FloatTensor, LongTensor>(values, indices);
         }
-
 
         [DllImport ("caffe2")]
         extern static void THFloatTensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
@@ -21083,7 +20350,6 @@ namespace TorchSharp {
             return result;
         }
 #endif
-
         [DllImport ("caffe2")]
         extern static void THFloatTensor_mean (HType result, HType self, int dimension, int keepdim);
 
@@ -21271,7 +20537,5 @@ namespace TorchSharp {
             THFloatdirichlet_grad (result.handle, this.handle, alpha.handle, total.handle);
             return result;
         }
-
     }
-
 }
