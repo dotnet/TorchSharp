@@ -222,6 +222,11 @@ foreach (var type in new [] {
         internal HType handle;
         internal <#=tname#>Storage storage;
         
+        internal <#=tname#>Tensor (HType handle)
+        {
+            this.handle = handle;
+        }
+        
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
         
@@ -231,11 +236,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor ()
         {
             handle = TH<#=tname#>Tensor_new ();
-        }
-
-        internal <#=tname#>Tensor (HType handle)
-        {
-            this.handle = handle;
         }
 
         [DllImport ("caffe2")]
@@ -290,6 +290,34 @@ foreach (var type in new [] {
         public <#=tname#>Tensor (long size0, long size1, long size2, long size3)
         {
             handle = TH<#=tname#>Tensor_newWithSize4d (size0, size1, size2, size3);
+        }
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>    
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public <#=tname#>Tensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = TH<#=tname#>Tensor_new ();
+                    break;
+                case 1: 
+                    handle = TH<#=tname#>Tensor_newWithSize1d (dims[0]);
+                    break;
+                case 2: 
+                    handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
+		            break;
+                case 3: 
+                    handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
+		            break;
+                case 4: 
+                    handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+		            break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
         }
         
         /// <summary>
@@ -459,7 +487,7 @@ foreach (var type in new [] {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
