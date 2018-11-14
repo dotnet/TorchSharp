@@ -228,7 +228,7 @@ foreach (var type in new [] {
         }
 
         internal HType handle;
-        
+
         internal <#=tname#>Tensor (HType handle)
         {
             this.handle = handle;
