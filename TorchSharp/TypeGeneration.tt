@@ -277,10 +277,10 @@ foreach (var type in new [] {
                     break;
                 case 2: 
                     handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;

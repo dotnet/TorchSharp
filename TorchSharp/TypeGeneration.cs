@@ -255,10 +255,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THByteTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THByteTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THByteTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
@@ -3464,10 +3464,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THShortTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THShortTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THShortTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
@@ -6625,10 +6625,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THIntTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THIntTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THIntTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
@@ -9786,10 +9786,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THLongTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THLongTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THLongTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
@@ -12947,10 +12947,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THDoubleTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THDoubleTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THDoubleTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
@@ -17030,10 +17030,10 @@ namespace TorchSharp {
                     break;
                 case 2: 
                     handle = THFloatTensor_newWithSize2d (dims[0], dims[1]);
-		            break;
+                    break;
                 case 3: 
                     handle = THFloatTensor_newWithSize3d (dims[0], dims[1], dims[2]);
-		            break;
+                    break;
                 case 4: 
                     handle = THFloatTensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
 		            break;
