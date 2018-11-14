@@ -184,6 +184,290 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="AddBMM">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddBMM (long beta, long alpha, TorchSharp.LongTensor batch1, TorchSharp.LongTensor batch2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddBMM(int64 beta, int64 alpha, class TorchSharp.LongTensor batch1, class TorchSharp.LongTensor batch2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beta" Type="System.Int64" />
+        <Parameter Name="alpha" Type="System.Int64" />
+        <Parameter Name="batch1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="batch2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="beta">Multiplier for this tensor (β).</param>
+        <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        <param name="batch1">the first batch of matrices to be multiplied</param>
+        <param name="batch2">the second batch of matrices to be multiplied</param>
+        <summary>
+              Performs AddBMM of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              β mat+α (∑i=0bbatch1i@batch2i)
+            </returns>
+        <remarks>
+            β mat+α (∑i=0bbatch1i@batch2i)
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddCDiv">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddCDiv (long value, TorchSharp.LongTensor src1, TorchSharp.LongTensor src2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddCDiv(int64 value, class TorchSharp.LongTensor src1, class TorchSharp.LongTensor src2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+        <Parameter Name="src1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+        </param>
+        <param name="src1">
+        </param>
+        <param name="src2">
+        </param>
+        <summary>
+              Performs AddCDiv of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddCMul">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddCMul (long value, TorchSharp.LongTensor src1, TorchSharp.LongTensor src2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddCMul(int64 value, class TorchSharp.LongTensor src1, class TorchSharp.LongTensor src2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+        <Parameter Name="src1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+        </param>
+        <param name="src1">
+        </param>
+        <param name="src2">
+        </param>
+        <summary>
+              Performs AddCMul of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddMM">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddMM (long beta, long alpha, TorchSharp.LongTensor mat1, TorchSharp.LongTensor mat2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddMM(int64 beta, int64 alpha, class TorchSharp.LongTensor mat1, class TorchSharp.LongTensor mat2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beta" Type="System.Int64" />
+        <Parameter Name="alpha" Type="System.Int64" />
+        <Parameter Name="mat1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="mat2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="beta">Multiplier for this tensor (β).</param>
+        <param name="alpha">Multiplier for mat1xmat2 (α)</param>
+        <param name="mat1">First matrix to  be multiplied</param>
+        <param name="mat2">Second matrix to  be multiplied</param>
+        <summary>
+              Performs AddMM of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              β mat+α (mat1i@mat2i)
+            </returns>
+        <remarks>
+            β mat+α (mat1i@mat2i)
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddMV">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddMV (long beta, long alpha, TorchSharp.LongTensor mat, TorchSharp.LongTensor vec);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddMV(int64 beta, int64 alpha, class TorchSharp.LongTensor mat, class TorchSharp.LongTensor vec) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beta" Type="System.Int64" />
+        <Parameter Name="alpha" Type="System.Int64" />
+        <Parameter Name="mat" Type="TorchSharp.LongTensor" />
+        <Parameter Name="vec" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="beta">Multiplier for this tensor (β).</param>
+        <param name="alpha">Multiplier for matxvec (α)</param>
+        <param name="mat">Matrix to be multiplied</param>
+        <param name="vec">Vector to be multiplied</param>
+        <summary>
+              Performs AddMV of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              β tensor+α (mat@vec)
+            </returns>
+        <remarks>
+            β tensor+α (mat@vec)
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddR">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddR (long beta, long alpha, TorchSharp.LongTensor vec1, TorchSharp.LongTensor vec2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddR(int64 beta, int64 alpha, class TorchSharp.LongTensor vec1, class TorchSharp.LongTensor vec2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beta" Type="System.Int64" />
+        <Parameter Name="alpha" Type="System.Int64" />
+        <Parameter Name="vec1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="vec2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="beta">Multiplier for this tensor (β).</param>
+        <param name="alpha">Multiplier for vec1xvec2 (α)</param>
+        <param name="vec1">the first vector of the outer product</param>
+        <param name="vec2">the second vector of the outer product</param>
+        <summary>
+              Performs AddR of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              β mat+α (vec1⊗vec2)
+            </returns>
+        <remarks>
+            β mat+α (vec1⊗vec2)
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddScaled">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor AddScaled (long value1, long value2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor AddScaled(int64 value1, int64 value2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value1" Type="System.Int64" />
+        <Parameter Name="value2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value1">
+        </param>
+        <param name="value2">
+        </param>
+        <summary>
+              Performs an AddScaled of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ARange">
+      <MemberSignature Language="C#" Value="public static TorchSharp.LongTensor ARange (long xmin, long xmax, long step);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class TorchSharp.LongTensor ARange(int64 xmin, int64 xmax, int64 step) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmin" Type="System.Int64" />
+        <Parameter Name="xmax" Type="System.Int64" />
+        <Parameter Name="step" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="xmin">The lower bound of the range.</param>
+        <param name="xmax">The upper bound of the range.</param>
+        <param name="step">The value step.</param>
+        <summary>
+              Create a range spanning from xmin to xmax, with 'step' between each value.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BAddBMM">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor BAddBMM (long beta, long alpha, TorchSharp.LongTensor batch1, TorchSharp.LongTensor batch2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor BAddBMM(int64 beta, int64 alpha, class TorchSharp.LongTensor batch1, class TorchSharp.LongTensor batch2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="beta" Type="System.Int64" />
+        <Parameter Name="alpha" Type="System.Int64" />
+        <Parameter Name="batch1" Type="TorchSharp.LongTensor" />
+        <Parameter Name="batch2" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="beta">Multiplier for this tensor (β).</param>
+        <param name="alpha">Multiplier for batch1xbatch2 (α)</param>
+        <param name="batch1">the first batch of matrices to be multiplied</param>
+        <param name="batch2">the second batch of matrices to be multiplied</param>
+        <summary>
+              Performs BAddBMM of the tensor with the provided 
+              <see paramref="src1" /> and <see paramref="src1" /> tensors and returns a new tensor with the result.
+            </summary>
+        <returns>
+              β mati+α (batch1i@batch2i)
+            </returns>
+        <remarks>
+            β mati+α (batch1i@batch2i)
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="BitAnd">
       <MemberSignature Language="C#" Value="public TorchSharp.LongTensor BitAnd (long value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor BitAnd(int64 value) cil managed" />
@@ -389,6 +673,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="CappedRandom">
+      <MemberSignature Language="C#" Value="public void CappedRandom (TorchSharp.RandomGenerator source, long max);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CappedRandom(class TorchSharp.RandomGenerator source, int64 max) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+        <Parameter Name="max" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <param name="max">The upper limit for the values to be generated</param>
+        <summary>
+             Populates the tensor with random values from 0 to max, using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CBitAnd">
       <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CBitAnd (TorchSharp.LongTensor src);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CBitAnd(class TorchSharp.LongTensor src) cil managed" />
@@ -403,7 +710,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CBitAnd of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -428,7 +735,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CBitOr of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -453,7 +760,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CBitXor of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -478,7 +785,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CDiv of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -503,7 +810,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CFMod of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -518,9 +825,6 @@
       <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Clamp (long value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Clamp(int64 value) cil managed" />
       <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TorchSharp.LongTensor</ReturnType>
       </ReturnValue>
@@ -543,12 +847,38 @@
       </Docs>
     </Member>
     <Member MemberName="Clamp">
-      <MemberSignature Language="C#" Value="public static void Clamp (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Clamp(class TorchSharp.LongTensor source, int64 value, class TorchSharp.LongTensor result) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Clamp (long value1, long value2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Clamp(int64 value1, int64 value2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value1" Type="System.Int64" />
+        <Parameter Name="value2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value1">
+        </param>
+        <param name="value2">
+        </param>
+        <summary>
+              Performs an Clamp of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clamp">
+      <MemberSignature Language="C#" Value="public static void Clamp (TorchSharp.LongTensor source, long value, TorchSharp.LongTensor result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Clamp(class TorchSharp.LongTensor source, int64 value, class TorchSharp.LongTensor result) cil managed" />
+      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -571,6 +901,31 @@
                with <see paramref="value" />.   The result is stored in the <see paramref="result" />
                tensor.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClampedRandom">
+      <MemberSignature Language="C#" Value="public void ClampedRandom (TorchSharp.RandomGenerator source, long min, long max);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ClampedRandom(class TorchSharp.RandomGenerator source, int64 min, int64 max) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+        <Parameter Name="min" Type="System.Int64" />
+        <Parameter Name="max" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <param name="min">The lower limit for the values to be generated</param>
+        <param name="max">The upper limit for the values to be generated</param>
+        <summary>
+             Populates the tensor with random values from min to max, using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -606,9 +961,109 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CLShift of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CMax">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CMax (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CMax(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an CMax of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CMaxValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CMaxValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CMaxValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an CMaxValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CMin">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CMin (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CMin(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an CMin of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CMinValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CMinValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CMinValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an CMinValue of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
             </summary>
         <returns>
@@ -631,7 +1086,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CMul of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -639,6 +1094,184 @@
         <returns>
               This returns a new tensor with the same shape as the tensor this operates on.
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Concatenate">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Concatenate (TorchSharp.LongTensor other, int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Concatenate(class TorchSharp.LongTensor other, int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="TorchSharp.LongTensor" />
+        <Parameter Name="dimension" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="other">The second tensor.</param>
+        <param name="dimension">The dimension along which to concatenate.</param>
+        <summary>
+              Concatenate tensors along the given dimesion.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public void Copy (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Copy(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyByte">
+      <MemberSignature Language="C#" Value="public void CopyByte (TorchSharp.ByteTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyByte(class TorchSharp.ByteTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ByteTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a byte tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyDouble">
+      <MemberSignature Language="C#" Value="public void CopyDouble (TorchSharp.DoubleTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyDouble(class TorchSharp.DoubleTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.DoubleTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a double tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyFloat">
+      <MemberSignature Language="C#" Value="public void CopyFloat (TorchSharp.FloatTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyFloat(class TorchSharp.FloatTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.FloatTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a float tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyInt">
+      <MemberSignature Language="C#" Value="public void CopyInt (TorchSharp.IntTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyInt(class TorchSharp.IntTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.IntTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a int tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyLong">
+      <MemberSignature Language="C#" Value="public void CopyLong (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyLong(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a long tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyShort">
+      <MemberSignature Language="C#" Value="public void CopyShort (TorchSharp.ShortTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyShort(class TorchSharp.ShortTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.ShortTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Copies the elements of a short tensor into the original tensor. 
+              The shape of the tensors must exactly match or an error will be thrown.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -656,7 +1289,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CPow of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -681,7 +1314,7 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Performs an CRemainder of the tensor with the provided 
               <see paramref="src" /> tensor and returns a new tensor with the result.
@@ -689,6 +1322,28 @@
         <returns>
               This returns a new tensor with the same shape as the tensor this operates on.
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CrossProduct">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CrossProduct (TorchSharp.LongTensor other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CrossProduct(class TorchSharp.LongTensor other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="other">The right-hand-side tensor.</param>
+        <summary>
+              Computes the cross product of two tensors. 
+            </summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -720,6 +1375,50 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="CumulativeProd">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CumulativeProd (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CumulativeProd(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <summary>
+              Computes the cumulative product of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CumulativeSum">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor CumulativeSum (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor CumulativeSum(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <summary>
+              Computes the cumulative sum of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Data">
       <MemberSignature Language="C#" Value="public long* Data { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int64* Data" />
@@ -735,6 +1434,29 @@
              Returns a pointer to the unmanaged data managed by this tensor.
             </summary>
         <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Diagonal">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Diagonal (int k);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Diagonal(int32 k) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="k" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="k">
+        </param>
+        <summary>
+              Gets the diagonal of the tensor. 
+            </summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -868,13 +1590,161 @@
         <Parameter Name="src" Type="TorchSharp.LongTensor" />
       </Parameters>
       <Docs>
-        <param name="src">To be added.</param>
+        <param name="src">The right-hand-side operand.</param>
         <summary>
               Returns the tensor product between this tensor and the provided one
             </summary>
         <returns>
               The dot product
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EqTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor EqTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor EqTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an EqTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EqTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor EqTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor EqTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an EqTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equal">
+      <MemberSignature Language="C#" Value="public bool Equal (TorchSharp.LongTensor other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equal(class TorchSharp.LongTensor other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="other">The right-hand-side operand.</param>
+        <summary>
+              Compare the tensor with another for complete equality.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EqValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor EqValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor EqValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an EqValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EqValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor EqValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor EqValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an EqValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Eye">
+      <MemberSignature Language="C#" Value="public static TorchSharp.LongTensor Eye (long m, long n);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class TorchSharp.LongTensor Eye(int64 m, int64 n) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="m" Type="System.Int64" />
+        <Parameter Name="n" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="m">
+        </param>
+        <param name="n">
+        </param>
+        <summary>
+              Eye. 
+            </summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -976,6 +1846,107 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Gather">
+      <MemberSignature Language="C#" Value="public void Gather (TorchSharp.LongTensor src, int dim, TorchSharp.LongTensor index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Gather(class TorchSharp.LongTensor src, int32 dim, class TorchSharp.LongTensor index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">
+        </param>
+        <param name="dim">
+        </param>
+        <param name="index">Indices of entries to copy.</param>
+        <summary>
+              Gather
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Geometric">
+      <MemberSignature Language="C#" Value="public void Geometric (TorchSharp.RandomGenerator source, double p);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Geometric(class TorchSharp.RandomGenerator source, float64 p) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+        <Parameter Name="p" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <param name="p">
+        </param>
+        <summary>
+             Populates the tensor with random values from 0 to n, using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GeTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor GeTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor GeTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GeTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GeTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor GeTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor GeTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GeTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetTensorDimension">
       <MemberSignature Language="C#" Value="public long GetTensorDimension (int dim);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetTensorDimension(int32 dim) cil managed" />
@@ -1020,6 +1991,182 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="GeValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor GeValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor GeValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GeValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GeValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor GeValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor GeValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GeValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor GtTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor GtTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GtTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor GtTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor GtTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GtTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor GtValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor GtValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GtValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor GtValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor GtValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an GtValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexAdd">
+      <MemberSignature Language="C#" Value="public void IndexAdd (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void IndexAdd(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select for the add</param>
+        <param name="index">Entries to copy</param>
+        <param name="src">Tensor to copy the data from.</param>
+        <summary>
+              Adds the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IndexCopy">
       <MemberSignature Language="C#" Value="public void IndexCopy (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void IndexCopy(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.LongTensor src) cil managed" />
@@ -1041,6 +2188,32 @@
         <param name="src">Tensor to copy the data from.</param>
         <summary>
               Copies the elements of tensor into the original tensor by selecting the indices in the order 
+              given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexFill">
+      <MemberSignature Language="C#" Value="public void IndexFill (int dim, TorchSharp.LongTensor index, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void IndexFill(int32 dim, class TorchSharp.LongTensor index, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dim">Dimension to select for the fill</param>
+        <param name="index">Entries to copy</param>
+        <param name="value">The value to write.</param>
+        <summary>
+              Uses the given value to overwrite the original tensor by selecting the indices in the order 
               given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
             </summary>
         <remarks>To be added.</remarks>
@@ -1172,6 +2345,157 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="KthValue">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; KthValue (long k, int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; KthValue(int64 k, int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="k" Type="System.Int64" />
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="k">The value for 'k' in 'kth'.</param>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the kth value of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the kth element of each dimension.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LERP">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LERP (TorchSharp.LongTensor other, long weight);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LERP(class TorchSharp.LongTensor other, int64 weight) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="TorchSharp.LongTensor" />
+        <Parameter Name="weight" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="other">The right-hand-side operand.</param>
+        <param name="weight">
+        </param>
+        <summary>
+              LERP
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor LeTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor LeTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LeTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LeTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LeTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LeTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor LeValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor LeValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LeValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LeValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LeValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LeValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="LShift">
       <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LShift (long value);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LShift(int64 value) cil managed" />
@@ -1231,6 +2555,232 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="LtTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor LtTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor LtTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LtTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LtTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LtTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LtTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LtTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LtValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor LtValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor LtValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LtValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LtValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor LtValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor LtValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an LtValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaskedCopy">
+      <MemberSignature Language="C#" Value="public void MaskedCopy (TorchSharp.ByteTensor mask, TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MaskedCopy(class TorchSharp.ByteTensor mask, class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mask" Type="TorchSharp.ByteTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the destination the value should be filled.</param>
+        <param name="src">The source tensor.</param>
+        <summary>
+             Copies elements from the source tensor to the locations indicated by the mask.
+            </summary>
+        <remarks>
+             There must be at least as many elements in the source tensor as there are 1s in the mask.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaskedFill">
+      <MemberSignature Language="C#" Value="public void MaskedFill (TorchSharp.ByteTensor mask, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MaskedFill(class TorchSharp.ByteTensor mask, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mask" Type="TorchSharp.ByteTensor" />
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="mask">A byte tensor with values 0 or 1 indicating the locations where the value should be filled.</param>
+        <param name="value">The value to write at the indicated locations.</param>
+        <summary>
+             Fills the tensor with the specified value at the locations indicated by the mask.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaskedSelect">
+      <MemberSignature Language="C#" Value="public void MaskedSelect (TorchSharp.ByteTensor mask, TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MaskedSelect(class TorchSharp.ByteTensor mask, class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mask" Type="TorchSharp.ByteTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="mask">A byte tensor with values 0 or 1 indicating the locations where in the source the value should be fetched.</param>
+        <param name="src">The source tensor.</param>
+        <summary>
+             Copies elements from the source tensor at the locations indicated by the mask.
+            </summary>
+        <remarks>
+             There will be as many elements in the tensor as there are 1s in the mask.
+             There must be at least as many elements in the source tensor as there are 1s in the mask.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Match (TorchSharp.LongTensor m2, long gain);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Match(class TorchSharp.LongTensor m2, int64 gain) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="m2" Type="TorchSharp.LongTensor" />
+        <Parameter Name="gain" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="m2">
+        </param>
+        <param name="gain">
+        </param>
+        <summary>
+              Match
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; Max (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; Max(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the max of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the resulting elements.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MaxAll">
       <MemberSignature Language="C#" Value="public long MaxAll ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 MaxAll() cil managed" />
@@ -1256,9 +2806,6 @@
       <MemberSignature Language="C#" Value="public long MeanAll ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 MeanAll() cil managed" />
       <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1270,6 +2817,30 @@
         <returns>
               The mean of the tensor.
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Median">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; Median (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; Median(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the median of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the resulting elements.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1294,6 +2865,30 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; Min (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; Min(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the min of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the resulting elements.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MinAll">
       <MemberSignature Language="C#" Value="public long MinAll ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 MinAll() cil managed" />
@@ -1312,6 +2907,30 @@
         <returns>
               The minimum value of the tensor.
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mode">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; Mode (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; Mode(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the mode of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the resulting elements.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1400,6 +3019,296 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="NeTensor">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor NeTensor (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor NeTensor(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an NeTensor of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NeTensorT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NeTensorT (TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NeTensorT(class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an NeTensorT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NeValue">
+      <MemberSignature Language="C#" Value="public TorchSharp.ByteTensor NeValue (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.ByteTensor NeValue(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.ByteTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an NeValue of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NeValueT">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NeValueT (long src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NeValueT(int64 src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="src">The right-hand-side operand.</param>
+        <summary>
+              Performs an NeValueT of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NewWithStorage1d">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NewWithStorage1d (IntPtr offset, long size, long stride);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NewWithStorage1d(native int offset, int64 size, int64 stride) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.IntPtr" />
+        <Parameter Name="size" Type="System.Int64" />
+        <Parameter Name="stride" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        <param name="size">Size of the first dimension.</param>
+        <param name="stride">Stride of the first dimension.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NewWithStorage2d">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NewWithStorage2d (IntPtr offset, long size0, long stride0, long size1, long stride1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NewWithStorage2d(native int offset, int64 size0, int64 stride0, int64 size1, int64 stride1) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.IntPtr" />
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="stride0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="stride1" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        <param name="size0">Size of the first dimension.</param>
+        <param name="stride0">Stride of the first dimension.</param>
+        <param name="size1">Size of the second dimension.</param>
+        <param name="stride1">Stride of the second dimension.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NewWithStorage3d">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NewWithStorage3d (IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NewWithStorage3d(native int offset, int64 size0, int64 stride0, int64 size1, int64 stride1, int64 size2, int64 stride2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.IntPtr" />
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="stride0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="stride1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+        <Parameter Name="stride2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        <param name="size0">Size of the first dimension.</param>
+        <param name="stride0">Stride of the first dimension.</param>
+        <param name="size1">Size of the second dimension.</param>
+        <param name="stride1">Stride of the second dimension.</param>
+        <param name="size2">Size of the third dimension.</param>
+        <param name="stride2">Stride of the third dimension.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NewWithStorage4d">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NewWithStorage4d (IntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NewWithStorage4d(native int offset, int64 size0, int64 stride0, int64 size1, int64 stride1, int64 size2, int64 stride2, int64 size3, int64 stride3) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.IntPtr" />
+        <Parameter Name="size0" Type="System.Int64" />
+        <Parameter Name="stride0" Type="System.Int64" />
+        <Parameter Name="size1" Type="System.Int64" />
+        <Parameter Name="stride1" Type="System.Int64" />
+        <Parameter Name="size2" Type="System.Int64" />
+        <Parameter Name="stride2" Type="System.Int64" />
+        <Parameter Name="size3" Type="System.Int64" />
+        <Parameter Name="stride3" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        <param name="size0">Size of the first dimension.</param>
+        <param name="stride0">Stride of the first dimension.</param>
+        <param name="size1">Size of the second dimension.</param>
+        <param name="stride1">Stride of the second dimension.</param>
+        <param name="size2">Size of the third dimension.</param>
+        <param name="stride2">Stride of the third dimension.</param>
+        <param name="size3">Size of the fourth dimension.</param>
+        <param name="stride3">Stride of the fourth dimension.</param>
+        <summary>
+              Access to element at the specified position in the tensor
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NonZero">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor NonZero ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor NonZero() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Finds the indices of all non-zero elements.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NumElements">
+      <MemberSignature Language="C#" Value="public long NumElements ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 NumElements() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+             Get the number of elements in the tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Prod">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Prod (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Prod(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the product of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ProdAll">
       <MemberSignature Language="C#" Value="public long ProdAll ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 ProdAll() cil managed" />
@@ -1418,6 +3327,33 @@
         <returns>
               The product of the tensor.
             </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Put">
+      <MemberSignature Language="C#" Value="public void Put (TorchSharp.LongTensor index, TorchSharp.LongTensor src, bool accumulate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Put(class TorchSharp.LongTensor index, class TorchSharp.LongTensor src, bool accumulate) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+        <Parameter Name="accumulate" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="index">Indices of entries to copy.</param>
+        <param name="src">
+        </param>
+        <param name="accumulate">
+        </param>
+        <summary>
+              Put
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1443,12 +3379,30 @@
       </Docs>
     </Member>
     <Member MemberName="Random">
-      <MemberSignature Language="C#" Value="public void Random (TorchSharp.RandomGenerator source, long n);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Random(class TorchSharp.RandomGenerator source, int64 n) cil managed" />
+      <MemberSignature Language="C#" Value="public void Random (TorchSharp.RandomGenerator source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Random(class TorchSharp.RandomGenerator source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <summary>
+             Populates the tensor with random values using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Random">
+      <MemberSignature Language="C#" Value="public void Random (TorchSharp.RandomGenerator source, long n);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Random(class TorchSharp.RandomGenerator source, int64 n) cil managed" />
+      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1462,6 +3416,55 @@
         <summary>
              Populates the tensor with random values from 0 to n, using the provided random source generator.
             </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RandPerm">
+      <MemberSignature Language="C#" Value="public void RandPerm (TorchSharp.RandomGenerator source, long max);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RandPerm(class TorchSharp.RandomGenerator source, int64 max) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="TorchSharp.RandomGenerator" />
+        <Parameter Name="max" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="source">The random generator source</param>
+        <param name="max">The upper limit for the values to be generated</param>
+        <summary>
+             Populates the tensor with random values from 0 to n, using the provided random source generator.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Range">
+      <MemberSignature Language="C#" Value="public static TorchSharp.LongTensor Range (long xmin, long xmax, long step);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class TorchSharp.LongTensor Range(int64 xmin, int64 xmax, int64 step) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmin" Type="System.Int64" />
+        <Parameter Name="xmax" Type="System.Int64" />
+        <Parameter Name="step" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="xmin">The lower bound of the range.</param>
+        <param name="xmax">The upper bound of the range.</param>
+        <param name="step">The value step.</param>
+        <summary>
+              Create a range spanning from xmin to xmax, with 'step' between each value.
+            </summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1729,6 +3732,87 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Scatter">
+      <MemberSignature Language="C#" Value="public void Scatter (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Scatter(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">
+        </param>
+        <param name="index">Indices of entries to copy.</param>
+        <param name="src">
+        </param>
+        <summary>
+              Scatter
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ScatterAdd">
+      <MemberSignature Language="C#" Value="public void ScatterAdd (int dim, TorchSharp.LongTensor index, TorchSharp.LongTensor src);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ScatterAdd(int32 dim, class TorchSharp.LongTensor index, class TorchSharp.LongTensor src) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="dim">
+        </param>
+        <param name="index">Indices of entries to copy.</param>
+        <param name="src">
+        </param>
+        <summary>
+              ScatterAdd
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ScatterFill">
+      <MemberSignature Language="C#" Value="public void ScatterFill (int dim, TorchSharp.LongTensor index, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ScatterFill(int32 dim, class TorchSharp.LongTensor index, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dim">
+        </param>
+        <param name="index">Indices of entries to copy.</param>
+        <param name="value">
+        </param>
+        <summary>
+              ScatterAdd
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Select">
       <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Select (int dim, long slideIndex);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Select(int32 dim, int64 slideIndex) cil managed" />
@@ -1798,15 +3882,99 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Sign ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Sign() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Computes the sign of the tensor. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; Sort (int dimension, bool descending);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; Sort(int32 dimension, bool descending) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="descending" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to sort along.</param>
+        <param name="descending">0 if ascending, 1 if descending.</param>
+        <summary>
+              Sorts the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the sorted elements.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Squeeze">
+      <MemberSignature Language="C#" Value="public void Squeeze ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Squeeze() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Squeeze1d">
+      <MemberSignature Language="C#" Value="public void Squeeze1d (TorchSharp.LongTensor src, int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Squeeze1d(class TorchSharp.LongTensor src, int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+        <Parameter Name="dimension" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="src">The source tensor which contains the data.</param>
+        <param name="dimension">The dimension to remove.</param>
+        <summary>
+              Squeeze the tensor, by removing the specified dimension.   
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Storage">
-      <MemberSignature Language="C#" Value="public TorchSharp.LongStorage Storage { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class TorchSharp.LongStorage Storage" />
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor.LongStorage Storage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class TorchSharp.LongTensor/LongStorage Storage" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>TorchSharp.LongStorage</ReturnType>
+        <ReturnType>TorchSharp.LongTensor+LongStorage</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
@@ -1875,6 +4043,59 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="SubScaled">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor SubScaled (long value1, long value2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor SubScaled(int64 value1, int64 value2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value1" Type="System.Int64" />
+        <Parameter Name="value2" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value1">
+        </param>
+        <param name="value2">
+        </param>
+        <summary>
+              Performs an SubScaled of the tensor with the provided 
+              <see paramref="src" /> tensor and returns a new tensor with the result.
+            </summary>
+        <returns>
+              This returns a new tensor with the same shape as the tensor this operates on.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sum">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor Sum (int dimension, bool keepdim);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor Sum(int32 dimension, bool keepdim) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int32" />
+        <Parameter Name="keepdim" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">The dimension to process along.</param>
+        <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
+        <summary>
+              Computes the sum of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="SumAll">
       <MemberSignature Language="C#" Value="public long SumAll ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 SumAll() cil managed" />
@@ -1896,6 +4117,58 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Take">
+      <MemberSignature Language="C#" Value="public void Take (TorchSharp.LongTensor src, TorchSharp.LongTensor index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Take(class TorchSharp.LongTensor src, class TorchSharp.LongTensor index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+        <Parameter Name="index" Type="TorchSharp.LongTensor" />
+      </Parameters>
+      <Docs>
+        <param name="src">
+        </param>
+        <param name="index">Indices of entries to copy.</param>
+        <summary>
+              Take
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TopK">
+      <MemberSignature Language="C#" Value="public Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt; TopK (long k, int dim, int dir, bool sorted);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Tuple`2&lt;class TorchSharp.LongTensor, class TorchSharp.LongTensor&gt; TopK(int64 k, int32 dim, int32 dir, bool sorted) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Tuple&lt;TorchSharp.LongTensor,TorchSharp.LongTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="k" Type="System.Int64" />
+        <Parameter Name="dim" Type="System.Int32" />
+        <Parameter Name="dir" Type="System.Int32" />
+        <Parameter Name="sorted" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="k">The number of elements to fetch.</param>
+        <param name="dim">The dimension along which to sort and find k elements.</param>
+        <param name="dir">0 if ascending, 1 if descending.</param>
+        <param name="sorted">1 if the result should be sorted, 0 if they should keep their original order.</param>
+        <summary>
+              Finds the top k of all the elements of the tensor along the given dimension. 
+            </summary>
+        <returns>A tuple containing the values and indices of the top 'k' elements.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
@@ -1909,7 +4182,26 @@
       <Parameters />
       <Docs>
         <summary>
-              Returns a debuggable version of the tensor, in this case the tensor shape
+              Get a string representation of the tensor.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Trace">
+      <MemberSignature Language="C#" Value="public long Trace ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 Trace() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+              Computes the trace of the tensor. 
             </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -1934,6 +4226,52 @@
         <param name="dim2">Second dimension</param>
         <summary>
             Returns a tensor where dimensions dim1 and dim2 have been swapped. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TriL">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor TriL (long k);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor TriL(int64 k) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="k" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="k">
+        </param>
+        <summary>
+              Lower triangle. 
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TriU">
+      <MemberSignature Language="C#" Value="public TorchSharp.LongTensor TriU (long k);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class TorchSharp.LongTensor TriU(int64 k) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.LongTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="k" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="k">
+        </param>
+        <summary>
+              Upper triangle. 
             </summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -1965,6 +4303,29 @@
               Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
             </summary>
         <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unsqueeze1d">
+      <MemberSignature Language="C#" Value="public void Unsqueeze1d (TorchSharp.LongTensor src, int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Unsqueeze1d(class TorchSharp.LongTensor src, int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="src" Type="TorchSharp.LongTensor" />
+        <Parameter Name="dimension" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="src">The source tensor which contains the data.</param>
+        <param name="dimension">The dimension to insert.</param>
+        <summary>
+              Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

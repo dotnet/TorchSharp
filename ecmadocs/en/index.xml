@@ -42,19 +42,19 @@
   <Copyright>To be added.</Copyright>
   <Types>
     <Namespace Name="TorchSharp">
-      <Type Name="ByteStorage" Kind="Class" />
       <Type Name="ByteTensor" Kind="Class" />
-      <Type Name="DoubleStorage" Kind="Class" />
+      <Type Name="ByteTensor+ByteStorage" Kind="Class" />
       <Type Name="DoubleTensor" Kind="Class" />
-      <Type Name="FloatStorage" Kind="Class" />
+      <Type Name="DoubleTensor+DoubleStorage" Kind="Class" />
       <Type Name="FloatTensor" Kind="Class" />
-      <Type Name="IntStorage" Kind="Class" />
+      <Type Name="FloatTensor+FloatStorage" Kind="Class" />
       <Type Name="IntTensor" Kind="Class" />
-      <Type Name="LongStorage" Kind="Class" />
+      <Type Name="IntTensor+IntStorage" Kind="Class" />
       <Type Name="LongTensor" Kind="Class" />
+      <Type Name="LongTensor+LongStorage" Kind="Class" />
       <Type Name="RandomGenerator" Kind="Class" />
-      <Type Name="ShortStorage" Kind="Class" />
       <Type Name="ShortTensor" Kind="Class" />
+      <Type Name="ShortTensor+ShortStorage" Kind="Class" />
     </Namespace>
   </Types>
   <Title>TorchSharp</Title>

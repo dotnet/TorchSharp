@@ -38,6 +38,14 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Raw/Blas.generated.cs</LastGenOutput>
     </None>
+    <None Update="Raw/Lapack.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Lapack.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Raw/Vector.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Vector.generated.cs</LastGenOutput>
+    </None>
     <None Update="FileOperations.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>FileOperations.cs</LastGenOutput>
@@ -62,6 +70,14 @@
       <DependentUpon>Raw/Types.ttinclude</DependentUpon>
       <DependentUpon>Raw/Blas.tt</DependentUpon>
     </Compile>
+    <Compile Update="Raw/Lapack.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Lapack.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Raw/Vector.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Vector.tt</DependentUpon>
+    </Compile>
     <Compile Update="FileOperations.cs">
       <DependentUpon>FileOperations.tt</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -70,5 +86,20 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <HasPayload Condition="Exists('../windows') and Exists ('../macos') and Exists ('../linux')">true</HasPayload>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(HasPayload)' == 'true'">
+    <None Include="nuget\TorchSharp.targets" PackagePath="build\netstandard2.0\TensorFlowSharp.targets" Pack="true" />
+
+    <None Include="..\windows\c10.dll" Link="nuget\runtimes\win7-x64\native\c10.dll" PackagePath="runtimes\win7-x64\native\c10.dll" Pack="true" />
+    <None Include="..\windows\caffe2.dll" Link="nuget\runtimes\win7-x64\native\caffe2.dll" PackagePath="runtimes\win7-x64\native\caffe2.dll" Pack="true" />
+
+    <None Include="..\macos\libtorch\lib\libc10.dylib" Link="nuget\runtimes\osx\native\libc10.dylib" PackagePath="runtimes\osx\native\libc10.dylib" Pack="true" />
+    <None Include="..\macos\libtorch\lib\libcaffe2.dylib" Link="nuget\runtimes\osx\native\libcaffe2.dylib" PackagePath="runtimes\osx\native\libcaffe2.dylib" Pack="true" />
+
+    <None Include="..\linux\libtorch\lib\libc10.so" Link="nuget\runtimes\linux\native\libc10.so" PackagePath="runtimes\linux\native\libc10.so" Pack="true" />
+    <None Include="..\linux\libtorch\lib\libcaffe2.so" Link="nuget\runtimes\linux\native\libcaffe2.so" PackagePath="runtimes\linux\native\libcaffe2.so" Pack="true" />
   </ItemGroup>
 </Project>

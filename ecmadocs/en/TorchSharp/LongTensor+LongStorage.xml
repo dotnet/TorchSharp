@@ -1,6 +1,6 @@
-<Type Name="ByteStorage" FullName="TorchSharp.ByteStorage">
-  <TypeSignature Language="C#" Value="public class ByteStorage : IDisposable" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ByteStorage extends System.Object implements class System.IDisposable" />
+<Type Name="LongTensor+LongStorage" FullName="TorchSharp.LongTensor+LongStorage">
+  <TypeSignature Language="C#" Value="public class LongTensor.LongStorage : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit LongTensor/LongStorage extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>TorchSharp</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -21,7 +21,7 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ByteStorage ();" />
+      <MemberSignature Language="C#" Value="public LongStorage ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -30,13 +30,13 @@
       <Parameters />
       <Docs>
         <summary>
-              Initializes an empty ByteStorage instance.
+              Initializes an empty LongStorage instance.
             </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ByteStorage (long size);" />
+      <MemberSignature Language="C#" Value="public LongStorage (long size);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 size) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -48,7 +48,7 @@
       <Docs>
         <param name="size">The desired number of elements in the storage</param>
         <summary>
-              Initializes a ByteStorage instance with the specified size.
+              Initializes a LongStorage instance with the specified size.
             </summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -93,8 +93,8 @@
       </Docs>
     </Member>
     <Member MemberName="Fill">
-      <MemberSignature Language="C#" Value="public void Fill (byte value);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Fill(unsigned int8 value) cil managed" />
+      <MemberSignature Language="C#" Value="public void Fill (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Fill(int64 value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -103,7 +103,7 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="value" Type="System.Byte" />
+        <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
         <param name="value">Value used for each element</param>
@@ -114,7 +114,7 @@
       </Docs>
     </Member>
     <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~ByteStorage ();" />
+      <MemberSignature Language="C#" Value="~LongStorage ();" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
@@ -132,14 +132,14 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public byte this[long index] { get; set; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 Item(int64)" />
+      <MemberSignature Language="C#" Value="public long this[long index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Item(int64)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Byte</ReturnType>
+        <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int64" />

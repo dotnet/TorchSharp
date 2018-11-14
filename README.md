@@ -1,5 +1,27 @@
 [![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
 
+TorchSharp
+==========
+
+TorchSharp is a .NET library that provides access to the library that powers
+PyTorch.  It is a work in progress, but already provides a .NET API that can
+be used to perform various operations on Tensors.
+
+Our current focus is to bind the entire C API surfaced by libtorch.
+
+Things that you can try:
+
+```csharp
+using TorchSharp;
+
+var x = new FloatTensor (100);   // 1D-tensor with 100 elements
+FloatTensor result = new FloatTensor (100);
+
+FloatTensor.Add (x, 23, result);
+
+Console.WriteLine (x [12]);
+```
+
 Discussions
 ===========
 

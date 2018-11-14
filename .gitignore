@@ -7,3 +7,7 @@ bin/
 *.pdb
 *.trx
 .*.sw*
+linux
+macos
+windows
+*.zip

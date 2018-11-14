@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
-	internal static class Blas {
+    // High-performance vector anad matrix operations.
+    internal static class Blas {
 
         // *** Level 1
 
