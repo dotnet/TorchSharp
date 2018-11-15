@@ -33,7 +33,7 @@ foreach (var type in new [] {
         /// </summary>
         public <#=tname#>Tensor TorchSharpTensor => inner as <#=tname#>Tensor;
 
-        public <#=tname#>TorchTensor(Memory<<#=tname.ToLower()#>> memory, ReadOnlySpan<int> dimensions, <#=tname#>Tensor inner) : base(memory, dimensions)
+        public <#=tname#>TorchTensor (Memory<<#=tname.ToLower()#>> memory, ReadOnlySpan<int> dimensions, <#=tname#>Tensor inner) : base (memory, dimensions)
         {
             this.inner = inner;
         }
@@ -44,9 +44,9 @@ foreach (var type in new [] {
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
-        public static <#=tname#>TorchTensor Create(params int[] sizes)
+        public static <#=tname#>TorchTensor Create (params int[] sizes)
         {
-            var totLength = Utils.GetTotalLength(sizes);
+            var totLength = Utils.GetTotalLength (sizes);
             var shape = sizes;
 
             if (sizes.Length == 0)
@@ -54,23 +54,23 @@ foreach (var type in new [] {
                 shape = new int[] { 0 };
             }
 
-            var inner = Create<#=tname#>Tensor(sizes.Select(x => (long)x).ToArray());
-            var mem = new NativeMemory<<#=tname.ToLower()#>>(inner.Data, totLength);
+            var inner = Create<#=tname#>Tensor (sizes.Select(x => (long)x).ToArray ());
+            var mem = new NativeMemory<<#=tname.ToLower()#>> (inner.Data, totLength);
 
-            return new <#=tname#>TorchTensor(mem.Memory, shape, inner);
+            return new <#=tname#>TorchTensor (mem.Memory, shape, inner);
         }
 
         /// <summary>
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
-        public override Tensor<<#=tname.ToLower()#>> Clone()
+        public override Tensor<<#=tname.ToLower()#>> Clone ()
         {
             var typedInner = inner as <#=tname#>Tensor;
-            var innerClone = typedInner.Clone();
-            var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
+            var innerClone = typedInner.Clone ();
+            var mem = new NativeMemory<<#=tname.ToLower()#>> (innerClone.Data, Buffer.Length);
 
-            return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone);
+            return new <#=tname#>TorchTensor (mem.Memory, Dimensions, innerClone);
         }
 
         /// <summary>
@@ -79,19 +79,19 @@ foreach (var type in new [] {
         /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
-        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
+        public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
             var typedInner = inner as <#=tname#>Tensor;
 
             switch (true)
             {
-                case bool _ when typeof(TResult) == typeof(<#=tname.ToLower()#>):
-                    var innerClone = Create<#=tname#>Tensor(typedInner.Shape);
-                    innerClone.Fill(default);
-                    var mem = new NativeMemory<<#=tname.ToLower()#>>(innerClone.Data, Buffer.Length);
+                case bool _ when typeof (TResult) == typeof (<#=tname.ToLower()#>):
+                    var innerClone = Create<#=tname#>Tensor (typedInner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new NativeMemory<<#=tname.ToLower()#>> (innerClone.Data, Buffer.Length);
 
-                    return new <#=tname#>TorchTensor(mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException("Only cloning <#=tname.ToLower()#>s is currently implemented.");
+                    return new <#=tname#>TorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                default: throw new NotImplementedException ("Only cloning <#=tname.ToLower()#>s is currently implemented.");
             }
         }
 
@@ -100,18 +100,18 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
-        public override Tensor<<#=tname.ToLower()#>> Reshape(ReadOnlySpan<int> dimensions)
+        public override Tensor<<#=tname.ToLower()#>> Reshape (ReadOnlySpan<int> dimensions)
         {
             if (dimensions.Length == 0)
             {
-                throw new ArgumentException("Dimensions must contain elements.", nameof(dimensions));
+                throw new ArgumentException ("Dimensions must contain elements.", nameof (dimensions));
             }
 
-            var newSize = Utils.GetTotalLength(dimensions);
+            var newSize = Utils.GetTotalLength (dimensions);
 
             if (newSize != Length)
             {
-                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
+                throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
             var typedInner = inner as <#=tname#>Tensor;
@@ -120,37 +120,37 @@ foreach (var type in new [] {
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d(UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d(UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
                     break;
-                default: throw new ArgumentException($"Cannot reshape tensor with more than 4 dimensions");
+                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
-            return new <#=tname#>TorchTensor(Buffer, dimensions, reshapedTensor);
+            return new <#=tname#>TorchTensor (Buffer, dimensions, reshapedTensor);
         }
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
         /// </summary>    
         /// <param name="dims">Sizes for the dimensions.</param>
-        internal static <#=tname#>Tensor Create<#=tname#>Tensor(params long[] dims)
+        internal static <#=tname#>Tensor Create<#=tname#>Tensor (params long[] dims)
         {
             switch (dims.Length)
             {
                 case 0:
-                    return new <#=tname#>Tensor();
+                    return new <#=tname#>Tensor ();
                 case 1:
-                    return new <#=tname#>Tensor(dims[0]);
+                    return new <#=tname#>Tensor (dims[0]);
                 case 2:
-                    return new <#=tname#>Tensor(dims[0], dims[1]);
+                    return new <#=tname#>Tensor (dims[0], dims[1]);
                 case 3:
-                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2]);
+                    return new <#=tname#>Tensor (dims[0], dims[1], dims[2]);
                 case 4:
-                    return new <#=tname#>Tensor(dims[0], dims[1], dims[2], dims[3]);
+                    return new <#=tname#>Tensor (dims[0], dims[1], dims[2], dims[3]);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+                    throw new ArgumentOutOfRangeException (nameof (dims), "Maximum number of dimensions for tensor creation is 4.");
             }
         }
     }

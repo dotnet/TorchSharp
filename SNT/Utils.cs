@@ -10,7 +10,7 @@ namespace Torch.SNT
         /// <param name="dimensions">An span of integers that represent the size of each dimension.</param>
         /// <param name="startIndex">The index of the first dimension to consider.</param>
         /// <returns>The total size of tensor.</returns>
-        public static int GetTotalLength(ReadOnlySpan<int> dimensions, int startIndex = 0)
+        public static int GetTotalLength (ReadOnlySpan<int> dimensions, int startIndex = 0)
         {
             if (dimensions.Length == 0)
             {
@@ -22,7 +22,7 @@ namespace Torch.SNT
             {
                 if (dimensions[i] < 0)
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(dimensions)}[{i}]");
+                    throw new ArgumentOutOfRangeException ($"{nameof (dimensions)}[{i}]");
                 }
 
                 checked

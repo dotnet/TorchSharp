@@ -15,11 +15,11 @@ namespace Torch.SNT
         private IntPtr memory;
         private int length;
 
-        public NativeMemory(IntPtr memory, int length)
+        public NativeMemory (IntPtr memory, int length)
         {
             if (length < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(length), "Length cannot be negative.");
+                throw new ArgumentOutOfRangeException (nameof (length), "Length cannot be negative.");
             }
 
             this.memory = memory;
@@ -31,9 +31,9 @@ namespace Torch.SNT
         /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
         /// from here will through a "double free or corruption" error.
         /// <summary>
-        ~NativeMemory()
+        ~NativeMemory ()
         {
-            Dispose(false);
+            Dispose (false);
         }
 
         /// <summary>
@@ -45,11 +45,11 @@ namespace Torch.SNT
         /// Returns a span wrapping the underlying memory.
         /// Remember to Unpin the memory once the span is disposed.
         /// </summary>
-        public override Span<T> GetSpan()
+        public override Span<T> GetSpan ()
         {
             unsafe
             {
-                return new Span<T>(memory.ToPointer(), length);
+                return new Span<T> (memory.ToPointer (), length);
             }
         }
 
@@ -57,21 +57,21 @@ namespace Torch.SNT
         /// Returns a handle to the memory that has been pinned and hence its address can be taken.
         /// </summary>
         /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
-        public override MemoryHandle Pin(int elementIndex = 0)
+        public override MemoryHandle Pin (int elementIndex = 0)
         {
             unsafe
             {
                 Retain();
-                if ((uint)elementIndex > length) throw new ArgumentOutOfRangeException(nameof(elementIndex), "Index out of array bound.");
-                void* pointer = Unsafe.Add<T>((void*)memory, elementIndex);
-                return new MemoryHandle(pointer, default, this);
+                if ((uint)elementIndex > length) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                void* pointer = Unsafe.Add<T> ((void*)memory, elementIndex);
+                return new MemoryHandle (pointer, default, this);
             }
         }
 
         /// <summary>
         /// Lets the garbage collector know that the object is free to be moved now.
         /// </summary>
-        public override void Unpin()
+        public override void Unpin ()
         {
             Release();
         }
@@ -79,22 +79,22 @@ namespace Torch.SNT
         /// <summary>
         ///   Releases the tensor and its associated data.
         /// </summary>        
-        public void Dispose()
+        public void Dispose ()
         {
-            Dispose(false);
-            GC.SuppressFinalize(this);
+            Dispose (false);
+            GC.SuppressFinalize (this);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose (bool disposing)
         {
             if (IsDisposed)
             {
                 return;
             }
 
-            if (!Equals(refCount, 0))
+            if (!Equals (refCount, 0))
             {
-                throw new InvalidOperationException("Disposing over unmatched Release/Retain");
+                throw new InvalidOperationException ("Disposing over unmatched Release/Retain");
             }
 
             IsDisposed = true;
@@ -102,32 +102,32 @@ namespace Torch.SNT
             if (disposing)
             {
                 // Typically this would call into a native method appropriate for the platform
-                Marshal.FreeHGlobal(memory);
+                Marshal.FreeHGlobal (memory);
                 memory = IntPtr.Zero;
                 length = 0;
             }
         }
 
-        private bool Release()
+        private bool Release ()
         {
-            int newRefCount = Interlocked.Decrement(ref refCount);
+            int newRefCount = Interlocked.Decrement (ref refCount);
 
             if (newRefCount < 0)
             {
-                throw new InvalidOperationException("Unmatched Release/Retain");
+                throw new InvalidOperationException ("Unmatched Release/Retain");
             }
 
             return newRefCount != 0;
         }
 
-        private void Retain()
+        private void Retain ()
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(NativeMemory<T>));
+                throw new ObjectDisposedException (nameof (NativeMemory<T>));
             }
 
-            Interlocked.Increment(ref refCount);
+            Interlocked.Increment (ref refCount);
         }
     }
 }
