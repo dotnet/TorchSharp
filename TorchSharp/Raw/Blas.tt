@@ -8,7 +8,8 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Raw {
 
-	internal static class Blas {
+    // High-performance vector anad matrix operations.
+    internal static class Blas {
 <#
 foreach (var type in TorchTypeDef.Types) {
 #>

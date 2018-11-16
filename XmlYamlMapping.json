@@ -1,16 +1,16 @@
 {
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ShortStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ShortStorage.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/LongStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.LongStorage.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/FloatStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.FloatStorage.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ShortTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ShortTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/RandomGenerator.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.RandomGenerator.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/LongTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.LongTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/IntStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.IntStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ShortTensor+ShortStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ShortTensor.ShortStorage.yml",
   "/cvs/TorchSharp/ecmadocs/en/TorchSharp/IntTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.IntTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/ns-TorchSharp.xml": "/cvs/TorchSharp/docfx/api/TorchSharp.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ByteTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ByteTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/DoubleTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.DoubleTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ByteStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ByteStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/LongTensor+LongStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.LongTensor.LongStorage.yml",
   "/cvs/TorchSharp/ecmadocs/en/TorchSharp/FloatTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.FloatTensor.yml",
-  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/DoubleStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.DoubleStorage.yml"
+  "/cvs/TorchSharp/ecmadocs/en/ns-TorchSharp.xml": "/cvs/TorchSharp/docfx/api/TorchSharp.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/RandomGenerator.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.RandomGenerator.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/FloatTensor+FloatStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.FloatTensor.FloatStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/DoubleTensor+DoubleStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.DoubleTensor.DoubleStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/DoubleTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.DoubleTensor.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/IntTensor+IntStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.IntTensor.IntStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ShortTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ShortTensor.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/LongTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.LongTensor.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ByteTensor+ByteStorage.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ByteTensor.ByteStorage.yml",
+  "/cvs/TorchSharp/ecmadocs/en/TorchSharp/ByteTensor.xml": "/cvs/TorchSharp/docfx/api/TorchSharp/TorchSharp.ByteTensor.yml"
 }

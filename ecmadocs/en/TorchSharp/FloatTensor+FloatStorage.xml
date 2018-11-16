@@ -1,6 +1,6 @@
-<Type Name="FloatStorage" FullName="TorchSharp.FloatStorage">
-  <TypeSignature Language="C#" Value="public class FloatStorage : IDisposable" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FloatStorage extends System.Object implements class System.IDisposable" />
+<Type Name="FloatTensor+FloatStorage" FullName="TorchSharp.FloatTensor+FloatStorage">
+  <TypeSignature Language="C#" Value="public class FloatTensor.FloatStorage : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit FloatTensor/FloatStorage extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>TorchSharp</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>

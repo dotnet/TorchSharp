@@ -12,18 +12,18 @@ using System.Text;
 
 namespace TorchSharp {
 <#
-foreach (var type in new [] { 
-    new { ApiName = "Byte", Storage = "byte", AccReal="long" }, 
-    new { ApiName = "Short", Storage = "short", AccReal="long" },   
+foreach (var type in new [] {
+    new { ApiName = "Byte", Storage = "byte", AccReal="long" },
+    new { ApiName = "Short", Storage = "short", AccReal="long" },
     new { ApiName = "Int", Storage = "int",  AccReal="long"},
     new { ApiName = "Long", Storage = "long", AccReal="long" },
     new { ApiName = "Double", Storage = "double", AccReal="double" },
     new { ApiName = "Float", Storage = "float", AccReal="double" },
-     }){
+     }) {
         string tname = type.ApiName;
         string ttype = type.Storage;
         string accreal = type.AccReal;
-        
+
         // In the future, we should add HalfFloat (16-bit float)
         bool isFloat = type.Storage == "double" || type.Storage == "float";
         bool isByte = type.Storage == "byte";
@@ -38,18 +38,18 @@ foreach (var type in new [] {
                 {
                     SetHandle (preexistingHandle);
                 }
-                
+
                 public override bool IsInvalid => handle == IntPtr.Zero;
 
                 // This is just for marshalling
                 internal HType () : base (IntPtr.Zero, true)
                 {
                 }
-                
+
                 [DllImport ("caffe2")]
                 extern static void TH<#=tname#>Storage_free (IntPtr handle);
-            
-                
+
+
                 protected override bool ReleaseHandle ()
                 {
                     TH<#=tname#>Storage_free (handle);
@@ -66,10 +66,10 @@ foreach (var type in new [] {
             }
 
             internal HType handle;
-            
+
             [DllImport ("caffe2")]
             extern static HType TH<#=tname#>Storage_new ();
-            
+
             /// <summary>
             ///   Initializes an empty <#=tname#>Storage instance.
             /// </summary>
@@ -77,18 +77,18 @@ foreach (var type in new [] {
             {
                 handle = TH<#=tname#>Storage_new ();
             }
-            
+
             internal <#=tname#>Storage (HType fromHandle)
             {
                 this.handle = fromHandle;
             }
-            
+
             [DllImport ("caffe2")]
             extern static HType TH<#=tname#>Storage_newWithSize (UIntPtr size);
-            
+
             /// <summary>
             ///   Initializes a <#=tname#>Storage instance with the specified size.
-            /// </summary>        
+            /// </summary>
             /// <param name="size">The desired number of elements in the storage</param>
             public <#=tname#>Storage (long size)
             {
@@ -102,16 +102,16 @@ foreach (var type in new [] {
             {
                 Dispose (false);
             }
-            
+
             /// <summary>
             ///   Releases the storage.
-            /// </summary>        
+            /// </summary>
             public void Dispose ()
             {
                 Dispose (true);
                 GC.SuppressFinalize (this);
             }
-            
+
             /// <summary>
             ///   Implements the .NET Dispose pattern.
             /// </summary>
@@ -127,7 +127,7 @@ foreach (var type in new [] {
             extern static <#=ttype#> TH<#=tname#>Storage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Storage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  <#=ttype#> value);
-            
+
             /// <summary>
             /// </summary>
             public <#=ttype#> this [long index] {
@@ -136,7 +136,7 @@ foreach (var type in new [] {
                     TH<#=tname#>Storage_set (handle, (IntPtr) (index), value);
                 }
             }
-            
+
             [DllImport ("caffe2")]
             extern static UIntPtr TH<#=tname#>Storage_size (HType handle); 
 
@@ -146,13 +146,13 @@ foreach (var type in new [] {
             public ulong Size {
                 get => TH<#=tname#>Storage_size(handle).ToUInt64();
             }
-            
+
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Storage_retain (HType handle);
 
             /// <summary>
             ///   Increment the ref count for this storage.
-            /// </summary>        
+            /// </summary>
             public void Retain ()
             {
                 TH<#=tname#>Storage_retain (handle);
@@ -160,7 +160,7 @@ foreach (var type in new [] {
 
             [DllImport ("caffe2")]
             extern static <#=ttype#> TH<#=tname#>Storage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
-            
+
             /// <summary>
             ///   Changes the size of this storage to the new requested size.
             /// </summary>
@@ -172,7 +172,7 @@ foreach (var type in new [] {
 
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Storage_fill (HType handle, <#=ttype#> value);
-            
+
             /// <summary>
             ///   Fills every element of the storage with the specified value.
             /// </summary>
@@ -183,7 +183,7 @@ foreach (var type in new [] {
             }
         }
     }
-    
+
     /// <summary>
     ///   Tensor of type <#=tname#>.
     /// </summary>
@@ -205,12 +205,12 @@ foreach (var type in new [] {
             internal HType () : base (IntPtr.Zero, true)
             {
             }
-                
+
             public override bool IsInvalid => handle == (IntPtr) 0;
 
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Tensor_free (IntPtr handle);
-                
+
             protected override bool ReleaseHandle ()
             {
                 TH<#=tname#>Tensor_free (handle);
@@ -219,11 +219,17 @@ foreach (var type in new [] {
         }
 
         internal HType handle;
+        
+        internal <#=tname#>Tensor (HType handle)
+        {
+            this.handle = handle;
+        }
+
         internal <#=tname#>Storage storage;
 
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
-        
+
         /// <summary>
         ///    Creates an empty tensor.
         /// </summary>
@@ -232,17 +238,12 @@ foreach (var type in new [] {
             handle = TH<#=tname#>Tensor_new ();
         }
 
-        internal <#=tname#>Tensor (HType handle)
-        {
-            this.handle = handle;
-        }
-
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize1d (long size0);
 
         /// <summary>
         ///    Creates a 1D tensor of the specified size.
-        /// </summary>    
+        /// </summary>
         /// <param name="size0">Size for the first dimension.</param>
         public <#=tname#>Tensor (long size0)
         {
@@ -251,10 +252,10 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize2d (long size0, long size1);
-        
+
         /// <summary>
         ///    Creates a 2D tensor of the specified size.
-        /// </summary>        
+        /// </summary>
         /// <param name="size0">Size for the first dimension.</param>
         /// <param name="size1">Size for the second dimension.</param>
         public <#=tname#>Tensor (long size0, long size1)
@@ -267,7 +268,7 @@ foreach (var type in new [] {
 
         /// <summary>
         ///    Creates a 3D tensor of the specified size.
-        /// </summary>        
+        /// </summary>
         /// <param name="size0">Size for the first dimension.</param>
         /// <param name="size1">Size for the second dimension.</param>
         /// <param name="size2">Size for the third dimension.</param>
@@ -278,7 +279,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithSize4d (long size0, long size1, long size2, long size3);
-        
+
         /// <summary>
         ///    Creates a 4D tensor of the specified size.
         /// </summary>
@@ -290,7 +291,35 @@ foreach (var type in new [] {
         {
             handle = TH<#=tname#>Tensor_newWithSize4d (size0, size1, size2, size3);
         }
-        
+
+        /// <summary>
+        ///   Creates a 1-4D tensor of the specified size(s).
+        /// </summary>
+        /// <param name="dims">Sizes for the dimensions.</param>
+        public <#=tname#>Tensor (params long[] dims)
+        {
+            switch (dims.Length)
+            {
+                case 0:
+                    handle = TH<#=tname#>Tensor_new ();
+                    break;
+                case 1:
+                    handle = TH<#=tname#>Tensor_newWithSize1d (dims[0]);
+                    break;
+                case 2:
+                    handle = TH<#=tname#>Tensor_newWithSize2d (dims[0], dims[1]);
+                    break;
+                case 3:
+                    handle = TH<#=tname#>Tensor_newWithSize3d (dims[0], dims[1], dims[2]);
+                    break;
+                case 4:
+                    handle = TH<#=tname#>Tensor_newWithSize4d (dims[0], dims[1], dims[2], dims[3]);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dims), "Maximum number of dimensions for tensor creation is 4.");
+            }
+        }
+
         /// <summary>
         ///  Finalizer for ~<#=tname#>Tensor
         /// </summary>
@@ -298,16 +327,16 @@ foreach (var type in new [] {
         {
             Dispose (false);
         }
-        
+
         /// <summary>
         ///   Releases the tensor and its associated data.
-        /// </summary>        
+        /// </summary>
         public void Dispose ()
         {
             Dispose (true);
             GC.SuppressFinalize (this);
         }
-        
+
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
@@ -326,21 +355,21 @@ foreach (var type in new [] {
         ///  Get the number of elements in the tensor.
         /// </summary>
         public long NumElements => TH<#=tname#>Tensor_numel (handle);
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_zero (HType handle);
-     
+
         /// <summary>
         ///  Fills the tensor with zeros
         /// </summary>
         public void ZeroFill ()
         {
             TH<#=tname#>Tensor_zero (handle);
-        }   
-        
+        }
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_fill (HType handle, <#=ttype#> value);
-        
+
         /// <summary>
         ///  Fills the tensor with the specified value
         /// </summary>
@@ -348,10 +377,10 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_fill (handle, value);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_nonzero (LongTensor.HType subscript, HType handle);
-     
+
         /// <summary>
         ///  Finds the indices of all non-zero elements.
         /// </summary>
@@ -360,11 +389,11 @@ foreach (var type in new [] {
             var result = new LongTensor();
             TH<#=tname#>Tensor_nonzero (result.handle, this.handle);
             return result;
-        }   
-        
+        }
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_maskedFill (HType handle1, ByteTensor.HType handle2, <#=ttype#> value);
-        
+
         /// <summary>
         ///  Fills the tensor with the specified value at the locations indicated by the mask.
         /// </summary>
@@ -377,7 +406,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_maskedCopy (HType handle1, ByteTensor.HType handle2, HType src);
-        
+
         /// <summary>
         ///  Copies elements from the source tensor to the locations indicated by the mask.
         /// </summary>
@@ -393,7 +422,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_maskedSelect (HType handle1, HType src, ByteTensor.HType handle2);
-        
+
         /// <summary>
         ///  Copies elements from the source tensor at the locations indicated by the mask.
         /// </summary>
@@ -428,15 +457,15 @@ foreach (var type in new [] {
         
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_nDimension (HType handle);
-        
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
         public int Dimensions => TH<#=tname#>Tensor_nDimension (handle);
-        
+
         [DllImport ("caffe2")]
         extern static long TH<#=tname#>Tensor_size (HType handle, int dim);
-        
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -457,7 +486,7 @@ foreach (var type in new [] {
             get {
                     var dims = new long [Dimensions];
                     for (int i = 0; i < dims.Length; i++)
-                            dims [i] = (long)GetTensorDimension (i);
+                            dims [i] = GetTensorDimension (i);
 
                     return dims;
             }
@@ -465,7 +494,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static long TH<#=tname#>Tensor_stride (HType handle, int dim);
-        
+
         /// <summary>
         ///  Retrieves the stride of the specified dimension in the tensor.
         /// </summary>
@@ -473,10 +502,10 @@ foreach (var type in new [] {
         {
             return TH<#=tname#>Tensor_stride (handle, dim);
         }
-        
+
         [DllImport ("caffe2")]
         extern static IntPtr TH<#=tname#>Tensor_data (HType handle);
-        
+
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
@@ -484,17 +513,17 @@ foreach (var type in new [] {
         
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newClone (HType handle);
-        
+
         /// <summary>
         ///   Returns a deep clone of the tensor
         /// </summary>
         public <#=tname#>Tensor Clone () => new <#=tname#>Tensor (TH<#=tname#>Tensor_newClone (handle));
-        
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newSelect (HType handle, int dim, long slideIndex);
-        
+
         /// <summary>
-        ///   Returns a new Tensor which is a tensor slice at the given index in the dimension dim. 
+        ///   Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
         /// </summary>
         /// <remarks>
         ///   The returned tensor has one less dimension: the dimension dim is removed. As a result, it is not possible to select() on a 1D tensor.
@@ -505,7 +534,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newNarrow (HType handle, int dim, long firstIndex, long size);
-        
+
         /// <summary>
         /// Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from firstIndexto firstIndex+size-1.
         /// </summary>
@@ -513,20 +542,20 @@ foreach (var type in new [] {
         /// <param name="firstIndex">Initial index to narrow</param>
         /// <param name="size">Number of elements</param>
         public <#=tname#>Tensor Narrow (int dim, long firstIndex, long size) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newNarrow (handle, dim, firstIndex, size));
-                
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newTranspose (HType handle, int dim1, int dim2);
-        
+
         /// <summary>
-        /// Returns a tensor where dimensions dim1 and dim2 have been swapped. 
+        /// Returns a tensor where dimensions dim1 and dim2 have been swapped.
         /// </summary>
         /// <param name="dim1">First dimension</param>
         /// <param name="dim2">Second dimension</param>
         public <#=tname#>Tensor Transpose (int dim1, int dim2) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newTranspose (handle, dim1, dim2));
-        
+
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newUnfold (HType handle, int dim1, long size, long step);
-        
+
         /// <summary>
         ///   Returns a tensor which contains all slices of size size in the dimension dim. Step between two slices is given by step.
         /// </summary>
@@ -534,7 +563,7 @@ foreach (var type in new [] {
         /// <param name="size"></param>
         /// <param name="step"></param>
         public <#=tname#>Tensor Unfold (int dim, long size, long step) => new <#=tname#>Tensor (TH<#=tname#>Tensor_newUnfold (handle, dim, size, step));
-        
+
         [DllImport("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithStorage1d(<#=tname#>Storage.HType handle, UIntPtr offset, long size, long stride);
 
@@ -588,7 +617,7 @@ foreach (var type in new [] {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public <#=tname#>Tensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -622,9 +651,9 @@ foreach (var type in new [] {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public <#=tname#>Tensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -660,11 +689,11 @@ foreach (var type in new [] {
         /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
         /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public <#=tname#>Tensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -673,20 +702,20 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_squeeze (HType handle, HType src);
-        
+
         /// <summary>
-        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.   
+        ///   Squeeze the tensor, i.e. remove all 1-sized dimensions.
         /// </summary>
         public void Squeeze ()
         {
             TH<#=tname#>Tensor_squeeze (handle, handle);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_squeeze1d (HType handle, HType src, int dimension);
-        
+
         /// <summary>
-        ///   Squeeze the tensor, by removing the specified dimension.   
+        ///   Squeeze the tensor, by removing the specified dimension.
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
         /// <param name="dimension">The dimension to remove.</param>
@@ -697,9 +726,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_unsqueeze1d (HType handle, HType src, int dimension);
-        
+
         /// <summary>
-        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.   
+        ///   Unsqueeze the tensor, by inserting the specified dimension of size 1.
         /// </summary>
         /// <param name="src">The source tensor which contains the data.</param>
         /// <param name="dimension">The dimension to insert.</param>
@@ -710,7 +739,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resize1d (HType handle, long size);
-        
+
         /// <summary>
         ///   Resizes the tensor to be one dimensional with the specified size, the contents of the tensor after this are undetermined.
         /// </summary>
@@ -719,7 +748,7 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_resize1d (handle, size);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resize2d (HType handle, long size0, long size1);
         /// <summary>
@@ -731,10 +760,10 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_resize2d (handle, size0, size1);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resize3d (HType handle, long size0, long size1, long size2);
-        
+
         /// <summary>
         ///   Resizes the tensor to be three dimensional with the specified size, the contents of the tensor after this are undetermined.
         /// </summary>
@@ -759,7 +788,7 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_resize4d (handle, size0, size1, size2, size3);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resize5d (HType handle, long size0, long size1, long size2, long size4, long size5);
 
@@ -775,10 +804,10 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_resize5d (handle, size0, size1, size2, size3, size4);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_resizeAs (HType handle, HType src);
-       
+
         /// <summary>
         ///   Resizes the tensor to match the dimensions of the specified src tensor, the contents of the tensor after this are undetermined.
         /// </summary>
@@ -787,19 +816,19 @@ foreach (var type in new [] {
         {
             TH<#=tname#>Tensor_resizeAs (handle, src.handle);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_set (HType handle, HType src);
-        
+
         /// <summary>
-        ///   The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.   
+        ///   The tensor will use the same storage as the provided source, so any changes to that tensor are visible on this one.
         /// </summary>
         /// <param name="src">The source tensor which contains the data..</param>
         public void Set (<#=tname#>Tensor src)
         {
             TH<#=tname#>Tensor_set (handle, src.handle);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_set1d (HType handle, long x0, <#=ttype#> value);
         [DllImport ("caffe2")]
@@ -807,13 +836,13 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
-        /// </summary>       
-        /// <param name="x0">Index to access.</param> 
+        /// </summary>
+        /// <param name="x0">Index to access.</param>
         public <#=ttype#> this [long x0] {
             get => TH<#=tname#>Tensor_get1d (handle, x0);
             set => TH<#=tname#>Tensor_set1d (handle, x0, value);
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_set2d (HType handle, long x0, long x1, <#=ttype#> value);
         [DllImport ("caffe2")]
@@ -821,9 +850,9 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
-        /// </summary>    
-        /// <param name="x0">Index in the first dimension to access.</param> 
-        /// <param name="x1">Index in the second dimension to access.</param>     
+        /// </summary>
+        /// <param name="x0">Index in the first dimension to access.</param>
+        /// <param name="x1">Index in the second dimension to access.</param>
         public <#=ttype#> this [long x0, long x1] {
             get => TH<#=tname#>Tensor_get2d (handle, x0, x1);
             set => TH<#=tname#>Tensor_set2d (handle, x0, x1, value);
@@ -836,10 +865,10 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
-        /// </summary>        
-        /// <param name="x0">Index in the first dimension to access.</param> 
-        /// <param name="x1">Index in the second dimension to access.</param>     
-        /// <param name="x2">Index in the third dimension to access.</param>     
+        /// </summary>
+        /// <param name="x0">Index in the first dimension to access.</param>
+        /// <param name="x1">Index in the second dimension to access.</param>
+        /// <param name="x2">Index in the third dimension to access.</param>
         public <#=ttype#> this [long x0, long x1, long x2] {
             get => TH<#=tname#>Tensor_get3d (handle, x0, x1, x2);
             set => TH<#=tname#>Tensor_set3d (handle, x0, x1, x2, value);
@@ -851,19 +880,19 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Access to element at the specified position in the tensor
-        /// </summary>        
-        /// <param name="x0">Index in the first dimension to access.</param> 
-        /// <param name="x1">Index in the second dimension to access.</param>     
-        /// <param name="x2">Index in the third dimension to access.</param>     
-        /// <param name="x3">Index in the fourth dimension to access.</param>     
+        /// </summary>
+        /// <param name="x0">Index in the first dimension to access.</param>
+        /// <param name="x1">Index in the second dimension to access.</param>
+        /// <param name="x2">Index in the third dimension to access.</param>
+        /// <param name="x3">Index in the fourth dimension to access.</param>
         public <#=ttype#> this [long x0, long x1, long x2, long x3] {
             get => TH<#=tname#>Tensor_get4d (handle, x0, x1, x2, x3);
             set => TH<#=tname#>Tensor_set4d (handle, x0, x1, x2, x3, value);
         }
-        
+
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_random (HType handle, IntPtr thgenerator);
-        
+
         /// <summary>
         ///  Populates the tensor with random values using the provided random source generator.
         /// </summary>
@@ -877,7 +906,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_clampedRandom (HType handle, IntPtr thgenerator, long min, long max);
-        
+
         /// <summary>
         ///  Populates the tensor with random values from min to max, using the provided random source generator.
         /// </summary>
@@ -893,7 +922,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_cappedRandom (HType handle, IntPtr thgenerator, long max);
-        
+
         /// <summary>
         ///  Populates the tensor with random values from 0 to max, using the provided random source generator.
         /// </summary>
@@ -908,7 +937,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_randperm (HType handle, IntPtr thgenerator, long max);
-        
+
         /// <summary>
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
@@ -923,7 +952,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=ttype#> TH<#=tname#>Tensor_geometric (HType handle, IntPtr thgenerator, double p);
-        
+
         /// <summary>
         ///  Populates the tensor with random values from 0 to n, using the provided random source generator.
         /// </summary>
@@ -935,11 +964,11 @@ foreach (var type in new [] {
                 throw new ArgumentNullException (nameof (source));
             TH<#=tname#>Tensor_geometric (handle, source.handle, p);
         }
-        
+
         /// <summary>
         ///  Populates the tensor with random values from 0 to n, using a newly initialized Random number geneator.
         /// </summary>
-        /// <param name="n">The upper limit for the values to be generated</param>        
+        /// <param name="n">The upper limit for the values to be generated</param>
         public void Random (long n)
         {
             using (var r = new RandomGenerator ())
@@ -948,7 +977,7 @@ foreach (var type in new [] {
 
 <#
         // Float-specific random distributions.
-            if (isFloat) {                    
+            if (isFloat) {
 #>
 #if false
         [DllImport ("caffe2")]
@@ -1091,7 +1120,7 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_multinomial(this.handle, source.handle, prob_dist.handle, n_sample, with_replacement);
         }
 <#          } /* if */ #>
-        
+
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>
@@ -1112,22 +1141,22 @@ foreach (var type in new [] {
         }
 <#
         // Idiom Op (Target, Source, Scalar)
-        
-            foreach (var op in new [] 
+
+            foreach (var op in new []
                 { "Add", "Sub", "Mul", "Div", "LShift", "RShift", "Fmod", "Remainder", "BitAnd", "BitOr", "BitXor"}){
-                
+
                 // BitOr and BitXor not supported for floating point values, rather than
                 // letting the runtime assert, do not surface the API.
                 if ((op == "BitOr" || op == "BitXor") && isFloat)
                     continue;
-#>                
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType source, <#=ttype#> value);
-        
+
         // Not married to xthis yet - we have a few ways of solving this, sometimes
         // we could avoid allocation, but the API is ugly.  Or we could not have side-effects
         // which can also be surprising
-        
+
         /// <summary>
         ///   Performs the <#=op#> operation on each element of the source with the
         ///   provided scalar.   The result tensor specified as the last parameters
@@ -1143,10 +1172,10 @@ foreach (var type in new [] {
         /// <param name="result">The tensor where the result will be placed</param>
         public static void <#=op#> (<#=tname#>Tensor source, <#=ttype#> value, <#=tname#>Tensor result)
         {
-            // Arguments swapped to match Func<.., TResult> 
+            // Arguments swapped to match Func<.., TResult>
             TH<#=tname#>Tensor_<#=op.ToLower()#> (result.handle, source.handle, value);
         }
-        
+
         /// <summary>
         ///   Performs the <#=op#> operation on each element of the tensor with the
         ///   <see paramref="value"/> and returns a new tensor with the result.
@@ -1155,7 +1184,7 @@ foreach (var type in new [] {
         ///   This returns a new tensor with the same shape as the tensor this operates on.
         /// </returns>
         /// <remarks>
-        ///   If you want to avoid the allocation of a new tensor, you can use the 
+        ///   If you want to avoid the allocation of a new tensor, you can use the
         ///   alternative method <see cref="M:PytorchSharp.<#=op#>(PytorchSharp.<#=tname#>Tensor, <#=tname#>, PytorchSharp.<#=tname#>)"/>.
         /// </remarks>
         public <#=tname#>Tensor <#=op#> (<#=ttype#> value)
@@ -1168,10 +1197,10 @@ foreach (var type in new [] {
 
 <#
         // Idiom Op (Result, T, Scalar, Source2)
-        
+
             foreach (var op in new [] { "CAdd", "CSub" }){
-            
-#>                
+
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, <#=ttype#> value, HType src);
         /// <summary>
@@ -1196,7 +1225,7 @@ foreach (var type in new [] {
 <#
         // Idiom Op (Result)
             if (isFloat){
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { FloatOnly=true,  Name="Sigmoid", CName="", Doc="sigmoid of the elements of" },
                 new { FloatOnly=true,  Name="Log", CName="", Doc="natural logarithm of the elements of" },
                 new { FloatOnly=true,  Name="Lgamma", CName="", Doc="" },
@@ -1239,10 +1268,10 @@ foreach (var type in new [] {
                 var doc = opdoc.Doc == "" ? opdoc.Name : opdoc.Doc;
                 if (opdoc.FloatOnly && !isFloat)
                     continue;
-#>                
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (HType result, HType t);
-        
+
         /// <summary>
         ///   Returns a new tensor with the <#=doc#> <see paramref="src"/>
         /// </summary>
@@ -1261,7 +1290,7 @@ foreach (var type in new [] {
 <#
         // Idiom Op (Result, T, Scalar, Source2)
             if (isFloat) {
-#>                
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_pow (HType result, HType x, <#=ttype#> y);
 
@@ -1294,7 +1323,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=accreal#> TH<#=tname#>Tensor_dot (HType self, HType other);
-        
+
         /// <summary>
         ///   Returns the tensor product between this tensor and the provided one
         /// </summary>
@@ -1306,13 +1335,13 @@ foreach (var type in new [] {
         {
             if (src == null)
                 throw new ArgumentNullException (nameof (src));
-           
+
             return TH<#=tname#>Tensor_dot (this.handle, src.handle);
         }
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_match (HType result, HType m1, HType m2, <#=ttype#> gain);
-        
+
         /// <summary>
         ///   Match
         /// </summary>
@@ -1330,9 +1359,9 @@ foreach (var type in new [] {
             return result;
         }
 <#
-        // Idiom Op (Result, Tensor, Tensor 
-        
-            foreach (var opdoc in new [] { 
+        // Idiom Op (Result, Tensor, Tensor
+
+            foreach (var opdoc in new [] {
                 new { Name="CMul", CName= "", ByteResult=false, Doc="element wise multiplication" },
                 new { Name="CPow", CName= "", ByteResult=false, Doc="element-wise power operation" },
                 new { Name="CDiv", CName= "", ByteResult=false, Doc="element-wise division " },
@@ -1363,12 +1392,12 @@ foreach (var type in new [] {
                 var resultType = opdoc.ByteResult ? "ByteTensor" : tname +"Tensor";
                 var resultHType = opdoc.ByteResult ? "ByteTensor.HType" : "HType";
 
-#>                
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (<#=resultHType#> result, HType t, HType src);
-        
+
         /// <summary>
-        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   Performs an <#=op#> of the tensor with the provided
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
         /// <param name="src">The right-hand-side operand.</param>
@@ -1386,9 +1415,9 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ #>
 <#
-        // Idiom Op (Result, Tensor, scalar 
-        
-            foreach (var opdoc in new [] { 
+        // Idiom Op (Result, Tensor, scalar
+
+            foreach (var opdoc in new [] {
                 new { Name="CMaxValue", CName= "cmaxValue", ByteResult=false, Doc="" },
                 new { Name="CMinValue", CName= "cminValue", ByteResult=false, Doc="" },
                 new { Name="LtValue", CName= "ltValue", ByteResult=true, Doc="Compare a tensor and a scalar for '<' and produce a byte tensor with the logical result." },
@@ -1409,13 +1438,13 @@ foreach (var type in new [] {
                 var cname = (string.IsNullOrEmpty(opdoc.CName)) ? op.ToLower() : opdoc.CName;
                 var resultType = opdoc.ByteResult ? "ByteTensor" : tname +"Tensor";
                 var resultHType = opdoc.ByteResult ? "ByteTensor.HType" : "HType";
-            
-#>                
+
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (<#=resultHType#> result, HType t, <#=ttype#> value);
-        
+
         /// <summary>
-        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   Performs an <#=op#> of the tensor with the provided
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
         /// <param name="src">The right-hand-side operand.</param>
@@ -1432,7 +1461,7 @@ foreach (var type in new [] {
 <#          } /* foreach */ #>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_lerp (HType result, HType self, HType other, <#=ttype#> weight);
-        
+
         /// <summary>
         ///   Does a linear interpolation of two tensors based on a scalar weight and returns the resulting tensor.
         /// </summary>
@@ -1453,7 +1482,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_equal (HType t, HType src);
-        
+
         /// <summary>
         ///   Compare the tensor with another for complete equality.
         /// </summary>
@@ -1465,9 +1494,9 @@ foreach (var type in new [] {
             return 0 != TH<#=tname#>Tensor_equal (this.handle, other.handle);
         }
 <#
-        // Idiom Op (Result, Tensor, scalar, scalar 
-        
-            foreach (var opdoc in new [] { 
+        // Idiom Op (Result, Tensor, scalar, scalar
+
+            foreach (var opdoc in new [] {
                 new { Name="AddScaled", CName= "add_scaled", Doc="" },
                 new { Name="SubScaled", CName= "sub_scaled", Doc="" },
                 new { Name="Clamp", CName= "", Doc="Clip the input elements to a range." },
@@ -1477,13 +1506,13 @@ foreach (var type in new [] {
                 var cname = (string.IsNullOrEmpty(opdoc.CName)) ? op.ToLower() : opdoc.CName;
                 var resultType = tname +"Tensor";
                 var resultHType = "HType";
-            
-#>                
+
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (HType result, HType t, <#=ttype#> value1, <#=ttype#> value2);
-        
+
         /// <summary>
-        ///   Performs an <#=op#> of the tensor with the provided 
+        ///   Performs an <#=op#> of the tensor with the provided
         ///   <see paramref="src"/> tensor and returns a new tensor with the result.
         /// </summary>
         /// <param name="value1"></param>
@@ -1501,20 +1530,20 @@ foreach (var type in new [] {
 <#          } /* foreach */ #>
 <#
         // Idiom Op (Result, Tensor, Scalar, Tensor, Tensor)
-        
-            foreach (var opdoc in new [] { 
+
+            foreach (var opdoc in new [] {
                 new { Name="AddCMul", Doc="" },
                 new { Name="AddCDiv", Doc="" },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
-            
-#>                
+
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, HType t, <#=ttype#> value, HType src1, HType src2);
-        
+
         /// <summary>
-        ///   Performs <#=op#> of the tensor with the provided 
+        ///   Performs <#=op#> of the tensor with the provided
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
         /// <param name="value"></param>
@@ -1537,10 +1566,10 @@ foreach (var type in new [] {
 <#          } /* foreach */ #>
 <#
         // Idiom Op (Result, Scalar, Tensor, Scalar, Tensor, Tensor)
-        
-            foreach (var opdoc in new [] { 
-                new { 
-                    Name="AddMV", Doc="Performs a matrix-vector product of the matrix mat and the vector vec.  This vector tensor is added to the final result.", 
+
+            foreach (var opdoc in new [] {
+                new {
+                    Name="AddMV", Doc="Performs a matrix-vector product of the matrix mat and the vector vec.  This vector tensor is added to the final result.",
                     arg1="mat", arg1Doc="Matrix to be multiplied",
                     arg2="vec", arg2Doc="Vector to be multiplied",
                     Remarks="If mat is a (n×m) tensor, vec is a 1-D tensor of size m, then tensor must be broadcastable with a 1-D tensor of size n and out will be 1-D tensor of size n.\n"+
@@ -1548,7 +1577,7 @@ foreach (var type in new [] {
                             "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.",
                     Returns="β tensor+α (mat@vec)"
                     },
-                new { 
+                new {
                     Name="AddMM", Doc="Performs a matrix multiplication of the matrices mat1 and mat2. This matrix tensor is added to the final result.",
                     arg1="mat1", arg1Doc="First matrix to  be multiplied",
                     arg2="mat2", arg2Doc="Second matrix to  be multiplied",
@@ -1556,7 +1585,7 @@ foreach (var type in new [] {
                             "alpha and beta are scaling factors on matrix-vector product between mat1 and :attr`mat2` and the added matrix mat respectively.",
                     Returns="β mat+α (mat1i@mat2i)"
                     },
-                new { 
+                new {
                     Name="AddBMM", Doc="Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step (all matrix multiplications get accumulated along the first dimension).  This tensor is added to the final result.",
                     arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
                     arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
@@ -1565,7 +1594,7 @@ foreach (var type in new [] {
                             "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers.",
                     Returns="β mat+α (∑i=0bbatch1i@batch2i)"
                     },
-                new { 
+                new {
                     Name="AddR", Doc="Performs the outer-product of vectors vec1 and vec2 and adds it to the matrix represented by this tensor." ,
                     arg1="vec1", arg1Doc="the first vector of the outer product",
                     arg2="vec2", arg2Doc="the second vector of the outer product",
@@ -1574,7 +1603,7 @@ foreach (var type in new [] {
                     "For inputs of type FloatTensor or DoubleTensor, arguments beta and alpha must be real numbers, otherwise they should be integers",
                     Returns="β mat+α (vec1⊗vec2)"
                     },
-                new { 
+                new {
                     Name="BAddBMM", Doc="Performs a batch matrix-matrix product of matrices in batch1 and batch2.  This tensor is added to the final result.",
                     arg1="batch1", arg1Doc="the first batch of matrices to be multiplied",
                     arg2="batch2", arg2Doc="the second batch of matrices to be multiplied",
@@ -1592,15 +1621,15 @@ foreach (var type in new [] {
                 var arg2Doc = opdoc.arg2Doc;
                 var returns = opdoc.Returns;
                 var remarks = "";
-                foreach (var j in opdoc.Returns.Split ('\n')) 
+                foreach (var j in opdoc.Returns.Split ('\n'))
                     remarks += "/// <para>" + j + "</para>\n";
                 remarks.Trim ();
-#>                
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> beta, HType t, <#=ttype#> alpha, HType src1, HType src2);
-        
+
         /// <summary>
-        ///   Performs <#=op#> of the tensor with the provided 
+        ///   Performs <#=op#> of the tensor with the provided
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
         /// <param name="beta">Multiplier for this tensor (β).</param>
@@ -1625,9 +1654,9 @@ foreach (var type in new [] {
 
 <#          } /* foreach */ #>
 <#
-        // Idiom Op (Result, Tensor, Tensor 
-        
-            foreach (var opdoc in new [] { 
+        // Idiom Op (Result, Tensor, Tensor
+
+            foreach (var opdoc in new [] {
                 new { Name="MinAll", Doc="minimum value", Ret=ttype },
                 new { Name="MaxAll", Doc="maximum value", Ret=ttype },
                 new { Name="MedianAll", Doc="median", Ret=ttype },
@@ -1637,7 +1666,7 @@ foreach (var type in new [] {
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
                 var ret = opdoc.Ret;
-#> 
+#>
         [DllImport ("caffe2")]
         extern static <#=ret#> TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result);
 
@@ -1656,19 +1685,19 @@ foreach (var type in new [] {
 <#
         // Idiom Op (Result, Scalar, Scalar, Long)
             if (isFloat) {
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { Name="Linspace", Doc="" },
                 new { Name="Logspace", Doc="" },
                 }){
                 var op = opdoc.Name;
                 var doc = opdoc.Doc;
-            
-#>                
+
+#>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=op.ToLower()#> (HType result, <#=ttype#> a, <#=ttype#> b, long n);
-        
+
         /// <summary>
-        ///   Performs <#=op#> of the tensor with the provided 
+        ///   Performs <#=op#> of the tensor with the provided
         ///   <see paramref="src1"/> and <see paramref="src1"/> tensors and returns a new tensor with the result.
         /// </summary>
         /// <param name="a"></param>
@@ -1688,10 +1717,10 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_indexSelect (HType tensor, HType src, int dim, LongTensor.HType index);
-        
+
         /// <summary>
         ///   Returns a new Tensor which indexes the original Tensor along dimension dim
-        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the 
+        ///   using the entries in index.  The returned Tensor has the same number of dimensions as the
         ///   original Tensor. The returned Tensor does not use the same storage as the original Tensor.
         /// </summary>
         /// <param name="dim">Dimension to select</param>
@@ -1700,17 +1729,17 @@ foreach (var type in new [] {
         {
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-             
+
             var res = new <#=tname#>Tensor ();
             TH<#=tname#>Tensor_indexSelect (res.handle, handle, dim, index.handle);
             return res;
         }
-        
+
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_indexCopy (HType tensor, int dim, LongTensor.HType index, HType src);
-        
+
         /// <summary>
-        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   Copies the elements of tensor into the original tensor by selecting the indices in the order
         ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
         /// </summary>
         /// <param name="dim">Dimension to select for the copy</param>
@@ -1722,15 +1751,15 @@ foreach (var type in new [] {
                 throw new ArgumentNullException (nameof (src));
             if (index == null)
                 throw new ArgumentNullException (nameof (index));
-            
+
             TH<#=tname#>Tensor_indexCopy (handle, dim, index.handle, src.handle);
         }
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_indexAdd (HType tensor, int dim, LongTensor.HType index, HType src);
-        
+
         /// <summary>
-        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order 
+        ///   Adds the elements of tensor into the original tensor by selecting the indices in the order
         ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
         /// </summary>
         /// <param name="dim">Dimension to select for the add</param>
@@ -1747,9 +1776,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_indexFill (HType tensor, int dim, LongTensor.HType index, <#=ttype#> value);
-        
+
         /// <summary>
-        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order 
+        ///   Uses the given value to overwrite the original tensor by selecting the indices in the order
         ///   given in index. The shape of tensor must exactly match the elements indexed or an error will be thrown.
         /// </summary>
         /// <param name="dim">Dimension to select for the fill</param>
@@ -1767,7 +1796,7 @@ foreach (var type in new [] {
 
         /// <summary>
         ///   Take
-        /// </summary>        
+        /// </summary>
         /// <param name="src"></param>
         /// <param name="index">Indices of entries to copy.</param>
         public void Take (<#=tname#>Tensor src, LongTensor index)
@@ -1869,9 +1898,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_copy (HType tensor, HType src);
-        
+
         /// <summary>
-        ///   Copies the elements of a tensor into the original tensor. 
+        ///   Copies the elements of a tensor into the original tensor.
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
         /// <param name="src">Tensor to copy the data from.</param>
@@ -1887,9 +1916,9 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_copy<#=srcType#> (HType tensor, <#=srcType#>Tensor.HType src);
-        
+
         /// <summary>
-        ///   Copies the elements of a <#=srcType.ToLower()#> tensor into the original tensor. 
+        ///   Copies the elements of a <#=srcType.ToLower()#> tensor into the original tensor.
         ///   The shape of the tensors must exactly match or an error will be thrown.
         /// </summary>
         /// <param name="src">Tensor to copy the data from.</param>
@@ -1900,10 +1929,10 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_copy<#=srcType#> (this.handle, src.handle);
         }
 
-<#          } /* foreach */ #>        
+<#          } /* foreach */ #>
 <#
             if (isByte) {
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { Name="LogicalAndAll", CName="logicalAndAll", Doc="AND" },
                 new { Name="LogicalAnyAll", CName="logicalAnyAll", Doc="OR" }
                 }){
@@ -1913,18 +1942,18 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_<#=cname#> (HType self);
-        
+
         /// <summary>
-        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the Boolean result. 
+        ///   Compares all the elements of the tensor using '<#=doc#>' and returns the Boolean result.
         /// </summary>
         public bool <#=op#> ()
         {
             return 0 != TH<#=tname#>Tensor_<#=cname#>(this.handle);
         }
-<#          } /* foreach */ } #>        
+<#          } /* foreach */ } #>
 <#
             if (isByte) {
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { Name="LogicalAnd", CName="logicalAnd", ByteOnly=true, Doc="AND" },
                 new { Name="LogicalAny", CName="logicalAny", ByteOnly=true, Doc="OR" }
                 }){
@@ -1934,9 +1963,9 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_<#=cname#> (HType result, HType self, int dimension, int keepdim);
-        
+
         /// <summary>
-        ///   Compares two tensors element-wise and returns the Boolean result tensor encoded as a byte: 0 or 1. 
+        ///   Compares two tensors element-wise and returns the Boolean result tensor encoded as a byte: 0 or 1.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
@@ -1946,9 +1975,9 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_<#=cname#> (result.handle, this.handle, dimension, keepdim?1:0);
             return result;
         }
-<#          } /* foreach */ } #>     
+<#          } /* foreach */ } #>
 <#
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { Name="Sum", Doc="sum" },
                 new { Name="Prod", Doc="product" }
                 }){
@@ -1958,9 +1987,9 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (HType result, HType self, int dimension, int keepdim);
-        
+
         /// <summary>
-        ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
+        ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
@@ -1973,9 +2002,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_cum<#=cname#> (HType result, HType self, int dimension);
-        
+
         /// <summary>
-        ///   Computes the cumulative <#=doc#> of all the elements of the tensor along the given dimension. 
+        ///   Computes the cumulative <#=doc#> of all the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         public <#=tname#>Tensor Cumulative<#=op#> (int dimension)
@@ -1984,9 +2013,9 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_cum<#=cname#> (result.handle, this.handle, dimension);
             return result;
         }
-<#          } /* foreach */ #>     
+<#          } /* foreach */ #>
 <#
-            foreach (var opdoc in new [] { 
+            foreach (var opdoc in new [] {
                 new { Name="Max", Doc="max" },
                 new { Name="Min", Doc="min" },
                 new { Name="Mode", Doc="mode" },
@@ -1998,9 +2027,9 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_<#=cname#> (HType values, LongTensor.HType indices, HType self, int dimension, int keepdim);
-        
+
         /// <summary>
-        ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension. 
+        ///   Computes the <#=doc#> of all the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
@@ -2012,13 +2041,13 @@ foreach (var type in new [] {
             TH<#=tname#>Tensor_<#=cname#> (values.handle, indices.handle, this.handle, dimension, keepdim?1:0);
             return new System.Tuple<<#=tname#>Tensor, LongTensor>(values, indices);
         }
-<#          } /* foreach */ #>     
+<#          } /* foreach */ #>
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_kthvalue (HType values, LongTensor.HType indices, HType self, long k, int dimension, int keepdim);
-        
+
         /// <summary>
-        ///   Computes the kth value of all the elements of the tensor along the given dimension. 
+        ///   Computes the kth value of all the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="k">The value for 'k' in 'kth'.</param>
         /// <param name="dimension">The dimension to process along.</param>
@@ -2034,9 +2063,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static <#=accreal#> TH<#=tname#>Tensor_trace (HType self);
-        
+
         /// <summary>
-        ///   Computes the trace of the tensor. 
+        ///   Computes the trace of the tensor.
         /// </summary>
         public <#=accreal#> Trace ()
         {
@@ -2045,9 +2074,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_sign (HType result, HType self);
-        
+
         /// <summary>
-        ///   Computes the sign of the tensor. 
+        ///   Computes the sign of the tensor.
         /// </summary>
         public <#=tname#>Tensor Sign ()
         {
@@ -2058,9 +2087,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_cross (HType result, HType a, HType b, int dim);
-        
+
         /// <summary>
-        ///   Computes the cross product of two tensors. 
+        ///   Computes the cross product of two tensors.
         /// </summary>
         /// <param name="other">The right-hand-side tensor.</param>
         /// <param name="dimension">The dimension to take the cross-product in.</param>
@@ -2073,9 +2102,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_diag (HType result, HType self, int k);
-        
+
         /// <summary>
-        ///   Gets the kth diagonal of the tensor. 
+        ///   Gets the kth diagonal of the tensor.
         /// </summary>
         /// <param name="k">The value for k, i.e. the specific diagonal to retrieve.</param>
         public <#=tname#>Tensor Diagonal (int k)
@@ -2087,7 +2116,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_eye (HType result, long m, long n);
-        
+
         /// <summary>
         ///   Create an identity matrix of shape m x n.
         /// </summary>
@@ -2102,7 +2131,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_range (HType result, <#=accreal#> xmin, <#=accreal#> xmax, <#=accreal#> step);
-        
+
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
@@ -2118,7 +2147,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_arange (HType result, <#=accreal#> xmin, <#=accreal#> xmax, <#=accreal#> step);
-        
+
         /// <summary>
         ///   Create a range spanning from xmin to xmax, with 'step' between each value.
         /// </summary>
@@ -2134,9 +2163,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_sort (HType values, LongTensor.HType indices, HType self, int dimension, int descending);
-        
+
         /// <summary>
-        ///   Sorts the elements of the tensor along the given dimension. 
+        ///   Sorts the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to sort along.</param>
         /// <param name="descending">0 if ascending, 1 if descending.</param>
@@ -2151,9 +2180,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_topk (HType values, LongTensor.HType indices, HType self, long k, int dim, int dir, int sorted);
-        
+
         /// <summary>
-        ///   Finds the top k of all the elements of the tensor along the given dimension. 
+        ///   Finds the top k of all the elements of the tensor along the given dimension.
         /// </summary>
         /// <param name="k">The number of elements to fetch.</param>
         /// <param name="dim">The dimension along which to sort and find k elements.</param>
@@ -2170,9 +2199,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_tril (HType result, HType self, long k);
-        
+
         /// <summary>
-        ///   Lower triangle. 
+        ///   Lower triangle.
         /// </summary>
         /// <param name="k"></param>
         public <#=tname#>Tensor TriL (long k)
@@ -2184,9 +2213,9 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_triu (HType result, HType self, long k);
-        
+
         /// <summary>
-        ///   Upper triangle. 
+        ///   Upper triangle.
         /// </summary>
         /// <param name="k"></param>
         public <#=tname#>Tensor TriU (long k)
@@ -2198,7 +2227,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_cat (HType result, HType ta, HType tb, int dimension);
-        
+
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
         /// </summary>
@@ -2213,7 +2242,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_catArray (HType result, HType[] ta, int count, int dimension);
-#if false        
+#if false
 // NOTE: We need to determine the right marshalling for an array of handles.
         /// <summary>
         ///   Concatenate tensors along the given dimesion.
@@ -2233,9 +2262,9 @@ foreach (var type in new [] {
 #>
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>Tensor_mean (HType result, HType self, int dimension, int keepdim);
-        
+
         /// <summary>
-        ///   Compute the mean of all tensor elements along the given dimension. 
+        ///   Compute the mean of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="keepdim">true if the reduction dimension should be kept, false otherwise.</param>
@@ -2250,7 +2279,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_std (HType result, HType self, int dimension, int biased, int keepdim);
 
         /// <summary>
-        ///   Compute the standard deviation of all tensor elements along the given dimension. 
+        ///   Compute the standard deviation of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
@@ -2266,7 +2295,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_var (HType result, HType self, int dimension, int biased, int keepdim);
 
         /// <summary>
-        ///   Compute the variance of all tensor elements along the given dimension. 
+        ///   Compute the variance of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="dimension">The dimension to process along.</param>
         /// <param name="biased"></param>
@@ -2282,7 +2311,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_norm (HType result, HType self, <#=ttype#> value,  int dimension, int keepdim);
 
         /// <summary>
-        ///   Compute the norm of all tensor elements along the given dimension. 
+        ///   Compute the norm of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
@@ -2298,7 +2327,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_renorm (HType result, HType self, <#=ttype#> value,  int dimension, <#=ttype#> maxnorm);
 
         /// <summary>
-        ///   Compute the renorm of all tensor elements along the given dimension. 
+        ///   Compute the renorm of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="dimension">The dimension to process along.</param>
@@ -2314,7 +2343,7 @@ foreach (var type in new [] {
         extern static <#=accreal#> TH<#=tname#>Tensor_dist (HType a, HType b, <#=ttype#> value);
 
         /// <summary>
-        ///   Compute the dist of all tensor elements along the given dimension. 
+        ///   Compute the dist of all tensor elements along the given dimension.
         /// </summary>
         /// <param name="other">The other tensor.</param>
         /// <param name="value"></param>
@@ -2329,7 +2358,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_histc (HType hist, HType self, long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue);
 
         /// <summary>
-        ///   Create a histogram of all tensor elements. 
+        ///   Create a histogram of all tensor elements.
         /// </summary>
         /// <param name="nbins">The number of bins in the output histogram.</param>
         /// <param name="minvalue">Only consider values equal to or greater than this.</param>
@@ -2345,7 +2374,7 @@ foreach (var type in new [] {
         extern static void TH<#=tname#>Tensor_bhistc (HType hist, HType self, long nbins, <#=ttype#> minvalue, <#=ttype#> maxvalue);
 
         /// <summary>
-        ///   Create a histogram of all tensor elements. 
+        ///   Create a histogram of all tensor elements.
         /// </summary>
         /// <param name="nbins">The number of bins in the output histogram.</param>
         /// <param name="minvalue">Only consider values equal to or greater than this.</param>
@@ -2361,7 +2390,7 @@ foreach (var type in new [] {
         extern static <#=accreal#> TH<#=tname#>Tensor_meanall (HType self);
 
         /// <summary>
-        ///   Compute the mean of all tensor elements. 
+        ///   Compute the mean of all tensor elements.
         /// </summary>
         public <#=accreal#> MeanAll ()
         {
@@ -2372,7 +2401,7 @@ foreach (var type in new [] {
         extern static <#=accreal#> TH<#=tname#>Tensor_varall (HType self, int biased);
 
         /// <summary>
-        ///   Compute the variance of all tensor elements. 
+        ///   Compute the variance of all tensor elements.
         /// </summary>
         /// <param name="biased"></param>
         public <#=accreal#> VarAll (bool biased)
@@ -2384,7 +2413,7 @@ foreach (var type in new [] {
         extern static <#=accreal#> TH<#=tname#>Tensor_stdall (HType self, int biased);
 
         /// <summary>
-        ///   Compute the standard deviation of all tensor elements. 
+        ///   Compute the standard deviation of all tensor elements.
         /// </summary>
         /// <param name="biased"></param>
         public <#=accreal#> StdAll (bool biased)
@@ -2396,7 +2425,7 @@ foreach (var type in new [] {
         extern static <#=accreal#> TH<#=tname#>Tensor_normall (HType self, <#=ttype#> value);
 
         /// <summary>
-        ///   Compute the norm of all tensor elements. 
+        ///   Compute the norm of all tensor elements.
         /// </summary>
         /// <param name="value"></param>
         public <#=accreal#> NormAll (<#=ttype#> value)
@@ -2406,7 +2435,7 @@ foreach (var type in new [] {
 
         [DllImport ("caffe2")]
         extern static void TH<#=tname#>dirichlet_grad (HType self, HType x, HType alpha, HType total);
-        
+
         /// <summary>
         ///    DirichletGrad
         /// </summary>
@@ -2418,7 +2447,7 @@ foreach (var type in new [] {
             TH<#=tname#>dirichlet_grad (result.handle, this.handle, alpha.handle, total.handle);
             return result;
         }
-<#          } /* if (isFloat) */ #>     
+<#          } /* if (isFloat) */ #>
     }
 <#
 }
