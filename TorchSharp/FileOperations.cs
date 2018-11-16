@@ -28,7 +28,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A byte to write at the current file position.</param>
         public void WriteByte(byte value) { THFile_writeByteScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readByte(HType self, ByteTensor.ByteStorage.HType storage);
 
@@ -71,7 +70,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read bytes from the file into the given byte tensor.
         /// </summary>
@@ -132,26 +130,6 @@ namespace Torch.IO {
         public void WriteChar(byte value) { THFile_writeCharScalar(this.handle, value); }
 
         [DllImport("caffe2")] 
-        extern static long THFile_readChar(HType self, CharTensor.CharStorage.HType storage);
-
-        /// <summary>
-        ///   Read bytes from the file into the given storage.
-        /// </summary>
-        /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadChars(CharTensor.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
-
-        [DllImport("caffe2")] 
-        extern static long THFile_writeChar(HType self, CharTensor.CharStorage.HType storage);
-
-        /// <summary>
-        ///   Write bytes to the file from the given storage.
-        /// </summary>
-        /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteChars(CharTensor.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
-
-        [DllImport("caffe2")] 
         extern static long THFile_readCharRaw(HType self, IntPtr data, long n);
         
         /// <summary>
@@ -172,16 +150,6 @@ namespace Torch.IO {
                     return readItems;
                 }
             }
-        }
-
-        /// <summary>
-        ///   Read bytes from the file into the given byte tensor.
-        /// </summary>
-        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
-        /// <returns>The number of bytes read.</returns>
-        public long ReadTensor(TorchSharp.CharTensor tensor)
-        {
-            return THFile_readCharRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
 
         [DllImport("caffe2")] 
@@ -205,15 +173,6 @@ namespace Torch.IO {
                 }
             }
         }
-        /// <summary>
-        ///   Write bytes to the file from the given byte tensor.
-        /// </summary>
-        /// <param name="tensor">A tensor containing data to be written to the file.</param>
-        /// <returns>The number of bytes written.</returns>
-        public long WriteTensor(TorchSharp.CharTensor tensor)
-        {
-            return THFile_writeCharRaw(this.handle, tensor.Data, tensor.NumElements);			
-        }
 
         [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
@@ -232,7 +191,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A short to write at the current file position.</param>
         public void WriteShort(short value) { THFile_writeShortScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readShort(HType self, ShortTensor.ShortStorage.HType storage);
 
@@ -275,7 +233,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read shorts from the file into the given short tensor.
         /// </summary>
@@ -334,7 +291,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A int to write at the current file position.</param>
         public void WriteInt(int value) { THFile_writeIntScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readInt(HType self, IntTensor.IntStorage.HType storage);
 
@@ -377,7 +333,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read ints from the file into the given int tensor.
         /// </summary>
@@ -436,7 +391,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A long to write at the current file position.</param>
         public void WriteLong(long value) { THFile_writeLongScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readLong(HType self, LongTensor.LongStorage.HType storage);
 
@@ -479,7 +433,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read longs from the file into the given long tensor.
         /// </summary>
@@ -538,7 +491,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A float to write at the current file position.</param>
         public void WriteFloat(float value) { THFile_writeFloatScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readFloat(HType self, FloatTensor.FloatStorage.HType storage);
 
@@ -581,7 +533,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read floats from the file into the given float tensor.
         /// </summary>
@@ -640,7 +591,6 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="value">A double to write at the current file position.</param>
         public void WriteDouble(double value) { THFile_writeDoubleScalar(this.handle, value); }
-
         [DllImport("caffe2")] 
         extern static long THFile_readDouble(HType self, DoubleTensor.DoubleStorage.HType storage);
 
@@ -683,7 +633,6 @@ namespace Torch.IO {
                 }
             }
         }
-
         /// <summary>
         ///   Read doubles from the file into the given double tensor.
         /// </summary>
@@ -724,5 +673,25 @@ namespace Torch.IO {
         {
             return THFile_writeDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Read chars from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of shorts read.</returns>
+        public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Write chars to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of shorts written.</returns>
+        public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
     }
 }

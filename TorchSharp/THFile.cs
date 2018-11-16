@@ -190,7 +190,7 @@ namespace Torch.IO
         ///   If true, the file is silent about errors.
         /// </summary>
         public bool IsQuiet { 
-            get { return THFile_hasError(this.handle) != 0; } 
+            get { return THFile_isQuiet(this.handle) != 0; } 
             set { if (value) THFile_quiet(this.handle); else THFile_pedantic(this.handle); } 
         }
 

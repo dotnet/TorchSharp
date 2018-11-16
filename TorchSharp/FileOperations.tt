@@ -46,7 +46,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="value">A <#=accreal#> to write at the current file position.</param>
         public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(this.handle, value); }
-
+<#      if (tname != "Char") { #>
         [DllImport("caffe2")] 
         extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
@@ -66,6 +66,7 @@ foreach (var type in new [] {
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+<#      } /* if */ #>
 
         [DllImport("caffe2")] 
         extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
@@ -89,7 +90,7 @@ foreach (var type in new [] {
                 }
             }
         }
-
+<#      if (tname != "Char") { #>
         /// <summary>
         ///   Read <#=accreal#>s from the file into the given <#=accreal#> tensor.
         /// </summary>
@@ -99,6 +100,7 @@ foreach (var type in new [] {
         {
             return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
         }
+<#      } /* if */ #>
 
         [DllImport("caffe2")] 
         extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
@@ -121,6 +123,7 @@ foreach (var type in new [] {
                 }
             }
         }
+<#      if (tname != "Char") { #>
         /// <summary>
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
         /// </summary>
@@ -130,6 +133,26 @@ foreach (var type in new [] {
         {
             return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
         }
-<# } /* foreach */ #>
+<#      } /* if */ } /* foreach */ #>
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Read chars from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of shorts read.</returns>
+        public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Write chars to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of shorts written.</returns>
+        public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
     }
 }
