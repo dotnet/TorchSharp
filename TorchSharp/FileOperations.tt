@@ -18,6 +18,7 @@ namespace Torch.IO {
 <#
 foreach (var type in new [] { 
     new { ApiName = "Byte", AccReal="byte" }, 
+    new { ApiName = "Char", AccReal="byte" },   
     new { ApiName = "Short", AccReal="short" },   
     new { ApiName = "Int", AccReal="int"},
     new { ApiName = "Long", AccReal="long" },

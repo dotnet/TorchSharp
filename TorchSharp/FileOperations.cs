@@ -114,6 +114,108 @@ namespace Torch.IO {
         }
 
         [DllImport("caffe2")] 
+        extern static byte THFile_readCharScalar(HType self);
+
+        /// <summary>
+        ///   Read one byte from the file.
+        /// </summary>
+        /// <returns>A byte read from the current file position.</returns>
+        public byte ReadChar() { return THFile_readCharScalar(this.handle); }
+
+        [DllImport("caffe2")] 
+        extern static void THFile_writeCharScalar(HType self, byte scalar);
+
+        /// <summary>
+        ///   Write one byte to the file.
+        /// </summary>
+        /// <param name="value">A byte to write at the current file position.</param>
+        public void WriteChar(byte value) { THFile_writeCharScalar(this.handle, value); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readChar(HType self, CharTensor.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Read bytes from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of bytes read.</returns>
+        public long ReadChars(CharTensor.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeChar(HType self, CharTensor.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Write bytes to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of bytes written.</returns>
+        public long WriteChars(CharTensor.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readCharRaw(HType self, IntPtr data, long n);
+        
+        /// <summary>
+        ///   Read bytes from the file into the given byte array.
+        /// </summary>
+        /// <param name="data">An array to place the data in after reading it from the file.</param>
+        /// <param name="n">The maximum number of bytes to read.</param>
+        /// <returns>The number of bytes read.</returns>
+        public long ReadChars(byte[] data, int n)
+        {
+            if (n > data.Length)
+                throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var readItems = THFile_readCharRaw(this.handle, (IntPtr)dest, n);
+                    return readItems;
+                }
+            }
+        }
+
+        /// <summary>
+        ///   Read bytes from the file into the given byte tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of bytes read.</returns>
+        public long ReadTensor(TorchSharp.CharTensor tensor)
+        {
+            return THFile_readCharRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeCharRaw(HType self, IntPtr data, long n);
+
+        /// <summary>
+        ///   Write bytes to the file from the given byte array.
+        /// </summary>
+        /// <param name="data">An array containing data to be written to the file.</param>
+        /// <param name="n">The number of bytes to write. Pass -1 (default) to write the whole array.</param>
+        /// <returns>The number of bytes written.</returns>
+        public long WriteChars(byte[] data, int n = -1)
+        {
+            n = (n == -1) ? data.Length : Math.Min(n, data.Length);
+            unsafe
+            {
+                fixed (byte *dest = data)
+                {
+                    var writtenItems = THFile_writeCharRaw(this.handle, (IntPtr)dest, n);
+                    return writtenItems;
+                }
+            }
+        }
+        /// <summary>
+        ///   Write bytes to the file from the given byte tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of bytes written.</returns>
+        public long WriteTensor(TorchSharp.CharTensor tensor)
+        {
+            return THFile_writeCharRaw(this.handle, tensor.Data, tensor.NumElements);			
+        }
+
+        [DllImport("caffe2")] 
         extern static short THFile_readShortScalar(HType self);
 
         /// <summary>
