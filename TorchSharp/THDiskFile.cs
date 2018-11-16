@@ -104,5 +104,10 @@ namespace Torch.IO {
 
         [DllImport("caffe2")]
         extern static void THDiskFile_noBuffer(File.HType self);
+
+        /// <summary>
+        ///    Don't buffer disk reads and writes.
+        /// </summary>
+        public void NoBuffer() { THDiskFile_noBuffer(this.handle); }
     }
 }

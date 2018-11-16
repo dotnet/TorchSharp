@@ -160,5 +160,56 @@ namespace Torch.IO
         ///   Close the file.
         /// </summary>
         public void Close() { THFile_close(this.handle); }
+
+        [DllImport("caffe2")]
+        extern static int THFile_hasError(HType self);
+
+        /// <summary>
+        ///   Check whether the file object has outstanding errors.
+        /// </summary>
+        public bool HasError { get { return THFile_hasError(this.handle) != 0; }}
+
+        [DllImport("caffe2")]
+        extern static void THFile_clearError(HType self);
+
+        /// <summary>
+        ///   Check whether the file object has outstanding errors.
+        /// </summary>
+        public void ClearError() { THFile_clearError(this.handle); }
+
+        [DllImport("caffe2")]
+        extern static int THFile_isQuiet(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_quiet(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_pedantic(HType self);
+        
+        /// <summary>
+        ///   If true, the file is silent about errors.
+        /// </summary>
+        public bool IsQuiet { 
+            get { return THFile_hasError(this.handle) != 0; } 
+            set { if (value) THFile_quiet(this.handle); else THFile_pedantic(this.handle); } 
+        }
+
+        [DllImport("caffe2")]
+        extern static int THFile_isAutoSpacing(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_autoSpacing(HType self);
+
+        [DllImport("caffe2")]
+        extern static void THFile_noAutoSpacing(HType self);
+
+        /// <summary>
+        ///   If true, the file will insert spaces and newlines in text files.
+        /// </summary>
+        public bool IsAutoSpacing
+        {
+            get { return THFile_isAutoSpacing(this.handle) != 0; }
+            set { if (value) THFile_autoSpacing(this.handle); else THFile_noAutoSpacing(this.handle); }
+        }
     }
 }
