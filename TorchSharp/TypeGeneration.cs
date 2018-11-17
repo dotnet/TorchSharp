@@ -97,7 +97,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -126,6 +126,14 @@ namespace TorchSharp {
                 return THByteStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THByteStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THByteStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THByteStorage_retain (HType handle);
 
@@ -135,6 +143,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THByteStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THByteStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THByteStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -329,7 +349,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 
@@ -3272,7 +3292,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -3301,6 +3321,14 @@ namespace TorchSharp {
                 return THShortStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THShortStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THShortStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THShortStorage_retain (HType handle);
 
@@ -3310,6 +3338,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THShortStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THShortStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THShortStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -3504,7 +3544,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 
@@ -6399,7 +6439,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -6428,6 +6468,14 @@ namespace TorchSharp {
                 return THIntStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THIntStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THIntStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THIntStorage_retain (HType handle);
 
@@ -6437,6 +6485,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THIntStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THIntStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THIntStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -6631,7 +6691,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 
@@ -9526,7 +9586,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -9555,6 +9615,14 @@ namespace TorchSharp {
                 return THLongStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THLongStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THLongStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THLongStorage_retain (HType handle);
 
@@ -9564,6 +9632,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THLongStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THLongStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THLongStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -9758,7 +9838,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 
@@ -12653,7 +12733,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -12682,6 +12762,14 @@ namespace TorchSharp {
                 return THDoubleStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THDoubleStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THDoubleStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THDoubleStorage_retain (HType handle);
 
@@ -12691,6 +12779,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THDoubleStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THDoubleStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THDoubleStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -12885,7 +12985,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 
@@ -16665,7 +16765,7 @@ namespace TorchSharp {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -16694,6 +16794,14 @@ namespace TorchSharp {
                 return THFloatStorage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr THFloatStorage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => THFloatStorage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void THFloatStorage_retain (HType handle);
 
@@ -16703,6 +16811,18 @@ namespace TorchSharp {
             public void Retain ()
             {
                 THFloatStorage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void THFloatStorage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                THFloatStorage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -16897,7 +17017,7 @@ namespace TorchSharp {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 

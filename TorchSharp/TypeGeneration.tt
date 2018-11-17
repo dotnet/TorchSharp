@@ -119,7 +119,7 @@ foreach (var type in new [] {
             {
                 if (disposing) {
                     handle.Dispose ();
-                    handle.SetHandleAsInvalid();
+                    handle.SetHandleAsInvalid ();
                 }
             }
 
@@ -148,6 +148,14 @@ foreach (var type in new [] {
                 return TH<#=tname#>Storage_size(handle).ToUInt64();
             }
 
+            [DllImport("caffe2")]
+            extern static IntPtr TH<#=tname#>Storage_data (HType handle);
+
+            /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public IntPtr Data => TH<#=tname#>Storage_data (handle);
+
             [DllImport ("caffe2")]
             extern static void TH<#=tname#>Storage_retain (HType handle);
 
@@ -157,6 +165,18 @@ foreach (var type in new [] {
             public void Retain ()
             {
                 TH<#=tname#>Storage_retain (handle);
+            }
+
+            [DllImport ("caffe2")]
+            extern static void TH<#=tname#>Storage_free (HType handle);
+
+            /// <summary>
+            ///   Decrememnt the ref count for this storage, or destroy it if
+            ///   refounct = 0.
+            /// </summary>
+            public void Free ()
+            {
+                TH<#=tname#>Storage_free (handle);
             }
 
             [DllImport ("caffe2")]
@@ -351,7 +371,7 @@ foreach (var type in new [] {
         {
             if (disposing) {
                 handle.Dispose ();
-                handle.SetHandleAsInvalid();
+                handle.SetHandleAsInvalid ();
             }
         }
 

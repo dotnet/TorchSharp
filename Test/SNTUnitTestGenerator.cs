@@ -364,6 +364,25 @@ namespace Torch.SNT
                 }
             }
         }
+
+        [TestMethod]
+        public void TestDanglingMemoryShort()
+        {
+            Memory<short> buffer;
+
+            using (var x = ShortTorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
+            }
+        }
     }
     [TestClass]
     public class IntTorchTensorUnitTestGenerator
@@ -721,6 +740,25 @@ namespace Torch.SNT
                 {
                     Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
+            }
+        }
+
+        [TestMethod]
+        public void TestDanglingMemoryInt()
+        {
+            Memory<int> buffer;
+
+            using (var x = IntTorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
             }
         }
     }
@@ -1082,6 +1120,25 @@ namespace Torch.SNT
                 }
             }
         }
+
+        [TestMethod]
+        public void TestDanglingMemoryLong()
+        {
+            Memory<long> buffer;
+
+            using (var x = LongTorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
+            }
+        }
     }
     [TestClass]
     public class DoubleTorchTensorUnitTestGenerator
@@ -1441,6 +1498,25 @@ namespace Torch.SNT
                 }
             }
         }
+
+        [TestMethod]
+        public void TestDanglingMemoryDouble()
+        {
+            Memory<double> buffer;
+
+            using (var x = DoubleTorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
+            }
+        }
     }
     [TestClass]
     public class FloatTorchTensorUnitTestGenerator
@@ -1798,6 +1874,25 @@ namespace Torch.SNT
                 {
                     Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
+            }
+        }
+
+        [TestMethod]
+        public void TestDanglingMemoryFloat()
+        {
+            Memory<float> buffer;
+
+            using (var x = FloatTorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
             }
         }
     }

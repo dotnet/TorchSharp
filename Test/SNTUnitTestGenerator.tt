@@ -379,6 +379,25 @@ foreach (var type in new [] {
                 }
             }
         }
+
+        [TestMethod]
+        public void TestDanglingMemory<#=tname#>()
+        {
+            Memory<<#=tname.ToLower()#>> buffer;
+
+            using (var x = <#=tname#>TorchTensor.Create(10))
+            {
+                x.Fill(33);
+                buffer = x.Buffer;
+            }
+
+            var arr = buffer.ToArray();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(33, arr[i]);
+            }
+        }
     }
 <#
 }

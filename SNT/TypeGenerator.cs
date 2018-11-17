@@ -1,6 +1,8 @@
 using System;
+using System.Buffers;
 using System.Linq;
 using System.Numerics.Tensors;
+using System.Runtime.CompilerServices;
 using TorchSharp;
 
 namespace Torch.SNT 
@@ -8,8 +10,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch ByteTensor as a System.Numerics DensorTensor of byte
     /// </summary>
-    public sealed class ByteTorchTensor : DenseTensor<byte>
+    public sealed class ByteTorchTensor : DenseTensor<byte>, IDisposable
     {
+        internal sealed class ByteNativeMemory : MemoryManager<byte>
+        {
+            private readonly ByteTensor.ByteStorage storage;
+
+            public ByteNativeMemory(ByteTensor.ByteStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~ByteNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<byte> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<byte> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<byte> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -38,10 +124,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateByteTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<byte> (inner.Data, totLength);
+            var inner = CreateByteTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new ByteNativeMemory (storage);
 
             return new ByteTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as ByteTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -52,7 +146,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as ByteTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<byte> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new ByteNativeMemory (storage);
 
             return new ByteTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -72,7 +168,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (byte):
                     var innerClone = CreateByteTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<byte> (innerClone.Data, Buffer.Length);
+                    var mem = new ByteNativeMemory (innerClone.Storage);
 
                     return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning bytes is currently implemented.");
@@ -141,8 +237,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch ShortTensor as a System.Numerics DensorTensor of short
     /// </summary>
-    public sealed class ShortTorchTensor : DenseTensor<short>
+    public sealed class ShortTorchTensor : DenseTensor<short>, IDisposable
     {
+        internal sealed class ShortNativeMemory : MemoryManager<short>
+        {
+            private readonly ShortTensor.ShortStorage storage;
+
+            public ShortNativeMemory(ShortTensor.ShortStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~ShortNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<short> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<short> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<short> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -171,10 +351,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateShortTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<short> (inner.Data, totLength);
+            var inner = CreateShortTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new ShortNativeMemory (storage);
 
             return new ShortTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as ShortTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -185,7 +373,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as ShortTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<short> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new ShortNativeMemory (storage);
 
             return new ShortTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -205,7 +395,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (short):
                     var innerClone = CreateShortTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<short> (innerClone.Data, Buffer.Length);
+                    var mem = new ShortNativeMemory (innerClone.Storage);
 
                     return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning shorts is currently implemented.");
@@ -274,8 +464,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch IntTensor as a System.Numerics DensorTensor of int
     /// </summary>
-    public sealed class IntTorchTensor : DenseTensor<int>
+    public sealed class IntTorchTensor : DenseTensor<int>, IDisposable
     {
+        internal sealed class IntNativeMemory : MemoryManager<int>
+        {
+            private readonly IntTensor.IntStorage storage;
+
+            public IntNativeMemory(IntTensor.IntStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~IntNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<int> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<int> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<int> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -304,10 +578,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateIntTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<int> (inner.Data, totLength);
+            var inner = CreateIntTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new IntNativeMemory (storage);
 
             return new IntTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as IntTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -318,7 +600,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as IntTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<int> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new IntNativeMemory (storage);
 
             return new IntTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -338,7 +622,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (int):
                     var innerClone = CreateIntTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<int> (innerClone.Data, Buffer.Length);
+                    var mem = new IntNativeMemory (innerClone.Storage);
 
                     return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning ints is currently implemented.");
@@ -407,8 +691,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch LongTensor as a System.Numerics DensorTensor of long
     /// </summary>
-    public sealed class LongTorchTensor : DenseTensor<long>
+    public sealed class LongTorchTensor : DenseTensor<long>, IDisposable
     {
+        internal sealed class LongNativeMemory : MemoryManager<long>
+        {
+            private readonly LongTensor.LongStorage storage;
+
+            public LongNativeMemory(LongTensor.LongStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~LongNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<long> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<long> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<long> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -437,10 +805,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateLongTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<long> (inner.Data, totLength);
+            var inner = CreateLongTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new LongNativeMemory (storage);
 
             return new LongTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as LongTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -451,7 +827,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as LongTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<long> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new LongNativeMemory (storage);
 
             return new LongTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -471,7 +849,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (long):
                     var innerClone = CreateLongTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<long> (innerClone.Data, Buffer.Length);
+                    var mem = new LongNativeMemory (innerClone.Storage);
 
                     return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning longs is currently implemented.");
@@ -540,8 +918,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch DoubleTensor as a System.Numerics DensorTensor of double
     /// </summary>
-    public sealed class DoubleTorchTensor : DenseTensor<double>
+    public sealed class DoubleTorchTensor : DenseTensor<double>, IDisposable
     {
+        internal sealed class DoubleNativeMemory : MemoryManager<double>
+        {
+            private readonly DoubleTensor.DoubleStorage storage;
+
+            public DoubleNativeMemory(DoubleTensor.DoubleStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~DoubleNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<double> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<double> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<double> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -570,10 +1032,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateDoubleTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<double> (inner.Data, totLength);
+            var inner = CreateDoubleTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new DoubleNativeMemory (storage);
 
             return new DoubleTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as DoubleTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -584,7 +1054,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as DoubleTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<double> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new DoubleNativeMemory (storage);
 
             return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -604,7 +1076,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (double):
                     var innerClone = CreateDoubleTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<double> (innerClone.Data, Buffer.Length);
+                    var mem = new DoubleNativeMemory (innerClone.Storage);
 
                     return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning doubles is currently implemented.");
@@ -673,8 +1145,92 @@ namespace Torch.SNT
     /// <summary>
     ///   Wrapper class used to surface a Torch FloatTensor as a System.Numerics DensorTensor of float
     /// </summary>
-    public sealed class FloatTorchTensor : DenseTensor<float>
+    public sealed class FloatTorchTensor : DenseTensor<float>, IDisposable
     {
+        internal sealed class FloatNativeMemory : MemoryManager<float>
+        {
+            private readonly FloatTensor.FloatStorage storage;
+
+            public FloatNativeMemory(FloatTensor.FloatStorage storage)
+            {
+                this.storage = storage;
+
+                if (storage.Size () < 0)
+                {
+                    throw new ArgumentOutOfRangeException ("Length cannot be negative.");
+                }
+            }
+
+            /// <summary>
+            /// Destructor for the native memory.
+            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
+            /// from here will through a "double free or corruption" error.
+            /// <summary>
+            ~FloatNativeMemory ()
+            {
+                Dispose (true);
+            }
+
+            /// <summary>
+            /// Returns a span wrapping the underlying memory.
+            /// Remember to Unpin the memory once the span is disposed.
+            /// </summary>
+            public override Span<float> GetSpan ()
+            {
+                ulong len = storage.Size ();
+
+                if (len > int.MaxValue)
+                {
+                    throw new InvalidCastException ("Tensor size not supported.");
+                }
+
+                unsafe
+                {
+                    return new Span<float> (storage.Data.ToPointer (), (int)len);
+                }
+            }
+
+            /// <summary>
+            /// Returns a handle to the memory that has been pinned and hence its address can be taken.
+            /// </summary>
+            /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
+            public override MemoryHandle Pin (int elementIndex = 0)
+            {
+                unsafe
+                {
+                    storage.Retain();
+                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    void* pointer = Unsafe.Add<float> ((void*)storage.Data, elementIndex);
+                    return new MemoryHandle (pointer, default, this);
+                }
+            }
+
+            /// <summary>
+            /// Lets the garbage collector know that the object is free to be moved now.
+            /// </summary>
+            public override void Unpin ()
+            {
+                storage.Free ();
+            }
+
+            /// <summary>
+            ///   Releases the tensor and its associated data.
+            /// </summary>        
+            public void Dispose ()
+            {
+                Dispose (true);
+                GC.SuppressFinalize (this);
+            }
+
+            protected override void Dispose (bool disposing)
+            {
+                if (disposing)
+                {
+                    storage.Dispose ();
+                }
+            }
+        }
+
         private readonly object inner;
 
         /// <summary>
@@ -703,10 +1259,18 @@ namespace Torch.SNT
                 shape = new int[] { 0 };
             }
 
-            var inner = CreateFloatTensor (sizes.Select(x => (long)x).ToArray ());
-            var mem = new NativeMemory<float> (inner.Data, totLength);
+            var inner = CreateFloatTensor (sizes.Select (x => (long)x).ToArray ());
+            var storage = inner.Storage;
+            storage.Retain ();
+            var mem = new FloatNativeMemory (storage);
 
             return new FloatTorchTensor (mem.Memory, shape, inner);
+        }
+
+        public void Dispose ()
+        {
+            var typedInner = inner as FloatTensor;
+            typedInner.Dispose ();
         }
 
         /// <summary>
@@ -717,7 +1281,9 @@ namespace Torch.SNT
         {
             var typedInner = inner as FloatTensor;
             var innerClone = typedInner.Clone ();
-            var mem = new NativeMemory<float> (innerClone.Data, Buffer.Length);
+            var storage = innerClone.Storage;
+            storage.Retain ();
+            var mem = new FloatNativeMemory (storage);
 
             return new FloatTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -737,7 +1303,7 @@ namespace Torch.SNT
                 case bool _ when typeof (TResult) == typeof (float):
                     var innerClone = CreateFloatTensor (typedInner.Shape);
                     innerClone.Fill (default);
-                    var mem = new NativeMemory<float> (innerClone.Data, Buffer.Length);
+                    var mem = new FloatNativeMemory (innerClone.Storage);
 
                     return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
                 default: throw new NotImplementedException ("Only cloning floats is currently implemented.");
