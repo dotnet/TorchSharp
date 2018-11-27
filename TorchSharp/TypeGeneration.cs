@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * DO NOT EDIT This is a generated file and will be overwritten, edit TypeGeneration.tt instead
+ */
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
