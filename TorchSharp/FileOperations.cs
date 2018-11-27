@@ -1,3 +1,6 @@
+﻿/*
+ * DO NOT EDIT This is a generated file and will be overwritten, edit FileOperations.tt instead
+ */
 using System;
 using System.Linq;
 using System.Collections.Generic;
