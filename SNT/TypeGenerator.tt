@@ -24,6 +24,7 @@ foreach (var type in new [] {
         string tname = type.ApiName;
         string stname = type.Storage;
 #>
+
     /// <summary>
     ///   Wrapper class used to surface a Torch <#=tname#>Tensor as a System.Numerics DensorTensor of <#=stname#>
     /// </summary>
@@ -41,16 +42,6 @@ foreach (var type in new [] {
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~<#=tname#>NativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -95,20 +86,11 @@ foreach (var type in new [] {
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }

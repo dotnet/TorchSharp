@@ -7,6 +7,7 @@ using TorchSharp;
 
 namespace Torch.SNT 
 {
+
     /// <summary>
     ///   Wrapper class used to surface a Torch ByteTensor as a System.Numerics DensorTensor of byte
     /// </summary>
@@ -24,16 +25,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~ByteNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -78,20 +69,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
@@ -234,6 +216,7 @@ namespace Torch.SNT
             }
         }
     }
+
     /// <summary>
     ///   Wrapper class used to surface a Torch ShortTensor as a System.Numerics DensorTensor of short
     /// </summary>
@@ -251,16 +234,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~ShortNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -305,20 +278,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
@@ -461,6 +425,7 @@ namespace Torch.SNT
             }
         }
     }
+
     /// <summary>
     ///   Wrapper class used to surface a Torch IntTensor as a System.Numerics DensorTensor of int
     /// </summary>
@@ -478,16 +443,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~IntNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -532,20 +487,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
@@ -688,6 +634,7 @@ namespace Torch.SNT
             }
         }
     }
+
     /// <summary>
     ///   Wrapper class used to surface a Torch LongTensor as a System.Numerics DensorTensor of long
     /// </summary>
@@ -705,16 +652,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~LongNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -759,20 +696,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
@@ -915,6 +843,7 @@ namespace Torch.SNT
             }
         }
     }
+
     /// <summary>
     ///   Wrapper class used to surface a Torch DoubleTensor as a System.Numerics DensorTensor of double
     /// </summary>
@@ -932,16 +861,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~DoubleNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -986,20 +905,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
@@ -1142,6 +1052,7 @@ namespace Torch.SNT
             }
         }
     }
+
     /// <summary>
     ///   Wrapper class used to surface a Torch FloatTensor as a System.Numerics DensorTensor of float
     /// </summary>
@@ -1159,16 +1070,6 @@ namespace Torch.SNT
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
-            }
-
-            /// <summary>
-            /// Destructor for the native memory.
-            /// The Tensor memory lifecycle is managed by Torch. Disposing the memory
-            /// from here will through a "double free or corruption" error.
-            /// <summary>
-            ~FloatNativeMemory ()
-            {
-                Dispose (true);
             }
 
             /// <summary>
@@ -1213,20 +1114,11 @@ namespace Torch.SNT
                 storage.Free ();
             }
 
-            /// <summary>
-            ///   Releases the tensor and its associated data.
-            /// </summary>        
-            public void Dispose ()
-            {
-                Dispose (true);
-                GC.SuppressFinalize (this);
-            }
-
             protected override void Dispose (bool disposing)
             {
                 if (disposing)
                 {
-                    storage.Dispose ();
+                    storage.Free ();
                 }
             }
         }
