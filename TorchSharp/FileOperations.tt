@@ -3,6 +3,12 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#
+var msg = "DO NOT EDIT" + " This is a generated file and will be overwritten, edit FileOperations.tt instead";
+#>
+/*
+ * <#=msg#>
+ */
 using System;
 using System.Linq;
 using System.Collections.Generic;
