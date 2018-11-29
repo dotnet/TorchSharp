@@ -19,6 +19,7 @@ namespace Torch.SNT
 
             public ByteNativeMemory(ByteTensor.ByteStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -107,9 +108,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateByteTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new ByteNativeMemory (storage);
+            var mem = new ByteNativeMemory (inner.Storage);
 
             return new ByteTorchTensor (mem.Memory, shape, inner);
         }
@@ -128,9 +127,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as ByteTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new ByteNativeMemory (storage);
+            var mem = new ByteNativeMemory (innerClone.Storage);
 
             return new ByteTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -228,6 +225,7 @@ namespace Torch.SNT
 
             public ShortNativeMemory(ShortTensor.ShortStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -316,9 +314,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateShortTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new ShortNativeMemory (storage);
+            var mem = new ShortNativeMemory (inner.Storage);
 
             return new ShortTorchTensor (mem.Memory, shape, inner);
         }
@@ -337,9 +333,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as ShortTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new ShortNativeMemory (storage);
+            var mem = new ShortNativeMemory (innerClone.Storage);
 
             return new ShortTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -437,6 +431,7 @@ namespace Torch.SNT
 
             public IntNativeMemory(IntTensor.IntStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -525,9 +520,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateIntTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new IntNativeMemory (storage);
+            var mem = new IntNativeMemory (inner.Storage);
 
             return new IntTorchTensor (mem.Memory, shape, inner);
         }
@@ -546,9 +539,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as IntTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new IntNativeMemory (storage);
+            var mem = new IntNativeMemory (innerClone.Storage);
 
             return new IntTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -646,6 +637,7 @@ namespace Torch.SNT
 
             public LongNativeMemory(LongTensor.LongStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -734,9 +726,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateLongTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new LongNativeMemory (storage);
+            var mem = new LongNativeMemory (inner.Storage);
 
             return new LongTorchTensor (mem.Memory, shape, inner);
         }
@@ -755,9 +745,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as LongTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new LongNativeMemory (storage);
+            var mem = new LongNativeMemory (innerClone.Storage);
 
             return new LongTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -855,6 +843,7 @@ namespace Torch.SNT
 
             public DoubleNativeMemory(DoubleTensor.DoubleStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -943,9 +932,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateDoubleTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new DoubleNativeMemory (storage);
+            var mem = new DoubleNativeMemory (inner.Storage);
 
             return new DoubleTorchTensor (mem.Memory, shape, inner);
         }
@@ -964,9 +951,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as DoubleTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new DoubleNativeMemory (storage);
+            var mem = new DoubleNativeMemory (innerClone.Storage);
 
             return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone);
         }
@@ -1064,6 +1049,7 @@ namespace Torch.SNT
 
             public FloatNativeMemory(FloatTensor.FloatStorage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -1152,9 +1138,7 @@ namespace Torch.SNT
             }
 
             var inner = CreateFloatTensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new FloatNativeMemory (storage);
+            var mem = new FloatNativeMemory (inner.Storage);
 
             return new FloatTorchTensor (mem.Memory, shape, inner);
         }
@@ -1173,9 +1157,7 @@ namespace Torch.SNT
         {
             var typedInner = inner as FloatTensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new FloatNativeMemory (storage);
+            var mem = new FloatNativeMemory (innerClone.Storage);
 
             return new FloatTorchTensor (mem.Memory, Dimensions, innerClone);
         }

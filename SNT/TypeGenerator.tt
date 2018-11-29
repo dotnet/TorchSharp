@@ -36,6 +36,7 @@ foreach (var type in new [] {
 
             public <#=tname#>NativeMemory(<#=tname#>Tensor.<#=tname#>Storage storage)
             {
+                storage.Retain ();
                 this.storage = storage;
 
                 if (storage.Size () < 0)
@@ -124,9 +125,7 @@ foreach (var type in new [] {
             }
 
             var inner = Create<#=tname#>Tensor (sizes.Select (x => (long)x).ToArray ());
-            var storage = inner.Storage;
-            storage.Retain ();
-            var mem = new <#=tname#>NativeMemory (storage);
+            var mem = new <#=tname#>NativeMemory (inner.Storage);
 
             return new <#=tname#>TorchTensor (mem.Memory, shape, inner);
         }
@@ -145,9 +144,7 @@ foreach (var type in new [] {
         {
             var typedInner = inner as <#=tname#>Tensor;
             var innerClone = typedInner.Clone ();
-            var storage = innerClone.Storage;
-            storage.Retain ();
-            var mem = new <#=tname#>NativeMemory (storage);
+            var mem = new <#=tname#>NativeMemory (innerClone.Storage);
 
             return new <#=tname#>TorchTensor (mem.Memory, Dimensions, innerClone);
         }
