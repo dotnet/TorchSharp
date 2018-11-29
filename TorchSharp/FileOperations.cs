@@ -62,6 +62,8 @@ namespace Torch.IO {
         /// <returns>The number of bytes read.</returns>
         public long ReadBytes(byte[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -94,6 +96,8 @@ namespace Torch.IO {
         /// <returns>The number of bytes written.</returns>
         public long WriteBytes(byte[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -143,6 +147,8 @@ namespace Torch.IO {
         /// <returns>The number of bytes read.</returns>
         public long ReadChars(byte[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -166,6 +172,8 @@ namespace Torch.IO {
         /// <returns>The number of bytes written.</returns>
         public long WriteChars(byte[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -225,6 +233,8 @@ namespace Torch.IO {
         /// <returns>The number of shorts read.</returns>
         public long ReadShorts(short[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -257,6 +267,8 @@ namespace Torch.IO {
         /// <returns>The number of shorts written.</returns>
         public long WriteShorts(short[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -325,6 +337,8 @@ namespace Torch.IO {
         /// <returns>The number of ints read.</returns>
         public long ReadInts(int[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -357,6 +371,8 @@ namespace Torch.IO {
         /// <returns>The number of ints written.</returns>
         public long WriteInts(int[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -425,6 +441,8 @@ namespace Torch.IO {
         /// <returns>The number of longs read.</returns>
         public long ReadLongs(long[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -457,6 +475,8 @@ namespace Torch.IO {
         /// <returns>The number of longs written.</returns>
         public long WriteLongs(long[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -525,6 +545,8 @@ namespace Torch.IO {
         /// <returns>The number of floats read.</returns>
         public long ReadFloats(float[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -557,6 +579,8 @@ namespace Torch.IO {
         /// <returns>The number of floats written.</returns>
         public long WriteFloats(float[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -625,6 +649,8 @@ namespace Torch.IO {
         /// <returns>The number of doubles read.</returns>
         public long ReadDoubles(double[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -657,6 +683,8 @@ namespace Torch.IO {
         /// <returns>The number of doubles written.</returns>
         public long WriteDoubles(double[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -684,7 +712,7 @@ namespace Torch.IO {
         ///   Read chars from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of shorts read.</returns>
+        /// <returns>The number of chars read.</returns>
         public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
@@ -694,7 +722,7 @@ namespace Torch.IO {
         ///   Write chars to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of shorts written.</returns>
+        /// <returns>The number of chars written.</returns>
         public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
     }
 }

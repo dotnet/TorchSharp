@@ -85,6 +85,8 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s read.</returns>
         public long Read<#=tname#>s(<#=accreal#>[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -119,6 +121,8 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -148,7 +152,7 @@ foreach (var type in new [] {
         ///   Read chars from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
-        /// <returns>The number of shorts read.</returns>
+        /// <returns>The number of chars read.</returns>
         public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
 
         [DllImport("caffe2")] 
@@ -158,7 +162,7 @@ foreach (var type in new [] {
         ///   Write chars to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
-        /// <returns>The number of shorts written.</returns>
+        /// <returns>The number of chars written.</returns>
         public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
     }
 }
