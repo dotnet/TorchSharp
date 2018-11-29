@@ -19,13 +19,13 @@ namespace Torch.SNT
 
             public ByteNativeMemory(ByteTensor.ByteStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -53,10 +53,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<byte> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -79,12 +84,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly ByteTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public ByteTensor TorchSharpTensor => inner as ByteTensor;
+        public ByteTensor TorchSharpTensor => inner;
 
         public ByteTorchTensor (Memory<byte> memory, ReadOnlySpan<int> dimensions, ByteTensor inner) : base (memory, dimensions)
         {
@@ -115,8 +120,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as ByteTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -125,8 +129,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<byte> Clone ()
         {
-            var typedInner = inner as ByteTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new ByteNativeMemory (innerClone.Storage);
 
             return new ByteTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -140,17 +143,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as ByteTensor;
-
             switch (true)
             {
                 case bool _ when typeof (TResult) == typeof (byte):
-                    var innerClone = CreateByteTensor (typedInner.Shape);
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new ByteNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
 
                     return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning bytes is currently implemented.");
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
+
+                    return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
+
+                    return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
+
+                    return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
+
+                    return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
+
+                    return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -173,18 +216,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as ByteTensor;
             ByteTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new ByteTorchTensor (Buffer, dimensions, reshapedTensor);
@@ -225,13 +296,13 @@ namespace Torch.SNT
 
             public ShortNativeMemory(ShortTensor.ShortStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -259,10 +330,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<short> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -285,12 +361,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly ShortTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public ShortTensor TorchSharpTensor => inner as ShortTensor;
+        public ShortTensor TorchSharpTensor => inner;
 
         public ShortTorchTensor (Memory<short> memory, ReadOnlySpan<int> dimensions, ShortTensor inner) : base (memory, dimensions)
         {
@@ -321,8 +397,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as ShortTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -331,8 +406,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<short> Clone ()
         {
-            var typedInner = inner as ShortTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new ShortNativeMemory (innerClone.Storage);
 
             return new ShortTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -346,17 +420,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as ShortTensor;
-
             switch (true)
             {
-                case bool _ when typeof (TResult) == typeof (short):
-                    var innerClone = CreateShortTensor (typedInner.Shape);
+                case bool _ when typeof (TResult) == typeof (byte):
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new ShortNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
+
+                    return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
 
                     return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning shorts is currently implemented.");
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
+
+                    return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
+
+                    return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
+
+                    return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
+
+                    return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -379,18 +493,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as ShortTensor;
             ShortTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new ShortTorchTensor (Buffer, dimensions, reshapedTensor);
@@ -431,13 +573,13 @@ namespace Torch.SNT
 
             public IntNativeMemory(IntTensor.IntStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -465,10 +607,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<int> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -491,12 +638,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly IntTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public IntTensor TorchSharpTensor => inner as IntTensor;
+        public IntTensor TorchSharpTensor => inner;
 
         public IntTorchTensor (Memory<int> memory, ReadOnlySpan<int> dimensions, IntTensor inner) : base (memory, dimensions)
         {
@@ -527,8 +674,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as IntTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -537,8 +683,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<int> Clone ()
         {
-            var typedInner = inner as IntTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new IntNativeMemory (innerClone.Storage);
 
             return new IntTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -552,17 +697,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as IntTensor;
-
             switch (true)
             {
-                case bool _ when typeof (TResult) == typeof (int):
-                    var innerClone = CreateIntTensor (typedInner.Shape);
+                case bool _ when typeof (TResult) == typeof (byte):
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new IntNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
+
+                    return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
+
+                    return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
 
                     return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning ints is currently implemented.");
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
+
+                    return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
+
+                    return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
+
+                    return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -585,18 +770,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as IntTensor;
             IntTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new IntTorchTensor (Buffer, dimensions, reshapedTensor);
@@ -637,13 +850,13 @@ namespace Torch.SNT
 
             public LongNativeMemory(LongTensor.LongStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -671,10 +884,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<long> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -697,12 +915,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly LongTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public LongTensor TorchSharpTensor => inner as LongTensor;
+        public LongTensor TorchSharpTensor => inner;
 
         public LongTorchTensor (Memory<long> memory, ReadOnlySpan<int> dimensions, LongTensor inner) : base (memory, dimensions)
         {
@@ -733,8 +951,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as LongTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -743,8 +960,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<long> Clone ()
         {
-            var typedInner = inner as LongTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new LongNativeMemory (innerClone.Storage);
 
             return new LongTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -758,17 +974,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as LongTensor;
-
             switch (true)
             {
-                case bool _ when typeof (TResult) == typeof (long):
-                    var innerClone = CreateLongTensor (typedInner.Shape);
+                case bool _ when typeof (TResult) == typeof (byte):
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new LongNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
+
+                    return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
+
+                    return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
+
+                    return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
 
                     return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning longs is currently implemented.");
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
+
+                    return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
+
+                    return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -791,18 +1047,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as LongTensor;
             LongTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new LongTorchTensor (Buffer, dimensions, reshapedTensor);
@@ -843,13 +1127,13 @@ namespace Torch.SNT
 
             public DoubleNativeMemory(DoubleTensor.DoubleStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -877,10 +1161,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<double> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -903,12 +1192,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly DoubleTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public DoubleTensor TorchSharpTensor => inner as DoubleTensor;
+        public DoubleTensor TorchSharpTensor => inner;
 
         public DoubleTorchTensor (Memory<double> memory, ReadOnlySpan<int> dimensions, DoubleTensor inner) : base (memory, dimensions)
         {
@@ -939,8 +1228,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as DoubleTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -949,8 +1237,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<double> Clone ()
         {
-            var typedInner = inner as DoubleTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new DoubleNativeMemory (innerClone.Storage);
 
             return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -964,17 +1251,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as DoubleTensor;
-
             switch (true)
             {
-                case bool _ when typeof (TResult) == typeof (double):
-                    var innerClone = CreateDoubleTensor (typedInner.Shape);
+                case bool _ when typeof (TResult) == typeof (byte):
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new DoubleNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
+
+                    return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
+
+                    return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
+
+                    return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
+
+                    return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
 
                     return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning doubles is currently implemented.");
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
+
+                    return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -997,18 +1324,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as DoubleTensor;
             DoubleTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new DoubleTorchTensor (Buffer, dimensions, reshapedTensor);
@@ -1049,13 +1404,13 @@ namespace Torch.SNT
 
             public FloatNativeMemory(FloatTensor.FloatStorage storage)
             {
-                storage.Retain ();
-                this.storage = storage;
-
                 if (storage.Size () < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
+
+                storage.Retain ();
+                this.storage = storage;        
             }
 
             /// <summary>
@@ -1083,10 +1438,15 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
+                if ((uint)elementIndex > storage.Size ()) 
+                {
+                    throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                }
+
                 unsafe
                 {
                     storage.Retain();
-                    if ((uint)elementIndex > storage.Size ()) throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
+                    
                     void* pointer = Unsafe.Add<float> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -1109,12 +1469,12 @@ namespace Torch.SNT
             }
         }
 
-        private readonly object inner;
+        private readonly FloatTensor inner;
 
         /// <summary>
         ///   Property returning the inner TorchSharp tensor the class is wrapping. 
         /// </summary>
-        public FloatTensor TorchSharpTensor => inner as FloatTensor;
+        public FloatTensor TorchSharpTensor => inner;
 
         public FloatTorchTensor (Memory<float> memory, ReadOnlySpan<int> dimensions, FloatTensor inner) : base (memory, dimensions)
         {
@@ -1145,8 +1505,7 @@ namespace Torch.SNT
 
         public void Dispose ()
         {
-            var typedInner = inner as FloatTensor;
-            typedInner.Dispose ();
+            inner.Dispose ();
         }
 
         /// <summary>
@@ -1155,8 +1514,7 @@ namespace Torch.SNT
         /// <returns>A shallow copy of this tensor.</returns>
         public override Tensor<float> Clone ()
         {
-            var typedInner = inner as FloatTensor;
-            var innerClone = typedInner.Clone ();
+            var innerClone = inner.Clone ();
             var mem = new FloatNativeMemory (innerClone.Storage);
 
             return new FloatTorchTensor (mem.Memory, Dimensions, innerClone);
@@ -1170,17 +1528,57 @@ namespace Torch.SNT
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult> (ReadOnlySpan<int> dimensions)
         {
-            var typedInner = inner as FloatTensor;
-
             switch (true)
             {
-                case bool _ when typeof (TResult) == typeof (float):
-                    var innerClone = CreateFloatTensor (typedInner.Shape);
+                case bool _ when typeof (TResult) == typeof (byte):
+                {
+                    var innerClone = ByteTorchTensor.CreateByteTensor (inner.Shape);
                     innerClone.Fill (default);
-                    var mem = new FloatNativeMemory (innerClone.Storage);
+                    var mem = new ByteTorchTensor.ByteNativeMemory (innerClone.Storage);
+
+                    return new ByteTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (short):
+                {
+                    var innerClone = ShortTorchTensor.CreateShortTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new ShortTorchTensor.ShortNativeMemory (innerClone.Storage);
+
+                    return new ShortTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (int):
+                {
+                    var innerClone = IntTorchTensor.CreateIntTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new IntTorchTensor.IntNativeMemory (innerClone.Storage);
+
+                    return new IntTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (long):
+                {
+                    var innerClone = LongTorchTensor.CreateLongTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new LongTorchTensor.LongNativeMemory (innerClone.Storage);
+
+                    return new LongTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (double):
+                {
+                    var innerClone = DoubleTorchTensor.CreateDoubleTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new DoubleTorchTensor.DoubleNativeMemory (innerClone.Storage);
+
+                    return new DoubleTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
+                }
+                case bool _ when typeof (TResult) == typeof (float):
+                {
+                    var innerClone = FloatTorchTensor.CreateFloatTensor (inner.Shape);
+                    innerClone.Fill (default);
+                    var mem = new FloatTorchTensor.FloatNativeMemory (innerClone.Storage);
 
                     return new FloatTorchTensor (mem.Memory, Dimensions, innerClone) as Tensor<TResult>;
-                default: throw new NotImplementedException ("Only cloning floats is currently implemented.");
+                }
+                default: throw new NotImplementedException ($"Cloning type {typeof (TResult)} is not supported.");
             }
         }
 
@@ -1203,18 +1601,46 @@ namespace Torch.SNT
                 throw new ArgumentException ($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
-            var typedInner = inner as FloatTensor;
             FloatTensor reshapedTensor;
 
             switch (dimensions.Length)
             {
                 case 1:
-                    reshapedTensor = typedInner.NewWithStorage1d (UIntPtr.Zero, dimensions[0], 1);
+                    reshapedTensor = inner.NewWithStorage1d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        1);
                     break;
                 case 2:
-                    reshapedTensor = typedInner.NewWithStorage2d (UIntPtr.Zero, dimensions[0], dimensions[1], dimensions[1], 1);
+                    reshapedTensor = inner.NewWithStorage2d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1], 
+                        dimensions[1], 
+                        1);
                     break;
-                default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
+                case 3:
+                    reshapedTensor = inner.NewWithStorage3d (
+                        UIntPtr.Zero, 
+                        dimensions[0], 
+                        dimensions[1] + dimensions[2],
+                        dimensions[1], 
+                        dimensions[2], 
+                        dimensions[2], 
+                        1);
+                    break;
+                case 4:
+                    reshapedTensor = inner.NewWithStorage4d (
+                        UIntPtr.Zero, 
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
+                        dimensions[1], 
+                        dimensions[2] + dimensions[3], 
+                        dimensions[2], 
+                        dimensions[3], 
+                        dimensions[3], 
+                        1);
+                    break;
+                 default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
             }
 
             return new FloatTorchTensor (Buffer, dimensions, reshapedTensor);
