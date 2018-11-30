@@ -231,8 +231,6 @@ foreach (var type in new [] {
             this.handle = handle;
         }
 
-        internal <#=tname#>Storage storage;
-
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_new ();
 
@@ -573,7 +571,6 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage1d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size, long stride)
         {
             var result = new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage1d(storage.handle, offset, size, stride));
-            result.storage = storage;
             return result;
         }
 
@@ -603,7 +600,6 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage2d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
-            result.storage = storage;
             return result;
         }
 
@@ -637,7 +633,6 @@ foreach (var type in new [] {
         public static <#=tname#>Tensor NewWithStorage3d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
-            result.storage = storage;
             return result;
         }
 
@@ -675,7 +670,6 @@ foreach (var type in new [] {
         public <#=tname#>Tensor NewWithStorage4d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
             var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
-            result.storage = storage;
             return result;
         }
 
