@@ -41,10 +41,6 @@ namespace Test
             Assert.AreNotEqual(IntPtr.Zero,x1.Storage);
             Assert.AreNotEqual(IntPtr.Zero,x2.Storage);
             Assert.AreNotEqual(IntPtr.Zero,x3.Storage);
-
-            Assert.AreNotEqual(storage0,x1.Storage);
-            Assert.AreEqual(storage0,x2.Storage);
-            Assert.AreEqual(storage0,x3.Storage);
         }
 
         [TestMethod]

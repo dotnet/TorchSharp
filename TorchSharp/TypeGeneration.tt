@@ -449,17 +449,7 @@ foreach (var type in new [] {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public <#=tname#>Storage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new <#=tname#>Storage (TH<#=tname#>Tensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public <#=tname#>Storage Storage => new <#=tname#>Storage (TH<#=tname#>Tensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_nDimension (HType handle);

@@ -424,17 +424,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public ByteStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new ByteStorage (THByteTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public ByteStorage Storage => new ByteStorage (THByteTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THByteTensor_nDimension (HType handle);
@@ -3670,17 +3660,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public ShortStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new ShortStorage (THShortTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public ShortStorage Storage => new ShortStorage (THShortTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THShortTensor_nDimension (HType handle);
@@ -6868,17 +6848,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public IntStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new IntStorage (THIntTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public IntStorage Storage => new IntStorage (THIntTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THIntTensor_nDimension (HType handle);
@@ -10066,17 +10036,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public LongStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new LongStorage (THLongTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public LongStorage Storage => new LongStorage (THLongTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THLongTensor_nDimension (HType handle);
@@ -13264,17 +13224,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public DoubleStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new DoubleStorage (THDoubleTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public DoubleStorage Storage => new DoubleStorage (THDoubleTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THDoubleTensor_nDimension (HType handle);
@@ -17347,17 +17297,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns the associated storage for this tensor
         /// </summary>       
-        public FloatStorage Storage 
-        { 
-            get 
-            { 
-                if (storage == null) 
-                { 
-                    storage = new FloatStorage (THFloatTensor_storage (handle)); 
-                } 
-                return storage; 
-            } 
-        } 
+        public FloatStorage Storage => new FloatStorage (THFloatTensor_storage (handle));
         
         [DllImport ("caffe2")]
         extern static int THFloatTensor_nDimension (HType handle);
