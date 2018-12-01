@@ -144,14 +144,13 @@ foreach (var type in new [] {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr TH<#=tname#>Storage_size (HType handle);
+            extern static UIntPtr TH<#=tname#>Storage_size (HType handle); 
 
             /// <summary>
             ///   Return the total length of the storage.
             /// </summary>
-            public ulong Size ()
-            {
-                return TH<#=tname#>Storage_size(handle).ToUInt64();
+            public ulong Size {
+                get => TH<#=tname#>Storage_size(handle).ToUInt64();
             }
 
             [DllImport ("caffe2")]
@@ -447,9 +446,9 @@ foreach (var type in new [] {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>
+        /// </summary>       
         public <#=tname#>Storage Storage => new <#=tname#>Storage (TH<#=tname#>Tensor_storage (handle));
-
+        
         [DllImport ("caffe2")]
         extern static int TH<#=tname#>Tensor_nDimension (HType handle);
 
@@ -504,8 +503,8 @@ foreach (var type in new [] {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public unsafe <#=ttype#> *Data => (<#=ttype#>*) TH<#=tname#>Tensor_data (handle);
-
+        public IntPtr Data => TH<#=tname#>Tensor_data (handle);
+        
         [DllImport ("caffe2")]
         extern static HType TH<#=tname#>Tensor_newClone (HType handle);
 
@@ -563,40 +562,85 @@ foreach (var type in new [] {
         extern static HType TH<#=tname#>Tensor_newWithStorage1d(<#=tname#>Storage.HType handle, UIntPtr offset, long size, long stride);
 
         /// <summary>
-        ///   Access to element at the specified position in the tensor
-        /// </summary>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
-        /// <param name="size">Size of the first dimension.</param>
-        /// <param name="stride">Stride of the first dimension.</param>
+        ///   Create a new tensor with a specified storage arena.
+        /// </summary>        
+        /// <param name="storage">Storage arena.</param>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size">Size of the first dimension.</param>     
+        /// <param name="stride">Stride of the first dimension.</param>          
+        public static <#=tname#>Tensor NewWithStorage1d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size, long stride)
+        {
+            var result = new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage1d(storage.handle, offset, size, stride));
+            return result;
+        }
+
+        /// <summary>
+        ///   Create a new tensor using the storage arena of the base tensor.
+        /// </summary>        
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size">Size of the first dimension.</param>     
+        /// <param name="stride">Stride of the first dimension.</param>          
         public <#=tname#>Tensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
-            return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage1d(Storage.handle, offset, size, stride));
+            return NewWithStorage1d(Storage, offset, size, stride);
         }
 
         [DllImport("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithStorage2d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1);
 
         /// <summary>
-        ///   Access to element at the specified position in the tensor
-        /// </summary>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
-        /// <param name="size0">Size of the first dimension.</param>
+        ///   Create a new tensor with a specified storage arena.
+        /// </summary>        
+        /// <param name="storage">Storage arena.</param>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="stride0">Stride of the first dimension.</param>
+        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="stride1">Stride of the second dimension.</param>
+        public static <#=tname#>Tensor NewWithStorage2d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
+        {
+            var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage2d(storage.handle, offset, size0, stride0, size1, stride1));
+            return result;
+        }
+
+        /// <summary>
+        ///   Create a new tensor using the storage arena of the base tensor.
+        /// </summary>        
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public <#=tname#>Tensor NewWithStorage2d(UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
-            return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage2d(Storage.handle, offset, size0, stride0, size1, stride1));
+            return NewWithStorage2d(Storage, offset, size0, stride0, size1, stride1);
         }
 
         [DllImport("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithStorage3d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2);
 
         /// <summary>
-        ///   Access to element at the specified position in the tensor
-        /// </summary>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
-        /// <param name="size0">Size of the first dimension.</param>
+        ///   Create a new tensor with a specified storage arena.
+        /// </summary>        
+        /// <param name="storage">Storage arena.</param>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="stride0">Stride of the first dimension.</param>
+        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="stride1">Stride of the second dimension.</param>
+        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="stride2">Stride of the third dimension.</param>
+        public static <#=tname#>Tensor NewWithStorage3d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
+        {
+            var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage3d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
+            return result;
+        }
+
+        /// <summary>
+        ///   Create a new tensor using the storage arena of the base tensor.
+        /// </summary>        
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -604,17 +648,36 @@ foreach (var type in new [] {
         /// <param name="stride2">Stride of the third dimension.</param>
         public <#=tname#>Tensor NewWithStorage3d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
-            return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage3d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2));
+            return NewWithStorage3d(Storage, offset, size0, stride0, size1, stride1, size2, stride2);
         }
 
         [DllImport("caffe2")]
         extern static HType TH<#=tname#>Tensor_newWithStorage4d(<#=tname#>Storage.HType handle, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3);
 
         /// <summary>
-        ///   Access to element at the specified position in the tensor
-        /// </summary>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
-        /// <param name="size0">Size of the first dimension.</param>
+        ///   Create a new tensor with a specified storage arena.
+        /// </summary>        
+        /// <param name="storage">Storage arena.</param>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="stride0">Stride of the first dimension.</param>
+        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="stride1">Stride of the second dimension.</param>
+        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="stride2">Stride of the third dimension.</param>
+        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="stride3">Stride of the fourth dimension.</param>
+        public <#=tname#>Tensor NewWithStorage4d(<#=tname#>Tensor.<#=tname#>Storage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
+        {
+            var result =  new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage4d(storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
+            return result;
+        }
+
+        /// <summary>
+        ///   Create a new tensor using the storage arena of the base tensor.
+        /// </summary>        
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
+        /// <param name="size0">Size of the first dimension.</param>     
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -624,7 +687,7 @@ foreach (var type in new [] {
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public <#=tname#>Tensor NewWithStorage4d(UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
-            return new <#=tname#>Tensor(TH<#=tname#>Tensor_newWithStorage4d(Storage.handle, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3));
+            return NewWithStorage4d(Storage, offset, size0, stride0, size1, stride1, size2, stride2, size3, stride3);
         }
 
         [DllImport ("caffe2")]

@@ -24,6 +24,7 @@ namespace Torch.IO {
 <#
 foreach (var type in new [] { 
     new { ApiName = "Byte", AccReal="byte" }, 
+    new { ApiName = "Char", AccReal="byte" },   
     new { ApiName = "Short", AccReal="short" },   
     new { ApiName = "Int", AccReal="int"},
     new { ApiName = "Long", AccReal="long" },
@@ -33,6 +34,7 @@ foreach (var type in new [] {
         string tname = type.ApiName;
         string accreal = type.AccReal;
 #>
+
         [DllImport("caffe2")] 
         extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
 
@@ -50,7 +52,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="value">A <#=accreal#> to write at the current file position.</param>
         public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(this.handle, value); }
-
+<#      if (tname != "Char") { #>
         [DllImport("caffe2")] 
         extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
@@ -70,6 +72,7 @@ foreach (var type in new [] {
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+<#      } /* if */ #>
 
         [DllImport("caffe2")] 
         extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
@@ -82,6 +85,8 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s read.</returns>
         public long Read<#=tname#>s(<#=accreal#>[] data, int n)
         {
+            if (n < 0)
+                throw new ArgumentOutOfRangeException("n cannot be less thab zero");
             if (n > data.Length)
                 throw new ArgumentOutOfRangeException("n cannot be greater than data.Length");
             unsafe
@@ -93,6 +98,17 @@ foreach (var type in new [] {
                 }
             }
         }
+<#      if (tname != "Char") { #>
+        /// <summary>
+        ///   Read <#=accreal#>s from the file into the given <#=accreal#> tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
+        /// <returns>The number of <#=accreal#>s read.</returns>
+        public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
+        {
+            return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+        }
+<#      } /* if */ #>
 
         [DllImport("caffe2")] 
         extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
@@ -105,6 +121,8 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long Write<#=tname#>s(<#=accreal#>[] data, int n = -1)
         {
+            if (n < -1)
+                throw new ArgumentOutOfRangeException("n cannot be less than -1");
             n = (n == -1) ? data.Length : Math.Min(n, data.Length);
             unsafe
             {
@@ -115,6 +133,36 @@ foreach (var type in new [] {
                 }
             }
         }
-<# } /* foreach */ #>
+<#      if (tname != "Char") { #>
+        /// <summary>
+        ///   Write <#=accreal#>s to the file from the given <#=accreal#> tensor.
+        /// </summary>
+        /// <param name="tensor">A tensor containing data to be written to the file.</param>
+        /// <returns>The number of <#=accreal#>s written.</returns>
+        public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
+        {
+            return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+        }
+<#      } /* if */ } /* foreach */ #>
+
+        [DllImport("caffe2")] 
+        extern static long THFile_readChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Read chars from the file into the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object to read data into.</param>
+        /// <returns>The number of chars read.</returns>
+        public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
+
+        [DllImport("caffe2")] 
+        extern static long THFile_writeChar(HType self, MemoryFile.CharStorage.HType storage);
+
+        /// <summary>
+        ///   Write chars to the file from the given storage.
+        /// </summary>
+        /// <param name="storage">A storage object fetch data from.</param>
+        /// <returns>The number of chars written.</returns>
+        public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
     }
 }
