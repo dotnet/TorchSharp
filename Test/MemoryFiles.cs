@@ -264,6 +264,210 @@ namespace Test
             file.Close();
             Assert.IsFalse(file.IsOpen);
         }
+
+        [TestMethod]
+        public void WriteAndReadByteTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.ByteTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (byte)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(byte), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.ByteTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(byte), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
+
+        [TestMethod]
+        public void WriteAndReadShortTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.ShortTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (short)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(short), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.ShortTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(short), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
+
+        [TestMethod]
+        public void WriteAndReadIntTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.IntTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (int)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(int), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.IntTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(int), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
+
+        [TestMethod]
+        public void WriteAndReadLongTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.LongTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (long)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(long), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.LongTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(long), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
+
+        [TestMethod]
+        public void WriteAndReadFloatTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.FloatTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (float)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(float), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.FloatTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(float), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
+
+        [TestMethod]
+        public void WriteAndReadDoubleTensorViaMemoryFile()
+        {
+            const int size = 10;
+
+            var file = new Torch.IO.MemoryFile("rwb");
+            Assert.IsNotNull(file);
+            Assert.IsTrue(file.CanWrite);
+
+            var tensor0 = new TorchSharp.DoubleTensor(size);
+            for (var i = 0; i < size; ++i) 
+            {
+                tensor0[i] = (double)i;
+            }
+
+            file.WriteTensor(tensor0);
+            Assert.AreEqual(size*sizeof(double), file.Position);
+            file.Seek(0);
+        
+            var tensor1 = new TorchSharp.DoubleTensor(size);
+            var rd = file.ReadTensor(tensor1);
+
+            Assert.AreEqual(rd, size);
+            Assert.AreEqual(size * sizeof(double), file.Position);
+
+            for (var i = 0; i < rd; ++i)
+            {
+                Assert.AreEqual(tensor1[i], tensor1[i]);
+            }
+
+            file.Close();
+            Assert.IsFalse(file.IsOpen);
+        }
         
         [TestMethod]
         public void WriteAndReadStorageBytesViaMemoryFile()
