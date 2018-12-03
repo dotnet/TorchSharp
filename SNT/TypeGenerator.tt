@@ -36,7 +36,7 @@ foreach (var type in new [] {
 
             public <#=tname#>NativeMemory(<#=tname#>Tensor.<#=tname#>Storage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -51,7 +51,7 @@ foreach (var type in new [] {
             /// </summary>
             public override Span<<#=stname#>> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -70,7 +70,7 @@ foreach (var type in new [] {
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }

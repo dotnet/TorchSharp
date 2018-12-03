@@ -19,7 +19,7 @@ namespace Torch.SNT
 
             public ByteNativeMemory(ByteTensor.ByteStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -34,7 +34,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<byte> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -53,7 +53,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -296,7 +296,7 @@ namespace Torch.SNT
 
             public ShortNativeMemory(ShortTensor.ShortStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -311,7 +311,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<short> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -330,7 +330,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -573,7 +573,7 @@ namespace Torch.SNT
 
             public IntNativeMemory(IntTensor.IntStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -588,7 +588,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<int> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -607,7 +607,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -850,7 +850,7 @@ namespace Torch.SNT
 
             public LongNativeMemory(LongTensor.LongStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -865,7 +865,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<long> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -884,7 +884,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -1127,7 +1127,7 @@ namespace Torch.SNT
 
             public DoubleNativeMemory(DoubleTensor.DoubleStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -1142,7 +1142,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<double> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -1161,7 +1161,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -1404,7 +1404,7 @@ namespace Torch.SNT
 
             public FloatNativeMemory(FloatTensor.FloatStorage storage)
             {
-                if (storage.Size () < 0)
+                if (storage.Size < 0)
                 {
                     throw new ArgumentOutOfRangeException ("Length cannot be negative.");
                 }
@@ -1419,7 +1419,7 @@ namespace Torch.SNT
             /// </summary>
             public override Span<float> GetSpan ()
             {
-                ulong len = storage.Size ();
+                ulong len = storage.Size;
 
                 if (len > int.MaxValue)
                 {
@@ -1438,7 +1438,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size ()) 
+                if ((uint)elementIndex > storage.Size) 
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
