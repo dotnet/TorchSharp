@@ -11,3 +11,4 @@ linux
 macos
 windows
 *.zip
+/Debug

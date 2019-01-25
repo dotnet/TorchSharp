@@ -6477,6 +6477,112 @@ namespace TorchSharp {
         }
 #endif
     }
+
+    public partial class Module : IDisposable
+    {
+        /// <summary>
+        ///    The storage class provides a mechanism to access the underlying data representation for tensors.
+        /// </summary>
+        internal sealed class HType : SafeHandle
+        {
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
+            {
+                SetHandle(preexistingHandle);
+            }
+
+            public override bool IsInvalid => handle == IntPtr.Zero;
+
+            // This is just for marshalling
+            internal HType() : base(IntPtr.Zero, true)
+            {
+            }
+
+            protected override bool ReleaseHandle()
+            {
+                return true;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    ReleaseHandle();
+                }
+            }
+        }
+
+        internal HType handle;
+
+        internal Module(IntPtr handle)
+        {
+            this.handle = new HType(handle, true);
+        }
+
+        ~Module()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        ///   Releases the storage.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///   Implements the .NET Dispose pattern.
+        /// </summary>
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                handle.Dispose();
+                handle.SetHandleAsInvalid();
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr Load(string filename);
+
+        static public Module LoadModule(string filename)
+        {
+            var handle = Load(filename);
+            return new Module(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Forward(Module.HType module, FloatTensor.HType tensor);
+
+        public FloatTensor Score(FloatTensor tensor)
+        {
+            Module.HType mhandle = handle;
+            FloatTensor.HType thandle = tensor.handle;
+            return new FloatTensor(Forward(mhandle, thandle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static int GetNumberOfModules(Module.HType module);
+
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        extern static string GetModule(Module.HType module, int index);
+
+        public string[] GetModules()
+        {
+            var numModules = GetNumberOfModules(handle);
+            string[] result = new string[numModules];
+
+            for(int i = 0; i < numModules; i++)
+            {
+                result[i] = GetModule(handle, i);
+            }
+
+            return result;
+        }
+    }
+
     public partial class IntTensor : IDisposable {
         /// <summary>
         ///    The storage class provides a mechanism to access the underlying data representation for tensors.
@@ -6833,6 +6939,23 @@ namespace TorchSharp {
 
         [DllImport ("caffe2")]
         extern static void THIntTensor_zero (HType handle);
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Ones(int length);
+
+        /// <summary>
+        ///  Fills the tensor with zeros
+        /// </summary>
+        static public IntTensor Ones(long[] size)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new IntTensor(Ones(size.Length));
+                }
+            }
+        }
 
         /// <summary>
         ///  Fills the tensor with zeros
@@ -16998,25 +17121,25 @@ namespace TorchSharp {
         /// </summary>
         public class FloatStorage : IDisposable {
             internal sealed class HType : SafeHandle {
-                public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+                public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
                 {
-                    SetHandle (preexistingHandle);
+                    SetHandle(preexistingHandle);
                 }
 
                 public override bool IsInvalid => handle == IntPtr.Zero;
 
                 // This is just for marshalling
-                internal HType () : base (IntPtr.Zero, true)
+                internal HType() : base(IntPtr.Zero, true)
                 {
                 }
 
-                [DllImport ("caffe2")]
-                extern static void THFloatStorage_free (IntPtr handle);
+                [DllImport("caffe2")]
+                extern static void THFloatStorage_free(IntPtr handle);
 
 
-                protected override bool ReleaseHandle ()
+                protected override bool ReleaseHandle()
                 {
-                    THFloatStorage_free (handle);
+                    THFloatStorage_free(handle);
                     return true;
                 }
 
@@ -17031,78 +17154,78 @@ namespace TorchSharp {
 
             internal HType handle;
 
-            [DllImport ("caffe2")]
-            extern static HType THFloatStorage_new ();
+            [DllImport("caffe2")]
+            extern static HType THFloatStorage_new();
 
             /// <summary>
             ///   Initializes an empty FloatStorage instance.
             /// </summary>
-            public FloatStorage ()
+            public FloatStorage()
             {
-                handle = THFloatStorage_new ();
+                handle = THFloatStorage_new();
             }
 
-            internal FloatStorage (HType fromHandle)
+            internal FloatStorage(HType fromHandle)
             {
                 this.handle = fromHandle;
             }
 
-            [DllImport ("caffe2")]
-            extern static HType THFloatStorage_newWithSize (UIntPtr size);
+            [DllImport("caffe2")]
+            extern static HType THFloatStorage_newWithSize(UIntPtr size);
 
             /// <summary>
             ///   Initializes a FloatStorage instance with the specified size.
             /// </summary>
             /// <param name="size">The desired number of elements in the storage</param>
-            public FloatStorage (long size)
+            public FloatStorage(long size)
             {
-                handle = THFloatStorage_newWithSize ((UIntPtr) size);
+                handle = THFloatStorage_newWithSize((UIntPtr)size);
             }
 
             /// <summary>
             /// Finalizer
             /// </summary>
-            ~FloatStorage ()
+            ~FloatStorage()
             {
-                Dispose (false);
+                Dispose(false);
             }
 
             /// <summary>
             ///   Releases the storage.
             /// </summary>
-            public void Dispose ()
+            public void Dispose()
             {
-                Dispose (true);
-                GC.SuppressFinalize (this);
+                Dispose(true);
+                GC.SuppressFinalize(this);
             }
 
             /// <summary>
             ///   Implements the .NET Dispose pattern.
             /// </summary>
-            protected void Dispose (bool disposing)
+            protected void Dispose(bool disposing)
             {
                 if (disposing) {
-                    handle.Dispose ();
-                    handle.SetHandleAsInvalid ();
+                    handle.Dispose();
+                    handle.SetHandleAsInvalid();
                 }
             }
 
-            [DllImport ("caffe2")]
-            extern static float THFloatStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
-            [DllImport ("caffe2")]
-            extern static void THFloatStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  float value);
+            [DllImport("caffe2")]
+            extern static float THFloatStorage_get(HType handle, /*ptrdiff_t*/IntPtr pos);
+            [DllImport("caffe2")]
+            extern static void THFloatStorage_set(HType handle, /*ptrdiff_t*/IntPtr pos, float value);
 
             /// <summary>
             /// </summary>
-            public float this [long index] {
-                get => THFloatStorage_get (handle, (IntPtr) (index));
+            public float this[long index] {
+                get => THFloatStorage_get(handle, (IntPtr)(index));
                 set {
-                    THFloatStorage_set (handle, (IntPtr) (index), value);
+                    THFloatStorage_set(handle, (IntPtr)(index), value);
                 }
             }
 
-            [DllImport ("caffe2")]
-            extern static UIntPtr THFloatStorage_size (HType handle); 
+            [DllImport("caffe2")]
+            extern static UIntPtr THFloatStorage_size(HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -17112,58 +17235,153 @@ namespace TorchSharp {
             }
 
             [DllImport("caffe2")]
-            extern static IntPtr THFloatStorage_data (HType handle);
+            extern static IntPtr THFloatStorage_data(HType handle);
 
             /// <summary>
             ///  Returns a pointer to the unmanaged data managed by this tensor.
             /// </summary>
-            public IntPtr Data => THFloatStorage_data (handle);
+            public IntPtr Data => THFloatStorage_data(handle);
 
-            [DllImport ("caffe2")]
-            extern static void THFloatStorage_retain (HType handle);
+            [DllImport("caffe2")]
+            extern static void THFloatStorage_retain(HType handle);
 
             /// <summary>
             ///   Increment the ref count for this storage.
             /// </summary>
-            public void Retain ()
+            public void Retain()
             {
-                THFloatStorage_retain (handle);
+                THFloatStorage_retain(handle);
             }
 
-            [DllImport ("caffe2")]
-            extern static void THFloatStorage_free (HType handle);
+            [DllImport("caffe2")]
+            extern static void THFloatStorage_free(HType handle);
 
             /// <summary>
             ///   Decrememnt the ref count for this storage, or destroy it if
             ///   refounct = 0.
             /// </summary>
-            public void Free ()
+            public void Free()
             {
-                THFloatStorage_free (handle);
+                THFloatStorage_free(handle);
             }
 
-            [DllImport ("caffe2")]
-            extern static float THFloatStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
+            [DllImport("caffe2")]
+            extern static float THFloatStorage_resize(HType handle, /*ptrdiff_t*/UIntPtr newSize);
 
             /// <summary>
             ///   Changes the size of this storage to the new requested size.
             /// </summary>
             /// <param name="size">The desired new size.</param>
-            public void Resize (ulong size)
+            public void Resize(ulong size)
             {
-                THFloatStorage_resize (handle, (UIntPtr) size);
+                THFloatStorage_resize(handle, (UIntPtr)size);
             }
 
-            [DllImport ("caffe2")]
-            extern static void THFloatStorage_fill (HType handle, float value);
+            [DllImport("caffe2")]
+            extern static void THFloatStorage_fill(HType handle, float value);
 
             /// <summary>
             ///   Fills every element of the storage with the specified value.
             /// </summary>
             /// <param name="value">Value used for each element</param>
-            public void Fill (float value)
+            public void Fill(float value)
             {
-                THFloatStorage_fill (handle, value);
+                THFloatStorage_fill(handle, value);
+            }
+        }
+
+        public class FloatArrayRef : IDisposable
+        {
+            internal sealed class HType : SafeHandle
+            {
+                public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
+                {
+                    SetHandle(preexistingHandle);
+                }
+
+                public override bool IsInvalid => handle == IntPtr.Zero;
+
+                // This is just for marshalling
+                internal HType() : base(IntPtr.Zero, true)
+                {
+                }
+
+                [DllImport("caffe2")]
+                extern static void THFloatArrayRef_free(IntPtr handle);
+
+
+                protected override bool ReleaseHandle()
+                {
+                    THFloatArrayRef_free(handle);
+                    return true;
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        ReleaseHandle();
+                    }
+                }
+            }
+
+            internal HType handle;
+
+            [DllImport("torch")]
+            extern static HType ArrayRef();
+
+            /// <summary>
+            ///   Initializes an empty FloatStorage instance.
+            /// </summary>
+            public FloatArrayRef()
+            {
+                handle = ArrayRef();
+            }
+
+            [DllImport("torch")]
+            extern static HType ArrayRef(IntPtr data, int size);
+
+            /// <summary>
+            ///   Initializes an empty FloatStorage instance.
+            /// </summary>
+            public FloatArrayRef(int[] data)
+            {
+                unsafe
+                {
+                    fixed (int* p = data)
+                    {
+                        handle = ArrayRef((IntPtr)p, data.Length);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Finalizer
+            /// </summary>
+            ~FloatArrayRef()
+            {
+                Dispose(false);
+            }
+
+            /// <summary>
+            ///   Releases the storage.
+            /// </summary>
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            /// <summary>
+            ///   Implements the .NET Dispose pattern.
+            /// </summary>
+            protected void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    handle.Dispose();
+                    handle.SetHandleAsInvalid();
+                }
             }
         }
     }
@@ -17355,6 +17573,23 @@ namespace TorchSharp {
         public void ZeroFill ()
         {
             THFloatTensor_zero (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Ones(int length);
+
+        /// <summary>
+        ///  Fills the tensor with zeros
+        /// </summary>
+        static public FloatTensor Ones(long[] size)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new FloatTensor(Ones(size.Length));
+                }
+            }
         }
 
         [DllImport ("caffe2")]
@@ -18097,16 +18332,16 @@ namespace TorchSharp {
         /// </summary>
         public override string ToString ()
         {
-            var n = Dimensions;
-            if (n == 0)
+            //var n = Dimensions;
+            //if (n == 0)
                     return "[]";
 
             StringBuilder sb = new StringBuilder ("[");
-            for (int i = 0; i < n; i++) {
-                    sb.Append (GetTensorDimension (i));
-                    if (i + 1 < n)
-                            sb.Append ("x");
-            }
+            //for (int i = 0; i < n; i++) {
+            //        sb.Append (GetTensorDimension (i));
+            //        if (i + 1 < n)
+            //                sb.Append ("x");
+            //}
             sb.Append ("]");
             return sb.ToString ();
         }
@@ -19110,6 +19345,13 @@ namespace TorchSharp {
         {
             var result = new FloatTensor ();
             THFloatTensor_onesLike (result.handle, this.handle);
+            return result;
+        }
+
+        public FloatTensor One()
+        {
+            var result = new FloatTensor();
+            THFloatTensor_onesLike(result.handle, this.handle);
             return result;
         }
 
