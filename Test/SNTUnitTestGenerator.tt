@@ -53,8 +53,8 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
@@ -73,8 +73,8 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
@@ -93,8 +93,8 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
@@ -181,7 +181,7 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.AreEqual(x[i, j], x.AtenSharpTensor[i, j]);
                 }
             }
         }
@@ -317,8 +317,8 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });

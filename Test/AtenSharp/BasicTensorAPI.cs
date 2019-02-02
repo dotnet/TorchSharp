@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TorchSharp;
+using AtenSharp;
 using System;
 
-namespace Test
+namespace AtenSharp.Test
 {
     [TestClass]
     public class BasicTensorAPI
@@ -24,24 +24,24 @@ namespace Test
             Assert.AreEqual(20, x2Shape[1]);
         }
 
-        [TestMethod]
-        public void CreateIntTensorOne()
-        {
-            var x1 = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
+        //[TestMethod]
+        //public void CreateIntTensorOne()
+        //{
+        //    var x1 = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
 
-            //Assert.AreEqual(4, x1.Shape.Length);
+        //    //Assert.AreEqual(4, x1.Shape.Length);
 
-            var module = Module.LoadModule(@"E:\Source\Repos\libtorch\model.pt");
+        //    var module = Module.LoadModule(@"E:\Source\Repos\libtorch\model.pt");
 
-            var modules = module.GetModules();
-            var result = module.Score(x1);
-        }
+        //    var modules = module.GetModules();
+        //    var result = module.Score(x1);
+        //}
 
         [TestMethod]
         public void GetFloatTensorData()
         {
             const int size = 10;
-            var storage0 = new TorchSharp.FloatTensor.FloatStorage(2 * size);
+            var storage0 = new AtenSharp.FloatTensor.FloatStorage(2 * size);
 
             var x1 = new FloatTensor(size);
             var x2 = FloatTensor.NewWithStorage1d(storage0, UIntPtr.Zero, size, 1);

@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Text;
-using TorchSharp;
+using AtenSharp;
 
 namespace Torch.IO {
 
@@ -104,7 +104,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of <#=accreal#>s read.</returns>
-        public long ReadTensor(TorchSharp.<#=tname#>Tensor tensor)
+        public long ReadTensor(AtenSharp.<#=tname#>Tensor tensor)
         {
             return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -139,7 +139,7 @@ foreach (var type in new [] {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
-        public long WriteTensor(TorchSharp.<#=tname#>Tensor tensor)
+        public long WriteTensor(AtenSharp.<#=tname#>Tensor tensor)
         {
             return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
         }

@@ -12,7 +12,7 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+    <ProjectReference Include="..\AtenSharp\AtenSharp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="TypeGenerator.tt">

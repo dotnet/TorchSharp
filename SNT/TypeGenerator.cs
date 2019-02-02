@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Linq;
 using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
-using TorchSharp;
+using AtenSharp;
 
 namespace Torch.SNT 
 {

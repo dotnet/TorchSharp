@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TorchSharp;
+using AtenSharp;
 using System;
 
-namespace Test
+namespace AtenSharp.Test
 {
     [TestClass]
     public class UnaryTensorOps

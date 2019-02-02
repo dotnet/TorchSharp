@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TorchSharp;
+using AtenSharp;
 using System;
-using System.Linq;
 
-namespace Test
+namespace AtenSharp.Test
 {
     [TestClass]
     public class MatrixAndVectorOps

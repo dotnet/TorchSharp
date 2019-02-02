@@ -30,9 +30,25 @@
     <None Remove="PreprocessedT4Template.tt" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Generated\TorchTensor.tt">
+    <None Update="TypeGeneration.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TorchTensor.generated.cs</LastGenOutput>
+      <LastGenOutput>TypeGeneration.cs</LastGenOutput>
+    </None>
+    <None Update="Raw/Blas.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Blas.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Raw/Lapack.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Lapack.generated.cs</LastGenOutput>
+    </None>
+    <None Update="Raw/Vector.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Raw/Vector.generated.cs</LastGenOutput>
+    </None>
+    <None Update="FileOperations.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FileOperations.cs</LastGenOutput>
     </None>
     <None Update="Generator.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
@@ -45,14 +61,28 @@
     <Compile Remove="Handle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Generated\TorchTensor.generated.cs">
+    <Compile Update="TypeGeneration.cs">
+      <DependentUpon>TypeGeneration.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TorchTensor.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AtenSharp\AtenSharp.csproj" />
+    </Compile>
+    <Compile Update="Raw/Blas.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Blas.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Raw/Lapack.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Lapack.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Raw/Vector.generated.cs">
+      <DependentUpon>Raw/Types.ttinclude</DependentUpon>
+      <DependentUpon>Raw/Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Update="FileOperations.cs">
+      <DependentUpon>FileOperations.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
@@ -71,12 +101,5 @@
 
     <None Include="..\linux\libtorch\lib\libc10.so" Link="nuget\runtimes\linux\native\libc10.so" PackagePath="runtimes\linux\native\libc10.so" Pack="true" />
     <None Include="..\linux\libtorch\lib\libcaffe2.so" Link="nuget\runtimes\linux\native\libcaffe2.so" PackagePath="runtimes\linux\native\libcaffe2.so" Pack="true" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Generated\TorchTensor.generated.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>TorchTensor.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 </Project>

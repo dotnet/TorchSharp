@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Torch.IO;
 
-namespace Test
+namespace AtenSharp.Test
 {
     [TestClass]
     public class DiskFiles
@@ -281,7 +281,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.ByteTensor.ByteStorage(size);
+            var storage0 = new AtenSharp.ByteTensor.ByteStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = (byte)i;
@@ -291,7 +291,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(byte), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.ByteTensor.ByteStorage(size);
+            var storage1 = new AtenSharp.ByteTensor.ByteStorage(size);
             var rd = file.ReadBytes(storage1);
 
             Assert.AreEqual(rd, size);
@@ -349,7 +349,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.ShortTensor.ShortStorage(size);
+            var storage0 = new AtenSharp.ShortTensor.ShortStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = (short)i;
@@ -359,7 +359,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(short), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.ShortTensor.ShortStorage(size);
+            var storage1 = new AtenSharp.ShortTensor.ShortStorage(size);
             var rd = file.ReadShorts(storage1);
 
             Assert.AreEqual(rd, size);
@@ -383,7 +383,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.IntTensor.IntStorage(size);
+            var storage0 = new AtenSharp.IntTensor.IntStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = i;
@@ -393,7 +393,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(int), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.IntTensor.IntStorage(size);
+            var storage1 = new AtenSharp.IntTensor.IntStorage(size);
             var rd = file.ReadInts(storage1);
 
             Assert.AreEqual(rd, size);
@@ -417,7 +417,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.LongTensor.LongStorage(size);
+            var storage0 = new AtenSharp.LongTensor.LongStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = i;
@@ -427,7 +427,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(long), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.LongTensor.LongStorage(size);
+            var storage1 = new AtenSharp.LongTensor.LongStorage(size);
             var rd = file.ReadLongs(storage1);
 
             Assert.AreEqual(rd, size);
@@ -451,7 +451,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.FloatTensor.FloatStorage(size);
+            var storage0 = new AtenSharp.FloatTensor.FloatStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = (float)i;
@@ -461,7 +461,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(float), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.FloatTensor.FloatStorage(size);
+            var storage1 = new AtenSharp.FloatTensor.FloatStorage(size);
             var rd = file.ReadFloats(storage1);
 
             Assert.AreEqual(rd, size);
@@ -485,7 +485,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var storage0 = new TorchSharp.DoubleTensor.DoubleStorage(size);
+            var storage0 = new AtenSharp.DoubleTensor.DoubleStorage(size);
             for (var i = 0; i < size; ++i) 
             {
                 storage0[i] = (double)i;
@@ -495,7 +495,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(double), file.Position);
             file.Seek(0);
 
-            var storage1 = new TorchSharp.DoubleTensor.DoubleStorage(size);
+            var storage1 = new AtenSharp.DoubleTensor.DoubleStorage(size);
             var rd = file.ReadDoubles(storage1);
 
             Assert.AreEqual(rd, size);
@@ -684,7 +684,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.ByteTensor(size);
+            var tensor0 = new AtenSharp.ByteTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (byte)i;
@@ -694,7 +694,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(byte), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.ByteTensor(size);
+            var tensor1 = new AtenSharp.ByteTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);
@@ -718,7 +718,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.ShortTensor(size);
+            var tensor0 = new AtenSharp.ShortTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (short)i;
@@ -728,7 +728,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(short), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.ShortTensor(size);
+            var tensor1 = new AtenSharp.ShortTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);
@@ -752,7 +752,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.IntTensor(size);
+            var tensor0 = new AtenSharp.IntTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (int)i;
@@ -762,7 +762,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(int), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.IntTensor(size);
+            var tensor1 = new AtenSharp.IntTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);
@@ -786,7 +786,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.LongTensor(size);
+            var tensor0 = new AtenSharp.LongTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (long)i;
@@ -796,7 +796,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(long), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.LongTensor(size);
+            var tensor1 = new AtenSharp.LongTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);
@@ -820,7 +820,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.FloatTensor(size);
+            var tensor0 = new AtenSharp.FloatTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (float)i;
@@ -830,7 +830,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(float), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.FloatTensor(size);
+            var tensor1 = new AtenSharp.FloatTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);
@@ -854,7 +854,7 @@ namespace Test
             Assert.IsNotNull(file);
             Assert.IsTrue(file.CanWrite);
 
-            var tensor0 = new TorchSharp.DoubleTensor(size);
+            var tensor0 = new AtenSharp.DoubleTensor(size);
             for (var i = 0; i < size; ++i) 
             {
                 tensor0[i] = (double)i;
@@ -864,7 +864,7 @@ namespace Test
             Assert.AreEqual(size*sizeof(double), file.Position);
             file.Seek(0);
         
-            var tensor1 = new TorchSharp.DoubleTensor(size);
+            var tensor1 = new AtenSharp.DoubleTensor(size);
             var rd = file.ReadTensor(tensor1);
 
             Assert.AreEqual(rd, size);

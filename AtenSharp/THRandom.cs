@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TorchSharp {
+namespace AtenSharp {
 	/// <summary>
 	/// Random class
 	/// </summary>
@@ -19,7 +19,7 @@ namespace TorchSharp {
 		extern static IntPtr THGenerator_new ();
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:TorchSharp.RandomGenerator"/> class.
+		/// Initializes a new instance of the <see cref="T:AtenSharp.RandomGenerator"/> class.
 		/// </summary>
 		public RandomGenerator ()
 		{
@@ -30,7 +30,7 @@ namespace TorchSharp {
 		extern static int THGeneratorState_isValid (IntPtr handle);
 
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="T:TorchSharp.RandomGenerator"/> is valid.
+		/// Gets a value indicating whether this <see cref="T:AtenSharp.RandomGenerator"/> is valid.
 		/// </summary>
 		/// <value><c>true</c> if is valid; otherwise, <c>false</c>.</value>
 		public bool IsValid => THGeneratorState_isValid (handle) != 0;
@@ -49,7 +49,7 @@ namespace TorchSharp {
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="T:TorchSharp.RandomGenerator"/> is reclaimed by garbage collection.
+		/// <see cref="T:AtenSharp.RandomGenerator"/> is reclaimed by garbage collection.
 		/// </summary>
 		~RandomGenerator()
 		{
@@ -57,12 +57,12 @@ namespace TorchSharp {
 		}
 
 		/// <summary>
-		/// Releases all resource used by the <see cref="T:TorchSharp.RandomGenerator"/> object.
+		/// Releases all resource used by the <see cref="T:AtenSharp.RandomGenerator"/> object.
 		/// </summary>
-		/// <remarks>Call Dispose when you are finished using the <see cref="T:TorchSharp.RandomGenerator"/>. This
-		/// method leaves the <see cref="T:TorchSharp.RandomGenerator"/> in an unusable state. After
-		/// calling this method, you must release all references to the <see cref="T:TorchSharp.RandomGenerator"/>
-		/// so the garbage collector can reclaim the memory that the <see cref="T:TorchSharp.RandomGenerator"/> was occupying.</remarks>
+		/// <remarks>Call Dispose when you are finished using the <see cref="T:AtenSharp.RandomGenerator"/>. This
+		/// method leaves the <see cref="T:AtenSharp.RandomGenerator"/> in an unusable state. After
+		/// calling this method, you must release all references to the <see cref="T:AtenSharp.RandomGenerator"/>
+		/// so the garbage collector can reclaim the memory that the <see cref="T:AtenSharp.RandomGenerator"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			Dispose (true);

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * DO NOT EDIT This is a generated file and will be overwritten, edit FileOperations.tt instead
  */
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Text;
-using TorchSharp;
+using AtenSharp;
 
 namespace Torch.IO {
 
@@ -80,7 +80,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of bytes read.</returns>
-        public long ReadTensor(TorchSharp.ByteTensor tensor)
+        public long ReadTensor(AtenSharp.ByteTensor tensor)
         {
             return THFile_readByteRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -113,7 +113,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of bytes written.</returns>
-        public long WriteTensor(TorchSharp.ByteTensor tensor)
+        public long WriteTensor(AtenSharp.ByteTensor tensor)
         {
             return THFile_writeByteRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -251,7 +251,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of shorts read.</returns>
-        public long ReadTensor(TorchSharp.ShortTensor tensor)
+        public long ReadTensor(AtenSharp.ShortTensor tensor)
         {
             return THFile_readShortRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -284,7 +284,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of shorts written.</returns>
-        public long WriteTensor(TorchSharp.ShortTensor tensor)
+        public long WriteTensor(AtenSharp.ShortTensor tensor)
         {
             return THFile_writeShortRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -355,7 +355,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of ints read.</returns>
-        public long ReadTensor(TorchSharp.IntTensor tensor)
+        public long ReadTensor(AtenSharp.IntTensor tensor)
         {
             return THFile_readIntRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -388,7 +388,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of ints written.</returns>
-        public long WriteTensor(TorchSharp.IntTensor tensor)
+        public long WriteTensor(AtenSharp.IntTensor tensor)
         {
             return THFile_writeIntRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -459,7 +459,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of longs read.</returns>
-        public long ReadTensor(TorchSharp.LongTensor tensor)
+        public long ReadTensor(AtenSharp.LongTensor tensor)
         {
             return THFile_readLongRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -492,7 +492,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of longs written.</returns>
-        public long WriteTensor(TorchSharp.LongTensor tensor)
+        public long WriteTensor(AtenSharp.LongTensor tensor)
         {
             return THFile_writeLongRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -563,7 +563,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of floats read.</returns>
-        public long ReadTensor(TorchSharp.FloatTensor tensor)
+        public long ReadTensor(AtenSharp.FloatTensor tensor)
         {
             return THFile_readFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -596,7 +596,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of floats written.</returns>
-        public long WriteTensor(TorchSharp.FloatTensor tensor)
+        public long WriteTensor(AtenSharp.FloatTensor tensor)
         {
             return THFile_writeFloatRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -667,7 +667,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor to place the data in after reading it from the file.</param>
         /// <returns>The number of doubles read.</returns>
-        public long ReadTensor(TorchSharp.DoubleTensor tensor)
+        public long ReadTensor(AtenSharp.DoubleTensor tensor)
         {
             return THFile_readDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
         }
@@ -700,7 +700,7 @@ namespace Torch.IO {
         /// </summary>
         /// <param name="tensor">A tensor containing data to be written to the file.</param>
         /// <returns>The number of doubles written.</returns>
-        public long WriteTensor(TorchSharp.DoubleTensor tensor)
+        public long WriteTensor(AtenSharp.DoubleTensor tensor)
         {
             return THFile_writeDoubleRaw(this.handle, tensor.Data, tensor.NumElements);			
         }

@@ -5,7 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-namespace TorchSharp {
+namespace AtenSharp {
 	public partial class DoubleTensor {
 		[DllImport ("caffe2")]
 		extern static void AbsCriterion_updateOutput(IntPtr state, DoubleTensor.HType input, DoubleTensor.HType target, DoubleTensor.HType output, long reduction);
