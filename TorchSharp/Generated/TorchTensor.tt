@@ -145,6 +145,15 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         public <#=type.Ptr#> Data => Tensor_data(handle);
 
+        public <#=type.Storage#> Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<<#=type.Storage#>>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
+
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
 
@@ -159,13 +168,30 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public <#=type.Name#>Tensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public <#=type.Name#>Tensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
                     return new <#=type.Name#>Tensor (Tensor_ones ((<#=type.Ptr#>)psizes, size.Length, (short)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public <#=type.Name#>Tensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new <#=type.Name#>Tensor (Tensor_randn ((<#=type.Ptr#>)psizes, size.Length, (short)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
         }

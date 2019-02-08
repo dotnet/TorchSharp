@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TorchSharp.NN
+namespace TorchSharp.JIT
 {
     public class Module : IDisposable
     {
@@ -69,60 +69,40 @@ namespace TorchSharp.NN
             }
         }
 
-        static public Sequential Sequential(params Module[] modules)
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr Module_load(string filename);
+
+        static public Module LoadModule(string filename)
         {
-            return new Sequential(modules);
+            var handle = Module_load(filename);
+            return new Module(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Module_linear(int input, int output, bool hasBias);
-
-        static public Module Linear(int input, int output, bool hasBias = false)
-        {
-            return new Linear(Module_linear(input, output, hasBias));
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr Module_relu();
-
-        static public Module Relu()
-        {
-            return new Module(Module_relu());
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Forward_functional(Module.HType module, FloatTensor.HType tensor);
+        extern static FloatTensor.HType Forward_jit(Module.HType module, FloatTensor.HType tensor);
 
         public virtual FloatTensor Forward(FloatTensor tensor)
         {
-            return new FloatTensor(Forward_functional(handle, tensor.handle));
+            return new FloatTensor(Forward_jit(handle, tensor.handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static long Get_number_of_children(Module.HType module);
+        extern static long Get_number_of_modules(Module.HType module);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string Module_nn_get(Module.HType module, int index);
+        extern static string Module_jit_get(Module.HType module, int index);
 
         public virtual string[] GetModules()
         {
-            var numModules = Get_number_of_children(handle);
+            var numModules = Get_number_of_modules(handle);
             string[] result = new string[numModules];
 
             for (int i = 0; i < numModules; i++)
             {
-                result[i] = Module_nn_get(handle, i);
+                result[i] = Module_jit_get(handle, i);
             }
 
             return result;
-        }
-
-        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string Module_name(Module.HType module);
-
-        public string GetName()
-        {
-            return Module_name(handle);
         }
     }
 }

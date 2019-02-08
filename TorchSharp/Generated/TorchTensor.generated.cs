@@ -16,17 +16,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -131,12 +131,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public byte Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<byte>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -147,18 +156,35 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ByteTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public ByteTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new ByteTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                    return new ByteTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public ByteTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new ByteTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
         }
@@ -195,17 +221,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -310,12 +336,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public short Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<short>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -326,18 +361,35 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ShortTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public ShortTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new ShortTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                    return new ShortTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public ShortTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new ShortTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
         }
@@ -374,17 +426,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -489,12 +541,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public int Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<int>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -505,18 +566,35 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public IntTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public IntTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new IntTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                    return new IntTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public IntTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new IntTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
         }
@@ -553,17 +631,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -668,12 +746,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public long Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<long>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -684,18 +771,35 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public LongTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public LongTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new LongTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                    return new LongTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public LongTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new LongTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
         }
@@ -732,17 +836,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -847,12 +951,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public double Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<double>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -863,18 +976,35 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public DoubleTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public DoubleTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new DoubleTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                    return new DoubleTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public DoubleTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new DoubleTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
         }
@@ -911,17 +1041,17 @@ namespace TorchSharp {
 
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr /* scalar_t* */ preexistingHandle, bool ownsHandle) : base(IntPtr /* scalar_t* */.Zero, ownsHandle)
+            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
             }
 
             // This is just for marshalling
-            internal HType() : base(IntPtr /* scalar_t* */.Zero, true)
+            internal HType() : base(IntPtr.Zero, true)
             {
             }
 
-            public override bool IsInvalid => handle == (IntPtr /* scalar_t* */)0;
+            public override bool IsInvalid => handle == (IntPtr)0;
 
             protected override bool ReleaseHandle()
             {
@@ -1026,12 +1156,21 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr /* scalar_t* */ Tensor_data(HType handle);
+        extern static IntPtr Tensor_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr /* scalar_t* */ Data => Tensor_data(handle);
+        public IntPtr Data => Tensor_data(handle);
+
+        public float Item()
+        {
+            unsafe
+            {
+                //var data = new System.Span<float>(Data.ToPointer(), 1);
+                return 0;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static string Tensor_device(HType handle);
@@ -1042,7 +1181,7 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr /* scalar_t* */ psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1053,7 +1192,24 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new FloatTensor (Tensor_ones ((IntPtr /* scalar_t* */)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                    return new FloatTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public FloatTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new FloatTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
                 }
             }
         }
