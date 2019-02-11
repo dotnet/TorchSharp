@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp.NN
@@ -96,6 +98,42 @@ namespace TorchSharp.NN
         public virtual FloatTensor Forward(FloatTensor tensor)
         {
             return new FloatTensor(Forward_functional(handle, tensor.handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Zero_grad_functional(Module.HType module);
+
+        public virtual void ZeroGrad()
+        {
+            Zero_grad_functional(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr No_grad();
+
+        public static Module NoGrad()
+        {
+            return new Module(No_grad());
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Param_functional(Module.HType module, AllocateResultOfStrategyArray allocator);
+
+        public struct Tensor
+        {
+            public IntPtr ptr;
+        }
+
+        public virtual IEnumerable<FloatTensor> Parameters()
+        {
+            Tensor[] ros;
+
+            using (var pa = new PinnedArray<Tensor>())
+            {
+                Param_functional(handle, pa.CreateArray);
+                ros = pa.Array;
+            }
+            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));
         }
 
         [DllImport("LibTorchSharp")]

@@ -52,6 +52,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AtenSharp\AtenSharp.csproj" />
   </ItemGroup>
   <ItemGroup>

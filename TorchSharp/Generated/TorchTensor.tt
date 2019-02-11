@@ -2,8 +2,8 @@
 <#@ Assembly Name="System.Core" #>
 <#@ Output Extension=".generated.cs" #>
 <#@ Include File="Types.ttinclude" #>
-
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -143,14 +143,37 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public <#=type.Ptr#> Data => Tensor_data(handle);
+        public Span<<#=type.Storage#>> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<<#=type.Storage#>>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public <#=type.Storage#> Item()
         {
             unsafe
             {
-                //var data = new System.Span<<#=type.Storage#>>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -194,6 +217,38 @@ foreach (var type in TorchTypeDef.Types) {
                     return new <#=type.Name#>Tensor (Tensor_randn ((<#=type.Ptr#>)psizes, size.Length, (short)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public <#=type.Name#>Tensor SubInPlace(<#=type.Name#>Tensor target, bool no_grad = true)
+        {
+            return new <#=type.Name#>Tensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, <#=type.Storage#> scalar, bool is_grad);
+
+        public <#=type.Name#>Tensor Mul(<#=type.Storage#> scalar, bool no_grad = true)
+        {
+            return new <#=type.Name#>Tensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>

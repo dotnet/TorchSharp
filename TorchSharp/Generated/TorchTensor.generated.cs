@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -136,14 +136,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<byte> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<byte>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public byte Item()
         {
             unsafe
             {
-                //var data = new System.Span<byte>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -187,6 +210,38 @@ namespace TorchSharp {
                     return new ByteTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public ByteTensor SubInPlace(ByteTensor target, bool no_grad = true)
+        {
+            return new ByteTensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, byte scalar, bool is_grad);
+
+        public ByteTensor Mul(byte scalar, bool no_grad = true)
+        {
+            return new ByteTensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -341,14 +396,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<short> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<short>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public short Item()
         {
             unsafe
             {
-                //var data = new System.Span<short>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -392,6 +470,38 @@ namespace TorchSharp {
                     return new ShortTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public ShortTensor SubInPlace(ShortTensor target, bool no_grad = true)
+        {
+            return new ShortTensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, short scalar, bool is_grad);
+
+        public ShortTensor Mul(short scalar, bool no_grad = true)
+        {
+            return new ShortTensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -546,14 +656,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<int> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<int>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public int Item()
         {
             unsafe
             {
-                //var data = new System.Span<int>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -597,6 +730,38 @@ namespace TorchSharp {
                     return new IntTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public IntTensor SubInPlace(IntTensor target, bool no_grad = true)
+        {
+            return new IntTensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, int scalar, bool is_grad);
+
+        public IntTensor Mul(int scalar, bool no_grad = true)
+        {
+            return new IntTensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -751,14 +916,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<long> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<long>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public long Item()
         {
             unsafe
             {
-                //var data = new System.Span<long>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -802,6 +990,38 @@ namespace TorchSharp {
                     return new LongTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public LongTensor SubInPlace(LongTensor target, bool no_grad = true)
+        {
+            return new LongTensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, long scalar, bool is_grad);
+
+        public LongTensor Mul(long scalar, bool no_grad = true)
+        {
+            return new LongTensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -956,14 +1176,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<double> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<double>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public double Item()
         {
             unsafe
             {
-                //var data = new System.Span<double>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -1007,6 +1250,38 @@ namespace TorchSharp {
                     return new DoubleTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg, bool is_grad);
+
+        public DoubleTensor SubInPlace(DoubleTensor target, bool no_grad = true)
+        {
+            return new DoubleTensor(Sub_(handle, target.handle, !no_grad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, double scalar, bool is_grad);
+
+        public DoubleTensor Mul(double scalar, bool no_grad = true)
+        {
+            return new DoubleTensor(Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -1161,14 +1436,37 @@ namespace TorchSharp {
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
-        public IntPtr Data => Tensor_data(handle);
+        public Span<float> Data
+        {
+            get
+            {
+                
+                int length;
+                switch (Dimensions)
+                {
+                    case 0: 
+                        length = 1;
+                        break;
+                    case 1:
+                        length = (int)Shape[0];
+                        break;
+                    default:
+                        length = (int)Shape.Aggregate((x, y) => x * y);
+                        break;
+                }
+                
+                unsafe
+                {
+                    return new System.Span<float>((void*)Tensor_data(handle), length);
+                }
+            }
+        }
 
         public float Item()
         {
             unsafe
             {
-                //var data = new System.Span<float>(Data.ToPointer(), 1);
-                return 0;
+                return Data[0];
             }
         }
 
@@ -1211,6 +1509,52 @@ namespace TorchSharp {
                 {
                     return new FloatTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
                 }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void Backward(HType handle);
+
+        public void Backward()
+        {
+            Backward(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType Grad(HType handle);
+
+        public FloatTensor Grad()
+        {
+            return new FloatTensor(Grad(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Sub_(HType src, HType trg);
+
+        public FloatTensor SubInPlace(FloatTensor target, bool no_grad = true)
+        {
+            if (no_grad)
+            {
+                return new FloatTensor(Sub_(handle, target.handle));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType Mul(HType src, float scalar);
+
+        public FloatTensor Mul(float scalar, bool no_grad = true)
+        {
+            if (no_grad)
+            {
+                return new FloatTensor(Mul(handle, scalar));
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 

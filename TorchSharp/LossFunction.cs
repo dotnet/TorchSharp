@@ -18,8 +18,8 @@ namespace TorchSharp
 
     public enum Reduction : long
     {
-        None = 0,
-        Mean = 1,
-        Sum = 2
+        None = 1,
+        Mean = 2,
+        Sum = 3
     }
 }

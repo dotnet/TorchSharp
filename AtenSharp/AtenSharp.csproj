@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <PackageId>TorchSharp</PackageId>
+    <PackageId>AtenSharp</PackageId>
     <PackageVersion>0.1</PackageVersion>
     <Authors>Miguel de Icaza</Authors>
     <PackageLicenseUrl>https://github.com/xamarin/TorchSharp/blob/master/LICENSE</PackageLicenseUrl>

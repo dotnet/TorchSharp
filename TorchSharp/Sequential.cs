@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TorchSharp.NN
 {
@@ -27,6 +28,26 @@ namespace TorchSharp.NN
             foreach (var module in _modules)
             {
                 result = module.Forward(result);
+            }
+
+            return result;
+        }
+
+        public override void ZeroGrad()
+        {
+            foreach (var module in _modules)
+            {
+                module.ZeroGrad();
+            }
+        }
+
+        public override IEnumerable<FloatTensor> Parameters()
+        {
+            IEnumerable<FloatTensor> result = Enumerable.Empty<FloatTensor>();
+
+            foreach (var module in _modules)
+            {
+                result = result.Concat(module.Parameters());
             }
 
             return result;
