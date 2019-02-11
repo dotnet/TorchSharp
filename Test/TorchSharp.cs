@@ -282,6 +282,7 @@ namespace TorchSharp.Test
 
                 loss.Backward();
 
+                // using(var noGrad = NN.NoGrad())
                 // The operators Mul and SubInPlace have no_grad=true by default
                 foreach (var param in seq.Parameters())
                 {
