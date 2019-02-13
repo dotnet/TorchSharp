@@ -29,7 +29,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Param_linear(Module.HType module, AllocateResultOfStrategyArray allocator);
+        extern static void Param_linear(Module.HType module, AllocatePinnedArray allocator);
 
         public override IEnumerable<FloatTensor> Parameters()
         {
