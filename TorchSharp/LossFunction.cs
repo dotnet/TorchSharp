@@ -8,11 +8,11 @@ namespace TorchSharp
     public class LossFunction
     {
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Loss_mse(FloatTensor.HType srct, FloatTensor.HType trgt, long reduction);
+        extern static FloatTensor.HType NN_LossMSE(FloatTensor.HType srct, FloatTensor.HType trgt, long reduction);
 
         public static FloatTensor MSELoss(FloatTensor src, FloatTensor target, Reduction reduction = Reduction.None)
         {
-            return new FloatTensor(Loss_mse(src.handle, target.handle, (long)reduction));
+            return new FloatTensor(NN_LossMSE(src.handle, target.handle, (long)reduction));
         }
     }
 

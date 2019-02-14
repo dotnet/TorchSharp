@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace TorchSharp.NN
 {
@@ -13,31 +12,31 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Forward_linear(Module.HType module, FloatTensor.HType tensor);
+        extern static FloatTensor.HType NN_linearModule_Forward(Module.HType module, FloatTensor.HType tensor);
 
         public override FloatTensor Forward(FloatTensor tensor)
         {
-            return new FloatTensor(Forward_linear(handle, tensor.handle));
+            return new FloatTensor(NN_linearModule_Forward(handle, tensor.handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Zero_grad_linear(Module.HType module);
+        extern static void NN_linearModule_ZeroGrad(Module.HType module);
 
         public override void ZeroGrad()
         {
-            Zero_grad_linear(handle);
+            NN_linearModule_ZeroGrad(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Param_linear(Module.HType module, AllocatePinnedArray allocator);
+        extern static void NN_linearModule_GetParameters(Module.HType module, AllocatePinnedArray allocator);
 
         public override IEnumerable<FloatTensor> Parameters()
         {
-            Tensor[] ros;
+            TensorPointerWrapper[] ros;
 
-            using (var pa = new PinnedArray<Tensor>())
+            using (var pa = new PinnedArray<TensorPointerWrapper>())
             {
-                Param_linear(handle, pa.CreateArray);
+                NN_linearModule_GetParameters(handle, pa.CreateArray);
                 ros = pa.Array;
             }
             return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));

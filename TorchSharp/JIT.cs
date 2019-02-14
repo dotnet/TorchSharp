@@ -70,39 +70,39 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Module_load(string filename);
+        extern static IntPtr JIT_module_load(string filename);
 
         static public Module LoadModule(string filename)
         {
-            var handle = Module_load(filename);
+            var handle = JIT_module_load(filename);
             return new Module(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Forward_jit(Module.HType module, FloatTensor.HType tensor);
-
-        public virtual FloatTensor Forward(FloatTensor tensor)
-        {
-            return new FloatTensor(Forward_jit(handle, tensor.handle));
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static long Get_number_of_modules(Module.HType module);
+        extern static long JIT_getNumModules(Module.HType module);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string Module_jit_get(Module.HType module, int index);
+        extern static string JIT_getModuleName(Module.HType module, int index);
 
-        public virtual string[] GetModules()
+        public virtual string[] GetSubModulesNames()
         {
-            var numModules = Get_number_of_modules(handle);
+            var numModules = JIT_getNumModules(handle);
             string[] result = new string[numModules];
 
             for (int i = 0; i < numModules; i++)
             {
-                result[i] = Module_jit_get(handle, i);
+                result[i] = JIT_getModuleName(handle, i);
             }
 
             return result;
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType JIT_forward(Module.HType module, FloatTensor.HType tensor);
+
+        public virtual FloatTensor Forward(FloatTensor tensor)
+        {
+            return new FloatTensor(JIT_forward(handle, tensor.handle));
         }
     }
 }

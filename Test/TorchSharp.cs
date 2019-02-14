@@ -138,29 +138,6 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void TestNoGrad()
-        {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
-
-            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
-
-            var eval = seq.Forward(x);
-            var loss = LossFunction.MSELoss(eval, y, Reduction.None);
-
-            seq.ZeroGrad();
-
-            loss.Backward();
-
-            using (var nograd = NN.Module.NoGrad())
-            {
-                Assert.IsNotNull(nograd);
-            }
-        }
-
-        [TestMethod]
         public void TestGettingParameters()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -177,12 +154,9 @@ namespace TorchSharp.Test
 
             loss.Backward();
 
-            using (var nograd = NN.Module.NoGrad())
+            foreach (var parm in seq.Parameters())
             {
-                foreach (var parm in seq.Parameters())
-                {
-                    Assert.IsNotNull(parm);
-                }
+                Assert.IsNotNull(parm);
             }
         }
 
@@ -203,13 +177,10 @@ namespace TorchSharp.Test
 
             loss.Backward();
 
-            using (var nograd = NN.Module.NoGrad())
+            foreach (var parm in seq.Parameters())
             {
-                foreach (var parm in seq.Parameters())
-                {
-                    var grad = parm.Grad();
-                    Assert.IsNotNull(grad);
-                }
+                var grad = parm.Grad();
+                Assert.IsNotNull(grad);
             }
         }
 

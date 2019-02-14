@@ -12,7 +12,7 @@ namespace TorchSharp {
     public class ByteTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.ByteTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.ByteTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -30,7 +30,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.ByteTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.ByteTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -87,7 +87,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.ByteTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.ByteTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -97,7 +97,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.ByteTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.ByteTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -126,12 +126,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.ByteTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.ByteTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -157,7 +157,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<byte>((void*)Tensor_data(handle), length);
+                    return new System.Span<byte>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -171,15 +171,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -190,13 +190,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ByteTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                    return new ByteTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -207,41 +207,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ByteTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                    return new ByteTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public ByteTensor SubInPlace(ByteTensor target, bool no_grad = true)
         {
-            return new ByteTensor(Sub_(handle, target.handle, !no_grad));
+            return new ByteTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, byte scalar, bool is_grad);
+        extern static HType THS_Mul(HType src, byte scalar, bool is_grad);
 
         public ByteTensor Mul(byte scalar, bool no_grad = true)
         {
-            return new ByteTensor(Mul(handle, scalar, !no_grad));
+            return new ByteTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace TorchSharp {
     public class ShortTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.ShortTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.ShortTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -290,7 +290,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.ShortTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.ShortTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -347,7 +347,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.ShortTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.ShortTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -357,7 +357,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.ShortTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.ShortTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -386,12 +386,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.ShortTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.ShortTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -417,7 +417,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<short>((void*)Tensor_data(handle), length);
+                    return new System.Span<short>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -431,15 +431,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -450,13 +450,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ShortTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                    return new ShortTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -467,41 +467,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ShortTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                    return new ShortTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public ShortTensor SubInPlace(ShortTensor target, bool no_grad = true)
         {
-            return new ShortTensor(Sub_(handle, target.handle, !no_grad));
+            return new ShortTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, short scalar, bool is_grad);
+        extern static HType THS_Mul(HType src, short scalar, bool is_grad);
 
         public ShortTensor Mul(short scalar, bool no_grad = true)
         {
-            return new ShortTensor(Mul(handle, scalar, !no_grad));
+            return new ShortTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -532,7 +532,7 @@ namespace TorchSharp {
     public class IntTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.IntTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.IntTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -550,7 +550,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.IntTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.IntTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -607,7 +607,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.IntTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.IntTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -617,7 +617,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.IntTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.IntTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -646,12 +646,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.IntTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.IntTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -677,7 +677,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<int>((void*)Tensor_data(handle), length);
+                    return new System.Span<int>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -691,15 +691,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -710,13 +710,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new IntTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                    return new IntTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -727,41 +727,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new IntTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                    return new IntTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public IntTensor SubInPlace(IntTensor target, bool no_grad = true)
         {
-            return new IntTensor(Sub_(handle, target.handle, !no_grad));
+            return new IntTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, int scalar, bool is_grad);
+        extern static HType THS_Mul(HType src, int scalar, bool is_grad);
 
         public IntTensor Mul(int scalar, bool no_grad = true)
         {
-            return new IntTensor(Mul(handle, scalar, !no_grad));
+            return new IntTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -792,7 +792,7 @@ namespace TorchSharp {
     public class LongTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.LongTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.LongTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -810,7 +810,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.LongTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.LongTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -867,7 +867,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.LongTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.LongTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -877,7 +877,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.LongTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.LongTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -906,12 +906,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.LongTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.LongTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -937,7 +937,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<long>((void*)Tensor_data(handle), length);
+                    return new System.Span<long>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -951,15 +951,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -970,13 +970,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new LongTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                    return new LongTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -987,41 +987,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new LongTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                    return new LongTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public LongTensor SubInPlace(LongTensor target, bool no_grad = true)
         {
-            return new LongTensor(Sub_(handle, target.handle, !no_grad));
+            return new LongTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, long scalar, bool is_grad);
+        extern static HType THS_Mul(HType src, long scalar, bool is_grad);
 
         public LongTensor Mul(long scalar, bool no_grad = true)
         {
-            return new LongTensor(Mul(handle, scalar, !no_grad));
+            return new LongTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -1052,7 +1052,7 @@ namespace TorchSharp {
     public class DoubleTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.DoubleTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.DoubleTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -1070,7 +1070,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.DoubleTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.DoubleTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -1127,7 +1127,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.DoubleTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.DoubleTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -1137,7 +1137,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.DoubleTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.DoubleTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -1166,12 +1166,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.DoubleTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.DoubleTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -1197,7 +1197,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<double>((void*)Tensor_data(handle), length);
+                    return new System.Span<double>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -1211,15 +1211,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1230,13 +1230,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new DoubleTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                    return new DoubleTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1247,41 +1247,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new DoubleTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                    return new DoubleTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public DoubleTensor SubInPlace(DoubleTensor target, bool no_grad = true)
         {
-            return new DoubleTensor(Sub_(handle, target.handle, !no_grad));
+            return new DoubleTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, double scalar, bool is_grad);
+        extern static HType THS_Mul(HType src, double scalar, bool is_grad);
 
         public DoubleTensor Mul(double scalar, bool no_grad = true)
         {
-            return new DoubleTensor(Mul(handle, scalar, !no_grad));
+            return new DoubleTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
@@ -1312,7 +1312,7 @@ namespace TorchSharp {
     public class FloatTensor : IDisposable
     {
         [DllImport("LibTorchSharp")]
-        extern static AtenSharp.FloatTensor.HType GetTHTensor(HType handle);
+        extern static AtenSharp.FloatTensor.HType THS_getTHTensorUnsafe(HType handle);
 
         internal sealed class HType : SafeHandle
         {
@@ -1330,7 +1330,7 @@ namespace TorchSharp {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.FloatTensor(GetTHTensor(this));
+                var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(this));
                 atenTensor.Dispose();
                 return true;
             }
@@ -1387,7 +1387,7 @@ namespace TorchSharp {
         {
             get
             {
-                var atenTensor = new AtenSharp.FloatTensor (GetTHTensor (handle));
+                var atenTensor = new AtenSharp.FloatTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -1397,7 +1397,7 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.FloatTensor (GetTHTensor (handle));
+            var atenTensor = new AtenSharp.FloatTensor (THS_getTHTensorUnsafe (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -1426,12 +1426,12 @@ namespace TorchSharp {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.FloatTensor(GetTHTensor(handle));
+            var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr Tensor_data(HType handle);
+        extern static IntPtr THS_data(HType handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -1457,7 +1457,7 @@ namespace TorchSharp {
                 
                 unsafe
                 {
-                    return new System.Span<float>((void*)Tensor_data(handle), length);
+                    return new System.Span<float>((void*)THS_data(handle), length);
                 }
             }
         }
@@ -1471,15 +1471,15 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string Tensor_device(HType handle);
+        extern static string THS_device(HType handle);
 
         public string getDevice()
         {
-            return Tensor_device(handle);
+            return THS_device(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1490,13 +1490,13 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new FloatTensor (Tensor_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                    return new FloatTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Tensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static HType THS_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1507,55 +1507,41 @@ namespace TorchSharp {
             {
                 fixed (long* psizes = size)
                 {
-                    return new FloatTensor (Tensor_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                    return new FloatTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void Backward(HType handle);
+        extern static void THS_Backward(HType handle);
 
         public void Backward()
         {
-            Backward(handle);
+            THS_Backward(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType Grad(HType handle);
+        extern static FloatTensor.HType THS_Grad(HType handle);
 
         public FloatTensor Grad()
         {
-            return new FloatTensor(Grad(handle));
+            return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Sub_(HType src, HType trg);
+        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
 
         public FloatTensor SubInPlace(FloatTensor target, bool no_grad = true)
         {
-            if (no_grad)
-            {
-                return new FloatTensor(Sub_(handle, target.handle));
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return new FloatTensor(THS_Sub_(handle, target.handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType Mul(HType src, float scalar);
+        extern static HType THS_Mul(HType src, float scalar, bool is_grad);
 
         public FloatTensor Mul(float scalar, bool no_grad = true)
         {
-            if (no_grad)
-            {
-                return new FloatTensor(Mul(handle, scalar));
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return new FloatTensor(THS_Mul(handle, scalar, !no_grad));
         }
 
         /// <summary>
