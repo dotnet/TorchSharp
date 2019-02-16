@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
@@ -12,15 +13,15 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_linearModule_Forward(Module.HType module, FloatTensor.HType tensor);
+        extern static FloatTensor.HType NN_linearModule_Forward(Module.HType module, IntPtr tensor);
 
-        public override FloatTensor Forward(FloatTensor tensor)
+        public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            return new FloatTensor(NN_linearModule_Forward(handle, tensor.handle));
+            return new FloatTensor(NN_linearModule_Forward(handle, tensor.Handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void NN_linearModule_ZeroGrad(Module.HType module);
+        extern static void NN_linearModule_ZeroGrad(HType module);
 
         public override void ZeroGrad()
         {
@@ -28,9 +29,9 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void NN_linearModule_GetParameters(Module.HType module, AllocatePinnedArray allocator);
+        extern static void NN_linearModule_GetParameters(HType module, AllocatePinnedArray allocator);
 
-        public override IEnumerable<FloatTensor> Parameters()
+        public override IEnumerable<ITorchTensor<float>> Parameters()
         {
             TensorPointerWrapper[] ros;
 

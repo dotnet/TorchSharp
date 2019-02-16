@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
@@ -21,11 +22,17 @@ namespace TorchSharp.NN
             }
         }
 
-        public override FloatTensor Forward(FloatTensor tensor)
+        public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            FloatTensor result = tensor;
+            if (_modules.Count < 1)
+            {
+                throw new ArgumentException("Cannot do forward pass over empty Sequence module.");
+            }
 
-            foreach (var module in _modules)
+            var (head, tail) = _modules;
+            ITorchTensor<float> result = head.Forward(tensor);
+
+            foreach (var module in tail)
             {
                 result = module.Forward(result);
             }
@@ -41,9 +48,9 @@ namespace TorchSharp.NN
             }
         }
 
-        public override IEnumerable<FloatTensor> Parameters()
+        public override IEnumerable<ITorchTensor<float>> Parameters()
         {
-            IEnumerable<FloatTensor> result = Enumerable.Empty<FloatTensor>();
+            IEnumerable<ITorchTensor<float>> result = Enumerable.Empty<ITorchTensor<float>>();
 
             foreach (var module in _modules)
             {

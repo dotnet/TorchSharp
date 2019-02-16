@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.JIT
 {
     public class Module : IDisposable
     {
         /// <summary>
-        ///    The storage class provides a mechanism to access the underlying data representation for tensors.
+        ///    Class wrapping PyTorch's module object reference.
         /// </summary>
         internal sealed class HType : SafeHandle
         {
@@ -72,17 +73,16 @@ namespace TorchSharp.JIT
         [DllImport("LibTorchSharp")]
         extern static IntPtr JIT_module_load(string filename);
 
-        static public Module LoadModule(string filename)
+        static public Module Load(string filename)
         {
-            var handle = JIT_module_load(filename);
-            return new Module(handle);
+            return new Module(JIT_module_load(filename));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static long JIT_getNumModules(Module.HType module);
+        extern static long JIT_getNumModules(HType module);
 
-        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string JIT_getModuleName(Module.HType module, int index);
+        [DllImport("LibTorchSharp")]
+        extern static string JIT_getModuleName(HType module, int index);
 
         public virtual string[] GetSubModulesNames()
         {
@@ -98,11 +98,11 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType JIT_forward(Module.HType module, FloatTensor.HType tensor);
+        extern static FloatTensor.HType JIT_forward(Module.HType module, IntPtr tensor);
 
-        public virtual FloatTensor Forward(FloatTensor tensor)
+        public FloatTensor Forward<T>(ITorchTensor<T> tensor)
         {
-            return new FloatTensor(JIT_forward(handle, tensor.handle));
+            return new FloatTensor(JIT_forward(handle, tensor.Handle));
         }
     }
 }

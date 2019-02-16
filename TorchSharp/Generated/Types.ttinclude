@@ -3,27 +3,27 @@
 
         public readonly string Name;
         public readonly string Storage;
-        public readonly string Acc;
+        public readonly string CSType;
 
         public readonly bool IsInt;
         public readonly bool IsFloat;
 
-        private TorchTypeDef(string name, string storage, string acc) {
+        private TorchTypeDef(string name, string storage, string cstype) {
             this.Name = name;
             this.Storage = storage;
-            this.Acc = acc;
+            this.CSType = cstype;
 
             this.IsInt = name == "Short" || name == "Int" || name == "Long";
             this.IsFloat = name == "Float" || name == "Double";
         }
 
         public static readonly TorchTypeDef[] Types = {
-            new TorchTypeDef("Byte",   "byte",   "long"  ),
-            new TorchTypeDef("Short",  "short",  "long"  ),
-            new TorchTypeDef("Int",    "int",    "long"  ),
-            new TorchTypeDef("Long",   "long",   "long"  ),
-            new TorchTypeDef("Double", "double", "double"),
-            new TorchTypeDef("Float",  "float",  "double"),
+            new TorchTypeDef("Byte",   "byte",   "Byte"  ),
+            new TorchTypeDef("Short",  "short",  "Short"  ),
+            new TorchTypeDef("Int",    "int",    "Int"  ),
+            new TorchTypeDef("Long",   "long",   "Long"  ),
+            new TorchTypeDef("Double", "double", "Double"),
+            new TorchTypeDef("Float",  "float",  "Single"),
         };
 
         public readonly string Ptr = "IntPtr"; // "HType";

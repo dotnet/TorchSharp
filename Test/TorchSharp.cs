@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.Test
 {
@@ -13,7 +14,7 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void CreateFloatTensorOnesAccessData()
+        public void CreateFloatTensorOnesCheckData()
         {
             unsafe
             {
@@ -28,7 +29,7 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void CreateIntTensorOnesAccessData()
+        public void CreateIntTensorOnesCheckData()
         {
             unsafe
             {
@@ -48,7 +49,7 @@ namespace TorchSharp.Test
             var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
             Assert.IsNotNull(ones);
 
-            var module = JIT.Module.LoadModule(@"E:\Source\Repos\libtorch\model.pt");
+            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
             Assert.IsNotNull(module);
 
             var result = module.Forward(ones);
@@ -103,9 +104,9 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = LossFunction.MSELoss(eval, y, Reduction.None);
+            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
 
-            var result = loss.Item();
+            var result = loss.Item;
             Assert.IsNotNull(result);
         }
 
@@ -130,7 +131,7 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = LossFunction.MSELoss(eval, y, Reduction.None);
+            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
 
             seq.ZeroGrad();
 
@@ -148,7 +149,7 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = LossFunction.MSELoss(eval, y, Reduction.None);
+            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
 
             seq.ZeroGrad();
 
@@ -171,7 +172,7 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = LossFunction.MSELoss(eval, y, Reduction.None);
+            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
 
             seq.ZeroGrad();
 
@@ -243,8 +244,8 @@ namespace TorchSharp.Test
             for (int i = 0; i < 10; i++)
             {
                 var eval = seq.Forward(x);
-                var loss = LossFunction.MSELoss(eval, y, Reduction.None);
-                var lossVal = loss.Item();
+                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+                var lossVal = loss.Item;
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;

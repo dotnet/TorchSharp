@@ -1,8 +1,12 @@
-﻿// Allocator of T[] that pins the memory (and handles unpinning)
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
-public sealed class PinnedArray<T> : IDisposable where T : struct
+/// <summary>
+/// Allocator of T[] that pins the memory and handles unpinning.
+/// (taken from StackOverflow)
+/// </summary>
+/// <typeparam name="T"></typeparam>
+internal sealed class PinnedArray<T> : IDisposable where T : struct
 {
     private GCHandle handle;
 

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
     public partial class Module
     {
         /// <summary>
-        ///    The storage class provides a mechanism to access the underlying data representation for tensors.
+        ///    Class wrapping PyTorch's module object reference.
         /// </summary>
         internal sealed class HType : SafeHandle
         {
@@ -44,11 +45,11 @@ namespace TorchSharp.NN
         }
     }
 
-    public partial class Module : IDisposable
+    public abstract partial class Module : IDisposable
     {
         internal HType handle;
 
-        internal Module(IntPtr handle)
+        protected Module(IntPtr handle)
         {
             this.handle = new HType(handle, true);
         }
@@ -97,45 +98,20 @@ namespace TorchSharp.NN
 
         static public Module Relu()
         {
-            return new Module(NN_reluModule());
+            return new Functional(NN_reluModule());
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_functionalModule_Forward(Module.HType module, FloatTensor.HType tensor);
+        public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
 
-        public virtual FloatTensor Forward(FloatTensor tensor)
-        {
-            return new FloatTensor(NN_functionalModule_Forward(handle, tensor.handle));
-        }
+        public abstract void ZeroGrad();
+
+        public abstract IEnumerable<ITorchTensor<float>> Parameters();
 
         [DllImport("LibTorchSharp")]
-        extern static void NN_functionalModule_ZeroGrad(Module.HType module);
-
-        public virtual void ZeroGrad()
-        {
-            NN_functionalModule_ZeroGrad(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static void NN_functionalModule_GetParameters(Module.HType module, AllocatePinnedArray allocator);
-
-        public virtual IEnumerable<FloatTensor> Parameters()
-        {
-            TensorPointerWrapper[] ros;
-
-            using (var pa = new PinnedArray<TensorPointerWrapper>())
-            {
-                NN_functionalModule_GetParameters(handle, pa.CreateArray);
-                ros = pa.Array;
-            }
-            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static long NN_GetNumberOfChildren(Module.HType module);
+        extern static long NN_GetNumberOfChildren(HType module);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string NN_GetModule(Module.HType module, int index);
+        extern static string NN_GetModule(HType module, int index);
 
         public virtual string[] GetModules()
         {
@@ -151,7 +127,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string NN_GetModuleName(Module.HType module);
+        extern static string NN_GetModuleName(HType module);
 
         public string GetName()
         {

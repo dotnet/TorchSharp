@@ -3,13 +3,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace TorchSharp {
+namespace TorchSharp.Tensor {
 
     /// <summary>
     ///   Tensor of type Byte.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class ByteTensor : IDisposable
+    public class ByteTensor : ITorchTensor<byte>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.ByteTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -80,6 +81,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -89,6 +98,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.ByteTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<byte> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<byte>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public byte Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -131,60 +203,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<byte> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<byte>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public byte Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ByteTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<byte> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -201,7 +225,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ByteTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<byte> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -223,23 +247,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public ByteTensor SubInPlace(ByteTensor target, bool no_grad = true)
+        public ITorchTensor<byte> SubInPlace(ITorchTensor<byte> target, bool no_grad = true)
         {
-            return new ByteTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new ByteTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, byte scalar, bool is_grad);
 
-        public ByteTensor Mul(byte scalar, bool no_grad = true)
+        public ITorchTensor<byte> Mul(byte scalar, bool no_grad = true)
         {
             return new ByteTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -261,15 +285,16 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
     /// <summary>
     ///   Tensor of type Short.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class ShortTensor : IDisposable
+    public class ShortTensor : ITorchTensor<short>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.ShortTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -340,6 +365,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -349,6 +382,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.ShortTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<short> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<short>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public short Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -391,60 +487,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<short> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<short>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public short Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ShortTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<short> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -461,7 +509,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ShortTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<short> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -483,23 +531,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public ShortTensor SubInPlace(ShortTensor target, bool no_grad = true)
+        public ITorchTensor<short> SubInPlace(ITorchTensor<short> target, bool no_grad = true)
         {
-            return new ShortTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new ShortTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, short scalar, bool is_grad);
 
-        public ShortTensor Mul(short scalar, bool no_grad = true)
+        public ITorchTensor<short> Mul(short scalar, bool no_grad = true)
         {
             return new ShortTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -521,15 +569,16 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
     /// <summary>
     ///   Tensor of type Int.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class IntTensor : IDisposable
+    public class IntTensor : ITorchTensor<int>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.IntTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -600,6 +649,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -609,6 +666,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.IntTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<int> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<int>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public int Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -651,60 +771,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<int> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<int>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public int Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public IntTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<int> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -721,7 +793,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public IntTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<int> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -743,23 +815,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public IntTensor SubInPlace(IntTensor target, bool no_grad = true)
+        public ITorchTensor<int> SubInPlace(ITorchTensor<int> target, bool no_grad = true)
         {
-            return new IntTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new IntTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, int scalar, bool is_grad);
 
-        public IntTensor Mul(int scalar, bool no_grad = true)
+        public ITorchTensor<int> Mul(int scalar, bool no_grad = true)
         {
             return new IntTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -781,15 +853,16 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
     /// <summary>
     ///   Tensor of type Long.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class LongTensor : IDisposable
+    public class LongTensor : ITorchTensor<long>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.LongTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -860,6 +933,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -869,6 +950,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.LongTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<long> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<long>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public long Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -911,60 +1055,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<long> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<long>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public long Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public LongTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<long> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -981,7 +1077,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public LongTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<long> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1003,23 +1099,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public LongTensor SubInPlace(LongTensor target, bool no_grad = true)
+        public ITorchTensor<long> SubInPlace(ITorchTensor<long> target, bool no_grad = true)
         {
-            return new LongTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new LongTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, long scalar, bool is_grad);
 
-        public LongTensor Mul(long scalar, bool no_grad = true)
+        public ITorchTensor<long> Mul(long scalar, bool no_grad = true)
         {
             return new LongTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -1041,15 +1137,16 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
     /// <summary>
     ///   Tensor of type Double.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class DoubleTensor : IDisposable
+    public class DoubleTensor : ITorchTensor<double>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.DoubleTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -1120,6 +1217,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -1129,6 +1234,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.DoubleTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<double> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<double>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public double Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -1171,60 +1339,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<double> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<double>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public double Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public DoubleTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<double> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1241,7 +1361,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public DoubleTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<double> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1263,23 +1383,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public DoubleTensor SubInPlace(DoubleTensor target, bool no_grad = true)
+        public ITorchTensor<double> SubInPlace(ITorchTensor<double> target, bool no_grad = true)
         {
-            return new DoubleTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new DoubleTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, double scalar, bool is_grad);
 
-        public DoubleTensor Mul(double scalar, bool no_grad = true)
+        public ITorchTensor<double> Mul(double scalar, bool no_grad = true)
         {
             return new DoubleTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -1301,15 +1421,16 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
     /// <summary>
     ///   Tensor of type Float.
-    ///   This tensor maps to a Torch variable. 
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class FloatTensor : IDisposable
+    public class FloatTensor : ITorchTensor<float>
     {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.FloatTensor.HType THS_getTHTensorUnsafe(HType handle);
@@ -1380,6 +1501,14 @@ namespace TorchSharp {
             }
         }
 
+        public IntPtr Handle
+        {
+            get
+            {
+                return handle.DangerousGetHandle();
+            }
+        }
+
         /// <summary>
         ///  Returns the number of dimensions for this tensor
         /// </summary>
@@ -1389,6 +1518,69 @@ namespace TorchSharp {
             {
                 var atenTensor = new AtenSharp.FloatTensor (THS_getTHTensorUnsafe (handle));
                 return atenTensor.Dimensions;
+            }
+        }
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public long NumberOfElements 
+        {
+            get
+            {
+                switch (Dimensions)
+                {
+                    case 0: 
+                        return 1;
+                    case 1:
+                        return (int)Shape[0];
+                    default:
+                        return (int)Shape.Aggregate((x, y) => x * y);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_data(HType handle);
+
+        /// <summary>
+        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        /// </summary>
+        public Span<float> Data
+        {
+            get
+            {               
+                if (NumberOfElements > int.MaxValue)
+                {
+                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                }
+                unsafe
+                {
+                    return new System.Span<float>((void*)THS_data(handle), (int)NumberOfElements);
+                }
+            }
+        }
+
+        public float Item
+        {
+            get
+            {
+                if (NumberOfElements != 1)
+                {
+                    throw new ArgumentException($"Number of elements in the tensor must be 1");
+                }
+                return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static string THS_device(HType handle);
+
+        public string Device
+        {
+            get
+            {
+                return THS_device(handle);
             }
         }
 
@@ -1431,60 +1623,12 @@ namespace TorchSharp {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_data(HType handle);
-
-        /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
-        /// </summary>
-        public Span<float> Data
-        {
-            get
-            {
-                
-                int length;
-                switch (Dimensions)
-                {
-                    case 0: 
-                        length = 1;
-                        break;
-                    case 1:
-                        length = (int)Shape[0];
-                        break;
-                    default:
-                        length = (int)Shape.Aggregate((x, y) => x * y);
-                        break;
-                }
-                
-                unsafe
-                {
-                    return new System.Span<float>((void*)THS_data(handle), length);
-                }
-            }
-        }
-
-        public float Item()
-        {
-            unsafe
-            {
-                return Data[0];
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
-
-        public string getDevice()
-        {
-            return THS_device(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         extern static HType THS_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public FloatTensor Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<float> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1501,7 +1645,7 @@ namespace TorchSharp {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public FloatTensor RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<float> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1523,23 +1667,23 @@ namespace TorchSharp {
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType THS_Grad(HType handle);
 
-        public FloatTensor Grad()
+        public ITorchTensor<float> Grad()
         {
             return new FloatTensor(THS_Grad(handle));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, HType trg, bool is_grad);
+        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
-        public FloatTensor SubInPlace(FloatTensor target, bool no_grad = true)
+        public ITorchTensor<float> SubInPlace(ITorchTensor<float> target, bool no_grad = true)
         {
-            return new FloatTensor(THS_Sub_(handle, target.handle, !no_grad));
+            return new FloatTensor(THS_Sub_(handle, target.Handle, !no_grad));
         }
 
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, float scalar, bool is_grad);
 
-        public FloatTensor Mul(float scalar, bool no_grad = true)
+        public ITorchTensor<float> Mul(float scalar, bool no_grad = true)
         {
             return new FloatTensor(THS_Mul(handle, scalar, !no_grad));
         }
@@ -1561,7 +1705,7 @@ namespace TorchSharp {
                     sb.Append("x");
             }
             sb.Append("]");
-            sb.Append($", device = {getDevice()}");
+            sb.Append($", device = {Device}");
             return sb.ToString();
         }
     }
