@@ -22,28 +22,5 @@ namespace TorchSharp.NN
         {
             return new FloatTensor(NN_functionalModule_Forward(handle, tensor.Handle));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static void NN_functionalModule_ZeroGrad(HType module);
-
-        public override void ZeroGrad()
-        {
-            NN_functionalModule_ZeroGrad(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static void NN_functionalModule_GetParameters(HType module, AllocatePinnedArray allocator);
-
-        public override IEnumerable<ITorchTensor<float>> Parameters()
-        {
-            TensorPointerWrapper[] ros;
-
-            using (var pa = new PinnedArray<TensorPointerWrapper>())
-            {
-                NN_functionalModule_GetParameters(handle, pa.CreateArray);
-                ros = pa.Array;
-            }
-            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));
-        }
     }
 }

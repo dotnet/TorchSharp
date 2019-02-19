@@ -103,9 +103,28 @@ namespace TorchSharp.NN
 
         public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
 
-        public abstract void ZeroGrad();
+        [DllImport("LibTorchSharp")]
+        extern static void NN_ZeroGrad(HType module);
 
-        public abstract IEnumerable<ITorchTensor<float>> Parameters();
+        public virtual void ZeroGrad()
+        {
+            NN_ZeroGrad(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void NN_GetParameters(HType module, AllocatePinnedArray allocator);
+
+        public virtual IEnumerable<ITorchTensor<float>> Parameters()
+        {
+            TensorPointerWrapper[] ros;
+
+            using (var pa = new PinnedArray<TensorPointerWrapper>())
+            {
+                NN_GetParameters(handle, pa.CreateArray);
+                ros = pa.Array;
+            }
+            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));
+        }
 
         [DllImport("LibTorchSharp")]
         extern static long NN_GetNumberOfChildren(HType module);
