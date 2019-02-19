@@ -264,5 +264,19 @@ namespace TorchSharp.Test
                 }
             }
         }
+
+        [TestMethod]
+        public void TestAdam()
+        {
+            var lin1 = NN.Module.Linear(1000, 100);
+            var lin2 = NN.Module.Linear(100, 10);
+            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+
+            double learning_rate = 0.00001;
+
+            var optimizer = NN.Optimizer.Adam(seq, learning_rate);
+
+            Assert.IsNotNull(optimizer);
+        }
     }
 }

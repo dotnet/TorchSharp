@@ -8,7 +8,7 @@ namespace TorchSharp.NN
 {
     public class Sequential : Module
     {
-        private IList<Module> _modules = new List<Module>();
+        internal IList<Module> Modules = new List<Module>();
 
         internal Sequential(IntPtr handle) : base(handle)
         {
@@ -18,18 +18,18 @@ namespace TorchSharp.NN
         {
             foreach (var module in modules)
             {
-                _modules.Add(module);
+                Modules.Add(module);
             }
         }
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            if (_modules.Count < 1)
+            if (Modules.Count < 1)
             {
                 throw new ArgumentException("Cannot do forward pass over empty Sequence module.");
             }
 
-            var (head, tail) = _modules;
+            var (head, tail) = Modules;
             ITorchTensor<float> result = head.Forward(tensor);
 
             foreach (var module in tail)
@@ -42,7 +42,7 @@ namespace TorchSharp.NN
 
         public override void ZeroGrad()
         {
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 module.ZeroGrad();
             }
@@ -52,7 +52,7 @@ namespace TorchSharp.NN
         {
             IEnumerable<ITorchTensor<float>> result = Enumerable.Empty<ITorchTensor<float>>();
 
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 result = result.Concat(module.Parameters());
             }
@@ -62,11 +62,11 @@ namespace TorchSharp.NN
 
         public override string[] GetModules()
         {
-            string[] result = new string[_modules.Count];
+            string[] result = new string[Modules.Count];
 
-            for (int i = 0; i < _modules.Count; i++)
+            for (int i = 0; i < Modules.Count; i++)
             {
-                result[i] = _modules[i].GetName();
+                result[i] = Modules[i].GetName();
             }
 
             return result;

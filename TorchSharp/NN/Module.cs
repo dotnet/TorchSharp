@@ -39,14 +39,6 @@ namespace TorchSharp.NN
             }
         }
 
-        protected struct TensorPointerWrapper
-        {
-            public IntPtr ptr;
-        }
-    }
-
-    public abstract partial class Module : IDisposable
-    {
         internal HType handle;
 
         protected Module(IntPtr handle)
@@ -79,7 +71,10 @@ namespace TorchSharp.NN
                 handle.SetHandleAsInvalid();
             }
         }
+    }
 
+    public abstract partial class Module : IDisposable
+    {
         static public Sequential Sequential(params Module[] modules)
         {
             return new Sequential(modules);
@@ -116,14 +111,14 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<ITorchTensor<float>> Parameters()
         {
-            TensorPointerWrapper[] ros;
+            IntPtr[] ros;
 
-            using (var pa = new PinnedArray<TensorPointerWrapper>())
+            using (var pa = new PinnedArray<IntPtr>())
             {
                 NN_GetParameters(handle, pa.CreateArray);
                 ros = pa.Array;
             }
-            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x.ptr, true)));
+            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x, true)));
         }
 
         [DllImport("LibTorchSharp")]
