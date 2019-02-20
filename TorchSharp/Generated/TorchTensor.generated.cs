@@ -154,13 +154,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -208,7 +208,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<byte> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<byte> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -225,7 +225,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<byte> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<byte> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -438,13 +438,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -492,7 +492,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<short> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<short> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -509,7 +509,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<short> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<short> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -722,13 +722,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -776,7 +776,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<int> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<int> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -793,7 +793,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<int> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<int> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1006,13 +1006,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -1060,7 +1060,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<long> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<long> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1077,7 +1077,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<long> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<long> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1290,13 +1290,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -1344,7 +1344,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<double> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<double> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1361,7 +1361,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<double> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<double> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1574,13 +1574,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -1628,7 +1628,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<float> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<float> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -1645,7 +1645,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<float> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<float> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {

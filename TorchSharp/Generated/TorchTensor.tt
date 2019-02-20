@@ -161,13 +161,13 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_device(HType handle);
+        extern static string THS_deviceType(HType handle);
 
         public string Device
         {
             get
             {
-                return THS_device(handle);
+                return THS_deviceType(handle);
             }
         }
 
@@ -215,7 +215,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<<#=type.Storage#>> Ones(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<<#=type.Storage#>> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {
@@ -232,7 +232,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor<<#=type.Storage#>> RandomN(long[] size, string device = "cpu:0", bool requiresGrad = false)
+        static public ITorchTensor<<#=type.Storage#>> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             unsafe
             {

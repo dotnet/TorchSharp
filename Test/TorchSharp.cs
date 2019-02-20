@@ -16,31 +16,34 @@ namespace TorchSharp.Test
         [TestMethod]
         public void CreateFloatTensorOnesCheckData()
         {
-            unsafe
-            {
-                var ones = FloatTensor.Ones(new long[] { 2, 2 });
-                var data = ones.Data;
+            var ones = FloatTensor.Ones(new long[] { 2, 2 });
+            var data = ones.Data;
 
-                for (int i = 0; i < 4; i++)
-                {
-                    Assert.AreEqual(data[i], 1.0);
-                }
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(data[i], 1.0);
             }
         }
 
         [TestMethod]
         public void CreateIntTensorOnesCheckData()
         {
-            unsafe
-            {
-                var ones = IntTensor.Ones(new long[] { 2, 2 });
-                var data = ones.Data;
+            var ones = IntTensor.Ones(new long[] { 2, 2 });
+            var data = ones.Data;
 
-                for (int i = 0; i < 4; i++)
-                {
-                    Assert.AreEqual(data[i], 1);
-                }
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(data[i], 1);
             }
+        }
+
+        [TestMethod]
+        public void CreateFloatTensorCheckDevice()
+        {
+            var ones = FloatTensor.Ones(new long[] { 2, 2 });
+            var device = ones.Device;
+
+            Assert.AreEqual(ones.Device, "cpu");
         }
 
         [TestMethod]
