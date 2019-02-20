@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
@@ -73,31 +76,14 @@ namespace TorchSharp.NN
     public partial class Optimizer
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr NN_OptimizerAdam(IntPtr modules, int len, double learningRate);
+        extern static IntPtr NN_OptimizerAdam(IntPtr parameters, int len, double learningRate);
 
-        public static Optimizer Adam(Module module, double learningRate)
+        public static Optimizer Adam(IEnumerable<ITorchTensor<float>> parameters, double learningRate)
         {
             var parray = new PinnedArray<IntPtr>();
-            IntPtr moduleRef;
+            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
-            switch (module)
-            {
-                case Sequential seq:
-                    var len = seq.Modules.Count;
-                    moduleRef = parray.CreateArray(len);
-
-                    for (int i = 0; i < len; i++)
-                    {
-                        parray.Array[i] = seq.Modules[i].handle.DangerousGetHandle();
-                    }
-                    
-                    return new Optimizer(NN_OptimizerAdam(moduleRef, len, learningRate));
-                default:
-                    moduleRef = parray.CreateArray(1);
-                    parray.Array[0] = module.handle.DangerousGetHandle();
-                    return new Optimizer(NN_OptimizerAdam(moduleRef, 1, learningRate));
-            }
-            
+            return new Optimizer(NN_OptimizerAdam(paramsRef, parray.Array.Length, learningRate));           
         }
 
         [DllImport("LibTorchSharp")]

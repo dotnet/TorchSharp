@@ -35,6 +35,24 @@ internal sealed class PinnedArray<T> : IDisposable where T : struct
         return CreateArray((int)length);
     }
 
+    public IntPtr CreateArray(T[] array)
+    {
+        FreeHandle();
+
+        Array = array;
+
+        // try... finally trick to be sure that the code isn't interrupted by asynchronous exceptions
+        try
+        {
+        }
+        finally
+        {
+            handle = GCHandle.Alloc(Array, GCHandleType.Pinned);
+        }
+
+        return handle.AddrOfPinnedObject();
+    }
+
     public void Dispose()
     {
         FreeHandle();

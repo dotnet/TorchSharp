@@ -274,7 +274,7 @@ namespace TorchSharp.Test
 
             double learning_rate = 0.00001;
 
-            var optimizer = NN.Optimizer.Adam(seq, learning_rate);
+            var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
 
             Assert.IsNotNull(optimizer);
         }
@@ -295,7 +295,7 @@ namespace TorchSharp.Test
 
             double learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adam(seq, learning_rate);
+            var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
 
             for (int i = 0; i < 10; i++)
             {
