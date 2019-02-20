@@ -238,7 +238,7 @@ namespace TorchSharp.Test
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
-            float learning_rate = 0.00001f;
+            float learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++)
@@ -277,6 +277,41 @@ namespace TorchSharp.Test
             var optimizer = NN.Optimizer.Adam(seq, learning_rate);
 
             Assert.IsNotNull(optimizer);
+        }
+
+        /// <summary>
+        /// Fully connected Relu net with one hidden layer trained using Adam optimizer.
+        /// Taken from <see cref="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [TestMethod]
+        public void TestTrainingAdam()
+        {
+            var lin1 = NN.Module.Linear(1000, 100);
+            var lin2 = NN.Module.Linear(100, 10);
+            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+
+            double learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.Adam(seq, learning_rate);
+
+            for (int i = 0; i < 10; i++)
+            {
+                var eval = seq.Forward(x);
+                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
+                var lossVal = loss.Item;
+
+                Assert.IsTrue(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.ZeroGrad();
+
+                loss.Backward();
+
+                optimizer.Step();
+            }
         }
     }
 }

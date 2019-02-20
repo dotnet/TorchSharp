@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.InteropServices;
-using static TorchSharp.NN.Module;
 
 namespace TorchSharp.NN
 {
@@ -100,6 +98,22 @@ namespace TorchSharp.NN
                     return new Optimizer(NN_OptimizerAdam(moduleRef, 1, learningRate));
             }
             
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void NN_Optimizer_ZeroGrad(HType module);
+
+        public void ZeroGrad()
+        {
+            NN_Optimizer_ZeroGrad(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void NN_Optimizer_Step(HType module);
+
+        public void Step()
+        {
+            NN_Optimizer_Step(handle);
         }
     }
 }

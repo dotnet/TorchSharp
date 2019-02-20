@@ -99,11 +99,11 @@ namespace TorchSharp.NN
         public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
 
         [DllImport("LibTorchSharp")]
-        extern static void NN_ZeroGrad(HType module);
+        extern static void NN_Module_ZeroGrad(HType module);
 
         public virtual void ZeroGrad()
         {
-            NN_ZeroGrad(handle);
+            NN_Module_ZeroGrad(handle);
         }
 
         [DllImport("LibTorchSharp")]
