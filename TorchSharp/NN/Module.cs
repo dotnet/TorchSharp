@@ -111,14 +111,14 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<ITorchTensor<float>> Parameters()
         {
-            IntPtr[] ros;
+            IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr>())
             {
                 NN_GetParameters(handle, pa.CreateArray);
-                ros = pa.Array;
+                ptrArray = pa.Array;
             }
-            return ros.Select(x => new FloatTensor(new FloatTensor.HType(x, true)));
+            return ptrArray.Select(x => new FloatTensor(new FloatTensor.HType(x, true)));
         }
 
         [DllImport("LibTorchSharp")]
