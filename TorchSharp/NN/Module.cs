@@ -73,7 +73,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public abstract partial class Module : IDisposable
+    public partial class Module : IDisposable
     {
         static public Sequential Sequential(params Module[] modules)
         {
@@ -89,14 +89,61 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr NN_reluModule();
+        extern static IntPtr NN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
+
+        static public Module Conv2D(long inputChannel, long outputChannel, int kernelSize)
+        {
+            return new Conv2D(NN_conv2dModule(inputChannel, outputChannel, kernelSize));
+        }
 
         static public Module Relu()
         {
-            return new Functional(NN_reluModule());
+            return new ReLu();
         }
 
+        static public ITorchTensor<float> Relu(ITorchTensor<float> x)
+        {
+            return new ReLu().Forward(x);
+        }
+
+        static public Module MaxPool2D(long kernelSize)
+        {
+            return new MaxPool2D(kernelSize);
+        }
+
+        static public ITorchTensor<float> MaxPool2D(ITorchTensor<float> x, long kernelSize)
+        {
+            return new MaxPool2D(kernelSize).Forward(x);
+        }
+
+        static public Module LogSoftMax(long dimension)
+        {
+            return new LogSoftMax(dimension);
+        }
+
+        static public ITorchTensor<float> LogSoftMax(ITorchTensor<float> x, long dimension)
+        {
+            return new LogSoftMax(dimension).Forward(x);
+        }
+
+        static public Module Dropout(double probability, Func<bool> isTraining)
+        {
+            return new Dropout(probability, isTraining);
+        }
+
+        static public ITorchTensor<float> Dropout(ITorchTensor<float> x, double probability, Func<bool> isTraining)
+        {
+            return new Dropout(probability, isTraining).Forward(x);
+        }
+    }
+
+    public abstract partial class Module : IDisposable
+    {
         public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
+
+        public virtual void RegisterModule(Module module)
+        {
+        }
 
         [DllImport("LibTorchSharp")]
         extern static void NN_Module_ZeroGrad(HType module);
@@ -104,6 +151,14 @@ namespace TorchSharp.NN
         public virtual void ZeroGrad()
         {
             NN_Module_ZeroGrad(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static bool NN_IsTraining(HType module);
+
+        public virtual bool IsTraining()
+        {
+            return NN_IsTraining(handle);
         }
 
         [DllImport("LibTorchSharp")]

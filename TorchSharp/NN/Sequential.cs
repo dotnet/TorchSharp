@@ -18,8 +18,13 @@ namespace TorchSharp.NN
         {
             foreach (var module in modules)
             {
-                Modules.Add(module);
+                RegisterModule(module);
             }
+        }
+
+        public override void RegisterModule(Module module)
+        {
+            Modules.Add(module);
         }
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
