@@ -14,13 +14,12 @@ namespace TorchSharp.NN
         {
         }
 
-        public override void ZeroGrad()
+        public override void RegisterModule(Module module)
         {
         }
 
-        public override bool IsTraining()
+        public override void ZeroGrad()
         {
-            return true;
         }
 
         public override IEnumerable<ITorchTensor<float>> Parameters()
@@ -28,7 +27,7 @@ namespace TorchSharp.NN
             return new List<ITorchTensor<float>>();
         }
 
-        public override string[] GetModules()
+        public override IEnumerable<string> GetModules()
         {
             return new string[0];
         }

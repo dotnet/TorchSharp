@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Tensor;
 
@@ -321,12 +323,14 @@ namespace TorchSharp.Test
         [TestMethod]
         public void TestMNISTLoader()
         {
-            var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 64);
+            var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32, out int size);
+            int i = 0;
 
-            foreach (var (data, target) in train.Take(10))
+            foreach (var (data, target) in train.SkipLast(2))
             {
-                CollectionAssert.AreEqual(data.Shape, new long[] { 64, 1, 28, 28 });
-                CollectionAssert.AreEqual(target.Shape, new long[] { 64 });
+                CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
+                CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
+                i++;
             }
         }
     }

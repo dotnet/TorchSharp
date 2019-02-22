@@ -8,8 +8,6 @@ namespace TorchSharp.NN
 {
     public class Sequential : Module
     {
-        internal IList<Module> Modules = new List<Module>();
-
         internal Sequential(IntPtr handle) : base(handle)
         {
         }
@@ -22,14 +20,9 @@ namespace TorchSharp.NN
             }
         }
 
-        public override void RegisterModule(Module module)
-        {
-            Modules.Add(module);
-        }
-
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            if (Modules.Count < 1)
+            if (!Modules.Any())
             {
                 throw new ArgumentException("Cannot do forward pass over empty Sequence module.");
             }
@@ -53,25 +46,13 @@ namespace TorchSharp.NN
             }
         }
 
-        public override IEnumerable<ITorchTensor<float>> Parameters()
+        public override IEnumerable<string> GetModules()
         {
-            IEnumerable<ITorchTensor<float>> result = Enumerable.Empty<ITorchTensor<float>>();
+            List<string> result = new List<string>();
 
             foreach (var module in Modules)
             {
-                result = result.Concat(module.Parameters());
-            }
-
-            return result;
-        }
-
-        public override string[] GetModules()
-        {
-            string[] result = new string[Modules.Count];
-
-            for (int i = 0; i < Modules.Count; i++)
-            {
-                result[i] = Modules[i].GetName();
+                result.Add(module.GetName());
             }
 
             return result;

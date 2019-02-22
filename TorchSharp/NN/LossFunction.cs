@@ -16,6 +16,14 @@ namespace TorchSharp.NN
         {
             return new FloatTensor(NN_LossMSE(src.Handle, target.Handle, (long)reduction));
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static FloatTensor.HType NN_LossNLL(IntPtr srct, IntPtr trgt);
+
+        public static ITorchTensor<float> NLL<T>(ITorchTensor<T> src, ITorchTensor<T> target)
+        {
+            return new FloatTensor(NN_LossNLL(src.Handle, target.Handle));
+        }
     }
 
     public enum Reduction : long

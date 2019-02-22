@@ -260,6 +260,20 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_View(HType src, IntPtr shape, int length);
+
+        public ITorchTensor<<#=type.Storage#>> View(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new <#=type.Name#>Tensor (THS_View (handle, (<#=type.Ptr#>)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<<#=type.Storage#>> SubInPlace(ITorchTensor<<#=type.Storage#>> target, bool no_grad = true)

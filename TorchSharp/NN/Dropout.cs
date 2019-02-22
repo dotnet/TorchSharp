@@ -10,20 +10,19 @@ namespace TorchSharp.NN
     public class Dropout : FunctionalModule
     {
         private double _probability;
-        private Func<bool> _isTraining;
 
-        internal Dropout(double probability, Func<bool> isTraining) : base()
+        internal Dropout(double probability, bool isTraining) : base()
         {
             _probability = probability;
             _isTraining = isTraining;
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_LogSoftMaxModule_Forward(IntPtr tensor, double probability, bool isTraining);
+        extern static FloatTensor.HType NN_DropoutModule_Forward(IntPtr tensor, double probability, bool isTraining);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            return new FloatTensor(NN_LogSoftMaxModule_Forward(tensor.Handle, _probability, _isTraining.Invoke()));
+            return new FloatTensor(NN_DropoutModule_Forward(tensor.Handle, _probability, _isTraining));
         }
     }
 }

@@ -126,23 +126,43 @@ namespace TorchSharp.NN
             return new LogSoftMax(dimension).Forward(x);
         }
 
-        static public Module Dropout(double probability, Func<bool> isTraining)
+        static public Module Dropout(double probability, bool isTraining)
         {
             return new Dropout(probability, isTraining);
         }
 
-        static public ITorchTensor<float> Dropout(ITorchTensor<float> x, double probability, Func<bool> isTraining)
+        static public ITorchTensor<float> Dropout(ITorchTensor<float> x, double probability,bool isTraining)
         {
             return new Dropout(probability, isTraining).Forward(x);
+        }
+
+        static public ITorchTensor<float> FeatureDropout(ITorchTensor<float> x)
+        {
+            return new FeatureDropout().Forward(x);
         }
     }
 
     public abstract partial class Module : IDisposable
     {
+        protected bool _isTraining = true;
+
+        protected List<NN.Module> Modules = new List<NN.Module>();
+
         public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
 
-        public virtual void RegisterModule(Module module)
+        public virtual void RegisterModule(NN.Module module)
         {
+            Modules.Add(module);
+        }
+
+        public void Train()
+        {
+            _isTraining = true;
+        }
+
+        public void Eval()
+        {
+            _isTraining = false;
         }
 
         [DllImport("LibTorchSharp")]
@@ -153,12 +173,9 @@ namespace TorchSharp.NN
             NN_Module_ZeroGrad(handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static bool NN_IsTraining(HType module);
-
-        public virtual bool IsTraining()
+        public bool IsTraining()
         {
-            return NN_IsTraining(handle);
+            return _isTraining;
         }
 
         [DllImport("LibTorchSharp")]
@@ -166,6 +183,19 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<ITorchTensor<float>> Parameters()
         {
+            // If module has no children, fetch the paramters from pytorch
+            if (Modules.Any())
+            {
+                IEnumerable<ITorchTensor<float>> result = Enumerable.Empty<ITorchTensor<float>>();
+
+                foreach (var module in Modules)
+                {
+                    result = result.Concat(module.Parameters());
+                }
+
+                return result;
+            }
+
             IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr>())
@@ -182,7 +212,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         extern static string NN_GetModule(HType module, int index);
 
-        public virtual string[] GetModules()
+        public virtual IEnumerable<string> GetModules()
         {
             var numModules = NN_GetNumberOfChildren(handle);
             string[] result = new string[numModules];

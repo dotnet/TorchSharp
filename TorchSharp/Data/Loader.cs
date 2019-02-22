@@ -16,7 +16,7 @@ namespace TorchSharp.Data
             AllocatePinnedArray dataAllocator, 
             AllocatePinnedArray targetAllocator);
 
-        static public IEnumerable<(ITorchTensor<float> data, ITorchTensor<float> target)> MNIST(string filename, long batchSize, bool isTrain = true)
+        static public IEnumerable<(ITorchTensor<float> data, ITorchTensor<float> target)> MNIST(string filename, long batchSize, out int size, bool isTrain = true)
         {
             IntPtr[] dataPtrArray;
             IntPtr[] targetPtrArray;
@@ -27,6 +27,7 @@ namespace TorchSharp.Data
                 Data_LoaderMNIST(filename, batchSize, isTrain, data.CreateArray, target.CreateArray);
                 dataPtrArray = data.Array;
                 targetPtrArray = target.Array;
+                size = data.Array.Length;
             }
 
             return dataPtrArray

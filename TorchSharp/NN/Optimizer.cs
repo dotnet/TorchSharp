@@ -87,6 +87,17 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr NN_OptimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
+
+        public static Optimizer SGD(IEnumerable<ITorchTensor<float>> parameters, double learningRate, double momentum)
+        {
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+
+            return new Optimizer(NN_OptimizerSGD(paramsRef, parray.Array.Length, learningRate, momentum));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static void NN_Optimizer_ZeroGrad(HType module);
 
         public void ZeroGrad()

@@ -26,6 +26,8 @@ namespace TorchSharp.Tensor
 
         ITorchTensor<float> Grad();
 
+        ITorchTensor<T> View(params long[] shape);
+
         ITorchTensor<T> SubInPlace(ITorchTensor<T> target, bool no_grad = true);
 
         ITorchTensor<T> Mul(T scalar, bool no_grad = true);
