@@ -7,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a dropout module for 2d/3d convolutational layers.
     /// </summary>
-    public class FeatureDropout : FunctionalModule
+    public class FeatureDropout : FunctionalModule<FeatureDropout>
     {
         internal FeatureDropout() : base()
         {

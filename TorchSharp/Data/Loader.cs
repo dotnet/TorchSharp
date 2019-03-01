@@ -1,41 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
 
 namespace TorchSharp.Data
 {
     public class Loader
     {
         [DllImport("LibTorchSharp")]
-        extern static void Data_LoaderMNIST(
-            string filename, 
-            long batchSize, 
-            bool isTrain,
-            AllocatePinnedArray dataAllocator, 
-            AllocatePinnedArray targetAllocator);
+        extern static IntPtr Data_LoaderMNIST(string filename, long batchSize, bool isTrain);
 
-        static public IEnumerable<(ITorchTensor<float> data, ITorchTensor<float> target)> MNIST(string filename, long batchSize, out int size, bool isTrain = true)
+        /// <summary>
+        /// Create an iterator scanning the MNIST dataset.
+        /// </summary>
+        /// <param name="filename">The position of the MNIST dataset</param>
+        /// <param name="batchSize">The required batch size</param>
+        /// <param name="isTrain">Wheter the iterator is for training or testing</param>
+        /// <returns></returns>
+        static public DataIterator<int, int> MNIST(string filename, long batchSize, bool isTrain = true)
         {
-            IntPtr[] dataPtrArray;
-            IntPtr[] targetPtrArray;
-
-            using (var data = new PinnedArray<IntPtr>())
-            using (var target = new PinnedArray<IntPtr>())
-            {
-                Data_LoaderMNIST(filename, batchSize, isTrain, data.CreateArray, target.CreateArray);
-                dataPtrArray = data.Array;
-                targetPtrArray = target.Array;
-                size = data.Array.Length;
-            }
-
-            return dataPtrArray
-                .Zip(
-                    targetPtrArray, 
-                    (d, t) => (
-                        (ITorchTensor<float>)new FloatTensor(new FloatTensor.HType(d, true)), 
-                        (ITorchTensor<float>)new FloatTensor(new FloatTensor.HType(t, true))));
+            return new DataIterator<int, int>(Data_LoaderMNIST(filename, batchSize, isTrain));
         }
     }
 }

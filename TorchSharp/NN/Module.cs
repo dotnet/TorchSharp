@@ -41,6 +41,10 @@ namespace TorchSharp.NN
 
         internal HType handle;
 
+        protected bool _isTraining = true;
+
+        protected List<NN.Module> Modules { get; } = new List<NN.Module>();
+
         protected Module(IntPtr handle)
         {
             this.handle = new HType(handle, true);
@@ -67,6 +71,11 @@ namespace TorchSharp.NN
         {
             if (disposing)
             {
+                foreach (var m in Modules)
+                {
+                    m.Dispose();
+                }
+
                 handle.Dispose();
                 handle.SetHandleAsInvalid();
             }
@@ -98,12 +107,12 @@ namespace TorchSharp.NN
 
         static public Module Relu()
         {
-            return new ReLu();
+            return new ReLU();
         }
 
         static public ITorchTensor<float> Relu(ITorchTensor<float> x)
         {
-            return new ReLu().Forward(x);
+            return new ReLU().Forward(x);
         }
 
         static public Module MaxPool2D(long kernelSize)
@@ -113,7 +122,10 @@ namespace TorchSharp.NN
 
         static public ITorchTensor<float> MaxPool2D(ITorchTensor<float> x, long kernelSize)
         {
-            return new MaxPool2D(kernelSize).Forward(x);
+            using (var m = new MaxPool2D(kernelSize))
+            {
+                return m.Forward(x);
+            }
         }
 
         static public Module LogSoftMax(long dimension)
@@ -123,7 +135,10 @@ namespace TorchSharp.NN
 
         static public ITorchTensor<float> LogSoftMax(ITorchTensor<float> x, long dimension)
         {
-            return new LogSoftMax(dimension).Forward(x);
+            using (var l = new LogSoftMax(dimension))
+            {
+                return l.Forward(x);
+            }
         }
 
         static public Module Dropout(double probability, bool isTraining)
@@ -133,21 +148,23 @@ namespace TorchSharp.NN
 
         static public ITorchTensor<float> Dropout(ITorchTensor<float> x, double probability,bool isTraining)
         {
-            return new Dropout(probability, isTraining).Forward(x);
+            using (var d = new Dropout(probability, isTraining))
+            {
+                return d.Forward(x);
+            }
         }
 
         static public ITorchTensor<float> FeatureDropout(ITorchTensor<float> x)
         {
-            return new FeatureDropout().Forward(x);
+            using (var f = new FeatureDropout())
+            {
+                return f.Forward(x);
+            }
         }
     }
 
     public abstract partial class Module : IDisposable
     {
-        protected bool _isTraining = true;
-
-        protected List<NN.Module> Modules = new List<NN.Module>();
-
         public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
 
         public virtual void RegisterModule(NN.Module module)
@@ -228,7 +245,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         extern static string NN_GetModuleName(HType module);
 
-        public string GetName()
+        public virtual string GetName()
         {
             return NN_GetModuleName(handle);
         }

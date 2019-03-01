@@ -1505,9 +1505,6 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.FloatTensor.HType THS_getTHTensorUnsafe(HType handle);
 
-        [DllImport("LibTorchSharp")]
-        extern static void THS_Delete(HType handle);
-
         internal sealed class HType : SafeHandle
         {
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
@@ -1524,9 +1521,8 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                //var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(this));
-                //atenTensor.Dispose();
-                THS_Delete(this);
+                var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(this));
+                atenTensor.Dispose();
                 return true;
             }
 
@@ -1806,5 +1802,40 @@ namespace TorchSharp.Tensor {
         Long = 4,
         Float = 6,
         Double = 7
+    }
+
+    public static class TensorExtensionMethods
+    {
+        internal static ITorchTensor<T> ToTorchTensor<T>(this IntPtr rawTensor)
+        {
+            switch (true)
+            {
+                case bool _ when typeof(T) == typeof(byte):
+                    {
+                        return (ITorchTensor<T>)new ByteTensor(new ByteTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(short):
+                    {
+                        return (ITorchTensor<T>)new ShortTensor(new ShortTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(int):
+                    {
+                        return (ITorchTensor<T>)new IntTensor(new IntTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(long):
+                    {
+                        return (ITorchTensor<T>)new LongTensor(new LongTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(double):
+                    {
+                        return (ITorchTensor<T>)new DoubleTensor(new DoubleTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(float):
+                    {
+                        return (ITorchTensor<T>)new FloatTensor(new FloatTensor.HType(rawTensor, true));
+                    }
+                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
+            }
+        }
     }
 }

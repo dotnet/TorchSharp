@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
@@ -8,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a functional module (e.g., ReLU).
     /// </summary>
-    public abstract class FunctionalModule : Module
+    public abstract class FunctionalModule<T> : Module
     {
         internal FunctionalModule() : base(IntPtr.Zero)
         {
@@ -30,6 +29,11 @@ namespace TorchSharp.NN
         public override IEnumerable<string> GetModules()
         {
             return new string[0];
+        }
+
+        public override string GetName()
+        {
+            return typeof(T).Name;
         }
     }
 }

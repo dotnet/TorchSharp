@@ -7,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a ReLu module.
     /// </summary>
-    public class MaxPool2D : FunctionalModule
+    public class MaxPool2D : FunctionalModule<MaxPool2D>
     {
         private long _kernelSize;
 

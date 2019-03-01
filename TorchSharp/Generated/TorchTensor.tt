@@ -321,4 +321,39 @@ foreach (var type in TorchTypeDef.Types) {
         Float = 6,
         Double = 7
     }
+
+    public static class TensorExtensionMethods
+    {
+        internal static ITorchTensor<T> ToTorchTensor<T>(this IntPtr rawTensor)
+        {
+            switch (true)
+            {
+                case bool _ when typeof(T) == typeof(byte):
+                    {
+                        return (ITorchTensor<T>)new ByteTensor(new ByteTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(short):
+                    {
+                        return (ITorchTensor<T>)new ShortTensor(new ShortTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(int):
+                    {
+                        return (ITorchTensor<T>)new IntTensor(new IntTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(long):
+                    {
+                        return (ITorchTensor<T>)new LongTensor(new LongTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(double):
+                    {
+                        return (ITorchTensor<T>)new DoubleTensor(new DoubleTensor.HType(rawTensor, true));
+                    }
+                case bool _ when typeof(T) == typeof(float):
+                    {
+                        return (ITorchTensor<T>)new FloatTensor(new FloatTensor.HType(rawTensor, true));
+                    }
+                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
+            }
+        }
+    }
 }

@@ -55,6 +55,10 @@ internal sealed class PinnedArray<T> : IDisposable where T : struct
 
     public void Dispose()
     {
+        foreach (var val in Array)
+        {
+            (val as IDisposable)?.Dispose();
+        }
         FreeHandle();
     }
 

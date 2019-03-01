@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Tensor;
 
@@ -14,6 +13,34 @@ namespace TorchSharp.Test
         {
             var ones = FloatTensor.Ones(new long[] { 2, 2 });
             Assert.IsNotNull(ones);
+        }
+
+        [TestMethod]
+        public void CreateFloatTensorCheckDistructor()
+        {
+            ITorchTensor<float> ones = null;
+
+            using (var tmp = FloatTensor.Ones(new long[] { 2, 2 }))
+            {
+                ones = tmp;
+                Assert.IsNotNull(ones);
+            }
+            Assert.ThrowsException<ObjectDisposedException>(ones.Grad);
+        }
+
+        [TestMethod]
+        public void CreateFloatTensorCheckMemory()
+        {
+            ITorchTensor<float> ones = null;
+
+            for (int i = 0; i < 10; i++)
+            {
+                using (var tmp = FloatTensor.Ones(new long[] { 1000, 1000, 1000 }))
+                {
+                    ones = tmp;
+                    Assert.IsNotNull(ones);
+                }
+            }
         }
 
         [TestMethod]
@@ -323,14 +350,27 @@ namespace TorchSharp.Test
         [TestMethod]
         public void TestMNISTLoader()
         {
-            var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32, out int size);
-            int i = 0;
-
-            foreach (var (data, target) in train.SkipLast(2))
+            using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
             {
-                CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
-                CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
-                i++;
+                var size = train.Size();
+
+                Assert.IsNotNull(train);
+                Assert.IsNotNull(size);
+
+                int i = 0;
+
+                foreach (var (data, target) in train)
+                {
+                    i++;
+
+                    CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
+                    CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
+
+                    data.Dispose();
+                    target.Dispose();
+                }
+
+                Assert.AreEqual(size, i * 32);
             }
         }
     }

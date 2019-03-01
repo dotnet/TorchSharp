@@ -6,7 +6,7 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public partial class Optimizer
+    public partial class Optimizer : IDisposable
     {
         /// <summary>
         ///    Class wrapping PyTorch's optimzer object reference.

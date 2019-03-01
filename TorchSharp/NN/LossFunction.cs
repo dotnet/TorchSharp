@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         extern static FloatTensor.HType NN_LossNLL(IntPtr srct, IntPtr trgt);
 
-        public static ITorchTensor<float> NLL<T>(ITorchTensor<T> src, ITorchTensor<T> target)
+        public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target)
         {
             return new FloatTensor(NN_LossNLL(src.Handle, target.Handle));
         }

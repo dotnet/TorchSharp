@@ -6,26 +6,25 @@ namespace TorchSharp.Examples
 {
     public class MNIST
     {
+        private readonly static long _batch = 64;
+        private readonly static string _trainDataset = @"E:/Source/Repos/LibTorchSharp/MNIST";
+
         static void Main(string[] args)
         {
-            var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 64, out int size);
-
-            var model = new Model();
-
-            var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5);
-
-            for (var epoch = 1; epoch <= 10; epoch++)
+            using (var train = Data.Loader.MNIST(_trainDataset, _batch))
+            using (var model = new Model())
+            using (var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5))
             {
-                Train(model, optimizer, train, epoch, size);
+                Train(model, optimizer, train, _batch, train.Size());
             }
         }
 
         private class Model : NN.Module
         {
-            private NN.Module conv1 = NN.Module.Conv2D(1, 10, 5);
-            private NN.Module conv2 = NN.Module.Conv2D(10, 20, 5);
-            private NN.Module fc1 = NN.Module.Linear(320, 50);
-            private NN.Module fc2 = NN.Module.Linear(50, 10);
+            private NN.Module conv1 = Conv2D(1, 10, 5);
+            private NN.Module conv2 = Conv2D(10, 20, 5);
+            private NN.Module fc1 = Linear(320, 50);
+            private NN.Module fc2 = Linear(50, 10);
 
             public Model() : base(IntPtr.Zero)
             {
@@ -37,47 +36,57 @@ namespace TorchSharp.Examples
 
             public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
             {
-                var x = conv1.Forward(tensor);
-                x = NN.Module.MaxPool2D(x, 2);
-                x = NN.Module.Relu(x);
+                using (var l11 = conv1.Forward(tensor))
+                using (var l12 = MaxPool2D(l11, 2))
+                using (var l13 = Relu(l12))
 
-                x = conv2.Forward(x);
-                x = NN.Module.FeatureDropout(x);
-                x = NN.Module.MaxPool2D(x, 2);
+                using (var l21 = conv2.Forward(l13))
+                using (var l22 = FeatureDropout(l21))
+                using (var l23 = MaxPool2D(l22, 2))
 
-                x = x.View(new long[] { -1, 320 });
+                using (var x = l23.View(new long[] { -1, 320 }))
 
-                x = fc1.Forward(x);
-                x = NN.Module.Relu(x);
-                x = NN.Module.Dropout(x, 0.5, _isTraining);
+                using (var l31 = fc1.Forward(x))
+                using (var l32 = Relu(l31))
+                using (var l33 = Dropout(l32, 0.5, _isTraining))
 
-                x = fc2.Forward(x);
+                using (var l41 = fc2.Forward(l33))
 
-                return NN.Module.LogSoftMax(x, 1);
+                return LogSoftMax(l41, 1);
             }
         }
 
-        private static void Train(NN.Module model, NN.Optimizer optimizer, IEnumerable<(ITorchTensor<float>, ITorchTensor<float>)> dataLoader, int epoch, int size)
+        private static void Train(
+            NN.Module model, 
+            NN.Optimizer optimizer,
+            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader, 
+            long batchSize, 
+            long size)
         {
             model.Train();
 
-            int batchId = 0;
+            int batchId = 1;
 
             foreach (var (data, target) in dataLoader)
             {
                 optimizer.ZeroGrad();
 
-                var output = model.Forward(data);
+                if (batchId == 937)
+                {
+                    Console.WriteLine();
+                }
 
-                var loss = NN.LossFunction.NLL(output, target);
+                using (var output = model.Forward(data))
+                using (var loss = NN.LossFunction.NLL(output, target))
+                {
+                    loss.Backward();
 
-                loss.Backward();
+                    optimizer.Step();
 
-                optimizer.Step();
+                    batchId++;
 
-                batchId++;
-
-                Console.WriteLine($"\rTrain Epoch: {epoch} [{batchId} / {size}] Loss: {loss.Item}");
+                    Console.WriteLine($"\rTrain: [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+                }
             }
         }
     }

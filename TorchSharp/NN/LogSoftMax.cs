@@ -7,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a log softmax module.
     /// </summary>
-    public class LogSoftMax : FunctionalModule
+    public class LogSoftMax : FunctionalModule<LogSoftMax>
     {
         private long _dimension;
 

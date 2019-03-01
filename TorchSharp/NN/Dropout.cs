@@ -7,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a dropout module.
     /// </summary>
-    public class Dropout : FunctionalModule
+    public class Dropout : FunctionalModule<Dropout>
     {
         private double _probability;
 
