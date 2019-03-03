@@ -21,6 +21,12 @@ namespace TorchSharp.Data
 
         [DllImport("LibTorchSharp")]
         extern internal static long Data_Size(IntPtr iterator);
+
+        [DllImport("LibTorchSharp")]
+        extern internal static void Data_Reset(IntPtr iterator);
+
+        [DllImport("LibTorchSharp")]
+        extern internal static void Data_Dispose(IntPtr iterator);
     }
 
     /// <summary>
@@ -65,6 +71,8 @@ namespace TorchSharp.Data
 
         protected HType handle;
 
+        protected IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)> @enum = null;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -95,6 +103,7 @@ namespace TorchSharp.Data
         {
             if (disposing)
             {
+                ExternMethods.Data_Dispose(handle.DangerousGetHandle());
                 handle.Dispose();
                 handle.SetHandleAsInvalid();
             }
@@ -115,7 +124,9 @@ namespace TorchSharp.Data
         /// <returns></returns>
         public IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)> GetEnumerator()
         {
-            return new DataIteratorEnumerator(this);
+            @enum?.Reset();
+            @enum = @enum ?? new DataIteratorEnumerator(this);
+            return @enum;
         }
 
 
@@ -148,8 +159,7 @@ namespace TorchSharp.Data
             {
                 get
                 {
-        
-                    ExternMethods.Data_Current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);
+                    ExternMethods.Data_Current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);   
                     return (_darray.Array[0].ToTorchTensor<TData>(), _tarray.Array[0].ToTorchTensor<TTarget>());
                 }
             }
@@ -169,7 +179,8 @@ namespace TorchSharp.Data
 
             public void Reset()
             {
-                throw new InvalidOperationException();
+                _isFirst = true;
+                ExternMethods.Data_Reset(_iterator.handle.DangerousGetHandle());
             }
 
             public void Dispose()

@@ -15,8 +15,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.ByteTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -31,8 +36,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.ByteTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.ByteTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -47,9 +56,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal ByteTensor(HType handle)
+        internal ByteTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -313,8 +323,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.ShortTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -329,8 +344,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.ShortTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.ShortTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -345,9 +364,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal ShortTensor(HType handle)
+        internal ShortTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -611,8 +631,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.IntTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -627,8 +652,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.IntTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.IntTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -643,9 +672,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal IntTensor(HType handle)
+        internal IntTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -909,8 +939,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.LongTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -925,8 +960,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.LongTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.LongTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -941,9 +980,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal LongTensor(HType handle)
+        internal LongTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -1207,8 +1247,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.DoubleTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -1223,8 +1268,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.DoubleTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.DoubleTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -1239,9 +1288,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal DoubleTensor(HType handle)
+        internal DoubleTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -1505,8 +1555,13 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.FloatTensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
+            internal bool shouldClean = true;
+
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
                 SetHandle(preexistingHandle);
@@ -1521,8 +1576,12 @@ namespace TorchSharp.Tensor {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                // var atenTensor = new AtenSharp.FloatTensor(THS_getTHTensorUnsafe(this));
+                // atenTensor.Dispose();
+                if (shouldClean)
+                {
+                    THS_Delete (this);
+                }
                 return true;
             }
 
@@ -1537,9 +1596,10 @@ namespace TorchSharp.Tensor {
 
         internal HType handle;
 
-        internal FloatTensor(HType handle)
+        internal FloatTensor(HType handle, bool shouldClean = true)
         {
             this.handle = handle;
+            this.handle.shouldClean = shouldClean;
         }
 
         /// <summary>
@@ -1806,33 +1866,33 @@ namespace TorchSharp.Tensor {
 
     public static class TensorExtensionMethods
     {
-        internal static ITorchTensor<T> ToTorchTensor<T>(this IntPtr rawTensor)
+        internal static ITorchTensor<T> ToTorchTensor<T>(this IntPtr rawTensor, bool shouldClean = true)
         {
             switch (true)
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        return (ITorchTensor<T>)new ByteTensor(new ByteTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new ByteTensor(new ByteTensor.HType(rawTensor, true), shouldClean);
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        return (ITorchTensor<T>)new ShortTensor(new ShortTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new ShortTensor(new ShortTensor.HType(rawTensor, true), shouldClean);
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        return (ITorchTensor<T>)new IntTensor(new IntTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new IntTensor(new IntTensor.HType(rawTensor, true), shouldClean);
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        return (ITorchTensor<T>)new LongTensor(new LongTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new LongTensor(new LongTensor.HType(rawTensor, true), shouldClean);
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        return (ITorchTensor<T>)new DoubleTensor(new DoubleTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new DoubleTensor(new DoubleTensor.HType(rawTensor, true), shouldClean);
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return (ITorchTensor<T>)new FloatTensor(new FloatTensor.HType(rawTensor, true));
+                        return (ITorchTensor<T>)new FloatTensor(new FloatTensor.HType(rawTensor, true), shouldClean);
                     }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }

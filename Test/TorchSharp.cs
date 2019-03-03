@@ -373,5 +373,38 @@ namespace TorchSharp.Test
                 Assert.AreEqual(size, i * 32);
             }
         }
+
+        [TestMethod]
+        public void TestMNISTLoaderWithEpochs()
+        {
+            using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
+            {
+                var size = train.Size();
+                var epochs = 10;
+
+                Assert.IsNotNull(train);
+                Assert.IsNotNull(size);
+
+                int i = 0;
+
+                for (int e = 0; e < epochs; e++)
+                {
+                    foreach (var (data, target) in train)
+                    {
+                        i++;
+
+                        CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
+                        CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
+
+                        data.Dispose();
+                        target.Dispose();
+                    }
+
+                    var t = i;
+                }
+
+                Assert.AreEqual(size * epochs, i * 32);
+            }
+        }
     }
 }
