@@ -6,6 +6,7 @@ namespace TorchSharp.Examples
 {
     public class MNIST
     {
+        private readonly static int _epochs = 10;
         private readonly static long _batch = 64;
         private readonly static string _trainDataset = @"E:/Source/Repos/LibTorchSharp/MNIST";
 
@@ -15,7 +16,10 @@ namespace TorchSharp.Examples
             using (var model = new Model())
             using (var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5))
             {
-                Train(model, optimizer, train, _batch, train.Size());
+                for (var epoch = 1; epoch <= _epochs; epoch++)
+                {
+                    Train(model, optimizer, train, epoch, _batch, train.Size());
+                }
             }
         }
 
@@ -59,7 +63,8 @@ namespace TorchSharp.Examples
         private static void Train(
             NN.Module model, 
             NN.Optimizer optimizer,
-            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader, 
+            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader,
+            int epoch,
             long batchSize, 
             long size)
         {
@@ -71,11 +76,6 @@ namespace TorchSharp.Examples
             {
                 optimizer.ZeroGrad();
 
-                if (batchId == 937)
-                {
-                    Console.WriteLine();
-                }
-
                 using (var output = model.Forward(data))
                 using (var loss = NN.LossFunction.NLL(output, target))
                 {
@@ -85,7 +85,10 @@ namespace TorchSharp.Examples
 
                     batchId++;
 
-                    Console.WriteLine($"\rTrain: [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+
+                    data.Dispose();
+                    target.Dispose();
                 }
             }
         }
