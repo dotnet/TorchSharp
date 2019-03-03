@@ -399,8 +399,6 @@ namespace TorchSharp.Test
                         data.Dispose();
                         target.Dispose();
                     }
-
-                    var t = i;
                 }
 
                 Assert.AreEqual(size * epochs, i * 32);
