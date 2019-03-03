@@ -71,8 +71,6 @@ namespace TorchSharp.Data
 
         protected HType handle;
 
-        protected IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)> @enum = null;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -124,9 +122,9 @@ namespace TorchSharp.Data
         /// <returns></returns>
         public IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)> GetEnumerator()
         {
-            @enum?.Reset();
-            @enum = @enum ?? new DataIteratorEnumerator(this);
-            return @enum;
+            var iter = new DataIteratorEnumerator(this);
+            iter.Reset();
+            return iter;
         }
 
 

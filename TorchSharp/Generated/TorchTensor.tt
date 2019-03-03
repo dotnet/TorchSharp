@@ -22,6 +22,9 @@ foreach (var type in TorchTypeDef.Types) {
         [DllImport("LibTorchSharp")]
         extern static AtenSharp.<#=type.Name#>Tensor.HType THS_getTHTensorUnsafe(HType handle);
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Delete(HType handle);
+
         internal sealed class HType : SafeHandle
         {
             public HType(<#=type.Ptr#> preexistingHandle, bool ownsHandle) : base(<#=type.Ptr#>.Zero, ownsHandle)
@@ -38,8 +41,7 @@ foreach (var type in TorchTypeDef.Types) {
 
             protected override bool ReleaseHandle()
             {
-                var atenTensor = new AtenSharp.<#=type.Name#>Tensor(THS_getTHTensorUnsafe(this));
-                atenTensor.Dispose();
+                THS_Delete (this);
                 return true;
             }
 
