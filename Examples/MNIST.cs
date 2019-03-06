@@ -13,12 +13,14 @@ namespace TorchSharp.Examples
         static void Main(string[] args)
         {
             using (var train = Data.Loader.MNIST(_trainDataset, _batch))
+            using (var test = Data.Loader.MNIST(_trainDataset, _batch, false))
             using (var model = new Model())
             using (var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5))
             {
                 for (var epoch = 1; epoch <= _epochs; epoch++)
                 {
                     Train(model, optimizer, train, epoch, _batch, train.Size());
+                    Test(model, test, test.Size());
                 }
             }
         }
@@ -83,14 +85,47 @@ namespace TorchSharp.Examples
 
                     optimizer.Step();
 
-                    batchId++;
-
                     Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+
+                    batchId++;
 
                     data.Dispose();
                     target.Dispose();
                 }
             }
+        }
+
+        private static void Test(
+            NN.Module model,
+            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader,
+            long size)
+        {
+            model.Eval();
+
+            double testLoss = 0;
+            int correct = 0;
+
+            foreach (var (data, target) in dataLoader)
+            {
+                using (var output = model.Forward(data))
+                using (var loss = NN.LossFunction.NLL(output, target, NN.Reduction.Sum))
+                {
+                    testLoss += loss.Item;
+
+                    var pred = output.Argmax(1);
+
+                    correct += pred.Eq(target).Sum().Item; // Memory leak here
+
+                    testLoss /= size;
+
+                    data.Dispose();
+                    target.Dispose();
+                    pred.Dispose();
+                }
+
+            }
+
+            Console.WriteLine($"\rTest set: Average loss {testLoss} | Accuracy {(double)correct / size}");
         }
     }
 }

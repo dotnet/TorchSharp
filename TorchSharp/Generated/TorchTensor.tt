@@ -276,6 +276,22 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<<#=type.Storage#>> Sum()
+        {
+            return new <#=type.Name#>Tensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<<#=type.Storage#>> SubInPlace(ITorchTensor<<#=type.Storage#>> target, bool no_grad = true)
@@ -286,9 +302,17 @@ foreach (var type in TorchTypeDef.Types) {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, <#=type.Storage#> scalar, bool is_grad);
 
-        public ITorchTensor<<#=type.Storage#>> Mul(<#=type.Storage#> scalar, bool no_grad = true)
+        public ITorchTensor<<#=type.Storage#>> Mul(<#=type.Storage#> scalar, bool noGrad = true)
         {
-            return new <#=type.Name#>Tensor(THS_Mul(handle, scalar, !no_grad));
+            return new <#=type.Name#>Tensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<<#=type.Storage#>> Argmax(long dimension, bool keepDim = false)
+        {
+            return new <#=type.Name#>Tensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>

@@ -269,6 +269,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<byte> Sum()
+        {
+            return new ByteTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<byte> SubInPlace(ITorchTensor<byte> target, bool no_grad = true)
@@ -279,9 +295,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, byte scalar, bool is_grad);
 
-        public ITorchTensor<byte> Mul(byte scalar, bool no_grad = true)
+        public ITorchTensor<byte> Mul(byte scalar, bool noGrad = true)
         {
-            return new ByteTensor(THS_Mul(handle, scalar, !no_grad));
+            return new ByteTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<byte> Argmax(long dimension, bool keepDim = false)
+        {
+            return new ByteTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -569,6 +593,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<short> Sum()
+        {
+            return new ShortTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<short> SubInPlace(ITorchTensor<short> target, bool no_grad = true)
@@ -579,9 +619,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, short scalar, bool is_grad);
 
-        public ITorchTensor<short> Mul(short scalar, bool no_grad = true)
+        public ITorchTensor<short> Mul(short scalar, bool noGrad = true)
         {
-            return new ShortTensor(THS_Mul(handle, scalar, !no_grad));
+            return new ShortTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<short> Argmax(long dimension, bool keepDim = false)
+        {
+            return new ShortTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -869,6 +917,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<int> Sum()
+        {
+            return new IntTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<int> SubInPlace(ITorchTensor<int> target, bool no_grad = true)
@@ -879,9 +943,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, int scalar, bool is_grad);
 
-        public ITorchTensor<int> Mul(int scalar, bool no_grad = true)
+        public ITorchTensor<int> Mul(int scalar, bool noGrad = true)
         {
-            return new IntTensor(THS_Mul(handle, scalar, !no_grad));
+            return new IntTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<int> Argmax(long dimension, bool keepDim = false)
+        {
+            return new IntTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -1169,6 +1241,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<long> Sum()
+        {
+            return new LongTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<long> SubInPlace(ITorchTensor<long> target, bool no_grad = true)
@@ -1179,9 +1267,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, long scalar, bool is_grad);
 
-        public ITorchTensor<long> Mul(long scalar, bool no_grad = true)
+        public ITorchTensor<long> Mul(long scalar, bool noGrad = true)
         {
-            return new LongTensor(THS_Mul(handle, scalar, !no_grad));
+            return new LongTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<long> Argmax(long dimension, bool keepDim = false)
+        {
+            return new LongTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -1469,6 +1565,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<double> Sum()
+        {
+            return new DoubleTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<double> SubInPlace(ITorchTensor<double> target, bool no_grad = true)
@@ -1479,9 +1591,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, double scalar, bool is_grad);
 
-        public ITorchTensor<double> Mul(double scalar, bool no_grad = true)
+        public ITorchTensor<double> Mul(double scalar, bool noGrad = true)
         {
-            return new DoubleTensor(THS_Mul(handle, scalar, !no_grad));
+            return new DoubleTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<double> Argmax(long dimension, bool keepDim = false)
+        {
+            return new DoubleTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -1769,6 +1889,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static HType THS_Sum(HType src);
+
+        public ITorchTensor<float> Sum()
+        {
+            return new FloatTensor(THS_Sum(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+
+        public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
+        {
+            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<float> SubInPlace(ITorchTensor<float> target, bool no_grad = true)
@@ -1779,9 +1915,17 @@ namespace TorchSharp.Tensor {
         [DllImport("LibTorchSharp")]
         extern static HType THS_Mul(HType src, float scalar, bool is_grad);
 
-        public ITorchTensor<float> Mul(float scalar, bool no_grad = true)
+        public ITorchTensor<float> Mul(float scalar, bool noGrad = true)
         {
-            return new FloatTensor(THS_Mul(handle, scalar, !no_grad));
+            return new FloatTensor(THS_Mul(handle, scalar, !noGrad));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+
+        public ITorchTensor<float> Argmax(long dimension, bool keepDim = false)
+        {
+            return new FloatTensor(THS_Argmax(handle, dimension, keepDim));
         }
 
         /// <summary>

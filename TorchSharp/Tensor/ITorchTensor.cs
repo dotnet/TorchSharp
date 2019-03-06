@@ -28,8 +28,14 @@ namespace TorchSharp.Tensor
 
         ITorchTensor<T> View(params long[] shape);
 
-        ITorchTensor<T> SubInPlace(ITorchTensor<T> target, bool no_grad = true);
+        ITorchTensor<U> Eq<U>(ITorchTensor<U> target);
 
-        ITorchTensor<T> Mul(T scalar, bool no_grad = true);
+        ITorchTensor<T> SubInPlace(ITorchTensor<T> target, bool noGrad = true);
+
+        ITorchTensor<T> Mul(T scalar, bool noGrad = true);
+
+        ITorchTensor<T> Sum();
+
+        ITorchTensor<T> Argmax(long dimension, bool keepDimension = false);
     }
 }

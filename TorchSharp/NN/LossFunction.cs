@@ -18,11 +18,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_LossNLL(IntPtr srct, IntPtr trgt);
+        extern static FloatTensor.HType NN_LossNLL(IntPtr srct, IntPtr trgt, long reduction);
 
-        public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target)
+        public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, Reduction reduction = Reduction.None)
         {
-            return new FloatTensor(NN_LossNLL(src.Handle, target.Handle));
+            return new FloatTensor(NN_LossNLL(src.Handle, target.Handle, (long)reduction));
         }
     }
 
