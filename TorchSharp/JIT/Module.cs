@@ -23,8 +23,12 @@ namespace TorchSharp.JIT
             {
             }
 
+            [DllImport("LibTorchSharp")]
+            extern static void NN_JIT_Dispose(HType handle);
+
             protected override bool ReleaseHandle()
             {
+                NN_JIT_Dispose(this);
                 return true;
             }
 
@@ -98,7 +102,7 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType JIT_forward(Module.HType module, IntPtr tensor);
+        extern static IntPtr JIT_forward(Module.HType module, IntPtr tensor);
 
         public FloatTensor Forward<T>(ITorchTensor<T> tensor)
         {

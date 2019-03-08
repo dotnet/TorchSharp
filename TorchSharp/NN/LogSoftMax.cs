@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_LogSoftMaxModule_Forward(IntPtr tensor, long dimension);
+        extern static IntPtr NN_LogSoftMaxModule_Forward(IntPtr tensor, long dimension);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {

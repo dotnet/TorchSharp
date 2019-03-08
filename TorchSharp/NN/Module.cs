@@ -25,8 +25,12 @@ namespace TorchSharp.NN
             {
             }
 
+            [DllImport("LibTorchSharp")]
+            extern static void NN_Module_Dispose(HType handle);
+
             protected override bool ReleaseHandle()
             {
+                NN_Module_Dispose(this);
                 return true;
             }
 
@@ -220,7 +224,7 @@ namespace TorchSharp.NN
                 NN_GetParameters(handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
-            return ptrArray.Select(x => new FloatTensor(new FloatTensor.HType(x, true)));
+            return ptrArray.Select(x => new FloatTensor(x) as ITorchTensor<float>);
         }
 
         [DllImport("LibTorchSharp")]

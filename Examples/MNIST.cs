@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.Examples
@@ -7,21 +8,33 @@ namespace TorchSharp.Examples
     public class MNIST
     {
         private readonly static int _epochs = 10;
-        private readonly static long _batch = 64;
-        private readonly static string _trainDataset = @"E:/Source/Repos/LibTorchSharp/MNIST";
+        private readonly static long _trainBatchSize = 64;
+        private readonly static long _testBatchSize = 1000;
+        private readonly static string _dataLocation = @"E:/Source/Repos/LibTorchSharp/MNIST";
+
+        private readonly static int _logInterval = 10;
 
         static void Main(string[] args)
         {
-            using (var train = Data.Loader.MNIST(_trainDataset, _batch))
-            using (var test = Data.Loader.MNIST(_trainDataset, _batch, false))
+            Torch.SetSeed(1);
+
+            using (var train = Data.Loader.MNIST(_dataLocation, _trainBatchSize))
+            using (var test = Data.Loader.MNIST(_dataLocation, _testBatchSize, false))
             using (var model = new Model())
             using (var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5))
             {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
                 for (var epoch = 1; epoch <= _epochs; epoch++)
                 {
-                    Train(model, optimizer, train, epoch, _batch, train.Size());
+                    Train(model, optimizer, train, epoch, _trainBatchSize, train.Size());
                     Test(model, test, test.Size());
                 }
+
+                sw.Stop();
+                Console.WriteLine($"Elapsed time {sw.ElapsedMilliseconds}.");
+                Console.ReadLine();
             }
         }
 
@@ -85,7 +98,10 @@ namespace TorchSharp.Examples
 
                     optimizer.Step();
 
-                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+                    if (batchId % _logInterval == 0)
+                    {
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+                    }
 
                     batchId++;
 
@@ -116,8 +132,6 @@ namespace TorchSharp.Examples
 
                     correct += pred.Eq(target).Sum().Item; // Memory leak here
 
-                    testLoss /= size;
-
                     data.Dispose();
                     target.Dispose();
                     pred.Dispose();
@@ -125,7 +139,7 @@ namespace TorchSharp.Examples
 
             }
 
-            Console.WriteLine($"\rTest set: Average loss {testLoss} | Accuracy {(double)correct / size}");
+            Console.WriteLine($"\rTest set: Average loss {testLoss / size} | Accuracy {(double)correct / size}");
         }
     }
 }

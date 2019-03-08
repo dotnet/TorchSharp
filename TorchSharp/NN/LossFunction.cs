@@ -10,17 +10,17 @@ namespace TorchSharp.NN
     public class LossFunction
     {
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_LossMSE(IntPtr srct, IntPtr trgt, long reduction);
+        extern static IntPtr NN_LossMSE(IntPtr srct, IntPtr trgt, long reduction);
 
-        public static ITorchTensor<float> MSE<T>(ITorchTensor<T> src, ITorchTensor<T> target, Reduction reduction = Reduction.None)
+        public static ITorchTensor<float> MSE<T>(ITorchTensor<T> src, ITorchTensor<T> target, Reduction reduction = Reduction.Mean)
         {
             return new FloatTensor(NN_LossMSE(src.Handle, target.Handle, (long)reduction));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType NN_LossNLL(IntPtr srct, IntPtr trgt, long reduction);
+        extern static IntPtr NN_LossNLL(IntPtr srct, IntPtr trgt, long reduction);
 
-        public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, Reduction reduction = Reduction.None)
+        public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, Reduction reduction = Reduction.Mean)
         {
             return new FloatTensor(NN_LossNLL(src.Handle, target.Handle, (long)reduction));
         }
@@ -28,8 +28,8 @@ namespace TorchSharp.NN
 
     public enum Reduction : long
     {
-        None = 1,
-        Mean = 2,
-        Sum = 3
+        None = 0,
+        Mean = 1,
+        Sum = 2
     }
 }

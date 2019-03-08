@@ -17,56 +17,13 @@ foreach (var type in TorchTypeDef.Types) {
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
     //    Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class <#=type.Name#>Tensor : ITorchTensor<<#=type.Storage#>>
+    public struct <#=type.Name#>Tensor : ITorchTensor<<#=type.Storage#>>
     {
-        [DllImport("LibTorchSharp")]
-        extern static AtenSharp.<#=type.Name#>Tensor.HType THS_getTHTensorUnsafe(HType handle);
+        internal IntPtr handle;
 
-        [DllImport("LibTorchSharp")]
-        extern static void THS_Delete(HType handle);
-
-        internal sealed class HType : SafeHandle
-        {
-            public HType(<#=type.Ptr#> preexistingHandle, bool ownsHandle) : base(<#=type.Ptr#>.Zero, ownsHandle)
-            {
-                SetHandle(preexistingHandle);
-            }
-
-            // This is just for marshalling
-            internal HType() : base(<#=type.Ptr#>.Zero, true)
-            {
-            }
-
-            public override bool IsInvalid => handle == (<#=type.Ptr#>)0;
-
-            protected override bool ReleaseHandle()
-            {
-                THS_Delete (this);
-                return true;
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    ReleaseHandle();
-                }
-            }
-        }
-
-        internal HType handle;
-
-        internal <#=type.Name#>Tensor(HType handle)
+        internal <#=type.Name#>Tensor(IntPtr handle)
         {
             this.handle = handle;
-        }
-
-        /// <summary>
-        ///  Finalizer for ~<#=type.Name#>Tensor
-        /// </summary>
-        ~<#=type.Name#>Tensor()
-        {
-            Dispose(false);
         }
 
         /// <summary>
@@ -78,15 +35,18 @@ foreach (var type in TorchTypeDef.Types) {
             GC.SuppressFinalize(this);
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static void THS_Dispose(IntPtr handle);
+
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
-        protected void Dispose(bool disposing)
+        public void Dispose(bool disposing)
         {
             if (disposing)
             {
-                handle.Dispose();
-                handle.SetHandleAsInvalid();
+                THS_Dispose(handle);
+                handle = IntPtr.Zero;
             }
         }
 
@@ -94,9 +54,12 @@ foreach (var type in TorchTypeDef.Types) {
         {
             get
             {
-                return handle.DangerousGetHandle();
+                return handle;
             }
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static AtenSharp.<#=type.Name#>Tensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
         ///  Returns the number of dimensions for this tensor
@@ -130,7 +93,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static <#=type.Ptr#> THS_data(HType handle);
+        extern static <#=type.Ptr#> THS_data(IntPtr handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -163,7 +126,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static string THS_deviceType(HType handle);
+        extern static string THS_deviceType(IntPtr handle);
 
         public string Device
         {
@@ -212,7 +175,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static IntPtr THS_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -229,7 +192,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static IntPtr THS_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -246,7 +209,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void THS_Backward(HType handle);
+        extern static void THS_Backward(IntPtr handle);
 
         public void Backward()
         {
@@ -254,7 +217,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static FloatTensor.HType THS_Grad(HType handle);
+        extern static IntPtr THS_Grad(IntPtr handle);
 
         public ITorchTensor<float> Grad()
         {
@@ -262,7 +225,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_View(HType src, IntPtr shape, int length);
+        extern static IntPtr THS_View(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<<#=type.Storage#>> View(params long[] shape)
         {
@@ -276,7 +239,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sum(HType src);
+        extern static IntPtr THS_Sum(IntPtr src);
 
         public ITorchTensor<<#=type.Storage#>> Sum()
         {
@@ -284,7 +247,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THS_Eq(HType src, IntPtr trg);
+        extern static IntPtr THS_Eq(IntPtr src, IntPtr trg);
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
@@ -292,7 +255,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Sub_(HType src, IntPtr trg, bool is_grad);
+        extern static IntPtr THS_Sub_(IntPtr src, IntPtr trg, bool is_grad);
 
         public ITorchTensor<<#=type.Storage#>> SubInPlace(ITorchTensor<<#=type.Storage#>> target, bool no_grad = true)
         {
@@ -300,7 +263,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Mul(HType src, <#=type.Storage#> scalar, bool is_grad);
+        extern static IntPtr THS_Mul(IntPtr src, <#=type.Storage#> scalar, bool is_grad);
 
         public ITorchTensor<<#=type.Storage#>> Mul(<#=type.Storage#> scalar, bool noGrad = true)
         {
@@ -308,7 +271,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static HType THS_Argmax(HType src, long dimension, bool keep_dim);
+        extern static IntPtr THS_Argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<<#=type.Storage#>> Argmax(long dimension, bool keepDim = false)
         {
@@ -354,30 +317,16 @@ foreach (var type in TorchTypeDef.Types) {
         {
             switch (true)
             {
-                case bool _ when typeof(T) == typeof(byte):
-                    {
-                        return (ITorchTensor<T>)new ByteTensor(new ByteTensor.HType(rawTensor, true));
-                    }
-                case bool _ when typeof(T) == typeof(short):
-                    {
-                        return (ITorchTensor<T>)new ShortTensor(new ShortTensor.HType(rawTensor, true));
-                    }
-                case bool _ when typeof(T) == typeof(int):
-                    {
-                        return (ITorchTensor<T>)new IntTensor(new IntTensor.HType(rawTensor, true));
-                    }
-                case bool _ when typeof(T) == typeof(long):
-                    {
-                        return (ITorchTensor<T>)new LongTensor(new LongTensor.HType(rawTensor, true));
-                    }
-                case bool _ when typeof(T) == typeof(double):
-                    {
-                        return (ITorchTensor<T>)new DoubleTensor(new DoubleTensor.HType(rawTensor, true));
-                    }
-                case bool _ when typeof(T) == typeof(float):
-                    {
-                        return (ITorchTensor<T>)new FloatTensor(new FloatTensor.HType(rawTensor, true));
-                    }
+<#
+foreach (var type in TorchTypeDef.Types) {
+#>
+                case bool _ when typeof(T) == typeof(<#=type.Storage#>):
+                {
+                    return new <#=type.Name#>Tensor(rawTensor) as ITorchTensor<T>;
+                }
+<#
+}
+#>
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }

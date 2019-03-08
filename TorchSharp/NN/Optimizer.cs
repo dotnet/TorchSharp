@@ -25,8 +25,12 @@ namespace TorchSharp.NN
             {
             }
 
+            [DllImport("LibTorchSharp")]
+            extern static void NN_Optimizer_Dispose(HType handle);
+
             protected override bool ReleaseHandle()
             {
+                NN_Optimizer_Dispose(this);
                 return true;
             }
 
