@@ -169,7 +169,7 @@ namespace TorchSharp.NN
 
     public abstract partial class Module : IDisposable
     {
-        public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
+        public abstract ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors);
 
         public virtual void RegisterModule(NN.Module module)
         {

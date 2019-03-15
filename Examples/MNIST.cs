@@ -53,17 +53,18 @@ namespace TorchSharp.Examples
                 RegisterModule(fc2);
             }
 
-            public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
+            public override ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
             {
-                using (var l11 = conv1.Forward(tensor))
+                using (var l11 = conv1.Forward(tensors))
                 using (var l12 = MaxPool2D(l11, 2))
                 using (var l13 = Relu(l12))
 
                 using (var l21 = conv2.Forward(l13))
                 using (var l22 = FeatureDropout(l21))
                 using (var l23 = MaxPool2D(l22, 2))
+                using (var l24 = Relu(l23))
 
-                using (var x = l23.View(new long[] { -1, 320 }))
+                using (var x = l24.View(new long[] { -1, 320 }))
 
                 using (var l31 = fc1.Forward(x))
                 using (var l32 = Relu(l31))

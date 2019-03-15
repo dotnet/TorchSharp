@@ -4,7 +4,7 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Linear : Module
+    public class Linear : ProvidedModule
     {
         internal Linear(IntPtr handle) : base(handle)
         {

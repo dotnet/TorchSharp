@@ -6,7 +6,7 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Sequential : Module
+    public class Sequential : ProvidedModule
     {
         internal Sequential(IntPtr handle) : base(handle)
         {

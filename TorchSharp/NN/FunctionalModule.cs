@@ -7,7 +7,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a functional module (e.g., ReLU).
     /// </summary>
-    public abstract class FunctionalModule<T> : Module
+    public abstract class FunctionalModule<T> : ProvidedModule
     {
         internal FunctionalModule() : base(IntPtr.Zero)
         {

@@ -4,7 +4,7 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Conv2D : Module
+    public class Conv2D : ProvidedModule
     {
         internal Conv2D(IntPtr handle) : base(handle)
         {
