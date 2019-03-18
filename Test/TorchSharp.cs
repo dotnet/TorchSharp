@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using TorchSharp.JIT;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.Test
@@ -86,6 +87,38 @@ namespace TorchSharp.Test
 
             var result = module.Forward(ones);
             Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void ScoreModelCheckInput()
+        {
+            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+            Assert.IsNotNull(module);
+
+            var num = module.GetNumberOfInputs();
+
+            for (int i = 0; i < num; i++)
+            {
+                var type = module.GetInputType(i);
+
+                Assert.IsNotNull(type as DynamicType);
+            }
+        }
+
+        [TestMethod]
+        public void ScoreModelCheckOutput()
+        {
+            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+            Assert.IsNotNull(module);
+
+            var num = module.GetNumberOfOutputs();
+
+            for (int i = 0; i < num; i++)
+            {
+                var type = module.GetOutputType(i);
+
+                Assert.IsNotNull(type as DynamicType);
+            }
         }
 
         [TestMethod]

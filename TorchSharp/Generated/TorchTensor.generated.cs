@@ -1,9 +1,14 @@
-﻿using System;
+﻿
+
+
+
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TorchSharp.Tensor {
+
 
     /// <summary>
     ///   Tensor of type Byte.
@@ -179,7 +184,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ByteTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                    return new ByteTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
         }
@@ -196,7 +201,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ByteTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Byte, device, requiresGrad));
+                    return new ByteTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Byte, device, requiresGrad));
                 }
             }
         }
@@ -292,6 +297,7 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     /// <summary>
     ///   Tensor of type Short.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -466,7 +472,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ShortTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                    return new ShortTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
         }
@@ -483,7 +489,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new ShortTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Short, device, requiresGrad));
+                    return new ShortTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Short, device, requiresGrad));
                 }
             }
         }
@@ -579,6 +585,7 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     /// <summary>
     ///   Tensor of type Int.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -753,7 +760,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new IntTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                    return new IntTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
         }
@@ -770,7 +777,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new IntTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Int, device, requiresGrad));
+                    return new IntTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Int, device, requiresGrad));
                 }
             }
         }
@@ -866,6 +873,7 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     /// <summary>
     ///   Tensor of type Long.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1040,7 +1048,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new LongTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                    return new LongTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
         }
@@ -1057,7 +1065,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new LongTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Long, device, requiresGrad));
+                    return new LongTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Long, device, requiresGrad));
                 }
             }
         }
@@ -1153,6 +1161,7 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     /// <summary>
     ///   Tensor of type Double.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1327,7 +1336,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new DoubleTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                    return new DoubleTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
         }
@@ -1344,7 +1353,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new DoubleTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Double, device, requiresGrad));
+                    return new DoubleTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Double, device, requiresGrad));
                 }
             }
         }
@@ -1440,6 +1449,7 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     /// <summary>
     ///   Tensor of type Float.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1614,7 +1624,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new FloatTensor (THS_ones ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                    return new FloatTensor (THS_ones ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad));
                 }
             }
         }
@@ -1631,7 +1641,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new FloatTensor (THS_randn ((IntPtr)psizes, size.Length, (short)ATenScalarMapping.Float, device, requiresGrad));
+                    return new FloatTensor (THS_randn ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad));
                 }
             }
         }
@@ -1727,8 +1737,9 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
+
     
-    internal enum ATenScalarMapping : short
+    public enum ATenScalarMapping : short
     {
         Byte = 0,
         Short = 2,
@@ -1744,30 +1755,37 @@ namespace TorchSharp.Tensor {
         {
             switch (true)
             {
+
                 case bool _ when typeof(T) == typeof(byte):
                 {
                     return new ByteTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 case bool _ when typeof(T) == typeof(short):
                 {
                     return new ShortTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 case bool _ when typeof(T) == typeof(int):
                 {
                     return new IntTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 case bool _ when typeof(T) == typeof(long):
                 {
                     return new LongTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 case bool _ when typeof(T) == typeof(double):
                 {
                     return new DoubleTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 case bool _ when typeof(T) == typeof(float):
                 {
                     return new FloatTensor(rawTensor) as ITorchTensor<T>;
                 }
+
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }

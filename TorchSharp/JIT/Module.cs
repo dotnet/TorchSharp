@@ -24,11 +24,11 @@ namespace TorchSharp.JIT
             }
 
             [DllImport("LibTorchSharp")]
-            extern static void NN_JIT_Dispose(HType handle);
+            extern static void JIT_Module_Dispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
-                NN_JIT_Dispose(this);
+                JIT_Module_Dispose(this);
                 return true;
             }
 
@@ -88,7 +88,7 @@ namespace TorchSharp.JIT
         [DllImport("LibTorchSharp")]
         extern static string JIT_getModuleName(HType module, int index);
 
-        public virtual string[] GetSubModulesNames()
+        public string[] GetSubModulesNames()
         {
             var numModules = JIT_getNumModules(handle);
             string[] result = new string[numModules];
@@ -99,6 +99,55 @@ namespace TorchSharp.JIT
             }
 
             return result;
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static int JIT_getNumberOfInputs(HType module);
+
+        public int GetNumberOfInputs()
+        { 
+            return JIT_getNumberOfInputs(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static int JIT_getNumberOfOutputs(HType module);
+
+        public int GetNumberOfOutputs()
+        {
+            return JIT_getNumberOfOutputs(handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr JIT_getInputType(HType module, int index);
+
+        public Type GetInputType(int index)
+        {
+            var type = new Type(JIT_getInputType(handle, index));
+
+            return GetType(type);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr JIT_getOutputType(HType module, int index);
+
+        public Type GetOutputType(int index)
+        {
+            var type = new Type(JIT_getOutputType(handle, index));
+
+            return GetType(type);
+        }
+
+        private Type GetType(Type type)
+        {
+            switch (type.Kind)
+            {
+                case Type.TypeKind.DynamicType:
+                    return type.AsDynamicType();
+                case Type.TypeKind.TensorType:
+                    return type.AsDynamicType();
+                default:
+                    return type;
+            }
         }
 
         [DllImport("LibTorchSharp")]

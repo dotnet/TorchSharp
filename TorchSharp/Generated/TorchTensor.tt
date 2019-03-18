@@ -186,7 +186,7 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new <#=type.Name#>Tensor (THS_ones ((<#=type.Ptr#>)psizes, size.Length, (short)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                    return new <#=type.Name#>Tensor (THS_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
         }
@@ -203,7 +203,7 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new <#=type.Name#>Tensor (THS_randn ((<#=type.Ptr#>)psizes, size.Length, (short)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                    return new <#=type.Name#>Tensor (THS_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
         }
@@ -301,7 +301,7 @@ foreach (var type in TorchTypeDef.Types) {
     }
 <# } #>
     
-    internal enum ATenScalarMapping : short
+    public enum ATenScalarMapping : short
     {
         Byte = 0,
         Short = 2,
