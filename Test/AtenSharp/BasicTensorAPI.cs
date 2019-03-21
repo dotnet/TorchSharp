@@ -24,19 +24,6 @@ namespace AtenSharp.Test
             Assert.AreEqual(20, x2Shape[1]);
         }
 
-        //[TestMethod]
-        //public void CreateIntTensorOne()
-        //{
-        //    var x1 = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
-
-        //    //Assert.AreEqual(4, x1.Shape.Length);
-
-        //    var module = Module.LoadModule(@"E:\Source\Repos\libtorch\model.pt");
-
-        //    var modules = module.GetModules();
-        //    var result = module.Score(x1);
-        //}
-
         [TestMethod]
         public void GetFloatTensorData()
         {

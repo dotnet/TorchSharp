@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -151,11 +152,14 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr JIT_forward(Module.HType module, IntPtr tensor);
+        extern static IntPtr JIT_forward(Module.HType module, IntPtr tensors, int length);
 
-        public FloatTensor Forward<T>(ITorchTensor<T> tensor)
+        public FloatTensor Forward<T>(params ITorchTensor<T>[] tensors)
         {
-            return new FloatTensor(JIT_forward(handle, tensor.Handle));
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorRefs = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+            return new FloatTensor(JIT_forward(handle, tensorRefs, parray.Array.Length));
         }
     }
 }

@@ -57,6 +57,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static ByteTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new ByteTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Byte));
+        }
+
+        public static ByteTensor From(byte[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (byte* parray = rawArray)
+                {
+                    return new ByteTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Byte));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.ByteTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -120,6 +148,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -345,6 +384,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static ShortTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new ShortTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Short));
+        }
+
+        public static ShortTensor From(short[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (short* parray = rawArray)
+                {
+                    return new ShortTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Short));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.ShortTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -408,6 +475,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -633,6 +711,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static IntTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new IntTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Int));
+        }
+
+        public static IntTensor From(int[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (int* parray = rawArray)
+                {
+                    return new IntTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Int));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.IntTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -696,6 +802,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -921,6 +1038,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static LongTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new LongTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Long));
+        }
+
+        public static LongTensor From(long[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (long* parray = rawArray)
+                {
+                    return new LongTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Long));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.LongTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -984,6 +1129,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -1209,6 +1365,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static DoubleTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new DoubleTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Double));
+        }
+
+        public static DoubleTensor From(double[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (double* parray = rawArray)
+                {
+                    return new DoubleTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Double));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.DoubleTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -1272,6 +1456,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -1497,6 +1692,34 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static FloatTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new FloatTensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Float));
+        }
+
+        public static FloatTensor From(float[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (float* parray = rawArray)
+                {
+                    return new FloatTensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Float));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.FloatTensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -1560,6 +1783,17 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -1739,7 +1973,7 @@ namespace TorchSharp.Tensor {
     }
 
     
-    public enum ATenScalarMapping : short
+    public enum ATenScalarMapping : sbyte
     {
         Byte = 0,
         Short = 2,
@@ -1784,6 +2018,45 @@ namespace TorchSharp.Tensor {
                 case bool _ when typeof(T) == typeof(float):
                 {
                     return new FloatTensor(rawTensor) as ITorchTensor<T>;
+                }
+
+                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
+            }
+        }
+
+        internal static ITorchTensor<T> FromArray<T>(this IntPtr rawArray)
+        {
+            switch (true)
+            {
+
+                case bool _ when typeof(T) == typeof(byte):
+                {
+                    return new ByteTensor(rawArray) as ITorchTensor<T>;
+                }
+
+                case bool _ when typeof(T) == typeof(short):
+                {
+                    return new ShortTensor(rawArray) as ITorchTensor<T>;
+                }
+
+                case bool _ when typeof(T) == typeof(int):
+                {
+                    return new IntTensor(rawArray) as ITorchTensor<T>;
+                }
+
+                case bool _ when typeof(T) == typeof(long):
+                {
+                    return new LongTensor(rawArray) as ITorchTensor<T>;
+                }
+
+                case bool _ when typeof(T) == typeof(double):
+                {
+                    return new DoubleTensor(rawArray) as ITorchTensor<T>;
+                }
+
+                case bool _ when typeof(T) == typeof(float):
+                {
+                    return new FloatTensor(rawArray) as ITorchTensor<T>;
                 }
 
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");

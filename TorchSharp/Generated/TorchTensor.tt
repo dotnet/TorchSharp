@@ -59,6 +59,34 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+
+        public static <#=type.Name#>Tensor From(IntPtr rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+
+            return new <#=type.Name#>Tensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
+        }
+
+        public static <#=type.Name#>Tensor From(<#=type.Storage#>[] rawArray, long[] dimensions, long[] strides)
+        {
+            if (dimensions.Length != strides.Length)
+            {
+                throw new ArgumentException("Dimensions and strides do not match.");
+            }
+            unsafe
+            {
+                fixed (<#=type.Storage#>* parray = rawArray)
+                {
+                    return new <#=type.Name#>Tensor(THS_new((IntPtr)parray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static AtenSharp.<#=type.Name#>Tensor.HType THS_getTHTensorUnsafe(IntPtr handle);
 
         /// <summary>
@@ -122,6 +150,17 @@ foreach (var type in TorchTypeDef.Types) {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THS_Type(IntPtr handle);
+
+        public ATenScalarMapping Type
+        {
+            get
+            {
+                return (ATenScalarMapping)THS_Type(handle);
             }
         }
 
@@ -301,7 +340,7 @@ foreach (var type in TorchTypeDef.Types) {
     }
 <# } #>
     
-    public enum ATenScalarMapping : short
+    public enum ATenScalarMapping : sbyte
     {
         Byte = 0,
         Short = 2,
@@ -323,6 +362,24 @@ foreach (var type in TorchTypeDef.Types) {
                 case bool _ when typeof(T) == typeof(<#=type.Storage#>):
                 {
                     return new <#=type.Name#>Tensor(rawTensor) as ITorchTensor<T>;
+                }
+<#
+}
+#>
+                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
+            }
+        }
+
+        internal static ITorchTensor<T> FromArray<T>(this IntPtr rawArray)
+        {
+            switch (true)
+            {
+<#
+foreach (var type in TorchTypeDef.Types) {
+#>
+                case bool _ when typeof(T) == typeof(<#=type.Storage#>):
+                {
+                    return new <#=type.Name#>Tensor(rawArray) as ITorchTensor<T>;
                 }
 <#
 }

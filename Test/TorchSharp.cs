@@ -16,19 +16,6 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void CreateFloatTensorCheckDistructor()
-        {
-            ITorchTensor<float> ones = null;
-
-            using (var tmp = FloatTensor.Ones(new long[] { 2, 2 }))
-            {
-                ones = tmp;
-                Assert.IsNotNull(ones);
-            }
-            Assert.ThrowsException<ObjectDisposedException>(ones.Grad);
-        }
-
-        [TestMethod]
         public void CreateFloatTensorCheckMemory()
         {
             ITorchTensor<float> ones = null;
@@ -77,6 +64,18 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void CreateFloatTensorFromData()
+        {
+            var data = new float[1000];
+            data[100] = 1;
+
+            using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }, new long[] { 1, 100 }))
+            {
+                Assert.AreEqual(tensor.Data[100], 1);
+            }
+        }
+
+        [TestMethod]
         public void ScoreModel()
         {
             var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
@@ -90,7 +89,7 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void ScoreModelCheckInput()
+        public void LoadModelCheckInput()
         {
             var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
             Assert.IsNotNull(module);
@@ -100,6 +99,22 @@ namespace TorchSharp.Test
             for (int i = 0; i < num; i++)
             {
                 var type = module.GetInputType(i);
+
+                Assert.IsNotNull(type as DynamicType);
+            }
+        }
+
+        [TestMethod]
+        public void LoadModelCheckOutput()
+        {
+            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+            Assert.IsNotNull(module);
+
+            var num = module.GetNumberOfOutputs();
+
+            for (int i = 0; i < num; i++)
+            {
+                var type = module.GetOutputType(i);
 
                 Assert.IsNotNull(type as DynamicType);
             }
