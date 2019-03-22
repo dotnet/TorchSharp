@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-[assembly: InternalsVisibleTo("TorchSharp")]
+[assembly: InternalsVisibleTo("Test")]
 
 namespace TorchSharp.Tensor {
 
