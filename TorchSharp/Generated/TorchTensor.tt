@@ -183,6 +183,22 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<<#=type.Storage#>> Cpu()
+        {
+            return new <#=type.Name#>Tensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<<#=type.Storage#>> Cuda()
+        {
+            return new <#=type.Name#>Tensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>

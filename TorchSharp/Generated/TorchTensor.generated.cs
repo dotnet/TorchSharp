@@ -1,14 +1,9 @@
-﻿
-
-
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TorchSharp.Tensor {
-
 
     /// <summary>
     ///   Tensor of type Byte.
@@ -181,6 +176,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<byte> Cpu()
+        {
+            return new ByteTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<byte> Cuda()
+        {
+            return new ByteTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -344,7 +355,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     /// <summary>
     ///   Tensor of type Short.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -516,6 +526,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<short> Cpu()
+        {
+            return new ShortTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<short> Cuda()
+        {
+            return new ShortTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -679,7 +705,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     /// <summary>
     ///   Tensor of type Int.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -851,6 +876,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<int> Cpu()
+        {
+            return new IntTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<int> Cuda()
+        {
+            return new IntTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -1014,7 +1055,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     /// <summary>
     ///   Tensor of type Long.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1186,6 +1226,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<long> Cpu()
+        {
+            return new LongTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<long> Cuda()
+        {
+            return new LongTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -1349,7 +1405,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     /// <summary>
     ///   Tensor of type Double.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1521,6 +1576,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<double> Cpu()
+        {
+            return new DoubleTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<double> Cuda()
+        {
+            return new DoubleTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -1684,7 +1755,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     /// <summary>
     ///   Tensor of type Float.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -1856,6 +1926,22 @@ namespace TorchSharp.Tensor {
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cpu(IntPtr handle);
+
+         public ITorchTensor<float> Cpu()
+        {
+            return new FloatTensor(THS_cpu(handle));
+        }
+
+         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_cuda(IntPtr handle);
+
+         public ITorchTensor<float> Cuda()
+        {
+            return new FloatTensor(THS_cuda(handle));
+        }
+
         /// <summary>
         ///  Retrieves the size of the specified dimension in the tensor.
         /// </summary>
@@ -2019,7 +2105,6 @@ namespace TorchSharp.Tensor {
             return sb.ToString();
         }
     }
-
     
     public enum ATenScalarMapping : sbyte
     {
@@ -2037,37 +2122,30 @@ namespace TorchSharp.Tensor {
         {
             switch (true)
             {
-
                 case bool _ when typeof(T) == typeof(byte):
                 {
                     return new ByteTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(short):
                 {
                     return new ShortTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(int):
                 {
                     return new IntTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(long):
                 {
                     return new LongTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(double):
                 {
                     return new DoubleTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(float):
                 {
                     return new FloatTensor(rawTensor) as ITorchTensor<T>;
                 }
-
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }
@@ -2076,37 +2154,30 @@ namespace TorchSharp.Tensor {
         {
             switch (true)
             {
-
                 case bool _ when typeof(T) == typeof(byte):
                 {
                     return ByteTensor.From(rawArray as byte[], dimensions) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(short):
                 {
                     return ShortTensor.From(rawArray as short[], dimensions) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(int):
                 {
                     return IntTensor.From(rawArray as int[], dimensions) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(long):
                 {
                     return LongTensor.From(rawArray as long[], dimensions) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(double):
                 {
                     return DoubleTensor.From(rawArray as double[], dimensions) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(float):
                 {
                     return FloatTensor.From(rawArray as float[], dimensions) as ITorchTensor<T>;
                 }
-
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }
@@ -2115,37 +2186,30 @@ namespace TorchSharp.Tensor {
         {
             switch (true)
             {
-
                 case bool _ when typeof(T) == typeof(byte):
                 {
                     return ByteTensor.From((byte)(object)scalar) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(short):
                 {
                     return ShortTensor.From((short)(object)scalar) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(int):
                 {
                     return IntTensor.From((int)(object)scalar) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(long):
                 {
                     return LongTensor.From((long)(object)scalar) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(double):
                 {
                     return DoubleTensor.From((double)(object)scalar) as ITorchTensor<T>;
                 }
-
                 case bool _ when typeof(T) == typeof(float):
                 {
                     return FloatTensor.From((float)(object)scalar) as ITorchTensor<T>;
                 }
-
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }

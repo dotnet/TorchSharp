@@ -114,6 +114,40 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void CopyCpuToCuda()
+        {
+            var cpu = FloatTensor.Ones(new long[] { 2, 2 });
+            Assert.AreEqual(cpu.Device, "cpu");
+
+            var cuda = cpu.Cuda();
+            Assert.AreEqual(cuda.Device, "cuda");
+
+            // Copy back to CPU to inspect the elements
+            cpu = cuda.Cpu();
+            var data = cpu.Data;
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(data[i], 1);
+            }
+        }
+
+        [TestMethod]
+        public void CopyCudaToCpu()
+        {
+            var cuda = FloatTensor.Ones(new long[] { 2, 2 }, "cuda");
+            Assert.AreEqual(cuda.Device, "cuda");
+
+            var cpu = cuda.Cpu();
+            Assert.AreEqual(cpu.Device, "cpu");
+
+            var data = cpu.Data;
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(data[i], 1);
+            }
+        }
+
+        [TestMethod]
         public void ScoreModel()
         {
             var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
