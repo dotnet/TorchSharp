@@ -57,6 +57,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_byteScalar(byte scalar);
+
+        public static ByteTensor From(byte scalar)
+        {
+            return new ByteTensor(THS_new_byteScalar(scalar));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
 
         public static ByteTensor From(IntPtr rawArray, long[] dimensions, long[] strides)
@@ -288,7 +296,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -381,6 +389,14 @@ namespace TorchSharp.Tensor {
             {
                 return handle;
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_shortScalar(short scalar);
+
+        public static ShortTensor From(short scalar)
+        {
+            return new ShortTensor(THS_new_shortScalar(scalar));
         }
 
         [DllImport("LibTorchSharp")]
@@ -615,7 +631,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -708,6 +724,14 @@ namespace TorchSharp.Tensor {
             {
                 return handle;
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_intScalar(int scalar);
+
+        public static IntTensor From(int scalar)
+        {
+            return new IntTensor(THS_new_intScalar(scalar));
         }
 
         [DllImport("LibTorchSharp")]
@@ -942,7 +966,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -1035,6 +1059,14 @@ namespace TorchSharp.Tensor {
             {
                 return handle;
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_longScalar(long scalar);
+
+        public static LongTensor From(long scalar)
+        {
+            return new LongTensor(THS_new_longScalar(scalar));
         }
 
         [DllImport("LibTorchSharp")]
@@ -1269,7 +1301,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -1362,6 +1394,14 @@ namespace TorchSharp.Tensor {
             {
                 return handle;
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_doubleScalar(double scalar);
+
+        public static DoubleTensor From(double scalar)
+        {
+            return new DoubleTensor(THS_new_doubleScalar(scalar));
         }
 
         [DllImport("LibTorchSharp")]
@@ -1596,7 +1636,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -1689,6 +1729,14 @@ namespace TorchSharp.Tensor {
             {
                 return handle;
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_floatScalar(float scalar);
+
+        public static FloatTensor From(float scalar)
+        {
+            return new FloatTensor(THS_new_floatScalar(scalar));
         }
 
         [DllImport("LibTorchSharp")]
@@ -1923,7 +1971,7 @@ namespace TorchSharp.Tensor {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -2024,39 +2072,39 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        internal static ITorchTensor<T> FromArray<T>(this IntPtr rawArray)
+        public static ITorchTensor<T> ToTorchTensor<T>(this T[] rawArray)
         {
             switch (true)
             {
 
                 case bool _ when typeof(T) == typeof(byte):
                 {
-                    return new ByteTensor(rawArray) as ITorchTensor<T>;
+                    return ByteTensor.From(rawArray as byte[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 case bool _ when typeof(T) == typeof(short):
                 {
-                    return new ShortTensor(rawArray) as ITorchTensor<T>;
+                    return ShortTensor.From(rawArray as short[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 case bool _ when typeof(T) == typeof(int):
                 {
-                    return new IntTensor(rawArray) as ITorchTensor<T>;
+                    return IntTensor.From(rawArray as int[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 case bool _ when typeof(T) == typeof(long):
                 {
-                    return new LongTensor(rawArray) as ITorchTensor<T>;
+                    return LongTensor.From(rawArray as long[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 case bool _ when typeof(T) == typeof(double):
                 {
-                    return new DoubleTensor(rawArray) as ITorchTensor<T>;
+                    return DoubleTensor.From(rawArray as double[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 case bool _ when typeof(T) == typeof(float):
                 {
-                    return new FloatTensor(rawArray) as ITorchTensor<T>;
+                    return FloatTensor.From(rawArray as float[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");

@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using TorchSharp.JIT;
 using TorchSharp.Tensor;
 
@@ -72,6 +71,30 @@ namespace TorchSharp.Test
             using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }, new long[] { 1, 100 }))
             {
                 Assert.AreEqual(tensor.Data[100], 1);
+            }
+        }
+
+        [TestMethod]
+        public void CreateFloatTensorFromData2()
+        {
+            
+            var data = new float[1000];
+            data[100] = 1;
+
+            using (var tensor = data.ToTorchTensor())
+            {
+                Assert.AreEqual(tensor.Data[100], 1);
+            }
+        }
+
+        [TestMethod]
+        public void CreateFloatTensorFromScalar()
+        {
+            float scalar = 333.0f;
+
+            using (var tensor = FloatTensor.From(scalar))
+            {
+                Assert.AreEqual(tensor.Item, 333);
             }
         }
 

@@ -59,6 +59,14 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THS_new_<#=type.Storage#>Scalar(<#=type.Storage#> scalar);
+
+        public static <#=type.Name#>Tensor From(<#=type.Storage#> scalar)
+        {
+            return new <#=type.Name#>Tensor(THS_new_<#=type.Storage#>Scalar(scalar));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
 
         public static <#=type.Name#>Tensor From(IntPtr rawArray, long[] dimensions, long[] strides)
@@ -290,7 +298,7 @@ foreach (var type in TorchTypeDef.Types) {
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return TensorExtensionMethods.ToTorchTensor<U>(THS_Eq(handle, target.Handle));
+            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("LibTorchSharp")]
@@ -370,7 +378,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-        internal static ITorchTensor<T> FromArray<T>(this IntPtr rawArray)
+        internal static ITorchTensor<T> FromArray<T>(this T[] rawArray)
         {
             switch (true)
             {
@@ -379,7 +387,7 @@ foreach (var type in TorchTypeDef.Types) {
 #>
                 case bool _ when typeof(T) == typeof(<#=type.Storage#>):
                 {
-                    return new <#=type.Name#>Tensor(rawArray) as ITorchTensor<T>;
+                    return <#=type.Name#>Tensor.From(rawArray as <#=type.Storage#>[], new long[]{}, new long[]{}) as ITorchTensor<T>;
                 }
 <#
 }
