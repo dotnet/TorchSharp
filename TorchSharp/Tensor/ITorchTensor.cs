@@ -14,6 +14,10 @@ namespace TorchSharp.Tensor
 
         string Device { get; }
 
+        ITorchTensor<T> Cpu();
+
+        ITorchTensor<T> Cuda();
+
         Span<T> Data { get; }
 
         T Item { get; }
