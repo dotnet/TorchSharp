@@ -78,12 +78,16 @@ namespace TorchSharp.Test
         [TestMethod]
         public void CreateFloatTensorFromData2()
         {
-            var data = new float[1000];
-            data[100] = 1;
+            CreateFloatTensorFromData2Generic<float>();
+        }
+
+        private static void CreateFloatTensorFromData2Generic<T>()
+        {
+            var data = new T[1000];
 
             using (var tensor = data.ToTorchTensor(new long[] { 10, 100 }))
             {
-                Assert.AreEqual(tensor.Data[100], 1);
+                Assert.AreEqual(tensor.Data[100], default(T));
             }
         }
 
