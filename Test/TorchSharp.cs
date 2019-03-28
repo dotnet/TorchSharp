@@ -352,6 +352,31 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestAutoGradMode()
+        {
+            var x = FloatTensor.RandomN(new long[] { 2, 3 }, device: "cpu:0", requiresGrad: true);
+            using (var mode = new AutoGradMode(false))
+            {
+                var sum = x.Sum();
+                sum.Backward();
+                var grad = x.Grad();
+                Assert.IsTrue(grad.Handle == IntPtr.Zero);
+            }
+            using (var mode = new AutoGradMode(true))
+            {
+                var sum = x.Sum();
+                sum.Backward();
+                var grad = x.Grad();
+                Assert.IsFalse(grad.Handle == IntPtr.Zero);
+                var data = grad.Data;
+                for (int i = 0; i < 2 * 3; i++)
+                {
+                    Assert.AreEqual(data[i], 1.0);
+                }
+            }
+        }
+
+        [TestMethod]
         public void TestSubInPlace()
         {
             var x = IntTensor.Ones(new long[] { 100, 100 });
