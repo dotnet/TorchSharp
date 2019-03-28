@@ -76,6 +76,20 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void CreateFloatTensorFromDataCheckDispose()
+        {
+            var data = new float[1000];
+            data[100] = 1;
+
+            using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }))
+            {
+                Assert.AreEqual(tensor.Data[100], 1);
+            }
+
+            Assert.AreEqual(data[100], 1);
+        }
+
+        [TestMethod]
         public void CreateFloatTensorFromData2()
         {
             CreateFloatTensorFromData2Generic<float>();
