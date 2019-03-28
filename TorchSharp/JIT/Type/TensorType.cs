@@ -18,27 +18,27 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("libTorchSharp")]
-        extern static short JIT_TensorType_getScalar(HType handle);
+        extern static short THSJIT_getScalarFromTensorType(HType handle);
 
         public Tensor.ATenScalarMapping GetScalarType()
         {
-            return (Tensor.ATenScalarMapping)JIT_TensorType_getScalar(handle);
+            return (Tensor.ATenScalarMapping)THSJIT_getScalarFromTensorType(handle);
         }
 
         [DllImport("libTorchSharp")]
-        extern static int JIT_TensorType_getDimensions(HType handle);
+        extern static int THSJIT_getTensorTypeDimensions(HType handle);
 
         public int GetDimensions()
         {
-            return JIT_TensorType_getDimensions(handle);
+            return THSJIT_getTensorTypeDimensions(handle);
         }
 
         [DllImport("libTorchSharp")]
-        extern static string JIT_TensorType_getDevice(HType handle);
+        extern static string THSJIT_getTensorDevice(HType handle);
 
         public string GetDevice()
         {
-            return JIT_TensorType_getDevice(handle);
+            return THSJIT_getTensorDevice(handle);
         }
     }
 }

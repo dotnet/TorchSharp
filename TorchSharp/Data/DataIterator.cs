@@ -13,19 +13,19 @@ namespace TorchSharp.Data
     internal static class ExternMethods
     {
         [DllImport("libTorchSharp")]
-        extern internal static IntPtr Data_Current(IntPtr iterator, IntPtr data, IntPtr target);
+        extern internal static IntPtr THSData_current(IntPtr iterator, IntPtr data, IntPtr target);
 
         [DllImport("libTorchSharp")]
-        extern internal static bool Data_MoveNext(IntPtr iterator);
+        extern internal static bool THSData_moveNext(IntPtr iterator);
 
         [DllImport("libTorchSharp")]
-        extern internal static long Data_Size(IntPtr iterator);
+        extern internal static long THSData_size(IntPtr iterator);
 
         [DllImport("libTorchSharp")]
-        extern internal static void Data_Reset(IntPtr iterator);
+        extern internal static void THSData_reset(IntPtr iterator);
 
         [DllImport("libTorchSharp")]
-        extern internal static void Data_Dispose(IntPtr iterator);
+        extern internal static void THSData_dispose(IntPtr iterator);
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace TorchSharp.Data
         {
             if (disposing)
             {
-                ExternMethods.Data_Dispose(handle.DangerousGetHandle());
+                ExternMethods.THSData_dispose(handle.DangerousGetHandle());
                 handle.Dispose();
                 handle.SetHandleAsInvalid();
             }
@@ -112,7 +112,7 @@ namespace TorchSharp.Data
         /// <returns></returns>
         public long Size()
         {
-            return ExternMethods.Data_Size(handle.DangerousGetHandle());
+            return ExternMethods.THSData_size(handle.DangerousGetHandle());
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace TorchSharp.Data
             {
                 get
                 {
-                    ExternMethods.Data_Current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);   
+                    ExternMethods.THSData_current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);   
                     return (_darray.Array[0].ToTorchTensor<TData>(), _tarray.Array[0].ToTorchTensor<TTarget>());
                 }
             }
@@ -171,13 +171,13 @@ namespace TorchSharp.Data
                     return true;
                 }
 
-                return ExternMethods.Data_MoveNext(_iterator.handle.DangerousGetHandle());
+                return ExternMethods.THSData_moveNext(_iterator.handle.DangerousGetHandle());
             }
 
             public void Reset()
             {
                 _isFirst = true;
-                ExternMethods.Data_Reset(_iterator.handle.DangerousGetHandle());
+                ExternMethods.THSData_reset(_iterator.handle.DangerousGetHandle());
             }
 
             public void Dispose()

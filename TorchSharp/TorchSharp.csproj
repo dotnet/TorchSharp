@@ -31,7 +31,7 @@
     <None Remove="PreprocessedT4Template.tt" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Generated\TorchTensor.tt">
+    <None Update="Tensor\TorchTensor.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TorchTensor.generated.cs</LastGenOutput>
     </None>
@@ -46,7 +46,7 @@
     <Compile Remove="Handle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Generated\TorchTensor.generated.cs">
+    <None Include="Tensor\TorchTensor.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TorchTensor.tt</DependentUpon>
@@ -81,7 +81,7 @@
     <None Include="..\linux\libtorch\lib\libcaffe2.so" Link="nuget\runtimes\linux\native\libcaffe2.so" PackagePath="runtimes\linux\native\libcaffe2.so" Pack="true" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Generated\TorchTensor.generated.cs">
+    <Compile Update="Tensor\TorchTensor.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TorchTensor.tt</DependentUpon>

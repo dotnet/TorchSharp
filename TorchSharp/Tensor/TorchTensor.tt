@@ -36,7 +36,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static void THS_Dispose(IntPtr handle);
+        extern static void THSTensor_dispose(IntPtr handle);
 
         /// <summary>
         ///   Implements the .NET Dispose pattern.
@@ -45,7 +45,7 @@ foreach (var type in TorchTypeDef.Types) {
         {
             if (disposing)
             {
-                THS_Dispose(handle);
+                THSTensor_dispose(handle);
                 handle = IntPtr.Zero;
             }
         }
@@ -59,15 +59,15 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_new_<#=type.Storage#>Scalar(<#=type.Storage#> scalar);
+        extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar);
 
         public static <#=type.Name#>Tensor From(<#=type.Storage#> scalar)
         {
-            return new <#=type.Name#>Tensor(THS_new_<#=type.Storage#>Scalar(scalar));
+            return new <#=type.Name#>Tensor(THSTensor_new<#=type.Name#>Scalar(scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
 
         public static <#=type.Name#>Tensor From(IntPtr rawArray, long[] dimensions)
         {
@@ -80,7 +80,7 @@ foreach (var type in TorchTypeDef.Types) {
                 strides[i] = dimensions[i - 1];
             }
 
-            return new <#=type.Name#>Tensor(THS_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
+            return new <#=type.Name#>Tensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
         }
 
         public static <#=type.Name#>Tensor From(<#=type.Storage#>[] rawArray, long[] dimensions)
@@ -95,7 +95,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static AtenSharp.<#=type.Name#>Tensor.HType THS_getTHTensorUnsafe(IntPtr handle);
+        extern static AtenSharp.<#=type.Name#>Tensor.HType THSTensor_unsafeGetTensorImpl(IntPtr handle);
 
         /// <summary>
         ///  Returns the number of dimensions for this tensor
@@ -104,7 +104,7 @@ foreach (var type in TorchTypeDef.Types) {
         {
             get
             {
-                var atenTensor = new AtenSharp.<#=type.Name#>Tensor (THS_getTHTensorUnsafe (handle));
+                var atenTensor = new AtenSharp.<#=type.Name#>Tensor (THSTensor_unsafeGetTensorImpl (handle));
                 return atenTensor.Dimensions;
             }
         }
@@ -129,7 +129,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static <#=type.Ptr#> THS_data(IntPtr handle);
+        extern static <#=type.Ptr#> THSTensor_data(IntPtr handle);
 
         /// <summary>
         ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -144,7 +144,7 @@ foreach (var type in TorchTypeDef.Types) {
                 }
                 unsafe
                 {
-                    return new System.Span<<#=type.Storage#>>((void*)THS_data(handle), (int)NumberOfElements);
+                    return new System.Span<<#=type.Storage#>>((void*)THSTensor_data(handle), (int)NumberOfElements);
                 }
             }
         }
@@ -162,41 +162,46 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static sbyte THS_Type(IntPtr handle);
+        extern static sbyte THSTensor_type(IntPtr handle);
 
         public ATenScalarMapping Type
         {
             get
             {
-                return (ATenScalarMapping)THS_Type(handle);
+                return (ATenScalarMapping)THSTensor_type(handle);
             }
         }
 
         [DllImport("libTorchSharp")]
-        extern static string THS_deviceType(IntPtr handle);
+        extern static string THSTensor_deviceType(IntPtr handle);
 
         public string Device
         {
             get
             {
-                return THS_deviceType(handle);
+                return THSTensor_deviceType(handle);
             }
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_cpu(IntPtr handle);
+        extern static IntPtr THSTensor_cpu(IntPtr handle);
 
-         public ITorchTensor<<#=type.Storage#>> Cpu()
+        public ITorchTensor<<#=type.Storage#>> Cpu()
         {
-            return new <#=type.Name#>Tensor(THS_cpu(handle));
+            return new <#=type.Name#>Tensor(THSTensor_cpu(handle));
         }
 
          [DllImport("libTorchSharp")]
-        extern static IntPtr THS_cuda(IntPtr handle);
+        extern static IntPtr THSTensor_cuda(IntPtr handle);
 
-         public ITorchTensor<<#=type.Storage#>> Cuda()
+        public ITorchTensor<<#=type.Storage#>> Cuda()
         {
-            return new <#=type.Name#>Tensor(THS_cuda(handle));
+            if (!Torch.IsCudaAvailable())
+            {
+                throw new InvalidOperationException("CUDA non available in the current machine.");
+            }
+
+            return new <#=type.Name#>Tensor(THSTensor_cuda(handle));
         }
 
         /// <summary>
@@ -204,7 +209,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         public long GetTensorDimension(int dim)
         {
-            var atenTensor = new AtenSharp.<#=type.Name#>Tensor (THS_getTHTensorUnsafe (handle));
+            var atenTensor = new AtenSharp.<#=type.Name#>Tensor (THSTensor_unsafeGetTensorImpl (handle));
             return atenTensor.GetTensorDimension (dim);
         }
 
@@ -233,62 +238,66 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         public long GetTensorStride (int dim)
         {
-            var atenTensor = new AtenSharp.<#=type.Name#>Tensor(THS_getTHTensorUnsafe(handle));
+            var atenTensor = new AtenSharp.<#=type.Name#>Tensor(THSTensor_unsafeGetTensorImpl(handle));
             return atenTensor.GetTensorStride(dim);
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
         static public ITorchTensor<<#=type.Storage#>> Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
+            <#=type.Name#>Tensor.CheckForCUDA (device);
+
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new <#=type.Name#>Tensor (THS_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                    return new <#=type.Name#>Tensor (THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
         static public ITorchTensor<<#=type.Storage#>> RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
+            <#=type.Name#>Tensor.CheckForCUDA (device);
+
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new <#=type.Name#>Tensor (THS_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                    return new <#=type.Name#>Tensor (THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("libTorchSharp")]
-        extern static void THS_Backward(IntPtr handle);
+        extern static void THSTensor_backward(IntPtr handle);
 
         public void Backward()
         {
-            THS_Backward(handle);
+            THSTensor_backward(handle);
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Grad(IntPtr handle);
+        extern static IntPtr THSTensor_grad(IntPtr handle);
 
         public ITorchTensor<float> Grad()
         {
-            return new FloatTensor(THS_Grad(handle));
+            return new FloatTensor(THSTensor_grad(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_View(IntPtr src, IntPtr shape, int length);
+        extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<<#=type.Storage#>> View(params long[] shape)
         {
@@ -296,49 +305,49 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* pshape = shape)
                 {
-                    return new <#=type.Name#>Tensor (THS_View (handle, (<#=type.Ptr#>)pshape, shape.Length));
+                    return new <#=type.Name#>Tensor (THSTensor_view (handle, (<#=type.Ptr#>)pshape, shape.Length));
                 }
             }
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Sum(IntPtr src);
+        extern static IntPtr THSTensor_sum(IntPtr src);
 
         public ITorchTensor<<#=type.Storage#>> Sum()
         {
-            return new <#=type.Name#>Tensor(THS_Sum(handle));
+            return new <#=type.Name#>Tensor(THSTensor_sum(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Eq(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_eq(IntPtr src, IntPtr trg);
 
         public ITorchTensor<U> Eq<U>(ITorchTensor<U> target)
         {
-            return THS_Eq(handle, target.Handle).ToTorchTensor<U>();
+            return THSTensor_eq(handle, target.Handle).ToTorchTensor<U>();
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Sub_(IntPtr src, IntPtr trg, bool is_grad);
+        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
 
-        public ITorchTensor<<#=type.Storage#>> SubInPlace(ITorchTensor<<#=type.Storage#>> target, bool no_grad = true)
+        public ITorchTensor<<#=type.Storage#>> SubInPlace(ITorchTensor<<#=type.Storage#>> target)
         {
-            return new <#=type.Name#>Tensor(THS_Sub_(handle, target.Handle, !no_grad));
+            return new <#=type.Name#>Tensor(THSTensor_sub_(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Mul(IntPtr src, <#=type.Storage#> scalar, bool is_grad);
+        extern static IntPtr THSTensor_mul(IntPtr src, <#=type.Storage#> scalar);
 
-        public ITorchTensor<<#=type.Storage#>> Mul(<#=type.Storage#> scalar, bool noGrad = true)
+        public ITorchTensor<<#=type.Storage#>> Mul(<#=type.Storage#> scalar)
         {
-            return new <#=type.Name#>Tensor(THS_Mul(handle, scalar, !noGrad));
+            return new <#=type.Name#>Tensor(THSTensor_mul(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THS_Argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<<#=type.Storage#>> Argmax(long dimension, bool keepDim = false)
         {
-            return new <#=type.Name#>Tensor(THS_Argmax(handle, dimension, keepDim));
+            return new <#=type.Name#>Tensor(THSTensor_argmax(handle, dimension, keepDim));
         }
 
         /// <summary>
@@ -360,6 +369,14 @@ foreach (var type in TorchTypeDef.Types) {
             sb.Append("]");
             sb.Append($", device = {Device}");
             return sb.ToString();
+        }
+
+        private static void CheckForCUDA(string device)
+        {
+            if (!Torch.IsCudaAvailable() && device.ToLower().Contains("cuda"))
+            {
+                throw new InvalidOperationException("CUDA non available in the current machine.");
+            }
         }
     }
 <# } #>

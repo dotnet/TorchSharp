@@ -26,11 +26,11 @@ namespace TorchSharp.NN
             }
 
             [DllImport("libTorchSharp")]
-            extern static void NN_Optimizer_Dispose(HType handle);
+            extern static void THSNN_optimizerDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
-                NN_Optimizer_Dispose(this);
+                THSNN_optimizerDispose(this);
                 return true;
             }
 
@@ -80,41 +80,41 @@ namespace TorchSharp.NN
     public partial class Optimizer
     {
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_OptimizerAdam(IntPtr parameters, int len, double learningRate);
+        extern static IntPtr THSNN_optimizerAdam(IntPtr parameters, int len, double learningRate);
 
         public static Optimizer Adam(IEnumerable<ITorchTensor<float>> parameters, double learningRate)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
-            return new Optimizer(NN_OptimizerAdam(paramsRef, parray.Array.Length, learningRate));           
+            return new Optimizer(THSNN_optimizerAdam(paramsRef, parray.Array.Length, learningRate));           
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_OptimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
+        extern static IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
 
         public static Optimizer SGD(IEnumerable<ITorchTensor<float>> parameters, double learningRate, double momentum)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
-            return new Optimizer(NN_OptimizerSGD(paramsRef, parray.Array.Length, learningRate, momentum));
+            return new Optimizer(THSNN_optimizerSGD(paramsRef, parray.Array.Length, learningRate, momentum));
         }
 
         [DllImport("libTorchSharp")]
-        extern static void NN_Optimizer_ZeroGrad(HType module);
+        extern static void THSNN_optimizerZeroGrad(HType module);
 
         public void ZeroGrad()
         {
-            NN_Optimizer_ZeroGrad(handle);
+            THSNN_optimizerZeroGrad(handle);
         }
 
         [DllImport("libTorchSharp")]
-        extern static void NN_Optimizer_Step(HType module);
+        extern static void THSNN_optimizerStep(HType module);
 
         public void Step()
         {
-            NN_Optimizer_Step(handle);
+            THSNN_optimizerStep(handle);
         }
     }
 }

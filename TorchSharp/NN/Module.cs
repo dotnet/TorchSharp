@@ -26,11 +26,11 @@ namespace TorchSharp.NN
             }
 
             [DllImport("libTorchSharp")]
-            extern static void NN_Module_Dispose(HType handle);
+            extern static void THSNN_moduleDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
-                NN_Module_Dispose(this);
+                THSNN_moduleDispose(this);
                 return true;
             }
 
@@ -94,19 +94,19 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_linearModule(int input, int output, bool hasBias);
+        extern static IntPtr THSNN_linearModule(int input, int output, bool hasBias);
 
         static public Module Linear(int input, int output, bool hasBias = false)
         {
-            return new Linear(NN_linearModule(input, output, hasBias));
+            return new Linear(THSNN_linearModule(input, output, hasBias));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
+        extern static IntPtr THSNN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
 
         static public Module Conv2D(long inputChannel, long outputChannel, int kernelSize)
         {
-            return new Conv2D(NN_conv2dModule(inputChannel, outputChannel, kernelSize));
+            return new Conv2D(THSNN_conv2dModule(inputChannel, outputChannel, kernelSize));
         }
 
         static public Module Relu()
@@ -187,11 +187,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static void NN_Module_ZeroGrad(HType module);
+        extern static void THSNN_moduleZeroGrad(HType module);
 
         public virtual void ZeroGrad()
         {
-            NN_Module_ZeroGrad(handle);
+            THSNN_moduleZeroGrad(handle);
         }
 
         public bool IsTraining()
@@ -200,7 +200,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static void NN_GetParameters(HType module, AllocatePinnedArray allocator);
+        extern static void THSNN_getParameters(HType module, AllocatePinnedArray allocator);
 
         public virtual IEnumerable<ITorchTensor<float>> Parameters()
         {
@@ -221,37 +221,37 @@ namespace TorchSharp.NN
 
             using (var pa = new PinnedArray<IntPtr>())
             {
-                NN_GetParameters(handle, pa.CreateArray);
+                THSNN_getParameters(handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
             return ptrArray.Select(x => new FloatTensor(x) as ITorchTensor<float>);
         }
 
         [DllImport("libTorchSharp")]
-        extern static long NN_GetNumberOfChildren(HType module);
+        extern static long THSNN_getNumberOfChildren(HType module);
 
-        [DllImport("libTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string NN_GetModule(HType module, int index);
+        [DllImport("libTorchSharp")]
+        extern static string THSNN_getChildModuleName(HType module, int index);
 
         public virtual IEnumerable<string> GetModules()
         {
-            var numModules = NN_GetNumberOfChildren(handle);
+            var numModules = THSNN_getNumberOfChildren(handle);
             string[] result = new string[numModules];
 
             for (int i = 0; i < numModules; i++)
             {
-                result[i] = NN_GetModule(handle, i);
+                result[i] = THSNN_getChildModuleName(handle, i);
             }
 
             return result;
         }
 
-        [DllImport("libTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        extern static string NN_GetModuleName(HType module);
+        [DllImport("libTorchSharp")]
+        extern static string THSNN_getModuleName(HType module);
 
         public virtual string GetName()
         {
-            return NN_GetModuleName(handle);
+            return THSNN_getModuleName(handle);
         }
     }
 }

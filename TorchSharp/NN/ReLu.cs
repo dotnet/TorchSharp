@@ -14,11 +14,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_ReluModule_Forward(IntPtr tensor);
+        extern static IntPtr THSNN_reluApply(IntPtr tensor);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            return new FloatTensor(NN_ReluModule_Forward(tensor.Handle));
+            return new FloatTensor(THSNN_reluApply(tensor.Handle));
         }
 
         public override string GetName()

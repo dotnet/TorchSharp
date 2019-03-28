@@ -133,31 +133,46 @@ namespace TorchSharp.Test
             var cpu = FloatTensor.Ones(new long[] { 2, 2 });
             Assert.AreEqual(cpu.Device, "cpu");
 
-            var cuda = cpu.Cuda();
-            Assert.AreEqual(cuda.Device, "cuda");
-
-            // Copy back to CPU to inspect the elements
-            cpu = cuda.Cpu();
-            var data = cpu.Data;
-            for (int i = 0; i < 4; i++)
+            if (Torch.IsCudaAvailable())
             {
-                Assert.AreEqual(data[i], 1);
+                var cuda = cpu.Cuda();
+                Assert.AreEqual(cuda.Device, "cuda");
+
+                // Copy back to CPU to inspect the elements
+                cpu = cuda.Cpu();
+                var data = cpu.Data;
+                for (int i = 0; i < 4; i++)
+                {
+                    Assert.AreEqual(data[i], 1);
+                }
             }
+            else
+            {
+                Assert.ThrowsException<InvalidOperationException>(cpu.Cuda);
+            }
+
         }
 
         [TestMethod]
         public void CopyCudaToCpu()
         {
-            var cuda = FloatTensor.Ones(new long[] { 2, 2 }, "cuda");
-            Assert.AreEqual(cuda.Device, "cuda");
-
-            var cpu = cuda.Cpu();
-            Assert.AreEqual(cpu.Device, "cpu");
-
-            var data = cpu.Data;
-            for (int i = 0; i < 4; i++)
+            if (Torch.IsCudaAvailable())
             {
-                Assert.AreEqual(data[i], 1);
+                var cuda = FloatTensor.Ones(new long[] { 2, 2 }, "cuda");
+                Assert.AreEqual(cuda.Device, "cuda");
+
+                var cpu = cuda.Cpu();
+                Assert.AreEqual(cpu.Device, "cpu");
+
+                var data = cpu.Data;
+                for (int i = 0; i < 4; i++)
+                {
+                    Assert.AreEqual(data[i], 1);
+                }
+            }
+            else
+            {
+                Assert.ThrowsException<InvalidOperationException>(() => { FloatTensor.Ones(new long[] { 2, 2 }, "cuda"); });
             }
         }
 
@@ -270,7 +285,7 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
 
             var result = loss.Item;
             Assert.IsNotNull(result);
@@ -357,6 +372,7 @@ namespace TorchSharp.Test
             var x = FloatTensor.RandomN(new long[] { 2, 3 }, device: "cpu:0", requiresGrad: true);
             using (var mode = new AutoGradMode(false))
             {
+                Assert.IsFalse(AutoGradMode.IsAutogradEnabled());
                 var sum = x.Sum();
                 sum.Backward();
                 var grad = x.Grad();
@@ -364,6 +380,7 @@ namespace TorchSharp.Test
             }
             using (var mode = new AutoGradMode(true))
             {
+                Assert.IsTrue(AutoGradMode.IsAutogradEnabled());
                 var sum = x.Sum();
                 sum.Backward();
                 var grad = x.Grad();
@@ -435,7 +452,7 @@ namespace TorchSharp.Test
             for (int i = 0; i < 10; i++)
             {
                 var eval = seq.Forward(x);
-                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
                 var lossVal = loss.Item;
 
                 Assert.IsTrue(lossVal < prevLoss);
@@ -445,13 +462,14 @@ namespace TorchSharp.Test
 
                 loss.Backward();
 
-                // using(var noGrad = NN.NoGrad())
-                // The operators Mul and SubInPlace have no_grad=true by default
-                foreach (var param in seq.Parameters())
+                using (var noGrad = new AutoGradMode(false))
                 {
-                    var grad = param.Grad();
-                    var update = grad.Mul(learning_rate);
-                    param.SubInPlace(update);
+                    foreach (var param in seq.Parameters())
+                    {
+                        var grad = param.Grad();
+                        var update = grad.Mul(learning_rate);
+                        param.SubInPlace(update);
+                    }
                 }
             }
         }

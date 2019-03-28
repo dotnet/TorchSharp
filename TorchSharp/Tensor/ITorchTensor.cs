@@ -34,9 +34,9 @@ namespace TorchSharp.Tensor
 
         ITorchTensor<U> Eq<U>(ITorchTensor<U> target);
 
-        ITorchTensor<T> SubInPlace(ITorchTensor<T> target, bool noGrad = true);
+        ITorchTensor<T> SubInPlace(ITorchTensor<T> target);
 
-        ITorchTensor<T> Mul(T scalar, bool noGrad = true);
+        ITorchTensor<T> Mul(T scalar);
 
         ITorchTensor<T> Sum();
 

@@ -11,11 +11,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr NN_conv2DModule_Forward(Module.HType module, IntPtr tensor);
+        extern static IntPtr THSNN_conv2DModuleApply(Module.HType module, IntPtr tensor);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
         {
-            return new FloatTensor(NN_conv2DModule_Forward(handle, tensor.Handle));
+            return new FloatTensor(THSNN_conv2DModuleApply(handle, tensor.Handle));
         }
     }
 }
