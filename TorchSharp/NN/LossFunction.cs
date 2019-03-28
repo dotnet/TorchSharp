@@ -9,7 +9,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class LossFunction
     {
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_LossMSE(IntPtr srct, IntPtr trgt, long reduction);
 
         public static ITorchTensor<float> MSE<T>(ITorchTensor<T> src, ITorchTensor<T> target, Reduction reduction = Reduction.Mean)
@@ -17,7 +17,7 @@ namespace TorchSharp.NN
             return new FloatTensor(NN_LossMSE(src.Handle, target.Handle, (long)reduction));
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_LossNLL(IntPtr srct, IntPtr trgt, long reduction);
 
         public static ITorchTensor<float> NLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, Reduction reduction = Reduction.Mean)

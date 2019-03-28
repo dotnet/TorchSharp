@@ -22,7 +22,7 @@ namespace TorchSharp.JIT
             {
             }
 
-            [DllImport("LibTorchSharp")]
+            [DllImport("libTorchSharp")]
             extern static void JIT_Type_Dispose(HType handle);
 
             protected override bool ReleaseHandle()
@@ -77,7 +77,7 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static short JIT_TypeKind(HType handle);
 
         internal TypeKind Kind

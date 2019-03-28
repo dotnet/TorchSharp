@@ -24,12 +24,12 @@ namespace TorchSharp.JIT
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static void JIT_Module_Dispose(HType handle);
+            [DllImport("libTorchSharp")]
+            extern static void THSJIT_moduleDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
-                JIT_Module_Dispose(this);
+                THSJIT_moduleDispose(this);
                 return true;
             }
 
@@ -75,65 +75,65 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr JIT_module_load(string filename);
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSJIT_loadModule(string filename);
 
         static public Module Load(string filename)
         {
-            return new Module(JIT_module_load(filename));
+            return new Module(THSJIT_loadModule(filename));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static long JIT_getNumModules(HType module);
+        [DllImport("libTorchSharp")]
+        extern static long THSJIT_getNumModules(HType module);
 
-        [DllImport("LibTorchSharp")]
-        extern static string JIT_getModuleName(HType module, int index);
+        [DllImport("libTorchSharp")]
+        extern static string THSJIT_getModuleName(HType module, int index);
 
         public string[] GetSubModulesNames()
         {
-            var numModules = JIT_getNumModules(handle);
+            var numModules = THSJIT_getNumModules(handle);
             string[] result = new string[numModules];
 
             for (int i = 0; i < numModules; i++)
             {
-                result[i] = JIT_getModuleName(handle, i);
+                result[i] = THSJIT_getModuleName(handle, i);
             }
 
             return result;
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static int JIT_getNumberOfInputs(HType module);
+        [DllImport("libTorchSharp")]
+        extern static int THSJIT_getNumberOfInputs(HType module);
 
         public int GetNumberOfInputs()
         { 
-            return JIT_getNumberOfInputs(handle);
+            return THSJIT_getNumberOfInputs(handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static int JIT_getNumberOfOutputs(HType module);
+        [DllImport("libTorchSharp")]
+        extern static int THSJIT_getNumberOfOutputs(HType module);
 
         public int GetNumberOfOutputs()
         {
-            return JIT_getNumberOfOutputs(handle);
+            return THSJIT_getNumberOfOutputs(handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr JIT_getInputType(HType module, int index);
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSJIT_getInputType(HType module, int index);
 
         public Type GetInputType(int index)
         {
-            var type = new Type(JIT_getInputType(handle, index));
+            var type = new Type(THSJIT_getInputType(handle, index));
 
             return GetType(type);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr JIT_getOutputType(HType module, int index);
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSJIT_getOutputType(HType module, int index);
 
         public Type GetOutputType(int index)
         {
-            var type = new Type(JIT_getOutputType(handle, index));
+            var type = new Type(THSJIT_getOutputType(handle, index));
 
             return GetType(type);
         }
@@ -151,15 +151,15 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr JIT_forward(Module.HType module, IntPtr tensors, int length);
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
 
-        public FloatTensor Forward<T>(params ITorchTensor<T>[] tensors)
+        public ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorRefs = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            return new FloatTensor(JIT_forward(handle, tensorRefs, parray.Array.Length));
+            return new FloatTensor(THSJIT_forward(handle, tensorRefs, parray.Array.Length));
         }
     }
 }

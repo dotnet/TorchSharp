@@ -17,7 +17,7 @@ namespace TorchSharp.NN
             _isTraining = isTraining;
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_DropoutModule_Forward(IntPtr tensor, double probability, bool isTraining);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)

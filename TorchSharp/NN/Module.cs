@@ -25,7 +25,7 @@ namespace TorchSharp.NN
             {
             }
 
-            [DllImport("LibTorchSharp")]
+            [DllImport("libTorchSharp")]
             extern static void NN_Module_Dispose(HType handle);
 
             protected override bool ReleaseHandle()
@@ -93,7 +93,7 @@ namespace TorchSharp.NN
             return new Sequential(modules);
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_linearModule(int input, int output, bool hasBias);
 
         static public Module Linear(int input, int output, bool hasBias = false)
@@ -101,7 +101,7 @@ namespace TorchSharp.NN
             return new Linear(NN_linearModule(input, output, hasBias));
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
 
         static public Module Conv2D(long inputChannel, long outputChannel, int kernelSize)
@@ -186,7 +186,7 @@ namespace TorchSharp.NN
             _isTraining = false;
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static void NN_Module_ZeroGrad(HType module);
 
         public virtual void ZeroGrad()
@@ -199,7 +199,7 @@ namespace TorchSharp.NN
             return _isTraining;
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static void NN_GetParameters(HType module, AllocatePinnedArray allocator);
 
         public virtual IEnumerable<ITorchTensor<float>> Parameters()
@@ -227,10 +227,10 @@ namespace TorchSharp.NN
             return ptrArray.Select(x => new FloatTensor(x) as ITorchTensor<float>);
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static long NN_GetNumberOfChildren(HType module);
 
-        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("libTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         extern static string NN_GetModule(HType module, int index);
 
         public virtual IEnumerable<string> GetModules()
@@ -246,7 +246,7 @@ namespace TorchSharp.NN
             return result;
         }
 
-        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("libTorchSharp", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         extern static string NN_GetModuleName(HType module);
 
         public virtual string GetName()

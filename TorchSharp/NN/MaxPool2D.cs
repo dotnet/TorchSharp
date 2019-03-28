@@ -16,7 +16,7 @@ namespace TorchSharp.NN
             _kernelSize = kernelSize;
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_MaxPool2DModule_Forward(IntPtr tensor, long kernelSize);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)

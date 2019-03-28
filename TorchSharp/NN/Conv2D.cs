@@ -10,7 +10,7 @@ namespace TorchSharp.NN
         {
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_conv2DModule_Forward(Module.HType module, IntPtr tensor);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)

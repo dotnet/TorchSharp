@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,16 +6,17 @@
 
   <PropertyGroup>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <PackageId>TorchSharp</PackageId>
-    <PackageVersion>0.1</PackageVersion>
-    <Authors>Miguel de Icaza</Authors>
+    <PackageId>SharpTorch</PackageId>
+    <PackageVersion>0.1.8</PackageVersion>
+    <Authors>Matteo Interlandi</Authors>
     <PackageLicenseUrl>https://github.com/xamarin/TorchSharp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/xamarin/TorchSharp/</PackageProjectUrl>
     <PackageTags>machine-learning, torch, pytorch, xamarin, .net, c#, f#</PackageTags>
     <Description>.NET Bindings for Torch</Description>
-    <Owners>Miguel de Icaza</Owners>
+    <Owners>Matteo Interlandi</Owners>
     <Summary>.NET API for Torch</Summary>
     <PackageReleaseNotes></PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -62,6 +63,10 @@
   </ItemGroup>
   <PropertyGroup>
     <HasPayload Condition="Exists('../windows') and Exists ('../macos') and Exists ('../linux')">true</HasPayload>
+    <AssemblyOriginatorKeyFile>Open.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <Version>0.0.2</Version>
+    <Company>Microsoft</Company>
   </PropertyGroup>
   <ItemGroup Condition="'$(HasPayload)' == 'true'">
     <None Include="nuget\TorchSharp.targets" PackagePath="build\netstandard2.0\TensorFlowSharp.targets" Pack="true" />

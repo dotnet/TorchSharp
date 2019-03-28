@@ -5,7 +5,7 @@ namespace TorchSharp.Data
 {
     public class Loader
     {
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr Data_LoaderMNIST(string filename, long batchSize, bool isTrain);
 
         /// <summary>

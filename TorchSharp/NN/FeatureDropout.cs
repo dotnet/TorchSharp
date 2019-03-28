@@ -13,7 +13,7 @@ namespace TorchSharp.NN
         {
         }
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("libTorchSharp")]
         extern static IntPtr NN_FeatureDropout_Forward(IntPtr tensor);
 
         public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
