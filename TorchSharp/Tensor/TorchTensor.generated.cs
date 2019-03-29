@@ -236,6 +236,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<byte> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            ByteTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new ByteTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Byte, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -290,6 +309,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<byte> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new ByteTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<byte> View(params long[] shape)
@@ -304,11 +337,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<byte> Sum()
+        public ITorchTensor<byte>  Add(ITorchTensor<byte> target, int scalar)
         {
-            return new ByteTensor(THSTensor_sum(handle));
+            return new ByteTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<byte> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<byte> Addbmm(ITorchTensor<byte> batch1, ITorchTensor<byte> batch2, float beta, float alpha)
+        {
+            return new ByteTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<byte> Argmax(long dimension, bool keepDim = false)
+        {
+            return new ByteTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<byte> Baddbmm(ITorchTensor<byte> batch2, ITorchTensor<byte> mat, float beta, float alpha)
+        {
+            return new ByteTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -320,27 +385,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<byte> SubInPlace(ITorchTensor<byte> target)
+        public ITorchTensor<byte> Exp()
         {
-            return new ByteTensor(THSTensor_sub_(handle, target.Handle));
+            return new ByteTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, byte scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<byte> MatMul(ITorchTensor<byte> target)
+        {
+            return new ByteTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<byte> Mul(ITorchTensor<byte> target)
+        {
+            return new ByteTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<byte> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, byte scalar);
 
         public ITorchTensor<byte> Mul(byte scalar)
         {
-            return new ByteTensor(THSTensor_mul(handle, scalar));
+            return new ByteTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<byte> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<byte> Pow(float scalar)
         {
-            return new ByteTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new ByteTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<byte> Sigmoid()
+        {
+            return new ByteTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<byte> Sub(ITorchTensor<byte> target)
+        {
+            return new ByteTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<byte> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<byte> Sum()
+        {
+            return new ByteTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -603,6 +724,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<short> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            ShortTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new ShortTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Short, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -657,6 +797,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<short> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new ShortTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<short> View(params long[] shape)
@@ -671,11 +825,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<short> Sum()
+        public ITorchTensor<short>  Add(ITorchTensor<short> target, int scalar)
         {
-            return new ShortTensor(THSTensor_sum(handle));
+            return new ShortTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<short> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<short> Addbmm(ITorchTensor<short> batch1, ITorchTensor<short> batch2, float beta, float alpha)
+        {
+            return new ShortTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<short> Argmax(long dimension, bool keepDim = false)
+        {
+            return new ShortTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<short> Baddbmm(ITorchTensor<short> batch2, ITorchTensor<short> mat, float beta, float alpha)
+        {
+            return new ShortTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -687,27 +873,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<short> SubInPlace(ITorchTensor<short> target)
+        public ITorchTensor<short> Exp()
         {
-            return new ShortTensor(THSTensor_sub_(handle, target.Handle));
+            return new ShortTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, short scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<short> MatMul(ITorchTensor<short> target)
+        {
+            return new ShortTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<short> Mul(ITorchTensor<short> target)
+        {
+            return new ShortTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<short> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, short scalar);
 
         public ITorchTensor<short> Mul(short scalar)
         {
-            return new ShortTensor(THSTensor_mul(handle, scalar));
+            return new ShortTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<short> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<short> Pow(float scalar)
         {
-            return new ShortTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new ShortTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<short> Sigmoid()
+        {
+            return new ShortTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<short> Sub(ITorchTensor<short> target)
+        {
+            return new ShortTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<short> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<short> Sum()
+        {
+            return new ShortTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -970,6 +1212,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<int> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            IntTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new IntTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Int, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -1024,6 +1285,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<int> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new IntTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<int> View(params long[] shape)
@@ -1038,11 +1313,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<int> Sum()
+        public ITorchTensor<int>  Add(ITorchTensor<int> target, int scalar)
         {
-            return new IntTensor(THSTensor_sum(handle));
+            return new IntTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<int> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<int> Addbmm(ITorchTensor<int> batch1, ITorchTensor<int> batch2, float beta, float alpha)
+        {
+            return new IntTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<int> Argmax(long dimension, bool keepDim = false)
+        {
+            return new IntTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<int> Baddbmm(ITorchTensor<int> batch2, ITorchTensor<int> mat, float beta, float alpha)
+        {
+            return new IntTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -1054,27 +1361,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<int> SubInPlace(ITorchTensor<int> target)
+        public ITorchTensor<int> Exp()
         {
-            return new IntTensor(THSTensor_sub_(handle, target.Handle));
+            return new IntTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, int scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<int> MatMul(ITorchTensor<int> target)
+        {
+            return new IntTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<int> Mul(ITorchTensor<int> target)
+        {
+            return new IntTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<int> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, int scalar);
 
         public ITorchTensor<int> Mul(int scalar)
         {
-            return new IntTensor(THSTensor_mul(handle, scalar));
+            return new IntTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<int> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<int> Pow(float scalar)
         {
-            return new IntTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new IntTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<int> Sigmoid()
+        {
+            return new IntTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<int> Sub(ITorchTensor<int> target)
+        {
+            return new IntTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<int> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<int> Sum()
+        {
+            return new IntTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -1337,6 +1700,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<long> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            LongTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new LongTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Long, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -1391,6 +1773,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<long> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new LongTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<long> View(params long[] shape)
@@ -1405,11 +1801,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<long> Sum()
+        public ITorchTensor<long>  Add(ITorchTensor<long> target, int scalar)
         {
-            return new LongTensor(THSTensor_sum(handle));
+            return new LongTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<long> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<long> Addbmm(ITorchTensor<long> batch1, ITorchTensor<long> batch2, float beta, float alpha)
+        {
+            return new LongTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<long> Argmax(long dimension, bool keepDim = false)
+        {
+            return new LongTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<long> Baddbmm(ITorchTensor<long> batch2, ITorchTensor<long> mat, float beta, float alpha)
+        {
+            return new LongTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -1421,27 +1849,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<long> SubInPlace(ITorchTensor<long> target)
+        public ITorchTensor<long> Exp()
         {
-            return new LongTensor(THSTensor_sub_(handle, target.Handle));
+            return new LongTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, long scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<long> MatMul(ITorchTensor<long> target)
+        {
+            return new LongTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<long> Mul(ITorchTensor<long> target)
+        {
+            return new LongTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<long> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, long scalar);
 
         public ITorchTensor<long> Mul(long scalar)
         {
-            return new LongTensor(THSTensor_mul(handle, scalar));
+            return new LongTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<long> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<long> Pow(float scalar)
         {
-            return new LongTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new LongTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<long> Sigmoid()
+        {
+            return new LongTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<long> Sub(ITorchTensor<long> target)
+        {
+            return new LongTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<long> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<long> Sum()
+        {
+            return new LongTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -1704,6 +2188,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<double> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            DoubleTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new DoubleTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Double, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -1758,6 +2261,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<double> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new DoubleTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<double> View(params long[] shape)
@@ -1772,11 +2289,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<double> Sum()
+        public ITorchTensor<double>  Add(ITorchTensor<double> target, int scalar)
         {
-            return new DoubleTensor(THSTensor_sum(handle));
+            return new DoubleTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<double> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<double> Addbmm(ITorchTensor<double> batch1, ITorchTensor<double> batch2, float beta, float alpha)
+        {
+            return new DoubleTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<double> Argmax(long dimension, bool keepDim = false)
+        {
+            return new DoubleTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<double> Baddbmm(ITorchTensor<double> batch2, ITorchTensor<double> mat, float beta, float alpha)
+        {
+            return new DoubleTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -1788,27 +2337,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<double> SubInPlace(ITorchTensor<double> target)
+        public ITorchTensor<double> Exp()
         {
-            return new DoubleTensor(THSTensor_sub_(handle, target.Handle));
+            return new DoubleTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, double scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<double> MatMul(ITorchTensor<double> target)
+        {
+            return new DoubleTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<double> Mul(ITorchTensor<double> target)
+        {
+            return new DoubleTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<double> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, double scalar);
 
         public ITorchTensor<double> Mul(double scalar)
         {
-            return new DoubleTensor(THSTensor_mul(handle, scalar));
+            return new DoubleTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<double> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<double> Pow(float scalar)
         {
-            return new DoubleTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new DoubleTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<double> Sigmoid()
+        {
+            return new DoubleTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<double> Sub(ITorchTensor<double> target)
+        {
+            return new DoubleTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<double> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<double> Sum()
+        {
+            return new DoubleTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -2071,6 +2676,25 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public ITorchTensor<float> Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            FloatTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new FloatTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -2125,6 +2749,20 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
+
+        public ITorchTensor<float> Reshape(params long[] shape)
+        {
+            unsafe
+            {
+                fixed (long* pshape = shape)
+                {
+                    return new FloatTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<float> View(params long[] shape)
@@ -2139,11 +2777,43 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sum(IntPtr src);
+        extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<float> Sum()
+        public ITorchTensor<float>  Add(ITorchTensor<float> target, int scalar)
         {
-            return new FloatTensor(THSTensor_sum(handle));
+            return new FloatTensor(THSTensor_add(handle, scalar, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+
+        public void AddInPlace(ITorchTensor<float> target, int scalar)
+        {
+            THSTensor_add_(handle, scalar, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
+
+        public ITorchTensor<float> Addbmm(ITorchTensor<float> batch1, ITorchTensor<float> batch2, float beta, float alpha)
+        {
+            return new FloatTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+
+        public ITorchTensor<float> Argmax(long dimension, bool keepDim = false)
+        {
+            return new FloatTensor(THSTensor_argmax(handle, dimension, keepDim));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
+
+        public ITorchTensor<float> Baddbmm(ITorchTensor<float> batch2, ITorchTensor<float> mat, float beta, float alpha)
+        {
+            return new FloatTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("libTorchSharp")]
@@ -2155,27 +2825,83 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+        extern static IntPtr THSTensor_exp(IntPtr src);
 
-        public ITorchTensor<float> SubInPlace(ITorchTensor<float> target)
+        public ITorchTensor<float> Exp()
         {
-            return new FloatTensor(THSTensor_sub_(handle, target.Handle));
+            return new FloatTensor(THSTensor_exp(handle));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mul(IntPtr src, float scalar);
+        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<float> MatMul(ITorchTensor<float> target)
+        {
+            return new FloatTensor(THSTensor_matMul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mul(IntPtr src, IntPtr target);
+
+        public ITorchTensor<float> Mul(ITorchTensor<float> target)
+        {
+            return new FloatTensor(THSTensor_mul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public void MulInPlace(ITorchTensor<float> target)
+        {
+            THSTensor_mul_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mulS(IntPtr src, float scalar);
 
         public ITorchTensor<float> Mul(float scalar)
         {
-            return new FloatTensor(THSTensor_mul(handle, scalar));
+            return new FloatTensor(THSTensor_mulS(handle, scalar));
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
 
-        public ITorchTensor<float> Argmax(long dimension, bool keepDim = false)
+        public ITorchTensor<float> Pow(float scalar)
         {
-            return new FloatTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new FloatTensor(THSTensor_pow(handle, scalar));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sigmoid(IntPtr src);
+
+        public ITorchTensor<float> Sigmoid()
+        {
+            return new FloatTensor(THSTensor_sigmoid(handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sub(IntPtr src, IntPtr trg);
+
+        public ITorchTensor<float> Sub(ITorchTensor<float> target)
+        {
+            return new FloatTensor(THSTensor_sub(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public void SubInPlace(ITorchTensor<float> target)
+        {
+            THSTensor_sub_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sum(IntPtr src);
+
+        public ITorchTensor<float> Sum()
+        {
+            return new FloatTensor(THSTensor_sum(handle));
         }
 
         /// <summary>
@@ -2314,6 +3040,14 @@ namespace TorchSharp.Tensor {
                 }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_initUniform(IntPtr src, double low, double high);
+
+        internal static void InitUniform<T>(this ITorchTensor<T> tensor, double low = 0, double high = 1)
+        {
+            THSTensor_initUniform(tensor.Handle, low, high);
         }
     }
 }

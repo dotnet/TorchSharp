@@ -399,16 +399,15 @@ namespace TorchSharp.Test
             var x = IntTensor.Ones(new long[] { 100, 100 });
             var y = IntTensor.Ones(new long[] { 100, 100 });
 
-            var z = x.SubInPlace(y);
+            x.SubInPlace(y);
 
-            var zdata = z.Data;
             var xdata = x.Data;
 
             for (int i = 0; i < 100; i++)
             {
                 for (int j = 0; j < 100; j++)
                 {
-                    Assert.AreEqual(zdata[i + j], xdata[i + j]);
+                    Assert.AreEqual(0, xdata[i + j]);
                 }
             }
         }
