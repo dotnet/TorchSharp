@@ -1,7 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <PackageId>SharpTorch</PackageId>
+    <PackageVersion>0.1.8</PackageVersion>
+    <Authors>Matteo Interlandi</Authors>
+    <PackageLicenseUrl>https://github.com/xamarin/TorchSharp/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/xamarin/TorchSharp/</PackageProjectUrl>
+    <PackageTags>machine-learning, torch, pytorch, xamarin, .net, c#, f#</PackageTags>
+    <Description>.NET Bindings for Torch</Description>
+    <Owners>Matteo Interlandi</Owners>
+    <Summary>.NET API for Torch</Summary>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -9,14 +24,16 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType></DebugType>
+    <DocumentationFile>bin\Release\netstandard2.0\TorchSharp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="PreprocessedT4Template.tt" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TypeGeneration.tt">
+    <None Update="Tensor\TorchTensor.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TypeGeneration.cs</LastGenOutput>
+      <LastGenOutput>TorchTensor.generated.cs</LastGenOutput>
     </None>
     <None Update="Generator.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
@@ -26,10 +43,48 @@
   <ItemGroup>
     <Compile Remove="PreprocessedT4Template.cs" />
     <Compile Remove="T4Template.cs" />
+    <Compile Remove="Handle.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="TypeGeneration.cs">
-      <DependentUpon>TypeGeneration.tt</DependentUpon>
+    <None Include="Tensor\TorchTensor.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TorchTensor.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AtenSharp\AtenSharp.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <HasPayload Condition="Exists('../windows') and Exists ('../macos') and Exists ('../linux')">true</HasPayload>
+    <AssemblyOriginatorKeyFile>Open.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <Version>0.0.2</Version>
+    <Company>Microsoft</Company>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(HasPayload)' == 'true'">
+    <None Include="nuget\TorchSharp.targets" PackagePath="build\netstandard2.0\TensorFlowSharp.targets" Pack="true" />
+
+    <None Include="..\windows\c10.dll" Link="nuget\runtimes\win7-x64\native\c10.dll" PackagePath="runtimes\win7-x64\native\c10.dll" Pack="true" />
+    <None Include="..\windows\caffe2.dll" Link="nuget\runtimes\win7-x64\native\caffe2.dll" PackagePath="runtimes\win7-x64\native\caffe2.dll" Pack="true" />
+
+    <None Include="..\macos\libtorch\lib\libc10.dylib" Link="nuget\runtimes\osx\native\libc10.dylib" PackagePath="runtimes\osx\native\libc10.dylib" Pack="true" />
+    <None Include="..\macos\libtorch\lib\libcaffe2.dylib" Link="nuget\runtimes\osx\native\libcaffe2.dylib" PackagePath="runtimes\osx\native\libcaffe2.dylib" Pack="true" />
+
+    <None Include="..\linux\libtorch\lib\libc10.so" Link="nuget\runtimes\linux\native\libc10.so" PackagePath="runtimes\linux\native\libc10.so" Pack="true" />
+    <None Include="..\linux\libtorch\lib\libcaffe2.so" Link="nuget\runtimes\linux\native\libcaffe2.so" PackagePath="runtimes\linux\native\libcaffe2.so" Pack="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Tensor\TorchTensor.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TorchTensor.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>
