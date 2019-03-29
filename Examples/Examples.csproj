@@ -9,4 +9,8 @@
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
 </Project>

@@ -10,7 +10,7 @@ namespace TorchSharp.Examples
         private readonly static int _epochs = 10;
         private readonly static long _trainBatchSize = 64;
         private readonly static long _testBatchSize = 1000;
-        private readonly static string _dataLocation = @"E:/Source/Repos/LibTorchSharp/MNIST";
+        private readonly static string _dataLocation = @"../../../Data";
 
         private readonly static int _logInterval = 10;
 
