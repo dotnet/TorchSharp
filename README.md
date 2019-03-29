@@ -45,3 +45,7 @@ The following was tested on Windows.
   2. Download and compile [libTorchSharp](https://github.com/interesaaat/LibTorchSharp/), and make it available to the
      dynamic linker.
   3. Run `dotnet run` in the `Test` subfolder.
+
+Examples
+===========
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs).
