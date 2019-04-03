@@ -63,8 +63,6 @@
   </ItemGroup>
   <PropertyGroup>
     <HasPayload Condition="Exists('../windows') and Exists ('../macos') and Exists ('../linux')">true</HasPayload>
-    <AssemblyOriginatorKeyFile>Open.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
     <Version>0.0.2</Version>
     <Company>Microsoft</Company>
   </PropertyGroup>
