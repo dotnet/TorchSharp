@@ -323,6 +323,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<byte> Transpose(long dimension1, long dimension2)
+        {
+            return new ByteTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<byte> View(params long[] shape)
@@ -832,6 +848,22 @@ namespace TorchSharp.Tensor {
                     return new ShortTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<short> Transpose(long dimension1, long dimension2)
+        {
+            return new ShortTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
         }
 
         [DllImport("libTorchSharp")]
@@ -1347,6 +1379,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<int> Transpose(long dimension1, long dimension2)
+        {
+            return new IntTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<int> View(params long[] shape)
@@ -1856,6 +1904,22 @@ namespace TorchSharp.Tensor {
                     return new LongTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<long> Transpose(long dimension1, long dimension2)
+        {
+            return new LongTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
         }
 
         [DllImport("libTorchSharp")]
@@ -2371,6 +2435,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<double> Transpose(long dimension1, long dimension2)
+        {
+            return new DoubleTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<double> View(params long[] shape)
@@ -2883,6 +2963,22 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
+
+        public ITorchTensor<float> Transpose(long dimension1, long dimension2)
+        {
+            return new FloatTensor (THSTensor_transpose (handle, dimension1, dimension2));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+
+        public void TransposeInPlace(long dimension1, long dimension2)
+        {
+            THSTensor_transpose_ (handle, dimension1, dimension2);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_view(IntPtr src, IntPtr shape, int length);
 
         public ITorchTensor<float> View(params long[] shape)
@@ -3187,11 +3283,33 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_cat(IntPtr src, int len, long dim);
+
+        internal static ITorchTensor<T> Cat<T>(this ITorchTensor<T>[] tensors, long dimension)
+        {
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+            return THSTensor_cat(tensorsRef, parray.Array.Length, dimension).ToTorchTensor<T>();
+        }
+
+        [DllImport("libTorchSharp")]
         extern static void THSTensor_initUniform(IntPtr src, double low, double high);
 
         internal static void InitUniform<T>(this ITorchTensor<T> tensor, double low = 0, double high = 1)
         {
             THSTensor_initUniform(tensor.Handle, low, high);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_stack(IntPtr src, int len, long dim);
+
+        internal static ITorchTensor<T> Stack<T>(this ITorchTensor<T>[] tensors, long dimension)
+        {
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+            return THSTensor_stack(tensorsRef, parray.Array.Length, dimension).ToTorchTensor<T>();
         }
     }
 }
