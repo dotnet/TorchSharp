@@ -361,6 +361,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<byte> Addmm(ITorchTensor<byte> mat1, ITorchTensor<byte> mat2, float beta, float alpha)
+        {
+            return new ByteTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<byte> Argmax(long dimension, bool keepDim = false)
@@ -374,6 +382,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<byte> Baddbmm(ITorchTensor<byte> batch2, ITorchTensor<byte> mat, float beta, float alpha)
         {
             return new ByteTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<byte> Bmm(ITorchTensor<byte> batch2)
+        {
+            return new ByteTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -393,11 +409,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<byte> MatMul(ITorchTensor<byte> target)
         {
-            return new ByteTensor(THSTensor_matMul(handle, target.Handle));
+            return new ByteTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<byte> Mm(ITorchTensor<byte> target)
+        {
+            return new ByteTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -849,6 +873,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<short> Addmm(ITorchTensor<short> mat1, ITorchTensor<short> mat2, float beta, float alpha)
+        {
+            return new ShortTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<short> Argmax(long dimension, bool keepDim = false)
@@ -862,6 +894,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<short> Baddbmm(ITorchTensor<short> batch2, ITorchTensor<short> mat, float beta, float alpha)
         {
             return new ShortTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<short> Bmm(ITorchTensor<short> batch2)
+        {
+            return new ShortTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -881,11 +921,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<short> MatMul(ITorchTensor<short> target)
         {
-            return new ShortTensor(THSTensor_matMul(handle, target.Handle));
+            return new ShortTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<short> Mm(ITorchTensor<short> target)
+        {
+            return new ShortTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -1337,6 +1385,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<int> Addmm(ITorchTensor<int> mat1, ITorchTensor<int> mat2, float beta, float alpha)
+        {
+            return new IntTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<int> Argmax(long dimension, bool keepDim = false)
@@ -1350,6 +1406,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<int> Baddbmm(ITorchTensor<int> batch2, ITorchTensor<int> mat, float beta, float alpha)
         {
             return new IntTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<int> Bmm(ITorchTensor<int> batch2)
+        {
+            return new IntTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -1369,11 +1433,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<int> MatMul(ITorchTensor<int> target)
         {
-            return new IntTensor(THSTensor_matMul(handle, target.Handle));
+            return new IntTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<int> Mm(ITorchTensor<int> target)
+        {
+            return new IntTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -1825,6 +1897,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<long> Addmm(ITorchTensor<long> mat1, ITorchTensor<long> mat2, float beta, float alpha)
+        {
+            return new LongTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<long> Argmax(long dimension, bool keepDim = false)
@@ -1838,6 +1918,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<long> Baddbmm(ITorchTensor<long> batch2, ITorchTensor<long> mat, float beta, float alpha)
         {
             return new LongTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<long> Bmm(ITorchTensor<long> batch2)
+        {
+            return new LongTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -1857,11 +1945,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<long> MatMul(ITorchTensor<long> target)
         {
-            return new LongTensor(THSTensor_matMul(handle, target.Handle));
+            return new LongTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<long> Mm(ITorchTensor<long> target)
+        {
+            return new LongTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -2313,6 +2409,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<double> Addmm(ITorchTensor<double> mat1, ITorchTensor<double> mat2, float beta, float alpha)
+        {
+            return new DoubleTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<double> Argmax(long dimension, bool keepDim = false)
@@ -2326,6 +2430,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<double> Baddbmm(ITorchTensor<double> batch2, ITorchTensor<double> mat, float beta, float alpha)
         {
             return new DoubleTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<double> Bmm(ITorchTensor<double> batch2)
+        {
+            return new DoubleTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -2345,11 +2457,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<double> MatMul(ITorchTensor<double> target)
         {
-            return new DoubleTensor(THSTensor_matMul(handle, target.Handle));
+            return new DoubleTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<double> Mm(ITorchTensor<double> target)
+        {
+            return new DoubleTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -2801,6 +2921,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addmm(IntPtr mat, IntPtr mat1, IntPtr mat2, float beta, float alpha);
+
+        public ITorchTensor<float> Addmm(ITorchTensor<float> mat1, ITorchTensor<float> mat2, float beta, float alpha)
+        {
+            return new FloatTensor(THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
 
         public ITorchTensor<float> Argmax(long dimension, bool keepDim = false)
@@ -2814,6 +2942,14 @@ namespace TorchSharp.Tensor {
         public ITorchTensor<float> Baddbmm(ITorchTensor<float> batch2, ITorchTensor<float> mat, float beta, float alpha)
         {
             return new FloatTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
+
+        public ITorchTensor<float> Bmm(ITorchTensor<float> batch2)
+        {
+            return new FloatTensor(THSTensor_bmm(handle, batch2.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -2833,11 +2969,19 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_matMul(IntPtr src, IntPtr target);
+        extern static IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public ITorchTensor<float> MatMul(ITorchTensor<float> target)
         {
-            return new FloatTensor(THSTensor_matMul(handle, target.Handle));
+            return new FloatTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mm(IntPtr src, IntPtr target);
+
+        public ITorchTensor<float> Mm(ITorchTensor<float> target)
+        {
+            return new FloatTensor(THSTensor_mm(handle, target.Handle));
         }
 
         [DllImport("libTorchSharp")]
