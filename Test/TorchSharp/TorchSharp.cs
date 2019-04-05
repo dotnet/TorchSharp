@@ -151,6 +151,19 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestSparse()
+        {
+            using (var i = LongTensor.From(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
+            using (var v = FloatTensor.From(new float[] { 3, 4, 5 }, new long[] { 3 }))
+            {
+                var sparse = FloatTensor.Sparse(i, v, new long[] { 2, 3 });
+
+                Assert.IsNotNull(sparse);
+                Assert.IsTrue(sparse.IsSparse);
+            }
+        }
+
+        [TestMethod]
         public void CopyCpuToCuda()
         {
             var cpu = FloatTensor.Ones(new long[] { 2, 2 });

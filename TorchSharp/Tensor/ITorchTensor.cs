@@ -14,17 +14,21 @@ namespace TorchSharp.Tensor
 
         string Device { get; }
 
-        ITorchTensor<T> Cpu();
-
-        ITorchTensor<T> Cuda();
-
         Span<T> Data { get; }
 
         T Item { get; }
 
+        bool IsSparse { get; }
+
+        bool IsVariable { get; }
+
         long GetTensorDimension(int dim);
 
         long GetTensorStride(int dim);
+
+        ITorchTensor<T> Cpu();
+
+        ITorchTensor<T> Cuda();
 
         void Backward();
 
