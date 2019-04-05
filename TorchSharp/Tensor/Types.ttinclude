@@ -7,6 +7,7 @@
 
         public readonly bool IsInt;
         public readonly bool IsFloat;
+        public readonly bool IsLong;
 
         private TorchTypeDef(string name, string storage, string cstype) {
             this.Name = name;
@@ -15,6 +16,7 @@
 
             this.IsInt = name == "Short" || name == "Int" || name == "Long";
             this.IsFloat = name == "Float" || name == "Double";
+            this.IsLong = name == "Long";
         }
 
         public static readonly TorchTypeDef[] Types = {
