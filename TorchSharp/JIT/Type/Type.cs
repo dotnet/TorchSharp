@@ -78,21 +78,24 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("libTorchSharp")]
-        extern static short THSJIT_typeKind(HType handle);
+        extern static sbyte THSJIT_typeKind(HType handle);
 
         internal TypeKind Kind
         {
             get { return (TypeKind)THSJIT_typeKind(handle); }
         }
 
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSJIT_typeCast(HType module);
+
         internal TensorType AsTensorType()
         {
-            return new TensorType(this);
+            return new TensorType(THSJIT_typeCast(handle));
         }
 
         internal DynamicType AsDynamicType()
         {
-            return new DynamicType(this);
+            return new DynamicType(THSJIT_typeCast(handle));
         }
 
         internal enum TypeKind : sbyte

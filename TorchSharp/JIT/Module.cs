@@ -143,9 +143,13 @@ namespace TorchSharp.JIT
             switch (type.Kind)
             {
                 case Type.TypeKind.DynamicType:
-                    return type.AsDynamicType();
+                    var dynamic = type.AsDynamicType();
+                    type.Dispose();
+                    return dynamic;
                 case Type.TypeKind.TensorType:
-                    return type.AsDynamicType();
+                    var tensor = type.AsTensorType();
+                    type.Dispose();
+                    return tensor;
                 default:
                     return type;
             }
