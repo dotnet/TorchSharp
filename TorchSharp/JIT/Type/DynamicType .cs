@@ -8,12 +8,5 @@ namespace TorchSharp.JIT
         {
             this.handle = new HType(handle, true);
         }
-
-        internal DynamicType(Type type) : base()
-        {
-            handle = type.handle;
-            type.handle = new HType(IntPtr.Zero, true);
-            type.Dispose();
-        }
     }
 }
