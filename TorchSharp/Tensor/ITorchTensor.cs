@@ -40,6 +40,8 @@ namespace TorchSharp.Tensor
 
         ITorchTensor<U> Eq<U>(ITorchTensor<U> target);
 
+        bool Equal<U>(ITorchTensor<U> target);
+
         ITorchTensor<T> Add(ITorchTensor<T> target, int scalar);
 
         void AddInPlace(ITorchTensor<T> target, int scalar);
@@ -50,9 +52,15 @@ namespace TorchSharp.Tensor
 
         ITorchTensor<T> Baddbmm(ITorchTensor<T> batch2, ITorchTensor<T> mat, float beta, float alpha);
 
+        ITorchTensor<T> Bmm(ITorchTensor<T> batch2);
+
         ITorchTensor<T> Exp();
 
         ITorchTensor<T> MatMul(ITorchTensor<T> target);
+
+        ITorchTensor<T> Mean();
+
+        ITorchTensor<T> Mm(ITorchTensor<T> target);
 
         ITorchTensor<T> Mul(ITorchTensor<T> target);
 
