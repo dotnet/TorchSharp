@@ -328,6 +328,19 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestPoissonNLLLoss()
+        {
+            using (FloatTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f, 2.5f }))
+            using (FloatTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
+            {
+                var componentWiseLoss = ((FloatTensor)input.Exp()) - target * input;
+                Assert.IsTrue(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.None)));
+                Assert.IsTrue(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Sum)));
+                Assert.IsTrue(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Mean)));
+            }
+        }
+
+        [TestMethod]
         public void TestZeroGrad()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -563,12 +576,12 @@ namespace TorchSharp.Test
         {
             using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
             {
-                var size = train.Size();
-
                 Assert.IsNotNull(train);
-                Assert.IsNotNull(size);
 
+                var size = train.Size();
                 int i = 0;
+
+                Assert.IsNotNull(size);
 
                 foreach (var (data, target) in train)
                 {

@@ -125,7 +125,7 @@ namespace TorchSharp.Examples
             foreach (var (data, target) in dataLoader)
             {
                 using (var output = model.Forward(data))
-                using (var loss = NN.LossFunction.NLL(output, target, NN.Reduction.Sum))
+                using (var loss = NN.LossFunction.NLL(output, target, reduction: NN.Reduction.Sum))
                 {
                     testLoss += loss.Item;
 

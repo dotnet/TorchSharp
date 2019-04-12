@@ -164,6 +164,11 @@ if (!type.IsLong) {
             }
         }
 
+        public static <#=type.Name#>Tensor From(<#=type.Storage#>[] rawArray)
+        {
+            return From(rawArray, new long[] { (long)rawArray.Length });
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
@@ -413,7 +418,7 @@ if (!type.IsLong) {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
 
-        public ITorchTensor<<#=type.Storage#>>  Add(ITorchTensor<<#=type.Storage#>> target, int scalar)
+        public ITorchTensor<<#=type.Storage#>> Add(ITorchTensor<<#=type.Storage#>> target, int scalar = 1)
         {
             return new <#=type.Name#>Tensor(THSTensor_add(handle, scalar, target.Handle));
         }
@@ -475,6 +480,14 @@ if (!type.IsLong) {
         }
 
         [DllImport("libTorchSharp")]
+        extern static bool THSTensor_equal(IntPtr src, IntPtr trg);
+
+        public bool Equal<U>(ITorchTensor<U> target)
+        {
+            return THSTensor_equal(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_exp(IntPtr src);
 
         public ITorchTensor<<#=type.Storage#>> Exp()
@@ -488,6 +501,14 @@ if (!type.IsLong) {
         public ITorchTensor<<#=type.Storage#>> MatMul(ITorchTensor<<#=type.Storage#>> target)
         {
             return new <#=type.Name#>Tensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_mean(IntPtr src);
+
+        public ITorchTensor<<#=type.Storage#>> Mean()
+        {
+            return new <#=type.Name#>Tensor(THSTensor_mean(handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -560,6 +581,22 @@ if (!type.IsLong) {
         public ITorchTensor<<#=type.Storage#>> Sum()
         {
             return new <#=type.Name#>Tensor(THSTensor_sum(handle));
+        }
+
+        // Operators overloading
+        public static <#=type.Name#>Tensor operator +(<#=type.Name#>Tensor left, <#=type.Name#>Tensor right)
+        {
+            return (<#=type.Name#>Tensor)left.Add(right);
+        }
+
+        public static <#=type.Name#>Tensor operator *(<#=type.Name#>Tensor left, <#=type.Name#>Tensor right)
+        {
+            return (<#=type.Name#>Tensor)left.Mul(right);
+        }
+
+        public static <#=type.Name#>Tensor operator -(<#=type.Name#>Tensor left, <#=type.Name#>Tensor right)
+        {
+            return (<#=type.Name#>Tensor)left.Sub(right);
         }
 
         /// <summary>
