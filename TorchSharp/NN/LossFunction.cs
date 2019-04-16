@@ -34,9 +34,9 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_lossPoissonNLL(IntPtr srct, IntPtr trgt, bool logInput, bool full, double eps, long reduction);
+        extern static IntPtr THSNN_lossPoissonNLL(IntPtr srct, IntPtr trgt, bool logInput, bool full, float eps, long reduction);
 
-        public static ITorchTensor<float> PoissonNLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, bool logInput = true, bool full = false, double eps = 1e-8, Reduction reduction = Reduction.Mean)
+        public static ITorchTensor<float> PoissonNLL<T, U>(ITorchTensor<T> src, ITorchTensor<U> target, bool logInput = true, bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean)
         {
             return new FloatTensor(THSNN_lossPoissonNLL(src.Handle, target.Handle, logInput, full, eps, (long)reduction));
         }

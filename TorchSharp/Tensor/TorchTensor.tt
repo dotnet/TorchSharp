@@ -240,7 +240,7 @@ if (!type.IsLong) {
             }
         }
 
-        public <#=type.Storage#> Item
+        public <#=type.Storage#> DataItem
         {
             get
             {
@@ -249,6 +249,39 @@ if (!type.IsLong) {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<<#=type.Storage#>> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<<#=type.Storage#>>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<<#=type.Storage#>> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<<#=type.Storage#>>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<<#=type.Storage#>> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<<#=type.Storage#>>();
             }
         }
 
@@ -699,7 +732,7 @@ foreach (var type in TorchTypeDef.Types) {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr src, int len, long dim);
 
-        internal static ITorchTensor<T> Cat<T>(this ITorchTensor<T>[] tensors, long dimension)
+        public static ITorchTensor<T> Cat<T>(this ITorchTensor<T>[] tensors, long dimension)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
@@ -708,17 +741,9 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("libTorchSharp")]
-        extern static void THSTensor_initUniform(IntPtr src, double low, double high);
-
-        internal static void InitUniform<T>(this ITorchTensor<T> tensor, double low = 0, double high = 1)
-        {
-            THSTensor_initUniform(tensor.Handle, low, high);
-        }
-
-        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_stack(IntPtr src, int len, long dim);
 
-        internal static ITorchTensor<T> Stack<T>(this ITorchTensor<T>[] tensors, long dimension)
+        public static ITorchTensor<T> Stack<T>(this ITorchTensor<T>[] tensors, long dimension)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());

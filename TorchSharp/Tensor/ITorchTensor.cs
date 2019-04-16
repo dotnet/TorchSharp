@@ -16,7 +16,13 @@ namespace TorchSharp.Tensor
 
         Span<T> Data { get; }
 
-        T Item { get; }
+        T DataItem { get; }
+
+        ITorchTensor<T> this[long i1] { get; }
+
+        ITorchTensor<T> this[long i1, long i2] { get; }
+
+        ITorchTensor<T> this[long i1, long i2, long i3] { get; }
 
         bool IsSparse { get; }
 

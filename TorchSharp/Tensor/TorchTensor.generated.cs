@@ -220,7 +220,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public byte Item
+        public byte DataItem
         {
             get
             {
@@ -229,6 +229,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<byte> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<byte>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<byte> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<byte>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<byte> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<byte>();
             }
         }
 
@@ -823,7 +856,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public short Item
+        public short DataItem
         {
             get
             {
@@ -832,6 +865,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<short> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<short>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<short> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<short>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<short> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<short>();
             }
         }
 
@@ -1426,7 +1492,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public int Item
+        public int DataItem
         {
             get
             {
@@ -1435,6 +1501,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<int> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<int>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<int> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<int>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<int> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<int>();
             }
         }
 
@@ -2029,7 +2128,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public long Item
+        public long DataItem
         {
             get
             {
@@ -2038,6 +2137,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<long> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<long>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<long> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<long>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<long> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<long>();
             }
         }
 
@@ -2632,7 +2764,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public double Item
+        public double DataItem
         {
             get
             {
@@ -2641,6 +2773,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<double> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<double>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<double> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<double>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<double> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<double>();
             }
         }
 
@@ -3235,7 +3400,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
-        public float Item
+        public float DataItem
         {
             get
             {
@@ -3244,6 +3409,39 @@ namespace TorchSharp.Tensor {
                     throw new ArgumentException($"Number of elements in the tensor must be 1");
                 }
                 return Data[0];
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        public ITorchTensor<float> this[long i1]
+        {
+            get
+            {
+                return THSTensor_get1(handle, i1).ToTorchTensor<float>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        public ITorchTensor<float> this[long i1, long i2]
+        {
+            get
+            {
+                return THSTensor_get2(handle, i1, i2).ToTorchTensor<float>();
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        public ITorchTensor<float> this[long i1, long i2, long i3]
+        {
+            get
+            {
+                return THSTensor_get3(handle, i1, i2, i3).ToTorchTensor<float>();
             }
         }
 
@@ -3735,7 +3933,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr src, int len, long dim);
 
-        internal static ITorchTensor<T> Cat<T>(this ITorchTensor<T>[] tensors, long dimension)
+        public static ITorchTensor<T> Cat<T>(this ITorchTensor<T>[] tensors, long dimension)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
@@ -3744,17 +3942,9 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
-        extern static void THSTensor_initUniform(IntPtr src, double low, double high);
-
-        internal static void InitUniform<T>(this ITorchTensor<T> tensor, double low = 0, double high = 1)
-        {
-            THSTensor_initUniform(tensor.Handle, low, high);
-        }
-
-        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_stack(IntPtr src, int len, long dim);
 
-        internal static ITorchTensor<T> Stack<T>(this ITorchTensor<T>[] tensors, long dimension)
+        public static ITorchTensor<T> Stack<T>(this ITorchTensor<T>[] tensors, long dimension)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
