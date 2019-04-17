@@ -124,7 +124,7 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(scalar))
             {
-                Assert.AreEqual(tensor.Item, 333);
+                Assert.AreEqual(tensor.DataItem, 333);
             }
         }
 
@@ -135,7 +135,7 @@ namespace TorchSharp.Test
 
             using (var tensor = scalar.ToTorchTensor())
             {
-                Assert.AreEqual(tensor.Item, 333);
+                Assert.AreEqual(tensor.DataItem, 333);
             }
         }
 
@@ -144,7 +144,7 @@ namespace TorchSharp.Test
         {
             using (var tensor = FloatTensor.Zeros(new long[] { 2, 2 }))
             {
-                tensor.InitUniform();
+                NN.Init.Uniform(tensor);
 
                 Assert.IsNotNull(tensor);
             } 
@@ -282,6 +282,27 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestGetBiasInLinear()
+        {
+            var lin = NN.Module.Linear(1000, 100);
+            Assert.IsFalse(lin.WithBias);
+            Assert.ThrowsException<ArgumentNullException>(() => lin.Bias);
+        }
+
+        [TestMethod]
+        public void TestSetGetBiasInLinear()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+            Assert.IsNotNull(lin.Bias);
+
+            var bias = FloatTensor.Ones(new long[] { 1000 });
+
+            lin.Bias = bias;
+
+            Assert.AreEqual(lin.Bias.NumberOfElements, bias.NumberOfElements);
+        }
+
+        [TestMethod]
         public void CreateRelu()
         {
             var rel = NN.Module.Relu();
@@ -323,7 +344,7 @@ namespace TorchSharp.Test
             var eval = seq.Forward(x);
             var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
 
-            var result = loss.Item;
+            var result = loss.DataItem;
             Assert.IsNotNull(result);
         }
 
@@ -501,7 +522,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.Item;
+                var lossVal = loss.DataItem;
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
@@ -558,7 +579,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.Item;
+                var lossVal = loss.DataItem;
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;

@@ -101,7 +101,7 @@ namespace TorchSharp.Examples
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.Item}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.DataItem}");
                     }
 
                     batchId++;
@@ -127,11 +127,11 @@ namespace TorchSharp.Examples
                 using (var output = model.Forward(data))
                 using (var loss = NN.LossFunction.NLL(output, target, reduction: NN.Reduction.Sum))
                 {
-                    testLoss += loss.Item;
+                    testLoss += loss.DataItem;
 
                     var pred = output.Argmax(1);
 
-                    correct += pred.Eq(target).Sum().Item; // Memory leak here
+                    correct += pred.Eq(target).Sum().DataItem; // Memory leak here
 
                     data.Dispose();
                     target.Dispose();

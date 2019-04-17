@@ -11,7 +11,7 @@ namespace TorchSharp.NN
         /// <summary>
         ///    Class wrapping PyTorch's module object reference.
         /// </summary>
-        internal sealed class HType : SafeHandle
+        protected sealed class HType : SafeHandle
         {
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
@@ -43,7 +43,7 @@ namespace TorchSharp.NN
             }
         }
 
-        internal HType handle;
+        protected HType handle;
 
         protected bool _isTraining = true;
 
@@ -96,7 +96,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_linearModule(int input, int output, bool hasBias);
 
-        static public Module Linear(int input, int output, bool hasBias = false)
+        static public Linear Linear(int input, int output, bool hasBias = false)
         {
             return new Linear(THSNN_linearModule(input, output, hasBias));
         }
