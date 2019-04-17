@@ -11,7 +11,7 @@ namespace TorchSharp.NN
         /// <summary>
         ///    Class wrapping PyTorch's module object reference.
         /// </summary>
-        protected sealed class HType : SafeHandle
+        internal sealed class HType : SafeHandle
         {
             public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
             {
@@ -43,7 +43,7 @@ namespace TorchSharp.NN
             }
         }
 
-        protected HType handle;
+        internal HType handle;
 
         protected bool _isTraining = true;
 

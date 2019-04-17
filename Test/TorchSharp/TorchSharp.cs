@@ -303,6 +303,57 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestWeightAndBiasShapeInLinear()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+
+            Assert.AreEqual(lin.Weight.Shape.Length, 2);
+            Assert.AreEqual(lin.Weight.Shape[0], 100);
+            Assert.AreEqual(lin.Weight.Shape[1], 1000);
+            Assert.AreEqual(lin.Bias.Shape.Length, 1);
+            Assert.AreEqual(lin.Bias.Shape[0], 100);
+        }
+
+        [TestMethod]
+        public void TestLinearWithBias()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+            var bias = lin.Bias;
+            var weight = lin.Weight.T();
+            var input = FloatTensor.RandomN(new long[] { 1, 1000 });
+            var forward = lin.Forward(input);
+            var matmul = input.MatMul(weight).Add(bias);
+
+            Assert.AreEqual(forward.Shape.Length, matmul.Shape.Length);
+            Assert.AreEqual(forward.Shape[0], matmul.Shape[0]);
+            Assert.AreEqual(forward.Shape[1], matmul.Shape[1]);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.AreEqual(forward.Data[i], matmul.Data[i]);
+            }
+        }
+
+        [TestMethod]
+        public void TestLinearNoBias()
+        {
+            var lin = NN.Module.Linear(1000, 100, false);
+            var weight = lin.Weight.Transpose(0, 1);
+            var input = FloatTensor.RandomN(new long[] { 1, 1000 });
+            var forward = lin.Forward(input);
+            var matmul = input.MatMul(weight);
+
+            Assert.AreEqual(forward.Shape.Length, matmul.Shape.Length);
+            Assert.AreEqual(forward.Shape[0], matmul.Shape[0]);
+            Assert.AreEqual(forward.Shape[1], matmul.Shape[1]);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.AreEqual(forward.Data[i], matmul.Data[i]);
+            }
+        }
+
+        [TestMethod]
         public void CreateRelu()
         {
             var rel = NN.Module.Relu();

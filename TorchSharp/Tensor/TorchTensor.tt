@@ -419,6 +419,14 @@ if (!type.IsLong) {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<<#=type.Storage#>> T()
+        {
+            return new <#=type.Name#>Tensor (THSTensor_t (handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
 
         public ITorchTensor<<#=type.Storage#>> Transpose(long dimension1, long dimension2)
