@@ -2,11 +2,11 @@
 
 namespace TorchSharp.Tensor
 {
-    public interface ITorchTensor<U> : IDisposable
+    public interface ITorchTensor : IDisposable
     {
         IntPtr Handle { get; }
 
-        int Dimensions { get; }
+        long Dimensions { get; }
 
         long[] Shape { get; }
 
@@ -14,80 +14,86 @@ namespace TorchSharp.Tensor
 
         string Device { get; }
 
-        Span<U> Data { get; }
+        ITorchTensor this[long i1] { get; }
 
-        U DataItem { get; }
+        ITorchTensor this[long i1, long i2] { get; }
 
-        ITorchTensor<U> this[long i1] { get; }
-
-        ITorchTensor<U> this[long i1, long i2] { get; }
-
-        ITorchTensor<U> this[long i1, long i2, long i3] { get; }
+        ITorchTensor this[long i1, long i2, long i3] { get; }
 
         bool IsSparse { get; }
 
         bool IsVariable { get; }
 
+        Span<T> Data<T>();
+
+        T DataItem<T>();
+
         long GetTensorDimension(int dim);
 
         long GetTensorStride(int dim);
 
-        ITorchTensor<U> Cpu();
+        ITorchTensor Cpu();
 
-        ITorchTensor<U> Cuda();
+        ITorchTensor Cuda();
 
         void Backward();
 
-        ITorchTensor<float> Grad();
+        ITorchTensor Grad();
 
-        ITorchTensor<U> Reshape(params long[] shape);
+        ITorchTensor Reshape(params long[] shape);
 
-        ITorchTensor<U> T();
+        ITorchTensor T();
 
-        ITorchTensor<U> Transpose(long dimension1, long dimension2);
+        ITorchTensor Transpose(long dimension1, long dimension2);
 
         void TransposeInPlace(long dimension1, long dimension2);
 
-        ITorchTensor<U> View(params long[] shape);
+        ITorchTensor View(params long[] shape);
 
-        ITorchTensor<U> Eq<U>(ITorchTensor<U> target);
+        ITorchTensor Eq(ITorchTensor target);
 
-        bool Equal<U>(ITorchTensor<U> target);
+        bool Equal(ITorchTensor target);
 
-        ITorchTensor<U> Add(ITorchTensor<U> target, int scalar = 1);
+        //ITorchTensor Add<T>(ITorchTensor target, T scalar = default);
 
-        void AddInPlace(ITorchTensor<U> target, int scalar);
+        //void AddInPlace<T>(ITorchTensor target, T scalar = default);
 
-        ITorchTensor<U> Addbmm(ITorchTensor<U> batch1, ITorchTensor<U> batch2, float beta, float alpha);
+        ITorchTensor Add(ITorchTensor target, int scalar = 1);
 
-        ITorchTensor<U> Argmax(long dimension, bool keepDimension = false);
+        void AddInPlace(ITorchTensor target, int scalar = 1);
 
-        ITorchTensor<U> Baddbmm(ITorchTensor<U> batch2, ITorchTensor<U> mat, float beta, float alpha);
+        ITorchTensor Addbmm(ITorchTensor batch1, ITorchTensor batch2, float beta, float alpha);
 
-        ITorchTensor<U> Bmm(ITorchTensor<U> batch2);
+        ITorchTensor Argmax(long dimension, bool keepDimension = false);
 
-        ITorchTensor<U> Exp();
+        ITorchTensor Baddbmm(ITorchTensor batch2, ITorchTensor mat, float beta, float alpha);
 
-        ITorchTensor<U> MatMul(ITorchTensor<U> target);
+        ITorchTensor Bmm(ITorchTensor batch2);
 
-        ITorchTensor<U> Mean();
+        ITorchTensor Exp();
 
-        ITorchTensor<U> Mm(ITorchTensor<U> target);
+        ITorchTensor MatMul(ITorchTensor target);
 
-        ITorchTensor<U> Mul(ITorchTensor<U> target);
+        ITorchTensor Mean();
 
-        ITorchTensor<U> Mul(U scalar);
+        ITorchTensor Mm(ITorchTensor target);
 
-        void MulInPlace(ITorchTensor<U> target);
+        ITorchTensor Mul(ITorchTensor target);
 
-        ITorchTensor<U> Pow(float scalar);
+        // ITorchTensor Mul<T>(T scalar);
 
-        ITorchTensor<U> Sigmoid();
+        ITorchTensor Mul(float scalar);
 
-        ITorchTensor<U> Sub(ITorchTensor<U> target);
+        void MulInPlace(ITorchTensor target);
 
-        void SubInPlace(ITorchTensor<U> target);
+        ITorchTensor Pow(float scalar);
 
-        ITorchTensor<U> Sum();
+        ITorchTensor Sigmoid();
+
+        ITorchTensor Sub(ITorchTensor target);
+
+        void SubInPlace(ITorchTensor target);
+
+        ITorchTensor Sum();
     }
 }

@@ -55,11 +55,11 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_new_module(IntPtr names, IntPtr parameters, IntPtr with_grad, int length);
 
-        protected Module(params (string name, ITorchTensor<float> parameter, bool withGrad)[] parameters)
+        protected Module(params Parameter[] parameters)
         {
-            var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.name)).ToArray();
-            var @params = parameters.Select(p => p.parameter.Handle).ToArray();
-            var withGrads = parameters.Select(p => p.withGrad).ToArray();
+            var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
+            var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
+            var withGrads = parameters.Select(p => p.WithGrad).ToArray();
 
             var namesPinned = new PinnedArray<IntPtr>();
             var paramsPinned = new PinnedArray<IntPtr>();
@@ -127,7 +127,7 @@ namespace TorchSharp.NN
             return new ReLU();
         }
 
-        static public ITorchTensor<float> Relu(ITorchTensor<float> x)
+        static public ITorchTensor Relu(ITorchTensor x)
         {
             return new ReLU().Forward(x);
         }
@@ -137,7 +137,7 @@ namespace TorchSharp.NN
             return new MaxPool2D(kernelSize);
         }
 
-        static public ITorchTensor<float> MaxPool2D(ITorchTensor<float> x, long kernelSize)
+        static public ITorchTensor MaxPool2D(ITorchTensor x, long kernelSize)
         {
             using (var m = new MaxPool2D(kernelSize))
             {
@@ -150,7 +150,7 @@ namespace TorchSharp.NN
             return new LogSoftMax(dimension);
         }
 
-        static public ITorchTensor<float> LogSoftMax(ITorchTensor<float> x, long dimension)
+        static public ITorchTensor LogSoftMax(ITorchTensor x, long dimension)
         {
             using (var l = new LogSoftMax(dimension))
             {
@@ -163,7 +163,7 @@ namespace TorchSharp.NN
             return new Dropout(probability, isTraining);
         }
 
-        static public ITorchTensor<float> Dropout(ITorchTensor<float> x, double probability, bool isTraining)
+        static public ITorchTensor Dropout(ITorchTensor x, double probability, bool isTraining)
         {
             using (var d = new Dropout(probability, isTraining))
             {
@@ -171,7 +171,7 @@ namespace TorchSharp.NN
             }
         }
 
-        static public ITorchTensor<float> FeatureDropout(ITorchTensor<float> x)
+        static public ITorchTensor FeatureDropout(ITorchTensor x)
         {
             using (var f = new FeatureDropout())
             {
@@ -182,7 +182,7 @@ namespace TorchSharp.NN
 
     public abstract partial class Module : IDisposable
     {
-        public abstract ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors);
+        public abstract ITorchTensor Forward(ITorchTensor input);
 
         [DllImport("libTorchSharp")]
         extern static void THSNN_train(HType module);
@@ -219,12 +219,12 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static void THSNN_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-        public virtual IEnumerable<(string name, ITorchTensor<float> parameter)> NamedParameters()
+        public virtual IEnumerable<(string name, ITorchTensor parameter)> NamedParameters()
         {
             // If module has no children, fetch the paramters from pytorch
             if (Modules.Any())
             {
-                IEnumerable<(string name, ITorchTensor<float> parameter)> result = Enumerable.Empty<(string name, ITorchTensor<float> parameter)>();
+                IEnumerable<(string name, ITorchTensor parameter)> result = Enumerable.Empty<(string name, ITorchTensor parameter)>();
 
                 foreach (var module in Modules)
                 {
@@ -244,18 +244,18 @@ namespace TorchSharp.NN
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
-            return strArray.Select(s => Marshal.PtrToStringAnsi(s)).Zip(ptrArray.Select(x => new FloatTensor(x) as ITorchTensor<float>), (x, y) => (x, y));
+            return strArray.Select(s => Marshal.PtrToStringAnsi(s)).Zip(ptrArray.Select(x => new TorchTensor(x) as ITorchTensor), (x, y) => (x, y));
         }
 
         [DllImport("libTorchSharp")]
         extern static void THSNN_get_parameters(HType module, AllocatePinnedArray allocator);
 
-        public virtual IEnumerable<ITorchTensor<float> > Parameters()
+        public virtual IEnumerable<ITorchTensor > Parameters()
         {
             // If module has no children, fetch the paramters from pytorch
             if (Modules.Any())
             {
-                IEnumerable<ITorchTensor<float>> result = Enumerable.Empty<ITorchTensor<float>>();
+                IEnumerable<ITorchTensor> result = Enumerable.Empty<ITorchTensor>();
 
                 foreach (var module in Modules)
                 {
@@ -272,7 +272,7 @@ namespace TorchSharp.NN
                 THSNN_get_parameters(handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
-            return ptrArray.Select(x => new FloatTensor(x) as ITorchTensor<float>);
+            return ptrArray.Select(x => new TorchTensor(x) as ITorchTensor);
         }
 
         [DllImport("libTorchSharp")]
@@ -286,7 +286,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_get_parameter(HType module, string name);
 
-        public ITorchTensor<float> GetParameter(string name)
+        public ITorchTensor GetParameter(string name)
         {
             var parameter = THSNN_get_parameter(handle, name);
 
@@ -295,7 +295,7 @@ namespace TorchSharp.NN
                 throw new ArgumentNullException("Linear module without bias term.");
             }
 
-            return new FloatTensor(parameter);
+            return new TorchTensor(parameter);
         }
 
         public virtual void RegisterModule(NN.Module module)

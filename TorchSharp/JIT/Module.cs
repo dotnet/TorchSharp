@@ -158,12 +158,12 @@ namespace TorchSharp.JIT
         [DllImport("libTorchSharp")]
         extern static IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
 
-        public ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
+        public ITorchTensor Forward(params ITorchTensor[] tensors)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorRefs = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            return new FloatTensor(THSJIT_forward(handle, tensorRefs, parray.Array.Length));
+            return new TorchTensor(THSJIT_forward(handle, tensorRefs, parray.Array.Length));
         }
     }
 }

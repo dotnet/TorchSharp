@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using TorchSharp.JIT;
+using TorchSharp.NN;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.Test
@@ -19,7 +20,7 @@ namespace TorchSharp.Test
         [TestMethod]
         public void CreateFloatTensorCheckMemory()
         {
-            ITorchTensor<float> ones = null;
+            ITorchTensor ones = null;
 
             for (int i = 0; i < 10; i++)
             {
@@ -35,7 +36,7 @@ namespace TorchSharp.Test
         public void CreateFloatTensorOnesCheckData()
         {
             var ones = FloatTensor.Ones(new long[] { 2, 2 });
-            var data = ones.Data;
+            var data = ones.Data<float>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -47,7 +48,7 @@ namespace TorchSharp.Test
         public void CreateFloatTensorZerosCheckData()
         {
             var zeros = FloatTensor.Zeros(new long[] { 2, 2 });
-            var data = zeros.Data;
+            var data = zeros.Data<float>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -59,7 +60,7 @@ namespace TorchSharp.Test
         public void CreateIntTensorOnesCheckData()
         {
             var ones = IntTensor.Ones(new long[] { 2, 2 });
-            var data = ones.Data;
+            var data = ones.Data<int>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -84,7 +85,7 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }))
             {
-                Assert.AreEqual(tensor.Data[100], 1);
+                Assert.AreEqual(tensor.Data<float>()[100], 1);
             }
         }
 
@@ -96,7 +97,7 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }))
             {
-                Assert.AreEqual(tensor.Data[100], 1);
+                Assert.AreEqual(tensor.Data<float>()[100], 1);
             }
 
             Assert.AreEqual(data[100], 1);
@@ -114,7 +115,7 @@ namespace TorchSharp.Test
 
             using (var tensor = data.ToTorchTensor(new long[] { 10, 100 }))
             {
-                Assert.AreEqual(tensor.Data[100], default(T));
+                Assert.AreEqual(tensor.Data<T>()[100], default(T));
             }
         }
 
@@ -125,7 +126,7 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(scalar))
             {
-                Assert.AreEqual(tensor.DataItem, 333);
+                Assert.AreEqual(tensor.DataItem<float>(), 333);
             }
         }
 
@@ -136,7 +137,7 @@ namespace TorchSharp.Test
 
             using (var tensor = scalar.ToTorchTensor())
             {
-                Assert.AreEqual(tensor.DataItem, 333);
+                Assert.AreEqual(tensor.DataItem<float>(), 333);
             }
         }
 
@@ -177,7 +178,7 @@ namespace TorchSharp.Test
 
                 // Copy back to CPU to inspect the elements
                 cpu = cuda.Cpu();
-                var data = cpu.Data;
+                var data = cpu.Data<float>();
                 for (int i = 0; i < 4; i++)
                 {
                     Assert.AreEqual(data[i], 1);
@@ -201,7 +202,7 @@ namespace TorchSharp.Test
                 var cpu = cuda.Cpu();
                 Assert.AreEqual(cpu.Device, "cpu");
 
-                var data = cpu.Data;
+                var data = cpu.Data<float>();
                 for (int i = 0; i < 4; i++)
                 {
                     Assert.AreEqual(data[i], 1);
@@ -362,7 +363,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.AreEqual(forward.Data[i], matmul.Data[i]);
+                Assert.AreEqual(forward.Data<float>()[i], matmul.Data<float>()[i]);
             }
         }
 
@@ -381,7 +382,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.AreEqual(forward.Data[i], matmul.Data[i]);
+                Assert.AreEqual(forward.Data<float>()[i], matmul.Data<float>()[i]);
             }
         }
 
@@ -428,17 +429,17 @@ namespace TorchSharp.Test
             var eval = seq.Forward(x);
             var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
 
-            var result = loss.DataItem;
+            var result = loss.DataItem<float>();
             Assert.IsNotNull(result);
         }
 
         [TestMethod]
         public void TestPoissonNLLLoss()
         {
-            using (FloatTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f, 2.5f }))
-            using (FloatTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
+            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f, 2.5f }))
+            using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
-                var componentWiseLoss = ((FloatTensor)input.Exp()) - target * input;
+                var componentWiseLoss = ((TorchTensor)input.Exp()) - target * input;
                 Assert.IsTrue(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.None)));
                 Assert.IsTrue(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Sum)));
                 Assert.IsTrue(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Mean)));
@@ -539,7 +540,7 @@ namespace TorchSharp.Test
                 sum.Backward();
                 var grad = x.Grad();
                 Assert.IsFalse(grad.Handle == IntPtr.Zero);
-                var data = grad.Data;
+                var data = grad.Data<float>();
                 for (int i = 0; i < 2 * 3; i++)
                 {
                     Assert.AreEqual(data[i], 1.0);
@@ -555,7 +556,7 @@ namespace TorchSharp.Test
 
             x.SubInPlace(y);
 
-            var xdata = x.Data;
+            var xdata = x.Data<int>();
 
             for (int i = 0; i < 100; i++)
             {
@@ -573,8 +574,8 @@ namespace TorchSharp.Test
 
             var y = x.Mul(0.5f);
 
-            var ydata = y.Data;
-            var xdata = x.Data;
+            var ydata = y.Data<float>();
+            var xdata = x.Data<float>();
 
             for (int i = 0; i < 100; i++)
             {
@@ -615,12 +616,12 @@ namespace TorchSharp.Test
 
         private class TestModule : NN.Module
         {
-            public TestModule(string name, ITorchTensor<float> tensor, bool withGrad) 
-                : base((name, tensor, withGrad))
+            public TestModule(string name, ITorchTensor tensor, bool withGrad) 
+                : base(new NN.Parameter(name, tensor, withGrad))
             {
             }
 
-            public override ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
+            public override ITorchTensor Forward(ITorchTensor input)
             {
                 throw new NotImplementedException();
             }
@@ -648,7 +649,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.DataItem;
+                var lossVal = loss.DataItem<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
@@ -705,7 +706,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.DataItem;
+                var lossVal = loss.DataItem<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;

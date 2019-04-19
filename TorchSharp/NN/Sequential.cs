@@ -20,7 +20,7 @@ namespace TorchSharp.NN
             }
         }
 
-        public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
+        public override ITorchTensor Forward(ITorchTensor tensor)
         {
             if (!Modules.Any())
             {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
             }
 
             var (head, tail) = Modules;
-            ITorchTensor<float> result = head.Forward(tensor);
+            var result = head.Forward(tensor);
 
             foreach (var module in tail)
             {

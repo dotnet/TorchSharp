@@ -16,17 +16,5 @@ namespace TorchSharp.NN
         internal ProvidedModule(IntPtr handle) : base(handle)
         {
         }
-
-        public override ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
-        {
-            if (tensors.Length != 1)
-            {
-                throw new ArgumentException(nameof(tensors));
-            }
-
-            return Forward(tensors[0]);
-        }
-
-        public abstract ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor);
     }
 }
