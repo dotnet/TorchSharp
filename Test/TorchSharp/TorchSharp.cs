@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using TorchSharp.JIT;
 using TorchSharp.Tensor;
 
@@ -315,6 +316,37 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestWeightAndBiasParametersInLinear()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+            var names = lin.NamedParameters().Select(p => p.name);
+            Assert.IsTrue(names.Contains("weight"));
+            Assert.IsTrue(names.Contains("bias"));
+        }
+
+        [TestMethod]
+        public void TestWeightParameterInLinear()
+        {
+            var lin = NN.Module.Linear(1000, 100, false);
+            var names = lin.NamedParameters().Select(p => p.name);
+            Assert.IsTrue(names.Contains("weight"));
+            Assert.IsFalse(names.Contains("bias"));
+        }
+
+        [TestMethod]
+        public void TestWeightAndBiasShapeInLinear3()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+            var weight = lin.GetParameter("weight");
+            var bias = lin.GetParameter("bias");
+            Assert.AreEqual(weight.Shape.Length, 2);
+            Assert.AreEqual(weight.Shape[0], 100);
+            Assert.AreEqual(weight.Shape[1], 1000);
+            Assert.AreEqual(bias.Shape.Length, 1);
+            Assert.AreEqual(bias.Shape[0], 100);
+        }
+
+        [TestMethod]
         public void TestLinearWithBias()
         {
             var lin = NN.Module.Linear(1000, 100, true);
@@ -368,6 +400,7 @@ namespace TorchSharp.Test
             var lin2 = NN.Module.Linear(100, 10);
             var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
             var modules = seq.GetModules();
+            Assert.AreEqual(modules.Count(), 3);
         }
 
         [TestMethod]
@@ -551,6 +584,48 @@ namespace TorchSharp.Test
                 }
             }
         }
+
+        [TestMethod]
+        public void TestCustomModule()
+        {
+            var module = new TestModule("test", FloatTensor.RandomN(new long[] { 2, 2 }), true);
+            var name = module.GetName();
+            Assert.IsNotNull(name);
+            Assert.IsTrue(module.HasParameter("test"));
+        }
+
+        [TestMethod]
+        public void TestCustomModuleWithInPlaceModification()
+        {
+            var param = FloatTensor.RandomN(new long[] { 1000, 100 });
+            var module = new TestModule("test", param, true);
+
+            Assert.AreEqual(module.GetParameter("test").Shape[0], 1000);
+            Assert.AreEqual(module.GetParameter("test").Shape[1], 100);
+
+            using (var grad = new AutoGradMode(false))
+            {
+                param.TransposeInPlace(0, 1);
+            }
+            Assert.AreEqual(module.GetParameter("test").Shape[0], 100);
+            Assert.AreEqual(module.GetParameter("test").Shape[1], 1000);
+            Assert.AreEqual(param.Shape[0], 100);
+            Assert.AreEqual(param.Shape[1], 1000);
+        }
+
+        private class TestModule : NN.Module
+        {
+            public TestModule(string name, ITorchTensor<float> tensor, bool withGrad) 
+                : base((name, tensor, withGrad))
+            {
+            }
+
+            public override ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
         /// <summary>
         /// Fully connected Relu net with one hidden layer trained using gradient descent.

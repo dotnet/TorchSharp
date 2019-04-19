@@ -11,11 +11,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_linearModule(int input, int output, bool hasBias);
+        extern static IntPtr THSNN_linearModule(long input_size, long output_size, bool with_bias);
 
-        public Linear(int input, int output, bool hasBias = false) : base()
+        public Linear(long inputSize, long outputSize, bool hasBias = false) : base()
         {
-            handle = new HType(THSNN_linearModule(input, output, hasBias), true);
+            handle = new HType(THSNN_linearModule(inputSize, outputSize, hasBias), true);
         }
 
         [DllImport("libTorchSharp")]

@@ -10,6 +10,7 @@ namespace TorchSharp.NN
     public class Dropout : FunctionalModule<Dropout>
     {
         private double _probability;
+        private bool _isTraining;
 
         internal Dropout(double probability, bool isTraining) : base()
         {
