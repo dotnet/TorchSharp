@@ -45,7 +45,7 @@ namespace TorchSharp.Examples
             private NN.Module fc1 = Linear(320, 50);
             private NN.Module fc2 = Linear(50, 10);
 
-            public Model() : base(IntPtr.Zero)
+            public Model() : base()
             {
                 RegisterModule(conv1);
                 RegisterModule(conv2);
@@ -68,7 +68,7 @@ namespace TorchSharp.Examples
 
                 using (var l31 = fc1.Forward(x))
                 using (var l32 = Relu(l31))
-                using (var l33 = Dropout(l32, 0.5, _isTraining))
+                using (var l33 = Dropout(l32, 0.5, IsTraining()))
 
                 using (var l41 = fc2.Forward(l33))
 

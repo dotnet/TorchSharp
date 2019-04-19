@@ -399,6 +399,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<byte> T()
+        {
+            return new ByteTensor (THSTensor_t (handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
 
         public ITorchTensor<byte> Transpose(long dimension1, long dimension2)
@@ -1032,6 +1040,14 @@ namespace TorchSharp.Tensor {
                     return new ShortTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<short> T()
+        {
+            return new ShortTensor (THSTensor_t (handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -1671,6 +1687,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<int> T()
+        {
+            return new IntTensor (THSTensor_t (handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
 
         public ITorchTensor<int> Transpose(long dimension1, long dimension2)
@@ -2304,6 +2328,14 @@ namespace TorchSharp.Tensor {
                     return new LongTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<long> T()
+        {
+            return new LongTensor (THSTensor_t (handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -2943,6 +2975,14 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<double> T()
+        {
+            return new DoubleTensor (THSTensor_t (handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_transpose(IntPtr src, long dim1, long dim2);
 
         public ITorchTensor<double> Transpose(long dimension1, long dimension2)
@@ -3576,6 +3616,14 @@ namespace TorchSharp.Tensor {
                     return new FloatTensor (THSTensor_reshape (handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_t(IntPtr src);
+
+        public ITorchTensor<float> T()
+        {
+            return new FloatTensor (THSTensor_t (handle));
         }
 
         [DllImport("libTorchSharp")]

@@ -21,6 +21,11 @@ namespace TorchSharp.NN
         {
         }
 
+        public override IEnumerable<(string name, ITorchTensor<float> parameter)> NamedParameters()
+        {
+            return new List<(string, ITorchTensor<float>)>();
+        }
+
         public override IEnumerable<ITorchTensor<float>> Parameters()
         {
             return new List<ITorchTensor<float>>();
