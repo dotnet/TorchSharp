@@ -19,9 +19,9 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_maxPool2DApply(IntPtr tensor, long kernelSize);
 
-        public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
+        public override ITorchTensor Forward(ITorchTensor tensor)
         {
-            return new FloatTensor(THSNN_maxPool2DApply(tensor.Handle, _kernelSize));
+            return new TorchTensor(THSNN_maxPool2DApply(tensor.Handle, _kernelSize));
         }
     }
 }

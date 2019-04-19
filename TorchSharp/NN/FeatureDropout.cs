@@ -16,9 +16,9 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_featureDropoutApply(IntPtr tensor);
 
-        public override ITorchTensor<float> Forward<T>(ITorchTensor<T> tensor)
+        public override ITorchTensor Forward(ITorchTensor tensor)
         {
-            return new FloatTensor(THSNN_featureDropoutApply(tensor.Handle));
+            return new TorchTensor(THSNN_featureDropoutApply(tensor.Handle));
         }
     }
 }

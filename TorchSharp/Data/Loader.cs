@@ -15,9 +15,9 @@ namespace TorchSharp.Data
         /// <param name="batchSize">The required batch size</param>
         /// <param name="isTrain">Wheter the iterator is for training or testing</param>
         /// <returns></returns>
-        static public DataIterator<int, int> MNIST(string filename, long batchSize, bool isTrain = true)
+        static public DataIterator MNIST(string filename, long batchSize, bool isTrain = true)
         {
-            return new DataIterator<int, int>(THSData_loaderMNIST(filename, batchSize, isTrain));
+            return new DataIterator(THSData_loaderMNIST(filename, batchSize, isTrain));
         }
     }
 }

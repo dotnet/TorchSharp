@@ -31,11 +31,9 @@ namespace TorchSharp.Data
     /// <summary>
     /// Class implementing enumerable over PyTorch's iterator.
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
-    /// <typeparam name="TTarget"></typeparam>
-    public class DataIterator<TData, TTarget> :
+    public class DataIterator :
         IDisposable,
-        IEnumerable<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)>
+        IEnumerable<(ITorchTensor data, ITorchTensor target)>
     {
         /// <summary>
         ///    Class wrapping PyTorch's iterator object reference.
@@ -119,7 +117,7 @@ namespace TorchSharp.Data
         /// Get the enumerator for this iterator.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)> GetEnumerator()
+        public IEnumerator<(ITorchTensor data, ITorchTensor target)> GetEnumerator()
         {
             var iter = new DataIteratorEnumerator(this);
             iter.Reset();
@@ -132,9 +130,9 @@ namespace TorchSharp.Data
             return GetEnumerator();
         }
 
-        private class DataIteratorEnumerator : IEnumerator<(ITorchTensor<TData> data, ITorchTensor<TTarget> target)>
+        private class DataIteratorEnumerator : IEnumerator<(ITorchTensor data, ITorchTensor target)>
         {
-            private DataIterator<TData, TTarget> _iterator;
+            private DataIterator _iterator;
 
             private readonly PinnedArray<IntPtr> _darray = new PinnedArray<IntPtr>();
             private readonly PinnedArray<IntPtr> _tarray = new PinnedArray<IntPtr>();
@@ -144,7 +142,7 @@ namespace TorchSharp.Data
 
             private bool _isFirst = true;
 
-            public DataIteratorEnumerator(DataIterator<TData, TTarget> iterator)
+            public DataIteratorEnumerator(DataIterator iterator)
             {
                 _iterator = iterator;
 
@@ -152,12 +150,12 @@ namespace TorchSharp.Data
                 _tRef = _tarray.CreateArray(new IntPtr[1]);
             }
 
-            public (ITorchTensor<TData> data, ITorchTensor<TTarget> target) Current
+            public (ITorchTensor data, ITorchTensor target) Current
             {
                 get
                 {
                     ExternMethods.THSData_current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);   
-                    return (_darray.Array[0].ToTorchTensor<TData>(), _tarray.Array[0].ToTorchTensor<TTarget>());
+                    return (new TorchTensor(_darray.Array[0]), new TorchTensor(_tarray.Array[0]));
                 }
             }
 
