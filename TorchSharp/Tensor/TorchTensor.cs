@@ -334,7 +334,7 @@ namespace TorchSharp.Tensor
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_addbmm(IntPtr mat, IntPtr batch1, IntPtr batch2, float beta, float alpha);
 
-        public ITorchTensor Addbmm(ITorchTensor batch1, ITorchTensor batch2, float beta, float alpha)
+        public ITorchTensor Addbmm(ITorchTensor batch1, ITorchTensor batch2, float beta = 1, float alpha = 1)
         {
             return new TorchTensor(THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha));
         }
@@ -358,7 +358,7 @@ namespace TorchSharp.Tensor
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta, float alpha);
 
-        public ITorchTensor Baddbmm(ITorchTensor batch2, ITorchTensor mat, float beta, float alpha)
+        public ITorchTensor Baddbmm(ITorchTensor batch2, ITorchTensor mat, float beta = 1, float alpha = 1)
         {
             return new TorchTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }

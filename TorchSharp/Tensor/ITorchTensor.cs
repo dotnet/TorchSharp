@@ -62,11 +62,11 @@ namespace TorchSharp.Tensor
 
         void AddInPlace(ITorchTensor target, int scalar = 1);
 
-        ITorchTensor Addbmm(ITorchTensor batch1, ITorchTensor batch2, float beta, float alpha);
+        ITorchTensor Addbmm(ITorchTensor batch1, ITorchTensor batch2, float beta = 1, float alpha = 1);
 
         ITorchTensor Argmax(long dimension, bool keepDimension = false);
 
-        ITorchTensor Baddbmm(ITorchTensor batch2, ITorchTensor mat, float beta, float alpha);
+        ITorchTensor Baddbmm(ITorchTensor batch2, ITorchTensor mat, float beta = 1, float alpha = 1);
 
         ITorchTensor Bmm(ITorchTensor batch2);
 
