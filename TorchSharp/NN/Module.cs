@@ -52,6 +52,11 @@ namespace TorchSharp.NN
             this.handle = new HType(handle, true);
         }
 
+        internal Module()
+        {
+            this.handle = new HType(IntPtr.Zero, true);
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_new_module(IntPtr names, IntPtr parameters, IntPtr with_grad, int length);
 
