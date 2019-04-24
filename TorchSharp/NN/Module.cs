@@ -132,7 +132,7 @@ namespace TorchSharp.NN
             return new ReLU();
         }
 
-        static public ITorchTensor Relu(ITorchTensor x)
+        static public TorchTensor Relu(TorchTensor x)
         {
             return new ReLU().Forward(x);
         }
@@ -142,7 +142,7 @@ namespace TorchSharp.NN
             return new MaxPool2D(kernelSize);
         }
 
-        static public ITorchTensor MaxPool2D(ITorchTensor x, long kernelSize)
+        static public TorchTensor MaxPool2D(TorchTensor x, long kernelSize)
         {
             using (var m = new MaxPool2D(kernelSize))
             {
@@ -155,7 +155,7 @@ namespace TorchSharp.NN
             return new LogSoftMax(dimension);
         }
 
-        static public ITorchTensor LogSoftMax(ITorchTensor x, long dimension)
+        static public TorchTensor LogSoftMax(TorchTensor x, long dimension)
         {
             using (var l = new LogSoftMax(dimension))
             {
@@ -168,7 +168,7 @@ namespace TorchSharp.NN
             return new Dropout(probability, isTraining);
         }
 
-        static public ITorchTensor Dropout(ITorchTensor x, double probability, bool isTraining)
+        static public TorchTensor Dropout(TorchTensor x, double probability, bool isTraining)
         {
             using (var d = new Dropout(probability, isTraining))
             {
@@ -176,7 +176,7 @@ namespace TorchSharp.NN
             }
         }
 
-        static public ITorchTensor FeatureDropout(ITorchTensor x)
+        static public TorchTensor FeatureDropout(TorchTensor x)
         {
             using (var f = new FeatureDropout())
             {
@@ -187,7 +187,7 @@ namespace TorchSharp.NN
 
     public abstract partial class Module : IDisposable
     {
-        public abstract ITorchTensor Forward(ITorchTensor input);
+        public abstract TorchTensor Forward(TorchTensor input);
 
         [DllImport("libTorchSharp")]
         extern static void THSNN_train(HType module);
@@ -224,12 +224,12 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static void THSNN_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-        public virtual IEnumerable<(string name, ITorchTensor parameter)> NamedParameters()
+        public virtual IEnumerable<(string name, TorchTensor parameter)> NamedParameters()
         {
             // If module has no children, fetch the paramters from pytorch
             if (Modules.Any())
             {
-                IEnumerable<(string name, ITorchTensor parameter)> result = Enumerable.Empty<(string name, ITorchTensor parameter)>();
+                IEnumerable<(string name, TorchTensor parameter)> result = Enumerable.Empty<(string name, TorchTensor parameter)>();
 
                 foreach (var module in Modules)
                 {
@@ -249,18 +249,18 @@ namespace TorchSharp.NN
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
-            return strArray.Select(s => Marshal.PtrToStringAnsi(s)).Zip(ptrArray.Select(x => new TorchTensor(x) as ITorchTensor), (x, y) => (x, y));
+            return strArray.Select(s => Marshal.PtrToStringAnsi(s)).Zip(ptrArray.Select(x => new TorchTensor(x)), (x, y) => (x, y));
         }
 
         [DllImport("libTorchSharp")]
         extern static void THSNN_get_parameters(HType module, AllocatePinnedArray allocator);
 
-        public virtual IEnumerable<ITorchTensor > Parameters()
+        public virtual IEnumerable<TorchTensor > Parameters()
         {
             // If module has no children, fetch the paramters from pytorch
             if (Modules.Any())
             {
-                IEnumerable<ITorchTensor> result = Enumerable.Empty<ITorchTensor>();
+                IEnumerable<TorchTensor> result = Enumerable.Empty<TorchTensor>();
 
                 foreach (var module in Modules)
                 {
@@ -277,7 +277,7 @@ namespace TorchSharp.NN
                 THSNN_get_parameters(handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
-            return ptrArray.Select(x => new TorchTensor(x) as ITorchTensor);
+            return ptrArray.Select(x => new TorchTensor(x));
         }
 
         [DllImport("libTorchSharp")]
@@ -291,7 +291,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_get_parameter(HType module, string name);
 
-        public ITorchTensor GetParameter(string name)
+        public TorchTensor GetParameter(string name)
         {
             var parameter = THSNN_get_parameter(handle, name);
 

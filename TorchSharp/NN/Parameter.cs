@@ -5,10 +5,10 @@ namespace TorchSharp.NN
     public struct Parameter
     {
         public string Name { get; set; }
-        public ITorchTensor Tensor { get; set; }
+        public TorchTensor Tensor { get; set; }
         public bool WithGrad { get; set; }
 
-        public Parameter(string name, ITorchTensor parameter, bool withGrad)
+        public Parameter(string name, TorchTensor parameter, bool withGrad)
         {
             Name = name;
             Tensor = parameter;

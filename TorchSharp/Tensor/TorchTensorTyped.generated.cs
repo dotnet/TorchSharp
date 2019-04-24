@@ -16,7 +16,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -35,7 +35,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -54,7 +54,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -67,13 +67,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Byte, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -130,7 +149,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -156,7 +175,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -175,7 +194,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -194,7 +213,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -207,13 +226,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Short, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -270,7 +308,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -296,7 +334,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -315,7 +353,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -334,7 +372,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -347,13 +385,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Int, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -410,7 +467,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -436,7 +493,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -455,7 +512,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -474,7 +531,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -487,13 +544,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Long, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -550,7 +626,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -576,7 +652,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -595,7 +671,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -614,7 +690,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -627,13 +703,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Double, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -690,7 +785,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -716,7 +811,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public ITorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -735,7 +830,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -754,7 +849,7 @@ namespace TorchSharp.Tensor {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public ITorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -767,13 +862,32 @@ namespace TorchSharp.Tensor {
             }
         }
 
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad));
+                }
+            }
+        }
+
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public ITorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
@@ -830,7 +944,7 @@ namespace TorchSharp.Tensor {
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
-        public static TorchTensor Sparse(ITorchTensor indices, ITorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 

@@ -82,7 +82,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_optimizerAdam(IntPtr parameters, int len, double learningRate);
 
-        public static Optimizer Adam(IEnumerable<ITorchTensor> parameters, double learningRate)
+        public static Optimizer Adam(IEnumerable<TorchTensor> parameters, double learningRate)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -93,7 +93,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
 
-        public static Optimizer SGD(IEnumerable<ITorchTensor> parameters, double learningRate, double momentum)
+        public static Optimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());

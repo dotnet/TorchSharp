@@ -13,7 +13,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_conv2DModuleApply(Module.HType module, IntPtr tensor);
 
-        public override ITorchTensor Forward(ITorchTensor tensor)
+        public override TorchTensor Forward(TorchTensor tensor)
         {
             return new TorchTensor(THSNN_conv2DModuleApply(handle, tensor.Handle));
         }

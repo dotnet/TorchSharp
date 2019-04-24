@@ -20,7 +20,7 @@ namespace TorchSharp.Test
         [TestMethod]
         public void CreateFloatTensorCheckMemory()
         {
-            ITorchTensor ones = null;
+            TorchTensor? ones = null;
 
             for (int i = 0; i < 10; i++)
             {
@@ -162,13 +162,17 @@ namespace TorchSharp.Test
 
                 Assert.IsNotNull(sparse);
                 Assert.IsTrue(sparse.IsSparse);
+                Assert.IsFalse(i.IsSparse);
+                Assert.IsFalse(v.IsSparse);
+                CollectionAssert.AreEqual(sparse.Indeces.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+                CollectionAssert.AreEqual(sparse.Values.Data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
         }
 
         [TestMethod]
         public void CopyCpuToCuda()
         {
-            var cpu = FloatTensor.Ones(new long[] { 2, 2 });
+            TorchTensor cpu = FloatTensor.Ones(new long[] { 2, 2 });
             Assert.AreEqual(cpu.Device, "cpu");
 
             if (Torch.IsCudaAvailable())
@@ -186,7 +190,7 @@ namespace TorchSharp.Test
             }
             else
             {
-                Assert.ThrowsException<InvalidOperationException>(cpu.Cuda);
+                Assert.ThrowsException<InvalidOperationException>(() => cpu.Cuda());
             }
 
         }
@@ -447,6 +451,16 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestPoissonNLLLoss2()
+        {
+            using (TorchTensor input = FloatTensor.Random(new long[] { 5, 2 }))
+            using (TorchTensor target = FloatTensor.Random(new long[] { 5, 2 }))
+            {
+                Assert.IsNotNull(NN.LossFunction.PoissonNLL(input, target, true, true));
+            }
+        }
+
+        [TestMethod]
         public void TestZeroGrad()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -616,12 +630,12 @@ namespace TorchSharp.Test
 
         private class TestModule : NN.Module
         {
-            public TestModule(string name, ITorchTensor tensor, bool withGrad) 
+            public TestModule(string name, TorchTensor tensor, bool withGrad) 
                 : base(new NN.Parameter(name, tensor, withGrad))
             {
             }
 
-            public override ITorchTensor Forward(ITorchTensor input)
+            public override TorchTensor Forward(TorchTensor input)
             {
                 throw new NotImplementedException();
             }

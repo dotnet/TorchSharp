@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_dropoutModuleApply(IntPtr tensor, double probability, bool isTraining);
 
-        public override ITorchTensor Forward(ITorchTensor tensor)
+        public override TorchTensor Forward(TorchTensor tensor)
         {
             return new TorchTensor(THSNN_dropoutModuleApply(tensor.Handle, _probability, _isTraining));
         }
