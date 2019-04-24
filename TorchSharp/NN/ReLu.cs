@@ -16,7 +16,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static IntPtr THSNN_reluApply(IntPtr tensor);
 
-        public override ITorchTensor Forward(ITorchTensor tensor)
+        public override TorchTensor Forward(TorchTensor tensor)
         {
             return new TorchTensor(THSNN_reluApply(tensor.Handle));
         }

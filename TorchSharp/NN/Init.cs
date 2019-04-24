@@ -9,7 +9,7 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static void THSNN_initUniform(IntPtr src, double low, double high);
 
-        public static void Uniform(ITorchTensor tensor, double low = 0, double high = 1)
+        public static void Uniform(TorchTensor tensor, double low = 0, double high = 1)
         {
             THSNN_initUniform(tensor.Handle, low, high);
         }
@@ -17,12 +17,12 @@ namespace TorchSharp.NN
         [DllImport("libTorchSharp")]
         extern static void THSNN_initKaimingUniform(IntPtr src, double a);
 
-        public static void KaimingUniform(ITorchTensor tensor, double a = 0)
+        public static void KaimingUniform(TorchTensor tensor, double a = 0)
         {
             THSNN_initKaimingUniform(tensor.Handle, a);
         }
 
-        public static (long fanIn, long fanOut) CalculateFanInAndFanOut<T>(ITorchTensor tensor)
+        public static (long fanIn, long fanOut) CalculateFanInAndFanOut<T>(TorchTensor tensor)
         {
             var dimensions = tensor.Dimensions;
 

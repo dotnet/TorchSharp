@@ -33,7 +33,7 @@ namespace TorchSharp.Data
     /// </summary>
     public class DataIterator :
         IDisposable,
-        IEnumerable<(ITorchTensor data, ITorchTensor target)>
+        IEnumerable<(TorchTensor data, TorchTensor target)>
     {
         /// <summary>
         ///    Class wrapping PyTorch's iterator object reference.
@@ -117,7 +117,7 @@ namespace TorchSharp.Data
         /// Get the enumerator for this iterator.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<(ITorchTensor data, ITorchTensor target)> GetEnumerator()
+        public IEnumerator<(TorchTensor data, TorchTensor target)> GetEnumerator()
         {
             var iter = new DataIteratorEnumerator(this);
             iter.Reset();
@@ -130,7 +130,7 @@ namespace TorchSharp.Data
             return GetEnumerator();
         }
 
-        private class DataIteratorEnumerator : IEnumerator<(ITorchTensor data, ITorchTensor target)>
+        private class DataIteratorEnumerator : IEnumerator<(TorchTensor data, TorchTensor target)>
         {
             private DataIterator _iterator;
 
@@ -150,7 +150,7 @@ namespace TorchSharp.Data
                 _tRef = _tarray.CreateArray(new IntPtr[1]);
             }
 
-            public (ITorchTensor data, ITorchTensor target) Current
+            public (TorchTensor data, TorchTensor target) Current
             {
                 get
                 {

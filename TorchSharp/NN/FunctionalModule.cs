@@ -21,14 +21,14 @@ namespace TorchSharp.NN
         {
         }
 
-        public override IEnumerable<(string name, ITorchTensor parameter)> NamedParameters()
+        public override IEnumerable<(string name, TorchTensor parameter)> NamedParameters()
         {
-            return new List<(string, ITorchTensor)>();
+            return new List<(string, TorchTensor)>();
         }
 
-        public override IEnumerable<ITorchTensor> Parameters()
+        public override IEnumerable<TorchTensor> Parameters()
         {
-            return new List<ITorchTensor>();
+            return new List<TorchTensor>();
         }
 
         public override IEnumerable<string> GetModules()

@@ -45,7 +45,7 @@ namespace TorchSharp.Examples
             private NN.Module fc1 = Linear(320, 50);
             private NN.Module fc2 = Linear(50, 10);
 
-            public Model() : base()
+            public Model()
             {
                 RegisterModule(conv1);
                 RegisterModule(conv2);
@@ -53,9 +53,9 @@ namespace TorchSharp.Examples
                 RegisterModule(fc2);
             }
 
-            public override ITorchTensor<float> Forward<T>(params ITorchTensor<T>[] tensors)
+            public override TorchTensor Forward(TorchTensor input)
             {
-                using (var l11 = conv1.Forward(tensors))
+                using (var l11 = conv1.Forward(input))
                 using (var l12 = MaxPool2D(l11, 2))
                 using (var l13 = Relu(l12))
 
@@ -79,7 +79,7 @@ namespace TorchSharp.Examples
         private static void Train(
             NN.Module model, 
             NN.Optimizer optimizer,
-            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader,
+            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
             long batchSize, 
             long size)
@@ -101,7 +101,7 @@ namespace TorchSharp.Examples
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.DataItem}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.DataItem<float>()}");
                     }
 
                     batchId++;
@@ -114,7 +114,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             NN.Module model,
-            IEnumerable<(ITorchTensor<int>, ITorchTensor<int>)> dataLoader,
+            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {
             model.Eval();
@@ -127,11 +127,11 @@ namespace TorchSharp.Examples
                 using (var output = model.Forward(data))
                 using (var loss = NN.LossFunction.NLL(output, target, reduction: NN.Reduction.Sum))
                 {
-                    testLoss += loss.DataItem;
+                    testLoss += loss.DataItem<float>();
 
                     var pred = output.Argmax(1);
 
-                    correct += pred.Eq(target).Sum().DataItem; // Memory leak here
+                    correct += pred.Eq(target).Sum().DataItem<int>(); // Memory leak here
 
                     data.Dispose();
                     target.Dispose();

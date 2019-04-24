@@ -20,7 +20,7 @@ namespace TorchSharp.NN
             }
         }
 
-        public override ITorchTensor Forward(ITorchTensor tensor)
+        public override TorchTensor Forward(TorchTensor tensor)
         {
             if (!Modules.Any())
             {
