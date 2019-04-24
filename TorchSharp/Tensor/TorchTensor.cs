@@ -294,6 +294,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_index_select(IntPtr src, long dimension, IntPtr index);
+
+        public TorchTensor IndexSelect(long dimension, TorchTensor index)
+        {
+            return new TorchTensor(THSTensor_index_select(handle, dimension, index.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_reshape(IntPtr src, IntPtr shape, int length);
 
         public TorchTensor Reshape(params long[] shape)
@@ -305,6 +313,14 @@ namespace TorchSharp.Tensor
                     return new TorchTensor(THSTensor_reshape(handle, (IntPtr)pshape, shape.Length));
                 }
             }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_squeeze(IntPtr src, long dimension);
+
+        public TorchTensor Squeeze(long dimension)
+        {
+            return new TorchTensor(THSTensor_squeeze(handle, dimension));
         }
 
         [DllImport("libTorchSharp")]
@@ -415,6 +431,14 @@ namespace TorchSharp.Tensor
         public void DivInPlace(TorchTensor target)
         {
             THSTensor_div_(handle, target.Handle);
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_divS(IntPtr src, int trg);
+
+        public TorchTensor Div(int target)
+        {
+            return new TorchTensor(THSTensor_divS(handle, target));
         }
 
         [DllImport("libTorchSharp")]
@@ -569,6 +593,11 @@ namespace TorchSharp.Tensor
         }
 
         public static TorchTensor operator /(TorchTensor left, TorchTensor right)
+        {
+            return left.Div(right);
+        }
+
+        public static TorchTensor operator /(TorchTensor left, int right)
         {
             return left.Div(right);
         }
