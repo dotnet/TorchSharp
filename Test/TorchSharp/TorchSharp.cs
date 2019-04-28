@@ -734,6 +734,38 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
+        public void TestTrainingAdam2()
+        {
+            var lin1 = NN.Module.Linear(1000, 100);
+            var lin2 = NN.Module.Linear(100, 10);
+            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+
+            double learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
+            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++)
+            {
+                var eval = seq.Forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.DataItem<float>();
+
+                Assert.IsTrue(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.ZeroGrad();
+
+                output.Backward();
+
+                optimizer.Step();
+            }
+        }
+
+        [TestMethod]
         public void TestMNISTLoader()
         {
             using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
