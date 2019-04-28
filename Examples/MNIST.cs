@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
+using static TorchSharp.NN.LossFunction;
 
 namespace TorchSharp.Examples
 {
@@ -28,8 +29,8 @@ namespace TorchSharp.Examples
 
                 for (var epoch = 1; epoch <= _epochs; epoch++)
                 {
-                    Train(model, optimizer, train, epoch, _trainBatchSize, train.Size());
-                    Test(model, test, test.Size());
+                    Train(model, optimizer, NLL(), train, epoch, _trainBatchSize, train.Size());
+                    Test(model, NLL(reduction: NN.Reduction.Sum), test, test.Size());
                 }
 
                 sw.Stop();
@@ -79,6 +80,7 @@ namespace TorchSharp.Examples
         private static void Train(
             NN.Module model, 
             NN.Optimizer optimizer,
+            Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
             long batchSize, 
@@ -92,16 +94,16 @@ namespace TorchSharp.Examples
             {
                 optimizer.ZeroGrad();
 
-                using (var output = model.Forward(data))
-                using (var loss = NN.LossFunction.NLL(output, target))
+                using (var prediction = model.Forward(data))
+                using (var output = loss(prediction, target))
                 {
-                    loss.Backward();
+                    output.Backward();
 
                     optimizer.Step();
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {loss.DataItem<float>()}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.DataItem<float>()}");
                     }
 
                     batchId++;
@@ -114,6 +116,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             NN.Module model,
+            Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {
@@ -124,10 +127,10 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                using (var output = model.Forward(data))
-                using (var loss = NN.LossFunction.NLL(output, target, reduction: NN.Reduction.Sum))
+                using (var prediction = model.Forward(data))
+                using (var output = loss(prediction, target))
                 {
-                    testLoss += loss.DataItem<float>();
+                    testLoss += output.DataItem<float>();
 
                     var pred = output.Argmax(1);
 
