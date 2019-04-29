@@ -431,9 +431,10 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
+            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+            var output = loss(eval, y);
 
-            var result = loss.DataItem<float>();
+            var result = output.DataItem<float>();
             Assert.IsNotNull(result);
         }
 
@@ -444,9 +445,9 @@ namespace TorchSharp.Test
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
                 var componentWiseLoss = ((TorchTensor)input.Exp()) - target * input;
-                Assert.IsTrue(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.None)));
-                Assert.IsTrue(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Sum)));
-                Assert.IsTrue(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(input, target, reduction: NN.Reduction.Mean)));
+                Assert.IsTrue(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.None)(input, target)));
+                Assert.IsTrue(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Sum)(input, target)));
+                Assert.IsTrue(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Mean)(input, target)));
             }
         }
 
@@ -456,7 +457,7 @@ namespace TorchSharp.Test
             using (TorchTensor input = FloatTensor.Random(new long[] { 5, 2 }))
             using (TorchTensor target = FloatTensor.Random(new long[] { 5, 2 }))
             {
-                Assert.IsNotNull(NN.LossFunction.PoissonNLL(input, target, true, true));
+                Assert.IsNotNull(NN.LossFunction.PoissonNLL(true, true)(input, target));
             }
         }
 
@@ -481,11 +482,12 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var output = loss(eval, y);
 
             seq.ZeroGrad();
 
-            loss.Backward();
+            output.Backward();
         }
 
         [TestMethod]
@@ -499,11 +501,12 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var output = loss(eval, y);
 
             seq.ZeroGrad();
 
-            loss.Backward();
+            output.Backward();
 
             foreach (var parm in seq.Parameters())
             {
@@ -522,11 +525,12 @@ namespace TorchSharp.Test
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.None);
+            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var output = loss(eval, y);
 
             seq.ZeroGrad();
 
-            loss.Backward();
+            output.Backward();
 
             foreach (var parm in seq.Parameters())
             {
@@ -658,19 +662,20 @@ namespace TorchSharp.Test
 
             float learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
+            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
 
             for (int i = 0; i < 10; i++)
             {
                 var eval = seq.Forward(x);
-                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.DataItem<float>();
+                var output = loss(eval, y);
+                var lossVal = output.DataItem<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
 
                 seq.ZeroGrad();
 
-                loss.Backward();
+                output.Backward();
 
                 using (var noGrad = new AutoGradMode(false))
                 {
@@ -715,19 +720,20 @@ namespace TorchSharp.Test
             double learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
             var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
+            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
 
             for (int i = 0; i < 10; i++)
             {
                 var eval = seq.Forward(x);
-                var loss = NN.LossFunction.MSE(eval, y, NN.Reduction.Sum);
-                var lossVal = loss.DataItem<float>();
+                var output = loss(eval, y);
+                var lossVal = output.DataItem<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
 
                 optimizer.ZeroGrad();
 
-                loss.Backward();
+                output.Backward();
 
                 optimizer.Step();
             }
