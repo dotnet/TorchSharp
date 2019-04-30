@@ -239,7 +239,7 @@ namespace TorchSharp.Tensor
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_indices(IntPtr handle);
 
-        public TorchTensor Indeces
+        public TorchTensor Indices
         {
             get
             {
