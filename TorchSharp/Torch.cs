@@ -1,7 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
+    using Debug = System.Diagnostics.Debug;
+
     public static class Torch
     {
         [DllImport("libTorchSharp")]
@@ -18,6 +22,20 @@ namespace TorchSharp
         public static bool IsCudaAvailable()
         {
             return THSTorch_isCudaAvailable();
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTorch_get_and_reset_last_err();
+
+        [Conditional("DEBUG")]
+        internal static void AssertNoErrors()
+        {
+            var error = THSTorch_get_and_reset_last_err();
+
+            if (error != IntPtr.Zero)
+            {
+                throw new ExternalException(Marshal.PtrToStringAnsi(error));
+            }
         }
     }
 }

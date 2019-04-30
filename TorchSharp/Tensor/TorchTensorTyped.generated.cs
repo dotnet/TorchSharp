@@ -876,7 +876,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad));
+                    var tptr = THSTensor_rand((IntPtr)psizes, size.Length, (sbyte)ATenScalarMapping.Float, device, requiresGrad);
+                    Torch.AssertNoErrors();
+                    return new TorchTensor (tptr);
                 }
             }
         }
