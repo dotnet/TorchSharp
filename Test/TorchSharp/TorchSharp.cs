@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TorchSharp.JIT;
 using TorchSharp.NN;
 using TorchSharp.Tensor;
@@ -164,7 +166,7 @@ namespace TorchSharp.Test
                 Assert.IsTrue(sparse.IsSparse);
                 Assert.IsFalse(i.IsSparse);
                 Assert.IsFalse(v.IsSparse);
-                CollectionAssert.AreEqual(sparse.Indeces.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+                CollectionAssert.AreEqual(sparse.Indices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
                 CollectionAssert.AreEqual(sparse.Values.Data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
         }
@@ -461,13 +463,24 @@ namespace TorchSharp.Test
             }
         }
 
+        # if DEBUG
+        [TestMethod]
+        public void TestErrorHandling()
+        {
+            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f}))
+            using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
+            {
+                Assert.ThrowsException<ExternalException>(() => NN.LossFunction.PoissonNLL()(input, target));
+            }
+        }
+        #endif
+
         [TestMethod]
         public void TestZeroGrad()
         {
             var lin1 = NN.Module.Linear(1000, 100);
             var lin2 = NN.Module.Linear(100, 10);
             var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
-
             seq.ZeroGrad();
         }
 
