@@ -98,7 +98,7 @@ namespace TorchSharp.Tensor
             }
         }
 
-        public T DataItem<T>()
+        public T Item<T>()
         {
             if (NumberOfElements != 1)
             {
@@ -108,35 +108,69 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_item(IntPtr handle);
+
+        public Scalar Item()
+        {
+            var sptr = THSTensor_item(Handle);
+            Torch.AssertNoErrors();
+            return new Scalar(sptr);
+        }
+
+        [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_get1(IntPtr handle, long i1);
 
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_set1(IntPtr handle, long i1, IntPtr value);
+
+        [System.Runtime.CompilerServices.IndexerName("TensorItems")]
         public TorchTensor this[long i1]
         {
-            get
+            get { return new TorchTensor(THSTensor_get1(handle, i1)); }
+            set
             {
-                return new TorchTensor(THSTensor_get1(handle, i1));
+                THSTensor_set1(handle, i1, value.Item().Handle);
+                Torch.AssertNoErrors();
             }
         }
 
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
 
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
+
+        [System.Runtime.CompilerServices.IndexerName("TensorItems")]
         public TorchTensor this[long i1, long i2]
         {
             get
             {
                 return new TorchTensor(THSTensor_get2(handle, i1, i2));
             }
+            set
+            {
+                THSTensor_set2(handle, i1, i2, value.Item().Handle);
+                Torch.AssertNoErrors();
+            }
         }
 
         [DllImport("libTorchSharp")]
         extern static IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
 
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
+
+        [System.Runtime.CompilerServices.IndexerName("TensorItems")]
         public TorchTensor this[long i1, long i2, long i3]
         {
             get
             {
                 return new TorchTensor(THSTensor_get3(handle, i1, i2, i3));
+            }
+            set
+            {
+                THSTensor_set3(handle, i1, i2, i3, value.Item().Handle);
+                Torch.AssertNoErrors();
             }
         }
 

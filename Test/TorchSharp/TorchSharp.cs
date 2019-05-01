@@ -1,10 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.JIT;
-using TorchSharp.NN;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.Test
@@ -128,7 +126,7 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(scalar))
             {
-                Assert.AreEqual(tensor.DataItem<float>(), 333);
+                Assert.AreEqual(tensor.Item<float>(), 333);
             }
         }
 
@@ -139,7 +137,19 @@ namespace TorchSharp.Test
 
             using (var tensor = scalar.ToTorchTensor())
             {
-                Assert.AreEqual(tensor.DataItem<float>(), 333);
+                Assert.AreEqual(tensor.Item<float>(), 333);
+            }
+        }
+
+        [TestMethod]
+        public void TextIndexSet()
+        {
+            var tensor = IntTensor.Zeros(new long[] { 2 });
+
+            using (var value = 1.ToTorchTensor())
+            {
+                tensor[0] = value;
+                Assert.AreEqual(tensor.Data<int>()[0], 1);
             }
         }
 
@@ -436,7 +446,7 @@ namespace TorchSharp.Test
             var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
-            var result = output.DataItem<float>();
+            var result = output.Item<float>();
             Assert.IsNotNull(result);
         }
 
@@ -681,7 +691,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var output = loss(eval, y);
-                var lossVal = output.DataItem<float>();
+                var lossVal = output.Item<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
@@ -739,7 +749,7 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var output = loss(eval, y);
-                var lossVal = output.DataItem<float>();
+                var lossVal = output.Item<float>();
 
                 Assert.IsTrue(lossVal < prevLoss);
                 prevLoss = lossVal;
