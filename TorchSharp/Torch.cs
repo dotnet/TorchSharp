@@ -4,8 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
-    using Debug = System.Diagnostics.Debug;
-
     public static class Torch
     {
         [DllImport("libTorchSharp")]

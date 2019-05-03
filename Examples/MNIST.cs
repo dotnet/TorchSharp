@@ -103,7 +103,7 @@ namespace TorchSharp.Examples
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.DataItem<float>()}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.Item<float>()}");
                     }
 
                     batchId++;
@@ -130,11 +130,11 @@ namespace TorchSharp.Examples
                 using (var prediction = model.Forward(data))
                 using (var output = loss(prediction, target))
                 {
-                    testLoss += output.DataItem<float>();
+                    testLoss += output.Item<float>();
 
                     var pred = output.Argmax(1);
 
-                    correct += pred.Eq(target).Sum().DataItem<int>(); // Memory leak here
+                    correct += pred.Eq(target).Sum().Item<int>(); // Memory leak here
 
                     data.Dispose();
                     target.Dispose();

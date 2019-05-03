@@ -292,7 +292,20 @@ namespace TorchSharp.Test
         }
 
         [TestMethod]
-        public void CreateLinear()
+        public void TestTensorToScalarMultiplication()
+        {
+            using (var tensor = FloatTensor.Ones(new long[] { 2, 2 }))
+            {
+                var neg = tensor * (-1).ToScalar();
+                foreach (var val in neg.Data<float>())
+                {
+                    Assert.AreEqual(val, -1.0);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestCreateLinear()
         {
             var lin = NN.Module.Linear(1000, 100);
             Assert.IsNotNull(lin);
@@ -613,7 +626,7 @@ namespace TorchSharp.Test
         {
             var x = FloatTensor.Ones(new long[] { 100, 100 });
 
-            var y = x.Mul(0.5f);
+            var y = x.Mul(0.5f.ToScalar());
 
             var ydata = y.Data<float>();
             var xdata = x.Data<float>();
@@ -683,7 +696,7 @@ namespace TorchSharp.Test
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
-            float learning_rate = 0.00004f;
+            Scalar learning_rate = 0.00004f.ToScalar();
             float prevLoss = float.MaxValue;
             var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
 
