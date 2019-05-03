@@ -540,11 +540,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_mulS(IntPtr src, float scalar);
+        extern static IntPtr THSTensor_mulS(IntPtr src, IntPtr scalar);
 
-        public TorchTensor Mul(float scalar)
+        public TorchTensor Mul(Scalar scalar)
         {
-            return new TorchTensor(THSTensor_mulS(handle, scalar));
+            return new TorchTensor(THSTensor_mulS(handle, scalar.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -556,11 +556,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("libTorchSharp")]
-        extern static IntPtr THSTensor_pow(IntPtr src, float scalar);
+        extern static IntPtr THSTensor_pow(IntPtr src, IntPtr scalar);
 
-        public TorchTensor Pow(float scalar)
+        public TorchTensor Pow(Scalar scalar)
         {
-            return new TorchTensor(THSTensor_pow(handle, scalar));
+            return new TorchTensor(THSTensor_pow(handle, scalar.Handle));
         }
 
         [DllImport("libTorchSharp")]
@@ -617,6 +617,11 @@ namespace TorchSharp.Tensor
         }
 
         public static TorchTensor operator *(TorchTensor left, TorchTensor right)
+        {
+            return left.Mul(right);
+        }
+
+        public static TorchTensor operator *(TorchTensor left, Scalar right)
         {
             return left.Mul(right);
         }
