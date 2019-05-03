@@ -404,6 +404,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_addS(IntPtr src, IntPtr trg);
+
+        public TorchTensor Add(Scalar scalar)
+        {
+            return new TorchTensor(THSTensor_addS(handle, scalar.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
         extern static void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
 
         public void AddInPlace(TorchTensor target, int scalar = 1)
@@ -479,6 +487,14 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_eq(IntPtr src, IntPtr trg);
 
         public TorchTensor Eq(TorchTensor target)
+        {
+            return new TorchTensor(THSTensor_eq(handle, target.Handle));
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_eqS(IntPtr src, IntPtr trg);
+
+        public TorchTensor Eq(Scalar target)
         {
             return new TorchTensor(THSTensor_eq(handle, target.Handle));
         }
@@ -612,6 +628,11 @@ namespace TorchSharp.Tensor
         // Operators overloading
 
         public static TorchTensor operator +(TorchTensor left, TorchTensor right)
+        {
+            return left.Add(right);
+        }
+
+        public static TorchTensor operator +(TorchTensor left, Scalar right)
         {
             return left.Add(right);
         }
