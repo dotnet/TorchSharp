@@ -1,0 +1,186 @@
+﻿<#@ Template Language="C#" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Output Extension=".generated.cs" #>
+<#@ Include File="Types.ttinclude" #>
+using System;
+using System.Runtime.InteropServices;
+
+namespace TorchSharp.Tensor {
+
+<#
+foreach (var type in TorchTypeDef.Types) {
+#>
+    /// <summary>
+    ///   Tensor of type <#=type.Name#>.
+    ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
+    //    Please do no mix Aten Tensors and Torch Tensors.
+    /// </summary>
+    public class <#=type.Name#>Tensor
+    {
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with ones
+        /// </summary>
+        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+                [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar);
+
+        public static TorchTensor From(<#=type.Storage#> scalar)
+        {
+            return new TorchTensor(THSTensor_new<#=type.Name#>Scalar(scalar));
+        }
+
+<#
+if (!type.IsLong) {
+#>
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+<# } else { #>
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_newLong(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
+<# } #>
+
+        public static TorchTensor From(IntPtr rawArray, long[] dimensions)
+        {
+            var length = dimensions.Length;
+            var strides = new long[length];
+
+            strides[0] = 1;
+            for (int i = 1; i < length; i++)
+            {
+                strides[i] = dimensions[i - 1];
+            }
+
+<#
+if (!type.IsLong) {
+#>
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
+<# } else { #>
+            return new TorchTensor(THSTensor_newLong(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.<#=type.Name#>));
+<# } #>
+        }
+
+        public static TorchTensor From(<#=type.Storage#>[] rawArray, long[] dimensions)
+        {
+            unsafe
+            {
+                fixed (<#=type.Storage#>* parray = rawArray)
+                {
+                    return <#=type.Name#>Tensor.From((IntPtr)parray, dimensions);
+                }
+            }
+        }
+
+        public static TorchTensor From(<#=type.Storage#>[] rawArray)
+        {
+            return From(rawArray, new long[] { (long)rawArray.Length });
+        }
+
+        [DllImport("libTorchSharp")]
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
+
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+    }
+<# } #>
+}
