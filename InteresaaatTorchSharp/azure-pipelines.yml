@@ -1,0 +1,56 @@
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+  
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: |
+    dotnet build --configuration $(buildConfiguration)
+  displayName: Build
+
+- script: |
+    if echo $BUILD_SOURCEBRANCH | grep /release/; then perl -pi -e "s/PackageVersion>.*</PackageVersion>${BUILD_SOURCEBRANCHNAME}</" TorchSharp/TorchSharp.csproj; fi
+  displayName: Update NuGet package version from branch name
+
+- script: |
+    curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
+    unzip -d linux libtorch-shared-with-deps-latest.zip
+  displayName: Download and setup libtorch/Linux
+
+- script: |
+    curl -O https://download.pytorch.org/libtorch/nightly/cpu/libtorch-macos-latest.zip
+    unzip -d macos libtorch-macos-latest.zip 'libtorch/lib/*'
+  displayName: Download and setup libtorch/Mac
+
+- script: |
+    mkdir windows
+    curl -L -o windows/c10.dll https://github.com/xamarin/TorchSharp/releases/download/0.1/c10.dll
+    curl -L -o windows/caffe2.dll https://github.com/xamarin/TorchSharp/releases/download/0.1/caffe2.dll
+  displayName: Download and setup libtorch/Windows
+
+- script: |
+    LD_LIBRARY_PATH=`pwd`/linux/libtorch/lib dotnet test Test --configuration Release --logger trx
+  displayName: Run tests
+
+- script: |
+    dotnet pack
+    cp TorchSharp/bin/Debug/*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  displayName: Create Nuget
+
+- script: |
+    dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+  displayName: dotnet publish
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+
+- task: PublishBuildArtifacts@1
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+
+
+
+
