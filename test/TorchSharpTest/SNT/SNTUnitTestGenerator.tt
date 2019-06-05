@@ -3,17 +3,17 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Numerics.Tensors;
 using Torch.SNT;
+using Xunit;
 
-namespace Torch.SNT 
+namespace Torch.SNT
 {
 <#
-foreach (var type in new [] { 
-    new { ApiName = "Short", Storage = "short", AccReal="long" },   
+foreach (var type in new [] {
+    new { ApiName = "Short", Storage = "short", AccReal="long" },
     new { ApiName = "Int", Storage = "int",  AccReal="long"},
     new { ApiName = "Long", Storage = "long", AccReal="long" },
     new { ApiName = "Double", Storage = "double", AccReal="double" },
@@ -21,84 +21,83 @@ foreach (var type in new [] {
      }) {
         string tname = type.ApiName;
 #>
-    [TestClass]
     public class <#=tname#>TorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreation<#=tname#>0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => <#=tname#>TorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => <#=tname#>TorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreation<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreation<#=tname#>2D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStrides<#=tname#>2D()
         {
             var x = <#=tname#>TorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreation<#=tname#>3D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStrides<#=tname#>3D()
         {
             var x = <#=tname#>TorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreation<#=tname#>4D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStrides<#=tname#>4D()
         {
             var x = <#=tname#>TorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFill<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -106,11 +105,11 @@ foreach (var type in new [] {
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(x[i], 30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFill<#=tname#>2D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
@@ -120,12 +119,12 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(x[i, j], 30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySet<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -137,11 +136,11 @@ foreach (var type in new [] {
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (<#=tname.ToLower()#>)30);
+                Assert.Equal(x[i], (<#=tname.ToLower()#>)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySet<#=tname#>2D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
@@ -158,12 +157,12 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (<#=tname.ToLower()#>)30);
+                    Assert.Equal(x[i, j], (<#=tname.ToLower()#>)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalance<#=tname#>2D()
         {
             var x = <#=tname#>TorchTensor.Create(10, 10);
@@ -181,12 +180,12 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.AtenSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.AtenSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestClone<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -196,15 +195,15 @@ foreach (var type in new [] {
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (<#=tname.ToLower()#>)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestClone<#=tname#>2D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
@@ -216,16 +215,16 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (<#=tname.ToLower()#>)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmpty<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -233,15 +232,15 @@ foreach (var type in new [] {
 
             Tensor<<#=tname.ToLower()#>> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (<#=tname.ToLower()#>)0);
+                Assert.Equal((<#=tname.ToLower()#>)0, y[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmpty<#=tname#>2D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10, 10);
@@ -249,27 +248,27 @@ foreach (var type in new [] {
 
             Tensor<<#=tname.ToLower()#>> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (<#=tname.ToLower()#>)0);
+                    Assert.Equal(y[i, j], (<#=tname.ToLower()#>)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape<#=tname#>1DFail()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
             x.Fill((<#=tname.ToLower()#>)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape<#=tname#>1D()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -283,12 +282,12 @@ foreach (var type in new [] {
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (<#=tname.ToLower()#>)i);
-                Assert.AreEqual(x[i], (<#=tname.ToLower()#>)i);
+                Assert.Equal(y[i], (<#=tname.ToLower()#>)i);
+                Assert.Equal(x[i], (<#=tname.ToLower()#>)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape<#=tname#>1DPointToTheSameStorage()
         {
             Tensor<<#=tname.ToLower()#>> x = <#=tname#>TorchTensor.Create(10);
@@ -304,11 +303,11 @@ foreach (var type in new [] {
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape<#=tname#>2D()
         {
             var x = <#=tname#>TorchTensor.Create(5, 10);
@@ -317,8 +316,8 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.AtenSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.AtenSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -327,7 +326,7 @@ foreach (var type in new [] {
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2<#=tname#>D2()
         {
             var x = <#=tname#>TorchTensor.Create(5, 10);
@@ -347,12 +346,12 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape<#=tname#>2DPointToTheSameStorage()
         {
             var x = <#=tname#>TorchTensor.Create(5, 10);
@@ -375,12 +374,12 @@ foreach (var type in new [] {
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemory<#=tname#>()
         {
             Memory<<#=tname.ToLower()#>> buffer;
@@ -395,7 +394,7 @@ foreach (var type in new [] {
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }

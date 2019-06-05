@@ -1,23 +1,24 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.JIT;
 using TorchSharp.Tensor;
+using Xunit;
 
 namespace TorchSharp.Test
 {
-    [TestClass]
     public class TorchSharp
     {
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorOnes()
         {
-            var ones = FloatTensor.Ones(new long[] { 2, 2 });
-            Assert.IsNotNull(ones);
+            string path = Directory.GetCurrentDirectory();
+            Console.WriteLine(path);
+            TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2 });
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorCheckMemory()
         {
             TorchTensor? ones = null;
@@ -27,12 +28,12 @@ namespace TorchSharp.Test
                 using (var tmp = FloatTensor.Ones(new long[] { 1000, 1000, 1000 }))
                 {
                     ones = tmp;
-                    Assert.IsNotNull(ones);
+                    Assert.NotNull(ones);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorOnesCheckData()
         {
             var ones = FloatTensor.Ones(new long[] { 2, 2 });
@@ -40,11 +41,11 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(1.0, data[i]);
+                Assert.Equal(1.0, data[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorZerosCheckData()
         {
             var zeros = FloatTensor.Zeros(new long[] { 2, 2 });
@@ -52,11 +53,11 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(0, data[i]);
+                Assert.Equal(0, data[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateIntTensorOnesCheckData()
         {
             var ones = IntTensor.Ones(new long[] { 2, 2 });
@@ -64,20 +65,20 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(data[i], 1);
+                Assert.Equal(1, data[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorCheckDevice()
         {
             var ones = FloatTensor.Ones(new long[] { 2, 2 });
             var device = ones.Device;
 
-            Assert.AreEqual(ones.Device, "cpu");
+            Assert.Equal("cpu", ones.Device);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromData()
         {
             var data = new float[1000];
@@ -85,11 +86,11 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }))
             {
-                Assert.AreEqual(tensor.Data<float>()[100], 1);
+                Assert.Equal(1, tensor.Data<float>()[100]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromDataCheckDispose()
         {
             var data = new float[1000];
@@ -97,13 +98,13 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(data, new long[] { 100, 10 }))
             {
-                Assert.AreEqual(tensor.Data<float>()[100], 1);
+                Assert.Equal(1, tensor.Data<float>()[100]);
             }
 
-            Assert.AreEqual(data[100], 1);
+            Assert.Equal(1, data[100]);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromData2()
         {
             CreateFloatTensorFromData2Generic<float>();
@@ -115,56 +116,42 @@ namespace TorchSharp.Test
 
             using (var tensor = data.ToTorchTensor(new long[] { 10, 100 }))
             {
-                Assert.AreEqual(tensor.Data<T>()[100], default(T));
+                Assert.Equal(default(T), tensor.Data<T>()[100]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromScalar()
         {
             float scalar = 333.0f;
 
             using (var tensor = FloatTensor.From(scalar))
             {
-                Assert.AreEqual(tensor.Item<float>(), 333);
+                Assert.Equal(333, tensor.DataItem<float>());
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromScalar2()
         {
             float scalar = 333.0f;
 
             using (var tensor = scalar.ToTorchTensor())
             {
-                Assert.AreEqual(tensor.Item<float>(), 333);
+                Assert.Equal(333, tensor.DataItem<float>());
             }
         }
 
-        [TestMethod]
-        public void TextIndexSet()
-        {
-            var tensor = IntTensor.Zeros(new long[] { 2 });
-
-            using (var value = 1.ToTorchTensor())
-            {
-                tensor[0] = value;
-                Assert.AreEqual(tensor.Data<int>()[0], 1);
-            }
-        }
-
-        [TestMethod]
+        [Fact]
         public void InitUniform()
         {
-            using (var tensor = FloatTensor.Zeros(new long[] { 2, 2 }))
+            using (TorchTensor tensor = FloatTensor.Zeros(new long[] { 2, 2 }))
             {
                 NN.Init.Uniform(tensor);
-
-                Assert.IsNotNull(tensor);
-            } 
+            }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSparse()
         {
             using (var i = LongTensor.From(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
@@ -172,82 +159,79 @@ namespace TorchSharp.Test
             {
                 var sparse = FloatTensor.Sparse(i, v, new long[] { 2, 3 });
 
-                Assert.IsNotNull(sparse);
-                Assert.IsTrue(sparse.IsSparse);
-                Assert.IsFalse(i.IsSparse);
-                Assert.IsFalse(v.IsSparse);
-                CollectionAssert.AreEqual(sparse.Indices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
-                CollectionAssert.AreEqual(sparse.Values.Data<float>().ToArray(), new float[] { 3, 4, 5 });
+                Assert.True(sparse.IsSparse);
+                Assert.False(i.IsSparse);
+                Assert.False(v.IsSparse);
+                Assert.Equal(sparse.Indices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+                Assert.Equal(sparse.Values.Data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CopyCpuToCuda()
         {
             TorchTensor cpu = FloatTensor.Ones(new long[] { 2, 2 });
-            Assert.AreEqual(cpu.Device, "cpu");
+            Assert.Equal("cpu", cpu.Device);
 
             if (Torch.IsCudaAvailable())
             {
                 var cuda = cpu.Cuda();
-                Assert.AreEqual(cuda.Device, "cuda");
+                Assert.Equal("cuda", cuda.Device);
 
                 // Copy back to CPU to inspect the elements
                 cpu = cuda.Cpu();
                 var data = cpu.Data<float>();
                 for (int i = 0; i < 4; i++)
                 {
-                    Assert.AreEqual(data[i], 1);
+                    Assert.Equal(1, data[i]);
                 }
             }
             else
             {
-                Assert.ThrowsException<InvalidOperationException>(() => cpu.Cuda());
+                Assert.Throws<InvalidOperationException>(() => cpu.Cuda());
             }
 
         }
 
-        [TestMethod]
+        [Fact]
         public void CopyCudaToCpu()
         {
             if (Torch.IsCudaAvailable())
             {
                 var cuda = FloatTensor.Ones(new long[] { 2, 2 }, "cuda");
-                Assert.AreEqual(cuda.Device, "cuda");
+                Assert.Equal("cuda", cuda.Device);
 
                 var cpu = cuda.Cpu();
-                Assert.AreEqual(cpu.Device, "cpu");
+                Assert.Equal("cpu", cpu.Device);
 
                 var data = cpu.Data<float>();
                 for (int i = 0; i < 4; i++)
                 {
-                    Assert.AreEqual(data[i], 1);
+                    Assert.Equal(1, data[i]);
                 }
             }
             else
             {
-                Assert.ThrowsException<InvalidOperationException>(() => { FloatTensor.Ones(new long[] { 2, 2 }, "cuda"); });
+                Assert.Throws<InvalidOperationException>(() => { FloatTensor.Ones(new long[] { 2, 2 }, "cuda"); });
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "Need model.pt")]
         public void ScoreModel()
         {
             var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
-            Assert.IsNotNull(ones);
 
             var module = JIT.Module.Load(@"..\..\..\Resources\model.pt");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
 
             var result = module.Forward(ones);
-            Assert.IsNotNull(result);
         }
 
-        [TestMethod]
+        [Fact(Skip = "Need model.pt")]
         public void LoadModelCheckInput()
         {
             var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
 
             var num = module.GetNumberOfInputs();
 
@@ -255,15 +239,15 @@ namespace TorchSharp.Test
             {
                 var type = module.GetInputType(i);
 
-                Assert.IsNotNull(type as DynamicType);
+                Assert.NotNull(type as DynamicType);
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "Need model.pt")]
         public void LoadModelCheckOutput()
         {
             var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
 
             var num = module.GetNumberOfOutputs();
 
@@ -271,15 +255,15 @@ namespace TorchSharp.Test
             {
                 var type = module.GetOutputType(i);
 
-                Assert.IsNotNull(type as DynamicType);
+                Assert.NotNull(type as DynamicType);
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "Need model.pt")]
         public void ScoreModelCheckOutput()
         {
             var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
 
             var num = module.GetNumberOfOutputs();
 
@@ -287,96 +271,82 @@ namespace TorchSharp.Test
             {
                 var type = module.GetOutputType(i);
 
-                Assert.IsNotNull(type as DynamicType);
+                Assert.NotNull(type as DynamicType);
             }
         }
 
-        [TestMethod]
-        public void TestTensorToScalarMultiplication()
-        {
-            using (var tensor = FloatTensor.Ones(new long[] { 2, 2 }))
-            {
-                var neg = tensor * (-1).ToScalar();
-                foreach (var val in neg.Data<float>())
-                {
-                    Assert.AreEqual(val, -1.0);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void TestCreateLinear()
+        [Fact]
+        public void CreateLinear()
         {
             var lin = NN.Module.Linear(1000, 100);
-            Assert.IsNotNull(lin);
+            Assert.NotNull(lin);
             var modules = lin.GetName();
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGetBiasInLinear()
         {
             var lin = NN.Module.Linear(1000, 100);
-            Assert.IsFalse(lin.WithBias);
-            Assert.ThrowsException<ArgumentNullException>(() => lin.Bias);
+            Assert.False(lin.WithBias);
+            Assert.Throws<ArgumentNullException>(() => lin.Bias);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSetGetBiasInLinear()
         {
             var lin = NN.Module.Linear(1000, 100, true);
-            Assert.IsNotNull(lin.Bias);
 
             var bias = FloatTensor.Ones(new long[] { 1000 });
 
             lin.Bias = bias;
 
-            Assert.AreEqual(lin.Bias.NumberOfElements, bias.NumberOfElements);
+            Assert.Equal(lin.Bias.NumberOfElements, bias.NumberOfElements);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWeightAndBiasShapeInLinear()
         {
             var lin = NN.Module.Linear(1000, 100, true);
 
-            Assert.AreEqual(lin.Weight.Shape.Length, 2);
-            Assert.AreEqual(lin.Weight.Shape[0], 100);
-            Assert.AreEqual(lin.Weight.Shape[1], 1000);
-            Assert.AreEqual(lin.Bias.Shape.Length, 1);
-            Assert.AreEqual(lin.Bias.Shape[0], 100);
+            Assert.Equal(2, lin.Weight.Shape.Length);
+            Assert.Equal(100, lin.Weight.Shape[0]);
+            Assert.Equal(1000, lin.Weight.Shape[1]);
+            Assert.True(1 == lin.Bias.Shape.Length);
+            Assert.Equal(100, lin.Bias.Shape[0]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWeightAndBiasParametersInLinear()
         {
             var lin = NN.Module.Linear(1000, 100, true);
             var names = lin.NamedParameters().Select(p => p.name);
-            Assert.IsTrue(names.Contains("weight"));
-            Assert.IsTrue(names.Contains("bias"));
+            Assert.True(names.Contains("weight") == true);
+            Assert.True(names.Contains("bias") == true);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWeightParameterInLinear()
         {
             var lin = NN.Module.Linear(1000, 100, false);
             var names = lin.NamedParameters().Select(p => p.name);
-            Assert.IsTrue(names.Contains("weight"));
-            Assert.IsFalse(names.Contains("bias"));
+            Assert.True(names.Contains("weight") == true);
+            Assert.False(names.Contains("bias") == true);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestWeightAndBiasShapeInLinear3()
         {
             var lin = NN.Module.Linear(1000, 100, true);
             var weight = lin.GetParameter("weight");
             var bias = lin.GetParameter("bias");
-            Assert.AreEqual(weight.Shape.Length, 2);
-            Assert.AreEqual(weight.Shape[0], 100);
-            Assert.AreEqual(weight.Shape[1], 1000);
-            Assert.AreEqual(bias.Shape.Length, 1);
-            Assert.AreEqual(bias.Shape[0], 100);
+            Assert.Equal(2, weight.Shape.Length);
+            Assert.Equal(100, weight.Shape[0]);
+            Assert.Equal(1000, weight.Shape[1]);
+            Assert.True(1 == bias.Shape.Length);
+            Assert.Equal(100, bias.Shape[0]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestLinearWithBias()
         {
             var lin = NN.Module.Linear(1000, 100, true);
@@ -386,17 +356,17 @@ namespace TorchSharp.Test
             var forward = lin.Forward(input);
             var matmul = input.MatMul(weight).Add(bias);
 
-            Assert.AreEqual(forward.Shape.Length, matmul.Shape.Length);
-            Assert.AreEqual(forward.Shape[0], matmul.Shape[0]);
-            Assert.AreEqual(forward.Shape[1], matmul.Shape[1]);
+            Assert.Equal(forward.Shape.Length, matmul.Shape.Length);
+            Assert.Equal(forward.Shape[0], matmul.Shape[0]);
+            Assert.Equal(forward.Shape[1], matmul.Shape[1]);
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.AreEqual(forward.Data<float>()[i], matmul.Data<float>()[i]);
+                Assert.InRange(forward.Data<float>()[i], matmul.Data<float>()[i] - 10e5f, matmul.Data<float>()[i] + 10e5f);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestLinearNoBias()
         {
             var lin = NN.Module.Linear(1000, 100, false);
@@ -405,35 +375,35 @@ namespace TorchSharp.Test
             var forward = lin.Forward(input);
             var matmul = input.MatMul(weight);
 
-            Assert.AreEqual(forward.Shape.Length, matmul.Shape.Length);
-            Assert.AreEqual(forward.Shape[0], matmul.Shape[0]);
-            Assert.AreEqual(forward.Shape[1], matmul.Shape[1]);
+            Assert.Equal(forward.Shape.Length, matmul.Shape.Length);
+            Assert.Equal(forward.Shape[0], matmul.Shape[0]);
+            Assert.Equal(forward.Shape[1], matmul.Shape[1]);
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.AreEqual(forward.Data<float>()[i], matmul.Data<float>()[i]);
+                Assert.Equal(forward.Data<float>()[i], matmul.Data<float>()[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateRelu()
         {
             var rel = NN.Module.Relu();
-            Assert.IsNotNull(rel);
+            Assert.NotNull(rel);
             var modules = rel.GetName();
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateSequence()
         {
             var lin1 = NN.Module.Linear(1000, 100);
             var lin2 = NN.Module.Linear(100, 10);
             var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
             var modules = seq.GetModules();
-            Assert.AreEqual(modules.Count(), 3);
+            Assert.Equal(3, modules.Count());
         }
 
-        [TestMethod]
+        [Fact]
         public void EvalSequence()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -442,10 +412,9 @@ namespace TorchSharp.Test
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
             var eval = seq.Forward(x);
-            Assert.IsNotNull(eval);
         }
 
-        [TestMethod]
+        [Fact]
         public void EvalLossSequence()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -459,46 +428,45 @@ namespace TorchSharp.Test
             var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
-            var result = output.Item<float>();
-            Assert.IsNotNull(result);
+            var result = output.DataItem<float>();
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPoissonNLLLoss()
         {
             using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f, 2.5f }))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
                 var componentWiseLoss = ((TorchTensor)input.Exp()) - target * input;
-                Assert.IsTrue(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.None)(input, target)));
-                Assert.IsTrue(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Sum)(input, target)));
-                Assert.IsTrue(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Mean)(input, target)));
+                Assert.True(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.None)(input, target)));
+                Assert.True(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Sum)(input, target)));
+                Assert.True(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Mean)(input, target)));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPoissonNLLLoss2()
         {
             using (TorchTensor input = FloatTensor.Random(new long[] { 5, 2 }))
             using (TorchTensor target = FloatTensor.Random(new long[] { 5, 2 }))
             {
-                Assert.IsNotNull(NN.LossFunction.PoissonNLL(true, true)(input, target));
+                var outTensor = NN.LossFunction.PoissonNLL(true, true)(input, target);
             }
         }
 
         # if DEBUG
-        [TestMethod]
+        [Fact]
         public void TestErrorHandling()
         {
             using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f}))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
-                Assert.ThrowsException<ExternalException>(() => NN.LossFunction.PoissonNLL()(input, target));
+                Assert.Throws<ExternalException>(() => NN.LossFunction.PoissonNLL()(input, target));
             }
         }
         #endif
 
-        [TestMethod]
+        [Fact]
         public void TestZeroGrad()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -507,7 +475,7 @@ namespace TorchSharp.Test
             seq.ZeroGrad();
         }
 
-        [TestMethod]
+        [Fact]
         public void TestBackward()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -526,7 +494,7 @@ namespace TorchSharp.Test
             output.Backward();
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGettingParameters()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -546,11 +514,10 @@ namespace TorchSharp.Test
 
             foreach (var parm in seq.Parameters())
             {
-                Assert.IsNotNull(parm);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGrad()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -571,38 +538,37 @@ namespace TorchSharp.Test
             foreach (var parm in seq.Parameters())
             {
                 var grad = parm.Grad();
-                Assert.IsNotNull(grad);
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "Not working on MacOS")]
         public void TestAutoGradMode()
         {
             var x = FloatTensor.RandomN(new long[] { 2, 3 }, device: "cpu:0", requiresGrad: true);
             using (var mode = new AutoGradMode(false))
             {
-                Assert.IsFalse(AutoGradMode.IsAutogradEnabled());
+                Assert.False(AutoGradMode.IsAutogradEnabled());
                 var sum = x.Sum();
                 sum.Backward();
                 var grad = x.Grad();
-                Assert.IsTrue(grad.Handle == IntPtr.Zero);
+                Assert.True(grad.Handle == IntPtr.Zero);
             }
             using (var mode = new AutoGradMode(true))
             {
-                Assert.IsTrue(AutoGradMode.IsAutogradEnabled());
+                Assert.True(AutoGradMode.IsAutogradEnabled());
                 var sum = x.Sum();
                 sum.Backward();
                 var grad = x.Grad();
-                Assert.IsFalse(grad.Handle == IntPtr.Zero);
+                Assert.False(grad.Handle == IntPtr.Zero);
                 var data = grad.Data<float>();
                 for (int i = 0; i < 2 * 3; i++)
                 {
-                    Assert.AreEqual(data[i], 1.0);
+                    Assert.Equal(1.0, data[i]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSubInPlace()
         {
             var x = IntTensor.Ones(new long[] { 100, 100 });
@@ -616,17 +582,17 @@ namespace TorchSharp.Test
             {
                 for (int j = 0; j < 100; j++)
                 {
-                    Assert.AreEqual(0, xdata[i + j]);
+                    Assert.Equal(0, xdata[i + j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestMul()
         {
             var x = FloatTensor.Ones(new long[] { 100, 100 });
 
-            var y = x.Mul(0.5f.ToScalar());
+            var y = x.Mul(0.5f);
 
             var ydata = y.Data<float>();
             var xdata = x.Data<float>();
@@ -635,42 +601,42 @@ namespace TorchSharp.Test
             {
                 for (int j = 0; j < 100; j++)
                 {
-                    Assert.AreEqual(ydata[i + j], xdata[i + j] * 0.5f);
+                    Assert.Equal(ydata[i + j], xdata[i + j] * 0.5f);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCustomModule()
         {
             var module = new TestModule("test", FloatTensor.RandomN(new long[] { 2, 2 }), true);
             var name = module.GetName();
-            Assert.IsNotNull(name);
-            Assert.IsTrue(module.HasParameter("test"));
+            Assert.NotNull(name);
+            Assert.True(module.HasParameter("test"));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
             var param = FloatTensor.RandomN(new long[] { 1000, 100 });
             var module = new TestModule("test", param, true);
 
-            Assert.AreEqual(module.GetParameter("test").Shape[0], 1000);
-            Assert.AreEqual(module.GetParameter("test").Shape[1], 100);
+            Assert.Equal(1000, module.GetParameter("test").Shape[0]);
+            Assert.Equal(100, module.GetParameter("test").Shape[1]);
 
             using (var grad = new AutoGradMode(false))
             {
                 param.TransposeInPlace(0, 1);
             }
-            Assert.AreEqual(module.GetParameter("test").Shape[0], 100);
-            Assert.AreEqual(module.GetParameter("test").Shape[1], 1000);
-            Assert.AreEqual(param.Shape[0], 100);
-            Assert.AreEqual(param.Shape[1], 1000);
+            Assert.Equal(100, module.GetParameter("test").Shape[0]);
+            Assert.Equal(1000, module.GetParameter("test").Shape[1]);
+            Assert.Equal(100, param.Shape[0]);
+            Assert.Equal(1000, param.Shape[1]);
         }
 
         private class TestModule : NN.Module
         {
-            public TestModule(string name, TorchTensor tensor, bool withGrad) 
+            public TestModule(string name, TorchTensor tensor, bool withGrad)
                 : base(new NN.Parameter(name, tensor, withGrad))
             {
             }
@@ -684,9 +650,9 @@ namespace TorchSharp.Test
 
         /// <summary>
         /// Fully connected Relu net with one hidden layer trained using gradient descent.
-        /// Taken from <see cref="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void TestTraining()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -696,7 +662,7 @@ namespace TorchSharp.Test
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
-            Scalar learning_rate = 0.00004f.ToScalar();
+            float learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
             var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
 
@@ -704,9 +670,9 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var output = loss(eval, y);
-                var lossVal = output.Item<float>();
+                var lossVal = output.DataItem<float>();
 
-                Assert.IsTrue(lossVal < prevLoss);
+                Assert.True(lossVal < prevLoss);
                 prevLoss = lossVal;
 
                 seq.ZeroGrad();
@@ -725,7 +691,7 @@ namespace TorchSharp.Test
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestAdam()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -736,14 +702,14 @@ namespace TorchSharp.Test
 
             var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
 
-            Assert.IsNotNull(optimizer);
+            Assert.NotNull(optimizer);
         }
 
         /// <summary>
         /// Fully connected Relu net with one hidden layer trained using Adam optimizer.
-        /// Taken from <see cref="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void TestTrainingAdam()
         {
             var lin1 = NN.Module.Linear(1000, 100);
@@ -762,9 +728,9 @@ namespace TorchSharp.Test
             {
                 var eval = seq.Forward(x);
                 var output = loss(eval, y);
-                var lossVal = output.Item<float>();
+                var lossVal = output.DataItem<float>();
 
-                Assert.IsTrue(lossVal < prevLoss);
+                Assert.True(lossVal < prevLoss);
                 prevLoss = lossVal;
 
                 optimizer.ZeroGrad();
@@ -775,43 +741,38 @@ namespace TorchSharp.Test
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoader()
         {
-            using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
+            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32))
             {
-                Assert.IsNotNull(train);
+                Assert.NotNull(train);
 
                 var size = train.Size();
                 int i = 0;
-
-                Assert.IsNotNull(size);
 
                 foreach (var (data, target) in train)
                 {
                     i++;
 
-                    CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
-                    CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
+                    Assert.Equal(data.Shape, new long[] { 32, 1, 28, 28 });
+                    Assert.Equal(target.Shape, new long[] { 32 });
 
                     data.Dispose();
                     target.Dispose();
                 }
 
-                Assert.AreEqual(size, i * 32);
+                Assert.Equal(size, i * 32);
             }
         }
 
-        [TestMethod]
+        [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoaderWithEpochs()
         {
-            using (var train = Data.Loader.MNIST(@"E:/Source/Repos/LibTorchSharp/MNIST", 32))
+            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32))
             {
                 var size = train.Size();
                 var epochs = 10;
-
-                Assert.IsNotNull(train);
-                Assert.IsNotNull(size);
 
                 int i = 0;
 
@@ -821,15 +782,15 @@ namespace TorchSharp.Test
                     {
                         i++;
 
-                        CollectionAssert.AreEqual(data.Shape, new long[] { 32, 1, 28, 28 });
-                        CollectionAssert.AreEqual(target.Shape, new long[] { 32 });
+                        Assert.Equal(data.Shape, new long[] { 32, 1, 28, 28 });
+                        Assert.Equal(target.Shape, new long[] { 32 });
 
                         data.Dispose();
                         target.Dispose();
                     }
                 }
 
-                Assert.AreEqual(size * epochs, i * 32);
+                Assert.Equal(size * epochs, i * 32);
             }
         }
     }

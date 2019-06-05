@@ -1,89 +1,86 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Linq;
 using System.Numerics.Tensors;
-using Torch.SNT;
+using Xunit;
 
-namespace Torch.SNT 
+namespace Torch.SNT
 {
-    [TestClass]
     public class ShortTorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreationShort0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ShortTorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => ShortTorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationShort2D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesShort2D()
         {
             var x = ShortTorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationShort3D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesShort3D()
         {
             var x = ShortTorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationShort4D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesShort4D()
         {
             var x = ShortTorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -91,11 +88,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(30, x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillShort2D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10);
@@ -105,12 +102,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(30, x[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -122,11 +119,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (short)30);
+                Assert.Equal(x[i], (short)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetShort2D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10);
@@ -143,12 +140,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (short)30);
+                    Assert.Equal(x[i, j], (short)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalanceShort2D()
         {
             var x = ShortTorchTensor.Create(10, 10);
@@ -166,12 +163,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -181,15 +178,15 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (short)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneShort2D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10);
@@ -201,16 +198,16 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (short)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -218,15 +215,15 @@ namespace Torch.SNT
 
             Tensor<short> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (short)0);
+                Assert.Equal(y[i], (short)0);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyShort2D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10, 10);
@@ -234,27 +231,27 @@ namespace Torch.SNT
 
             Tensor<short> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (short)0);
+                    Assert.Equal(y[i, j], (short)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeShort1DFail()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
             x.Fill((short)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeShort1D()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -268,12 +265,12 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (short)i);
-                Assert.AreEqual(x[i], (short)i);
+                Assert.Equal(y[i], (short)i);
+                Assert.Equal(x[i], (short)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeShort1DPointToTheSameStorage()
         {
             Tensor<short> x = ShortTorchTensor.Create(10);
@@ -289,11 +286,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeShort2D()
         {
             var x = ShortTorchTensor.Create(5, 10);
@@ -302,8 +299,8 @@ namespace Torch.SNT
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -312,7 +309,7 @@ namespace Torch.SNT
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2ShortD2()
         {
             var x = ShortTorchTensor.Create(5, 10);
@@ -332,12 +329,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeShort2DPointToTheSameStorage()
         {
             var x = ShortTorchTensor.Create(5, 10);
@@ -360,12 +357,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemoryShort()
         {
             Memory<short> buffer;
@@ -380,88 +377,88 @@ namespace Torch.SNT
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }
-    [TestClass]
+
     public class IntTorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreationInt0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => IntTorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => IntTorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationInt2D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesInt2D()
         {
             var x = IntTorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationInt3D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesInt3D()
         {
             var x = IntTorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationInt4D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesInt4D()
         {
             var x = IntTorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -469,11 +466,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(30, x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillInt2D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10);
@@ -483,12 +480,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(30, x[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -500,11 +497,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (int)30);
+                Assert.Equal(x[i], (int)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetInt2D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10);
@@ -521,12 +518,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (int)30);
+                    Assert.Equal(x[i, j], (int)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalanceInt2D()
         {
             var x = IntTorchTensor.Create(10, 10);
@@ -544,12 +541,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -559,15 +556,15 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (int)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneInt2D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10);
@@ -579,16 +576,16 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (int)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -596,15 +593,15 @@ namespace Torch.SNT
 
             Tensor<int> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (int)0);
+                Assert.Equal(y[i], (int)0);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyInt2D()
         {
             Tensor<int> x = IntTorchTensor.Create(10, 10);
@@ -612,27 +609,27 @@ namespace Torch.SNT
 
             Tensor<int> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (int)0);
+                    Assert.Equal(y[i, j], (int)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeInt1DFail()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
             x.Fill((int)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeInt1D()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -646,12 +643,12 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (int)i);
-                Assert.AreEqual(x[i], (int)i);
+                Assert.Equal(y[i], (int)i);
+                Assert.Equal(x[i], (int)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeInt1DPointToTheSameStorage()
         {
             Tensor<int> x = IntTorchTensor.Create(10);
@@ -667,11 +664,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeInt2D()
         {
             var x = IntTorchTensor.Create(5, 10);
@@ -680,8 +677,8 @@ namespace Torch.SNT
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -690,7 +687,7 @@ namespace Torch.SNT
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2IntD2()
         {
             var x = IntTorchTensor.Create(5, 10);
@@ -710,12 +707,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeInt2DPointToTheSameStorage()
         {
             var x = IntTorchTensor.Create(5, 10);
@@ -738,12 +735,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemoryInt()
         {
             Memory<int> buffer;
@@ -758,88 +755,88 @@ namespace Torch.SNT
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }
-    [TestClass]
+
     public class LongTorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreationLong0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => LongTorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => LongTorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationLong2D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesLong2D()
         {
             var x = LongTorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationLong3D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesLong3D()
         {
             var x = LongTorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationLong4D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesLong4D()
         {
             var x = LongTorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -847,11 +844,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(30, x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillLong2D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10);
@@ -861,12 +858,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(30, x[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -878,11 +875,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (long)30);
+                Assert.Equal(x[i], (long)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetLong2D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10);
@@ -899,12 +896,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (long)30);
+                    Assert.Equal(x[i, j], (long)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalanceLong2D()
         {
             var x = LongTorchTensor.Create(10, 10);
@@ -922,12 +919,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -937,15 +934,15 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (long)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneLong2D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10);
@@ -957,16 +954,16 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (long)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -974,15 +971,15 @@ namespace Torch.SNT
 
             Tensor<long> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (long)0);
+                Assert.Equal(y[i], (long)0);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyLong2D()
         {
             Tensor<long> x = LongTorchTensor.Create(10, 10);
@@ -990,27 +987,27 @@ namespace Torch.SNT
 
             Tensor<long> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (long)0);
+                    Assert.Equal(y[i, j], (long)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeLong1DFail()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
             x.Fill((long)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeLong1D()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -1024,12 +1021,12 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (long)i);
-                Assert.AreEqual(x[i], (long)i);
+                Assert.Equal(y[i], (long)i);
+                Assert.Equal(x[i], (long)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeLong1DPointToTheSameStorage()
         {
             Tensor<long> x = LongTorchTensor.Create(10);
@@ -1045,11 +1042,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeLong2D()
         {
             var x = LongTorchTensor.Create(5, 10);
@@ -1058,8 +1055,8 @@ namespace Torch.SNT
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -1068,7 +1065,7 @@ namespace Torch.SNT
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2LongD2()
         {
             var x = LongTorchTensor.Create(5, 10);
@@ -1088,12 +1085,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeLong2DPointToTheSameStorage()
         {
             var x = LongTorchTensor.Create(5, 10);
@@ -1116,12 +1113,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemoryLong()
         {
             Memory<long> buffer;
@@ -1136,88 +1133,88 @@ namespace Torch.SNT
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }
-    [TestClass]
+
     public class DoubleTorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreationDouble0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => DoubleTorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => DoubleTorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationDouble2D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesDouble2D()
         {
             var x = DoubleTorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationDouble3D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesDouble3D()
         {
             var x = DoubleTorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationDouble4D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesDouble4D()
         {
             var x = DoubleTorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1225,11 +1222,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(30, x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillDouble2D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10);
@@ -1239,12 +1236,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(30, x[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1256,11 +1253,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (double)30);
+                Assert.Equal(x[i], (double)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetDouble2D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10);
@@ -1277,12 +1274,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (double)30);
+                    Assert.Equal(x[i, j], (double)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalanceDouble2D()
         {
             var x = DoubleTorchTensor.Create(10, 10);
@@ -1300,12 +1297,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1315,15 +1312,15 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (double)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneDouble2D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10);
@@ -1335,16 +1332,16 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (double)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1352,15 +1349,15 @@ namespace Torch.SNT
 
             Tensor<double> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (double)0);
+                Assert.Equal(y[i], (double)0);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyDouble2D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10, 10);
@@ -1368,27 +1365,27 @@ namespace Torch.SNT
 
             Tensor<double> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (double)0);
+                    Assert.Equal(y[i, j], (double)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeDouble1DFail()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
             x.Fill((double)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeDouble1D()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1402,12 +1399,12 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (double)i);
-                Assert.AreEqual(x[i], (double)i);
+                Assert.Equal(y[i], (double)i);
+                Assert.Equal(x[i], (double)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeDouble1DPointToTheSameStorage()
         {
             Tensor<double> x = DoubleTorchTensor.Create(10);
@@ -1423,11 +1420,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeDouble2D()
         {
             var x = DoubleTorchTensor.Create(5, 10);
@@ -1436,8 +1433,8 @@ namespace Torch.SNT
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -1446,7 +1443,7 @@ namespace Torch.SNT
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2DoubleD2()
         {
             var x = DoubleTorchTensor.Create(5, 10);
@@ -1466,12 +1463,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeDouble2DPointToTheSameStorage()
         {
             var x = DoubleTorchTensor.Create(5, 10);
@@ -1494,12 +1491,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemoryDouble()
         {
             Memory<double> buffer;
@@ -1514,88 +1511,88 @@ namespace Torch.SNT
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }
-    [TestClass]
+
     public class FloatTorchTensorUnitTestGenerator
     {
-        [TestMethod]
+        [Fact]
         public void TestCreationFloat0D()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => FloatTorchTensor.Create());
+            Assert.Throws<ArgumentOutOfRangeException>(() => FloatTorchTensor.Create());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationFloat2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesFloat2D()
         {
             var x = FloatTorchTensor.Create(10, 10);
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationFloat3D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10, 3);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesFloat3D()
         {
             var x = FloatTorchTensor.Create(10, 10, 3);
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCreationFloat4D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10, 3, 10);
 
-            Assert.AreNotEqual(x, null);
+            Assert.NotNull(x);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestShapeAndStridesFloat4D()
         {
             var x = FloatTorchTensor.Create(10, 10, 3, 10);
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1603,11 +1600,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], 30);
+                Assert.Equal(30, x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillFloat2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
@@ -1617,12 +1614,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], 30);
+                    Assert.Equal(30, x[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1634,11 +1631,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], (float)30);
+                Assert.Equal(x[i], (float)30);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillBySetFloat2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
@@ -1655,12 +1652,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], (float)30);
+                    Assert.Equal(x[i, j], (float)30);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFillEquivalanceFloat2D()
         {
             var x = FloatTorchTensor.Create(10, 10);
@@ -1678,12 +1675,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], x.TorchSharpTensor[i, j]);
+                    Assert.Equal(x[i, j], x.TorchSharpTensor[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1693,15 +1690,15 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(x[i], y[i]);
+                Assert.Equal(x[i], y[i]);
             }
 
             y[5] = (float)0;
 
-            Assert.AreNotEqual(x[5], y[5]);
+            Assert.NotEqual(x[5], y[5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneFloat2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
@@ -1713,16 +1710,16 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < x.Dimensions[1]; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i, j]);
+                    Assert.Equal(x[i, j], y[i, j]);
                 }
             }
 
             y[5, 5] = (float)0;
 
-            Assert.AreNotEqual(x[5, 5], y[5, 5]);
+            Assert.NotEqual(x[5, 5], y[5, 5]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1730,15 +1727,15 @@ namespace Torch.SNT
 
             Tensor<float> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (float)0);
+                Assert.Equal(y[i], (float)0);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCloneEmptyFloat2D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10, 10);
@@ -1746,27 +1743,27 @@ namespace Torch.SNT
 
             Tensor<float> y = x.CloneEmpty();
 
-            CollectionAssert.AreEqual(y.Dimensions.ToArray(), x.Dimensions.ToArray());
+            Assert.Equal(y.Dimensions.ToArray(), x.Dimensions.ToArray());
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
                 for (int j = 0; j < x.Dimensions[0]; j++)
                 {
-                    Assert.AreEqual(y[i, j], (float)0);
+                    Assert.Equal(y[i, j], (float)0);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat1DFail()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
             x.Fill((float)1);
 
-            Assert.ThrowsException<ArgumentException>(() => x.Reshape(new int[] { 9 }));
+            Assert.Throws<ArgumentException>(() => x.Reshape(new int[] { 9 }));
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat1D()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1780,12 +1777,12 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], (float)i);
-                Assert.AreEqual(x[i], (float)i);
+                Assert.Equal(y[i], (float)i);
+                Assert.Equal(x[i], (float)i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat1DPointToTheSameStorage()
         {
             Tensor<float> x = FloatTorchTensor.Create(10);
@@ -1801,11 +1798,11 @@ namespace Torch.SNT
 
             for (int i = 0; i < x.Dimensions[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat2D()
         {
             var x = FloatTorchTensor.Create(5, 10);
@@ -1814,8 +1811,8 @@ namespace Torch.SNT
 
             for (int i = 0; i < 2; i++)
             {
-                Assert.AreEqual(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
-                Assert.AreEqual(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
+                Assert.Equal(x.Dimensions[0], (int)x.TorchSharpTensor.GetTensorDimension(0));
+                Assert.Equal(x.Strides[0], (int)x.TorchSharpTensor.GetTensorStride(0));
             }
 
             Equals(x.Dimensions.ToArray(), new int[] { 5, 10 });
@@ -1824,7 +1821,7 @@ namespace Torch.SNT
             Equals(y.Strides.ToArray(), new int[] { 1, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2FloatD2()
         {
             var x = FloatTorchTensor.Create(5, 10);
@@ -1844,12 +1841,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat2DPointToTheSameStorage()
         {
             var x = FloatTorchTensor.Create(5, 10);
@@ -1872,12 +1869,12 @@ namespace Torch.SNT
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDanglingMemoryFloat()
         {
             Memory<float> buffer;
@@ -1892,7 +1889,7 @@ namespace Torch.SNT
 
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(33, arr[i]);
+                Assert.Equal(33, arr[i]);
             }
         }
     }

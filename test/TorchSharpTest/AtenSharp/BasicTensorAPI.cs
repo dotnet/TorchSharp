@@ -1,13 +1,12 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AtenSharp;
 using System;
+using Xunit;
 
 namespace AtenSharp.Test
 {
-    [TestClass]
     public class BasicTensorAPI
     {
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensor()
         {
             var x1 = new FloatTensor(10);
@@ -16,40 +15,40 @@ namespace AtenSharp.Test
             var x1Shape = x1.Shape;
             var x2Shape = x2.Shape;
 
-            Assert.AreEqual(1, x1Shape.Length);
-            Assert.AreEqual(2, x2Shape.Length);
+            Assert.True(1 == x1Shape.Length);
+            Assert.Equal(2, x2Shape.Length);
 
-            Assert.AreEqual(10, x1Shape[0]);
-            Assert.AreEqual(10, x2Shape[0]);
-            Assert.AreEqual(20, x2Shape[1]);
+            Assert.Equal(10, x1Shape[0]);
+            Assert.Equal(10, x2Shape[0]);
+            Assert.Equal(20, x2Shape[1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void GetFloatTensorData()
         {
             const int size = 10;
-            var storage0 = new AtenSharp.FloatTensor.FloatStorage(2 * size);
+            var storage0 = new FloatTensor.FloatStorage(2 * size);
 
             var x1 = new FloatTensor(size);
             var x2 = FloatTensor.NewWithStorage1d(storage0, UIntPtr.Zero, size, 1);
             var x3 = x2.NewWithStorage1d((UIntPtr)size, size, 1);
 
-            Assert.AreNotEqual(IntPtr.Zero, x1.Data);
-            Assert.AreNotEqual(IntPtr.Zero, x2.Data);
-            Assert.AreNotEqual(IntPtr.Zero, x3.Data);
+            Assert.NotEqual(IntPtr.Zero, x1.Data);
+            Assert.NotEqual(IntPtr.Zero, x2.Data);
+            Assert.NotEqual(IntPtr.Zero, x3.Data);
 
-            Assert.AreNotEqual(IntPtr.Zero, x1.Storage);
-            Assert.AreNotEqual(IntPtr.Zero, x2.Storage);
-            Assert.AreNotEqual(IntPtr.Zero, x3.Storage);
+            Assert.NotEqual(IntPtr.Zero, x1.Storage as object);
+            Assert.NotEqual(IntPtr.Zero, x2.Storage as object);
+            Assert.NotEqual(IntPtr.Zero, x3.Storage as object);
         }
 
-        [TestMethod]
+        [Fact]
         public void ReshapeFloatTensor()
         {
             var x2 = new FloatTensor(200);
 
-            Assert.AreEqual(1, x2.Shape.Length);
-            Assert.AreEqual(200, x2.Shape[0]);
+            Assert.True(1 == x2.Shape.Length);
+            Assert.Equal(200, x2.Shape[0]);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
@@ -57,44 +56,44 @@ namespace AtenSharp.Test
             }
 
             x2.Resize2d(10, 20);
-            Assert.AreEqual(2, x2.Shape.Length);
-            Assert.AreEqual(10, x2.Shape[0]);
-            Assert.AreEqual(20, x2.Shape[1]);
+            Assert.Equal(2, x2.Shape.Length);
+            Assert.Equal(10, x2.Shape[0]);
+            Assert.Equal(20, x2.Shape[1]);
 
             x2.Resize3d(4, 25, 2);
-            Assert.AreEqual(3, x2.Shape.Length);
-            Assert.AreEqual(4, x2.Shape[0]);
-            Assert.AreEqual(25, x2.Shape[1]);
-            Assert.AreEqual(2, x2.Shape[2]);
+            Assert.Equal(3, x2.Shape.Length);
+            Assert.Equal(4, x2.Shape[0]);
+            Assert.Equal(25, x2.Shape[1]);
+            Assert.Equal(2, x2.Shape[2]);
 
             x2.Resize4d(4, 5, 5, 2);
-            Assert.AreEqual(4, x2.Shape.Length);
-            Assert.AreEqual(4, x2.Shape[0]);
-            Assert.AreEqual(5, x2.Shape[1]);
-            Assert.AreEqual(5, x2.Shape[2]);
-            Assert.AreEqual(2, x2.Shape[3]);
+            Assert.Equal(4, x2.Shape.Length);
+            Assert.Equal(4, x2.Shape[0]);
+            Assert.Equal(5, x2.Shape[1]);
+            Assert.Equal(5, x2.Shape[2]);
+            Assert.Equal(2, x2.Shape[3]);
 
             x2.Resize5d(2, 2, 5, 5, 2);
-            Assert.AreEqual(5, x2.Shape.Length);
-            Assert.AreEqual(2, x2.Shape[0]);
-            Assert.AreEqual(2, x2.Shape[1]);
-            Assert.AreEqual(5, x2.Shape[2]);
-            Assert.AreEqual(5, x2.Shape[3]);
-            Assert.AreEqual(2, x2.Shape[4]);
+            Assert.Equal(5, x2.Shape.Length);
+            Assert.Equal(2, x2.Shape[0]);
+            Assert.Equal(2, x2.Shape[1]);
+            Assert.Equal(5, x2.Shape[2]);
+            Assert.Equal(5, x2.Shape[3]);
+            Assert.Equal(2, x2.Shape[4]);
 
             // Check that the values are retained across resizings.
 
             x2.Resize1d(200);
-            Assert.AreEqual(1, x2.Shape.Length);
-            Assert.AreEqual(200, x2.Shape[0]);
+            Assert.True(1 == x2.Shape.Length);
+            Assert.Equal(200, x2.Shape[0]);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
-                Assert.AreEqual(i * 47.11f, x2[i]);
+                Assert.Equal(i * 47.11f, x2[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void DiagFloat()
         {
             var x1 = new FloatTensor(9);
@@ -109,20 +108,20 @@ namespace AtenSharp.Test
             var diag0 = x1.Diagonal(0);
             var diag1 = x1.Diagonal(1);
 
-            Assert.AreEqual(1, diag0.Shape.Length);
-            Assert.AreEqual(3, diag0.Shape[0]);
-            Assert.AreEqual(1, diag1.Shape.Length);
-            Assert.AreEqual(2, diag1.Shape[0]);
+            Assert.True(1 == diag0.Shape.Length);
+            Assert.Equal(3, diag0.Shape[0]);
+            Assert.True(1 == diag1.Shape.Length);
+            Assert.Equal(2, diag1.Shape[0]);
 
-            Assert.AreEqual(1, diag0[0]);
-            Assert.AreEqual(5, diag0[1]);
-            Assert.AreEqual(9, diag0[2]);
+            Assert.True(1 == diag0[0]);
+            Assert.Equal(5, diag0[1]);
+            Assert.Equal(9, diag0[2]);
 
-            Assert.AreEqual(2, diag1[0]);
-            Assert.AreEqual(6, diag1[1]);
+            Assert.Equal(2, diag1[0]);
+            Assert.Equal(6, diag1[1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void ConcatenateFloat()
         {
             var x1 = new FloatTensor(9);
@@ -136,16 +135,16 @@ namespace AtenSharp.Test
 
             var x3 = x1.Concatenate(x2, 0);
 
-            Assert.AreEqual(1, x3.Shape.Length);
-            Assert.AreEqual(18, x3.Shape[0]);
+            Assert.True(1 == x3.Shape.Length);
+            Assert.Equal(18, x3.Shape[0]);
 
             for (var i = 0; i < x3.Shape[0]; ++i)
             {
-                Assert.AreEqual(i + 1, x3[i]);
+                Assert.Equal(i + 1, x3[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void IdentityFloat()
         {
             var x1 = FloatTensor.Eye(10, 10);
@@ -155,40 +154,40 @@ namespace AtenSharp.Test
                 for (int j = 0; j < 10; ++j)
                 {
                     if (i == j)
-                        Assert.AreEqual(1, x1[i, j]);
+                        Assert.True(1 == x1[i, j]);
                     else
-                        Assert.AreEqual(0, x1[i, j]);
+                        Assert.Equal(0, x1[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void RangeFloat()
         {
             var x1 = FloatTensor.Range(0f, 100f, 1f);
 
             for (int i = 0; i < x1.Shape[0]; ++i)
             {
-                Assert.AreEqual(i, x1[i]);
+                Assert.Equal(i, x1[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateFloatTensorFromRange()
         {
             var x1 = FloatTensor.Range(0f, 150f, 5f);
 
-            Assert.IsNotNull(x1);
-            Assert.AreEqual(1, x1.Shape.Length);
+            Assert.NotNull(x1);
+            Assert.True(1 == x1.Shape.Length);
 
             float start = 0f;
             for (var i = 0; i < x1.Shape[0]; ++i)
             {
-                Assert.AreEqual(start + 5f * i, x1[i]);
+                Assert.Equal(start + 5f * i, x1[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void NewFloatTensorWithStorage1D()
         {
             var x1 = new FloatTensor(9);
@@ -196,11 +195,11 @@ namespace AtenSharp.Test
 
             for (int i = 0; i < x1.Shape[0]; i++)
             {
-                Assert.AreEqual(x1[i], x2[i]);
+                Assert.Equal(x1[i], x2[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat1D()
         {
             var x = new FloatTensor(10);
@@ -214,12 +213,12 @@ namespace AtenSharp.Test
 
             for (int i = 0; i < x.Shape[0]; i++)
             {
-                Assert.AreEqual(y[i], i);
-                Assert.AreEqual(x[i], i);
+                Assert.Equal(y[i], i);
+                Assert.Equal(x[i], i);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat1DPointToTheSameStorage()
         {
             var x = new FloatTensor(10);
@@ -234,11 +233,11 @@ namespace AtenSharp.Test
 
             for (int i = 0; i < x.Shape[0]; i++)
             {
-                Assert.AreEqual(y[i], x[i]);
+                Assert.Equal(y[i], x[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat2D()
         {
             var x = new FloatTensor(5, 10);
@@ -248,7 +247,7 @@ namespace AtenSharp.Test
             Equals(y.Shape, new int[] { 10, 5 });
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshape2FloatD2()
         {
             var x = new FloatTensor(5, 10);
@@ -265,12 +264,12 @@ namespace AtenSharp.Test
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat2DPointToTheSameStorage()
         {
             var x = new FloatTensor(5, 10);
@@ -293,12 +292,12 @@ namespace AtenSharp.Test
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.AreEqual(x[i, j], y[i * 2 + j / 5, j % 5]);
+                    Assert.Equal(x[i, j], y[i * 2 + j / 5, j % 5]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat3DPointToTheSameStorage()
         {
             var x = new FloatTensor(10, 10, 10);
@@ -317,13 +316,13 @@ namespace AtenSharp.Test
                 {
                     for (int k = 0; k < x.Shape[2]; k++)
                     {
-                        Assert.AreEqual(x[i, j, k], y[count++]);
+                        Assert.Equal(x[i, j, k], y[count++]);
                     }
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestReshapeFloat4DPointToTheSameStorage()
         {
             var x = new FloatTensor(10, 10, 10, 5);
@@ -344,14 +343,14 @@ namespace AtenSharp.Test
                     {
                         for (int l = 0; l < x.Shape[3]; l++)
                         {
-                            Assert.AreEqual(x[i, j, k, l], y[count++]);
+                            Assert.Equal(x[i, j, k, l], y[count++]);
                         }
                     }
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateDoubleTensor()
         {
             var x1 = new DoubleTensor(10);
@@ -360,21 +359,21 @@ namespace AtenSharp.Test
             var x1Shape = x1.Shape;
             var x2Shape = x2.Shape;
 
-            Assert.AreEqual(1, x1Shape.Length);
-            Assert.AreEqual(2, x2Shape.Length);
+            Assert.True(1 == x1Shape.Length);
+            Assert.Equal(2, x2Shape.Length);
 
-            Assert.AreEqual(10, x1Shape[0]);
-            Assert.AreEqual(10, x2Shape[0]);
-            Assert.AreEqual(20, x2Shape[1]);
+            Assert.Equal(10, x1Shape[0]);
+            Assert.Equal(10, x2Shape[0]);
+            Assert.Equal(20, x2Shape[1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void ReshapeDoubleTensor()
         {
             var x2 = new DoubleTensor(200);
 
-            Assert.AreEqual(1, x2.Shape.Length);
-            Assert.AreEqual(200, x2.Shape[0]);
+            Assert.True(1 == x2.Shape.Length);
+            Assert.Equal(200, x2.Shape[0]);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
@@ -382,44 +381,44 @@ namespace AtenSharp.Test
             }
 
             x2.Resize2d(10, 20);
-            Assert.AreEqual(2, x2.Shape.Length);
-            Assert.AreEqual(10, x2.Shape[0]);
-            Assert.AreEqual(20, x2.Shape[1]);
+            Assert.Equal(2, x2.Shape.Length);
+            Assert.Equal(10, x2.Shape[0]);
+            Assert.Equal(20, x2.Shape[1]);
 
             x2.Resize3d(4, 25, 2);
-            Assert.AreEqual(3, x2.Shape.Length);
-            Assert.AreEqual(4, x2.Shape[0]);
-            Assert.AreEqual(25, x2.Shape[1]);
-            Assert.AreEqual(2, x2.Shape[2]);
+            Assert.Equal(3, x2.Shape.Length);
+            Assert.Equal(4, x2.Shape[0]);
+            Assert.Equal(25, x2.Shape[1]);
+            Assert.Equal(2, x2.Shape[2]);
 
             x2.Resize4d(4, 5, 5, 2);
-            Assert.AreEqual(4, x2.Shape.Length);
-            Assert.AreEqual(4, x2.Shape[0]);
-            Assert.AreEqual(5, x2.Shape[1]);
-            Assert.AreEqual(5, x2.Shape[2]);
-            Assert.AreEqual(2, x2.Shape[3]);
+            Assert.Equal(4, x2.Shape.Length);
+            Assert.Equal(4, x2.Shape[0]);
+            Assert.Equal(5, x2.Shape[1]);
+            Assert.Equal(5, x2.Shape[2]);
+            Assert.Equal(2, x2.Shape[3]);
 
             x2.Resize5d(2, 2, 5, 5, 2);
-            Assert.AreEqual(5, x2.Shape.Length);
-            Assert.AreEqual(2, x2.Shape[0]);
-            Assert.AreEqual(2, x2.Shape[1]);
-            Assert.AreEqual(5, x2.Shape[2]);
-            Assert.AreEqual(5, x2.Shape[3]);
-            Assert.AreEqual(2, x2.Shape[4]);
+            Assert.Equal(5, x2.Shape.Length);
+            Assert.Equal(2, x2.Shape[0]);
+            Assert.Equal(2, x2.Shape[1]);
+            Assert.Equal(5, x2.Shape[2]);
+            Assert.Equal(5, x2.Shape[3]);
+            Assert.Equal(2, x2.Shape[4]);
 
             // Check that the values are retained across resizings.
 
             x2.Resize1d(200);
-            Assert.AreEqual(1, x2.Shape.Length);
-            Assert.AreEqual(200, x2.Shape[0]);
+            Assert.True(1 == x2.Shape.Length);
+            Assert.Equal(200, x2.Shape[0]);
 
             for (var i = 0; i < x2.Shape[0]; ++i)
             {
-                Assert.AreEqual(i * 47.11f, x2[i]);
+                Assert.Equal(i * 47.11f, x2[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void DiagDouble()
         {
             var x1 = new DoubleTensor(9);
@@ -434,20 +433,20 @@ namespace AtenSharp.Test
             var diag0 = x1.Diagonal(0);
             var diag1 = x1.Diagonal(1);
 
-            Assert.AreEqual(1, diag0.Shape.Length);
-            Assert.AreEqual(3, diag0.Shape[0]);
-            Assert.AreEqual(1, diag1.Shape.Length);
-            Assert.AreEqual(2, diag1.Shape[0]);
+            Assert.True(1 == diag0.Shape.Length);
+            Assert.Equal(3, diag0.Shape[0]);
+            Assert.True(1 == diag1.Shape.Length);
+            Assert.Equal(2, diag1.Shape[0]);
 
-            Assert.AreEqual(1, diag0[0]);
-            Assert.AreEqual(5, diag0[1]);
-            Assert.AreEqual(9, diag0[2]);
+            Assert.True(1 == diag0[0]);
+            Assert.Equal(5, diag0[1]);
+            Assert.Equal(9, diag0[2]);
 
-            Assert.AreEqual(2, diag1[0]);
-            Assert.AreEqual(6, diag1[1]);
+            Assert.Equal(2, diag1[0]);
+            Assert.Equal(6, diag1[1]);
         }
 
-        [TestMethod]
+        [Fact]
         public void ConcatenateDouble()
         {
             var x1 = new DoubleTensor(9);
@@ -461,16 +460,16 @@ namespace AtenSharp.Test
 
             var x3 = x1.Concatenate(x2, 0);
 
-            Assert.AreEqual(1, x3.Shape.Length);
-            Assert.AreEqual(18, x3.Shape[0]);
+            Assert.True(1 == x3.Shape.Length);
+            Assert.Equal(18, x3.Shape[0]);
 
             for (var i = 0; i < x3.Shape[0]; ++i)
             {
-                Assert.AreEqual(i + 1, x3[i]);
+                Assert.Equal(i + 1, x3[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void IdentityDouble()
         {
             var x1 = DoubleTensor.Eye(10, 10);
@@ -480,36 +479,36 @@ namespace AtenSharp.Test
                 for (int j = 0; j < 10; ++j)
                 {
                     if (i == j)
-                        Assert.AreEqual(1, x1[i, j]);
+                        Assert.True(1 == x1[i, j]);
                     else
-                        Assert.AreEqual(0, x1[i, j]);
+                        Assert.Equal(0, x1[i, j]);
                 }
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void RangeDouble()
         {
             var x1 = DoubleTensor.Range(0f, 100f, 1f);
 
             for (int i = 0; i < x1.Shape[0]; ++i)
             {
-                Assert.AreEqual(i, x1[i]);
+                Assert.Equal(i, x1[i]);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateDoubleTensorFromRange()
         {
             var x1 = DoubleTensor.Range(0f, 150f, 5f);
 
-            Assert.IsNotNull(x1);
-            Assert.AreEqual(1, x1.Shape.Length);
+            Assert.NotNull(x1);
+            Assert.True(1 == x1.Shape.Length);
 
             float start = 0f;
             for (var i = 0; i < x1.Shape[0]; ++i)
             {
-                Assert.AreEqual(start + 5f * i, x1[i]);
+                Assert.Equal(start + 5f * i, x1[i]);
             }
         }
 
