@@ -26,7 +26,7 @@ namespace Torch.IO
             }
 
             [DllImport ("caffe2")]  
-            extern static void THFile_free (IntPtr handle);
+            private static extern void THFile_free (IntPtr handle);
 
             protected override bool ReleaseHandle()
             {
@@ -72,7 +72,7 @@ namespace Torch.IO
         }
 
         [DllImport("caffe2")]
-        extern static int THFile_isOpened(HType self);
+        private static extern int THFile_isOpened(HType self);
 
         /// <summary>
         ///   The open status of the file.
@@ -80,10 +80,10 @@ namespace Torch.IO
         public bool IsOpen { get { return 0 != THFile_isOpened(this.handle); } }
 
 [       DllImport("caffe2")]
-        extern static int THFile_isBinary(HType self);
+        private static extern int THFile_isBinary(HType self);
 
         [DllImport("caffe2")]
-        extern static void THFile_binary(HType self);
+        private static extern void THFile_binary(HType self);
 
         /// <summary>
         ///   Set/get the binary file mode.
@@ -94,7 +94,7 @@ namespace Torch.IO
         }
 
         [DllImport("caffe2")]
-        extern static void THFile_ascii(HType self);
+        private static extern void THFile_ascii(HType self);
 
         /// <summary>
         ///   Set/get the text file mode.
@@ -105,7 +105,7 @@ namespace Torch.IO
         }
         
         [DllImport("caffe2")]
-        extern static int THFile_isReadable(HType self);
+        private static extern int THFile_isReadable(HType self);
         
         /// <summary>
         ///   The readability status of the file.
@@ -113,7 +113,7 @@ namespace Torch.IO
         public bool CanRead { get { return 0 != THFile_isReadable(this.handle); } }
 
         [DllImport("caffe2")]
-        extern static int THFile_isWritable(HType self);
+        private static extern int THFile_isWritable(HType self);
 
         /// <summary>
         ///   The writability status of the file.
@@ -121,7 +121,7 @@ namespace Torch.IO
         public bool CanWrite { get { return 0 != THFile_isWritable(this.handle); } }
 
         [DllImport("caffe2")]
-        extern static void THFile_seek(HType self, long position);
+        private static extern void THFile_seek(HType self, long position);
 
         /// <summary>
         ///   Seek to the given position, counted from the beginning of the file.
@@ -130,7 +130,7 @@ namespace Torch.IO
         public void Seek(long position) { THFile_seek(this.handle, position); }
 
         [DllImport("caffe2")]
-        extern static void THFile_seekEnd(HType self);
+        private static extern void THFile_seekEnd(HType self);
 
         /// <summary>
         ///   Seek to the last position of the file. 
@@ -138,7 +138,7 @@ namespace Torch.IO
         public void SeekEnd() { THFile_seekEnd(this.handle); }
 
         [DllImport("caffe2")]
-        extern static long THFile_position(HType self);
+        private static extern long THFile_position(HType self);
 
         /// <summary>
         ///   The current file position.
@@ -146,7 +146,7 @@ namespace Torch.IO
         public long Position { get { return THFile_position(this.handle); } }
 
         [DllImport("caffe2")]
-        extern static void THFile_synchronize(HType self);       
+        private static extern void THFile_synchronize(HType self);       
 
         /// <summary>
         ///   Flush everything to disk.
@@ -154,7 +154,7 @@ namespace Torch.IO
         public void Flush() { THFile_synchronize(this.handle); }
 
         [DllImport("caffe2")]
-        extern static void THFile_close(HType self);
+        private static extern void THFile_close(HType self);
 
         /// <summary>
         ///   Close the file.
@@ -162,7 +162,7 @@ namespace Torch.IO
         public void Close() { THFile_close(this.handle); }
 
         [DllImport("caffe2")]
-        extern static int THFile_hasError(HType self);
+        private static extern int THFile_hasError(HType self);
 
         /// <summary>
         ///   Check whether the file object has outstanding errors.
@@ -170,7 +170,7 @@ namespace Torch.IO
         public bool HasError { get { return THFile_hasError(this.handle) != 0; }}
 
         [DllImport("caffe2")]
-        extern static void THFile_clearError(HType self);
+        private static extern void THFile_clearError(HType self);
 
         /// <summary>
         ///   Check whether the file object has outstanding errors.
@@ -178,13 +178,13 @@ namespace Torch.IO
         public void ClearError() { THFile_clearError(this.handle); }
 
         [DllImport("caffe2")]
-        extern static int THFile_isQuiet(HType self);
+        private static extern int THFile_isQuiet(HType self);
 
         [DllImport("caffe2")]
-        extern static void THFile_quiet(HType self);
+        private static extern void THFile_quiet(HType self);
 
         [DllImport("caffe2")]
-        extern static void THFile_pedantic(HType self);
+        private static extern void THFile_pedantic(HType self);
         
         /// <summary>
         ///   If true, the file is silent about errors.
@@ -195,13 +195,13 @@ namespace Torch.IO
         }
 
         [DllImport("caffe2")]
-        extern static int THFile_isAutoSpacing(HType self);
+        private static extern int THFile_isAutoSpacing(HType self);
 
         [DllImport("caffe2")]
-        extern static void THFile_autoSpacing(HType self);
+        private static extern void THFile_autoSpacing(HType self);
 
         [DllImport("caffe2")]
-        extern static void THFile_noAutoSpacing(HType self);
+        private static extern void THFile_noAutoSpacing(HType self);
 
         /// <summary>
         ///   If true, the file will insert spaces and newlines in text files.

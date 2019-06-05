@@ -78,12 +78,12 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-            NN.Module model, 
+            NN.Module model,
             NN.Optimizer optimizer,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
-            long batchSize, 
+            long batchSize,
             long size)
         {
             model.Train();
@@ -103,7 +103,7 @@ namespace TorchSharp.Examples
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.Item<float>()}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.DataItem<float>()}");
                     }
 
                     batchId++;
@@ -130,11 +130,11 @@ namespace TorchSharp.Examples
                 using (var prediction = model.Forward(data))
                 using (var output = loss(prediction, target))
                 {
-                    testLoss += output.Item<float>();
+                    testLoss += output.DataItem<float>();
 
                     var pred = output.Argmax(1);
 
-                    correct += pred.Eq(target).Sum().Item<int>(); // Memory leak here
+                    correct += pred.Eq(target).Sum().DataItem<int>(); // Memory leak here
 
                     data.Dispose();
                     target.Dispose();

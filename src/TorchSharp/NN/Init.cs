@@ -6,16 +6,16 @@ namespace TorchSharp.NN
 {
     public static class Init
     {
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_initUniform(IntPtr src, double low, double high);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_initUniform(IntPtr src, double low, double high);
 
         public static void Uniform(TorchTensor tensor, double low = 0, double high = 1)
         {
             THSNN_initUniform(tensor.Handle, low, high);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_initKaimingUniform(IntPtr src, double a);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_initKaimingUniform(IntPtr src, double a);
 
         public static void KaimingUniform(TorchTensor tensor, double a = 0)
         {

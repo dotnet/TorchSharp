@@ -1,31 +1,26 @@
-<#@ template language="C#" #>
+﻿<#@ template language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#
-var msg = "DO NOT EDIT" + " This is a generated file and will be overwritten, edit FileOperations.tt instead";
-#>
+<# var msg = "DO NOT EDIT" + " This is a generated file and will be overwritten, edit FileOperations.tt instead"; #>
 /*
  * <#=msg#>
  */
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-using System.Text;
 using AtenSharp;
 
-namespace Torch.IO {
+namespace Torch.IO
+{
 
     public abstract partial class File : IDisposable
     {
 <#
-foreach (var type in new [] { 
-    new { ApiName = "Byte", AccReal="byte" }, 
-    new { ApiName = "Char", AccReal="byte" },   
-    new { ApiName = "Short", AccReal="short" },   
+foreach (var type in new [] {
+    new { ApiName = "Byte", AccReal="byte" },
+    new { ApiName = "Char", AccReal="byte" },
+    new { ApiName = "Short", AccReal="short" },
     new { ApiName = "Int", AccReal="int"},
     new { ApiName = "Long", AccReal="long" },
     new { ApiName = "Float", AccReal="float" },
@@ -34,49 +29,47 @@ foreach (var type in new [] {
         string tname = type.ApiName;
         string accreal = type.AccReal;
 #>
-
-        [DllImport("caffe2")] 
-        extern static <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
+        [DllImport("caffe2")]
+        private static extern <#=accreal#> THFile_read<#=tname#>Scalar(HType self);
 
         /// <summary>
         ///   Read one <#=accreal#> from the file.
         /// </summary>
         /// <returns>A <#=accreal#> read from the current file position.</returns>
-        public <#=accreal#> Read<#=tname#>() { return THFile_read<#=tname#>Scalar(this.handle); }
+        public <#=accreal#> Read<#=tname#>() { return THFile_read<#=tname#>Scalar(handle); }
 
-        [DllImport("caffe2")] 
-        extern static void THFile_write<#=tname#>Scalar(HType self, <#=accreal#> scalar);
+        [DllImport("caffe2")]
+        private static extern void THFile_write<#=tname#>Scalar(HType self, <#=accreal#> scalar);
 
         /// <summary>
         ///   Write one <#=accreal#> to the file.
         /// </summary>
         /// <param name="value">A <#=accreal#> to write at the current file position.</param>
-        public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(this.handle, value); }
+        public void Write<#=tname#>(<#=accreal#> value) { THFile_write<#=tname#>Scalar(handle, value); }
 <#      if (tname != "Char") { #>
-        [DllImport("caffe2")] 
-        extern static long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+        [DllImport("caffe2")]
+        private static extern long THFile_read<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
         /// <summary>
         ///   Read <#=accreal#>s from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
         /// <returns>The number of <#=accreal#>s read.</returns>
-        public long Read<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(this.handle, storage.handle); }
+        public long Read<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_read<#=tname#>(handle, storage.handle); }
 
-        [DllImport("caffe2")] 
-        extern static long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
+        [DllImport("caffe2")]
+        private static extern long THFile_write<#=tname#>(HType self, <#=tname#>Tensor.<#=tname#>Storage.HType storage);
 
         /// <summary>
         ///   Write <#=accreal#>s to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of <#=accreal#>s written.</returns>
-        public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(this.handle, storage.handle); }
+        public long Write<#=tname#>s(<#=tname#>Tensor.<#=tname#>Storage storage) { return THFile_write<#=tname#>(handle, storage.handle); }
 <#      } /* if */ #>
+        [DllImport("caffe2")]
+        private static extern long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
 
-        [DllImport("caffe2")] 
-        extern static long THFile_read<#=tname#>Raw(HType self, IntPtr data, long n);
-        
         /// <summary>
         ///   Read <#=accreal#>s from the file into the given <#=accreal#> array.
         /// </summary>
@@ -93,7 +86,7 @@ foreach (var type in new [] {
             {
                 fixed (<#=accreal#> *dest = data)
                 {
-                    var readItems = THFile_read<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    var readItems = THFile_read<#=tname#>Raw(handle, (IntPtr)dest, n);
                     return readItems;
                 }
             }
@@ -106,12 +99,11 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s read.</returns>
         public long ReadTensor(AtenSharp.<#=tname#>Tensor tensor)
         {
-            return THFile_read<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+            return THFile_read<#=tname#>Raw(handle, tensor.Data, tensor.NumElements);
         }
 <#      } /* if */ #>
-
-        [DllImport("caffe2")] 
-        extern static long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
+        [DllImport("caffe2")]
+        private static extern long THFile_write<#=tname#>Raw(HType self, IntPtr data, long n);
 
         /// <summary>
         ///   Write <#=accreal#>s to the file from the given <#=accreal#> array.
@@ -128,7 +120,7 @@ foreach (var type in new [] {
             {
                 fixed (<#=accreal#> *dest = data)
                 {
-                    var writtenItems = THFile_write<#=tname#>Raw(this.handle, (IntPtr)dest, n);
+                    var writtenItems = THFile_write<#=tname#>Raw(handle, (IntPtr)dest, n);
                     return writtenItems;
                 }
             }
@@ -141,28 +133,27 @@ foreach (var type in new [] {
         /// <returns>The number of <#=accreal#>s written.</returns>
         public long WriteTensor(AtenSharp.<#=tname#>Tensor tensor)
         {
-            return THFile_write<#=tname#>Raw(this.handle, tensor.Data, tensor.NumElements);			
+            return THFile_write<#=tname#>Raw(handle, tensor.Data, tensor.NumElements);
         }
 <#      } /* if */ } /* foreach */ #>
-
-        [DllImport("caffe2")] 
-        extern static long THFile_readChar(HType self, MemoryFile.CharStorage.HType storage);
+        [DllImport("caffe2")]
+        private static extern long THFile_readChar(HType self, MemoryFile.CharStorage.HType storage);
 
         /// <summary>
         ///   Read chars from the file into the given storage.
         /// </summary>
         /// <param name="storage">A storage object to read data into.</param>
         /// <returns>The number of chars read.</returns>
-        public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(this.handle, storage.handle); }
+        public long ReadChars(MemoryFile.CharStorage storage) { return THFile_readChar(handle, storage.handle); }
 
-        [DllImport("caffe2")] 
-        extern static long THFile_writeChar(HType self, MemoryFile.CharStorage.HType storage);
+        [DllImport("caffe2")]
+        private static extern long THFile_writeChar(HType self, MemoryFile.CharStorage.HType storage);
 
         /// <summary>
         ///   Write chars to the file from the given storage.
         /// </summary>
         /// <param name="storage">A storage object fetch data from.</param>
         /// <returns>The number of chars written.</returns>
-        public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(this.handle, storage.handle); }
+        public long WriteChars(MemoryFile.CharStorage storage) { return THFile_writeChar(handle, storage.handle); }
     }
 }

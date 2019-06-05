@@ -25,8 +25,8 @@ namespace TorchSharp.NN
             {
             }
 
-            [DllImport("libTorchSharp")]
-            extern static void THSNN_optimizerDispose(HType handle);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_optimizerDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
@@ -79,8 +79,8 @@ namespace TorchSharp.NN
 
     public partial class Optimizer
     {
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_optimizerAdam(IntPtr parameters, int len, double learningRate);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_optimizerAdam(IntPtr parameters, int len, double learningRate);
 
         public static Optimizer Adam(IEnumerable<TorchTensor> parameters, double learningRate)
         {
@@ -90,8 +90,8 @@ namespace TorchSharp.NN
             return new Optimizer(THSNN_optimizerAdam(paramsRef, parray.Array.Length, learningRate));           
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
 
         public static Optimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum)
         {
@@ -101,16 +101,16 @@ namespace TorchSharp.NN
             return new Optimizer(THSNN_optimizerSGD(paramsRef, parray.Array.Length, learningRate, momentum));
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_optimizerZeroGrad(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_optimizerZeroGrad(HType module);
 
         public void ZeroGrad()
         {
             THSNN_optimizerZeroGrad(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_optimizerStep(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_optimizerStep(HType module);
 
         public void Step()
         {

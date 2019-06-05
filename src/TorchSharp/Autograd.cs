@@ -8,10 +8,10 @@ namespace TorchSharp
         private bool _isPrevGrad;
 
         [DllImport("LibTorchSharp")]
-        extern static bool THSAutograd_isGradEnabled();
+        private static extern bool THSAutograd_isGradEnabled();
 
         [DllImport("LibTorchSharp")]
-        extern static void THSAutograd_setGrad(bool enabled);
+        private static extern void THSAutograd_setGrad(bool enabled);
 
         public AutoGradMode(bool enabled)
         {

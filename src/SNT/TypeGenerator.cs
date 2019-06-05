@@ -3,9 +3,9 @@ using System.Buffers;
 using System.Linq;
 using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
-using TorchSharp;
+using AtenSharp;
 
-namespace Torch.SNT 
+namespace Torch.SNT
 {
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -53,7 +53,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -61,7 +61,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<byte> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -87,7 +87,7 @@ namespace Torch.SNT
         private readonly ByteTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public ByteTensor TorchSharpTensor => inner;
 
@@ -98,7 +98,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -222,37 +222,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -263,7 +263,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static ByteTensor CreateByteTensor (params long[] dims)
         {
@@ -302,7 +302,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -330,7 +330,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -338,7 +338,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<short> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -364,7 +364,7 @@ namespace Torch.SNT
         private readonly ShortTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public ShortTensor TorchSharpTensor => inner;
 
@@ -375,7 +375,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -499,37 +499,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -540,7 +540,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static ShortTensor CreateShortTensor (params long[] dims)
         {
@@ -579,7 +579,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -607,7 +607,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -615,7 +615,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<int> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -641,7 +641,7 @@ namespace Torch.SNT
         private readonly IntTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public IntTensor TorchSharpTensor => inner;
 
@@ -652,7 +652,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -776,37 +776,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -817,7 +817,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static IntTensor CreateIntTensor (params long[] dims)
         {
@@ -856,7 +856,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -884,7 +884,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -892,7 +892,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<long> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -918,7 +918,7 @@ namespace Torch.SNT
         private readonly LongTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public LongTensor TorchSharpTensor => inner;
 
@@ -929,7 +929,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -1053,37 +1053,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -1094,7 +1094,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static LongTensor CreateLongTensor (params long[] dims)
         {
@@ -1133,7 +1133,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -1161,7 +1161,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -1169,7 +1169,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<double> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -1195,7 +1195,7 @@ namespace Torch.SNT
         private readonly DoubleTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public DoubleTensor TorchSharpTensor => inner;
 
@@ -1206,7 +1206,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -1330,37 +1330,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -1371,7 +1371,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static DoubleTensor CreateDoubleTensor (params long[] dims)
         {
@@ -1410,7 +1410,7 @@ namespace Torch.SNT
                 }
 
                 storage.Retain ();
-                this.storage = storage;        
+                this.storage = storage;
             }
 
             /// <summary>
@@ -1438,7 +1438,7 @@ namespace Torch.SNT
             /// <param name="elementIndex">The offset to the element within the memory at which the returned <see cref="MemoryHandle"/> points to. (default = 0)</param>
             public override MemoryHandle Pin (int elementIndex = 0)
             {
-                if ((uint)elementIndex > storage.Size) 
+                if ((uint)elementIndex > storage.Size)
                 {
                     throw new ArgumentOutOfRangeException (nameof (elementIndex), "Index out of array bound.");
                 }
@@ -1446,7 +1446,7 @@ namespace Torch.SNT
                 unsafe
                 {
                     storage.Retain();
-                    
+
                     void* pointer = Unsafe.Add<float> ((void*)storage.Data, elementIndex);
                     return new MemoryHandle (pointer, default, this);
                 }
@@ -1472,7 +1472,7 @@ namespace Torch.SNT
         private readonly FloatTensor inner;
 
         /// <summary>
-        ///   Property returning the inner TorchSharp tensor the class is wrapping. 
+        ///   Property returning the inner TorchSharp tensor the class is wrapping.
         /// </summary>
         public FloatTensor TorchSharpTensor => inner;
 
@@ -1483,7 +1483,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Utility method to create a TorchTensor.
-        ///   This is currently failing if the input parameter is empty because SNT 
+        ///   This is currently failing if the input parameter is empty because SNT
         ///   does not support zero-size tensors.
         /// </summary>
         /// <param name="sizes">The desired sizes for the dimensions of the tensor.</param>
@@ -1607,37 +1607,37 @@ namespace Torch.SNT
             {
                 case 1:
                     reshapedTensor = inner.NewWithStorage1d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         1);
                     break;
                 case 2:
                     reshapedTensor = inner.NewWithStorage2d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
-                        dimensions[1], 
-                        dimensions[1], 
+                        UIntPtr.Zero,
+                        dimensions[0],
+                        dimensions[1],
+                        dimensions[1],
                         1);
                     break;
                 case 3:
                     reshapedTensor = inner.NewWithStorage3d (
-                        UIntPtr.Zero, 
-                        dimensions[0], 
+                        UIntPtr.Zero,
+                        dimensions[0],
                         dimensions[1] + dimensions[2],
-                        dimensions[1], 
-                        dimensions[2], 
-                        dimensions[2], 
+                        dimensions[1],
+                        dimensions[2],
+                        dimensions[2],
                         1);
                     break;
                 case 4:
                     reshapedTensor = inner.NewWithStorage4d (
-                        UIntPtr.Zero, 
-                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3], 
-                        dimensions[1], 
-                        dimensions[2] + dimensions[3], 
-                        dimensions[2], 
-                        dimensions[3], 
-                        dimensions[3], 
+                        UIntPtr.Zero,
+                        dimensions[0], dimensions[1] + dimensions[2] + dimensions[3],
+                        dimensions[1],
+                        dimensions[2] + dimensions[3],
+                        dimensions[2],
+                        dimensions[3],
+                        dimensions[3],
                         1);
                     break;
                  default: throw new ArgumentException ($"Cannot reshape tensor with more than 4 dimensions");
@@ -1648,7 +1648,7 @@ namespace Torch.SNT
 
         /// <summary>
         ///   Creates a 1-4D tensor of the specified size(s).
-        /// </summary>    
+        /// </summary>
         /// <param name="dims">Sizes for the dimensions.</param>
         internal static FloatTensor CreateFloatTensor (params long[] dims)
         {

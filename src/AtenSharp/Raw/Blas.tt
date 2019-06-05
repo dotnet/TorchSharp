@@ -23,7 +23,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THBlas_(swap)(
         //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_swap(
+        internal private static extern void TH<#=type.Name#>Blas_swap(
             long n,
             <#=type.Ptr#> x,
             long incx,
@@ -37,7 +37,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THBlas_(scal)(
         //     int64_t n, scalar_t a, scalar_t *x, int64_t incx);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_scal(
+        internal private static extern void TH<#=type.Name#>Blas_scal(
             long n,
             <#=type.Storage#> a,
             <#=type.Ptr#> x,
@@ -50,7 +50,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THBlas_(copy)(
         //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_copy(
+        internal private static extern void TH<#=type.Name#>Blas_copy(
             long n,
             <#=type.Ptr#> x,
             long incx,
@@ -64,7 +64,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THBlas_(axpy)(
         //     int64_t n, scalar_t a, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_axpy(
+        internal private static extern void TH<#=type.Name#>Blas_axpy(
             long n,
             <#=type.Storage#> a,
             <#=type.Ptr#> x,
@@ -79,7 +79,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API scalar_t THBlas_(dot)(
         //     int64_t n, scalar_t *x, int64_t incx, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
-        internal extern static <#=type.Storage#> TH<#=type.Name#>Blas_dot(
+        internal private static extern <#=type.Storage#> TH<#=type.Name#>Blas_dot(
             long n,
             <#=type.Ptr#> x,
             long incx,
@@ -97,7 +97,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     scalar_t *a, int64_t lda, scalar_t *x, int64_t incx,
         //     scalar_t beta, scalar_t *y, int64_t incy);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_gemv(
+        internal private static extern void TH<#=type.Name#>Blas_gemv(
             byte trans,
             long m,
             long n,
@@ -118,7 +118,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     int64_t m, int64_t n, scalar_t alpha, scalar_t *x, int64_t incx,
         //     scalar_t *y, int64_t incy, scalar_t *a, int64_t lda);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_ger(
+        internal private static extern void TH<#=type.Name#>Blas_ger(
             long m,
             long n,
             <#=type.Storage#> alpha,
@@ -140,7 +140,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     scalar_t alpha, scalar_t *a, int64_t lda, scalar_t *b, int64_t ldb,
         //     scalar_t beta, scalar_t *c, int64_t ldc);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Blas_gemm(
+        internal private static extern void TH<#=type.Name#>Blas_gemm(
             byte transa,
             byte transb,
             long m,

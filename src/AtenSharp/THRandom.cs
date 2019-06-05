@@ -13,10 +13,10 @@ namespace AtenSharp {
 		internal IntPtr handle;
 
 		[DllImport ("caffe2")]
-		extern static void THGenerator_free (IntPtr handle);
+        private static extern void THGenerator_free (IntPtr handle);
 
 		[DllImport ("caffe2")]
-		extern static IntPtr THGenerator_new ();
+		private static extern IntPtr THGenerator_new ();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:AtenSharp.RandomGenerator"/> class.
@@ -101,7 +101,7 @@ namespace AtenSharp {
 		extern static ulong THRandom_random (IntPtr handle);
 
 		/// <summary>
-		///  Generates a uniform 32 bits integer. 
+		///  Generates a uniform 32 bits integer.
 		/// </summary>
 		/// <returns>UInt32 random value.</returns>
 		public uint NextUInt32 () => (uint)THRandom_random (handle);
@@ -110,7 +110,7 @@ namespace AtenSharp {
 		extern static ulong THRandom_random64 (IntPtr handle);
 
 		/// <summary>
-		///  Generates a uniform 64 bits integer. 
+		///  Generates a uniform 64 bits integer.
 		/// </summary>
 		/// <returns>UInt64 random value.</returns>
 		public ulong NextUInt64 () => THRandom_random64 (handle);

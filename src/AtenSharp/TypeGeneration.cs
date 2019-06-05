@@ -9,8 +9,6 @@ using Microsoft.Win32.SafeHandles;
 using System.Text;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("TorchSharp")]
-
 namespace AtenSharp {
     public partial class ByteTensor : IDisposable {
         /// <summary>
@@ -122,7 +120,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THByteStorage_size (HType handle); 
+            extern static UIntPtr THByteStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -452,9 +450,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public ByteStorage Storage => new ByteStorage (THByteTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THByteTensor_nDimension (HType handle);
 
@@ -510,7 +508,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THByteTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THByteTensor_newClone (HType handle);
 
@@ -569,11 +567,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static ByteTensor NewWithStorage1d(ByteTensor.ByteStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new ByteTensor(THByteTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -582,10 +580,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public ByteTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -596,12 +594,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static ByteTensor NewWithStorage2d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -611,9 +609,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -627,14 +625,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static ByteTensor NewWithStorage3d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -644,9 +642,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -662,16 +660,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public ByteTensor NewWithStorage4d(ByteTensor.ByteStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -681,9 +679,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -3380,7 +3378,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THShortStorage_size (HType handle); 
+            extern static UIntPtr THShortStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -3710,9 +3708,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public ShortStorage Storage => new ShortStorage (THShortTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THShortTensor_nDimension (HType handle);
 
@@ -3768,7 +3766,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THShortTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THShortTensor_newClone (HType handle);
 
@@ -3827,11 +3825,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static ShortTensor NewWithStorage1d(ShortTensor.ShortStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new ShortTensor(THShortTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -3840,10 +3838,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public ShortTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -3854,12 +3852,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static ShortTensor NewWithStorage2d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -3869,9 +3867,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -3885,14 +3883,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static ShortTensor NewWithStorage3d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -3902,9 +3900,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -3920,16 +3918,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public ShortTensor NewWithStorage4d(ShortTensor.ShortStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -3939,9 +3937,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -6590,7 +6588,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THIntStorage_size (HType handle); 
+            extern static UIntPtr THIntStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -6920,9 +6918,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public IntStorage Storage => new IntStorage (THIntTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THIntTensor_nDimension (HType handle);
 
@@ -6978,7 +6976,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THIntTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THIntTensor_newClone (HType handle);
 
@@ -7037,11 +7035,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static IntTensor NewWithStorage1d(IntTensor.IntStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new IntTensor(THIntTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -7050,10 +7048,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public IntTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -7064,12 +7062,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static IntTensor NewWithStorage2d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -7079,9 +7077,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -7095,14 +7093,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static IntTensor NewWithStorage3d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -7112,9 +7110,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -7130,16 +7128,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public IntTensor NewWithStorage4d(IntTensor.IntStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -7149,9 +7147,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -9800,7 +9798,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THLongStorage_size (HType handle); 
+            extern static UIntPtr THLongStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -10130,9 +10128,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public LongStorage Storage => new LongStorage (THLongTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THLongTensor_nDimension (HType handle);
 
@@ -10188,7 +10186,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THLongTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THLongTensor_newClone (HType handle);
 
@@ -10247,11 +10245,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static LongTensor NewWithStorage1d(LongTensor.LongStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new LongTensor(THLongTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -10260,10 +10258,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public LongTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -10274,12 +10272,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static LongTensor NewWithStorage2d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -10289,9 +10287,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -10305,14 +10303,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static LongTensor NewWithStorage3d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -10322,9 +10320,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -10340,16 +10338,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public LongTensor NewWithStorage4d(LongTensor.LongStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -10359,9 +10357,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -13010,7 +13008,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THDoubleStorage_size (HType handle); 
+            extern static UIntPtr THDoubleStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -13340,9 +13338,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public DoubleStorage Storage => new DoubleStorage (THDoubleTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THDoubleTensor_nDimension (HType handle);
 
@@ -13398,7 +13396,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THDoubleTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THDoubleTensor_newClone (HType handle);
 
@@ -13457,11 +13455,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static DoubleTensor NewWithStorage1d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new DoubleTensor(THDoubleTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -13470,10 +13468,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public DoubleTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -13484,12 +13482,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static DoubleTensor NewWithStorage2d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -13499,9 +13497,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -13515,14 +13513,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static DoubleTensor NewWithStorage3d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -13532,9 +13530,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -13550,16 +13548,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public DoubleTensor NewWithStorage4d(DoubleTensor.DoubleStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -13569,9 +13567,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -17105,7 +17103,7 @@ namespace AtenSharp {
             }
 
             [DllImport ("caffe2")]
-            extern static UIntPtr THFloatStorage_size (HType handle); 
+            extern static UIntPtr THFloatStorage_size (HType handle);
 
             /// <summary>
             ///   Return the total length of the storage.
@@ -17180,7 +17178,7 @@ namespace AtenSharp {
     ///     constructors with one (1D), two (2D), three (3D), or four parameters (4D) to x
     ///     create a tensor for the desired number of dimensions.
     ///   </para>
-    /// </remarks> 
+    /// </remarks>
     public partial class FloatTensor : IDisposable {
         internal sealed class HType : SafeHandle {
             public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
@@ -17435,9 +17433,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///  Returns the associated storage for this tensor
-        /// </summary>       
+        /// </summary>
         public FloatStorage Storage => new FloatStorage (THFloatTensor_storage (handle));
-        
+
         [DllImport ("caffe2")]
         extern static int THFloatTensor_nDimension (HType handle);
 
@@ -17493,7 +17491,7 @@ namespace AtenSharp {
         ///  Returns a pointer to the unmanaged data managed by this tensor.
         /// </summary>
         public IntPtr Data => THFloatTensor_data (handle);
-        
+
         [DllImport ("caffe2")]
         extern static HType THFloatTensor_newClone (HType handle);
 
@@ -17552,11 +17550,11 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public static FloatTensor NewWithStorage1d(FloatTensor.FloatStorage storage, UIntPtr offset, long size, long stride)
         {
             var result = new FloatTensor(THFloatTensor_newWithStorage1d(storage.handle, offset, size, stride));
@@ -17565,10 +17563,10 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size">Size of the first dimension.</param>     
-        /// <param name="stride">Stride of the first dimension.</param>          
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size">Size of the first dimension.</param>
+        /// <param name="stride">Stride of the first dimension.</param>
         public FloatTensor NewWithStorage1d(UIntPtr offset, long size, long stride)
         {
             return NewWithStorage1d(Storage, offset, size, stride);
@@ -17579,12 +17577,12 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
         public static FloatTensor NewWithStorage2d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1)
         {
@@ -17594,9 +17592,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -17610,14 +17608,14 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
         public static FloatTensor NewWithStorage3d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2)
         {
@@ -17627,9 +17625,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
@@ -17645,16 +17643,16 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor with a specified storage arena.
-        /// </summary>        
+        /// </summary>
         /// <param name="storage">Storage arena.</param>
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
-        /// <param name="size1">Size of the second dimension.</param>     
+        /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>
-        /// <param name="size2">Size of the third dimension.</param>     
+        /// <param name="size2">Size of the third dimension.</param>
         /// <param name="stride2">Stride of the third dimension.</param>
-        /// <param name="size3">Size of the fourth dimension.</param>     
+        /// <param name="size3">Size of the fourth dimension.</param>
         /// <param name="stride3">Stride of the fourth dimension.</param>
         public FloatTensor NewWithStorage4d(FloatTensor.FloatStorage storage, UIntPtr offset, long size0, long stride0, long size1, long stride1, long size2, long stride2, long size3, long stride3)
         {
@@ -17664,9 +17662,9 @@ namespace AtenSharp {
 
         /// <summary>
         ///   Create a new tensor using the storage arena of the base tensor.
-        /// </summary>        
-        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param> 
-        /// <param name="size0">Size of the first dimension.</param>     
+        /// </summary>
+        /// <param name="offset">Offset within the input storage the storage of the new tensor will start from.</param>
+        /// <param name="size0">Size of the first dimension.</param>
         /// <param name="stride0">Stride of the first dimension.</param>
         /// <param name="size1">Size of the second dimension.</param>
         /// <param name="stride1">Stride of the second dimension.</param>

@@ -22,8 +22,8 @@ namespace TorchSharp.JIT
             {
             }
 
-            [DllImport("libTorchSharp")]
-            extern static void THSJIT_typeDispose(HType handle);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSJIT_typeDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
@@ -77,16 +77,16 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("libTorchSharp")]
-        extern static sbyte THSJIT_typeKind(HType handle);
+        [DllImport("LibTorchSharp")]
+        private static extern sbyte THSJIT_typeKind(HType handle);
 
         internal TypeKind Kind
         {
             get { return (TypeKind)THSJIT_typeKind(handle); }
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSJIT_typeCast(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSJIT_typeCast(HType module);
 
         internal TensorType AsTensorType()
         {

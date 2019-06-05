@@ -5,8 +5,8 @@ namespace TorchSharp.Data
 {
     public class Loader
     {
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSData_loaderMNIST(string filename, long batchSize, bool isTrain);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSData_loaderMNIST(string filename, long batchSize, bool isTrain);
 
         /// <summary>
         /// Create an iterator scanning the MNIST dataset.

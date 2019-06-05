@@ -12,19 +12,19 @@ namespace TorchSharp.Data
     /// </summary>
     internal static class ExternMethods
     {
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern internal static IntPtr THSData_current(IntPtr iterator, IntPtr data, IntPtr target);
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern internal static bool THSData_moveNext(IntPtr iterator);
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern internal static long THSData_size(IntPtr iterator);
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern internal static void THSData_reset(IntPtr iterator);
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern internal static void THSData_dispose(IntPtr iterator);
     }
 

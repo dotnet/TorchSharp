@@ -25,8 +25,8 @@ namespace TorchSharp.NN
             {
             }
 
-            [DllImport("libTorchSharp")]
-            extern static void THSNN_moduleDispose(HType handle);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_moduleDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
@@ -57,8 +57,8 @@ namespace TorchSharp.NN
             this.handle = new HType(IntPtr.Zero, true);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_new_module(IntPtr names, IntPtr parameters, IntPtr with_grad, int length);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_new_module(IntPtr names, IntPtr parameters, IntPtr with_grad, int length);
 
         protected Module(params Parameter[] parameters)
         {
@@ -111,16 +111,16 @@ namespace TorchSharp.NN
             return new Sequential(modules);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_linearModule(long input_size, long output_size, bool with_bias);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_linearModule(long input_size, long output_size, bool with_bias);
 
         static public Linear Linear(long inputSize, long outputSize, bool hasBias = false)
         {
             return new Linear(THSNN_linearModule(inputSize, outputSize, hasBias));
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
 
         static public Conv2D Conv2D(long inputChannel, long outputChannel, int kernelSize)
         {
@@ -189,40 +189,40 @@ namespace TorchSharp.NN
     {
         public abstract TorchTensor Forward(TorchTensor input);
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_train(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_train(HType module);
 
         public void Train()
         {
             THSNN_train(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_eval(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_eval(HType module);
 
         public void Eval()
         {
             THSNN_eval(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static bool THSNN_is_training(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern bool THSNN_is_training(HType module);
 
         public bool IsTraining()
         {
             return THSNN_is_training(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_moduleZeroGrad(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_moduleZeroGrad(HType module);
 
         public virtual void ZeroGrad()
         {
             THSNN_moduleZeroGrad(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         public virtual IEnumerable<(string name, TorchTensor parameter)> NamedParameters()
         {
@@ -252,8 +252,8 @@ namespace TorchSharp.NN
             return strArray.Select(s => Marshal.PtrToStringAnsi(s)).Zip(ptrArray.Select(x => new TorchTensor(x)), (x, y) => (x, y));
         }
 
-        [DllImport("libTorchSharp")]
-        extern static void THSNN_get_parameters(HType module, AllocatePinnedArray allocator);
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_get_parameters(HType module, AllocatePinnedArray allocator);
 
         public virtual IEnumerable<TorchTensor > Parameters()
         {
@@ -280,16 +280,16 @@ namespace TorchSharp.NN
             return ptrArray.Select(x => new TorchTensor(x));
         }
 
-        [DllImport("libTorchSharp")]
-        extern static bool THSNN_has_parameter(HType module, string name);
+        [DllImport("LibTorchSharp")]
+        private static extern bool THSNN_has_parameter(HType module, string name);
 
         public bool HasParameter(string name)
         {
             return THSNN_has_parameter(handle, name);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSNN_get_parameter(HType module, string name);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_get_parameter(HType module, string name);
 
         public TorchTensor GetParameter(string name)
         {
@@ -308,11 +308,11 @@ namespace TorchSharp.NN
             Modules.Add(module);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static long THSNN_getNumberOfChildren(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern long THSNN_getNumberOfChildren(HType module);
 
-        [DllImport("libTorchSharp")]
-        extern static string THSNN_getChildModuleName(HType module, int index);
+        [DllImport("LibTorchSharp")]
+        private static extern string THSNN_getChildModuleName(HType module, int index);
 
         public virtual IEnumerable<string> GetModules()
         {
@@ -327,8 +327,8 @@ namespace TorchSharp.NN
             return result;
         }
 
-        [DllImport("libTorchSharp")]
-        extern static string THSNN_getModuleName(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern string THSNN_getModuleName(HType module);
 
         public virtual string GetName()
         {

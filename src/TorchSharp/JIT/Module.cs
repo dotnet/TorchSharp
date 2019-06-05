@@ -24,8 +24,8 @@ namespace TorchSharp.JIT
             {
             }
 
-            [DllImport("libTorchSharp")]
-            extern static void THSJIT_moduleDispose(HType handle);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSJIT_moduleDispose(HType handle);
 
             protected override bool ReleaseHandle()
             {
@@ -75,19 +75,19 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSJIT_loadModule(string filename);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSJIT_loadModule(string filename);
 
         static public Module Load(string filename)
         {
             return new Module(THSJIT_loadModule(filename));
         }
 
-        [DllImport("libTorchSharp")]
-        extern static long THSJIT_getNumModules(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern long THSJIT_getNumModules(HType module);
 
-        [DllImport("libTorchSharp")]
-        extern static string THSJIT_getModuleName(HType module, int index);
+        [DllImport("LibTorchSharp")]
+        private static extern string THSJIT_getModuleName(HType module, int index);
 
         public string[] GetSubModulesNames()
         {
@@ -102,24 +102,24 @@ namespace TorchSharp.JIT
             return result;
         }
 
-        [DllImport("libTorchSharp")]
-        extern static int THSJIT_getNumberOfInputs(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern int THSJIT_getNumberOfInputs(HType module);
 
         public int GetNumberOfInputs()
         { 
             return THSJIT_getNumberOfInputs(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static int THSJIT_getNumberOfOutputs(HType module);
+        [DllImport("LibTorchSharp")]
+        private static extern int THSJIT_getNumberOfOutputs(HType module);
 
         public int GetNumberOfOutputs()
         {
             return THSJIT_getNumberOfOutputs(handle);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSJIT_getInputType(HType module, int index);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSJIT_getInputType(HType module, int index);
 
         public Type GetInputType(int index)
         {
@@ -128,8 +128,8 @@ namespace TorchSharp.JIT
             return GetType(type);
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSJIT_getOutputType(HType module, int index);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSJIT_getOutputType(HType module, int index);
 
         public Type GetOutputType(int index)
         {
@@ -155,8 +155,8 @@ namespace TorchSharp.JIT
             }
         }
 
-        [DllImport("libTorchSharp")]
-        extern static IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
 
         public TorchTensor Forward(params TorchTensor[] tensors)
         {

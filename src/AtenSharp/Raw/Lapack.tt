@@ -24,7 +24,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     int n, int nrhs, scalar_t *a, int lda, int *ipiv,
         //      scalar_t *b, int ldb, int* info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_gesv(
+        internal private static extern void TH<#=type.Name#>Lapack_gesv(
             int n,
             int nrhs,
             <#=type.Ptr#> a,
@@ -42,7 +42,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char uplo, char trans, char diag, int n, int nrhs,
         //     scalar_t *a, int lda, scalar_t *b, int ldb, int* info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_trtrs(
+        internal private static extern void TH<#=type.Name#>Lapack_trtrs(
             byte uplo,
             byte trans,
             byte diag,
@@ -62,7 +62,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char trans, int m, int n, int nrhs, scalar_t *a, int lda,
         //     scalar_t *b, int ldb, scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_gels(
+        internal private static extern void TH<#=type.Name#>Lapack_gels(
             byte trans,
             int m,
             int n,
@@ -83,7 +83,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char jobz, char uplo, int n, scalar_t *a, int lda,
         //     scalar_t *w, scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_syev(
+        internal private static extern void TH<#=type.Name#>Lapack_syev(
             byte jobz,
             byte uplo,
             int n,
@@ -103,7 +103,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     scalar_t *wr, scalar_t *wi, scalar_t* vl, int ldvl,
         //     scalar_t *vr, int ldvr, scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_geev(
+        internal private static extern void TH<#=type.Name#>Lapack_geev(
             byte jobvl,
             byte jobvr,
             int n,
@@ -128,7 +128,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     scalar_t *u, int ldu, scalar_t *vt, int ldvt,
         //     scalar_t *work, int lwork, int *iwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_gesdd(
+        internal private static extern void TH<#=type.Name#>Lapack_gesdd(
             byte jobz,
             int m,
             int n,
@@ -151,7 +151,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THLapack_(getrf)(
         //     int m, int n, scalar_t *a, int lda, int *ipiv, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_getrf(
+        internal private static extern void TH<#=type.Name#>Lapack_getrf(
             int m,
             int n,
             <#=type.Ptr#> a,
@@ -167,7 +167,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char trans, int n, int nrhs, scalar_t *a, int lda,
         //     int *ipiv, scalar_t *b, int ldb, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_getrs(
+        internal private static extern void TH<#=type.Name#>Lapack_getrs(
             byte trans,
             int n,
             int nrhs,
@@ -186,7 +186,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     int n, scalar_t *a, int lda, int *ipiv,
         //     scalar_t *work, int lwork, int* info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_getri(
+        internal private static extern void TH<#=type.Name#>Lapack_getri(
             int n,
             <#=type.Ptr#> a,
             int lda,
@@ -204,7 +204,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THLapack_(potrf)(
         //     char uplo, int n, scalar_t *a, int lda, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_potrf(
+        internal private static extern void TH<#=type.Name#>Lapack_potrf(
             byte uplo,
             int n,
             <#=type.Ptr#> a,
@@ -218,7 +218,7 @@ foreach (var type in TorchTypeDef.Types) {
         // TH_API void THLapack_(potri)(
         //     char uplo, int n, scalar_t *a, int lda, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_potri(
+        internal private static extern void TH<#=type.Name#>Lapack_potri(
             byte uplo,
             int n,
             <#=type.Ptr#> a,
@@ -234,7 +234,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char uplo, int n, int nrhs, scalar_t *a, int lda,
         //     scalar_t *b, int ldb, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_potrs(
+        internal private static extern void TH<#=type.Name#>Lapack_potrs(
             char uplo,
             int n,
             int nrhs,
@@ -252,7 +252,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     char uplo, int n, scalar_t *a, int lda, int *piv,
         //     int *rank, scalar_t tol, scalar_t *work, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_pstrf(
+        internal private static extern void TH<#=type.Name#>Lapack_pstrf(
             byte uplo,
             int n,
             <#=type.Ptr#> a,
@@ -271,7 +271,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     int m, int n, scalar_t *a, int lda,
         //     scalar_t *tau, scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_geqrf(
+        internal private static extern void TH<#=type.Name#>Lapack_geqrf(
             int m,
             int n,
             <#=type.Ptr#> a,
@@ -289,7 +289,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     int m, int n, int k, scalar_t *a, int lda,
         //     scalar_t *tau, scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_orgqr(
+        internal private static extern void TH<#=type.Name#>Lapack_orgqr(
             int m,
             int n,
             int k,
@@ -309,7 +309,7 @@ foreach (var type in TorchTypeDef.Types) {
         //     scalar_t *a, int lda, scalar_t *tau, scalar_t *c, int ldc,
         //     scalar_t *work, int lwork, int *info);
         [DllImport ("caffe2")]
-        internal extern static void TH<#=type.Name#>Lapack_ormqr(
+        internal private static extern void TH<#=type.Name#>Lapack_ormqr(
             byte side,
             byte trans,
             int m,

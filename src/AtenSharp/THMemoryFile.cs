@@ -29,7 +29,7 @@ namespace Torch.IO
                 }
                 
                 [DllImport ("caffe2")]
-                extern static void THCharStorage_free (IntPtr handle);
+                private static extern void THCharStorage_free (IntPtr handle);
             
                 
                 protected override bool ReleaseHandle ()
@@ -43,7 +43,7 @@ namespace Torch.IO
             internal HType handle;
             
             [DllImport ("caffe2")]
-            extern static HType THCharStorage_new ();
+            private static extern HType THCharStorage_new ();
             
             /// <summary>
             ///   Initializes an empty ByteStorage instance.
@@ -59,7 +59,7 @@ namespace Torch.IO
             }
             
             [DllImport ("caffe2")]
-            extern static HType THCharStorage_newWithSize(IntPtr size);
+            private static extern HType THCharStorage_newWithSize(IntPtr size);
             
             /// <summary>
             ///   Initializes a ByteStorage instance with the specified size.
@@ -99,10 +99,10 @@ namespace Torch.IO
             }
             
             [DllImport ("caffe2")]
-            extern static byte THCharStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
+            private static extern byte THCharStorage_get (HType handle, /*ptrdiff_t*/IntPtr pos);
 
             [DllImport ("caffe2")]
-            extern static void THCharStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  byte value);
+            private static extern void THCharStorage_set (HType handle, /*ptrdiff_t*/IntPtr pos,  byte value);
             
             /// <summary>
             ///   Access an element of the storage at the given index.
@@ -115,7 +115,7 @@ namespace Torch.IO
             }
             
             [DllImport ("caffe2")]
-            extern static byte THCharStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
+            private static extern byte THCharStorage_resize (HType handle, /*ptrdiff_t*/UIntPtr newSize);
             
             /// <summary>
             ///   Changes the size of this storage to the new requested size.
@@ -127,7 +127,7 @@ namespace Torch.IO
             }
 
             [DllImport ("caffe2")]
-            extern static void THCharStorage_fill (HType handle, byte value);
+            private static extern void THCharStorage_fill (HType handle, byte value);
             
             /// <summary>
             ///   Fills every element of the storage with the specified value.
@@ -140,7 +140,7 @@ namespace Torch.IO
         }
 
         [DllImport ("caffe2")]
-        extern static HType THMemoryFile_newWithStorage(CharStorage.HType handle, string mode);
+        private static extern HType THMemoryFile_newWithStorage(CharStorage.HType handle, string mode);
 
         /// <summary>
         ///    Creates an empty memory file from an existing storage buffer.
@@ -159,7 +159,7 @@ namespace Torch.IO
         }
 
         [DllImport ("caffe2")]
-        extern static HType THMemoryFile_new(string mode);
+        private static extern HType THMemoryFile_new(string mode);
 
         /// <summary>
         ///    Creates an empty memory file.
@@ -186,7 +186,7 @@ namespace Torch.IO
         }
 
         [DllImport ("caffe2")]
-        extern static CharStorage.HType THMemoryFile_storage(HType self);
+        private static extern CharStorage.HType THMemoryFile_storage(HType self);
 
         /// <summary>
         ///    Gets the underlying storage handle.
@@ -194,7 +194,7 @@ namespace Torch.IO
         public CharStorage Storage { get { return new CharStorage(THMemoryFile_storage(this.handle)); } }
 
         [DllImport ("caffe2")]
-        extern static void THMemoryFile_longSize(HType self, int size);
+        private static extern void THMemoryFile_longSize(HType self, int size);
 
         /// <summary>
         ///    Sets the size of long values.
