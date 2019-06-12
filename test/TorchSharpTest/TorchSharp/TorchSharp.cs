@@ -541,6 +541,84 @@ namespace TorchSharp.Test
             }
         }
 
+        private class CondModel : NN.Module
+        {
+            private NN.Module fb = Linear(1000, 100);
+            private NN.Module fbT1 = Linear(100, 10);
+            private NN.Module fbF1 = Linear(100, 50);
+            private NN.Module fbF2 = Linear(50, 10);
+            private bool _isTrue = false;
+
+            public CondModel(bool isTrue)
+            {
+                _isTrue = isTrue;
+                RegisterModule(fb);
+                RegisterModule(fbT1);
+                RegisterModule(fbF1);
+                RegisterModule(fbF2);
+            }
+
+            public override TorchTensor Forward(TorchTensor input)
+            {
+                using (var x = fb.Forward(input))
+                    if (_isTrue)
+                    {
+                        return fbT1.Forward(x);
+                    }
+                    else
+                    {
+                        return fbF2.Forward(fbF1.Forward(x));
+                    }
+            }
+        }
+
+        [Fact]
+        public void TestGradConditional()
+        {
+            var modT = new CondModel(true);
+            var modF = new CondModel(false);
+
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+
+            modT.Train();
+
+            var eval = modT.Forward(x);
+            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var output = loss(eval, y);
+
+            modT.ZeroGrad();
+
+            output.Backward();
+            var gradCounts = 0;
+
+            foreach (var parm in modT.Parameters())
+            {
+                var grad = parm.Grad();
+                gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
+            }
+
+            Assert.Equal(2, gradCounts);
+
+            modF.Train();
+
+            eval = modF.Forward(x);
+            output = loss(eval, y);
+
+            modF.ZeroGrad();
+
+            output.Backward();
+            gradCounts = 0;
+
+            foreach (var parm in modF.Parameters())
+            {
+                var grad = parm.Grad();
+                gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
+            }
+
+            Assert.Equal(3, gradCounts);
+        }
+
         [Fact(Skip = "Not working on MacOS")]
         public void TestAutoGradMode()
         {
