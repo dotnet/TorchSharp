@@ -226,13 +226,16 @@ phases:
       msbuildVersion: 15.0
     continueOnError: false
       
-  - task: MSBuild@1
-    displayName: Publish Packages to MyGet Feed
+  - task: NuGetCommand@2 
+    displayName: Publish Packages to DevOps Feed 
     inputs:
-      solution: build/publish.proj
-      msbuildArguments: /t:PublishPackages /p:NuGetFeedUrl=$(_NuGetFeedUrl) /p:NuGetApiKey=$(myget-shmoradi-mlnet2-api-key)
-      msbuildVersion: 15.0
+      command: push 
+      packagesToPush: $(Build.SourcesDirectory)/bin/packages/**/*.nupkg;!$(Build.SourcesDirectory)/bin/packages/**/*.symbols.nupkg 
+      nuGetFeedType: internal 
+      feedPublish: TorchSharp-DevOps # TODO: Needs setting up.
 
+  # TODO: Deal with symbols.
+  
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
     displayName: Dotnet Server Shutdown
