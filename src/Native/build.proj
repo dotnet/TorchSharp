@@ -42,7 +42,7 @@
     <LibName Condition="'$(OS)' != 'Windows_NT'">libtorch-shared-with-deps</LibName>
     <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))">libtorch-macos</LibName>
 
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)Microsoft.ML.Libtorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
+    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)Libtorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <Target Name="BuildNativeUnix"

@@ -24,7 +24,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
     <!-- space separated -->
-    <PackageTags>TorchSharp PyTorch Torch DL Deep ML Machine Learning</PackageTags>
+    <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,7 +34,8 @@
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\tools\**\*" Pack="true" PackagePath="tools" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IncludeMLNetNotices)' != 'false'">
+  <ItemGroup Condition="'$(IncludeNotices)' != 'false'">
+    <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
     <Content Include="$(RepoRoot)\LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 

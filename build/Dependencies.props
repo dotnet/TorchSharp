@@ -13,6 +13,7 @@
   <!-- Other/Non-Core Product Dependencies -->
   <PropertyGroup>
     <LibtorchVersion>1.0.1</LibtorchVersion>
+    <MklDnnVersion>2019.0.5.20190502</MklDnnVersion>
     <!-- <GoogleProtobufPackageVersion>3.5.1</GoogleProtobufPackageVersion>
     <LightGBMPackageVersion>2.2.3</LightGBMPackageVersion>
     <MicrosoftMLOnnxRuntimePackageVersion>0.3.0</MicrosoftMLOnnxRuntimePackageVersion>

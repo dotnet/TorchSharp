@@ -42,17 +42,17 @@
                         libtorch\lib\libtorch_python.dylib;" 
       Runtime="osx-x64" />
 
-    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE" />
+    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
   </ItemGroup>
 
 
   <ItemGroup>
     <MklDnnConfig Include="darwin" FileExtension=".tgz" 
-      FilesFromArchive= "mklml_mac_2019.0.5.20190502\lib\libmklml.dylib;
-                        mklml_mac_2019.0.5.20190502\lib\libiomp5.dylib;" 
+      FilesFromArchive= "mklml_mac_$(LibtorchVersion)\lib\libmklml.dylib;
+                        mklml_mac_$(LibtorchVersion)\lib\libiomp5.dylib;" 
       Runtime="osx-x64" />
 
-      <!-- License/Thirdpartynotices TODO -->
+    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
   </ItemGroup>
 
 
@@ -71,7 +71,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(PackageRid)' == 'osx-x64'">
-      <MklDnnArchive Include="@(MklDnnConfig->'https://github.com/intel/mkl-dnn/releases/download/v0.19/mklml_mac_2019.0.5.20190502%(FileExtension)')" />
+      <MklDnnArchive Include="@(MklDnnConfig->'https://github.com/intel/mkl-dnn/releases/download/v0.19/mklml_mac_$(MklDnnVersion)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
       <MklDnnArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
@@ -208,14 +208,18 @@
       <_fileFromArchive PackagePath="runtimes\%(_fileFromArchive.Runtime)\native\%(_fileFromArchive.DestinationFile)" />
 
       <!-- LICENSE from the package is actually THIRD_PARTY_NOTICES-->
-      <_fileFromArchive Condition="'%(DestinationFile)' == 'LICENSE'" PackagePath="THIRD_PARTY_NOTICES.txt" Runtime="" />
+      <_fileFromArchive Condition="'%(DestinationFile)' == 'LICENSE-LIBTORCH'" PackagePath="THIRD_PARTY_NOTICES_LIBTORCH.txt" Runtime="" />
+      <_fileFromArchive Condition="'%(DestinationFile)' == 'LICENSE-MKL-DNN'" PackagePath="THIRD_PARTY_NOTICES_MKL_DNN.txt" Runtime="" />
+
 
       <!-- copy to packaging location -->
       <FilesFromArchive Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
                         TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\%(PackagePath)" />
       <!-- include LICENSE that was downloaded from GitHub -->
-      <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE"
-                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE.txt" />
+      <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-LIBTORCH"
+                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE-LIBTORCH.txt" />
+      <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-MKL-DNN"
+                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE-MKL-DNN.txt" />
 
       <!-- copy to NativeAssets location, only for current RID, so that they may be used by tests -->
       <FilesFromArchive Condition="'$(PackageRID)' == '%(_fileFromArchive.Runtime)'"
