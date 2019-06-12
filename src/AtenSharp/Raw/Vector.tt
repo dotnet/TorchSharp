@@ -1,0 +1,151 @@
+﻿<#@ Template Language="C#" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Output Extension=".generated.cs" #>
+<#@ Include File="Types.ttinclude" #>
+
+using System;
+using System.Runtime.InteropServices;
+
+namespace AtenSharp.Raw {
+
+    // Element-wise operations for vectors.
+    // Each scalar_t* pointer can be an offset, and ptrdiff_t
+    // parameters usually has number of elements to operate on.
+    internal static class Vector {
+
+<#
+foreach (var type in TorchTypeDef.Types) {
+#>
+        // Assign value c to n elements of the vector, starting from pointer x.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(fill)(scalar_t *x, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_fill(
+            <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+
+        // z = (x + y) + c element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(cadd)(scalar_t *z, const scalar_t *x, const scalar_t *y, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_cadd(
+            <#=type.Ptr#> z, <#=type.Ptr#> x, <#=type.Ptr#> y, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+
+        // z = x * y element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(cmul)(scalar_t *z, const scalar_t *x, const scalar_t *y, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_cmul(
+            <#=type.Ptr#> z, <#=type.Ptr#> x, <#=type.Ptr#> y, <#=type.PtrDiff#> n);
+
+        // z = x / y element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(cdiv)(scalar_t *z, const scalar_t *x, const scalar_t *y, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_cdiv(
+            <#=type.Ptr#> z, <#=type.Ptr#> x, <#=type.Ptr#> y, <#=type.PtrDiff#> n);
+
+        // y = x + c element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(adds)(scalar_t *y, const scalar_t *x, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_adds(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+
+        // y = x * c element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(muls)(scalar_t *y, const scalar_t *x, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_muls(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+
+        // z = (x / y) * c element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(divs)(scalar_t *y, const scalar_t *x, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_divs(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+
+        // copy y = x element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(copy)(scalar_t *y, const scalar_t *x, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_copy(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.PtrDiff#> n);
+
+        // negate and copy y = -x element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(neg)(scalar_t *y, const scalar_t *x, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_neg(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.PtrDiff#> n);
+
+        // Fill vector with random values drawn from a normal distribution.
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(normal_fill)(
+        //     scalar_t *data, const int64_t size, struct THGenerator *generator,
+        //     const scalar_t mean, const scalar_t stddev);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_normal_fill(
+            <#=type.Ptr#> data, long size, IntPtr /* struct THGenerator* */ generator,
+            <#=type.Storage#> mean,<#=type.Storage#> stddev);
+
+<# if (type.IsInt) { #>
+        // y = |x| element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(abs)(scalar_t *y, const scalar_t *x, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_abs(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.PtrDiff#> n);
+
+<# } #>
+<# if (type.IsFloat) { #>
+        // y = x^c element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(pow)(scalar_t *y, const scalar_t *x, const scalar_t c, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_pow(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.Storage#> c, <#=type.PtrDiff#> n);
+<#
+foreach (var op in new string[] {
+    "log", "lgamma", "digamma", "trigamma", "log10", "log1p", "log2", "sigmoid", "exp", "expm1",
+    "erf", "erfc", "erfinv", "cos", "acos", "cosh", "sin", "asin", "sinh", "tan", "atan", "tanh",
+    "sqrt", "rsqrt", "ceil", "floor", "round", "abs", "trunc", "frac", "cinv" }) {
+#>
+
+        // y = <#=op#>(x) element-wise for n elements
+        //
+        // Corresponds to the following TH declaration:
+        //
+        // TH_API void THVector_(<#=op#>)(scalar_t *y, const scalar_t *x, const ptrdiff_t n);
+        [DllImport ("caffe2")]
+        internal private static extern void TH<#=type.Name#>Vector_<#=op#>(
+            <#=type.Ptr#> y, <#=type.Ptr#> x, <#=type.PtrDiff#> n);
+<# } #>
+<# } #>
+<# } #>
+    }
+}
