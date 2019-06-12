@@ -48,8 +48,8 @@
 
   <ItemGroup>
     <MklDnnConfig Include="darwin" FileExtension=".tgz" 
-      FilesFromArchive= "mklml_mac_$(LibtorchVersion)\lib\libmklml.dylib;
-                        mklml_mac_$(LibtorchVersion)\lib\libiomp5.dylib;" 
+      FilesFromArchive= "mklml_mac_$(MklDnnVersion)\lib\libmklml.dylib;
+                        mklml_mac_$(MklDnnVersion)\lib\libiomp5.dylib;" 
       Runtime="osx-x64" />
 
     <AdditionalDownloadFile Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
