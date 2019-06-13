@@ -5,7 +5,9 @@
     <!-- Use this flag to ensure native assets take stable version -->
     <UseStableVersionForNativeAssets>true</UseStableVersionForNativeAssets>
 
-    <StripNativeSymbols Condition="'$(StripNativeSymbols)' == '' and '$(Configuration)' == 'Release'">True</StripNativeSymbols>
+    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
+    because LibTorch itself is in release. -->
+    <StripNativeSymbols Condition="'$(StripNativeSymbols)' == ''">True</StripNativeSymbols>
   </PropertyGroup>
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
@@ -50,8 +52,11 @@
           DependsOnTargets="GenerateVersionSourceFile">
 
     <PropertyGroup>
+      
+      <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
+      because LibTorch itself is in release. -->
       <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripSymbols</StripArgs>
-      <BuildArgs>--configuration $(Configuration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchPath)</BuildArgs>
+      <BuildArgs>--configuration Release --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchPath)</BuildArgs>
     </PropertyGroup>
 
     <Message Text="$(MSBuildProjectDirectory)/build.sh $(BuildArgs)" Importance="High"/>
@@ -64,7 +69,9 @@
           DependsOnTargets="GenerateVersionHeader">
           
     <PropertyGroup>
-      <BuildArgs>$(Configuration) $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
+      <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
+      because LibTorch itself is in release. -->
+      <BuildArgs>Release $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
     </PropertyGroup>
 
     <!-- Run script that invokes Cmake to create VS files, and then calls msbuild to compile them -->

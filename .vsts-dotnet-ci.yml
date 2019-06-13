@@ -31,10 +31,10 @@ phases:
     name: Windows_x64_NetCoreApp30
     buildScript: build.cmd
     customMatrixes:
-      # Debug_Build:
-      #   _configuration: Debug-Intrinsics
-      #   _config_short: DI
-      #   _includeBenchmarkData: false
+      Debug_Build:
+        _configuration: Debug-Intrinsics
+        _config_short: DI
+        _includeBenchmarkData: false
       Release_Build:
         _configuration: Release-Intrinsics
         _config_short: RI
@@ -54,10 +54,10 @@ phases:
     name: Windows_x64_NetFx461
     buildScript: build.cmd
     customMatrixes:
-      # Debug_Build:
-      #   _configuration: Debug-netfx
-      #   _config_short: DFX
-      #   _includeBenchmarkData: false
+      Debug_Build:
+        _configuration: Debug-netfx
+        _config_short: DFX
+        _includeBenchmarkData: false
       Release_Build:
         _configuration: Release-netfx
         _config_short: RFX

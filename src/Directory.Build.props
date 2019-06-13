@@ -13,7 +13,9 @@
 
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\Source.ruleset</CodeAnalysisRuleSet>
     
-    <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).$(Configuration)\Native</NativeAssetsBuiltPath>
+    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
+    because LibTorch itself is in release. -->
+    <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).Release\Native</NativeAssetsBuiltPath>
 
     <PackageRid Condition="'$(OS)' == 'Windows_NT'">win</PackageRid>
     <PackageRid Condition="'$(OS)' != 'Windows_NT'">linux</PackageRid>

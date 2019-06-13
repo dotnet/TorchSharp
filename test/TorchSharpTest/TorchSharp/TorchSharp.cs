@@ -461,7 +461,7 @@ namespace TorchSharp.Test
             using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f}))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
-                Assert.Throws<ExternalException>(() => NN.LossFunction.PoissonNLL()(input, target));
+                Assert.Throws<SEHException>(() => NN.LossFunction.PoissonNLL()(input, target));
             }
         }
         #endif

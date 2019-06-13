@@ -45,7 +45,9 @@
     <PackageOutputPath Condition="'$(PackageOutputPath)'=='' and '$(NonShippingPackage)' == 'true'">$(BinDir)packages_noship/</PackageOutputPath>
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/</PackageOutputPath>
 
-    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(Configuration)\Native\</NativeOutputPath>
+    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
+    because LibTorch itself is in release. -->
+    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).Release\Native\</NativeOutputPath>
 
     <!-- Input Directories -->
     <PackagesDir>$(DotNetRestorePackagesPath)</PackagesDir>
