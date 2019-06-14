@@ -28,23 +28,40 @@ We have a chat room here:
 
 https://gitter.im/xamarin/TorchSharp
 
-Running this
+Building
 ============
-To run this, you will need libTorchSharp, libTorch and its dependencies (on Mac that
-includes libc10) installed in a location that your dynamic linker can
-get to.
 
 
-Running On Windows
+Windows
 -----------------------------
 
-The following was tested on Windows.
+Requirements:
+- Visual Studio
+- git
+- cmake (tested with 3.14)
 
-  1. Install [libTorch](https://pytorch.org/), and make it available to the
-     dynamic linker.
-  2. Download and compile [libTorchSharp](https://github.com/interesaaat/LibTorchSharp/), and make it available to the
-     dynamic linker.
-  3. Run `dotnet run` in the `Test` subfolder.
+Commands:
+- Building: `build.cmd`
+- Building from Visual Studio: first build using the command line
+- See all configurations: `build.cmd -?`
+- Run tests from command line: `build.cmd -runtests`
+- Build packages: `build.cmd -buildpackages`
+
+
+Linux/Mac
+-----------------------------
+Requirements:
+- requirements to run .NET Core 2.0
+- git
+- cmake (tested with 3.14)
+- clang 3.9
+
+Command:
+- Building: `./build.sh`
+- Building from Visual Studio: first build using the command line
+- See all configurations: `./build.sh -?`
+- Run tests from command line: `./build.sh -runtests`
+- Build packages: `./build.sh -buildpackages`
 
 Examples
 ===========
