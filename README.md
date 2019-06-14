@@ -56,7 +56,7 @@ Requirements:
 - cmake (tested with 3.14)
 - clang 3.9
 
-Command:
+Commands:
 - Building: `./build.sh`
 - Building from Visual Studio: first build using the command line
 - See all configurations: `./build.sh -?`
