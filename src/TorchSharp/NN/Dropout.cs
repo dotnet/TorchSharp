@@ -12,7 +12,7 @@ namespace TorchSharp.NN
         private double _probability;
         private bool _isTraining;
 
-        internal Dropout(double probability, bool isTraining) : base()
+        internal Dropout(bool isTraining, double probability = 0.5) : base()
         {
             _probability = probability;
             _isTraining = isTraining;

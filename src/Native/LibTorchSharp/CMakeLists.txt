@@ -3,6 +3,7 @@ project(LibTorchSharp)
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
+    cifar10.h
     THSAutograd.h
     THSData.h
     THSJIT.h
@@ -10,6 +11,7 @@ set(SOURCES
     THSTensor.h
     THSTorch.h
     Utils.h
+    cifar10.cpp
     THSAutograd.cpp
     THSData.cpp
     THSJIT.cpp

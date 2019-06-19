@@ -79,8 +79,14 @@ inline void DatasetIterator<Dataset>::reset()
 
 // API.
 
-// Load a MNIST dataset from a file.
+// Load a MNIST dataset from a directory.
 EXPORT_API(DatasetIteratorBase *) THSData_loaderMNIST(
+    const char* filename,
+    int64_t batchSize,
+    bool isTrain);
+
+// Load a MNIST dataset from a directory.
+EXPORT_API(DatasetIteratorBase *) THSData_loaderCIFAR10(
     const char* filename,
     int64_t batchSize,
     bool isTrain);

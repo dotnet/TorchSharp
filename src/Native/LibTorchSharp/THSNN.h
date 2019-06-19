@@ -16,9 +16,11 @@ EXPORT_API(NNModule) THSNN_linearModule(const int64_t input_size, const int64_t 
 
 // Returns a Conv2d layer.
 EXPORT_API(NNModule) THSNN_conv2dModule(
-    const int64_t inputChannel, 
-    const int64_t outputChannel, 
-    const size_t kernelSize);
+    const int64_t inputChannel,
+    const int64_t outputChannel,
+    const int64_t kernelSize,
+    const int64_t stride,
+    const int64_t padding);
 
 EXPORT_API(NNModule) THSNN_new_module(const char ** names, at::Tensor ** parameters, const bool * require_grad, const int length);
 
@@ -59,7 +61,15 @@ EXPORT_API(const char *) THSNN_getModuleName(const NNModule module);
 EXPORT_API(Tensor) THSNN_reluApply(const Tensor tensor);
 
 // Applies a maxpool 2d on the input tensor. 
-EXPORT_API(Tensor) THSNN_maxPool2DApply(const Tensor tensor, const int64_t kernelSize);
+EXPORT_API(Tensor) THSNN_maxPool2DApply(
+    const Tensor tensor,
+    const int kernelSizeLength,
+    const int64_t* kernelSize,
+    const int strideLength,
+    const int64_t* stride);
+
+// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+EXPORT_API(Tensor) THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize);
 
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension);

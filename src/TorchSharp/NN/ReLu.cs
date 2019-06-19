@@ -9,16 +9,19 @@ namespace TorchSharp.NN
     /// </summary>
     public class ReLU : FunctionalModule<ReLU>
     {
-        internal ReLU() : base()
+        private readonly bool _inPlace;
+
+        internal ReLU(bool inPlace = false) : base()
         {
+            _inPlace = inPlace;
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_reluApply(IntPtr tensor);
+        private static extern IntPtr THSNN_reluApply(IntPtr tensor, bool inPlace);
 
         public override TorchTensor Forward(TorchTensor tensor)
         {
-            return new TorchTensor(THSNN_reluApply(tensor.Handle));
+            return new TorchTensor(THSNN_reluApply(tensor.Handle, _inPlace));
         }
 
         public override string GetName()

@@ -19,5 +19,20 @@ namespace TorchSharp.Data
         {
             return new DataIterator(THSData_loaderMNIST(filename, batchSize, isTrain));
         }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSData_loaderCIFAR10(string path, long batchSize, bool isTrain);
+
+        /// <summary>
+        /// Create an iterator scanning the CIFAR10 dataset.
+        /// </summary>
+        /// <param name="path">The position of the CIFAR10 dataset</param>
+        /// <param name="batchSize">The required batch size</param>
+        /// <param name="isTrain">Wheter the iterator is for training or testing</param>
+        /// <returns></returns>
+        static public DataIterator CIFAR10(string path, long batchSize, bool isTrain = true)
+        {
+            return new DataIterator(THSData_loaderCIFAR10(path, batchSize, isTrain));
+        }
     }
 }

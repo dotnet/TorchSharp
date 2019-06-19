@@ -127,6 +127,9 @@ EXPORT_API(Tensor) THSTensor_get1(const Tensor tensor, int64_t index);
 // Returns the inner type of the tensor.
 EXPORT_API(int8_t) THSTensor_type(const Tensor twrapper);
 
+// Change the inner type of the tensor.
+EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type);
+
 // Returns a printable version of the device type storing the tensor.
 EXPORT_API(const char *) THSTensor_deviceType(const Tensor twrapper);
 
@@ -264,6 +267,9 @@ EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
 // The behavior depends on the dimensionality of the tensors.
 // Check https://pytorch.org/docs/stable/torch.html#torch.matmul for details.
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
+
+// Returns a tensor where values are the maximum value of each row of the input tensor in the given dimension dimension.
+EXPORT_API(void) THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim);
 
 // Returns the mean of all elements in the input tensor.
 EXPORT_API(Tensor) THSTensor_mean(const Tensor tensor);

@@ -185,6 +185,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
+
+        public TorchTensor ToType(ATenScalarMapping type)
+        {
+            return new TorchTensor(THSTensor_to_type(handle, (sbyte)type));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_cpu(IntPtr handle);
 
         public TorchTensor Cpu()
@@ -471,6 +479,21 @@ namespace TorchSharp.Tensor
         public TorchTensor MatMul(TorchTensor target)
         {
             return new TorchTensor(THSTensor_matmul(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_max(IntPtr src, AllocatePinnedArray allocator, long dimension, bool keep_dim);
+
+        public (TorchTensor vaues, TorchTensor indexes) Max(long dimension, bool keepDim = false)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            {
+                THSTensor_max(handle, pa.CreateArray, dimension, keepDim);
+                ptrArray = pa.Array;
+            }
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
         }
 
         [DllImport("LibTorchSharp")]

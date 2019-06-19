@@ -11,7 +11,7 @@ namespace TorchSharp.Examples
         private readonly static int _epochs = 10;
         private readonly static long _trainBatchSize = 64;
         private readonly static long _testBatchSize = 1000;
-        private readonly static string _dataLocation = @"../../../Data";
+        private readonly static string _dataLocation = @"../../../../Data";
 
         private readonly static int _logInterval = 10;
 
@@ -57,23 +57,23 @@ namespace TorchSharp.Examples
             public override TorchTensor Forward(TorchTensor input)
             {
                 using (var l11 = conv1.Forward(input))
-                using (var l12 = MaxPool2D(l11, 2))
+                using (var l12 = MaxPool2D(l11, kernelSize: new long[]{ 2 }))
                 using (var l13 = Relu(l12))
 
                 using (var l21 = conv2.Forward(l13))
                 using (var l22 = FeatureDropout(l21))
-                using (var l23 = MaxPool2D(l22, 2))
+                using (var l23 = MaxPool2D(l22, kernelSize: new long[] { 2 }))
                 using (var l24 = Relu(l23))
 
                 using (var x = l24.View(new long[] { -1, 320 }))
 
                 using (var l31 = fc1.Forward(x))
                 using (var l32 = Relu(l31))
-                using (var l33 = Dropout(l32, 0.5, IsTraining()))
+                using (var l33 = Dropout(l32, IsTraining()))
 
                 using (var l41 = fc2.Forward(l33))
 
-                return LogSoftMax(l41, 1);
+                    return LogSoftMax(l41, 1);
             }
         }
 

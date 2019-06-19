@@ -35,9 +35,13 @@ NNModule THSNN_linearModule(const int64_t input_size, const int64_t output_size,
 NNModule THSNN_conv2dModule(
     const int64_t inputChannel,
     const int64_t outputChannel,
-    const size_t kernelSize)
+    const int64_t kernelSize,
+    const int64_t stride,
+    const int64_t padding)
 {
-    auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize);
+    auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize)
+        .stride(stride)
+        .padding(padding);
     auto conv = torch::nn::Conv2d(options);
 
     return new std::shared_ptr<torch::nn::Module>(conv.ptr());
@@ -126,9 +130,22 @@ Tensor THSNN_reluApply(const Tensor tensor)
     return new torch::Tensor(torch::relu(*tensor));
 }
 
-Tensor THSNN_maxPool2DApply(const Tensor tensor, const int64_t kernelSize)
+Tensor THSNN_maxPool2DApply(
+    const Tensor tensor, 
+    const int kernelSizeLength, 
+    const int64_t* kernelSize,
+    const int strideLength,
+    const int64_t* stride)
 {
-    return new torch::Tensor(torch::max_pool2d(*tensor, kernelSize));
+    return new torch::Tensor(torch::max_pool2d(
+        *tensor, 
+        at::IntList(kernelSize, kernelSizeLength), 
+        at::IntList(stride, strideLength)));
+}
+
+Tensor THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize)
+{
+    return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::IntList(outputSize, length)));
 }
 
 Tensor THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension)

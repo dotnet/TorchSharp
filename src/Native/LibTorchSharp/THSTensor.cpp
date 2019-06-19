@@ -184,6 +184,11 @@ int8_t THSTensor_type(const Tensor tensor)
     return (int8_t)tensor->scalar_type();
 }
 
+Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type)
+{
+    return new torch::Tensor(tensor->toType(at::ScalarType(scalar_type)));
+}
+
 Tensor THSTensor_get1(const Tensor tensor, int64_t index)
 {
     return new torch::Tensor((*tensor)[index]);
@@ -383,6 +388,14 @@ Tensor THSTensor_exp(const Tensor tensor)
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
     return new torch::Tensor(left->matmul(*right));
+}
+
+void THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim)
+{
+    auto max = tensor->max(dimension, keep_dim);
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(max));
+    result[1] = new torch::Tensor(std::get<1>(max));
 }
 
 Tensor THSTensor_mean(const Tensor tensor)

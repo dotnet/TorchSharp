@@ -32,7 +32,9 @@ namespace TorchSharp.NN
 
             foreach (var module in tail)
             {
-                result = module.Forward(result);
+                var tmp = module.Forward(result);
+                result.Dispose();
+                result = tmp;
             }
 
             return result;

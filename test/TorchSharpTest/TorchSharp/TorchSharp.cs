@@ -844,6 +844,32 @@ namespace TorchSharp.Test
             }
         }
 
+        [Fact]//[Fact(Skip = "MNIST data too big to keep in repo")]
+        public void TestCIFAR10Loader()
+        {
+            using (var train = Data.Loader.CIFAR10("../../../../src/Examples/Data", 16))
+            {
+                Assert.NotNull(train);
+
+                var size = train.Size();
+                int i = 0;
+
+                foreach (var (data, target) in train)
+                {
+                    i++;
+
+                    Assert.Equal(data.Shape, new long[] { 16, 3, 32, 32 });
+                    Assert.Equal(target.Shape, new long[] { 16 });
+                    Assert.True(target.Data<int>().ToArray().Where(x => x >= 0 && x < 10).Count() == 16);
+
+                    data.Dispose();
+                    target.Dispose();
+                }
+
+                Assert.Equal(size, i * 16);
+            }
+        }
+
         [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoaderWithEpochs()
         {

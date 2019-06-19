@@ -120,33 +120,46 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_conv2dModule(long inputChannel, long outputChannel, int kernelSize);
+        private static extern IntPtr THSNN_conv2dModule(long inputChannel, long outputChannel, long kernelSize, long stride, long padding);
 
-        static public Conv2D Conv2D(long inputChannel, long outputChannel, int kernelSize)
+        static public Conv2D Conv2D(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
-            return new Conv2D(THSNN_conv2dModule(inputChannel, outputChannel, kernelSize));
+            return new Conv2D(THSNN_conv2dModule(inputChannel, outputChannel, kernelSize, stride, padding));
         }
 
-        static public ReLU Relu()
+        static public ReLU Relu(bool inPlace = false)
         {
-            return new ReLU();
+            return new ReLU(inPlace);
         }
 
-        static public TorchTensor Relu(TorchTensor x)
+        static public TorchTensor Relu(TorchTensor x, bool inPlace = false)
         {
             return new ReLU().Forward(x);
         }
 
-        static public MaxPool2D MaxPool2D(long kernelSize)
+        static public MaxPool2D MaxPool2D(long[] kernelSize, long[] stride = null)
         {
-            return new MaxPool2D(kernelSize);
+            return new MaxPool2D(kernelSize, stride);
         }
 
-        static public TorchTensor MaxPool2D(TorchTensor x, long kernelSize)
+        static public TorchTensor MaxPool2D(TorchTensor x, long[] kernelSize, long[] stride = null)
         {
-            using (var m = new MaxPool2D(kernelSize))
+            using (var m = new MaxPool2D(kernelSize, stride))
             {
                 return m.Forward(x);
+            }
+        }
+
+        static public AdaptiveAvgPool2D AdaptiveAvgPool2D(params long[] outputSize)
+        {
+            return new AdaptiveAvgPool2D(outputSize);
+        }
+
+        static public TorchTensor AdaptiveAvgPool2D(TorchTensor x, params long[] outputSize)
+        {
+            using (var a = new AdaptiveAvgPool2D(outputSize))
+            {
+                return a.Forward(x);
             }
         }
 
@@ -163,14 +176,14 @@ namespace TorchSharp.NN
             }
         }
 
-        static public Dropout Dropout(double probability, bool isTraining)
+        static public Dropout Dropout(bool isTraining, double probability = 0.5)
         {
-            return new Dropout(probability, isTraining);
+            return new Dropout(isTraining, probability);
         }
 
-        static public TorchTensor Dropout(TorchTensor x, double probability, bool isTraining)
+        static public TorchTensor Dropout(TorchTensor x, bool isTraining, double probability = 0.5)
         {
-            using (var d = new Dropout(probability, isTraining))
+            using (var d = new Dropout(isTraining, probability))
             {
                 return d.Forward(x);
             }
