@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <IncludeInPackage>TorchSharp</IncludeInPackage>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+  </ItemGroup>
+
+</Project>

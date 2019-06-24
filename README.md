@@ -1,18 +1,17 @@
-[![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
-
 TorchSharp
 ==========
 
 TorchSharp is a .NET library that provides access to the library that powers
 PyTorch.  It is a work in progress, but already provides a .NET API that can
-be used to perform various operations on Tensors.
+be used to perform (1) various operations on ATen Tensors; (2) scoring of 
+TorchScript models; (3) Training of simple neural networks.
 
-Our current focus is to bind the entire C API surfaced by libtorch.
+Our current focus is to bind the entire API surfaced by libtorch.
 
 Things that you can try:
 
 ```csharp
-using TorchSharp;
+using AtenSharp;
 
 var x = new FloatTensor (100);   // 1D-tensor with 100 elements
 FloatTensor result = new FloatTensor (100);
@@ -29,27 +28,41 @@ We have a chat room here:
 
 https://gitter.im/xamarin/TorchSharp
 
-Status
-======
-
-Currently I am binding the Tensor APIs, opportunities to bind other APIs
-are wide open.
-
-[API Documentation](https://xamarin.github.io/TorchSharp/api/TorchSharp.html)
-
-Running this
+Building
 ============
-To run this, you will need libtorch and its dependencies (on Mac that
-includes libc10) installed in a location that your dynamic linker can
-get to.
 
 
-Running On Linux (on Windows)
+Windows
 -----------------------------
 
-The following was tested on Ubuntu 18.04 on the Windows Subsytem for Linux.
+Requirements:
+- Visual Studio
+- git
+- cmake (tested with 3.14)
 
-  1. Install the [.NET Core SDK](https://www.microsoft.com/net/download).
-  2. Install [libtorch](https://pytorch.org/), and make it available to the
-     dynamic linker.
-  3. Run `dotnet run` in the `Tester` subfolder.
+Commands:
+- Building: `build.cmd`
+- Building from Visual Studio: first build using the command line
+- See all configurations: `build.cmd -?`
+- Run tests from command line: `build.cmd -runtests`
+- Build packages: `build.cmd -buildpackages`
+
+
+Linux/Mac
+-----------------------------
+Requirements:
+- requirements to run .NET Core 2.0
+- git
+- cmake (tested with 3.14)
+- clang 3.9
+
+Commands:
+- Building: `./build.sh`
+- Building from Visual Studio: first build using the command line
+- See all configurations: `./build.sh -?`
+- Run tests from command line: `./build.sh -runtests`
+- Build packages: `./build.sh -buildpackages`
+
+Examples
+===========
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs).
