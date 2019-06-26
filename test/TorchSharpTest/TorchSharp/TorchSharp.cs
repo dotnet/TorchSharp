@@ -844,7 +844,7 @@ namespace TorchSharp.Test
             }
         }
 
-        [Fact]//[Fact(Skip = "MNIST data too big to keep in repo")]
+        [Fact(Skip = "CIFAR10 data too big to keep in repo")]
         public void TestCIFAR10Loader()
         {
             using (var train = Data.Loader.CIFAR10("../../../../src/Examples/Data", 16))
