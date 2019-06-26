@@ -191,12 +191,12 @@ Tensor THSTensor_get1(const Tensor tensor, int64_t index)
 
 Tensor THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2)
 {
-    return new torch::Tensor((*tensor)[index1, index2]);
+    return new torch::Tensor((*tensor)[index1][index2]);
 }
 
 Tensor THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3)
 {
-    return new torch::Tensor((*tensor)[index1, index2, index3]);
+    return new torch::Tensor((*tensor)[index1][index2][index3]);
 }
 
 void THSTensor_set1(const Tensor tensor, int64_t index, Scalar value)
@@ -208,12 +208,12 @@ void THSTensor_set1(const Tensor tensor, int64_t index, Scalar value)
 
 void THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, Scalar value)
 {
-    (*tensor)[index1, index2] = *value;
+    (*tensor)[index1][index2] = *value;
 }
 
 void THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value)
 {
-    (*tensor)[index1, index2, index3] = *value;
+    (*tensor)[index1][index2][index3] = *value;
 }
 
 int8_t THSTensor_type(const Tensor tensor)
