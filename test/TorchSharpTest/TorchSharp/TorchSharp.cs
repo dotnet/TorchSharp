@@ -288,7 +288,7 @@ namespace TorchSharp.Test
         {
             var lin = NN.Module.Linear(1000, 100);
             Assert.False(lin.WithBias);
-            Assert.Throws<ArgumentNullException>(() => lin.Bias);
+            Assert.True(lin.Bias == null);
         }
 
         [Fact]
@@ -300,7 +300,7 @@ namespace TorchSharp.Test
 
             lin.Bias = bias;
 
-            Assert.Equal(lin.Bias.NumberOfElements, bias.NumberOfElements);
+            Assert.Equal(lin.Bias?.NumberOfElements, bias.NumberOfElements);
         }
 
         [Fact]
@@ -311,8 +311,8 @@ namespace TorchSharp.Test
             Assert.Equal(2, lin.Weight.Shape.Length);
             Assert.Equal(100, lin.Weight.Shape[0]);
             Assert.Equal(1000, lin.Weight.Shape[1]);
-            Assert.True(1 == lin.Bias.Shape.Length);
-            Assert.Equal(100, lin.Bias.Shape[0]);
+            Assert.True(1 == lin.Bias?.Shape.Length);
+            Assert.Equal(100, lin.Bias?.Shape[0]);
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace TorchSharp.Test
             var weight = lin.Weight.T();
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
             var forward = lin.Forward(input);
-            var matmul = input.MatMul(weight).Add(bias);
+            var matmul = input.MatMul(weight).Add(bias.Value);
 
             Assert.Equal(forward.Shape.Length, matmul.Shape.Length);
             Assert.Equal(forward.Shape[0], matmul.Shape[0]);
@@ -670,7 +670,7 @@ namespace TorchSharp.Test
         {
             var x = FloatTensor.Ones(new long[] { 100, 100 });
 
-            var y = x.Mul(0.5f);
+            var y = x.Mul(0.5f.ToScalar());
 
             var ydata = y.Data<float>();
             var xdata = x.Data<float>();
@@ -762,7 +762,7 @@ namespace TorchSharp.Test
                     foreach (var param in seq.Parameters())
                     {
                         var grad = param.Grad();
-                        var update = grad.Mul(learning_rate);
+                        var update = grad.Mul(learning_rate.ToScalar());
                         param.SubInPlace(update);
                     }
                 }
