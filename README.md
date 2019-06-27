@@ -26,9 +26,7 @@ Console.WriteLine (x [12]);
 Discussions
 ===========
 
-We have a chat room here:
-
-https://gitter.im/xamarin/TorchSharp
+We have a chat room on Gitter [![Gitter](https://badges.gitter.im/xamarin/TorchSharp.svg)](https://gitter.im/xamarin/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Building
 ============
