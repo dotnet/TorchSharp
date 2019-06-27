@@ -179,6 +179,43 @@ void * THSTensor_data(const Tensor tensor)
     return tensor->data_ptr();
 }
 
+Scalar THSTensor_item(const Tensor tensor)
+{
+    return new torch::Scalar(tensor->item());
+}
+
+Tensor THSTensor_get1(const Tensor tensor, int64_t index)
+{
+    return new torch::Tensor((*tensor)[index]);
+}
+
+Tensor THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2)
+{
+    return new torch::Tensor((*tensor)[index1][index2]);
+}
+
+Tensor THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3)
+{
+    return new torch::Tensor((*tensor)[index1][index2][index3]);
+}
+
+void THSTensor_set1(const Tensor tensor, int64_t index, Scalar value)
+{
+    CATCH(
+        (*tensor)[index] = *value;
+    )
+}
+
+void THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, Scalar value)
+{
+    (*tensor)[index1][index2] = *value;
+}
+
+void THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value)
+{
+    (*tensor)[index1][index2][index3] = *value;
+}
+
 int8_t THSTensor_type(const Tensor tensor)
 {
     return (int8_t)tensor->scalar_type();
@@ -189,21 +226,6 @@ Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type)
     return new torch::Tensor(tensor->toType(at::ScalarType(scalar_type)));
 }
 
-Tensor THSTensor_get1(const Tensor tensor, int64_t index)
-{
-    return new torch::Tensor((*tensor)[index]);
-}
-
-// Tensor THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2)
-// {
-//     return new torch::Tensor((*tensor)[index1, index2]);
-// }
-
-// Tensor THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3)
-// {
-//     return new torch::Tensor((*tensor)[index1, index2, index3]);
-// }
-
 const char* THSTensor_deviceType(const Tensor tensor)
 {
     auto device = tensor->device();
@@ -212,6 +234,16 @@ const char* THSTensor_deviceType(const Tensor tensor)
     std::transform(device_type.begin(), device_type.end(), device_type.begin(), ::tolower);
 
     return make_sharable_string(device_type);
+}
+
+bool THSTensor_requires_grad(const Tensor tensor)
+{
+    return tensor->requires_grad();
+}
+
+Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
+{
+    return new torch::Tensor(tensor->set_requires_grad(requires_grad));
 }
 
 int THSTensor_isSparse(const Tensor tensor)
@@ -265,6 +297,11 @@ Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
     return new torch::Tensor(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
 }
 
+Tensor THSTensor_contiguous(const Tensor input)
+{
+    return new torch::Tensor(input->contiguous());
+}
+
 Tensor THSTensor_index_select(Tensor tensor, int64_t dimension, Tensor index)
 {
     return new torch::Tensor(tensor->index_select(dimension, *index));
@@ -315,6 +352,11 @@ void THSTensor_add_(const Tensor left, const int value, const Tensor right)
     left->add_(*right, value);
 }
 
+Tensor THSTensor_addS(const Tensor left, const Scalar right)
+{
+    return new torch::Tensor(left->add(*right));
+}
+
 Tensor THSTensor_addbmm(
     const Tensor mat,
     const Tensor batch1,
@@ -355,6 +397,11 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     return new torch::Tensor(batch1->bmm(*batch2));
 }
 
+Tensor THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max)
+{
+    return new torch::Tensor(input->clamp(*min, *max));
+}
+
 Tensor THSTensor_div(const Tensor left, const Tensor right)
 {
     return new torch::Tensor(left->div(*right));
@@ -365,12 +412,17 @@ void THSTensor_div_(const Tensor left, const Tensor right)
     left->div_(*right);
 }
 
-Tensor THSTensor_divS(const Tensor left, const int right)
+Tensor THSTensor_divS(const Tensor left, const Scalar right)
 {
-    return new torch::Tensor(left->div(right));
+    return new torch::Tensor(left->div(*right));
 }
 
 Tensor THSTensor_eq(const Tensor left, const Tensor right)
+{
+    return new torch::Tensor(left->eq(*right));
+}
+
+Tensor THSTensor_eqS(const Tensor left, const Scalar right)
 {
     return new torch::Tensor(left->eq(*right));
 }
@@ -418,9 +470,9 @@ void THSTensor_mul_(const Tensor left, const Tensor right)
     left->mul_(*right);
 }
 
-Tensor THSTensor_mulS(const Tensor tensor, const float scalar)
+Tensor THSTensor_mulS(const Tensor tensor, const Scalar scalar)
 {
-    return new torch::Tensor(tensor->mul(scalar));
+    return new torch::Tensor(tensor->mul(*scalar));
 }
 
 Tensor THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension)
@@ -428,9 +480,9 @@ Tensor THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool k
     return new torch::Tensor(tensor->norm(0, dimension, keep_dimension));
 }
 
-Tensor THSTensor_pow(const Tensor tensor, const float scalar)
+Tensor THSTensor_pow(const Tensor tensor, const Scalar scalar)
 {
-    return new torch::Tensor(tensor->pow(scalar));
+    return new torch::Tensor(tensor->pow(*scalar));
 }
 
 Tensor THSTensor_sigmoid(const Tensor tensor)
