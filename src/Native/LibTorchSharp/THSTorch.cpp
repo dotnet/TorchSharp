@@ -18,3 +18,38 @@ const char * THSTorch_get_and_reset_last_err()
     torch_last_err = nullptr;
     return tmp;
 }
+
+Scalar THSTorch_btos(char value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_stos(short value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_itos(int value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_ltos(long value)
+{
+    return new torch::Scalar(int64_t(value));
+}
+
+Scalar THSTorch_ftos(float value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_dtos(double value)
+{
+    return new torch::Scalar(value);
+}
+
+void THSThorch_dispose_scalar(Scalar scalar)
+{
+    delete scalar;
+}

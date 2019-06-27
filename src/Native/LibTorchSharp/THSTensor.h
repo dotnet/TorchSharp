@@ -112,17 +112,27 @@ EXPORT_API(void) THSTensor_dispose(const Tensor twrapper);
 // (see the note [Tensor versus Variable in C++] in Aten\core\Tensor.h)
 EXPORT_API(void *) THSTensor_data(const Tensor twrapper);
 
+// Returns the value of this tensor as a Scalar. 
+// This only works for tensors with one element.
+EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
+
 // Returns the sub-tensor identified by the index.
-EXPORT_API(Tensor) THSTensor_get1(const Tensor tensor, int64_t index);
+EXPORT_API(Tensor ) THSTensor_get1(const Tensor tensor, int64_t index);
 
-// REVIEW: I don't think that the equivalent API as above exists with two indices.
-// I don't know what three indices was supposed to do.
-//
-// // Returns the sub-tensor identified by the indexes.
-// EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2);
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2);
 
-// // Returns the sub-tensor identified by the indexes.
-// EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3);
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3);
+
+// Set the sub-tensor identified by the index to value.
+EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value);
 
 // Returns the inner type of the tensor.
 EXPORT_API(int8_t) THSTensor_type(const Tensor twrapper);
@@ -135,6 +145,12 @@ EXPORT_API(const char *) THSTensor_deviceType(const Tensor twrapper);
 
 // Returns whether the input tensor is sparse or not.
 EXPORT_API(int) THSTensor_isSparse(const Tensor twrapper);
+
+// Wheter the tensor requires grad or not.
+EXPORT_API(bool) THSTensor_requires_grad(const Tensor tensor);
+
+// Set the value for requires grad.
+EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
 // Returns whether the input tensor is a variable or not.
 EXPORT_API(int) THSTensor_isVariable(const Tensor twrapper);
@@ -167,6 +183,10 @@ EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 // All tensors must either have the same shape (except in the concatenating dimension) or be empty.
 // See https://pytorch.org/docs/stable/torch.html#torch.cat for examples.
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* twrapper, const int length, const int64_t dim);
+
+// Returns a contiguous tensor containing the same data as the input tensor. 
+// If the input tensor is contiguous, this function returns input.
+EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);
 
 // Returns a new tensor which indexes the input tensor along dimension dim using the entries in index.
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dimension, Tensor index);
@@ -204,6 +224,9 @@ EXPORT_API(Tensor) THSTensor_view(const Tensor twrapper, const int64_t * shape, 
 // Each element of the tensor other is multiplied by the scalar value 
 // and added to each element of the tensor input. The resulting tensor is returned.
 EXPORT_API(Tensor) THSTensor_add(const Tensor left, const int value, const Tensor right);
+
+// Each element of the tensor other is increased by the scalar value.
+EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right);
 
 // Each element of the tensor other is multiplied by the scalar value 
 // and added to each element of the tensor input. The resulting tensor is returned.
@@ -245,6 +268,9 @@ EXPORT_API(Tensor) THSTensor_baddbmm(
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2.
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
+// Clamp all elements in input into the range [ min, max ] and return a resulting tensor.
+EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
+
 // Returns left / right. 
 EXPORT_API(Tensor) THSTensor_div(const Tensor left, const Tensor right);
 
@@ -252,10 +278,13 @@ EXPORT_API(Tensor) THSTensor_div(const Tensor left, const Tensor right);
 EXPORT_API(void) THSTensor_div_(const Tensor left, const Tensor right);
 
 // Returns left / right. 
-EXPORT_API(Tensor) THSTensor_divS(const Tensor left, const int right);
+EXPORT_API(Tensor) THSTensor_divS(const Tensor left, const Scalar right);
 
 // Computes element-wise equality.
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
+
+// Computes element-wise equality between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_eqS(const Tensor left, const Scalar right);
 
 // True if two tensors have the same size and elements, False otherwise.
 EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
@@ -286,14 +315,14 @@ EXPORT_API(Tensor) THSTensor_mul(const Tensor left, const Tensor right);
 // This operation is in place.
 EXPORT_API(void) THSTensor_mul_(const Tensor left, const Tensor right);
 
+// Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
+EXPORT_API(Tensor) THSTensor_mulS(const Tensor twrapper, const Scalar scalar);
+
 // Returns the matrix norm or vector norm of a given tensor.
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension);
 
-// Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
-EXPORT_API(Tensor) THSTensor_mulS(const Tensor twrapper, const float scalar);
-
 // Takes the power of each element in input with exponent and returns a tensor with the result.
-EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const float scalar);
+EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
 
 // Returns a new tensor with the sigmoid of the elements of input.
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor twrapper);
