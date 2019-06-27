@@ -17,7 +17,7 @@ foreach (var type in TorchTypeDef.Types) {
     /// </summary>
     public class <#=type.Name#>Tensor
     {
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -36,7 +36,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -55,7 +55,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -74,7 +74,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-                [DllImport("libTorchSharp")]
+                [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -93,7 +93,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
@@ -112,7 +112,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar);
 
         public static TorchTensor From(<#=type.Storage#> scalar)
@@ -123,10 +123,10 @@ foreach (var type in TorchTypeDef.Types) {
 <#
 if (!type.IsLong) {
 #>
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
 <# } else { #>
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newLong(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type);
 <# } #>
 
@@ -166,7 +166,7 @@ if (!type.IsLong) {
             return From(rawArray, new long[] { (long)rawArray.Length });
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)

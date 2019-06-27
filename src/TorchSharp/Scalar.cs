@@ -21,7 +21,7 @@ namespace TorchSharp
             GC.SuppressFinalize(this);
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static void THSThorch_dispose_scalar(IntPtr handle);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace TorchSharp
 
     public static class ScalarExtensionMethods
     {
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_btos(byte hanvaluedle);
 
         public static Scalar ToScalar(this byte value)
@@ -47,7 +47,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_btos(value));
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_stos(short hanvaluedle);
 
         public static Scalar ToScalar(this short value)
@@ -55,7 +55,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_stos(value));
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_itos(int hanvaluedle);
 
         public static Scalar ToScalar(this int value)
@@ -63,7 +63,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_itos(value));
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_ltos(long hanvaluedle);
 
         public static Scalar ToScalar(this long value)
@@ -71,7 +71,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_ltos(value));
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_ftos(float hanvaluedle);
 
         public static Scalar ToScalar(this float value)
@@ -79,7 +79,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_ftos(value));
         }
 
-        [DllImport("libTorchSharp")]
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_dtos(double hanvaluedle);
 
         public static Scalar ToScalar(this double value)
