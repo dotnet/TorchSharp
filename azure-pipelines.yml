@@ -222,14 +222,9 @@ phases:
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
+      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages
       targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
  
-  #  - task: CopyFiles@3
-  #    displayName: Copy package assets to staging folder
-  #    inputs:
-  #      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-  #      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
   #  - script: |
   #      cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
@@ -240,6 +235,9 @@ phases:
   #    displayName: Dotnet Publish
 
   # TODO: Deal with symbols.
+  
+  - task: PublishBuildArtifacts@1
+    condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
   
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
