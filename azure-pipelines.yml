@@ -211,9 +211,7 @@ phases:
     _TeamName: DotNetCore
     _NuGetFeedUrl: https://www.myget.org/F/torchsharp-myget-feed/api/v2
   queue:
-    name: DotNetCore-Build
-    demands: 
-      - agent.os -equals Windows_NT
+    name: Hosted VS2017
   steps:
 
   # Download all agent packages from all previous phases
