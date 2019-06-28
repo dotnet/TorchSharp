@@ -75,9 +75,7 @@ phases:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   queue:
-    name: DotNet-Build
-    demands:
-    - agent.os -equals linux
+    name: Hosted Ubuntu 1604
     container: CentosContainer
   steps:
   # Only build native assets to avoid conflicts.
@@ -101,9 +99,7 @@ phases:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   queue:
-    name: DotNetCore-Build
-    demands:
-    - agent.os -equals Darwin
+    name: Hosted macOS
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
     displayName: Install build dependencies
@@ -131,9 +127,7 @@ phases:
     _UseEsrpSigning: true
     _TeamName: DotNetCore
   queue:
-    name: DotNetCore-Build
-    demands: 
-      - agent.os -equals Windows_NT
+    name: Hosted VS2017
   steps:
 
   # Only build native assets to avoid conflicts.
@@ -172,9 +166,7 @@ phases:
     _UseEsrpSigning: true
     _TeamName: DotNetCore
   queue:
-    name: DotNetCore-Build
-    demands: 
-      - agent.os -equals Windows_NT
+    name: Hosted VS2017
   steps:
 
   # Build both native and managed assets. 
