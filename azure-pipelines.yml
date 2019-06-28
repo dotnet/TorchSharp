@@ -172,14 +172,6 @@ phases:
   # Build both native and managed assets. 
   - script: ./build.cmd -$(BuildConfig)
     displayName: Build
-  
-  - task: MSBuild@1
-    displayName: Sign Windows_x64 Binaries
-    inputs:
-      solution: build/sign.proj
-      msbuildArguments: /p:SignType=$(_SignType)
-      msbuildVersion: 15.0
-    continueOnError: false
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Windows_x64 package assets
@@ -206,10 +198,6 @@ phases:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-    _SignType: real
-    _UseEsrpSigning: true
-    _TeamName: DotNetCore
-    _NuGetFeedUrl: https://www.myget.org/F/torchsharp-myget-feed/api/v2
   queue:
     name: Hosted VS2017
   steps:
@@ -231,10 +219,15 @@ phases:
   - script: ./build.cmd -buildPackages
     displayName: Create Packages
     
-  - script: |
-      cp $(Build.SourcesDirectory)/bin/obj/packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
-      rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
-    displayName: Copy Nugets in staging directory
+  - task: CopyFiles@3
+    displayName: Copy package assets to staging folder
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
+      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
+#   - script: |
+#       cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+#     # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
+#     displayName: Copy Nugets in staging directory
       
   - script: |
       dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
