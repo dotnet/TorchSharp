@@ -225,19 +225,19 @@ phases:
       sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
       targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
  
-#   - task: CopyFiles@3
-#     displayName: Copy package assets to staging folder
-#     inputs:
-#       sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-#       targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
-#   - script: |
-#       cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
-#     # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
-#     displayName: Copy Nugets in staging directory
-      
-#   - script: |
-#       dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-#     displayName: Dotnet Publish
+  #  - task: CopyFiles@3
+  #    displayName: Copy package assets to staging folder
+  #    inputs:
+  #      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
+  #      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #  - script: |
+  #      cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
+  #    displayName: Copy Nugets in staging directory
+
+  #  - script: |
+  #      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #    displayName: Dotnet Publish
 
   # TODO: Deal with symbols.
   
