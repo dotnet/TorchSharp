@@ -214,16 +214,16 @@ phases:
     displayName: Copy package assets to correct folder
     inputs:
       sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packages
+      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
   
   - script: ./build.cmd -buildPackages
     displayName: Create Packages
     
-  - task: CopyFiles@3
-    displayName: Copy package assets to staging folder
-    inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
+#   - task: CopyFiles@3
+#     displayName: Copy package assets to staging folder
+#     inputs:
+#       sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
+#       targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
 #   - script: |
 #       cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
 #     # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
