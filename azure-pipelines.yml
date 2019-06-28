@@ -204,10 +204,10 @@ phases:
 - phase: Package
 ################################################################################
   dependsOn:
-  - Linux
-  - MacOS
-  - Windows_x86
-  - Windows_x64
+  - Linux_Build
+  - MacOS_Build
+  - Windows_x86_Build
+  - Windows_x64_Build
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
