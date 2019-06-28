@@ -198,7 +198,7 @@ phases:
   dependsOn:
   - Linux_Build
   - MacOS_Build
-  - Windows_x86_Build
+  # - Windows_x86_Build
   - Windows_x64_Build
   variables:
     BuildConfig: Release
