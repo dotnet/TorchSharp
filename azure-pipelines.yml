@@ -216,14 +216,14 @@ phases:
       sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packages/
   
-  - script: ./build.cmd -buildPackages
+  - script: ./build.cmd -release -buildPackages
     displayName: Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages
-      targetFolder: $BUILD_ARTIFACTSTAGINGDIRECTORY
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages
+      targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
   #      cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
