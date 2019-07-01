@@ -280,6 +280,9 @@ EXPORT_API(void) THSTensor_div_(const Tensor left, const Tensor right);
 // Returns left / right. 
 EXPORT_API(Tensor) THSTensor_divS(const Tensor left, const Scalar right);
 
+// Returns left / right. 
+EXPORT_API(Tensor) THSTensor_divS2(const Scalar left, const Tensor right);
+
 // Computes element-wise equality.
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
 
@@ -327,11 +330,17 @@ EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
 // Returns a new tensor with the sigmoid of the elements of input.
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor twrapper);
 
-// Subtraction of right to left. 
+// Subtraction of right from left. 
 // The shape of right must be broadcastable with the shape of the left tensor.
 EXPORT_API(Tensor) THSTensor_sub(const Tensor left, const Tensor right);
 
-// Inplace subtraction of right to left. 
+// Subtraction of right scalar from left. 
+EXPORT_API(Tensor) THSTensor_subS(const Tensor left, const Scalar right);
+
+// Subtraction of right from left scalar. 
+EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
+
+// Inplace subtraction of right from left. 
 // The shape of right must be broadcastable with the shape of the left tensor.
 EXPORT_API(void) THSTensor_sub_(const Tensor left, const Tensor right);
 

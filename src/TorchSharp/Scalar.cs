@@ -12,6 +12,11 @@ namespace TorchSharp
             Handle = handle;
         }
 
+        public static implicit operator Scalar(double value)
+        {
+            return value.ToScalar();
+        }
+
         /// <summary>
         ///   Releases the storage.
         /// </summary>

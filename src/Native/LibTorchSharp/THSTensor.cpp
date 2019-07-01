@@ -417,6 +417,11 @@ Tensor THSTensor_divS(const Tensor left, const Scalar right)
     return new torch::Tensor(left->div(*right));
 }
 
+Tensor THSTensor_divS2(const Scalar left, const Tensor right)
+{
+	return new torch::Tensor(at::empty(right->sizes(), right->options()).fill_(*left).div_(*right));
+}
+
 Tensor THSTensor_eq(const Tensor left, const Tensor right)
 {
     return new torch::Tensor(left->eq(*right));
@@ -493,6 +498,16 @@ Tensor THSTensor_sigmoid(const Tensor tensor)
 Tensor THSTensor_sub(const Tensor left, const Tensor right)
 {
     return new torch::Tensor(left->sub(*right));
+}
+
+Tensor THSTensor_subS(const Tensor left, const Scalar right)
+{
+	return new torch::Tensor(left->sub(*right));
+}
+
+Tensor THSTensor_subS2(const Scalar left, const Tensor right)
+{
+	return new torch::Tensor(at::empty(right->sizes(), right->options()).fill_(*left).sub_(*right));
 }
 
 void THSTensor_sub_(const Tensor left, const Tensor right)

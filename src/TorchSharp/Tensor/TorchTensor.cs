@@ -703,6 +703,11 @@ namespace TorchSharp.Tensor
             return left.Add(right);
         }
 
+        public static TorchTensor operator +(Scalar left, TorchTensor right)
+        {
+            return right.Add(left);
+        }
+
         public static TorchTensor operator *(TorchTensor left, TorchTensor right)
         {
             return left.Mul(right);
@@ -713,9 +718,30 @@ namespace TorchSharp.Tensor
             return left.Mul(right);
         }
 
+        public static TorchTensor operator *(Scalar left, TorchTensor right)
+        {
+            return right.Mul(left);
+        }
+
         public static TorchTensor operator -(TorchTensor left, TorchTensor right)
         {
             return left.Sub(right);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_subS(IntPtr src, IntPtr trg);
+
+        public static TorchTensor operator -(TorchTensor left, Scalar right)
+        {
+            return new TorchTensor(THSTensor_subS(left.Handle, right.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_subS2(IntPtr src, IntPtr trg);
+
+        public static TorchTensor operator -(Scalar left, TorchTensor right)
+        {
+            return new TorchTensor(THSTensor_subS2(left.Handle, right.Handle));
         }
 
         public static TorchTensor operator /(TorchTensor left, TorchTensor right)
@@ -726,6 +752,14 @@ namespace TorchSharp.Tensor
         public static TorchTensor operator /(TorchTensor left, Scalar right)
         {
             return left.Div(right);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_divS2(IntPtr src, IntPtr trg);
+
+        public static TorchTensor operator /(Scalar left, TorchTensor right)
+        {
+            return new TorchTensor(THSTensor_divS2(left.Handle, right.Handle));
         }
 
         /// <summary>

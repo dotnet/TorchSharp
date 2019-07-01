@@ -454,17 +454,17 @@ namespace TorchSharp.Test
             }
         }
 
-        # if DEBUG
+#if DEBUG
         [Fact(Skip = "Not working on Mac and Ubuntu")]
         public void TestErrorHandling()
         {
-            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f}))
+            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f }))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
                 Assert.Throws<SEHException>(() => NN.LossFunction.PoissonNLL()(input, target));
             }
         }
-        #endif
+#endif
 
         [Fact]
         public void TestZeroGrad()
@@ -661,6 +661,66 @@ namespace TorchSharp.Test
                 for (int j = 0; j < 100; j++)
                 {
                     Assert.Equal(0, xdata[i + j]);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestOperatorOverloads()
+        {
+            var x = FloatTensor.Ones(new long[] { 100, 100 });
+
+            // scalar-tensor operations
+            TestOneTensor(a => a + 0.5f, a => a + 0.5f);
+            TestOneTensor(a => 0.5f + a, a => 0.5f + a);
+            TestOneTensor(a => a - 0.5f, a => a - 0.5f);
+            TestOneTensor(a => 0.5f - a, a => 0.5f - a);
+            TestOneTensor(a => a * 0.5f, a => a * 0.5f);
+            TestOneTensor(a => 0.5f * a, a => 0.5f * a);
+            TestOneTensor(a => a / 0.5f, a => a / 0.5f);
+            TestOneTensor(a => 0.5f / a, a => 0.5f / a);
+
+            // tensor-tensor operations
+            TestTwoTensor((a, b) => a + b, (a, b) => a + b);
+            TestTwoTensor((a, b) => a - b, (a, b) => a - b);
+            TestTwoTensor((a, b) => a * b, (a, b) => a * b);
+            TestTwoTensor((a, b) => a / b, (a, b) => a / b);
+        }
+
+        private void TestOneTensor(Func<TorchTensor, TorchTensor> tensorFunc, 
+            Func<float, float> floatFunc)
+        {
+            var x = FloatTensor.Ones(new long[] { 10, 10 });
+            var y = tensorFunc(x);
+
+            var xdata = x.Data<float>();
+            var ydata = y.Data<float>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(ydata[i + j], floatFunc(xdata[i + j]));
+                }
+            }
+        }
+
+        private void TestTwoTensor(Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Func<float, float, float> floatFunc)
+        {
+            var x = FloatTensor.Ones(new long[] { 10, 10 });
+            var y = FloatTensor.Ones(new long[] { 10, 10 }) + 2;
+            var z = tensorFunc(x, y);
+
+            var xdata = x.Data<float>();
+            var ydata = y.Data<float>();
+            var zdata = z.Data<float>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(zdata[i + j], floatFunc(xdata[i + j], ydata[i + j]));
                 }
             }
         }
