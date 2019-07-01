@@ -330,9 +330,4 @@ ASALocalRun/
 *.binlog
 # Ignore external test datasets.
 /test/data/external/
-/src/Native/out/build/x64-Debug/.cmake/api/v1/query/client-MicrosoftVS/query.json
-/src/Native/out/build/x64-Debug/CMakeFiles/3.14.19050301-MSVC_2/CompilerIdC/CMakeCCompilerId.c
-/src/Native/out/build/x64-Debug/CMakeFiles/3.14.19050301-MSVC_2/CompilerIdC
-/src/Native/out/build/x64-Debug/CMakeFiles
-/src/Native/out/build/x64-Debug
-/src/Examples/TensorMaths.cs
+/src/Native/out/build/
