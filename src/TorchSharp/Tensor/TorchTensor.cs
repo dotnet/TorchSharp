@@ -841,8 +841,17 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr src, int len, long dim);
 
-        public static TorchTensor Cat<T>(this TorchTensor[] tensors, long dimension)
+        public static TorchTensor Cat(this TorchTensor[] tensors, long dimension)
         {
+            if (tensors.Length == 0)
+            {
+                throw new ArgumentException(nameof(tensors));
+            }
+            if (tensors.Length == 1)
+            {
+                return tensors[0];
+            }
+
             var parray = new PinnedArray<IntPtr>();
             IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 

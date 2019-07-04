@@ -12,7 +12,7 @@ namespace TorchSharp.NN
         {
         }
 
-        public Sequential(params Module[] modules) : base(IntPtr.Zero)
+        public Sequential(IEnumerable<Module> modules) : base(IntPtr.Zero)
         {
             foreach (var module in modules)
             {
