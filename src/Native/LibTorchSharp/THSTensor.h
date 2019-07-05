@@ -184,6 +184,9 @@ EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 // See https://pytorch.org/docs/stable/torch.html#torch.cat for examples.
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* twrapper, const int length, const int64_t dim);
 
+// Clone the input tensor.
+EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
+
 // Returns a contiguous tensor containing the same data as the input tensor. 
 // If the input tensor is contiguous, this function returns input.
 EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);

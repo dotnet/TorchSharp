@@ -347,6 +347,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_clone(IntPtr handle);
+
+        public TorchTensor Clone()
+        {
+            return new TorchTensor(THSTensor_clone(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_contiguous(IntPtr handle);
 
         public TorchTensor Contiguous()
@@ -774,33 +782,69 @@ namespace TorchSharp.Tensor
 
     public static class TensorExtensionMethods
     {
-        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions)
+        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false)
         {
             switch (true)
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        return ByteTensor.From(rawArray as byte[], dimensions);
+                        var result = ByteTensor.From(rawArray as byte[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        return ShortTensor.From(rawArray as short[], dimensions);
+                        var result = ShortTensor.From(rawArray as short[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        return IntTensor.From(rawArray as int[], dimensions);
+                        var result = IntTensor.From(rawArray as int[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        return LongTensor.From(rawArray as long[], dimensions);
+                        var result = LongTensor.From(rawArray as long[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        return DoubleTensor.From(rawArray as double[], dimensions);
+                        var result = DoubleTensor.From(rawArray as double[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return FloatTensor.From(rawArray as float[], dimensions);
+                        var result =  FloatTensor.From(rawArray as float[], dimensions);
+
+                        if (doCopy)
+                        {
+                            return result.Clone();
+                        }
+                        return result;
                     }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }

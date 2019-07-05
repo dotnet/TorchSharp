@@ -297,6 +297,11 @@ Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
     return new torch::Tensor(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
 }
 
+Tensor THSTensor_clone(const Tensor input)
+{
+    return new torch::Tensor(input->clone());
+}
+
 Tensor THSTensor_contiguous(const Tensor input)
 {
     return new torch::Tensor(input->contiguous());
