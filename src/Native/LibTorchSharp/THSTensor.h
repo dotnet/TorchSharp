@@ -9,6 +9,16 @@
 
 // API.
 
+// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with common
+// difference step starting from start.
+EXPORT_API(Tensor) THSTensor_arange(
+	const Scalar start,
+	const Scalar end,
+	const Scalar step,
+	const int8_t scalar_type,
+	const char * device,
+	const bool requires_grad);
+
 //  Creates  a variable tensor containing a tensor composed of zeros.
 EXPORT_API(Tensor) THSTensor_zeros(
     const int64_t * sizes,
@@ -286,14 +296,68 @@ EXPORT_API(Tensor) THSTensor_divS2(const Scalar left, const Tensor right);
 // Computes element-wise equality.
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
 
+// Computes element-wise equality in place.
+EXPORT_API(void) THSTensor_eq_(const Tensor left, const Tensor right);
+
 // Computes element-wise equality between a tensor and a scalar.
 EXPORT_API(Tensor) THSTensor_eqS(const Tensor left, const Scalar right);
+
+// Computes element-wise equality between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_eqS_(const Tensor left, const Scalar right);
 
 // True if two tensors have the same size and elements, False otherwise.
 EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
 
 // Returns a new tensor with the exponential of the elements of the input tensor input.
 EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
+
+// Computes element-wise greater than or equal to.
+EXPORT_API(Tensor) THSTensor_ge(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than  or equal to in place.
+EXPORT_API(void) THSTensor_ge_(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than or equal to between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_geS(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than or equal to between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_geS_(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than.
+EXPORT_API(Tensor) THSTensor_gt(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than in place.
+EXPORT_API(void) THSTensor_gt_(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_gtS(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_gtS_(const Tensor left, const Scalar right);
+
+// Computes element-wise less than or equal to.
+EXPORT_API(Tensor) THSTensor_le(const Tensor left, const Tensor right);
+
+// Computes element-wise less than or equal to in place.
+EXPORT_API(void) THSTensor_le_(const Tensor left, const Tensor right);
+
+// Computes element-wise less than or equal to between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_leS(const Tensor left, const Scalar right);
+
+// Computes element-wise less than or equal to between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_leS_(const Tensor left, const Scalar right);
+
+// Computes element-wise less than.
+EXPORT_API(Tensor) THSTensor_lt(const Tensor left, const Tensor right);
+
+// Computes element-wise less than in place.
+EXPORT_API(void) THSTensor_lt_(const Tensor left, const Tensor right);
+
+// Computes element-wise less than between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_ltS(const Tensor left, const Scalar right);
+
+// Computes element-wise less than between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_ltS_(const Tensor left, const Scalar right);
 
 // Matrix product of two tensors.
 // The behavior depends on the dimensionality of the tensors.
@@ -314,18 +378,45 @@ EXPORT_API(Tensor) THSTensor_mm(const Tensor left, const Tensor right);
 // The resulting tensor is returned.
 EXPORT_API(Tensor) THSTensor_mul(const Tensor left, const Tensor right);
 
-// Each element of the left tensor is multiplied by each element of the rigth Tensor. 
+// Each element of the left tensor is multiplied by each element of the right Tensor. 
 // This operation is in place.
 EXPORT_API(void) THSTensor_mul_(const Tensor left, const Tensor right);
 
 // Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
 EXPORT_API(Tensor) THSTensor_mulS(const Tensor twrapper, const Scalar scalar);
 
+// Computes element-wise non-equality.
+EXPORT_API(Tensor) THSTensor_ne(const Tensor left, const Tensor right);
+
+// Computes element-wise non-equality in place.
+EXPORT_API(void) THSTensor_ne_(const Tensor left, const Tensor right);
+
+// Computes element-wise non-equality between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_neS(const Tensor left, const Scalar right);
+
+// Computes element-wise non-equality between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_neS_(const Tensor left, const Scalar right);
+
 // Returns the matrix norm or vector norm of a given tensor.
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension);
 
 // Takes the power of each element in input with exponent and returns a tensor with the result.
 EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
+
+// Computes remainder.
+EXPORT_API(Tensor) THSTensor_remainder(const Tensor left, const Tensor right);
+
+// Computes remainder in place.
+EXPORT_API(void) THSTensor_remainder_(const Tensor left, const Tensor right);
+
+// Computes remainder between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_remainderS(const Tensor left, const Scalar right);
+
+// Computes remainder between a tensor and a scalar in place.
+EXPORT_API(void) THSTensor_remainderS_(const Tensor left, const Scalar right);
+
+// Computes remainder between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_remainderS2(const Scalar left, const Tensor right);
 
 // Returns a new tensor with the sigmoid of the elements of input.
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor twrapper);
@@ -349,3 +440,6 @@ EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper);
 
 // Returns the sum of all elements over the input dimensions in the input tensor.
 EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension);
+
+// Returns a tensor with a dimension of size 1 inserted at the specified position.
+EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
