@@ -1,5 +1,8 @@
 #include "THSTensor.h"
 
+#include <iostream>
+#include <fstream>
+
 Tensor THSTensor_zeros(
     const int64_t * sizes,
     const int length,
@@ -51,10 +54,13 @@ Tensor THSTensor_new(
     const int szlength, 
     const int64_t * strides, 
     const int stlength, 
-    int8_t scalar_type)
+    int8_t scalar_type,
+    const bool requires_grad)
 {
     auto options = at::TensorOptions()
-        .dtype(at::ScalarType(scalar_type));
+        .dtype(at::ScalarType(scalar_type))
+        .is_variable(true)
+        .requires_grad(requires_grad);
 
     return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), at::IntList(strides, stlength), options));
 }
@@ -65,39 +71,54 @@ Tensor THSTensor_newLong(
     const int szlength,
     const int64_t * strides,
     const int stlength,
-    int8_t scalar_type)
+    const bool requires_grad)
 {
-    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), at::IntList(strides, stlength), at::kLong));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(at::kLong))
+        .is_variable(true)
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), at::IntList(strides, stlength), options));
 }
 
-Tensor THSTensor_newByteScalar(char data)
+Tensor THSTensor_newByteScalar(char data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
-Tensor THSTensor_newShortScalar(short data)
+Tensor THSTensor_newShortScalar(short data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
-Tensor THSTensor_newIntScalar(int data)
+Tensor THSTensor_newIntScalar(int data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    Tensor result;
+    try {
+        result = new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    }
+    catch (c10::Error e)
+    {
+        std::ofstream log;
+        log.open("log.txt");
+        log << e.what();
+        log.close();
+    }
+    return result;
 }
 
-Tensor THSTensor_newLongScalar(int64_t data)
+Tensor THSTensor_newLongScalar(int64_t data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
-Tensor THSTensor_newDoubleScalar(double data)
+Tensor THSTensor_newDoubleScalar(double data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
-Tensor THSTensor_newFloatScalar(float data)
+Tensor THSTensor_newFloatScalar(float data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data));
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
 Tensor THSTensor_rand(
@@ -243,7 +264,19 @@ bool THSTensor_requires_grad(const Tensor tensor)
 
 Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
 {
-    return new torch::Tensor(tensor->set_requires_grad(requires_grad));
+    Tensor result;
+    try {
+        result = new torch::Tensor(tensor->set_requires_grad(requires_grad));
+    }
+    catch (c10::Error e)
+    {
+        std::ofstream log;
+        log.open("log.txt");
+        log << e.what();
+        log.close();
+    }
+
+    return result;
 }
 
 int THSTensor_isSparse(const Tensor tensor)
@@ -352,9 +385,9 @@ Tensor THSTensor_add(const Tensor left, const int value, const Tensor right)
     return new torch::Tensor(left->add(*right, value));
 }
 
-void THSTensor_add_(const Tensor left, const int value, const Tensor right)
+Tensor THSTensor_add_(const Tensor left, const int value, const Tensor right)
 {
-    left->add_(*right, value);
+    return new torch::Tensor(left->add_(*right, value));
 }
 
 Tensor THSTensor_addS(const Tensor left, const Scalar right)
@@ -394,7 +427,18 @@ Tensor THSTensor_baddbmm(
     const float beta,
     const float alpha)
 {
-    return new torch::Tensor(batch1->baddbmm(*batch2, *mat, beta, alpha));
+    Tensor result;
+    try {
+    result = new torch::Tensor(mat->baddbmm(*batch1, *batch2, beta, alpha));
+    }
+    catch (c10::Error e)
+    {
+        std::ofstream log;
+        log.open("log.txt");
+        log << e.what();
+        log.close();
+    }
+    return result;
 }
 
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
@@ -442,9 +486,26 @@ Tensor THSTensor_exp(const Tensor tensor)
     return new torch::Tensor(tensor->exp());
 }
 
+Tensor THSTensor_geS(const Tensor tensor, const Scalar scalar)
+{
+    return new torch::Tensor(tensor->ge(*scalar));
+}
+
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
-    return new torch::Tensor(left->matmul(*right));
+    Tensor result;
+    try {
+        result =  new torch::Tensor(left->matmul(*right));
+    }
+    catch (c10::Error e)
+    {
+        std::ofstream log;
+        log.open("log.txt");
+        log << e.what();
+        log.close();
+    }
+
+    return result;
 }
 
 void THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim)

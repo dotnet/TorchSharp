@@ -40,7 +40,8 @@ EXPORT_API(Tensor) THSTensor_new(
     const int szlength,
     const int64_t * strides,
     const int stlength,
-    int8_t scalar_type);
+    int8_t scalar_type,
+    const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newLong(
     int64_t * data,
@@ -48,25 +49,25 @@ EXPORT_API(Tensor) THSTensor_newLong(
     const int szlength,
     const int64_t * strides,
     const int stlength,
-    int8_t scalar_type);
+    const bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newByteScalar(char data);
+EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newShortScalar(short data);
+EXPORT_API(Tensor) THSTensor_newShortScalar(short data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newIntScalar(int data);
+EXPORT_API(Tensor) THSTensor_newIntScalar(int data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newLongScalar(int64_t data);
+EXPORT_API(Tensor) THSTensor_newLongScalar(int64_t data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newDoubleScalar(double data);
+EXPORT_API(Tensor) THSTensor_newDoubleScalar(double data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newFloatScalar(float data);
+EXPORT_API(Tensor) THSTensor_newFloatScalar(float data, bool requires_grad);
 
 // Returns a variable tensor filled with random numbers from a uniform distribution within [0, 1).
 EXPORT_API(Tensor) THSTensor_rand(
@@ -234,7 +235,7 @@ EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right);
 // Each element of the tensor other is multiplied by the scalar value 
 // and added to each element of the tensor input. The resulting tensor is returned.
 // This operation is in place.
-EXPORT_API(void) THSTensor_add_(const Tensor left, const int value, const Tensor right);
+EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const int value, const Tensor right);
 
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step 
 // (all matrix multiplications get accumulated along the first dimension). mat is added to the final result.
@@ -271,7 +272,7 @@ EXPORT_API(Tensor) THSTensor_baddbmm(
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2.
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
-// Clamp all elements in input into the range [ min, max ] and return a resulting tensor.
+// Clamp all elements in input into the range [ min, max ] and return the resulting tensor.
 EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
 
 // Returns left / right. 
@@ -294,6 +295,9 @@ EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
 
 // Returns a new tensor with the exponential of the elements of the input tensor input.
 EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
+
+// Computes element-wise >= between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_geS(const Tensor tensor, const Scalar scalar);
 
 // Matrix product of two tensors.
 // The behavior depends on the dimensionality of the tensors.

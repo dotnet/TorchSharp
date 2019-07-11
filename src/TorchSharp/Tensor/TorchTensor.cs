@@ -455,11 +455,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+        private static extern IntPtr THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
 
-        public void AddInPlace(TorchTensor target, int scalar = 1)
+        public TorchTensor AddInPlace(TorchTensor target, int scalar = 1)
         {
-            THSTensor_add_(handle, scalar, target.Handle);
+            return new TorchTensor(THSTensor_add_(handle, scalar, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -491,7 +491,7 @@ namespace TorchSharp.Tensor
 
         public TorchTensor Baddbmm(TorchTensor batch2, TorchTensor mat, float beta = 1, float alpha = 1)
         {
-            return new TorchTensor(THSTensor_addbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
+            return new TorchTensor(THSTensor_baddbmm(handle, batch2.Handle, mat.Handle, beta, alpha));
         }
 
         [DllImport("LibTorchSharp")]
@@ -575,6 +575,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_geS(IntPtr src, IntPtr trg);
+
+        public TorchTensor Ge(Scalar target)
+        {
+            return new TorchTensor(THSTensor_geS(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_matmul(IntPtr src, IntPtr target);
 
         public TorchTensor MatMul(TorchTensor target)
@@ -585,7 +593,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_max(IntPtr src, AllocatePinnedArray allocator, long dimension, bool keep_dim);
 
-        public (TorchTensor vaues, TorchTensor indexes) Max(long dimension, bool keepDim = false)
+        public (TorchTensor values, TorchTensor indexes) Max(long dimension, bool keepDim = false)
         {
             IntPtr[] ptrArray;
 
@@ -782,13 +790,13 @@ namespace TorchSharp.Tensor
 
     public static class TensorExtensionMethods
     {
-        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false)
+        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
             switch (true)
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        var result = ByteTensor.From(rawArray as byte[], dimensions);
+                        var result = ByteTensor.From(rawArray as byte[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -798,7 +806,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        var result = ShortTensor.From(rawArray as short[], dimensions);
+                        var result = ShortTensor.From(rawArray as short[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -808,7 +816,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        var result = IntTensor.From(rawArray as int[], dimensions);
+                        var result = IntTensor.From(rawArray as int[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -818,7 +826,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        var result = LongTensor.From(rawArray as long[], dimensions);
+                        var result = LongTensor.From(rawArray as long[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -828,7 +836,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        var result = DoubleTensor.From(rawArray as double[], dimensions);
+                        var result = DoubleTensor.From(rawArray as double[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -838,7 +846,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        var result =  FloatTensor.From(rawArray as float[], dimensions);
+                        var result =  FloatTensor.From(rawArray as float[], dimensions, requiresGrad);
 
                         if (doCopy)
                         {
@@ -850,33 +858,38 @@ namespace TorchSharp.Tensor
             }
         }
 
-        public static TorchTensor ToTorchTensor<T>(this T scalar)
+        public static TorchTensor ToTorchTensor<T>(this T scalar, bool requiresGrad = false)
         {
+            if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double))
+            {
+                throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");
+            }
+
             switch (true)
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        return ByteTensor.From((byte)(object)scalar);
+                        return ByteTensor.From((byte)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        return ShortTensor.From((short)(object)scalar);
+                        return ShortTensor.From((short)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        return IntTensor.From((int)(object)scalar);
+                        return IntTensor.From((int)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        return LongTensor.From((long)(object)scalar);
+                        return LongTensor.From((long)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        return DoubleTensor.From((double)(object)scalar);
+                        return DoubleTensor.From((double)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return FloatTensor.From((float)(object)scalar);
+                        return FloatTensor.From((float)(object)scalar, requiresGrad);
                     }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
