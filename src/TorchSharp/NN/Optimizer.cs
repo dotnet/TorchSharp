@@ -93,7 +93,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
 
-        public static Optimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum)
+        public static Optimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0)
         {
             var parray = new PinnedArray<IntPtr>();
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
