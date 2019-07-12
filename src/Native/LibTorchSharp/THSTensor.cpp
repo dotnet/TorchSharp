@@ -1,8 +1,5 @@
 #include "THSTensor.h"
 
-#include <iostream>
-#include <fstream>
-
 Tensor THSTensor_zeros(
     const int64_t * sizes,
     const int length,
@@ -92,18 +89,7 @@ Tensor THSTensor_newShortScalar(short data, bool requires_grad)
 
 Tensor THSTensor_newIntScalar(int data, bool requires_grad)
 {
-    Tensor result;
-    try {
-        result = new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
-    }
-    catch (c10::Error e)
-    {
-        std::ofstream log;
-        log.open("log.txt");
-        log << e.what();
-        log.close();
-    }
-    return result;
+    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
 }
 
 Tensor THSTensor_newLongScalar(int64_t data, bool requires_grad)
@@ -264,19 +250,7 @@ bool THSTensor_requires_grad(const Tensor tensor)
 
 Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
 {
-    Tensor result;
-    try {
-        result = new torch::Tensor(tensor->set_requires_grad(requires_grad));
-    }
-    catch (c10::Error e)
-    {
-        std::ofstream log;
-        log.open("log.txt");
-        log << e.what();
-        log.close();
-    }
-
-    return result;
+   return new torch::Tensor(tensor->set_requires_grad(requires_grad));
 }
 
 int THSTensor_isSparse(const Tensor tensor)
@@ -427,18 +401,7 @@ Tensor THSTensor_baddbmm(
     const float beta,
     const float alpha)
 {
-    Tensor result;
-    try {
-    result = new torch::Tensor(mat->baddbmm(*batch1, *batch2, beta, alpha));
-    }
-    catch (c10::Error e)
-    {
-        std::ofstream log;
-        log.open("log.txt");
-        log << e.what();
-        log.close();
-    }
-    return result;
+    return new torch::Tensor(mat->baddbmm(*batch1, *batch2, beta, alpha));
 }
 
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
@@ -493,19 +456,7 @@ Tensor THSTensor_geS(const Tensor tensor, const Scalar scalar)
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
-    Tensor result;
-    try {
-        result =  new torch::Tensor(left->matmul(*right));
-    }
-    catch (c10::Error e)
-    {
-        std::ofstream log;
-        log.open("log.txt");
-        log << e.what();
-        log.close();
-    }
-
-    return result;
+    return  new torch::Tensor(left->matmul(*right));
 }
 
 void THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim)
