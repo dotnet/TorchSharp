@@ -231,6 +231,17 @@ void THSNN_optimizerZeroGrad(const Optimizer optimizer)
     (*optimizer)->zero_grad();
 }
 
+void THSNN_optimizer_get_parameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length))
+{
+    auto parameters = (*optimizer)->parameters();
+    Tensor * result = allocator(parameters.size());
+
+    for (int i = 0; i < parameters.size(); i++)
+    {
+        result[i] = new torch::Tensor(parameters[i]);
+    }
+}
+
 Tensor THSNN_lossBCE(
     const Tensor input, 
     const Tensor target, 
