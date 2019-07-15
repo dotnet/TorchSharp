@@ -112,6 +112,9 @@ EXPORT_API(void) THSNN_moduleZeroGrad(const NNModule module);
 // Zero-ing the grad parameters for the input optimizer.
 EXPORT_API(void) THSNN_optimizerZeroGrad(const Optimizer optimizer);
 
+// Fetches the parameters for the optimizer.
+EXPORT_API(void) THSNN_optimizer_get_parameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
+
 // Computes the Binary Cross Entropy (BCE) loss between input and target tensors, using a specified reduction type
 // and weights if classes are unbalanced.
 // See https://pytorch.org/docs/stable/nn.html#torch.nn.BCELoss for further details.
