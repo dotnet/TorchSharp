@@ -219,6 +219,9 @@ phases:
   - script: ./build.cmd -release -buildPackages
     displayName: Create Packages
 
+  - script: rm $(Build.SourcesDirectory)/bin/packages/*.symbols.nupkg
+    displayName: Remove symbols nuget
+
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
