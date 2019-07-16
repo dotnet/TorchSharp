@@ -148,7 +148,7 @@ EXPORT_API(const char *) THSTensor_deviceType(const Tensor twrapper);
 EXPORT_API(int) THSTensor_isSparse(const Tensor twrapper);
 
 // Wheter the tensor requires grad or not.
-EXPORT_API(bool) THSTensor_requires_grad(const Tensor tensor);
+EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 // Set the value for requires grad.
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);

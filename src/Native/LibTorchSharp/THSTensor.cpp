@@ -243,7 +243,7 @@ const char* THSTensor_deviceType(const Tensor tensor)
     return make_sharable_string(device_type);
 }
 
-bool THSTensor_requires_grad(const Tensor tensor)
+int THSTensor_requires_grad(const Tensor tensor)
 {
     return tensor->requires_grad();
 }
