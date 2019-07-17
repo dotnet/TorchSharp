@@ -328,6 +328,11 @@ Tensor THSTensor_clone(const Tensor input)
     return new torch::Tensor(input->clone());
 }
 
+Tensor THSTensor_clone(const Tensor input)
+{
+    return new torch::Tensor(input->clone());
+}
+
 Tensor THSTensor_contiguous(const Tensor input)
 {
 	return new torch::Tensor(input->contiguous());
@@ -601,6 +606,11 @@ Tensor THSTensor_ltS(const Tensor left, const Scalar right)
 void THSTensor_ltS_(const Tensor left, const Scalar right)
 {
 	left->lt_(*right);
+}
+
+Tensor THSTensor_geS(const Tensor tensor, const Scalar scalar)
+{
+    return new torch::Tensor(tensor->ge(*scalar));
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
