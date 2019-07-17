@@ -11,13 +11,6 @@ namespace TorchSharp.Test
     public class TorchSharp
     {
         [Fact]
-        public void APITest()
-        {
-            var ep = DoubleTensor.RandomN(new long[] { 10, 10 });
-            var a = ep.Exp() + 7;
-        }
-
-        [Fact]
         public void CreateFloatTensorOnes()
         {
             string path = Directory.GetCurrentDirectory();

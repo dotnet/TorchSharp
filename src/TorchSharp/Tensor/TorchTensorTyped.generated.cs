@@ -14,7 +14,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(byte start, byte stop, byte step, string device = "cpu", bool requiresGrad = false)
@@ -187,7 +187,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(short start, short stop, short step, string device = "cpu", bool requiresGrad = false)
@@ -360,7 +360,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(int start, int stop, int step, string device = "cpu", bool requiresGrad = false)
@@ -533,7 +533,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(long start, long stop, long step, string device = "cpu", bool requiresGrad = false)
@@ -706,7 +706,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(double start, double stop, double step, string device = "cpu", bool requiresGrad = false)
@@ -879,7 +879,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(float start, float stop, float step, string device = "cpu", bool requiresGrad = false)

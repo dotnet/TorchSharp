@@ -21,7 +21,7 @@ foreach (var type in TorchTypeDef.Types) {
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
         static public TorchTensor Arange(<#=type.Storage#> start, <#=type.Storage#> stop, <#=type.Storage#> step, string device = "cpu", bool requiresGrad = false)
