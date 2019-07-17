@@ -9,50 +9,6 @@
 
 // API.
 
-typedef void (*FreeMemory)(void*);
-
-typedef void(__stdcall* AllocateFree)(size_t nBytes, void**, FreeMemory*);
-
-struct ManagedAllocator final : c10::Allocator 
-{	
-	AllocateFree _allocateFree;
-	
-	ManagedAllocator(AllocateFree& allocateFree)
-	{
-		std::cout << "Hit!";
-		_allocateFree = allocateFree;
-	}
-	
-	~ManagedAllocator() override {}
-
-	at::DataPtr allocate(size_t nbytes) const override {
-
-		std::cout << "Hit!!";
-		void* data;
-		void(*freeMemory)(void*);
-		
-		_allocateFree(nbytes, &data, &freeMemory);
-
-		return { data, data, freeMemory, at::Device(at::DeviceType::CPU) };
-	}
-};
-
-EXPORT_API(ManagedAllocator*) THSCreateManagedAllocator(void __stdcall allocate(size_t, void** data, FreeMemory* freeMemory))
-{
-	return new ManagedAllocator(allocate);
-}
-
-EXPORT_API(c10::Allocator*) THSGetAllocator()
-{
-	return caffe2::GetAllocator(c10::DeviceType::CPU);
-}
-
-EXPORT_API(void) THSSetAllocator(c10::Allocator* allocator)
-{
-	//std::cout << "Set allocator";
-	caffe2::SetAllocator(c10::DeviceType::CPU, allocator);
-}
-
 // Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with common
 // difference step starting from start.
 EXPORT_API(Tensor) THSTensor_arange(
