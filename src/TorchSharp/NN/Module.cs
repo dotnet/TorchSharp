@@ -205,7 +205,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         private static extern void THSNN_train(HType module);
 
-        public void Train()
+        public virtual void Train()
         {
             THSNN_train(handle);
         }
@@ -213,7 +213,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         private static extern void THSNN_eval(HType module);
 
-        public void Eval()
+        public virtual void Eval()
         {
             THSNN_eval(handle);
         }
@@ -268,7 +268,7 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         private static extern void THSNN_get_parameters(HType module, AllocatePinnedArray allocator);
 
-        public virtual IEnumerable<TorchTensor > Parameters()
+        public virtual IEnumerable<TorchTensor> Parameters()
         {
             // If module has no children, fetch the paramters from pytorch
             if (Modules.Any())

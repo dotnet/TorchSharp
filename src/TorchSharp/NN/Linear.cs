@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -55,6 +56,19 @@ namespace TorchSharp.NN
                 return new TorchTensor(THSNN_linear_get_weight(handle));
             }
             set { THSNN_linear_set_weight(handle, value.Handle); }
+        }
+
+        public override IEnumerable<TorchTensor> Parameters()
+        {
+            var parameters = new List<TorchTensor>();
+
+            parameters.Add(Weight);
+
+            if (WithBias)
+            {
+                parameters.Add(Bias.Value);
+            }
+            return parameters;
         }
 
         [DllImport("LibTorchSharp")]

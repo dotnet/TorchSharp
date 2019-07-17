@@ -143,6 +143,21 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void TestScalarToTensor()
+        {
+            Assert.Throws<ArgumentException>(() => 1.ToTorchTensor(requiresGrad: true));
+        }
+
+        [Fact]
+        public void TestScalarToTensor2()
+        {
+            using (var tensor = 1.ToTorchTensor())
+            {
+                Assert.Equal(1, tensor.DataItem<int>());
+            }
+        }
+
+        [Fact]
         public void InitUniform()
         {
             using (TorchTensor tensor = FloatTensor.Zeros(new long[] { 2, 2 }))
@@ -386,21 +401,59 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void TestLinearEditBias()
+        {
+            var lin = NN.Module.Linear(1000, 100, true);
+            var bias = FloatTensor.RandomN(new long[] { 100 });
+            lin.Bias = bias;
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.Equal(lin.Bias.Value.Data<float>()[i], bias.Data<float>()[i]);
+            }
+        }
+
+        [Fact]
+        public void TestLinearEditWeightsAndBias()
+        {
+            var lin = NN.Module.Linear(0, 0, true);
+            var bias = FloatTensor.RandomN(new long[] { 100 });
+            var weights = FloatTensor.RandomN(new long[] { 100, 1000 });
+            lin.Bias = bias;
+            lin.Weight = weights;
+
+            Assert.Equal(lin.Weight.Shape.Length, weights.Shape.Length);
+            Assert.Equal(lin.Weight.Shape[0], weights.Shape[0]);
+            Assert.Equal(lin.Weight.Shape[1], weights.Shape[1]);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.Equal(lin.Bias.Value.Data<float>()[i], bias.Data<float>()[i]);
+            }
+        }
+
+        [Fact]
+        public void TestLinearEditWeightsAndBiasGetParameters()
+        {
+            var lin = NN.Module.Linear(0, 0, true);
+            var bias = FloatTensor.RandomN(new long[] { 100 });
+            var weights = FloatTensor.RandomN(new long[] { 100, 1000 });
+            lin.Bias = bias;
+            lin.Weight = weights;
+
+            var parameters = lin.Parameters().ToArray();
+
+            Assert.Equal(lin.Weight.Shape.Length, parameters[0].Shape.Length);
+            Assert.Equal(lin.Weight.Shape[0], parameters[0].Shape[0]);
+            Assert.Equal(lin.Weight.Shape[1], parameters[0].Shape[1]);
+        }
+
+        [Fact]
         public void CreateRelu()
         {
             var rel = NN.Module.Relu();
             Assert.NotNull(rel);
             var modules = rel.GetName();
-        }
-
-        [Fact]
-        public void CreateSequence()
-        {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
-            var modules = seq.GetModules();
-            Assert.Equal(3, modules.Count());
         }
 
         [Fact]
@@ -412,6 +465,16 @@ namespace TorchSharp.Test
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
             var eval = seq.Forward(x);
+        }
+
+        [Fact]
+        public void CreateSequence()
+        {
+            var lin1 = NN.Module.Linear(1000, 100);
+            var lin2 = NN.Module.Linear(100, 10);
+            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var modules = seq.GetModules();
+            Assert.Equal(3, modules.Count());
         }
 
         [Fact]

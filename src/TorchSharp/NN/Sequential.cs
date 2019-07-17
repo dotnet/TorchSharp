@@ -12,7 +12,7 @@ namespace TorchSharp.NN
         {
         }
 
-        public Sequential(params Module[] modules) : base(IntPtr.Zero)
+        public Sequential(IEnumerable<Module> modules) : base(IntPtr.Zero)
         {
             foreach (var module in modules)
             {
@@ -58,6 +58,22 @@ namespace TorchSharp.NN
             }
 
             return result;
+        }
+
+        public override void Train()
+        {
+            foreach (var module in Modules)
+            {
+                module.Train();
+            }
+        }
+
+        public override void Eval()
+        {
+            foreach (var module in Modules)
+            {
+                module.Eval();
+            }
         }
     }
 }

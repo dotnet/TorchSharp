@@ -217,22 +217,34 @@ phases:
   
   - script: ./build.cmd -buildPackages
     displayName: Create Packages
+    
+  - script: |
+      cp $(Build.SourcesDirectory)/bin/obj/packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+      rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
+    displayName: Copy Nugets in staging directory
 
-  - task: MSBuild@1
-    displayName: Sign Packages
-    inputs:
-      solution: build/sign.proj
-      msbuildArguments: /p:SignType=$(_SignType) /p:SignNugetPackages=true
-      msbuildVersion: 15.0
-    continueOnError: false
+  # Commenting signing for the moment
+  #- task: MSBuild@1
+  #  displayName: Sign Packages
+  #  inputs:
+  #    solution: build/sign.proj
+  #    msbuildArguments: /p:SignType=$(_SignType) /p:SignNugetPackages=true
+  #    msbuildVersion: 15.0
+  #  continueOnError: false
       
-  - task: NuGetCommand@2 
-    displayName: Publish Packages to DevOps Feed 
-    inputs:
-      command: push 
-      packagesToPush: $(Build.SourcesDirectory)/bin/packages/**/*.nupkg;!$(Build.SourcesDirectory)/bin/packages/**/*.symbols.nupkg 
-      nuGetFeedType: internal 
-      feedPublish: TorchSharp-DevOps # TODO: Needs setting up.
+  - script: |
+      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+    displayName: Dotnet Publish
+
+  # - task: PublishBuildArtifacts@1
+  #  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+  #  - task: NuGetCommand@2 
+  #    displayName: Publish Packages to DevOps Feed 
+  #    inputs:
+  #      command: push 
+  #      packagesToPush: $(Build.SourcesDirectory)/bin/packages/**/*.nupkg;!$(Build.SourcesDirectory)/bin/packages/**/*.symbols.nupkg 
+  #      nuGetFeedType: internal 
+  #      feedPublish: TorchSharp-DevOps # TODO: Needs setting up.
 
   # TODO: Deal with symbols.
   
