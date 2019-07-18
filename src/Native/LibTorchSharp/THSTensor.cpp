@@ -8,7 +8,7 @@ Tensor THSTensor_arange(
 	const Scalar end,
 	const Scalar step,
 	const int8_t scalar_type,
-	const char* device,
+	const char * device,
 	const bool requires_grad)
 {
 	auto options = at::TensorOptions()
@@ -328,11 +328,6 @@ Tensor THSTensor_clone(const Tensor input)
     return new torch::Tensor(input->clone());
 }
 
-Tensor THSTensor_clone(const Tensor input)
-{
-    return new torch::Tensor(input->clone());
-}
-
 Tensor THSTensor_contiguous(const Tensor input)
 {
 	return new torch::Tensor(input->contiguous());
@@ -385,7 +380,7 @@ Tensor THSTensor_add(const Tensor left, const int value, const Tensor right)
 
 Tensor THSTensor_add_(const Tensor left, const int value, const Tensor right)
 {
-    return new torch::Tensor(left->add_(*right, value));
+	return new torch::Tensor(left->add_(*right, value));
 }
 
 Tensor THSTensor_addS(const Tensor left, const Scalar right)
@@ -443,9 +438,9 @@ Tensor THSTensor_div(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->div(*right));
 }
 
-void THSTensor_div_(const Tensor left, const Tensor right)
+Tensor THSTensor_div_(const Tensor left, const Tensor right)
 {
-	left->div_(*right);
+	return new torch::Tensor(left->div_(*right));
 }
 
 Tensor THSTensor_divS(const Tensor left, const Scalar right)
@@ -463,9 +458,9 @@ Tensor THSTensor_eq(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->eq(*right));
 }
 
-void THSTensor_eq_(const Tensor left, const Tensor right)
+Tensor THSTensor_eq_(const Tensor left, const Tensor right)
 {
-	left->eq_(*right);
+	return new torch::Tensor(left->eq_(*right));
 }
 
 Tensor THSTensor_eqS(const Tensor left, const Scalar right)
@@ -473,9 +468,9 @@ Tensor THSTensor_eqS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->eq(*right));
 }
 
-void THSTensor_eqS_(const Tensor left, const Scalar right)
+Tensor THSTensor_eqS_(const Tensor left, const Scalar right)
 {
-	left->eq_(*right);
+	return new torch::Tensor(left->eq_(*right));
 }
 
 int THSTensor_equal(const Tensor left, const Tensor right)
@@ -493,9 +488,9 @@ Tensor THSTensor_erf(const Tensor tensor)
 	return new torch::Tensor(tensor->erf());
 }
 
-void THSTensor_erf_(const Tensor tensor)
+Tensor THSTensor_erf_(const Tensor tensor)
 {
-	tensor->erf_();
+	return new torch::Tensor(tensor->erf_());
 }
 
 Tensor THSTensor_ge(const Tensor left, const Tensor right)
@@ -503,19 +498,19 @@ Tensor THSTensor_ge(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->ge(*right));
 }
 
-void THSTensor_ge_(const Tensor left, const Tensor right)
+Tensor THSTensor_ge_(const Tensor left, const Tensor right)
 {
-	left->ge_(*right);
+	return new torch::Tensor(left->ge_(*right));
 }
 
 Tensor THSTensor_geS(const Tensor left, const Scalar right)
 {
-	return new torch::Tensor(left->gt(*right));
+	return new torch::Tensor(left->ge(*right));
 }
 
-void THSTensor_geS_(const Tensor left, const Scalar right)
+Tensor THSTensor_geS_(const Tensor left, const Scalar right)
 {
-	left->gt_(*right);
+	return new torch::Tensor(left->ge_(*right));
 }
 
 Tensor THSTensor_gt(const Tensor left, const Tensor right)
@@ -523,9 +518,9 @@ Tensor THSTensor_gt(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->gt(*right));
 }
 
-void THSTensor_gt_(const Tensor left, const Tensor right)
+Tensor THSTensor_gt_(const Tensor left, const Tensor right)
 {
-	left->gt_(*right);
+	return new torch::Tensor(left->gt_(*right));
 }
 
 Tensor THSTensor_gtS(const Tensor left, const Scalar right)
@@ -533,9 +528,9 @@ Tensor THSTensor_gtS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->gt(*right));
 }
 
-void THSTensor_gtS_(const Tensor left, const Scalar right)
+Tensor THSTensor_gtS_(const Tensor left, const Scalar right)
 {
-	left->gt_(*right);
+	return new torch::Tensor(left->gt_(*right));
 }
 
 Tensor THSTensor_le(const Tensor left, const Tensor right)
@@ -543,9 +538,9 @@ Tensor THSTensor_le(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->le(*right));
 }
 
-void THSTensor_le_(const Tensor left, const Tensor right)
+Tensor THSTensor_le_(const Tensor left, const Tensor right)
 {
-	left->le_(*right);
+	return new torch::Tensor(left->le_(*right));
 }
 
 Tensor THSTensor_leS(const Tensor left, const Scalar right)
@@ -553,9 +548,9 @@ Tensor THSTensor_leS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->le(*right));
 }
 
-void THSTensor_leS_(const Tensor left, const Scalar right)
+Tensor THSTensor_leS_(const Tensor left, const Scalar right)
 {
-	left->le_(*right);
+	return new torch::Tensor(left->le_(*right));
 }
 
 Tensor THSTensor_log(const Tensor tensor)
@@ -563,9 +558,9 @@ Tensor THSTensor_log(const Tensor tensor)
 	return new torch::Tensor(tensor->log());
 }
 
-void THSTensor_log_(const Tensor tensor)
+Tensor THSTensor_log_(const Tensor tensor)
 {
-	tensor->log_();
+	return new torch::Tensor(tensor->log_());
 }
 
 Tensor THSTensor_log2(const Tensor tensor)
@@ -573,9 +568,9 @@ Tensor THSTensor_log2(const Tensor tensor)
 	return new torch::Tensor(tensor->log());
 }
 
-void THSTensor_log2_(const Tensor tensor)
+Tensor THSTensor_log2_(const Tensor tensor)
 {
-	tensor->log_();
+	return new torch::Tensor(tensor->log_());
 }
 
 Tensor THSTensor_log10(const Tensor tensor)
@@ -583,9 +578,9 @@ Tensor THSTensor_log10(const Tensor tensor)
 	return new torch::Tensor(tensor->log());
 }
 
-void THSTensor_log10_(const Tensor tensor)
+Tensor THSTensor_log10_(const Tensor tensor)
 {
-	tensor->log_();
+	return new torch::Tensor(tensor->log_());
 }
 
 Tensor THSTensor_lt(const Tensor left, const Tensor right)
@@ -593,9 +588,9 @@ Tensor THSTensor_lt(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->lt(*right));
 }
 
-void THSTensor_lt_(const Tensor left, const Tensor right)
+Tensor THSTensor_lt_(const Tensor left, const Tensor right)
 {
-	left->lt_(*right);
+	return new torch::Tensor(left->lt_(*right));
 }
 
 Tensor THSTensor_ltS(const Tensor left, const Scalar right)
@@ -603,14 +598,9 @@ Tensor THSTensor_ltS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->lt(*right));
 }
 
-void THSTensor_ltS_(const Tensor left, const Scalar right)
+Tensor THSTensor_ltS_(const Tensor left, const Scalar right)
 {
-	left->lt_(*right);
-}
-
-Tensor THSTensor_geS(const Tensor tensor, const Scalar scalar)
-{
-    return new torch::Tensor(tensor->ge(*scalar));
+	return new torch::Tensor(left->lt_(*right));
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
@@ -641,9 +631,9 @@ Tensor THSTensor_mul(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->mul(*right));
 }
 
-void THSTensor_mul_(const Tensor left, const Tensor right)
+Tensor THSTensor_mul_(const Tensor left, const Tensor right)
 {
-	left->mul_(*right);
+	return new torch::Tensor(left->mul_(*right));
 }
 
 Tensor THSTensor_mulS(const Tensor tensor, const Scalar scalar)
@@ -656,9 +646,9 @@ Tensor THSTensor_ne(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->ne(*right));
 }
 
-void THSTensor_ne_(const Tensor left, const Tensor right)
+Tensor THSTensor_ne_(const Tensor left, const Tensor right)
 {
-	left->ne_(*right);
+	return new torch::Tensor(left->ne_(*right));
 }
 
 Tensor THSTensor_neS(const Tensor left, const Scalar right)
@@ -666,9 +656,9 @@ Tensor THSTensor_neS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->ne(*right));
 }
 
-void THSTensor_neS_(const Tensor left, const Scalar right)
+Tensor THSTensor_neS_(const Tensor left, const Scalar right)
 {
-	left->ne_(*right);
+	return new torch::Tensor(left->ne_(*right));
 }
 
 Tensor THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension)
@@ -686,9 +676,9 @@ Tensor THSTensor_remainder(const Tensor left, const Tensor right)
 	return new torch::Tensor(left->remainder(*right));
 }
 
-void THSTensor_remainder_(const Tensor left, const Tensor right)
+Tensor THSTensor_remainder_(const Tensor left, const Tensor right)
 {
-	left->remainder_(*right);
+	return new torch::Tensor(left->remainder_(*right));
 }
 
 Tensor THSTensor_remainderS(const Tensor left, const Scalar right)
@@ -696,9 +686,9 @@ Tensor THSTensor_remainderS(const Tensor left, const Scalar right)
 	return new torch::Tensor(left->remainder(*right));
 }
 
-void THSTensor_remainderS_(const Tensor left, const Scalar right)
+Tensor THSTensor_remainderS_(const Tensor left, const Scalar right)
 {
-	left->lt_(*right);
+	return new torch::Tensor(left->lt_(*right));
 }
 
 Tensor THSTensor_remainderS2(const Scalar left, const Tensor right)
@@ -726,9 +716,9 @@ Tensor THSTensor_subS2(const Scalar left, const Tensor right)
 	return new torch::Tensor(at::empty(right->sizes(), right->options()).fill_(*left).sub_(*right));
 }
 
-void THSTensor_sub_(const Tensor left, const Tensor right)
+Tensor THSTensor_sub_(const Tensor left, const Tensor right)
 {
-	left->sub_(*right);
+	return new torch::Tensor(left->sub_(*right));
 }
 
 Tensor THSTensor_sum(const Tensor tensor)

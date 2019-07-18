@@ -6,14 +6,14 @@ namespace TorchSharp.Tensor
 {
     public static class TMath
     {
-        public static TorchTensor Exp(TorchTensor value)
-        {
-            return value.Exp();
-        }
-
         public static TorchTensor Erf(TorchTensor value)
         {
             return value.Erf();
+        }
+
+        public static TorchTensor Exp(TorchTensor value)
+        {
+            return value.Exp();
         }
 
         public static TorchTensor Log(TorchTensor value)

@@ -729,9 +729,9 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void TestOperatorOverloads()
+        public void TestArithmeticOperators()
         {
-            // scalar-tensor operations
+            // scalar-tensor operators
             TestOneTensor<float, float>(a => a + 0.5f, a => a + 0.5f);
             TestOneTensor<float, float>(a => 0.5f + a, a => 0.5f + a);
             TestOneTensor<float, float>(a => a - 0.5f, a => a - 0.5f);
@@ -741,37 +741,51 @@ namespace TorchSharp.Test
             TestOneTensor<float, float>(a => a / 0.5f, a => a / 0.5f);
             TestOneTensor<float, float>(a => 0.5f / a, a => 0.5f / a);
 
-            TestOneTensor<float, bool>(a => a == 5.0, a => a == 5.0);
-            TestOneTensor<float, bool>(a => a != 5.0, a => a != 5.0);
-
-            TestOneTensor<float, bool>(a => a < 5.0, a => a < 5.0);
-            TestOneTensor<float, bool>(a => 5.0 < a, a => 5.0 < a);
-            TestOneTensor<float, bool>(a => a <= 5.0, a => a <= 5.0);
-            TestOneTensor<float, bool>(a => 5.0 <= a, a => 5.0 <= a);
-            TestOneTensor<float, bool>(a => a > 5.0, a => a > 5.0);
-            TestOneTensor<float, bool>(a => 5.0 > a, a => 5.0 > a);
-            TestOneTensor<float, bool>(a => a >= 5.0, a => a >= 5.0);
-            TestOneTensor<float, bool>(a => 5.0 >= a, a => 5.0 >= a);
-
-            // tensor-tensor operations
-            TestTwoTensor<float, bool>((a, b) => a == b, (a, b) => a == b);
-            TestTwoTensor<float, bool>((a, b) => a != b, (a, b) => a != b);
-
+            // tensor-tensor operators
             TestTwoTensor<float, float>((a, b) => a + b, (a, b) => a + b);
             TestTwoTensor<float, float>((a, b) => a - b, (a, b) => a - b);
             TestTwoTensor<float, float>((a, b) => a * b, (a, b) => a * b);
             TestTwoTensor<float, float>((a, b) => a / b, (a, b) => a / b);
+        }
+
+        [Fact]
+        public void TestComparisonOperators()
+        {
+            // scalar-tensor operators
+            TestOneTensor<float, bool>(a => a == 5.0f, a => a == 5.0f);
+            TestOneTensor<float, bool>(a => a != 5.0f, a => a != 5.0f);
+
+            TestOneTensor<float, bool>(a => a < 5.0f, a => a < 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f < a, a => 5.0f < a);
+            TestOneTensor<float, bool>(a => a <= 5.0f, a => a <= 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f <= a, a => 5.0f <= a);
+            TestOneTensor<float, bool>(a => a > 5.0f, a => a > 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f > a, a => 5.0f > a);
+            TestOneTensor<float, bool>(a => a >= 5.0f, a => a >= 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f >= a, a => 5.0f >= a);
+
+            TestOneTensor<float, float>(a => 5.0f % a, a => 5.0f % a);
+            TestOneTensor<float, float>(a => a % 5.0f, a => a % 5.0f);
+
+            // tensor-tensor operators
+            TestTwoTensor<float, bool>((a, b) => a == b, (a, b) => a == b);
+            TestTwoTensor<float, bool>((a, b) => a != b, (a, b) => a != b);
 
             TestTwoTensor<float, bool>((a, b) => a < b, (a, b) => a < b);
             TestTwoTensor<float, bool>((a, b) => a <= b, (a, b) => a <= b);
             TestTwoTensor<float, bool>((a, b) => a > b, (a, b) => a > b);
             TestTwoTensor<float, bool>((a, b) => a >= b, (a, b) => a >= b);
+
+            TestTwoTensor<float, float>((a, b) => a % b, (a, b) => a % b);
         }
 
         private void TestOneTensor<Tin, Tout>(Func<TorchTensor, TorchTensor> tensorFunc, 
             Func<Tin, Tout> scalarFunc)
         {
-            var x = FloatTensor.Ones(new long[] { 10, 10 });
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c2;
             var y = tensorFunc(x);
 
             var xdata = x.Data<Tin>();
