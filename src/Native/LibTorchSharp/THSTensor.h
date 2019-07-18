@@ -50,7 +50,8 @@ EXPORT_API(Tensor) THSTensor_new(
 	const int szlength,
 	const int64_t * strides,
 	const int stlength,
-	int8_t scalar_type);
+	int8_t scalar_type,
+	const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newLong(
 	int64_t * data,
@@ -58,25 +59,25 @@ EXPORT_API(Tensor) THSTensor_newLong(
 	const int szlength,
 	const int64_t * strides,
 	const int stlength,
-	int8_t scalar_type);
+	const bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newByteScalar(char data);
+EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newShortScalar(short data);
+EXPORT_API(Tensor) THSTensor_newShortScalar(short data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newIntScalar(int data);
+EXPORT_API(Tensor) THSTensor_newIntScalar(int data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newLongScalar(int64_t data);
+EXPORT_API(Tensor) THSTensor_newLongScalar(int64_t data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newDoubleScalar(double data);
+EXPORT_API(Tensor) THSTensor_newDoubleScalar(double data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newFloatScalar(float data);
+EXPORT_API(Tensor) THSTensor_newFloatScalar(float data, bool requires_grad);
 
 // Returns a variable tensor filled with random numbers from a uniform distribution within [0, 1).
 EXPORT_API(Tensor) THSTensor_rand(
@@ -193,6 +194,9 @@ EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 // All tensors must either have the same shape (except in the concatenating dimension) or be empty.
 // See https://pytorch.org/docs/stable/torch.html#torch.cat for examples.
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* twrapper, const int length, const int64_t dim);
+
+// Clone the input tensor.
+EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
 
 // Returns a contiguous tensor containing the same data as the input tensor.
 // If the input tensor is contiguous, this function returns input.
