@@ -84,7 +84,7 @@
   
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="TorchSharp\runtimes\$(PackageRid)\native" />
+                          RelativePath="LibTorch.Redist\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>
