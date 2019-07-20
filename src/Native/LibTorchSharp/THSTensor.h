@@ -12,54 +12,54 @@
 // Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with common
 // difference step starting from start.
 EXPORT_API(Tensor) THSTensor_arange(
-	const Scalar start,
-	const Scalar end,
-	const Scalar step,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const Scalar start,
+    const Scalar end,
+    const Scalar step,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 //  Creates  a variable tensor containing a tensor composed of zeros.
 EXPORT_API(Tensor) THSTensor_zeros(
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 //  Creates  a variable tensor containing a tensor composed of ones.
 EXPORT_API(Tensor) THSTensor_ones(
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 //  Creates  a variable tensor containing a an empty tensor.
 EXPORT_API(Tensor) THSTensor_empty(
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 //  Creates  a variable tensor out of the input data, dimensions and strides.
 EXPORT_API(Tensor) THSTensor_new(
-	void * data,
-	const int64_t * sizes,
-	const int szlength,
-	const int64_t * strides,
-	const int stlength,
-	int8_t scalar_type,
-	const bool requires_grad);
+    void * data,
+    const int64_t * sizes,
+    const int szlength,
+    const int64_t * strides,
+    const int stlength,
+    int8_t scalar_type,
+    const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newLong(
-	int64_t * data,
-	const int64_t * sizes,
-	const int szlength,
-	const int64_t * strides,
-	const int stlength,
-	const bool requires_grad);
+    int64_t * data,
+    const int64_t * sizes,
+    const int szlength,
+    const int64_t * strides,
+    const int stlength,
+    const bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
 EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
@@ -81,30 +81,30 @@ EXPORT_API(Tensor) THSTensor_newFloatScalar(float data, bool requires_grad);
 
 // Returns a variable tensor filled with random numbers from a uniform distribution within [0, 1).
 EXPORT_API(Tensor) THSTensor_rand(
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 // Returns a variable tensor filled with random numbers from a normal distribution with mean 0 and variance 1.
 EXPORT_API(Tensor) THSTensor_randn(
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 // A sparse tensor is represented as a pair of dense tensors: a tensor of values and a 2D tensor of indices.
 // A sparse tensor can be constructed by providing these two tensors, as well as the size of the sparse tensor.
 EXPORT_API(Tensor) THSTensor_sparse(
-	Tensor indices,
-	Tensor values,
-	const int64_t * sizes,
-	const int length,
-	const int8_t scalar_type,
-	const char * device,
-	const bool requires_grad);
+    Tensor indices,
+    Tensor values,
+    const int64_t * sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
 
 // Returns the number of dimensions of the input tensor.
 EXPORT_API(int64_t) THSTensor_ndimension(const Tensor tensor);
@@ -251,20 +251,20 @@ EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const int value, const Tens
 // (all matrix multiplications get accumulated along the first dimension). mat is added to the final result.
 // Check https://pytorch.org/docs/stable/torch.html#torch.addbmm for details.
 EXPORT_API(Tensor) THSTensor_addbmm(
-	const Tensor matWrapper,
-	const Tensor batch1Wrapper,
-	const Tensor batch2Wrapper,
-	const float beta,
-	const float alpha);
+    const Tensor matWrapper,
+    const Tensor batch1Wrapper,
+    const Tensor batch2Wrapper,
+    const float beta,
+    const float alpha);
 
 // Performs a matrix multiplication of the matrices mat1 and mat2.
 // The matrix mat is added to the final result.
 EXPORT_API(Tensor) THSTensor_addmm(
-	const Tensor matWrapper,
-	const Tensor mat1Wrapper,
-	const Tensor mat2Wrapper,
-	const float beta,
-	const float alpha);
+    const Tensor matWrapper,
+    const Tensor mat1Wrapper,
+    const Tensor mat2Wrapper,
+    const float beta,
+    const float alpha);
 
 // Returns the indices of the maximum values of a tensor across a dimension.
 EXPORT_API(Tensor) THSTensor_argmax(const Tensor twrapper, const int64_t dimension, bool keepDim);
@@ -273,11 +273,11 @@ EXPORT_API(Tensor) THSTensor_argmax(const Tensor twrapper, const int64_t dimensi
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.
 // Check https://pytorch.org/docs/stable/torch.html#torch.baddbmm for details.
 EXPORT_API(Tensor) THSTensor_baddbmm(
-	const Tensor batch1Wrapper,
-	const Tensor batch2Wrapper,
-	const Tensor matWrapper,
-	const float beta,
-	const float alpha);
+    const Tensor batch1Wrapper,
+    const Tensor batch2Wrapper,
+    const Tensor matWrapper,
+    const float beta,
+    const float alpha);
 
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2.
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
