@@ -202,22 +202,6 @@ phases:
     name: Hosted VS2017
   steps:
 
-  # - task: CmdLine@2
-  #   inputs:
-  #     script: ls $(Build.SourcesDirectory)/bin/obj/packages
-  
-  # - task: CmdLine@2
-  #   inputs:
-  #     script: ls $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-
-  # - task: CmdLine@2
-  #   inputs:
-  #     script: ls $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets/LibTorch.Redist
-
-  # - task: DeleteFiles@1
-  #   inputs:
-  #     sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages
-
   # Download all agent packages from all previous phases
   - task: DownloadBuildArtifacts@0
     displayName: Download package assets
