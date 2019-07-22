@@ -208,6 +208,7 @@ phases:
     inputs:
       artifactName: PackageAssets
       downloadPath: $(Build.SourcesDirectory)/bin/obj/packages
+      parallelizationLimit: 1
 
   # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
