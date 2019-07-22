@@ -212,7 +212,7 @@ phases:
 
   - task: CmdLine@2
     inputs:
-      script: ls $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets/Libtorch.Redist
+      script: ls $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets/LibTorch.Redist
 
   - task: DeleteFiles@1
     inputs:
