@@ -136,13 +136,13 @@ Tensor THSTensor_rand(
     Tensor tensor;
     CATCH(
         auto options = at::TensorOptions()
-        .dtype(at::ScalarType(scalar_type))
-        .device(device)
-        .requires_grad(requires_grad);
+            .dtype(at::ScalarType(scalar_type))
+            .device(device)
+            .requires_grad(requires_grad);
 
-    tensor = new torch::Tensor(torch::rand(at::IntList(sizes, length), options));
+        tensor = new torch::Tensor(torch::rand(at::IntList(sizes, length), options));
     )
-        return tensor;
+    return tensor;
 }
 
 Tensor THSTensor_randn(
