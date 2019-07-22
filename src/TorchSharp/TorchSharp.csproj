@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+    <ProjectReference Include="../Libtorch.Redist/Libtorch.Redist.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup>
