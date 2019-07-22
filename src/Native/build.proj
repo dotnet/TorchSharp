@@ -44,7 +44,7 @@
     <LibName Condition="'$(OS)' != 'Windows_NT'">libtorch-shared-with-deps</LibName>
     <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))">libtorch-macos</LibName>
 
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)Libtorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
+    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <Target Name="BuildNativeUnix"
@@ -84,7 +84,7 @@
   
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="TorchSharp\runtimes\$(PackageRid)\native" />
+                          RelativePath="LibTorch.Redist\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>
