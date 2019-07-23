@@ -298,6 +298,23 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_strides(IntPtr handle);
+
+        /// <summary>
+        ///  Retrieves the strides for the tensor.
+        /// </summary>
+        public Span<long> Strides
+        {
+            get
+            {
+                unsafe
+                {
+                    return new Span<long>((void*)THSTensor_strides(handle), (int)Dimensions);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_indices(IntPtr handle);
 
         public TorchTensor Indices
@@ -792,67 +809,33 @@ namespace TorchSharp.Tensor
     {
         public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
+            var array = doCopy ? (T[])rawArray.Clone() : rawArray;
+
             switch (true)
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        var result = ByteTensor.From(rawArray as byte[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return ByteTensor.From(array as byte[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        var result = ShortTensor.From(rawArray as short[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return ShortTensor.From(array as short[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        var result = IntTensor.From(rawArray as int[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return IntTensor.From(array as int[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        var result = LongTensor.From(rawArray as long[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return LongTensor.From(array as long[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        var result = DoubleTensor.From(rawArray as double[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return DoubleTensor.From(array as double[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        var result =  FloatTensor.From(rawArray as float[], dimensions, requiresGrad);
-
-                        if (doCopy)
-                        {
-                            return result.Clone();
-                        }
-                        return result;
+                        return  FloatTensor.From(array as float[], dimensions, requiresGrad);
                     }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }

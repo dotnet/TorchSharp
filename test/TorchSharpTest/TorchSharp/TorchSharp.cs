@@ -13,8 +13,6 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateFloatTensorOnes()
         {
-            string path = Directory.GetCurrentDirectory();
-            Console.WriteLine(path);
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2 });
         }
 
@@ -117,6 +115,32 @@ namespace TorchSharp.Test
             using (var tensor = data.ToTorchTensor(new long[] { 10, 100 }))
             {
                 Assert.Equal(default(T), tensor.Data<T>()[100]);
+            }
+        }
+
+        [Fact]
+        public void CreateFloatTensorFromDataCheckStrides()
+        {
+            var data = new double[] { 0.2663158, 0.1144736, 0.1147367, 0.1249998, 0.1957895, 0.1231576, 0.1944732, 0.111842, 0.1065789, 0.667881, 0.5682123, 0.5824502, 0.4824504, 0.4844371, 0.6463582, 0.5334439, 0.5079474, 0.2281452 };
+            var dataTensor = data.ToTorchTensor(new long[] { 2, 9 });
+
+            for (int r = 0; r < 2; r++)
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    var fromData = data[(r * 9) + i];
+                    var fromTensor = dataTensor[r, i].DataItem<double>();
+                    Assert.True(Math.Abs(fromData - fromTensor) < 0.0001);
+                }
+            }
+
+            var firstHalf = dataTensor[0];
+
+            for (int i = 0; i < 9; i++)
+            {
+                var fromData = data[i];
+                var fromChunk = firstHalf[i].DataItem<double>();
+                Assert.True(Math.Abs(fromData - fromChunk) < 0.0001);
             }
         }
 
@@ -288,6 +312,21 @@ namespace TorchSharp.Test
 
                 Assert.NotNull(type as DynamicType);
             }
+        }
+
+        [Fact]
+        public void TestSquareEuclideanDistance()
+        {
+            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTorchTensor(new long[] { 9 }).ToType(ATenScalarMapping.Float);
+            var zeros = FloatTensor.Zeros(new long[] { 1, 9 });
+            var ones = FloatTensor.Ones(new long[] { 1, 9 });
+            var centroids = new TorchTensor[] { zeros, ones }.Cat(0);
+
+            var distanceFromZero = input.Reshape(new long[] { -1, 1, 9 }).Sub(zeros).Pow(2.ToScalar()).Sum(new long[] { 2 });
+            var distanceFromOne = input.Reshape(new long[] { -1, 1, 9 }).Sub(ones).Pow(2.ToScalar()).Sum(new long[] { 2 });
+            var distanceFromCentroids = input.Reshape(new long[] { -1, 1, 9 }).Sub(centroids).Pow(2.ToScalar()).Sum(new long[] { 2 });
+
+            Assert.True(true);
         }
 
         [Fact]

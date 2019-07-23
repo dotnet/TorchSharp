@@ -49,8 +49,6 @@ Tensor THSTensor_new(
     void * data, 
     const int64_t * sizes, 
     const int szlength, 
-    const int64_t * strides, 
-    const int stlength, 
     int8_t scalar_type,
     const bool requires_grad)
 {
@@ -59,22 +57,20 @@ Tensor THSTensor_new(
         .is_variable(true)
         .requires_grad(requires_grad);
 
-    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), at::IntList(strides, stlength), options));
+    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), options));
 }
 
 Tensor THSTensor_newLong(
     int64_t * data,
     const int64_t * sizes,
     const int szlength,
-    const int64_t * strides,
-    const int stlength,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(at::kLong))
         .is_variable(true)
         .requires_grad(requires_grad);
-    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), at::IntList(strides, stlength), options));
+    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), options));
 }
 
 Tensor THSTensor_newByteScalar(char data, bool requires_grad)
@@ -169,6 +165,11 @@ int64_t THSTensor_ndimension(const Tensor tensor)
 int64_t THSTensor_stride(const Tensor tensor, const int64_t dimension)
 {
     return tensor->stride(dimension);
+}
+
+int64_t* THSTensor_strides(const Tensor tensor)
+{
+    return tensor->strides().vec().data();
 }
 
 int64_t THSTensor_size(const Tensor tensor, const int64_t dimension)
