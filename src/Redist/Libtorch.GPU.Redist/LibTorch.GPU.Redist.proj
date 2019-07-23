@@ -7,15 +7,7 @@
   
   <ItemGroup>
     <LibtorchGPUConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\caffe2.dll;
-                        libtorch\lib\caffe2_module_test_dynamic.dll;
-                        libtorch\lib\onnxifi.dll;
-                        libtorch\lib\libiomp5md.dll;
-                        libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\torch.dll;
-                        libtorch\lib\onnxifi_dummy.dll;
-                        libtorch\lib\c10.dll;
-                        libtorch\lib\c10_cuda.dll;
+      FilesFromArchive= "libtorch\lib\c10_cuda.dll;
                         libtorch\lib\caffe2_detectron_ops_gpu.dll;
                         libtorch\lib\caffe2_gpu.dll;
                         libtorch\lib\cublas64_90.dll;
@@ -33,13 +25,7 @@
 
       Runtime="win-x64"/>
     <LibtorchGPUConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\libc10.so;
-                        libtorch\lib\libcaffe2.so;
-                        libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libonnxifi.so;
-                        libtorch\lib\libonnxifi_dummy.so;
-                        libtorch\lib\libtorch.so;
-                        libtorch\lib\libc10d_cuda_test.so;
+      FilesFromArchive= "libtorch\lib\libc10d_cuda_test.so;
                         libtorch\lib\libc10_cuda.so;
                         libtorch\lib\libcaffe2_detectron_ops_gpu.so;
                         libtorch\lib\libcaffe2_gpu.so;
@@ -143,7 +129,7 @@
 
   <!-- Select the files we want to copy out of each archive. -->
   <Target Name="GetFilesFromArchive"
-          DependsOnTargets="ValidateAndExtractArchivesLibtorch;ValidateAndExtractArchivesMklDnn" >
+          DependsOnTargets="ValidateAndExtractArchivesLibtorch" >
     <ItemGroup>
       <!-- batch rather than transform so that we can split FilesFromArchive metadata -->
       <_fileFromArchive Include="%(LibtorchGPUArchive.FilesFromArchive)" ExtractDirectory="%(LibtorchGPUArchive.ExtractDirectory)" Runtime="%(LibtorchGPUArchive.Runtime)" />
