@@ -1,3 +1,5 @@
+[![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
+
 TorchSharp
 ==========
 
@@ -24,9 +26,7 @@ Console.WriteLine (x [12]);
 Discussions
 ===========
 
-We have a chat room here:
-
-https://gitter.im/xamarin/TorchSharp
+We have a chat room on Gitter [![Gitter](https://badges.gitter.im/xamarin/TorchSharp.svg)](https://gitter.im/xamarin/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Building
 ============
@@ -63,6 +63,21 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
+
+Updating pacakge version for new release
+-----------------------------
+To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
+Everything is currently considered in preview.
+
+Use the following two MSBuild arguments in order to control the -preview and the build numbers in the name of the nuget packages produced (use one of the two generally):
+
+|Name | Value| Example Version Output|
+|---|---|---|
+|StabilizePackageVersion |  true  | 1.0.0|
+|IncludeBuildNumberInPackageVersion | false | 1.0.0-preview|
+
+Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersion=true`
+
 Examples
 ===========
-Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs).
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
