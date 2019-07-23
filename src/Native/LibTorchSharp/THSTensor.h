@@ -38,8 +38,6 @@ EXPORT_API(Tensor) THSTensor_new(
     void * data,
     const int64_t * sizes,
     const int szlength,
-    const int64_t * strides,
-    const int stlength,
     int8_t scalar_type,
     const bool requires_grad);
 
@@ -47,8 +45,6 @@ EXPORT_API(Tensor) THSTensor_newLong(
     int64_t * data,
     const int64_t * sizes,
     const int szlength,
-    const int64_t * strides,
-    const int stlength,
     const bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
@@ -105,6 +101,9 @@ EXPORT_API(int64_t) THSTensor_size(const Tensor tensor, const int64_t dimension)
 // Returns the stride of the target dimension of the input tensor.
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dimension);
 
+// Returns the strides of the input tensor.
+EXPORT_API(int64_t*) THSTensor_strides(const Tensor tensor);
+
 // Disposes the tensor.
 EXPORT_API(void) THSTensor_dispose(const Tensor twrapper);
 
@@ -148,7 +147,7 @@ EXPORT_API(const char *) THSTensor_deviceType(const Tensor twrapper);
 EXPORT_API(int) THSTensor_isSparse(const Tensor twrapper);
 
 // Wheter the tensor requires grad or not.
-EXPORT_API(bool) THSTensor_requires_grad(const Tensor tensor);
+EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 // Set the value for requires grad.
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);

@@ -270,7 +270,7 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<TorchTensor> Parameters()
         {
-            // If module has no children, fetch the paramters from pytorch
+            // If module has no children, fetch the paramters from pytorch, otherwise iterate over the params of the child modules
             if (Modules.Any())
             {
                 IEnumerable<TorchTensor> result = Enumerable.Empty<TorchTensor>();

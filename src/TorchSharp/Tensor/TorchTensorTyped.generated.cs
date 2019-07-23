@@ -114,20 +114,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
         }
 
         public static TorchTensor From(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -273,20 +266,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
         }
 
         public static TorchTensor From(short[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -432,20 +418,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
         }
 
         public static TorchTensor From(int[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -591,20 +570,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newLong(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, bool requiresGrad);
+        extern static IntPtr THSTensor_newLong(IntPtr rawArray, long[] dimensions, int numDimensions, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_newLong(rawArray, dimensions, dimensions.Length, strides, strides.Length, requiresGrad));
+            return new TorchTensor(THSTensor_newLong(rawArray, dimensions, dimensions.Length, requiresGrad));
         }
 
         public static TorchTensor From(long[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -750,20 +722,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
         }
 
         public static TorchTensor From(double[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -909,20 +874,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, long[] strides, int numStrides, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
-            var strides = new long[length];
 
-            strides[0] = 1;
-            for (int i = 1; i < length; i++)
-            {
-                strides[i] = dimensions[i - 1];
-            }
-
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, strides, strides.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
         }
 
         public static TorchTensor From(float[] rawArray, long[] dimensions, bool requiresGrad = false)

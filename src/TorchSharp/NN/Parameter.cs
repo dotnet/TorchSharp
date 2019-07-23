@@ -8,11 +8,11 @@ namespace TorchSharp.NN
         public TorchTensor Tensor { get; set; }
         public bool WithGrad { get; set; }
 
-        public Parameter(string name, TorchTensor parameter, bool withGrad)
+        public Parameter(string name, TorchTensor parameter, bool? withGrad = null)
         {
             Name = name;
             Tensor = parameter;
-            WithGrad = withGrad;
+            WithGrad = withGrad ?? parameter.IsGradRequired;
         }
     };
 }
