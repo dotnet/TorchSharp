@@ -17,6 +17,12 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void CreateFloatTensorOnesGPU()
+        {
+            TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2 }, device: "cuda");
+        }
+
+        [Fact]
         public void CreateFloatTensorCheckMemory()
         {
             TorchTensor? ones = null;
