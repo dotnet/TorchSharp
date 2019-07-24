@@ -34,16 +34,21 @@
       Runtime="win-x64"/>
     <LibtorchGPUConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\libc10.so;
+                        libtorch\lib\libc10d_cuda_test.so;
+                        libtorch\lib\libc10_cuda.so;
                         libtorch\lib\libcaffe2.so;
+                        libtorch\lib\libcaffe2_detectron_ops_gpu.so;
+                        libtorch\lib\libcaffe2_gpu.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
+                        libtorch\lib\libcudart-f7fdd8d7.so.9.0;
+                        libtorch\lib\libgomp-8bba0e50.so.1;
+                        libtorch\lib\libnvrtc-007d19c9.so.9.0;
+                        libtorch\lib\libnvrtc-builtins.so;
+                        libtorch\lib\libnvToolsExt-3965bdd0.so.1;
                         libtorch\lib\libonnxifi.so;
                         libtorch\lib\libonnxifi_dummy.so;
                         libtorch\lib\libtorch.so;
-                        libtorch\lib\libc10d_cuda_test.so;
-                        libtorch\lib\libc10_cuda.so;
-                        libtorch\lib\libcaffe2_detectron_ops_gpu.so;
-                        libtorch\lib\libcaffe2_gpu.so;
-                        libtorch\lib\libnvrtc-builtins.so;"
+                        libtorch\lib\libtorch.so.1;"
 
       Runtime="linux-x64" />
 
