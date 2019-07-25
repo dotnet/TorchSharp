@@ -741,11 +741,31 @@ namespace TorchSharp.Test
             TestOneTensor<float, float>(a => a / 0.5f, a => a / 0.5f);
             TestOneTensor<float, float>(a => 0.5f / a, a => 0.5f / a);
 
+            TestOneTensor<float, float>(a => a.Add(0.5f), a => a + 0.5f);
+            TestOneTensor<float, float>(a => a.Sub(0.5f), a => a - 0.5f);
+            TestOneTensor<float, float>(a => a.Mul(0.5f), a => a * 0.5f);
+            TestOneTensor<float, float>(a => a.Div(0.5f), a => a / 0.5f);
+
+            TestOneTensorInPlace<float>(a => a.AddInPlace(0.5f), a => a + 0.5f);
+            TestOneTensorInPlace<float>(a => a.SubInPlace(0.5f), a => a - 0.5f);
+            TestOneTensorInPlace<float>(a => a.MulInPlace(0.5f), a => a * 0.5f);
+            TestOneTensorInPlace<float>(a => a.DivInPlace(0.5f), a => a / 0.5f);
+
             // tensor-tensor operators
             TestTwoTensor<float, float>((a, b) => a + b, (a, b) => a + b);
             TestTwoTensor<float, float>((a, b) => a - b, (a, b) => a - b);
             TestTwoTensor<float, float>((a, b) => a * b, (a, b) => a * b);
             TestTwoTensor<float, float>((a, b) => a / b, (a, b) => a / b);
+
+            TestTwoTensor<float, float>((a, b) => a.Add(b), (a, b) => a + b);
+            TestTwoTensor<float, float>((a, b) => a.Sub(b), (a, b) => a - b);
+            TestTwoTensor<float, float>((a, b) => a.Mul(b), (a, b) => a * b);
+            TestTwoTensor<float, float>((a, b) => a.Div(b), (a, b) => a / b);
+
+            TestTwoTensorInPlace<float>((a, b) => a.AddInPlace(b), (a, b) => a + b);
+            TestTwoTensorInPlace<float>((a, b) => a.SubInPlace(b), (a, b) => a - b);
+            TestTwoTensorInPlace<float>((a, b) => a.MulInPlace(b), (a, b) => a * b);
+            TestTwoTensorInPlace<float>((a, b) => a.DivInPlace(b), (a, b) => a / b);
         }
 
         [Fact]
@@ -754,6 +774,8 @@ namespace TorchSharp.Test
             // scalar-tensor operators
             TestOneTensor<float, bool>(a => a == 5.0f, a => a == 5.0f);
             TestOneTensor<float, bool>(a => a != 5.0f, a => a != 5.0f);
+            TestOneTensorInPlace<float>(a => a.EqInPlace(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.NeInPlace(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
 
             TestOneTensor<float, bool>(a => a < 5.0f, a => a < 5.0f);
             TestOneTensor<float, bool>(a => 5.0f < a, a => 5.0f < a);
@@ -764,19 +786,33 @@ namespace TorchSharp.Test
             TestOneTensor<float, bool>(a => a >= 5.0f, a => a >= 5.0f);
             TestOneTensor<float, bool>(a => 5.0f >= a, a => 5.0f >= a);
 
+            TestOneTensorInPlace<float>(a => a.LtInPlace(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.LeInPlace(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GtInPlace(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GeInPlace(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
+
             TestOneTensor<float, float>(a => 5.0f % a, a => 5.0f % a);
             TestOneTensor<float, float>(a => a % 5.0f, a => a % 5.0f);
+            TestOneTensorInPlace<float>(a => a.RemainderInPlace(5.0f), a => a % 5.0f);
 
             // tensor-tensor operators
             TestTwoTensor<float, bool>((a, b) => a == b, (a, b) => a == b);
             TestTwoTensor<float, bool>((a, b) => a != b, (a, b) => a != b);
+            TestTwoTensorInPlace<float>((a, b) => a.EqInPlace(b), (a, b) => a == b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.NeInPlace(b), (a, b) => a != b ? 1.0f : 0.0f);
 
             TestTwoTensor<float, bool>((a, b) => a < b, (a, b) => a < b);
             TestTwoTensor<float, bool>((a, b) => a <= b, (a, b) => a <= b);
             TestTwoTensor<float, bool>((a, b) => a > b, (a, b) => a > b);
             TestTwoTensor<float, bool>((a, b) => a >= b, (a, b) => a >= b);
 
+            TestTwoTensorInPlace<float>((a, b) => a.LtInPlace(b), (a, b) => a < b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.LeInPlace(b), (a, b) => a <= b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.GtInPlace(b), (a, b) => a > b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.GeInPlace(b), (a, b) => a >= b ? 1.0f : 0.0f);
+
             TestTwoTensor<float, float>((a, b) => a % b, (a, b) => a % b);
+            TestTwoTensorInPlace<float>((a, b) => a.RemainderInPlace(b), (a, b) => a % b);
         }
 
         private void TestOneTensor<Tin, Tout>(Func<TorchTensor, TorchTensor> tensorFunc, 
@@ -788,14 +824,38 @@ namespace TorchSharp.Test
             var x = c1 * c2;
             var y = tensorFunc(x);
 
-            var xdata = x.Data<Tin>();
-            var ydata = y.Data<Tout>();
+            var xData = x.Data<Tin>();
+            var yData = y.Data<Tout>();
 
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.Equal(ydata[i + j], scalarFunc(xdata[i + j]));
+                    Assert.Equal(yData[i + j], scalarFunc(xData[i + j]));
+                }
+            }
+        }
+
+        private void TestOneTensorInPlace<Tin>(Func<TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tin> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c2;
+            var xClone = x.Clone();
+            var y = tensorFunc(x);
+
+            var xData = x.Data<Tin>();
+            var xCloneData = xClone.Data<Tin>();
+            var yData = y.Data<Tin>();
+
+            Assert.True(xData == yData);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(yData[i + j], scalarFunc(xCloneData[i + j]));
                 }
             }
         }
@@ -812,15 +872,43 @@ namespace TorchSharp.Test
 
             var z = tensorFunc(x, y);
 
-            var xdata = x.Data<Tin>();
-            var ydata = y.Data<Tin>();
-            var zdata = z.Data<Tout>();
+            var xData = x.Data<Tin>();
+            var yData = y.Data<Tin>();
+            var zData = z.Data<Tout>();
 
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Assert.Equal(zdata[i + j], scalarFunc(xdata[i + j], ydata[i + j]));
+                    Assert.Equal(zData[i + j], scalarFunc(xData[i + j], yData[i + j]));
+                }
+            }
+        }
+
+        private void TestTwoTensorInPlace<Tin>(Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tin, Tin> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Arange(10, 0, -1);
+            var c3 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c3;
+            var xClone = x.Clone();
+            var y = c2 * c3;
+
+            var z = tensorFunc(x, y);
+
+            var xData = x.Data<Tin>();
+            var xCloneData = xClone.Data<Tin>();
+            var yData = y.Data<Tin>();
+            var zData = z.Data<Tin>();
+
+            Assert.True(xData == zData);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(zData[i + j], scalarFunc(xCloneData[i + j], yData[i + j]));
                 }
             }
         }

@@ -12,6 +12,31 @@ namespace TorchSharp
             Handle = handle;
         }
 
+        public static implicit operator Scalar(byte value)
+        {
+            return value.ToScalar();
+        }
+
+        public static implicit operator Scalar(short value)
+        {
+            return value.ToScalar();
+        }
+
+        public static implicit operator Scalar(int value)
+        {
+            return value.ToScalar();
+        }
+
+        public static implicit operator Scalar(long value)
+        {
+            return value.ToScalar();
+        }
+
+        public static implicit operator Scalar(float value)
+        {
+            return value.ToScalar();
+        }
+
         public static implicit operator Scalar(double value)
         {
             return value.ToScalar();

@@ -387,27 +387,55 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_add(IntPtr src, int scalar, IntPtr trg);
+        private static extern IntPtr THSTensor_add(IntPtr src, IntPtr trg, IntPtr alpha);
 
-        public TorchTensor Add(TorchTensor target, int scalar = 1)
+        public TorchTensor Add(TorchTensor target)
         {
-            return new TorchTensor(THSTensor_add(handle, scalar, target.Handle));
+            return Add(target, 1);
+        }
+
+        public TorchTensor Add(TorchTensor target, Scalar alpha)
+        {
+            return new TorchTensor(THSTensor_add(handle, target.Handle, alpha.Handle));
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_addS(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_addS(IntPtr src, IntPtr trg, IntPtr alpha);
 
         public TorchTensor Add(Scalar scalar)
         {
-            return new TorchTensor(THSTensor_addS(handle, scalar.Handle));
+            return Add(scalar, 1);
+        }
+
+        public TorchTensor Add(Scalar scalar, Scalar alpha)
+        {
+            return new TorchTensor(THSTensor_addS(handle, scalar.Handle, alpha.Handle));
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_add_(IntPtr src, int scalar, IntPtr trg);
+        private static extern IntPtr THSTensor_add_(IntPtr src, IntPtr trg, IntPtr alpha);
 
-        public TorchTensor AddInPlace(TorchTensor target, int scalar = 1)
+        public TorchTensor AddInPlace(TorchTensor target)
         {
-            return new TorchTensor(THSTensor_add_(handle, scalar, target.Handle));
+            return AddInPlace(target, 1);
+        }
+
+        public TorchTensor AddInPlace(TorchTensor target, Scalar alpha)
+        {
+            return new TorchTensor(THSTensor_add_(handle, target.Handle, alpha.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_addS_(IntPtr src, IntPtr trg, IntPtr alpha);
+
+        public TorchTensor AddInPlace(Scalar scalar)
+        {
+            return AddInPlace(scalar, 1);
+        }
+
+        public TorchTensor AddInPlace(Scalar scalar, Scalar alpha)
+        {
+            return new TorchTensor(THSTensor_addS_(handle, scalar.Handle, alpha.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -469,19 +497,27 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_div_(IntPtr src, IntPtr trg);
-
-        public void DivInPlace(TorchTensor target)
-        {
-            THSTensor_div_(handle, target.Handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_divS(IntPtr src, IntPtr trg);
 
         public TorchTensor Div(Scalar target)
         {
             return new TorchTensor(THSTensor_divS(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_div_(IntPtr src, IntPtr trg);
+
+        public TorchTensor DivInPlace(TorchTensor target)
+        {
+            return new TorchTensor(THSTensor_div_(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_divS_(IntPtr src, IntPtr trg);
+
+        public TorchTensor DivInPlace(Scalar target)
+        {
+            return new TorchTensor(THSTensor_divS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -495,9 +531,9 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_erf_(IntPtr src);
 
-        public void ErfInPlace()
+        public TorchTensor ErfInPlace()
         {
-            THSTensor_erf_(handle);
+            return new TorchTensor(THSTensor_erf_(handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -509,11 +545,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_eq_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_eq_(IntPtr src, IntPtr trg);
 
-        public void EqInPlace(TorchTensor target)
+        public TorchTensor EqInPlace(TorchTensor target)
         {
-            THSTensor_eq_(handle, target.Handle);
+            return new TorchTensor(THSTensor_eq_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -525,11 +561,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_eqS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_eqS_(IntPtr src, IntPtr trg);
 
-        public void EqInPlace(Scalar target)
+        public TorchTensor EqInPlace(Scalar target)
         {
-            THSTensor_eqS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_eqS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -557,11 +593,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_ge_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_ge_(IntPtr src, IntPtr trg);
 
-        public void GeInPlace(TorchTensor target)
+        public TorchTensor GeInPlace(TorchTensor target)
         {
-            THSTensor_ge_(handle, target.Handle);
+            return new TorchTensor(THSTensor_ge_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -573,11 +609,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_geS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_geS_(IntPtr src, IntPtr trg);
 
-        public void GeInPlace(Scalar target)
+        public TorchTensor GeInPlace(Scalar target)
         {
-            THSTensor_geS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_geS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -589,11 +625,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_gt_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_gt_(IntPtr src, IntPtr trg);
 
-        public void GtInPlace(TorchTensor target)
+        public TorchTensor GtInPlace(TorchTensor target)
         {
-            THSTensor_gt_(handle, target.Handle);
+            return new TorchTensor(THSTensor_gt_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -605,11 +641,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_gtS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_gtS_(IntPtr src, IntPtr trg);
 
-        public void GtInPlace(Scalar target)
+        public TorchTensor GtInPlace(Scalar target)
         {
-            THSTensor_gtS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_gtS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -621,11 +657,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_le_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_le_(IntPtr src, IntPtr trg);
 
-        public void LeInPlace(TorchTensor target)
+        public TorchTensor LeInPlace(TorchTensor target)
         {
-            THSTensor_le_(handle, target.Handle);
+            return new TorchTensor(THSTensor_le_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -637,11 +673,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_leS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_leS_(IntPtr src, IntPtr trg);
 
-        public void LeInPlace(Scalar target)
+        public TorchTensor LeInPlace(Scalar target)
         {
-            THSTensor_leS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_leS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -655,9 +691,9 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_log_(IntPtr src);
 
-        public void LogInPlace()
+        public TorchTensor LogInPlace()
         {
-            THSTensor_log_(handle);
+            return new TorchTensor(THSTensor_log_(handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -669,11 +705,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_lt_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_lt_(IntPtr src, IntPtr trg);
 
-        public void LtInPlace(TorchTensor target)
+        public TorchTensor LtInPlace(TorchTensor target)
         {
-            THSTensor_lt_(handle, target.Handle);
+            return new TorchTensor(THSTensor_lt_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -685,11 +721,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_ltS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_ltS_(IntPtr src, IntPtr trg);
 
-        public void LtInPlace(Scalar target)
+        public TorchTensor LtInPlace(Scalar target)
         {
-            THSTensor_ltS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_ltS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -742,19 +778,27 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_mul_(IntPtr src, IntPtr target);
-
-        public void MulInPlace(TorchTensor target)
-        {
-            THSTensor_mul_(handle, target.Handle);
-        }
-
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_mulS(IntPtr src, IntPtr scalar);
 
         public TorchTensor Mul(Scalar scalar)
         {
             return new TorchTensor(THSTensor_mulS(handle, scalar.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_mul_(IntPtr src, IntPtr target);
+
+        public TorchTensor MulInPlace(TorchTensor target)
+        {
+            return new TorchTensor(THSTensor_mul_(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_mulS_(IntPtr src, IntPtr target);
+
+        public TorchTensor MulInPlace(Scalar target)
+        {
+            return new TorchTensor(THSTensor_mulS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -766,11 +810,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_ne_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_ne_(IntPtr src, IntPtr trg);
 
-        public void NeInPlace(TorchTensor target)
+        public TorchTensor NeInPlace(TorchTensor target)
         {
-            THSTensor_ne_(handle, target.Handle);
+            return new TorchTensor(THSTensor_ne_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -782,11 +826,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_neS_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_neS_(IntPtr src, IntPtr trg);
 
-        public void NeInPlace(Scalar target)
+        public TorchTensor NeInPlace(Scalar target)
         {
-            THSTensor_neS_(handle, target.Handle);
+            return new TorchTensor(THSTensor_neS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -814,11 +858,27 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_remainder_(IntPtr src, IntPtr trg);
+
+        public TorchTensor RemainderInPlace(TorchTensor target)
+        {
+            return new TorchTensor(THSTensor_remainder_(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_remainderS(IntPtr src, IntPtr scalar);
 
         public TorchTensor Remainder(Scalar scalar)
         {
             return new TorchTensor(THSTensor_remainderS(handle, scalar.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_remainderS_(IntPtr src, IntPtr scalar);
+
+        public TorchTensor RemainderInPlace(Scalar scalar)
+        {
+            return new TorchTensor(THSTensor_remainderS_(handle, scalar.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -838,11 +898,27 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_sub_(IntPtr src, IntPtr trg);
+        private static extern IntPtr THSTensor_subS(IntPtr src, IntPtr trg);
 
-        public void SubInPlace(TorchTensor target)
+        public TorchTensor Sub(Scalar target)
         {
-            THSTensor_sub_(handle, target.Handle);
+            return new TorchTensor(THSTensor_subS(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_sub_(IntPtr src, IntPtr trg);
+
+        public TorchTensor SubInPlace(TorchTensor target)
+        {
+            return new TorchTensor(THSTensor_sub_(handle, target.Handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_subS_(IntPtr src, IntPtr trg);
+
+        public TorchTensor SubInPlace(Scalar target)
+        {
+            return new TorchTensor(THSTensor_subS_(handle, target.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -941,9 +1017,6 @@ namespace TorchSharp.Tensor
         {
             return left.Sub(right);
         }
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_subS(IntPtr src, IntPtr trg);
 
         public static TorchTensor operator -(TorchTensor left, Scalar right)
         {

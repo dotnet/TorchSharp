@@ -226,7 +226,7 @@ EXPORT_API(Tensor) THSTensor_transpose(const Tensor twrapper, const int64_t dim1
 
 // Returns a tensor that is a transposed version of input.The given dimensions dim0 and dim1 are swapped.
 // This operation is in place.
-EXPORT_API(void) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
+EXPORT_API(Tensor) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
 
 // Returns a new tensor with the same data as the tensor in twrapper but of a different shape.
 // The returned tensor shares the same data and must have the same number of elements,
@@ -235,17 +235,23 @@ EXPORT_API(void) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1,
 // that size is inferred from other dimensions.
 EXPORT_API(Tensor) THSTensor_view(const Tensor twrapper, const int64_t * shape, const int length);
 
-// Each element of the tensor other is multiplied by the scalar value
-// and added to each element of the tensor input. The resulting tensor is returned.
-EXPORT_API(Tensor) THSTensor_add(const Tensor left, const int value, const Tensor right);
+// Each element of tensor 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+EXPORT_API(Tensor) THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha);
 
-// Each element of the tensor other is increased by the scalar value.
-EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right);
+// Each element of tensor 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+// This addition is in place, overwriting 'left'.
+EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha);
 
-// Each element of the tensor other is multiplied by the scalar value
-// and added to each element of the tensor input. The resulting tensor is returned.
-// This operation is in place.
-EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const int value, const Tensor right);
+// Scalar 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right, const Scalar alpha);
+
+// Scalar 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+// This addition is in place, overwriting 'left'.
+EXPORT_API(Tensor) THSTensor_addS_(const Tensor left, const Scalar right, const Scalar alpha);
 
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step
 // (all matrix multiplications get accumulated along the first dimension). mat is added to the final result.
@@ -293,6 +299,9 @@ EXPORT_API(Tensor) THSTensor_div_(const Tensor left, const Tensor right);
 
 // Returns left / right.
 EXPORT_API(Tensor) THSTensor_divS(const Tensor left, const Scalar right);
+
+// Returns left / right in place.
+EXPORT_API(Tensor) THSTensor_divS_(const Tensor left, const Scalar right);
 
 // Returns left / right.
 EXPORT_API(Tensor) THSTensor_divS2(const Scalar left, const Tensor right);
@@ -413,6 +422,10 @@ EXPORT_API(Tensor) THSTensor_mul_(const Tensor left, const Tensor right);
 // Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
 EXPORT_API(Tensor) THSTensor_mulS(const Tensor twrapper, const Scalar scalar);
 
+// Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
+// This operation is in place.
+EXPORT_API(Tensor) THSTensor_mulS_(const Tensor twrapper, const Scalar scalar);
+
 // Computes element-wise non-equality.
 EXPORT_API(Tensor) THSTensor_ne(const Tensor left, const Tensor right);
 
@@ -453,15 +466,18 @@ EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor twrapper);
 // The shape of right must be broadcastable with the shape of the left tensor.
 EXPORT_API(Tensor) THSTensor_sub(const Tensor left, const Tensor right);
 
-// Subtraction of right scalar from left.
-EXPORT_API(Tensor) THSTensor_subS(const Tensor left, const Scalar right);
-
-// Subtraction of right from left scalar.
-EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
-
 // Inplace subtraction of right from left.
 // The shape of right must be broadcastable with the shape of the left tensor.
 EXPORT_API(Tensor) THSTensor_sub_(const Tensor left, const Tensor right);
+
+// Subtraction of right scalar from left.
+EXPORT_API(Tensor) THSTensor_subS(const Tensor left, const Scalar right);
+
+// Inplace subtraction of right scalar from left.
+EXPORT_API(Tensor) THSTensor_subS_(const Tensor left, const Scalar right);
+
+// Subtraction of right from left scalar.
+EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
 
 // Returns the sum of all elements in the input tensor.
 EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper);
