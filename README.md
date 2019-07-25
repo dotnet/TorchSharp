@@ -63,6 +63,13 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
+Example commands for Ubuntu 16:
+```
+sudo apt-get update
+sudo apt-get install git clang cmake libunwind8 curl
+sudo apt-get install libssl1.0.0
+sudo apt-get install libomp-dev
+```
 
 Updating pacakge version for new release
 -----------------------------
