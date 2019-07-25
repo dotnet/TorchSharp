@@ -166,11 +166,6 @@
       <!-- include LICENSE that was downloaded from GitHub -->
       <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-LIBTORCH"
                         TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE-LIBTORCH.txt" />
-
-      <!-- copy to NativeAssets location, only for current RID, so that they may be used by tests -->
-      <FilesFromArchive Condition="'$(PackageRID)' == '%(_fileFromArchive.Runtime)'"
-                        Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
-                        TargetPath="$(NativeAssetsBuiltPath)\%(_fileFromArchive.DestinationFile)" />
     </ItemGroup>
   </Target>
 
