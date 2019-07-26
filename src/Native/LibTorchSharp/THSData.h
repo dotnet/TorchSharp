@@ -39,9 +39,9 @@ public:
         void reset();
 
 private:
-        std::shared_ptr<Dataset> loaderPointer;
-        torch::data::Iterator<torch::data::Example<>> currentIter;
-        size_t size;
+    std::shared_ptr<Dataset> loaderPointer;
+    torch::data::Iterator<torch::data::Example<>> currentIter;
+    size_t size;
 };
 
 // Class-related methods.
@@ -59,7 +59,7 @@ inline bool DatasetIterator<Dataset>::moveNext()
 {
     ++currentIter;
 
-    return currentIter != loaderPointer.get()->end();
+    return currentIter != loaderPointer->end();
 }
 
 // Get the current object pointed by the iterator.
@@ -74,7 +74,7 @@ inline void DatasetIterator<Dataset>::current(Tensor* data, Tensor* target)
 template<typename Dataset>
 inline void DatasetIterator<Dataset>::reset()
 {
-    currentIter = loaderPointer.get()->begin();
+    currentIter = loaderPointer->begin();
 }
 
 // API.

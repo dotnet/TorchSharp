@@ -330,3 +330,13 @@ ASALocalRun/
 *.binlog
 # Ignore external test datasets.
 /test/data/external/
+/src/Examples/Data/train-labels-idx1-ubyte
+/src/Examples/Data/train-images-idx3-ubyte
+/src/Examples/Data/test_batch.bin
+/src/Examples/Data/t10k-labels-idx1-ubyte
+/src/Examples/Data/t10k-images-idx3-ubyte
+/src/Examples/Data/data_batch_5.bin
+/src/Examples/Data/data_batch_4.bin
+/src/Examples/Data/data_batch_3.bin
+/src/Examples/Data/data_batch_2.bin
+/src/Examples/Data/data_batch_1.bin
