@@ -71,7 +71,7 @@ sudo apt-get install libssl1.0.0
 sudo apt-get install libomp-dev
 ```
 
-Updating pacakge version for new release
+Updating package version for new release
 -----------------------------
 To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 Everything is currently considered in preview.
