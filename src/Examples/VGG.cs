@@ -12,7 +12,7 @@ namespace Examples
     class VGG : TorchSharp.NN.Module
     {
         Sequential sequential;
-        private readonly static Dictionary<string, List<object>> cfg;
+        private readonly static Dictionary<string, List<object>> cfgs = new Dictionary<string, List<object>>();
 
         /// <summary>
         /// 
@@ -21,7 +21,8 @@ namespace Examples
         public VGG(string VGGName) : base()
         {
             // super(VGG, self).__init__()  dont really need it, i think
-
+            List<object> cfg = cfgs.GetValueOrDefault(VGGName);
+            this.sequential = MakeSequential(cfg);
 
         }
 
@@ -32,10 +33,9 @@ namespace Examples
         /// <returns></returns>
         private override TorchTensor Forward(TorchTensor input)
         {
-
         }
 
-        private Sequential MakeSequential(List<string> cfg)
+        private Sequential MakeSequential(List<object> cfg)
         {
             List<Module> layers = new List<Module>();
             int in_channels = 3;
@@ -48,10 +48,13 @@ namespace Examples
                 {
                     layers.Add(Module.Conv2D(in_channels, (long)x, 3, padding: 1));
                     //layers.Add(Module.Bat);
-
+                    layers.Add(Module.Relu(inPlace: true));
+                    in_channels = (int) x;
                 }
-
             }
+            //layers.Add(Module.AdaptiveAvgPool2D( )
+
+            return Module.Sequential(layers.ToArray());
         }
 
     }
