@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
-    <ProjectReference Include="..\..\src\AtenSharp\AtenSharp.csproj" />
-    <ProjectReference Include="..\..\src\SNT\SNT.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux'))">
-    <NativeAssemblyReference Include="torch" ExtraExtension=".1"/>
+    <NativeAssemblyReference Include="torch" ExtraExtension=".1" />
     <NativeAssemblyReference Include="gomp-8bba0e50" ExtraExtension=".1" />
   </ItemGroup>
 

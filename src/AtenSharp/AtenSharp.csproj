@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IncludeInPackage>AtenSharp</IncludeInPackage>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
-    <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-  </PropertyGroup>
-</Project>
