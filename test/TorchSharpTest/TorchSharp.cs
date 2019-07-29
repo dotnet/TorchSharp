@@ -556,17 +556,17 @@ namespace TorchSharp.Test
             }
         }
 
-        # if DEBUG
+#if DEBUG
         [Fact(Skip = "Not working on Mac and Ubuntu")]
         public void TestErrorHandling()
         {
-            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f}))
+            using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f }))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
                 Assert.Throws<SEHException>(() => NN.LossFunction.PoissonNLL()(input, target));
             }
         }
-        #endif
+#endif
 
         [Fact]
         public void TestZeroGrad()
@@ -643,11 +643,11 @@ namespace TorchSharp.Test
             }
         }
 
-        [Fact] 
+        [Fact]
         public void TestGrad2()
         {
             var y = FloatTensor.RandomN(new long[] { 32, 1 }, device: "cpu:0");
-            var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTorchTensor(new long[] { 32, 11}).ToType(ATenScalarMapping.Float);
+            var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTorchTensor(new long[] { 32, 11 }).ToType(ATenScalarMapping.Float);
             var inputs = new TorchTensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTorchTensor(new long[] { 1, 11 }).ToType(ATenScalarMapping.Float).RequiresGrad(true);
             var linear = new NN.Linear(11, 1, true);
@@ -805,6 +805,191 @@ namespace TorchSharp.Test
                 for (int j = 0; j < 100; j++)
                 {
                     Assert.Equal(0, xdata[i + j]);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestArithmeticOperators()
+        {
+            // scalar-tensor operators
+            TestOneTensor<float, float>(a => a + 0.5f, a => a + 0.5f);
+            TestOneTensor<float, float>(a => 0.5f + a, a => 0.5f + a);
+            TestOneTensor<float, float>(a => a - 0.5f, a => a - 0.5f);
+            TestOneTensor<float, float>(a => 0.5f - a, a => 0.5f - a);
+            TestOneTensor<float, float>(a => a * 0.5f, a => a * 0.5f);
+            TestOneTensor<float, float>(a => 0.5f * a, a => 0.5f * a);
+            TestOneTensor<float, float>(a => a / 0.5f, a => a / 0.5f);
+            TestOneTensor<float, float>(a => 0.5f / a, a => 0.5f / a);
+
+            TestOneTensor<float, float>(a => a.Add(0.5f), a => a + 0.5f);
+            TestOneTensor<float, float>(a => a.Sub(0.5f), a => a - 0.5f);
+            TestOneTensor<float, float>(a => a.Mul(0.5f), a => a * 0.5f);
+            TestOneTensor<float, float>(a => a.Div(0.5f), a => a / 0.5f);
+
+            TestOneTensorInPlace<float>(a => a.AddInPlace(0.5f), a => a + 0.5f);
+            TestOneTensorInPlace<float>(a => a.SubInPlace(0.5f), a => a - 0.5f);
+            TestOneTensorInPlace<float>(a => a.MulInPlace(0.5f), a => a * 0.5f);
+            TestOneTensorInPlace<float>(a => a.DivInPlace(0.5f), a => a / 0.5f);
+
+            // tensor-tensor operators
+            TestTwoTensor<float, float>((a, b) => a + b, (a, b) => a + b);
+            TestTwoTensor<float, float>((a, b) => a - b, (a, b) => a - b);
+            TestTwoTensor<float, float>((a, b) => a * b, (a, b) => a * b);
+            TestTwoTensor<float, float>((a, b) => a / b, (a, b) => a / b);
+
+            TestTwoTensor<float, float>((a, b) => a.Add(b), (a, b) => a + b);
+            TestTwoTensor<float, float>((a, b) => a.Sub(b), (a, b) => a - b);
+            TestTwoTensor<float, float>((a, b) => a.Mul(b), (a, b) => a * b);
+            TestTwoTensor<float, float>((a, b) => a.Div(b), (a, b) => a / b);
+
+            TestTwoTensorInPlace<float>((a, b) => a.AddInPlace(b), (a, b) => a + b);
+            TestTwoTensorInPlace<float>((a, b) => a.SubInPlace(b), (a, b) => a - b);
+            TestTwoTensorInPlace<float>((a, b) => a.MulInPlace(b), (a, b) => a * b);
+            TestTwoTensorInPlace<float>((a, b) => a.DivInPlace(b), (a, b) => a / b);
+        }
+
+        [Fact]
+        public void TestComparisonOperators()
+        {
+            // scalar-tensor operators
+            TestOneTensor<float, bool>(a => a == 5.0f, a => a == 5.0f);
+            TestOneTensor<float, bool>(a => a != 5.0f, a => a != 5.0f);
+            TestOneTensorInPlace<float>(a => a.EqInPlace(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.NeInPlace(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
+
+            TestOneTensor<float, bool>(a => a < 5.0f, a => a < 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f < a, a => 5.0f < a);
+            TestOneTensor<float, bool>(a => a <= 5.0f, a => a <= 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f <= a, a => 5.0f <= a);
+            TestOneTensor<float, bool>(a => a > 5.0f, a => a > 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f > a, a => 5.0f > a);
+            TestOneTensor<float, bool>(a => a >= 5.0f, a => a >= 5.0f);
+            TestOneTensor<float, bool>(a => 5.0f >= a, a => 5.0f >= a);
+
+            TestOneTensorInPlace<float>(a => a.LtInPlace(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.LeInPlace(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GtInPlace(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GeInPlace(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
+
+            TestOneTensor<float, float>(a => 5.0f % a, a => 5.0f % a);
+            TestOneTensor<float, float>(a => a % 5.0f, a => a % 5.0f);
+            TestOneTensorInPlace<float>(a => a.RemainderInPlace(5.0f), a => a % 5.0f);
+
+            // tensor-tensor operators
+            TestTwoTensor<float, bool>((a, b) => a == b, (a, b) => a == b);
+            TestTwoTensor<float, bool>((a, b) => a != b, (a, b) => a != b);
+            TestTwoTensorInPlace<float>((a, b) => a.EqInPlace(b), (a, b) => a == b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.NeInPlace(b), (a, b) => a != b ? 1.0f : 0.0f);
+
+            TestTwoTensor<float, bool>((a, b) => a < b, (a, b) => a < b);
+            TestTwoTensor<float, bool>((a, b) => a <= b, (a, b) => a <= b);
+            TestTwoTensor<float, bool>((a, b) => a > b, (a, b) => a > b);
+            TestTwoTensor<float, bool>((a, b) => a >= b, (a, b) => a >= b);
+
+            TestTwoTensorInPlace<float>((a, b) => a.LtInPlace(b), (a, b) => a < b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.LeInPlace(b), (a, b) => a <= b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.GtInPlace(b), (a, b) => a > b ? 1.0f : 0.0f);
+            TestTwoTensorInPlace<float>((a, b) => a.GeInPlace(b), (a, b) => a >= b ? 1.0f : 0.0f);
+
+            TestTwoTensor<float, float>((a, b) => a % b, (a, b) => a % b);
+            TestTwoTensorInPlace<float>((a, b) => a.RemainderInPlace(b), (a, b) => a % b);
+        }
+
+        private void TestOneTensor<Tin, Tout>(Func<TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tout> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c2;
+            var y = tensorFunc(x);
+
+            var xData = x.Data<Tin>();
+            var yData = y.Data<Tout>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(yData[i + j], scalarFunc(xData[i + j]));
+                }
+            }
+        }
+
+        private void TestOneTensorInPlace<Tin>(Func<TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tin> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c2;
+            var xClone = x.Clone();
+            var y = tensorFunc(x);
+
+            var xData = x.Data<Tin>();
+            var xCloneData = xClone.Data<Tin>();
+            var yData = y.Data<Tin>();
+
+            Assert.True(xData == yData);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(yData[i + j], scalarFunc(xCloneData[i + j]));
+                }
+            }
+        }
+
+        private void TestTwoTensor<Tin, Tout>(Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tin, Tout> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Arange(10, 0, -1);
+            var c3 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c3;
+            var y = c2 * c3;
+
+            var z = tensorFunc(x, y);
+
+            var xData = x.Data<Tin>();
+            var yData = y.Data<Tin>();
+            var zData = z.Data<Tout>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(zData[i + j], scalarFunc(xData[i + j], yData[i + j]));
+                }
+            }
+        }
+
+        private void TestTwoTensorInPlace<Tin>(Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Func<Tin, Tin, Tin> scalarFunc)
+        {
+            var c1 = FloatTensor.Arange(0, 10, 1);
+            var c2 = FloatTensor.Arange(10, 0, -1);
+            var c3 = FloatTensor.Ones(new long[] { 10, 10 });
+
+            var x = c1 * c3;
+            var xClone = x.Clone();
+            var y = c2 * c3;
+
+            var z = tensorFunc(x, y);
+
+            var xData = x.Data<Tin>();
+            var xCloneData = xClone.Data<Tin>();
+            var yData = y.Data<Tin>();
+            var zData = z.Data<Tin>();
+
+            Assert.True(xData == zData);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Assert.Equal(zData[i + j], scalarFunc(xCloneData[i + j], yData[i + j]));
                 }
             }
         }
