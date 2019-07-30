@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDefaultAlias("TorchSharp")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.2.27827.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.2.27925.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.2.27827.0 @BuiltBy: miguel-iMac-Pro.local @Branch: master @SrcCode: https://github.com/dotnet/machinelearning/tree/4301607ea36ed029e78e9d0c5b14871acd2104e3+4301607ea36ed029e78e9d0c5b14871acd2104e3")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.2.27925.0 @BuiltBy: miguel-iMac.local @Branch: master @SrcCode: https://github.com/dotnet/machinelearning/tree/584cb0b531c52086b0661b4fe12e5202db6c2353+584cb0b531c52086b0661b4fe12e5202db6c2353")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("Microsoft® .NET Core")</AttributeName>
@@ -226,27 +226,23 @@
       <Targets>
         <Target Type="T:TorchSharp.Tensor.TorchTensor" />
       </Targets>
-      <Member MemberName="Cat&lt;T&gt;">
-        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor Cat&lt;T&gt; (this TorchSharp.Tensor.TorchTensor[] tensors, long dimension);" />
-        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor Cat&lt;T&gt;(valuetype TorchSharp.Tensor.TorchTensor[] tensors, int64 dimension) cil managed" />
+      <Member MemberName="Cat">
+        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor Cat (this TorchSharp.Tensor.TorchTensor[] tensors, long dimension);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor Cat(valuetype TorchSharp.Tensor.TorchTensor[] tensors, int64 dimension) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
         </ReturnValue>
-        <TypeParameters>
-          <TypeParameter Name="T" />
-        </TypeParameters>
         <Parameters>
           <Parameter Name="tensors" Type="TorchSharp.Tensor.TorchTensor[]" RefType="this" />
           <Parameter Name="dimension" Type="System.Int64" />
         </Parameters>
         <Docs>
-          <typeparam name="T">To be added.</typeparam>
           <param name="tensors">To be added.</param>
           <param name="dimension">To be added.</param>
           <summary>To be added.</summary>
         </Docs>
-        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.Cat``1(TorchSharp.Tensor.TorchTensor[],System.Int64)" />
+        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.Cat(TorchSharp.Tensor.TorchTensor[],System.Int64)" />
       </Member>
     </ExtensionMethod>
     <ExtensionMethod>
@@ -277,8 +273,8 @@
         <Target Type="System.Object" />
       </Targets>
       <Member MemberName="ToTorchTensor&lt;T&gt;">
-        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt; (this T scalar);" />
-        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt;(!!T scalar) cil managed" />
+        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt; (this T scalar, bool requiresGrad = false);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt;(!!T scalar, bool requiresGrad) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
@@ -288,13 +284,15 @@
         </TypeParameters>
         <Parameters>
           <Parameter Name="scalar" Type="T" RefType="this" />
+          <Parameter Name="requiresGrad" Type="System.Boolean" />
         </Parameters>
         <Docs>
           <typeparam name="T">To be added.</typeparam>
           <param name="scalar">To be added.</param>
+          <param name="requiresGrad">To be added.</param>
           <summary>To be added.</summary>
         </Docs>
-        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.ToTorchTensor``1(``0)" />
+        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.ToTorchTensor``1(``0,System.Boolean)" />
       </Member>
     </ExtensionMethod>
     <ExtensionMethod>
@@ -302,8 +300,8 @@
         <Target Type="T:System.Array" />
       </Targets>
       <Member MemberName="ToTorchTensor&lt;T&gt;">
-        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt; (this T[] rawArray, long[] dimensions);" />
-        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt;(!!T[] rawArray, int64[] dimensions) cil managed" />
+        <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt; (this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor ToTorchTensor&lt;T&gt;(!!T[] rawArray, int64[] dimensions, bool doCopy, bool requiresGrad) cil managed" />
         <MemberType>ExtensionMethod</MemberType>
         <ReturnValue>
           <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
@@ -314,14 +312,18 @@
         <Parameters>
           <Parameter Name="rawArray" Type="T[]" RefType="this" />
           <Parameter Name="dimensions" Type="System.Int64[]" />
+          <Parameter Name="doCopy" Type="System.Boolean" />
+          <Parameter Name="requiresGrad" Type="System.Boolean" />
         </Parameters>
         <Docs>
           <typeparam name="T">To be added.</typeparam>
           <param name="rawArray">To be added.</param>
           <param name="dimensions">To be added.</param>
+          <param name="doCopy">To be added.</param>
+          <param name="requiresGrad">To be added.</param>
           <summary>To be added.</summary>
         </Docs>
-        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.ToTorchTensor``1(``0[],System.Int64[])" />
+        <Link Type="TorchSharp.Tensor.TensorExtensionMethods" Member="M:TorchSharp.Tensor.TensorExtensionMethods.ToTorchTensor``1(``0[],System.Int64[],System.Boolean,System.Boolean)" />
       </Member>
     </ExtensionMethod>
   </ExtensionMethods>
