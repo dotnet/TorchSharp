@@ -63,7 +63,6 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
-
 Updating pacakge version for new release
 -----------------------------
 To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
@@ -77,6 +76,10 @@ Use the following two MSBuild arguments in order to control the -preview and the
 |IncludeBuildNumberInPackageVersion | false | 1.0.0-preview|
 
 Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersion=true`
+
+GPU support
+============
+For GPU support it is required to install CUDA 9.0 and make it available to the dynamic linker.
 
 Examples
 ===========
