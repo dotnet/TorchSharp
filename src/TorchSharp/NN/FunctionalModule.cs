@@ -13,6 +13,15 @@ namespace TorchSharp.NN
         {
         }
 
+        public override void Save(String location)
+        {
+        }
+
+        public new static Module Load(String location)
+        {
+            throw new Exception("Functional module cannot be loaded.");
+        }
+
         public override void RegisterModule(Module module)
         {
         }

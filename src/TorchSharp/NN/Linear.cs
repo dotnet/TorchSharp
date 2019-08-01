@@ -58,6 +58,14 @@ namespace TorchSharp.NN
             set { THSNN_linear_set_weight(handle, value.Handle); }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_linear_load_module(string location);
+
+        public new static Linear Load(String location)
+        {
+            return new Linear(THSNN_linear_load_module(location));
+        }
+
         public override IEnumerable<TorchTensor> Parameters()
         {
             var parameters = new List<TorchTensor>();

@@ -8,6 +8,18 @@
 
 // API.
 
+// Save a module
+EXPORT_API(int) THSNN_save_module(const char * location, const NNModule module);
+
+// Load a linear module
+EXPORT_API(NNModule) THSNN_linear_load_module(const char * location);
+
+// Load a conv2d module
+EXPORT_API(NNModule) THSNN_conv2d_load_module(const char * location);
+
+// Load a custom module
+EXPORT_API(NNModule) THSNN_load_module(const char * location, const char * name);
+
 // Returns a ReLu layer.
 EXPORT_API(NNModule) THSNN_reluModule();
 

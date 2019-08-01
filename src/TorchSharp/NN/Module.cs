@@ -106,6 +106,14 @@ namespace TorchSharp.NN
 
     public partial class Module
     {
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_load_module(string location);
+
+        public static Linear Load(String location)
+        {
+            return new Linear(THSNN_load_module(location));
+        }
+
         static public Sequential Sequential(params Module[] modules)
         {
             return new Sequential(modules);
@@ -201,6 +209,14 @@ namespace TorchSharp.NN
     public abstract partial class Module : IDisposable
     {
         public abstract TorchTensor Forward(TorchTensor input);
+
+        public virtual void Save(String location)
+        {
+            foreach (var module in Modules)
+            {
+                module.Save(location); // This will not work when > 1 modules exist.
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         private static extern void THSNN_train(HType module);
