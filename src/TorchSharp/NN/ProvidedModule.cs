@@ -15,16 +15,5 @@ namespace TorchSharp.NN
         internal ProvidedModule(IntPtr handle) : base(handle)
         {
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static bool THSNN_save_module(HType handle, string location);
-
-        public override void Save(String location)
-        {
-            if (!THSNN_save_module(handle, location))
-            {
-                throw new Exception("Error while saving the module.");
-            }
-        }
     }
 }

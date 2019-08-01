@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
@@ -106,12 +108,9 @@ namespace TorchSharp.NN
 
     public partial class Module
     {
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_load_module(string location);
-
-        public static Linear Load(String location)
+        public static Module Load(String location)
         {
-            return new Linear(THSNN_load_module(location));
+            throw new NotImplementedException();
         }
 
         static public Sequential Sequential(params Module[] modules)
@@ -212,10 +211,7 @@ namespace TorchSharp.NN
 
         public virtual void Save(String location)
         {
-            foreach (var module in Modules)
-            {
-                module.Save(location); // This will not work when > 1 modules exist.
-            }
+            throw new NotImplementedException();
         }
 
         [DllImport("LibTorchSharp")]
