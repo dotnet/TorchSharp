@@ -56,6 +56,14 @@ Requirements:
 - cmake (tested with 3.14)
 - clang 3.9
 
+Example to fulfill the requirements in Ubuntu 16:
+```
+sudo apt-get update
+sudo apt-get install git clang cmake libunwind8 curl
+sudo apt-get install libssl1.0.0
+sudo apt-get install libomp-dev
+```
+
 Commands:
 - Building: `./build.sh`
 - Building from Visual Studio: first build using the command line

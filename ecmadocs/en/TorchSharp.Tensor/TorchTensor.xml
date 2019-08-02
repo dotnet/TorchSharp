@@ -39,8 +39,8 @@
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Add (TorchSharp.Tensor.TorchTensor target, int scalar = 1);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Add(valuetype TorchSharp.Tensor.TorchTensor target, int32 scalar) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Add (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Add(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -50,11 +50,53 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
-        <Parameter Name="scalar" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Add (TorchSharp.Scalar scalar, TorchSharp.Scalar alpha);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Add(class TorchSharp.Scalar scalar, class TorchSharp.Scalar alpha) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scalar" Type="TorchSharp.Scalar" />
+        <Parameter Name="alpha" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
         <param name="scalar">To be added.</param>
+        <param name="alpha">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Add (TorchSharp.Tensor.TorchTensor target, TorchSharp.Scalar alpha);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Add(valuetype TorchSharp.Tensor.TorchTensor target, class TorchSharp.Scalar alpha) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="alpha" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="alpha">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -87,23 +129,86 @@
       </Docs>
     </Member>
     <Member MemberName="AddInPlace">
-      <MemberSignature Language="C#" Value="public void AddInPlace (TorchSharp.Tensor.TorchTensor target, int scalar = 1);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddInPlace(valuetype TorchSharp.Tensor.TorchTensor target, int32 scalar) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor AddInPlace (TorchSharp.Scalar scalar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor AddInPlace(class TorchSharp.Scalar scalar) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scalar" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="scalar">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor AddInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor AddInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
-        <Parameter Name="scalar" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="target">To be added.</param>
-        <param name="scalar">To be added.</param>
         <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor AddInPlace (TorchSharp.Scalar scalar, TorchSharp.Scalar alpha);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor AddInPlace(class TorchSharp.Scalar scalar, class TorchSharp.Scalar alpha) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scalar" Type="TorchSharp.Scalar" />
+        <Parameter Name="alpha" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="scalar">To be added.</param>
+        <param name="alpha">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor AddInPlace (TorchSharp.Tensor.TorchTensor target, TorchSharp.Scalar alpha);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor AddInPlace(valuetype TorchSharp.Tensor.TorchTensor target, class TorchSharp.Scalar alpha) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="alpha" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="alpha">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -234,6 +339,23 @@
       <Docs>
         <param name="min">To be added.</param>
         <param name="max">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -448,14 +570,34 @@
       </Docs>
     </Member>
     <Member MemberName="DivInPlace">
-      <MemberSignature Language="C#" Value="public void DivInPlace (TorchSharp.Tensor.TorchTensor target);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DivInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor DivInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor DivInPlace(class TorchSharp.Scalar target) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DivInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor DivInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor DivInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
@@ -463,6 +605,7 @@
       <Docs>
         <param name="target">To be added.</param>
         <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -506,6 +649,46 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="EqInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor EqInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor EqInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EqInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor EqInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor EqInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Equal">
       <MemberSignature Language="C#" Value="public bool Equal (TorchSharp.Tensor.TorchTensor target);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equal(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
@@ -526,6 +709,60 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Erf">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Erf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Erf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ErfInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor ErfInPlace ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor ErfInPlace() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Exp">
       <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Exp ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Exp() cil managed" />
@@ -535,6 +772,103 @@
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Ge">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Ge (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Ge(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Ge">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Ge (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Ge(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor GeInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor GeInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor GeInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor GeInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -616,6 +950,66 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Gt">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Gt (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Gt(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor GtInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor GtInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GtInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor GtInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor GtInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
       </Parameters>
       <Docs>
         <param name="target">To be added.</param>
@@ -738,6 +1132,200 @@
       </ReturnValue>
       <Parameters />
       <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Le">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Le (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Le(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Le">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Le (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Le(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor LeInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor LeInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor LeInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor LeInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Log ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Log() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LogInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor LogInPlace ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor LogInPlace() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Lt">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Lt (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Lt(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Lt">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Lt (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Lt(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LtInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor LtInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor LtInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LtInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor LtInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor LtInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -868,14 +1456,34 @@
       </Docs>
     </Member>
     <Member MemberName="MulInPlace">
-      <MemberSignature Language="C#" Value="public void MulInPlace (TorchSharp.Tensor.TorchTensor target);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MulInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor MulInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor MulInPlace(class TorchSharp.Scalar target) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MulInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor MulInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor MulInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
@@ -883,6 +1491,87 @@
       <Docs>
         <param name="target">To be added.</param>
         <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Ne">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Ne (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Ne(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Ne">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Ne (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Ne(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor NeInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor NeInPlace(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NeInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor NeInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor NeInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -923,6 +1612,28 @@
              Returns a pointer to the unmanaged data managed by this tensor.
             </summary>
         <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Addition (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Addition(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -971,6 +1682,28 @@
       </Docs>
     </Member>
     <Member MemberName="op_Division">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Division (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Division(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Division">
       <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Division (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Division(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
       <MemberType>Method</MemberType>
@@ -1004,6 +1737,490 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Equality (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Equality(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Equality (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Equality(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Equality (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Equality(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThan (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThan(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThan (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThan(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThan (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThan(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_GreaterThanOrEqual(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Inequality (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Inequality(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Inequality (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Inequality(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Inequality (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Inequality(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThan (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThan(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThan (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThan(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThan (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThan(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThanOrEqual (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThanOrEqual(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThanOrEqual (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThanOrEqual(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_LessThanOrEqual (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_LessThanOrEqual(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Modulus">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Modulus (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Modulus(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Modulus">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Modulus (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Modulus(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Modulus">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Modulus (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Modulus(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Multiply">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Multiply (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Multiply(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
         <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
       </Parameters>
       <Docs>
@@ -1059,6 +2276,50 @@
       </Docs>
     </Member>
     <Member MemberName="op_Subtraction">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Subtraction (TorchSharp.Scalar left, TorchSharp.Tensor.TorchTensor right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Subtraction(class TorchSharp.Scalar left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Scalar" />
+        <Parameter Name="right" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Subtraction (TorchSharp.Tensor.TorchTensor left, TorchSharp.Scalar right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Subtraction(valuetype TorchSharp.Tensor.TorchTensor left, class TorchSharp.Scalar right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="TorchSharp.Tensor.TorchTensor" />
+        <Parameter Name="right" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="left">To be added.</param>
+        <param name="right">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Subtraction">
       <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor op_Subtraction (TorchSharp.Tensor.TorchTensor left, TorchSharp.Tensor.TorchTensor right);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype TorchSharp.Tensor.TorchTensor op_Subtraction(valuetype TorchSharp.Tensor.TorchTensor left, valuetype TorchSharp.Tensor.TorchTensor right) cil managed" />
       <MemberType>Method</MemberType>
@@ -1095,6 +2356,86 @@
       </Parameters>
       <Docs>
         <param name="scalar">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remainder">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Remainder (TorchSharp.Scalar scalar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Remainder(class TorchSharp.Scalar scalar) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scalar" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="scalar">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remainder">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Remainder (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Remainder(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemainderInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor RemainderInPlace (TorchSharp.Scalar scalar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor RemainderInPlace(class TorchSharp.Scalar scalar) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scalar" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="scalar">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemainderInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor RemainderInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor RemainderInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -1205,6 +2546,44 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Strides">
+      <MemberSignature Language="C#" Value="public Span&lt;long&gt; Strides { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Span`1&lt;int64&gt; Strides" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;System.Int64&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+             Retrieves the strides for the tensor.
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sub">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Sub (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Sub(class TorchSharp.Scalar target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Sub">
       <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Sub (TorchSharp.Tensor.TorchTensor target);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Sub(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
@@ -1226,14 +2605,34 @@
       </Docs>
     </Member>
     <Member MemberName="SubInPlace">
-      <MemberSignature Language="C#" Value="public void SubInPlace (TorchSharp.Tensor.TorchTensor target);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SubInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor SubInPlace (TorchSharp.Scalar target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor SubInPlace(class TorchSharp.Scalar target) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="TorchSharp.Scalar" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SubInPlace">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor SubInPlace (TorchSharp.Tensor.TorchTensor target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor SubInPlace(valuetype TorchSharp.Tensor.TorchTensor target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="target" Type="TorchSharp.Tensor.TorchTensor" />
@@ -1241,6 +2640,7 @@
       <Docs>
         <param name="target">To be added.</param>
         <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1478,6 +2878,26 @@
       <Docs>
         <summary>To be added.</summary>
         <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unsqueeze">
+      <MemberSignature Language="C#" Value="public TorchSharp.Tensor.TorchTensor Unsqueeze (long dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype TorchSharp.Tensor.TorchTensor Unsqueeze(int64 dimension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dimension" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="dimension">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
