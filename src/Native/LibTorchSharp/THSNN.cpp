@@ -148,6 +148,18 @@ Tensor THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const
     return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::IntList(outputSize, length)));
 }
 
+Tensor THSNN_avgPool2DApply(const Tensor tensor,
+	const int kernelSizeLength,
+	const int64_t* kernelSize,
+	const int strideLength,
+	const int64_t* stride) 
+{
+	return new torch::Tensor(torch::avg_pool2d(
+		*tensor,
+		at::IntList(kernelSize, kernelSizeLength),
+		at::IntList(stride, strideLength)));
+}
+
 Tensor THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension)
 {
     return new torch::Tensor(torch::log_softmax(*tensor, dimension));
