@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp.NN
@@ -14,6 +15,19 @@ namespace TorchSharp.NN
 
         internal ProvidedModule(IntPtr handle) : base(handle)
         {
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSNN_save_module(string location, HType handle);
+
+        public override void Save(String modelPath)
+        {
+            if (File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} already existing.", modelPath));
+            }
+
+            THSNN_save_module(modelPath, handle);
         }
     }
 }

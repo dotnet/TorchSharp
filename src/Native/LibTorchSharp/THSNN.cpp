@@ -23,9 +23,7 @@ class ModuleWrapper : torch::nn::Module
 
 int THSNN_save_module(const char * location, const NNModule module)
 {
-    auto output = torch::serialize::OutputArchive();
-    (*module)->save(output);
-    output.save_to(location);
+    torch::save(*module, location);
 
     return true;
 }
@@ -65,21 +63,17 @@ NNModule THSNN_new_module(const char ** names, at::Tensor ** parameters, const b
 
 NNModule THSNN_linear_load_module(const char * location)
 {
-    auto input = torch::serialize::InputArchive();
-    torch::nn::Linear module;
+    auto module = torch::nn::Linear(torch::nn::LinearOptions(0, 0));
+    torch::load(module, location);
 
-    input.load_from(location);
-    module->load(input);
     return new std::shared_ptr<torch::nn::Module>(module.ptr());
 }
 
 NNModule THSNN_conv2d_load_module(const char * location)
 {
-    auto input = torch::serialize::InputArchive();
-    torch::nn::Conv2d module;
+    auto module = torch::nn::Conv2d(torch::nn::Conv2dOptions(0, 0, 0));
+    torch::load(module, location);
 
-    input.load_from(location);
-    module->load(input);
     return new std::shared_ptr<torch::nn::Module>(module.ptr());
 }
 

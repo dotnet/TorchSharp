@@ -810,6 +810,34 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void TestSaveLinear()
+        {
+            var linear = NN.Module.Linear(100, 10);
+            linear.Save(".model.ts");
+            File.Delete(".model.ts");
+        }
+
+        [Fact]
+        public void TestSaveLoadLinear()
+        {
+            var linear = NN.Module.Linear(100, 10, true);
+            linear.Save(".model.ts");
+            var loadedLinear = NN.Linear.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loadedLinear);
+        }
+
+        [Fact]
+        public void TestSaveLoadConv2D()
+        {
+            var conv = NN.Module.Conv2D(100, 10, 5);
+            conv.Save(".model.ts");
+            var loaded = NN.Conv2D.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loaded);
+        }
+
+        [Fact]
         public void TestArithmeticOperators()
         {
             // scalar-tensor operators

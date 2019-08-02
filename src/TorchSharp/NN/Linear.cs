@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -61,9 +62,14 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_linear_load_module(string location);
 
-        public new static Linear Load(String location)
+        public new static Linear Load(String modelPath)
         {
-            return new Linear(THSNN_linear_load_module(location));
+            if (!File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} does not exist.", modelPath));
+            }
+
+            return new Linear(THSNN_linear_load_module(modelPath));
         }
 
         public override IEnumerable<TorchTensor> Parameters()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -13,9 +14,14 @@ namespace TorchSharp.NN
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_conv2d_load_module(string location);
 
-        public new static Conv2D Load(String location)
+        public new static Conv2D Load(String modelPath)
         {
-            return new Conv2D(THSNN_conv2d_load_module(location));
+            if (!File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} does not exist.", modelPath));
+            }
+
+            return new Conv2D(THSNN_conv2d_load_module(modelPath));
         }
 
         [DllImport("LibTorchSharp")]
