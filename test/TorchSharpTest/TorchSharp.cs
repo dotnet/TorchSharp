@@ -838,6 +838,20 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void TestSaveLoadSequence()
+        {
+            var lin1 = NN.Module.Linear(100, 10, true);
+            var lin2 = NN.Module.Linear(10, 5, true);
+            var seq = NN.Module.Sequential(lin1, lin2);
+            seq.Save(".");
+            var loaded = NN.Sequential.Load(".");
+            File.Delete("model-list.txt");
+            File.Delete("NN.Module.Linear-0.ts");
+            File.Delete("NN.Module.Linear-1.ts");
+            Assert.NotNull(loaded);
+        }
+
+        [Fact]
         public void TestArithmeticOperators()
         {
             // scalar-tensor operators
@@ -1081,7 +1095,6 @@ namespace TorchSharp.Test
                 throw new NotImplementedException();
             }
         }
-
 
         /// <summary>
         /// Fully connected Relu net with one hidden layer trained using gradient descent.

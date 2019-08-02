@@ -50,9 +50,9 @@ namespace TorchSharp.NN
             {
                 foreach (var module in Modules)
                 {
-                    var actualLocation = module.GetType() + "\t" + count++;
+                    var actualLocation = module.GetType() + "-" + count++;
                     writer.WriteLine(actualLocation);
-                    module.Save(actualLocation);
+                    module.Save(actualLocation + ".ts");
                 }
             }
         }
@@ -67,20 +67,20 @@ namespace TorchSharp.NN
 
             foreach (var line in File.ReadLines(location + "/model-list.txt"))
             {
-                var splitted = line.Split('\t');
+                var splitted = line.Split('-');
 
                 Contract.Assert(splitted.Count() == 2);
                 
                 switch(splitted[0])
                 {
-                    case "Linear":
-                        modules.Add(TorchSharp.NN.Linear.Load(line));
+                    case "TorchSharp.NN.Linear":
+                        modules.Add(TorchSharp.NN.Linear.Load(line + ".ts"));
                         break;
-                    case "Conv2d":
-                        modules.Add(TorchSharp.NN.Conv2D.Load(line));
+                    case "TorchSharp.NN.Conv2d":
+                        modules.Add(TorchSharp.NN.Conv2D.Load(line + ".ts"));
                         break;
                     default:
-                        throw new ArgumentException(@"Module type {splitted[0]} not found.");
+                        throw new ArgumentException(string.Format("Module type {0} not found.", splitted[0]));
                 }
             }
 
