@@ -71,9 +71,9 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
-Updating pacakge version for new release
+Updating package version for new release
 -----------------------------
-To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
+To change the package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 Everything is currently considered in preview.
 
 Use the following two MSBuild arguments in order to control the -preview and the build numbers in the name of the nuget packages produced (use one of the two generally):
