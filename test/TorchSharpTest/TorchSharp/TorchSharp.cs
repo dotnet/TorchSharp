@@ -1044,7 +1044,7 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void AvgPool2D_Object_Initialized()
+        public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
             var obj = NN.Module.AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
@@ -1052,7 +1052,7 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void MaxPool2D_Object_Initialized()
+        public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
             var obj = NN.Module.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
