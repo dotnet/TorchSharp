@@ -87,4 +87,4 @@ Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersi
 
 Examples
 ===========
-Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
