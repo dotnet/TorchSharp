@@ -19,7 +19,6 @@ namespace Examples
         private readonly static string _dataLocation = @"../../../../src/Examples/Data";
 
         private readonly static int _logInterval = 10;
-        private readonly static int _numClasses = 10;
 
         /// <summary>
         /// 
@@ -92,6 +91,13 @@ namespace Examples
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="module"></param>
+        /// <param name="optimizer"></param>
+        /// <param name="loss"></param>
+        /// <param name="dataLoader"></param>
+        /// <param name="epoch"></param>
+        /// <param name="batchSize"></param>
+        /// <param name="size"></param>
         private static void Train(Module module, Optimizer optimizer, Loss loss, 
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader, int epoch, long batchSize, long size
             )
