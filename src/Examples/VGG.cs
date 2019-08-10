@@ -27,6 +27,7 @@ namespace Examples
         static void main(String[] args)
         {
             Torch.SetSeed(1);
+            Console.Write("Starting VGG");
             using (var train = Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Loader.CIFAR10(_dataLocation, _testBatchSize, false))
             using (var model = new Model("VGG11"))
