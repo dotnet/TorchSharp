@@ -161,8 +161,6 @@ namespace Examples
                 cfgs.Add("VGG16", vgg16);
                 cfgs.Add("VGG19", vgg19);
 
-                // super(VGG, self).__init__()  dont really need it, i think
-
                 object[] cfg = cfgs.GetValueOrDefault(VGGName);
                 this.sequential = MakeSequential(cfg);
                 classifier = Linear(320, 50);
