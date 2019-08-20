@@ -18,7 +18,21 @@ foreach (var type in TorchTypeDef.Types) {
     public class <#=type.Name#>Tensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
+		/// common difference step, starting from start
+        /// </summary>
+        static public TorchTensor Arange(<#=type.Storage#> start, <#=type.Storage#> stop, <#=type.Storage#> step, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+        }
+		
+		[DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros

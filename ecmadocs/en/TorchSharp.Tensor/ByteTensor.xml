@@ -13,7 +13,7 @@
     <summary>
               Tensor of type Byte.
               This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-              Please do no mix Aten Tensors and Torch Tensors.
+              Please do not mix Aten Tensors and Torch Tensors.
             </summary>
     <remarks>To be added.</remarks>
   </Docs>
@@ -28,6 +28,37 @@
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Arange">
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor Arange (byte start, byte stop, byte step, string device = &quot;cpu&quot;, bool requiresGrad = false);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor Arange(unsigned int8 start, unsigned int8 stop, unsigned int8 step, string device, bool requiresGrad) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TorchSharp.Tensor.TorchTensor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="start" Type="System.Byte" />
+        <Parameter Name="stop" Type="System.Byte" />
+        <Parameter Name="step" Type="System.Byte" />
+        <Parameter Name="device" Type="System.String" />
+        <Parameter Name="requiresGrad" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="start">To be added.</param>
+        <param name="stop">To be added.</param>
+        <param name="step">To be added.</param>
+        <param name="device">To be added.</param>
+        <param name="requiresGrad">To be added.</param>
+        <summary>
+            Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
+            common difference step, starting from start
+            </summary>
+        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -58,8 +89,8 @@
       </Docs>
     </Member>
     <Member MemberName="From">
-      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte scalar);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8 scalar) cil managed" />
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte scalar, bool requiresGrad = false);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8 scalar, bool requiresGrad) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -69,17 +100,19 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="scalar" Type="System.Byte" />
+        <Parameter Name="requiresGrad" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <param name="scalar">To be added.</param>
+        <param name="requiresGrad">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="From">
-      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte[] rawArray);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8[] rawArray) cil managed" />
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte[] rawArray, bool requiresGrad = false);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8[] rawArray, bool requiresGrad) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -89,17 +122,19 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="rawArray" Type="System.Byte[]" />
+        <Parameter Name="requiresGrad" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <param name="rawArray">To be added.</param>
+        <param name="requiresGrad">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="From">
-      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte[] rawArray, long[] dimensions);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8[] rawArray, int64[] dimensions) cil managed" />
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (byte[] rawArray, long[] dimensions, bool requiresGrad = false);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(unsigned int8[] rawArray, int64[] dimensions, bool requiresGrad) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -110,18 +145,20 @@
       <Parameters>
         <Parameter Name="rawArray" Type="System.Byte[]" />
         <Parameter Name="dimensions" Type="System.Int64[]" />
+        <Parameter Name="requiresGrad" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <param name="rawArray">To be added.</param>
         <param name="dimensions">To be added.</param>
+        <param name="requiresGrad">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="From">
-      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (IntPtr rawArray, long[] dimensions);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(native int rawArray, int64[] dimensions) cil managed" />
+      <MemberSignature Language="C#" Value="public static TorchSharp.Tensor.TorchTensor From (IntPtr rawArray, long[] dimensions, bool requiresGrad);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype TorchSharp.Tensor.TorchTensor From(native int rawArray, int64[] dimensions, bool requiresGrad) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -132,10 +169,12 @@
       <Parameters>
         <Parameter Name="rawArray" Type="System.IntPtr" />
         <Parameter Name="dimensions" Type="System.Int64[]" />
+        <Parameter Name="requiresGrad" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <param name="rawArray">To be added.</param>
         <param name="dimensions">To be added.</param>
+        <param name="requiresGrad">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
