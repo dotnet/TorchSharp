@@ -46,8 +46,6 @@ namespace Examples
                 Console.WriteLine($"Elapsed time {sw.ElapsedMilliseconds}.");
                 Console.ReadLine();
             }
-
-
         }
 
         /// <summary>
@@ -83,7 +81,6 @@ namespace Examples
                     target.Dispose();
                     pred.Dispose();
                 }
-
             }
 
             Console.WriteLine($"\rTest set: Average loss {testLoss} | Accuracy {(float)correct / size}");
@@ -174,8 +171,8 @@ namespace Examples
             /// <returns></returns>
             public override TorchTensor Forward(TorchTensor input)
             {
-                TorchTensor res = this.sequential.Forward(input);
-                res = res.View(new long[] { -1, 0 });
+                TorchTensor res = this.sequential.Forward(input);                
+                res = res.View(new long[] { res.Shape[0], -1 });
                 return classifier.Forward(res);
             }
 
@@ -201,11 +198,9 @@ namespace Examples
                         in_channels = (int)x;
                     }
                 }
-                // layers.Add(Module.AdaptiveAvgPool2D();
-
+                //layers.Add(Module)
                 return Module.Sequential(layers.ToArray());
             }
-
         }
     }
 }
