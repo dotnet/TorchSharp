@@ -155,6 +155,11 @@ namespace TorchSharp.NN
             return new AdaptiveAvgPool2D(outputSize);
         }
 
+        static public AvgPool2D AvgPool2D(long [] kernelSize, long[] stride)
+        {
+            return new AvgPool2D(kernelSize, stride);
+        }
+
         static public TorchTensor AvgPool2D(TorchTensor x, long[] kernelSize, long[] stride = null)
         {
             using (var m = new AvgPool2D(kernelSize, stride))

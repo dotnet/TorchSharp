@@ -198,7 +198,7 @@ namespace Examples
                         in_channels = (int)x;
                     }
                 }
-                //layers.Add(Module)
+                layers.Add(Module.AvgPool2D(new long[1], new long[1]));
                 return Module.Sequential(layers.ToArray());
             }
         }
