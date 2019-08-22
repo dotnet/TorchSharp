@@ -56,6 +56,14 @@ Requirements:
 - cmake (tested with 3.14)
 - clang 3.9
 
+Example to fulfill the requirements in Ubuntu 16:
+```
+sudo apt-get update
+sudo apt-get install git clang cmake libunwind8 curl
+sudo apt-get install libssl1.0.0
+sudo apt-get install libomp-dev
+```
+
 Commands:
 - Building: `./build.sh`
 - Building from Visual Studio: first build using the command line
@@ -63,8 +71,7 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
-
-Updating pacakge version for new release
+Updating package version for new release
 -----------------------------
 To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 Everything is currently considered in preview.
@@ -80,4 +87,4 @@ Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersi
 
 Examples
 ===========
-Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)

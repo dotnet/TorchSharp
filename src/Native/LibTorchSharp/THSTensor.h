@@ -9,6 +9,16 @@
 
 // API.
 
+// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) with common
+// difference step starting from start.
+EXPORT_API(Tensor) THSTensor_arange(
+    const Scalar start,
+    const Scalar end,
+    const Scalar step,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad);
+
 //  Creates  a variable tensor containing a tensor composed of zeros.
 EXPORT_API(Tensor) THSTensor_zeros(
     const int64_t * sizes,
@@ -81,8 +91,8 @@ EXPORT_API(Tensor) THSTensor_randn(
     const char * device,
     const bool requires_grad);
 
-// A sparse tensor is represented as a pair of dense tensors: a tensor of values and a 2D tensor of indices. 
-// A sparse tensor can be constructed by providing these two tensors, as well as the size of the sparse tensor. 
+// A sparse tensor is represented as a pair of dense tensors: a tensor of values and a 2D tensor of indices.
+// A sparse tensor can be constructed by providing these two tensors, as well as the size of the sparse tensor.
 EXPORT_API(Tensor) THSTensor_sparse(
     Tensor indices,
     Tensor values,
@@ -108,16 +118,16 @@ EXPORT_API(int64_t*) THSTensor_strides(const Tensor tensor);
 EXPORT_API(void) THSTensor_dispose(const Tensor twrapper);
 
 // Returns the tensor data
-// Note that calling GetTHTensorUnsafe and get data from there won't work 
+// Note that calling GetTHTensorUnsafe and get data from there won't work
 // (see the note [Tensor versus Variable in C++] in Aten\core\Tensor.h)
 EXPORT_API(void *) THSTensor_data(const Tensor twrapper);
 
-// Returns the value of this tensor as a Scalar. 
+// Returns the value of this tensor as a Scalar.
 // This only works for tensors with one element.
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
 
 // Returns the sub-tensor identified by the index.
-EXPORT_API(Tensor ) THSTensor_get1(const Tensor tensor, int64_t index);
+EXPORT_API(Tensor) THSTensor_get1(const Tensor tensor, int64_t index);
 
 // Returns the sub-tensor identified by the indexes.
 EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2);
@@ -179,7 +189,7 @@ EXPORT_API(void) THSTensor_backward(Tensor twrapper);
 // Turns a sparse tensor into a dense representation.
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 
-// Concatenates the given sequence of seq tensors in the given dimension. 
+// Concatenates the given sequence of seq tensors in the given dimension.
 // All tensors must either have the same shape (except in the concatenating dimension) or be empty.
 // See https://pytorch.org/docs/stable/torch.html#torch.cat for examples.
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* twrapper, const int length, const int64_t dim);
@@ -187,7 +197,7 @@ EXPORT_API(Tensor) THSTensor_cat(const Tensor* twrapper, const int length, const
 // Clone the input tensor.
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
 
-// Returns a contiguous tensor containing the same data as the input tensor. 
+// Returns a contiguous tensor containing the same data as the input tensor.
 // If the input tensor is contiguous, this function returns input.
 EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);
 
@@ -196,7 +206,7 @@ EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dimension, Tens
 
 // Returns a tensor with the same data and number of elements as input, but with the specified shape.
 // When possible, the returned tensor will be a view of input.Otherwise, it will be a copy.
-// Contiguous inputs and inputs with compatible strides can be reshaped without copying, 
+// Contiguous inputs and inputs with compatible strides can be reshaped without copying,
 // but you should not depend on the copying vs.viewing behavior.
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor twrapper, const int64_t * shape, const int length);
 
@@ -207,7 +217,7 @@ EXPORT_API(Tensor) THSTensor_squeeze(Tensor tensor, int64_t dimension);
 // All tensors need to be of the same size.
 EXPORT_API(Tensor) THSTensor_stack(const Tensor* twrapper, const int length, const int64_t dim);
 
-// Returns a tensor that is a transposed version of input. 
+// Returns a tensor that is a transposed version of input.
 EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
 
 // Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
@@ -215,28 +225,34 @@ EXPORT_API(Tensor) THSTensor_transpose(const Tensor twrapper, const int64_t dim1
 
 // Returns a tensor that is a transposed version of input.The given dimensions dim0 and dim1 are swapped.
 // This operation is in place.
-EXPORT_API(void) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
+EXPORT_API(Tensor) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
 
 // Returns a new tensor with the same data as the tensor in twrapper but of a different shape.
-// The returned tensor shares the same data and must have the same number of elements, 
-// but may have a different size. For a tensor to be viewed, the new view size must be compatible 
-// with its original size and stride. If -1 is the size of one dimension, 
+// The returned tensor shares the same data and must have the same number of elements,
+// but may have a different size. For a tensor to be viewed, the new view size must be compatible
+// with its original size and stride. If -1 is the size of one dimension,
 // that size is inferred from other dimensions.
 EXPORT_API(Tensor) THSTensor_view(const Tensor twrapper, const int64_t * shape, const int length);
 
-// Each element of the tensor other is multiplied by the scalar value 
-// and added to each element of the tensor input. The resulting tensor is returned.
-EXPORT_API(Tensor) THSTensor_add(const Tensor left, const int value, const Tensor right);
+// Each element of tensor 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+EXPORT_API(Tensor) THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha);
 
-// Each element of the tensor other is increased by the scalar value.
-EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right);
+// Each element of tensor 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+// This addition is in place, overwriting 'left'.
+EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha);
 
-// Each element of the tensor other is multiplied by the scalar value 
-// and added to each element of the tensor input. The resulting tensor is returned.
-// This operation is in place.
-EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const int value, const Tensor right);
+// Scalar 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+EXPORT_API(Tensor) THSTensor_addS(const Tensor left, const Scalar right, const Scalar alpha);
 
-// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step 
+// Scalar 'right' is multiplied by scalar 'alpha'
+// and added to each element of tensor 'left'. The resulting tensor is returned.
+// This addition is in place, overwriting 'left'.
+EXPORT_API(Tensor) THSTensor_addS_(const Tensor left, const Scalar right, const Scalar alpha);
+
+// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced add step
 // (all matrix multiplications get accumulated along the first dimension). mat is added to the final result.
 // Check https://pytorch.org/docs/stable/torch.html#torch.addbmm for details.
 EXPORT_API(Tensor) THSTensor_addbmm(
@@ -246,7 +262,7 @@ EXPORT_API(Tensor) THSTensor_addbmm(
     const float beta,
     const float alpha);
 
-// Performs a matrix multiplication of the matrices mat1 and mat2. 
+// Performs a matrix multiplication of the matrices mat1 and mat2.
 // The matrix mat is added to the final result.
 EXPORT_API(Tensor) THSTensor_addmm(
     const Tensor matWrapper,
@@ -271,32 +287,113 @@ EXPORT_API(Tensor) THSTensor_baddbmm(
 // Performs a batch matrix-matrix product of matrices stored in batch1 and batch2.
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
-// Clamp all elements in input into the range [ min, max ] and return the resulting tensor.
+// Clamp all elements in input into the range [ min, max ] and return a resulting tensor.
 EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
 
-// Returns left / right. 
+// Returns left / right.
 EXPORT_API(Tensor) THSTensor_div(const Tensor left, const Tensor right);
 
 // Returns left / right in place.
-EXPORT_API(void) THSTensor_div_(const Tensor left, const Tensor right);
+EXPORT_API(Tensor) THSTensor_div_(const Tensor left, const Tensor right);
 
-// Returns left / right. 
+// Returns left / right.
 EXPORT_API(Tensor) THSTensor_divS(const Tensor left, const Scalar right);
+
+// Returns left / right in place.
+EXPORT_API(Tensor) THSTensor_divS_(const Tensor left, const Scalar right);
+
+// Returns left / right.
+EXPORT_API(Tensor) THSTensor_divS2(const Scalar left, const Tensor right);
 
 // Computes element-wise equality.
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
 
+// Computes element-wise equality in place.
+EXPORT_API(Tensor) THSTensor_eq_(const Tensor left, const Tensor right);
+
 // Computes element-wise equality between a tensor and a scalar.
 EXPORT_API(Tensor) THSTensor_eqS(const Tensor left, const Scalar right);
+
+// Computes element-wise equality between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_eqS_(const Tensor left, const Scalar right);
 
 // True if two tensors have the same size and elements, False otherwise.
 EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
 
-// Returns a new tensor with the exponential of the elements of the input tensor input.
+// Returns a new tensor with the exponential of the elements of the input tensor.
 EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
 
-// Computes element-wise >= between a tensor and a scalar.
-EXPORT_API(Tensor) THSTensor_geS(const Tensor tensor, const Scalar scalar);
+// Returns a new tensor with the error function of the elements of the input tensor input.
+EXPORT_API(Tensor) THSTensor_erf(const Tensor twrapper);
+
+// Computes element-wise error function of the elements of the input tensor in place.
+EXPORT_API(Tensor) THSTensor_erf_(const Tensor twrapper);
+
+// Computes element-wise greater than or equal to.
+EXPORT_API(Tensor) THSTensor_ge(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than  or equal to in place.
+EXPORT_API(Tensor) THSTensor_ge_(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than or equal to between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_geS(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than or equal to between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_geS_(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than.
+EXPORT_API(Tensor) THSTensor_gt(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than in place.
+EXPORT_API(Tensor) THSTensor_gt_(const Tensor left, const Tensor right);
+
+// Computes element-wise greater than between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_gtS(const Tensor left, const Scalar right);
+
+// Computes element-wise greater than between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_gtS_(const Tensor left, const Scalar right);
+
+// Computes element-wise less than or equal to.
+EXPORT_API(Tensor) THSTensor_le(const Tensor left, const Tensor right);
+
+// Computes element-wise less than or equal to in place.
+EXPORT_API(Tensor) THSTensor_le_(const Tensor left, const Tensor right);
+
+// Computes element-wise less than or equal to between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_leS(const Tensor left, const Scalar right);
+
+// Computes element-wise less than or equal to between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_leS_(const Tensor left, const Scalar right);
+
+// Computes element-wise natural log.
+EXPORT_API(Tensor) THSTensor_log(const Tensor twrapper);
+
+// Computes element-wise natural log in place.
+EXPORT_API(Tensor) THSTensor_log_(const Tensor twrapper);
+
+// Computes element-wise base 2 log.
+EXPORT_API(Tensor) THSTensor_log2(const Tensor twrapper);
+
+// Computes element-wise base 2 log in place.
+EXPORT_API(Tensor) THSTensor_log2_(const Tensor twrapper);
+
+// Computes element-wise base 10 log.
+EXPORT_API(Tensor) THSTensor_log10(const Tensor twrapper);
+
+// Computes element-wise base 10 log in place.
+EXPORT_API(Tensor) THSTensor_log10_(const Tensor twrapper);
+
+// Computes element-wise less than.
+EXPORT_API(Tensor) THSTensor_lt(const Tensor left, const Tensor right);
+
+// Computes element-wise less than in place.
+EXPORT_API(Tensor) THSTensor_lt_(const Tensor left, const Tensor right);
+
+// Computes element-wise less than between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_ltS(const Tensor left, const Scalar right);
+
+// Computes element-wise less than between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_ltS_(const Tensor left, const Scalar right);
 
 // Matrix product of two tensors.
 // The behavior depends on the dimensionality of the tensors.
@@ -313,16 +410,32 @@ EXPORT_API(Tensor) THSTensor_mean(const Tensor tensor);
 // This operation does not broadcast. For broadcasting use matmul.
 EXPORT_API(Tensor) THSTensor_mm(const Tensor left, const Tensor right);
 
-// Each element of the left tensor is multiplied by each element of the rigth Tensor. 
+// Each element of the left tensor is multiplied by each element of the rigth Tensor.
 // The resulting tensor is returned.
 EXPORT_API(Tensor) THSTensor_mul(const Tensor left, const Tensor right);
 
-// Each element of the left tensor is multiplied by each element of the rigth Tensor. 
+// Each element of the left tensor is multiplied by each element of the right Tensor.
 // This operation is in place.
-EXPORT_API(void) THSTensor_mul_(const Tensor left, const Tensor right);
+EXPORT_API(Tensor) THSTensor_mul_(const Tensor left, const Tensor right);
 
 // Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
 EXPORT_API(Tensor) THSTensor_mulS(const Tensor twrapper, const Scalar scalar);
+
+// Multiplies each element of the target tensor with the scalar value and returns a new resulting tensor.
+// This operation is in place.
+EXPORT_API(Tensor) THSTensor_mulS_(const Tensor twrapper, const Scalar scalar);
+
+// Computes element-wise non-equality.
+EXPORT_API(Tensor) THSTensor_ne(const Tensor left, const Tensor right);
+
+// Computes element-wise non-equality in place.
+EXPORT_API(Tensor) THSTensor_ne_(const Tensor left, const Tensor right);
+
+// Computes element-wise non-equality between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_neS(const Tensor left, const Scalar right);
+
+// Computes element-wise non-equality between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_neS_(const Tensor left, const Scalar right);
 
 // Returns the matrix norm or vector norm of a given tensor.
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension);
@@ -330,19 +443,46 @@ EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, 
 // Takes the power of each element in input with exponent and returns a tensor with the result.
 EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
 
+// Computes remainder.
+EXPORT_API(Tensor) THSTensor_remainder(const Tensor left, const Tensor right);
+
+// Computes remainder in place.
+EXPORT_API(Tensor) THSTensor_remainder_(const Tensor left, const Tensor right);
+
+// Computes remainder between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_remainderS(const Tensor left, const Scalar right);
+
+// Computes remainder between a tensor and a scalar in place.
+EXPORT_API(Tensor) THSTensor_remainderS_(const Tensor left, const Scalar right);
+
+// Computes remainder between a tensor and a scalar.
+EXPORT_API(Tensor) THSTensor_remainderS2(const Scalar left, const Tensor right);
+
 // Returns a new tensor with the sigmoid of the elements of input.
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor twrapper);
 
-// Subtraction of right to left. 
+// Subtraction of right from left.
 // The shape of right must be broadcastable with the shape of the left tensor.
 EXPORT_API(Tensor) THSTensor_sub(const Tensor left, const Tensor right);
 
-// Inplace subtraction of right to left. 
+// Inplace subtraction of right from left.
 // The shape of right must be broadcastable with the shape of the left tensor.
-EXPORT_API(void) THSTensor_sub_(const Tensor left, const Tensor right);
+EXPORT_API(Tensor) THSTensor_sub_(const Tensor left, const Tensor right);
+
+// Subtraction of right scalar from left.
+EXPORT_API(Tensor) THSTensor_subS(const Tensor left, const Scalar right);
+
+// Inplace subtraction of right scalar from left.
+EXPORT_API(Tensor) THSTensor_subS_(const Tensor left, const Scalar right);
+
+// Subtraction of right from left scalar.
+EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
 
 // Returns the sum of all elements in the input tensor.
 EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper);
 
 // Returns the sum of all elements over the input dimensions in the input tensor.
 EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension);
+
+// Returns a tensor with a dimension of size 1 inserted at the specified position.
+EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
