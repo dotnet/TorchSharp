@@ -73,7 +73,7 @@ Commands:
 
 Updating package version for new release
 -----------------------------
-To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
+To change the package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 Everything is currently considered in preview.
 
 Use the following two MSBuild arguments in order to control the -preview and the build numbers in the name of the nuget packages produced (use one of the two generally):
@@ -84,6 +84,10 @@ Use the following two MSBuild arguments in order to control the -preview and the
 |IncludeBuildNumberInPackageVersion | false | 1.0.0-preview|
 
 Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersion=true`
+
+GPU support
+============
+For GPU support it is required to install CUDA 9.0 and make it available to the dynamic linker.
 
 Examples
 ===========
