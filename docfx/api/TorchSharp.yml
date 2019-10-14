@@ -1,21 +1,13 @@
 ### YamlMime:ManagedReference
 items:
 - uid: TorchSharp
+  commentId: N:TorchSharp
   id: TorchSharp
   children:
-  - TorchSharp.ByteTensor
-  - TorchSharp.ByteTensor.ByteStorage
-  - TorchSharp.DoubleTensor
-  - TorchSharp.DoubleTensor.DoubleStorage
-  - TorchSharp.FloatTensor
-  - TorchSharp.FloatTensor.FloatStorage
-  - TorchSharp.IntTensor
-  - TorchSharp.IntTensor.IntStorage
-  - TorchSharp.LongTensor
-  - TorchSharp.LongTensor.LongStorage
-  - TorchSharp.RandomGenerator
-  - TorchSharp.ShortTensor
-  - TorchSharp.ShortTensor.ShortStorage
+  - TorchSharp.AutoGradMode
+  - TorchSharp.Scalar
+  - TorchSharp.ScalarExtensionMethods
+  - TorchSharp.Torch
   langs:
   - csharp
   name: TorchSharp
@@ -23,81 +15,31 @@ items:
   fullName: TorchSharp
   type: Namespace
 references:
-- uid: TorchSharp.ByteTensor
+- uid: TorchSharp.AutoGradMode
   parent: TorchSharp
   isExternal: false
-  name: ByteTensor
-  nameWithType: ByteTensor
-  fullName: TorchSharp.ByteTensor
-- uid: TorchSharp.ByteTensor.ByteStorage
+  name: AutoGradMode
+  nameWithType: TorchSharp.AutoGradMode
+  fullName: TorchSharp.AutoGradMode
+  type: class
+- uid: TorchSharp.Scalar
   parent: TorchSharp
   isExternal: false
-  name: ByteTensor.ByteStorage
-  nameWithType: ByteTensor.ByteStorage
-  fullName: TorchSharp.ByteTensor.ByteStorage
-- uid: TorchSharp.DoubleTensor
+  name: Scalar
+  nameWithType: TorchSharp.Scalar
+  fullName: TorchSharp.Scalar
+  type: class
+- uid: TorchSharp.ScalarExtensionMethods
   parent: TorchSharp
   isExternal: false
-  name: DoubleTensor
-  nameWithType: DoubleTensor
-  fullName: TorchSharp.DoubleTensor
-- uid: TorchSharp.DoubleTensor.DoubleStorage
+  name: ScalarExtensionMethods
+  nameWithType: TorchSharp.ScalarExtensionMethods
+  fullName: TorchSharp.ScalarExtensionMethods
+  type: class
+- uid: TorchSharp.Torch
   parent: TorchSharp
   isExternal: false
-  name: DoubleTensor.DoubleStorage
-  nameWithType: DoubleTensor.DoubleStorage
-  fullName: TorchSharp.DoubleTensor.DoubleStorage
-- uid: TorchSharp.FloatTensor
-  parent: TorchSharp
-  isExternal: false
-  name: FloatTensor
-  nameWithType: FloatTensor
-  fullName: TorchSharp.FloatTensor
-- uid: TorchSharp.FloatTensor.FloatStorage
-  parent: TorchSharp
-  isExternal: false
-  name: FloatTensor.FloatStorage
-  nameWithType: FloatTensor.FloatStorage
-  fullName: TorchSharp.FloatTensor.FloatStorage
-- uid: TorchSharp.IntTensor
-  parent: TorchSharp
-  isExternal: false
-  name: IntTensor
-  nameWithType: IntTensor
-  fullName: TorchSharp.IntTensor
-- uid: TorchSharp.IntTensor.IntStorage
-  parent: TorchSharp
-  isExternal: false
-  name: IntTensor.IntStorage
-  nameWithType: IntTensor.IntStorage
-  fullName: TorchSharp.IntTensor.IntStorage
-- uid: TorchSharp.LongTensor
-  parent: TorchSharp
-  isExternal: false
-  name: LongTensor
-  nameWithType: LongTensor
-  fullName: TorchSharp.LongTensor
-- uid: TorchSharp.LongTensor.LongStorage
-  parent: TorchSharp
-  isExternal: false
-  name: LongTensor.LongStorage
-  nameWithType: LongTensor.LongStorage
-  fullName: TorchSharp.LongTensor.LongStorage
-- uid: TorchSharp.RandomGenerator
-  parent: TorchSharp
-  isExternal: false
-  name: RandomGenerator
-  nameWithType: RandomGenerator
-  fullName: TorchSharp.RandomGenerator
-- uid: TorchSharp.ShortTensor
-  parent: TorchSharp
-  isExternal: false
-  name: ShortTensor
-  nameWithType: ShortTensor
-  fullName: TorchSharp.ShortTensor
-- uid: TorchSharp.ShortTensor.ShortStorage
-  parent: TorchSharp
-  isExternal: false
-  name: ShortTensor.ShortStorage
-  nameWithType: ShortTensor.ShortStorage
-  fullName: TorchSharp.ShortTensor.ShortStorage
+  name: Torch
+  nameWithType: TorchSharp.Torch
+  fullName: TorchSharp.Torch
+  type: class

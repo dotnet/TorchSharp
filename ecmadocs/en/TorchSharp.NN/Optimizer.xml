@@ -111,8 +111,25 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetParameters">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;TorchSharp.Tensor.TorchTensor&gt; GetParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;valuetype TorchSharp.Tensor.TorchTensor&gt; GetParameters() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;TorchSharp.Tensor.TorchTensor&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="SGD">
-      <MemberSignature Language="C#" Value="public static TorchSharp.NN.Optimizer SGD (System.Collections.Generic.IEnumerable&lt;TorchSharp.Tensor.TorchTensor&gt; parameters, double learningRate, double momentum);" />
+      <MemberSignature Language="C#" Value="public static TorchSharp.NN.Optimizer SGD (System.Collections.Generic.IEnumerable&lt;TorchSharp.Tensor.TorchTensor&gt; parameters, double learningRate, double momentum = 0);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class TorchSharp.NN.Optimizer SGD(class System.Collections.Generic.IEnumerable`1&lt;valuetype TorchSharp.Tensor.TorchTensor&gt; parameters, float64 learningRate, float64 momentum) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>

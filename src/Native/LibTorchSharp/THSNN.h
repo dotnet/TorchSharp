@@ -71,6 +71,14 @@ EXPORT_API(Tensor) THSNN_maxPool2DApply(
 // Applies a 2D adaptive average pooling over an input signal composed of several input planes.
 EXPORT_API(Tensor) THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize);
 
+// Applies a avgpool 2d on the input tensor. 
+EXPORT_API(Tensor) THSNN_avgPool2DApply(
+	const Tensor tensor,
+	const int kernelSizeLength,
+	const int64_t* kernelSize,
+	const int strideLength,
+	const int64_t* stride);
+
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension);
 

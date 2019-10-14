@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.JIT;
+using TorchSharp.NN;
 using TorchSharp.Tensor;
 using Xunit;
 
@@ -1225,6 +1226,22 @@ namespace TorchSharp.Test
 
                 Assert.Equal(size * epochs, i * 32);
             }
+        }
+
+        [Fact]
+        public void AvgPool2DObjectInitialized()
+        {
+            TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
+            var obj = NN.Module.AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            Assert.Equal(typeof(TorchTensor), obj.GetType());
+        }
+
+        [Fact]
+        public void MaxPool2DObjectInitialized()
+        {
+            TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
+            var obj = NN.Module.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
     }
 }

@@ -15,8 +15,8 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Parameter (string name, TorchSharp.Tensor.TorchTensor parameter, bool withGrad);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype TorchSharp.Tensor.TorchTensor parameter, bool withGrad) cil managed" />
+      <MemberSignature Language="C#" Value="public Parameter (string name, TorchSharp.Tensor.TorchTensor parameter, Nullable&lt;bool&gt; withGrad = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype TorchSharp.Tensor.TorchTensor parameter, valuetype System.Nullable`1&lt;bool&gt; withGrad) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -24,7 +24,7 @@
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="parameter" Type="TorchSharp.Tensor.TorchTensor" />
-        <Parameter Name="withGrad" Type="System.Boolean" />
+        <Parameter Name="withGrad" Type="System.Nullable&lt;System.Boolean&gt;" />
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>

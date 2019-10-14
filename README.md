@@ -56,6 +56,14 @@ Requirements:
 - cmake (tested with 3.14)
 - clang 3.9
 
+Example to fulfill the requirements in Ubuntu 16:
+```
+sudo apt-get update
+sudo apt-get install git clang cmake libunwind8 curl
+sudo apt-get install libssl1.0.0
+sudo apt-get install libomp-dev
+```
+
 Commands:
 - Building: `./build.sh`
 - Building from Visual Studio: first build using the command line
@@ -63,10 +71,9 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
-
-Updating pacakge version for new release
+Updating package version for new release
 -----------------------------
-To change the pacakage version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
+To change the package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 Everything is currently considered in preview.
 
 Use the following two MSBuild arguments in order to control the -preview and the build numbers in the name of the nuget packages produced (use one of the two generally):
@@ -78,6 +85,10 @@ Use the following two MSBuild arguments in order to control the -preview and the
 
 Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersion=true`
 
+GPU support
+============
+For GPU support it is required to install CUDA 9.0 and make it available to the dynamic linker.
+
 Examples
 ===========
-Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/interesaaat/TorchSharp/blob/master/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
+Porting of the more famous network architectures to TorchSharp is in progress. For the moment we only support [MNIST](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/MNIST.cs) and [AlexNet](https://github.com/xamarin/TorchSharp/blob/master/src/Examples/AlexNet.cs)
