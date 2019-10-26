@@ -6,7 +6,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Byte.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class ByteTensor
     {
@@ -139,13 +139,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (byte* parray = rawArray)
-                {
-                    return ByteTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return ByteTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(byte[] rawArray, bool requiresGrad = false)
@@ -172,7 +167,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Short.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class ShortTensor
     {
@@ -305,13 +300,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(short[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (short* parray = rawArray)
-                {
-                    return ShortTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return ShortTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(short[] rawArray, bool requiresGrad = false)
@@ -338,7 +328,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Int.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class IntTensor
     {
@@ -471,13 +461,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(int[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (int* parray = rawArray)
-                {
-                    return IntTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return IntTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(int[] rawArray, bool requiresGrad = false)
@@ -504,7 +489,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Long.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class LongTensor
     {
@@ -637,13 +622,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(long[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (long* parray = rawArray)
-                {
-                    return LongTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return LongTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(long[] rawArray, bool requiresGrad = false)
@@ -670,7 +650,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Double.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class DoubleTensor
     {
@@ -803,13 +783,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(double[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (double* parray = rawArray)
-                {
-                    return DoubleTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return DoubleTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(double[] rawArray, bool requiresGrad = false)
@@ -836,7 +811,7 @@ namespace TorchSharp.Tensor {
     /// <summary>
     ///   Tensor of type Float.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
-    ///   Please do not mix Aten Tensors and Torch Tensors.
+    ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
     public class FloatTensor
     {
@@ -969,13 +944,8 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (float* parray = rawArray)
-                {
-                    return FloatTensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return FloatTensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(float[] rawArray, bool requiresGrad = false)

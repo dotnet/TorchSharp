@@ -159,13 +159,8 @@ if (!type.IsLong) {
 
         public static TorchTensor From(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            unsafe
-            {
-                fixed (<#=type.Storage#>* parray = rawArray)
-                {
-                    return <#=type.Name#>Tensor.From((IntPtr)parray, dimensions, requiresGrad);
-                }
-            }
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            return <#=type.Name#>Tensor.From(dataHandle.AddrOfPinnedObject(), dimensions, requiresGrad);
         }
 
         public static TorchTensor From(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
