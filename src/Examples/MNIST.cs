@@ -132,7 +132,7 @@ namespace TorchSharp.Examples
                 {
                     testLoss += output.DataItem<float>();
 
-                    var pred = output.Argmax(1);
+                    var pred = prediction.Argmax(1);
 
                     correct += pred.Eq(target).Sum().DataItem<int>(); // Memory leak here
 
