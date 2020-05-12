@@ -5,7 +5,7 @@ using TorchSharp.Tensor;
 namespace TorchSharp.NN
 {
     /// <summary>
-    /// This class is used to represent a ReLu module.
+    /// This class is used to represent a MaxPool2D module.
     /// </summary>
     public class MaxPool2D : FunctionalModule<MaxPool2D>
     {

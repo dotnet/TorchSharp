@@ -57,9 +57,6 @@ EXPORT_API(const char *) THSNN_getChildModuleName(const NNModule module, const i
 // Returns the module name.
 EXPORT_API(const char *) THSNN_getModuleName(const NNModule module);
 
-// Applies a ReLu activation function on the input tensor. 
-EXPORT_API(Tensor) THSNN_reluApply(const Tensor tensor);
-
 // Applies a maxpool 2d on the input tensor. 
 EXPORT_API(Tensor) THSNN_maxPool2DApply(
     const Tensor tensor,
@@ -81,6 +78,9 @@ EXPORT_API(Tensor) THSNN_avgPool2DApply(
 
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension);
+
+// Applies a softplus on the input tensor. 
+EXPORT_API(Tensor) THSNN_softplusApply(const Tensor input, const Scalar beta, const Scalar threshold)
 
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_featureDropoutApply(const Tensor tensor);

@@ -16,12 +16,9 @@ namespace TorchSharp.NN
             _inPlace = inPlace;
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_reluApply(IntPtr tensor, bool inPlace);
-
         public override TorchTensor Forward(TorchTensor tensor)
         {
-            return new TorchTensor(THSNN_reluApply(tensor.Handle, _inPlace));
+            return _inPlace ? tensor.ReluInPlace() : tensor.Relu(); 
         }
 
         public override string GetName()

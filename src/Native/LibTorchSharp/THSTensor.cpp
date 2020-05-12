@@ -374,9 +374,9 @@ Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_
     return new torch::Tensor(tensor->transpose(dim1, dim2));
 }
 
-void THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2)
+Tensor THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2)
 {
-    tensor->transpose_(dim1, dim2);
+    return new torch::Tensor(tensor->transpose_(dim1, dim2));
 }
 
 Tensor THSTensor_view(const Tensor tensor, const int64_t * shape, const int length)
@@ -434,7 +434,7 @@ Tensor THSTensor_relu(const Tensor tensor)
     return new torch::Tensor(tensor->relu());
 }
 
-void THSTensor_relu_(const Tensor tensor)
+Tensor THSTensor_relu_(const Tensor tensor)
 {
     return new torch::Tensor(tensor->relu_());
 }
@@ -444,9 +444,9 @@ Tensor THSTensor_acos(const Tensor tensor)
     return new torch::Tensor(tensor->acos());
 }
 
-void THSTensor_acos_(const Tensor tensor)
+Tensor THSTensor_acos_(const Tensor tensor)
 {
-    tensor->acos_();
+    return new torch::Tensor(tensor->acos_());
 }
 
 Tensor THSTensor_asin(const Tensor tensor)
@@ -454,9 +454,9 @@ Tensor THSTensor_asin(const Tensor tensor)
     return new torch::Tensor(tensor->asin());
 }
 
-void THSTensor_asin_(const Tensor tensor)
+Tensor THSTensor_asin_(const Tensor tensor)
 {
-    tensor->asin_();
+    return new torch::Tensor(tensor->asin_());
 }
 
 Tensor THSTensor_atan(const Tensor tensor)
@@ -464,9 +464,9 @@ Tensor THSTensor_atan(const Tensor tensor)
     return new torch::Tensor(tensor->atan());
 }
 
-void THSTensor_atan_(const Tensor tensor)
+Tensor THSTensor_atan_(const Tensor tensor)
 {
-    tensor->atan_();
+    return new torch::Tensor(tensor->atan_());
 }
 
 Tensor THSTensor_sin(const Tensor tensor)
@@ -474,9 +474,9 @@ Tensor THSTensor_sin(const Tensor tensor)
     return new torch::Tensor(tensor->sin());
 }
 
-void THSTensor_sin_(const Tensor tensor)
+Tensor THSTensor_sin_(const Tensor tensor)
 {
-    tensor->sin_();
+    return new torch::Tensor(tensor->sin_());
 }
 
 Tensor THSTensor_cos(const Tensor tensor)
@@ -484,9 +484,9 @@ Tensor THSTensor_cos(const Tensor tensor)
     return new torch::Tensor(tensor->cos());
 }
 
-void THSTensor_cos_(const Tensor tensor)
+Tensor THSTensor_cos_(const Tensor tensor)
 {
-    tensor->cos_();
+    return new torch::Tensor(tensor->cos_());
 }
 
 Tensor THSTensor_tan(const Tensor tensor)
@@ -494,9 +494,9 @@ Tensor THSTensor_tan(const Tensor tensor)
     return new torch::Tensor(tensor->tan());
 }
 
-void THSTensor_tan_(const Tensor tensor)
+Tensor THSTensor_tan_(const Tensor tensor)
 {
-    tensor->tan_();
+    return new torch::Tensor(tensor->tan_());
 }
 
 Tensor THSTensor_sinh(const Tensor tensor)
@@ -504,9 +504,9 @@ Tensor THSTensor_sinh(const Tensor tensor)
     return new torch::Tensor(tensor->sinh());
 }
 
-void THSTensor_sinh_(const Tensor tensor)
+Tensor THSTensor_sinh_(const Tensor tensor)
 {
-    tensor->sinh_();
+    return new torch::Tensor(tensor->sinh_());
 }
 
 Tensor THSTensor_cosh(const Tensor tensor)
@@ -514,9 +514,9 @@ Tensor THSTensor_cosh(const Tensor tensor)
     return new torch::Tensor(tensor->cosh());
 }
 
-void THSTensor_cosh_(const Tensor tensor)
+Tensor THSTensor_cosh_(const Tensor tensor)
 {
-    tensor->cosh_();
+    return new torch::Tensor(tensor->cosh_());
 }
 
 Tensor THSTensor_tanh(const Tensor tensor)
@@ -524,9 +524,9 @@ Tensor THSTensor_tanh(const Tensor tensor)
     return new torch::Tensor(tensor->tanh());
 }
 
-void THSTensor_tanh_(const Tensor tensor)
+Tensor THSTensor_tanh_(const Tensor tensor)
 {
-    tensor->tanh_();
+    return new torch::Tensor(tensor->tanh_());
 }
 
 Tensor THSTensor_floor(const Tensor tensor)
@@ -534,9 +534,9 @@ Tensor THSTensor_floor(const Tensor tensor)
     return new torch::Tensor(tensor->floor());
 }
 
-void THSTensor_floor_(const Tensor tensor)
+Tensor THSTensor_floor_(const Tensor tensor)
 {
-    tensor->floor_();
+    return new torch::Tensor(tensor->floor_());
 }
 
 Tensor THSTensor_ceil(const Tensor tensor)
@@ -544,9 +544,9 @@ Tensor THSTensor_ceil(const Tensor tensor)
     return new torch::Tensor(tensor->ceil());
 }
 
-void THSTensor_ceil_(const Tensor tensor)
+Tensor THSTensor_ceil_(const Tensor tensor)
 {
-    tensor->ceil_();
+    return new torch::Tensor(tensor->ceil_());
 }
 
 Tensor THSTensor_abs(const Tensor tensor)
@@ -554,9 +554,9 @@ Tensor THSTensor_abs(const Tensor tensor)
     return new torch::Tensor(tensor->abs());
 }
 
-void THSTensor_abs_(const Tensor tensor)
+Tensor THSTensor_abs_(const Tensor tensor)
 {
-    tensor->abs_();
+    return new torch::Tensor(tensor->abs_());
 }
 
 Tensor THSTensor_round(const Tensor tensor)
@@ -564,9 +564,9 @@ Tensor THSTensor_round(const Tensor tensor)
     return new torch::Tensor(tensor->round());
 }
 
-void THSTensor_round_(const Tensor tensor)
+Tensor THSTensor_round_(const Tensor tensor)
 {
-    tensor->round_();
+    return new torch::Tensor(tensor->round_());
 }
 
 Tensor THSTensor_sign(const Tensor tensor)
@@ -574,9 +574,9 @@ Tensor THSTensor_sign(const Tensor tensor)
     return new torch::Tensor(tensor->sign());
 }
 
-void THSTensor_sign_(const Tensor tensor)
+Tensor THSTensor_sign_(const Tensor tensor)
 {
-    tensor->sign_();
+    return new torch::Tensor(tensor->sign_());
 }
 
 Tensor THSTensor_sqrt(const Tensor tensor)
@@ -584,9 +584,14 @@ Tensor THSTensor_sqrt(const Tensor tensor)
     return new torch::Tensor(tensor->sqrt());
 }
 
-void THSTensor_sqrt_(const Tensor tensor)
+Tensor THSTensor_sqrt_(const Tensor tensor)
 {
-    tensor->sqrt_();
+    return new torch::Tensor(tensor->sqrt_());
+}
+
+Tensor THSTensor_softplus(const Tensor tensor)
+{
+    return new torch::Tensor(torch::softplus(*tensor));
 }
 
 Tensor THSTensor_neg(const Tensor tensor)
@@ -594,9 +599,9 @@ Tensor THSTensor_neg(const Tensor tensor)
     return new torch::Tensor(tensor->neg());
 }
 
-void THSTensor_neg_(const Tensor tensor)
+Tensor THSTensor_neg_(const Tensor tensor)
 {
-    tensor->neg_();
+    return new torch::Tensor(tensor->neg_());
 }
 
 Tensor THSTensor_pow(const Tensor tensor, const Tensor exponent)
@@ -604,9 +609,9 @@ Tensor THSTensor_pow(const Tensor tensor, const Tensor exponent)
     return new torch::Tensor(tensor->pow(*exponent));
 }
 
-void THSTensor_pow_(const Tensor tensor, const Tensor exponent)
+Tensor THSTensor_pow_(const Tensor tensor, const Tensor exponent)
 {
-    tensor->pow_(*exponent);
+    return new torch::Tensor(tensor->pow_(*exponent));
 }
 
 Tensor THSTensor_powS(const Tensor tensor, const Scalar exponent)
@@ -614,14 +619,14 @@ Tensor THSTensor_powS(const Tensor tensor, const Scalar exponent)
     return new torch::Tensor(tensor->pow(*exponent));
 }
 
-void THSTensor_powS_(const Tensor tensor, const Scalar exponent)
+Tensor THSTensor_powS_(const Tensor tensor, const Scalar exponent)
 {
-    tensor->pow_(*exponent);
+    return new torch::Tensor(tensor->pow_(*exponent));
 }
 
-void THSTensor_fill_(const Tensor tensor, const Scalar value)
+Tensor THSTensor_fill_(const Tensor tensor, const Scalar value)
 {
-    tensor->fill_(*value);
+    return new torch::Tensor(tensor->fill_(*value));
 }
 
 Tensor THSTensor_baddbmm(

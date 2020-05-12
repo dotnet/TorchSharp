@@ -125,11 +125,6 @@ const char * THSNN_getModuleName(const NNModule module)
     return make_sharable_string((*module)->name());
 }
 
-Tensor THSNN_reluApply(const Tensor tensor)
-{
-    return new torch::Tensor(torch::relu(*tensor));
-}
-
 Tensor THSNN_maxPool2DApply(
     const Tensor tensor, 
     const int kernelSizeLength, 

@@ -114,11 +114,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_fill_(IntPtr handle, IntPtr value);
+        private static extern IntPtr THSTensor_fill_(IntPtr handle, IntPtr value);
 
-        public void FillInPlace(Scalar value)
+        public TorchTensor FillInPlace(Scalar value)
         {
-             THSTensor_fill_(handle, value.Handle);
+            return new TorchTensor(THSTensor_fill_(handle, value.Handle));
         }
 
         [DllImport("LibTorchSharp")]
@@ -407,11 +407,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_transpose_(IntPtr src, long dim1, long dim2);
+        private static extern IntPtr THSTensor_transpose_(IntPtr src, long dim1, long dim2);
 
-        public void TransposeInPlace(long dimension1, long dimension2)
+        public TorchTensor TransposeInPlace(long dimension1, long dimension2)
         {
-            THSTensor_transpose_(handle, dimension1, dimension2);
+            return new TorchTensor(THSTensor_transpose_(handle, dimension1, dimension2));
         }
 
         [DllImport("LibTorchSharp")]
@@ -698,9 +698,17 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_softplus(IntPtr src);
+
+        public TorchTensor Softplus()
+        {
+            return new TorchTensor(THSTensor_softplus(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_relu(IntPtr src);
 
-        public TorchTensor ReLu()
+        public TorchTensor Relu()
         {
             return new TorchTensor(THSTensor_relu(handle));
         }
@@ -708,7 +716,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_relu_(IntPtr src);
 
-        public TorchTensor ReLuInPlace()
+        public TorchTensor ReluInPlace()
         {
             return new TorchTensor(THSTensor_relu_(handle));
         }
