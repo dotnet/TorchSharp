@@ -296,7 +296,25 @@ EXPORT_API(Tensor) THSTensor_round(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_abs(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_log10(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_relu_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sin_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cos_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tan_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_asin_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_acos_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_atan_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sinh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cosh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_floor_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_ceil_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_abs_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_neg_(const Tensor tensor);
+
+// Computes element-wise sqrt inplace.
+EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
 
 // Performs a batch matrix - matrix product of matrices in batch1 and batch2.mat is added to the final result.
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.
@@ -464,8 +482,17 @@ EXPORT_API(Tensor) THSTensor_neS_(const Tensor left, const Scalar right);
 // Returns the matrix norm or vector norm of a given tensor.
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension);
 
+// Takes the element-wise power of each element in input with exponent and returns a tensor with the result.
+EXPORT_API(Tensor) THSTensor_pow(const Tensor tensor, const Tensor exponent);
+
+// Takes the element-wise power of each element in input with exponent and returns a tensor with the result in place.
+EXPORT_API(Tensor) THSTensor_pow_(const Tensor tensor, const Tensor exponent);
+
 // Takes the power of each element in input with exponent and returns a tensor with the result.
-EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
+EXPORT_API(Tensor) THSTensor_powS(const Tensor twrapper, const Scalar scalar);
+
+// Takes the power of each element in input with exponent and returns a tensor with the result in place.
+EXPORT_API(Tensor) THSTensor_powS_(const Tensor twrapper, const Scalar scalar);
 
 // Computes remainder.
 EXPORT_API(Tensor) THSTensor_remainder(const Tensor left, const Tensor right);
