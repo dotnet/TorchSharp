@@ -135,6 +135,9 @@ EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t i
 // Returns the sub-tensor identified by the indexes.
 EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3);
 
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4);
+
 // Set the sub-tensor identified by the index to value.
 EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
 
@@ -143,6 +146,9 @@ EXPORT_API(void) THSTensor_set2(const Tensor tensor, int64_t index1, int64_t ind
 
 // Set the sub-tensor identified by the indexes to value.
 EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, Scalar value);
 
 // Returns the inner type of the tensor.
 EXPORT_API(int8_t) THSTensor_type(const Tensor twrapper);
@@ -273,6 +279,24 @@ EXPORT_API(Tensor) THSTensor_addmm(
 
 // Returns the indices of the maximum values of a tensor across a dimension.
 EXPORT_API(Tensor) THSTensor_argmax(const Tensor twrapper, const int64_t dimension, bool keepDim);
+
+EXPORT_API(Tensor) THSTensor_relu(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sin(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cos(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tan(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_asin(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_acos(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_atan(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sinh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cosh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tanh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_floor(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_ceil(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_abs(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_log10(const Tensor tensor);
 
 // Performs a batch matrix - matrix product of matrices in batch1 and batch2.mat is added to the final result.
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.

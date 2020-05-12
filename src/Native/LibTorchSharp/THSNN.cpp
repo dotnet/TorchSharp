@@ -21,11 +21,6 @@ class ModuleWrapper : torch::nn::Module
 
 // API
 
-NNModule THSNN_reluModule()
-{
-    return new std::shared_ptr<torch::nn::Module>(torch::nn::Functional(torch::relu).ptr());
-}
-
 NNModule THSNN_linearModule(const int64_t input_size, const int64_t output_size, const bool with_bias)
 {
     auto options = torch::nn::LinearOptions(input_size, output_size).with_bias(with_bias);
