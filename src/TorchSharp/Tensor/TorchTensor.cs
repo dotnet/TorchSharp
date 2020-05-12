@@ -114,6 +114,14 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_fill_(IntPtr handle, IntPtr value);
+
+        public void FillInPlace(Scalar value)
+        {
+             THSTensor_fill_(handle, value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
 
         [DllImport("LibTorchSharp")]
@@ -901,6 +909,14 @@ namespace TorchSharp.Tensor
         public bool Equal(TorchTensor target)
         {
             return THSTensor_equal(handle, target.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern bool THSTensor_allclose(IntPtr src, IntPtr trg, double rtol, double atol, bool equal_nan);
+
+        public bool AllClose(TorchTensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan=false)
+        {
+            return THSTensor_allclose(handle, target.Handle, rtol, atol, equal_nan);
         }
 
         [DllImport("LibTorchSharp")]

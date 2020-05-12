@@ -138,6 +138,9 @@ EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t i
 // Returns the sub-tensor identified by the indexes.
 EXPORT_API(Tensor) THSTensor_get4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4);
 
+// Fill the tensor with a given value.
+EXPORT_API(void) THSTensor_fill_(const Tensor tensor, Scalar value);
+
 // Set the sub-tensor identified by the index to value.
 EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
 
@@ -231,7 +234,7 @@ EXPORT_API(Tensor) THSTensor_transpose(const Tensor twrapper, const int64_t dim1
 
 // Returns a tensor that is a transposed version of input.The given dimensions dim0 and dim1 are swapped.
 // This operation is in place.
-EXPORT_API(Tensor) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
+EXPORT_API(void) THSTensor_transpose_(const Tensor twrapper, const int64_t dim1, const int64_t dim2);
 
 // Returns a new tensor with the same data as the tensor in twrapper but of a different shape.
 // The returned tensor shares the same data and must have the same number of elements,
@@ -297,24 +300,22 @@ EXPORT_API(Tensor) THSTensor_abs(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_relu_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_sin_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_cos_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_tan_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_asin_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_acos_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_atan_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_sinh_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_cosh_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_floor_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_ceil_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_abs_(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_neg_(const Tensor tensor);
-
-// Computes element-wise sqrt inplace.
-EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
+EXPORT_API(void) THSTensor_relu_(const Tensor tensor);
+EXPORT_API(void) THSTensor_sin_(const Tensor tensor);
+EXPORT_API(void) THSTensor_cos_(const Tensor tensor);
+EXPORT_API(void) THSTensor_tan_(const Tensor tensor);
+EXPORT_API(void) THSTensor_asin_(const Tensor tensor);
+EXPORT_API(void) THSTensor_acos_(const Tensor tensor);
+EXPORT_API(void) THSTensor_atan_(const Tensor tensor);
+EXPORT_API(void) THSTensor_sinh_(const Tensor tensor);
+EXPORT_API(void) THSTensor_cosh_(const Tensor tensor);
+EXPORT_API(void) THSTensor_tanh_(const Tensor tensor);
+EXPORT_API(void) THSTensor_floor_(const Tensor tensor);
+EXPORT_API(void) THSTensor_ceil_(const Tensor tensor);
+EXPORT_API(void) THSTensor_round_(const Tensor tensor);
+EXPORT_API(void) THSTensor_abs_(const Tensor tensor);
+EXPORT_API(void) THSTensor_neg_(const Tensor tensor);
+EXPORT_API(void) THSTensor_sqrt_(const Tensor tensor);
 
 // Performs a batch matrix - matrix product of matrices in batch1 and batch2.mat is added to the final result.
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.
@@ -361,6 +362,9 @@ EXPORT_API(Tensor) THSTensor_eqS_(const Tensor left, const Scalar right);
 
 // True if two tensors have the same size and elements, False otherwise.
 EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
+
+// True if two tensors have the same size and elements, False otherwise.
+EXPORT_API(int) THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan);
 
 // Returns a new tensor with the exponential of the elements of the input tensor.
 EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
