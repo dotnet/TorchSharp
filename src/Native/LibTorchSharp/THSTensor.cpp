@@ -424,9 +424,32 @@ Tensor THSTensor_addmm(
     return new torch::Tensor(mat->addmm(*mat1, *mat2, beta, alpha));
 }
 
-Tensor THSTensor_argmax(const Tensor tensor, const int64_t dimension, bool keepDim)
+Tensor THSTensor_argmaxT(const Tensor tensor, const int64_t dimension, bool keepDim)
 {
     return new torch::Tensor(tensor->argmax(dimension, keepDim));
+}
+
+Tensor THSTensor_argmax(const Tensor tensor)
+{
+    return new torch::Tensor(tensor->argmax());
+}
+
+void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dimension, const bool largest, const bool sorted)
+{
+    auto topk = tensor->topk(k, dimension, largest, sorted);
+    Tensor* result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(topk));
+    result[1] = new torch::Tensor(std::get<1>(topk));
+}
+
+Tensor THSTensor_argminT(const Tensor tensor, const int64_t dimension, bool keepDim)
+{
+    return new torch::Tensor(tensor->argmin(dimension, keepDim));
+}
+
+Tensor THSTensor_argmin(const Tensor tensor)
+{
+    return new torch::Tensor(tensor->argmin());
 }
 
 Tensor THSTensor_relu(const Tensor tensor)
@@ -801,12 +824,12 @@ Tensor THSTensor_log2_(const Tensor tensor)
 
 Tensor THSTensor_log10(const Tensor tensor)
 {
-    return new torch::Tensor(tensor->log());
+    return new torch::Tensor(tensor->log10());
 }
 
 Tensor THSTensor_log10_(const Tensor tensor)
 {
-    return new torch::Tensor(tensor->log_());
+    return new torch::Tensor(tensor->log10_());
 }
 
 Tensor THSTensor_lt(const Tensor left, const Tensor right)

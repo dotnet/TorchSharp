@@ -498,11 +498,35 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_argmax(IntPtr src, long dimension, bool keep_dim);
+        private static extern IntPtr THSTensor_argmax(IntPtr src);
+
+        public TorchTensor Argmax()
+        {
+            return new TorchTensor(THSTensor_argmax(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_argmaxT(IntPtr src, long dimension, bool keep_dim);
 
         public TorchTensor Argmax(long dimension, bool keepDim = false)
         {
-            return new TorchTensor(THSTensor_argmax(handle, dimension, keepDim));
+            return new TorchTensor(THSTensor_argmaxT(handle, dimension, keepDim));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_argmin(IntPtr src);
+
+        public TorchTensor Argmin()
+        {
+            return new TorchTensor(THSTensor_argmin(handle));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_argminT(IntPtr src, long dimension, bool keep_dim);
+
+        public TorchTensor Argmin(long dimension, bool keepDim = false)
+        {
+            return new TorchTensor(THSTensor_argminT(handle, dimension, keepDim));
         }
 
         [DllImport("LibTorchSharp")]
@@ -1088,7 +1112,24 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_max(IntPtr src, AllocatePinnedArray allocator, long dimension,
+        private static extern void THSTensor_topk(IntPtr src, AllocatePinnedArray allocator, int k, 
+            long dimension, bool largest, bool sorted);
+
+        public (TorchTensor values, TorchTensor indexes) TopK(int k, int dimension = -1, bool largest = true, bool sorted = true)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            {
+                THSTensor_topk(handle, pa.CreateArray, k, dimension, largest, sorted);
+                ptrArray = pa.Array;
+            }
+
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_max(IntPtr src, AllocatePinnedArray allocator, long dimension,
             bool keep_dim);
 
         public (TorchTensor values, TorchTensor indexes) Max(long dimension, bool keepDim = false)

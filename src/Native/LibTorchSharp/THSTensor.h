@@ -280,8 +280,17 @@ EXPORT_API(Tensor) THSTensor_addmm(
     const float beta,
     const float alpha);
 
+// Returns the indices of the maximum values of a tensor
+EXPORT_API(Tensor) THSTensor_argmax(const Tensor tensor);
+
 // Returns the indices of the maximum values of a tensor across a dimension.
-EXPORT_API(Tensor) THSTensor_argmax(const Tensor twrapper, const int64_t dimension, bool keepDim);
+EXPORT_API(Tensor) THSTensor_argmaxT(const Tensor twrapper, const int64_t dimension, bool keepDim);
+
+// Returns the indices of the minimum values of a tensor
+EXPORT_API(Tensor) THSTensor_argmin(const Tensor tensor);
+
+// Returns the indices of the minimum values of a tensor across a dimension.
+EXPORT_API(Tensor) THSTensor_argminT(const Tensor twrapper, const int64_t dimension, bool keepDim);
 
 EXPORT_API(Tensor) THSTensor_relu(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sin(const Tensor tensor);
@@ -446,6 +455,9 @@ EXPORT_API(Tensor) THSTensor_ltS_(const Tensor left, const Scalar right);
 // The behavior depends on the dimensionality of the tensors.
 // Check https://pytorch.org/docs/stable/torch.html#torch.matmul for details.
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
+
+// Returns a tensor where values are the maximum value of each row of the input tensor in the given dimension dimension.
+EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dimension, const bool largest, const bool sorted);
 
 // Returns a tensor where values are the maximum value of each row of the input tensor in the given dimension dimension.
 EXPORT_API(void) THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim);

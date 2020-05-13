@@ -79,9 +79,6 @@ EXPORT_API(Tensor) THSNN_avgPool2DApply(
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension);
 
-// Applies a softplus on the input tensor. 
-EXPORT_API(Tensor) THSNN_softplusApply(const Tensor input, const Scalar beta, const Scalar threshold)
-
 // Applies a log soft max on the input tensor. 
 EXPORT_API(Tensor) THSNN_featureDropoutApply(const Tensor tensor);
 
