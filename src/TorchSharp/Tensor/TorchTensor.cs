@@ -1129,6 +1129,45 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_unbind(IntPtr src, AllocatePinnedArray allocator, long dimension);
+
+        public TorchTensor[] Unbind(int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            {
+                THSTensor_unbind(handle, pa.CreateArray, dimension);
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_split_with_sizes(IntPtr src, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
+
+        public TorchTensor[] SplitWithSizes(long[] sizes, int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            {
+                unsafe
+                {
+                    fixed (long* psizes = sizes)
+                    {
+                        THSTensor_split_with_sizes(handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dimension);
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern void THSTensor_max(IntPtr src, AllocatePinnedArray allocator, long dimension,
             bool keep_dim);
 

@@ -557,3 +557,9 @@ EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
 
 // Expand tensor to the given shape
 EXPORT_API(Tensor) THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit);
+
+// Split the tensor to single size tensors along the given dimension
+EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension);
+
+// Split the tensor along the given dimension using the given sizes
+EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dimension);
