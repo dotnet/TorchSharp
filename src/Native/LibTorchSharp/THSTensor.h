@@ -554,3 +554,6 @@ EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimension
 
 // Returns a tensor with a dimension of size 1 inserted at the specified position.
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
+
+// Expand tensor to the given shape
+EXPORT_API(Tensor) THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit);

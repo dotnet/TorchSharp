@@ -989,3 +989,9 @@ Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dimension)
 {
     return new torch::Tensor(tensor->unsqueeze(dimension));
 }
+
+Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit)
+{
+    return new torch::Tensor(tensor->expand(at::IntList(sizes, length), implicit));
+}
+

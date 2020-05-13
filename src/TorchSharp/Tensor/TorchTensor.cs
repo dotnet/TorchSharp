@@ -1359,6 +1359,24 @@ namespace TorchSharp.Tensor
             }
         }
 
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_expand(IntPtr src, IntPtr psizes, int length, bool isImplicit);
+
+        /// <summary>
+        ///  Create a new tensor filled with zeros
+        /// </summary>
+        public TorchTensor Expand(long[] sizes, bool isImplicit = false)
+        {
+            unsafe
+            {
+                fixed (long* psizes = sizes)
+                {
+                    return new TorchTensor(THSTensor_expand(handle, (IntPtr)psizes, sizes.Length, isImplicit));
+                }
+            }
+        }
+
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_unsqueeze(IntPtr src, long dimension);
 
@@ -1687,5 +1705,6 @@ namespace TorchSharp.Tensor
 
             return new TorchTensor(THSTensor_stack(tensorsRef, parray.Array.Length, dimension));
         }
+
     }
 }

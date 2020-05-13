@@ -32,7 +32,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -51,7 +51,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -70,7 +70,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -89,7 +89,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -108,7 +108,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int scalarType, int length, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
