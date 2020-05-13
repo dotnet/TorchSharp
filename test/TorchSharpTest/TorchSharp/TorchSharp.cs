@@ -1250,7 +1250,11 @@ namespace TorchSharp.Test
         public void SinTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Sin).ToArray();
+#else
+            var expected = data.Select(x => (float) Math.Sin((double) x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Sin();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1259,7 +1263,11 @@ namespace TorchSharp.Test
         public void CosTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Cos).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Cos((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Cos();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1268,7 +1276,11 @@ namespace TorchSharp.Test
         public void TanTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Tan).ToArray();
+#else
+            var expected = data.Select(x => (float) Math.Tan((double) x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Tan();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1277,7 +1289,11 @@ namespace TorchSharp.Test
         public void SinhTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Sinh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Sinh((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Sinh();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1286,7 +1302,11 @@ namespace TorchSharp.Test
         public void CoshTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Cosh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Cosh((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Cosh();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1295,7 +1315,11 @@ namespace TorchSharp.Test
         public void TanhTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Tanh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Tanh((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Tanh();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1304,7 +1328,11 @@ namespace TorchSharp.Test
         public void AsinTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Asin).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Asin((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Asin();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1313,7 +1341,11 @@ namespace TorchSharp.Test
         public void AcosTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Acos).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Acos((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Acos();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1322,7 +1354,11 @@ namespace TorchSharp.Test
         public void AtanTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
             var expected = data.Select(MathF.Atan).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Atan((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Atan();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1331,7 +1367,11 @@ namespace TorchSharp.Test
         public void LogTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select((float x) => MathF.Log(x)).ToArray();
+#if NETSTANDARD
+            var expected = data.Select(MathF.Log).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Log((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Log();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1340,7 +1380,11 @@ namespace TorchSharp.Test
         public void Log10Test()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select((float x) => MathF.Log10(x)).ToArray();
+#if NETSTANDARD
+            var expected = data.Select(MathF.Log10).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Log10((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Log10();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1349,7 +1393,11 @@ namespace TorchSharp.Test
         public void FloorTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select((float x) => MathF.Floor(x)).ToArray();
+#if NETSTANDARD
+            var expected = data.Select(MathF.Floor).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Floor((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Floor();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1358,7 +1406,11 @@ namespace TorchSharp.Test
         public void CeilTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select((float x) => MathF.Ceiling(x)).ToArray();
+#if NETSTANDARD
+            var expected = data.Select(MathF.Ceiling).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Ceiling((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Ceil();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1367,7 +1419,11 @@ namespace TorchSharp.Test
         public void RoundTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select((float x) => MathF.Round(x)).ToArray();
+#if NETSTANDARD
+            var expected = data.Select(MathF.Round).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Round((double)x)).ToArray();
+#endif
             var res = FloatTensor.From(data).Round();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
