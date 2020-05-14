@@ -1362,7 +1362,7 @@ namespace TorchSharp.Test
         public void LogTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Log).ToArray();
+            var expected = data.Select(x => MathF.Log(x)).ToArray();
             var res = FloatTensor.From(data).Log();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
@@ -1398,7 +1398,7 @@ namespace TorchSharp.Test
         public void RoundTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select(MathF.Round).ToArray();
+            var expected = data.Select(x => MathF.Round(x)).ToArray();
             var res = FloatTensor.From(data).Round();
             Assert.True(res.AllClose(FloatTensor.From(expected)));
         }
