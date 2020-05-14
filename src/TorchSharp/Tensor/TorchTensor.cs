@@ -192,7 +192,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern sbyte THSTensor_type(IntPtr handle);
 
-        public ATenScalarMapping Type => (ATenScalarMapping) THSTensor_type(handle);
+        public ATenScalarMapping Type => (ATenScalarMapping)THSTensor_type(handle);
 
         [DllImport("LibTorchSharp")]
         private static extern string THSTensor_deviceType(IntPtr handle);
@@ -214,7 +214,7 @@ namespace TorchSharp.Tensor
 
         public TorchTensor ToType(ATenScalarMapping type)
         {
-            return new TorchTensor(THSTensor_to_type(handle, (sbyte) type));
+            return new TorchTensor(THSTensor_to_type(handle, (sbyte)type));
         }
 
         [DllImport("LibTorchSharp")]
@@ -946,7 +946,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern bool THSTensor_allclose(IntPtr src, IntPtr trg, double rtol, double atol, bool equal_nan);
 
-        public bool AllClose(TorchTensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan=false)
+        public bool AllClose(TorchTensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false)
         {
             return THSTensor_allclose(handle, target.Handle, rtol, atol, equal_nan);
         }
@@ -1112,7 +1112,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_topk(IntPtr src, AllocatePinnedArray allocator, int k, 
+        private static extern void THSTensor_topk(IntPtr src, AllocatePinnedArray allocator, int k,
             long dimension, bool largest, bool sorted);
 
         public (TorchTensor values, TorchTensor indexes) TopK(int k, int dimension = -1, bool largest = true, bool sorted = true)
@@ -1379,6 +1379,9 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_sum(IntPtr src);
 
+        /// <summary>
+        /// Returns the sum of all elements in the :attr:`input` tensor.
+        /// </summary>
         public TorchTensor Sum()
         {
             return new TorchTensor(THSTensor_sum(handle));
@@ -1387,13 +1390,16 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_sum1(IntPtr src, IntPtr dimensions, int length, bool keep_dimension);
 
+        /// <summary>
+        ///  Returns the sum of each row of the input tensor in the given dimensions.
+        /// </summary>
         public TorchTensor Sum(long[] dimensions, bool keepDimension = false)
         {
             unsafe
             {
                 fixed (long* pdims = dimensions)
                 {
-                    return new TorchTensor(THSTensor_sum1(handle, (IntPtr) pdims, dimensions.Length, keepDimension));
+                    return new TorchTensor(THSTensor_sum1(handle, (IntPtr)pdims, dimensions.Length, keepDimension));
                 }
             }
         }
@@ -1403,7 +1409,7 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_expand(IntPtr src, IntPtr psizes, int length, bool isImplicit);
 
         /// <summary>
-        ///  Create a new tensor filled with zeros
+        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
         /// </summary>
         public TorchTensor Expand(long[] sizes, bool isImplicit = false)
         {
@@ -1417,7 +1423,351 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_flip(IntPtr src, IntPtr psizes, int length);
+
+        /// <summary>
+        ///  Reverse the order of a n-D tensor along given axis in dims.
+        /// </summary>
+        public TorchTensor Flip(long[] sizes)
+        {
+            unsafe
+            {
+                fixed (long* psizes = sizes)
+                {
+                    return new TorchTensor(THSTensor_flip(handle, (IntPtr)psizes, sizes.Length));
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_narrow(IntPtr src, long dimension, long start, long length);
+
+        /// <summary>
+        ///  Returns a new tensor that is a narrowed version of the input along one dimension. The
+        /// dimension is input from start to start + length. The
+        /// returned tensor and the input tensor share the same underlying storage.
+        /// </summary>
+        public TorchTensor Narrow(long dimension, long start, long length)
+        {
+            return new TorchTensor(THSTensor_narrow(handle, dimension, start, length));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_slice(IntPtr src, long dimension, long start, long length, long step);
+
+        /// <summary>
+        ///  Returns a new tensor that is a sliced version of the input along one dimension. The
+        /// dimension is input from start to finish-1. The
+        /// returned tensor and the input tensor share the same underlying storage.
+        /// </summary>
+        public TorchTensor Slice(long dimension, long start, long finish, long step)
+        {
+            return new TorchTensor(THSTensor_slice(handle, dimension, start, finish, step));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_unsqueeze(IntPtr src, long dimension);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv1d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor Conv1D(TorchTensor weight, TorchTensor? bias, 
+            long? stride = null,
+            long? padding = null,
+            long? dilation = null,
+            long groups = 1)
+        {
+            var strides = new long[] { stride ?? 1 };
+            var padding = new long[] { padding ?? 0 }; 
+            var dilation = new long[] { dilation ?? 1 }; 
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv1d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv2d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor Conv2D(TorchTensor weight, TorchTensor? bias,
+            long[] strides = null,
+            long[] padding = null,
+            long[] dilation = null,
+            long groups = 1)
+        {
+            strides = (strides == null) ? new long[] { 1 } : strides;
+            padding = (padding == null) ? new long[] { 0 } : padding;
+            dilation = (dilation == null) ? new long[] { 1 } : dilation;
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv2d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv3d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor Conv3D(TorchTensor weight, TorchTensor? bias,
+            long[] strides = null,
+            long[] padding = null,
+            long[] dilation = null,
+            long groups = 1)
+        {
+            strides = (strides == null) ? new long[] { 1 } : strides;
+            padding = (padding == null) ? new long[] { 0 } : padding;
+            dilation = (dilation == null) ? new long[] { 1 } : dilation;
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv3d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length, 
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv_transpose1d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr outputPadding, int outputPaddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor ConvTranspose1D(TorchTensor weight, TorchTensor? bias,
+            long? stride = null,
+            long? padding = null,
+            long? outputPadding = null,
+            long? dilation = null,
+            long groups = 1)
+        {
+            var strides = new long[] { stride ?? 1 };
+            var padding = new long[] { padding ?? 0 };
+            var outputPadding = new long[] { outputPadding ?? 0 };
+            var dilation = new long[] { dilation ?? 1 };
+            //var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv_transpose1d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)poutputPadding, outputPadding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv_transpose2d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr outputPadding, int outputPaddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor ConvTranspose2D(TorchTensor weight, TorchTensor? bias,
+            long[] strides = null,
+            long[] padding = null,
+            long[] outputPadding = null,
+            long[] dilation = null,
+            long groups = 1)
+        {
+            strides = (strides == null) ? new long[] { 1, 1 } : strides;
+            padding = (padding == null) ? new long[] { 0, 0 } : padding;
+            outputPadding = (outputPadding == null) ? new long[] { 0, 0 } : outputPadding;
+            dilation = (dilation == null) ? new long[] { 1, 1 } : dilation;
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv_transpose2d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)poutputPadding, outputPadding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_conv_transpose3d(IntPtr input, IntPtr weight, IntPtr bias,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr outputPadding, int outputPaddingLength,
+                IntPtr dilation, int dilationLength,
+                long groups);
+
+        public TorchTensor ConvTranspose3D(TorchTensor weight, TorchTensor? bias,
+            long[] strides = null,
+            long[] padding = null,
+            long[] outputPadding = null,
+            long[] dilation = null,
+            long groups = 1)
+        {
+            strides = (strides == null) ? new long[] { 1, 1, 1 } : strides;
+            padding = (padding == null) ? new long[] { 0, 0, 0 } : padding;
+            outputPadding = (outputPadding == null) ? new long[] { 0, 0, 0 } : outputPadding;
+            dilation = (dilation == null) ? new long[] { 1, 1, 1 } : dilation;
+            unsafe
+            {
+                fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation)
+                {
+                    var biasHandle = (bias.HasValue ? bias.Value.Handle : IntPtr.Zero);
+                    var res =
+                        THSTensor_conv_transpose3d(handle, weight.Handle, biasHandle,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)poutputPadding, outputPadding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            groups);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_maxpool1d(IntPtr input,
+                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public TorchTensor MaxPool1D(long kernelSize, long? stride = null,
+            long? padding = null, long? dilation = null, bool ceil_mode = false)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var padding = new long[] { padding ?? 0 };
+            var dilation = new long[] { dilation ?? 1 };
+            unsafe
+            {
+                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var res =
+                        THSTensor_maxpool1d(handle, 
+                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            ceil_mode);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_maxpool2d(IntPtr input,
+                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public TorchTensor MaxPool2D(long[] kernelSizes, long[] strides = null,
+            long[] padding = null, long[] dilation = null, bool ceil_mode = false)
+        {
+            strides = strides ?? kernelSizes.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSizes.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSizes.Select(x => 1L).ToArray();
+            unsafe
+            {
+                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var res =
+                        THSTensor_maxpool2d(handle,
+                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            ceil_mode);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_maxpool3d(IntPtr input,
+                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public TorchTensor MaxPool3D(long[] kernelSizes, long[] strides = null,
+            long[] padding = null, long[] dilation = null, bool ceil_mode = false)
+        {
+            strides = strides ?? kernelSizes.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSizes.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSizes.Select(x => 1L).ToArray();
+            unsafe
+            {
+                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = padding, pdilation = dilation)
+                {
+                    var res =
+                        THSTensor_maxpool3d(handle,
+                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            ceil_mode);
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        /// <summary>
+        ///  Returns a new tensor with a dimension of size one inserted at the specified position.
+        ///  The returned tensor shares the same underlying data with this tensor.
+        /// </summary>
 
         public TorchTensor Unsqueeze(long dimension)
         {
@@ -1671,7 +2021,7 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return  FloatTensor.From(array as float[], dimensions, requiresGrad);
+                        return FloatTensor.From(array as float[], dimensions, requiresGrad);
                     }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }

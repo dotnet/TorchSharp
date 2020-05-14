@@ -125,19 +125,6 @@ const char * THSNN_getModuleName(const NNModule module)
     return make_sharable_string((*module)->name());
 }
 
-Tensor THSNN_maxPool2DApply(
-    const Tensor tensor, 
-    const int kernelSizeLength, 
-    const int64_t* kernelSize,
-    const int strideLength,
-    const int64_t* stride)
-{
-    return new torch::Tensor(torch::max_pool2d(
-        *tensor, 
-        at::IntList(kernelSize, kernelSizeLength), 
-        at::IntList(stride, strideLength)));
-}
-
 Tensor THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize)
 {
     return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::IntList(outputSize, length)));

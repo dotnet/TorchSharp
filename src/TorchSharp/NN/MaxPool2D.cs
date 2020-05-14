@@ -19,11 +19,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_maxPool2DApply(IntPtr tensor, int kernelSizeLength, long[] kernelSize, int strideLength, long[] stride);
+        private static extern IntPtr THSTensor_maxpool2d(IntPtr tensor, int kernelSizeLength, long[] kernelSize, int strideLength, long[] stride);
 
         public override TorchTensor Forward(TorchTensor tensor)
         {
-            return new TorchTensor(THSNN_maxPool2DApply(tensor.Handle, _kernelSize.Length, _kernelSize, _stride.Length, _stride));
+            return new TorchTensor(THSTensor_maxpool2d(tensor.Handle, _kernelSize.Length, _kernelSize, _stride.Length, _stride));
         }
     }
 }

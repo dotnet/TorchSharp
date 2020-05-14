@@ -995,6 +995,21 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
     return new torch::Tensor(tensor->expand(at::IntList(sizes, length), implicit));
 }
 
+Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
+{
+    return new torch::Tensor(tensor->flip(at::IntList(sizes, length)));
+}
+
+Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length)
+{
+    return new torch::Tensor(tensor->narrow(dim, start, length));
+}
+
+Tensor THSTensor_slice(const Tensor tensor, int64_t dim, int64_t start, int64_t finish, int64_t step)
+{
+    return new torch::Tensor(tensor->slice(dim, start, finish, step));
+}
+
 void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension)
 {
     auto res = tensor->unbind(dimension);
@@ -1004,12 +1019,177 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
         result[i] = new torch::Tensor(res[i]);
 }
 
-void THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dimension)
+void THSTensor_split_with_sizes(
+    const Tensor tensor, 
+    Tensor* (*allocator)(size_t length), 
+    const int64_t* sizes, 
+    const int length, const 
+    int64_t dimension)
 {
     auto res = tensor->split_with_sizes(at::IntList(sizes, length), dimension);
     const size_t sz = res.size();
     Tensor* result = allocator(sz);
     for (size_t i = 0; i < sz; i++)
         result[i] = new torch::Tensor(res[i]);
+}
+
+Tensor THSTensor_maxpool1d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    return new torch::Tensor(torch::max_pool1d(
+        *tensor,
+        at::IntList(kernelSize, kernelSizeLength),
+        at::IntList(stride, strideLength),
+        at::IntList(padding, paddingLength),
+        at::IntList(dilation, dilationLength),
+        ceil_mode));
+}
+
+Tensor THSTensor_maxpool2d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    return new torch::Tensor(torch::max_pool2d(
+        *tensor,
+        at::IntList(kernelSize, kernelSizeLength),
+        at::IntList(stride, strideLength),
+        at::IntList(padding, paddingLength),
+        at::IntList(dilation, dilationLength),
+        ceil_mode));
+}
+
+Tensor THSTensor_maxpool3d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    return new torch::Tensor(torch::max_pool3d(
+        *tensor,
+        at::IntList(kernelSize, kernelSizeLength),
+        at::IntList(stride, strideLength),
+        at::IntList(padding, paddingLength),
+        at::IntList(dilation, dilationLength),
+        ceil_mode));
+}
+
+
+Tensor THSTensor_conv_transpose1d(
+    const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* outputPadding, const int outputPaddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv_transpose1d(*input, *weight, *bias,
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(outputPadding, outputPaddingLength),
+            groups,
+            at::IntList(dilation, dilationLength));
+    return new torch::Tensor(res);
+}
+
+Tensor THSTensor_conv_transpose2d(
+    const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* outputPadding, const int outputPaddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv_transpose2d(*input, *weight, *bias,
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(outputPadding, outputPaddingLength),
+            groups,
+            at::IntList(dilation, dilationLength));
+    return new torch::Tensor(res);
+}
+
+Tensor THSTensor_conv_transpose3d(
+    const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* outputPadding, const int outputPaddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv_transpose3d(*input, *weight, *bias,
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(outputPadding, outputPaddingLength),
+            groups,
+            at::IntList(dilation, dilationLength));
+    return new torch::Tensor(res);
+}
+
+Tensor THSTensor_conv1d(
+    const Tensor input, 
+    const Tensor weight, 
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv1d(*input, *weight, *bias,
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(dilation, dilationLength),
+            groups);
+    return new torch::Tensor(res);
+}
+
+Tensor THSTensor_conv2d(
+    const Tensor input, 
+    const Tensor weight, 
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv2d(*input, *weight, *bias, 
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(dilation, dilationLength),
+            groups);
+    return new torch::Tensor(res);
+}
+
+Tensor THSTensor_conv3d(
+    const Tensor input, 
+    const Tensor weight, 
+    const Tensor bias,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    int64_t groups)
+{
+    auto res =
+        torch::conv3d(*input, *weight, *bias,
+            at::IntList(stride, strideLength),
+            at::IntList(padding, paddingLength),
+            at::IntList(dilation, dilationLength),
+            groups);
+    return new torch::Tensor(res);
 }
 

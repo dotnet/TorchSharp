@@ -308,7 +308,8 @@ EXPORT_API(Tensor) THSTensor_round(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_abs(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor, const Scalar beta, const Scalar threshold);
+EXPORT_API(Tensor) THSTensor_sign(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_relu_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sin_(const Tensor tensor);
@@ -326,6 +327,7 @@ EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_abs_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_neg_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sign_(const Tensor tensor);
 
 // Performs a batch matrix - matrix product of matrices in batch1 and batch2.mat is added to the final result.
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.
@@ -558,8 +560,95 @@ EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
 // Expand tensor to the given shape
 EXPORT_API(Tensor) THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit);
 
+// Flip along the given dimensions
+EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
+
+// Narrow along the given dimension
+EXPORT_API(Tensor) THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length);
+
+// Slice along the given dimension
+EXPORT_API(Tensor) THSTensor_slice(const Tensor tensor, int64_t dim, int64_t start, int64_t finish, int64_t step);
+
 // Split the tensor to single size tensors along the given dimension
 EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension);
 
 // Split the tensor along the given dimension using the given sizes
 EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dimension);
+
+// Applies a conv 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv2d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv3d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose1d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose2d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose3d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+
+// Applies a maxpool 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool1d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+// Applies a maxpool 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool2d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+// Applies a maxpool 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool3d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+
+
+
+
