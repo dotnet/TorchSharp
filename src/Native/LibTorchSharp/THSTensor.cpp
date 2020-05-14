@@ -1023,8 +1023,8 @@ void THSTensor_split_with_sizes(
     const Tensor tensor, 
     Tensor* (*allocator)(size_t length), 
     const int64_t* sizes, 
-    const int length, const 
-    int64_t dimension)
+    const int length, 
+    const int64_t dimension)
 {
     auto res = tensor->split_with_sizes(at::IntList(sizes, length), dimension);
     const size_t sz = res.size();
