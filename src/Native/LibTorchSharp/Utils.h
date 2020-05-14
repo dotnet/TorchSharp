@@ -18,16 +18,27 @@ typedef std::shared_ptr<torch::jit::TensorType> * JITTensorType;
 
 #define THS_API TH_API
 
-#ifdef DEBUG
 #define CATCH(x) \
   try { \
+    torch_last_err = 0; \
     x \
   } catch (const c10::Error e) { \
       torch_last_err = strdup(e.what()); \
   }
-#else
-#define CATCH(x) x
-#endif
+
+#define CATCH_RETURN_TENSOR(expr) \
+    at::Tensor res; \
+    CATCH(  \
+        res = expr;  \
+    );  \
+    return new torch::Tensor(res);
+
+#define CATCH_RETURN(ty, expr) \
+    ty res; \
+    CATCH(  \
+        res = expr;  \
+    );  \
+    return res;
 
 // Utility method used to built sharable strings.
 const char * make_sharable_string(const std::string str);

@@ -43,7 +43,7 @@ namespace TorchSharp.NN
             return (TorchTensor src, TorchTensor target) =>
             {
                 var tptr = THSNN_loss_poisson_nll(src.Handle, target.Handle, logInput, full, eps, (long)reduction);
-                Torch.AssertNoErrors();
+                Torch.CheckForErrors();
                 return new TorchTensor(tptr);
             };
         }

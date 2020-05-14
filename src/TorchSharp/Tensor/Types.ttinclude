@@ -5,7 +5,7 @@
         public readonly string Storage;
         public readonly string CSType;
 
-        public readonly bool IsInt;
+        public readonly bool IsSignedInt;
         public readonly bool IsFloat;
         public readonly bool IsLong;
 
@@ -14,13 +14,14 @@
             this.Storage = storage;
             this.CSType = cstype;
 
-            this.IsInt = name == "Short" || name == "Int" || name == "Long";
+            this.IsSignedInt = name == "SByte" || name == "Short" || name == "Int" || name == "Long";
             this.IsFloat = name == "Float" || name == "Double";
             this.IsLong = name == "Long";
         }
 
         public static readonly TorchTypeDef[] Types = {
             new TorchTypeDef("Byte",   "byte",   "Byte"  ),
+            new TorchTypeDef("SByte",  "sbyte",  "SByte" ),
             new TorchTypeDef("Short",  "short",  "Short"  ),
             new TorchTypeDef("Int",    "int",    "Int"  ),
             new TorchTypeDef("Long",   "long",   "Long"  ),

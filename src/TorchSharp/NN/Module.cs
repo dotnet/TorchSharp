@@ -134,7 +134,10 @@ namespace TorchSharp.NN
 
         static public TorchTensor Relu(TorchTensor x, bool inPlace = false)
         {
-            return new ReLU().Forward(x);
+            using (var m = new ReLU(inPlace))
+            {
+                return m.Forward(x);
+            }
         }
 
         static public MaxPool2D MaxPool2D(long[] kernelSize, long[] stride = null)

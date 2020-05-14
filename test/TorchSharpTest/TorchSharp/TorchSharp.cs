@@ -14,7 +14,9 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateFloatTensorOnes()
         {
-            TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2 });
+            var shape = new long[] { 2, 2 };
+            TorchTensor ones = FloatTensor.Ones(shape);
+            Assert.Equal(shape, ones.Shape);
         }
 
         [Fact]
@@ -178,7 +180,38 @@ namespace TorchSharp.Test
         {
             using (var tensor = 1.ToTorchTensor())
             {
+                Assert.Equal(ATenScalarMapping.Int, tensor.Type);
                 Assert.Equal(1, tensor.DataItem<int>());
+            }
+            using (var tensor = ((byte)1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Byte, tensor.Type);
+                Assert.Equal(1, tensor.DataItem<byte>());
+            }
+            using (var tensor = ((sbyte)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.SByte, tensor.Type);
+                Assert.Equal(-1, tensor.DataItem<sbyte>());
+            }
+            using (var tensor = ((short)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Short, tensor.Type);
+                Assert.Equal(-1, tensor.DataItem<short>());
+            }
+            using (var tensor = ((long)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Long, tensor.Type);
+                Assert.Equal(-1L, tensor.DataItem<short>());
+            }
+            using (var tensor = ((float)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Float, tensor.Type);
+                Assert.Equal(-1.0f, tensor.DataItem<float>());
+            }
+            using (var tensor = ((double)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Double, tensor.Type);
+                Assert.Equal(-1.0, tensor.DataItem<double>());
             }
         }
 
@@ -644,11 +677,11 @@ namespace TorchSharp.Test
             }
         }
 
-        [Fact] 
+        [Fact]
         public void TestGrad2()
         {
             var y = FloatTensor.RandomN(new long[] { 32, 1 }, device: "cpu:0");
-            var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTorchTensor(new long[] { 32, 11}).ToType(ATenScalarMapping.Float);
+            var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTorchTensor(new long[] { 32, 11 }).ToType(ATenScalarMapping.Float);
             var inputs = new TorchTensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTorchTensor(new long[] { 1, 11 }).ToType(ATenScalarMapping.Float).RequiresGrad(true);
             var linear = new NN.Linear(11, 1, true);
@@ -897,7 +930,7 @@ namespace TorchSharp.Test
             TestTwoTensorInPlace<float>((a, b) => a.RemainderInPlace(b), (a, b) => a % b);
         }
 
-        private void TestOneTensor<Tin, Tout>(Func<TorchTensor, TorchTensor> tensorFunc, 
+        private void TestOneTensor<Tin, Tout>(Func<TorchTensor, TorchTensor> tensorFunc,
             Func<Tin, Tout> scalarFunc)
         {
             var c1 = FloatTensor.Arange(0, 10, 1);
@@ -1242,6 +1275,433 @@ namespace TorchSharp.Test
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
             var obj = NN.Module.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
+        }
+
+        [Fact]
+        public void SinTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Sin).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Sin((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Sin();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void CosTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Cos).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Cos((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Cos();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void TanTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Tan).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Tan((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Tan();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void SinhTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Sinh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Sinh((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Sinh();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void CoshTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Cosh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Cosh((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Cosh();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void TanhTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Tanh).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Tanh((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Tanh();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void AsinTest()
+        {
+            var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Asin).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Asin((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Asin();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void AcosTest()
+        {
+            var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Acos).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Acos((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Acos();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void AtanTest()
+        {
+            var data = new float[] { 1.0f, 0.2f, -0.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Atan).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Atan((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Atan();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void LogTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Log).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Log((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Log();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void Log10Test()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Log10).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Log10((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Log10();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void FloorTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Floor).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Floor((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Floor();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void CeilTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Ceiling).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Ceiling((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Ceil();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void RoundTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+#if NETSTANDARD
+            var expected = data.Select(MathF.Round).ToArray();
+#else
+            var expected = data.Select(x => (float)Math.Round((double)x)).ToArray();
+#endif
+            var res = FloatTensor.From(data).Round();
+            Assert.True(res.AllClose(FloatTensor.From(expected)));
+        }
+
+        [Fact]
+        public void ExpandTest()
+        {
+            TorchTensor ones = FloatTensor.Ones(new long[] { 2 });
+            TorchTensor onesExpanded = ones.Expand(new long[] { 3, 2 });
+
+            Assert.Equal(onesExpanded.Shape, new long[] { 3, 2 });
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    Assert.Equal(1.0, onesExpanded[i, j].DataItem<float>());
+                }
+            }
+        }
+
+        [Fact]
+        public void TopKTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            var res1 = FloatTensor.From(data).TopK(1);
+            var res1_0 = res1.values[0].DataItem<float>();
+            var index1_0 = res1.indexes[0].DataItem<long>();
+            Assert.Equal(3.1f, res1_0);
+            Assert.Equal(2L, index1_0);
+
+            var res2 = FloatTensor.From(data).TopK(2, sorted: true);
+            var res2_0 = res2.values[0].DataItem<float>();
+            var index2_0 = res2.indexes[0].DataItem<long>();
+            var res2_1 = res2.values[1].DataItem<float>();
+            var index2_1 = res2.indexes[1].DataItem<long>();
+            Assert.Equal(3.1f, res2_0);
+            Assert.Equal(2L, index2_0);
+            Assert.Equal(2.0f, res2_1);
+            Assert.Equal(1L, index2_1);
+        }
+
+        [Fact]
+        public void SumTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+
+            var res1 = FloatTensor.From(data).Sum();
+            var res1_0 = res1.DataItem<float>();
+            Assert.Equal(6.0f, res1_0);
+
+            var res2 = FloatTensor.From(data).Sum(type: ATenScalarMapping.Double);
+            var res2_0 = res2.DataItem<double>();
+            Assert.Equal(6.0, res2_0);
+
+            // summing integers gives long unless type is explicitly specified
+            var dataInt32 = new int[] { 1, 2, 3 };
+            var res3 = IntTensor.From(dataInt32).Sum();
+            Assert.Equal(ATenScalarMapping.Long, res3.Type);
+            var res3_0 = res3.DataItem<long>();
+            Assert.Equal(6L, res3_0);
+
+            // summing integers gives long unless type is explicitly specified
+            var res4 = IntTensor.From(dataInt32).Sum(type: ATenScalarMapping.Int);
+            Assert.Equal(ATenScalarMapping.Int, res4.Type);
+            var res4_0 = res4.DataItem<int>();
+            Assert.Equal(6L, res4_0);
+
+        }
+
+        [Fact]
+        public void UnbindTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            var res = FloatTensor.From(data).Unbind();
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { }, res[0].Shape);
+            Assert.Equal(new long[] { }, res[1].Shape);
+            Assert.Equal(new long[] { }, res[2].Shape);
+            Assert.Equal(1.1f, res[0].DataItem<float>());
+            Assert.Equal(2.0f, res[1].DataItem<float>());
+            Assert.Equal(3.1f, res[2].DataItem<float>());
+        }
+
+        [Fact]
+        public void SplitWithSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            var res = FloatTensor.From(data).SplitWithSizes(new long[] { 2, 1 });
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 2 }, res[0].Shape);
+            Assert.Equal(new long[] { 1 }, res[1].Shape);
+            Assert.Equal(1.1f, res[0][0].DataItem<float>());
+            Assert.Equal(2.0f, res[0][1].DataItem<float>());
+            Assert.Equal(3.1f, res[1][0].DataItem<float>());
+        }
+
+        [Fact]
+        public void RandomTest()
+        {
+            var res = FloatTensor.Random(new long[] { 2 });
+            Assert.Equal(new long[] { 2 }, res.Shape);
+
+            var res1 = ShortTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res1.Shape);
+
+            var res2 = IntTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res2.Shape);
+
+            var res3 = LongTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res3.Shape);
+
+            var res4 = ByteTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res4.Shape);
+
+            var res5 = SByteTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res5.Shape);
+        }
+
+        [Fact]
+        public void SqueezeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            var res = FloatTensor.From(data).Expand(new long[] { 1, 1, 3 }).Squeeze(0).Squeeze(0);
+            Assert.Equal(new long[] { 3 }, res.Shape);
+            Assert.Equal(1.1f, res[0].DataItem<float>());
+            Assert.Equal(2.0f, res[1].DataItem<float>());
+            Assert.Equal(3.1f, res[2].DataItem<float>());
+        }
+
+        [Fact]
+        public void NarrowTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            var res = FloatTensor.From(data).Narrow(0, 1, 2);
+            Assert.Equal(new long[] { 2 }, res.Shape);
+            Assert.Equal(2.0f, res[0].DataItem<float>());
+            Assert.Equal(3.1f, res[1].DataItem<float>());
+        }
+
+        [Fact]
+        public void SliceTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.0f };
+
+            var res = FloatTensor.From(data).Slice(0, 1, 1, 1);
+            Assert.Equal(new long[] { 0 }, res.Shape);
+
+            var res2 = FloatTensor.From(data).Slice(0, 1, 2, 1);
+            Assert.Equal(new long[] { 1 }, res2.Shape);
+            Assert.Equal(2.0f, res2[0].DataItem<float>());
+
+            var res3 = FloatTensor.From(data).Slice(0, 1, 4, 2);
+            Assert.Equal(new long[] { 2 }, res3.Shape);
+            Assert.Equal(2.0f, res3[0].DataItem<float>());
+            Assert.Equal(4.0f, res3[1].DataItem<float>());
+        }
+        [Fact]
+        public void Conv1DTest()
+        {
+            var t1 =
+                new float[3, 4, 5]
+                   {{{0.3460f, 0.4414f, 0.2384f, 0.7905f, 0.2267f},
+                                     {0.5161f, 0.9032f, 0.6741f, 0.6492f, 0.8576f},
+                                     {0.3373f, 0.0863f, 0.8137f, 0.2649f, 0.7125f},
+                                     {0.7144f, 0.1020f, 0.0437f, 0.5316f, 0.7366f}},
+
+                                    {{0.9871f, 0.7569f, 0.4329f, 0.1443f, 0.1515f},
+                                     {0.5950f, 0.7549f, 0.8619f, 0.0196f, 0.8741f},
+                                     {0.4595f, 0.7844f, 0.3580f, 0.6469f, 0.7782f},
+                                     {0.0130f, 0.8869f, 0.8532f, 0.2119f, 0.8120f}},
+
+                                    {{0.5163f, 0.5590f, 0.5155f, 0.1905f, 0.4255f},
+                                     {0.0823f, 0.7887f, 0.8918f, 0.9243f, 0.1068f},
+                                     {0.0337f, 0.2771f, 0.9744f, 0.0459f, 0.4082f},
+                                     {0.9154f, 0.2569f, 0.9235f, 0.9234f, 0.3148f}}};
+            var t2 =
+                new float[2, 4, 3]
+                   {{{0.4941f, 0.8710f, 0.0606f},
+                     {0.2831f, 0.7930f, 0.5602f},
+                     {0.0024f, 0.1236f, 0.4394f},
+                     {0.9086f, 0.1277f, 0.2450f}},
+
+                    {{0.5196f, 0.1349f, 0.0282f},
+                     {0.1749f, 0.6234f, 0.5502f},
+                     {0.7678f, 0.0733f, 0.3396f},
+                     {0.6023f, 0.6546f, 0.3439f}}};
+
+            var t1raw = new float[3 * 4 * 5];
+            var t2raw = new float[2 * 4 * 3];
+            { for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 5; k++) { t1raw[i * 4 * 5 + j * 5 + k] = t1[i, j, k]; } }
+            { for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 3; k++) { t2raw[i * 4 * 3 + j * 3 + k] = t2[i, j, k]; } }
+            var t1t = FloatTensor.From(t1raw, new long[] { 3, 4, 5 });
+            var t2t = FloatTensor.From(t2raw, new long[] { 2, 4, 3 });
+            var t3t = t1t.Conv1D(t2t);
+
+            // Check the answer
+            var t3Correct =
+                new float[3, 2, 3]
+                    {{{2.8516f, 2.0732f, 2.6420f},
+                      {2.3239f, 1.7078f, 2.7450f}},
+
+                    {{3.0127f, 2.9651f, 2.5219f},
+                     {3.0899f, 3.1496f, 2.4110f}},
+
+                    {{3.4749f, 2.9038f, 2.7131f},
+                     {2.7692f, 2.9444f, 3.2554f}}};
+            {
+                var data = t3t.Data<float>();
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 2; j++)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            var itemCorrect = t3Correct[i, j, k];
+                            var item = data[i * 2 * 3 + j * 3 + k];
+                            Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
+                        }
+            }
+            
+            var t3p2d3 = t1t.Conv1D(t2t, padding: 2, dilation: 3);
+
+            // Check the answer
+            var t3p2d3Correct =
+                new float[3, 2, 3]
+                    {{{ 2.1121f, 0.8484f, 2.2709f},
+                      {1.6692f, 0.5406f, 1.8381f}},
+
+                     {{2.5078f, 1.2137f, 0.9173f},
+                      {2.2395f, 1.1805f, 1.1954f}},
+
+                     {{1.5215f, 1.3946f, 2.1327f},
+                      {1.0732f, 1.3014f, 2.0696f}}};
+            {
+                var data = t3p2d3.Data<float>();
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 2; j++)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            var itemCorrect = t3p2d3Correct[i, j, k];
+                            var item = data[i * 2 * 3 + j * 3 + k];
+                            Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
+                        }
+            }
         }
     }
 }

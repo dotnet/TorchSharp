@@ -46,6 +46,7 @@ EXPORT_API(Tensor) THSTensor_empty(
 //  Creates  a variable tensor out of the input data, dimensions and strides.
 EXPORT_API(Tensor) THSTensor_new(
     void * data,
+    void (*deleter)(void*),
     const int64_t * sizes,
     const int szlength,
     int8_t scalar_type,
@@ -53,9 +54,13 @@ EXPORT_API(Tensor) THSTensor_new(
 
 EXPORT_API(Tensor) THSTensor_newLong(
     int64_t * data,
+    void (*deleter)(void*),
     const int64_t * sizes,
     const int szlength,
     const bool requires_grad);
+
+//  Creates  a variable tensor wrapping the input scalar.
+EXPORT_API(Tensor) THSTensor_newSByteScalar(int8_t data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
 EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
@@ -81,6 +86,15 @@ EXPORT_API(Tensor) THSTensor_rand(
     const int length,
     const int8_t scalar_type,
     const char * device,
+    const bool requires_grad);
+
+// Returns a variable tensor filled with random numbers from a uniform distribution within [0, 1).
+EXPORT_API(Tensor) THSTensor_randint(
+    const int64_t max,
+    const int64_t* sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char* device,
     const bool requires_grad);
 
 // Returns a variable tensor filled with random numbers from a normal distribution with mean 0 and variance 1.
@@ -135,6 +149,12 @@ EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t i
 // Returns the sub-tensor identified by the indexes.
 EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3);
 
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4);
+
+// Fill the tensor with a given value.
+EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
+
 // Set the sub-tensor identified by the index to value.
 EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
 
@@ -143,6 +163,9 @@ EXPORT_API(void) THSTensor_set2(const Tensor tensor, int64_t index1, int64_t ind
 
 // Set the sub-tensor identified by the indexes to value.
 EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, Scalar value);
 
 // Returns the inner type of the tensor.
 EXPORT_API(int8_t) THSTensor_type(const Tensor twrapper);
@@ -271,8 +294,54 @@ EXPORT_API(Tensor) THSTensor_addmm(
     const float beta,
     const float alpha);
 
+// Returns the indices of the maximum values of a tensor
+EXPORT_API(Tensor) THSTensor_argmax(const Tensor tensor);
+
 // Returns the indices of the maximum values of a tensor across a dimension.
-EXPORT_API(Tensor) THSTensor_argmax(const Tensor twrapper, const int64_t dimension, bool keepDim);
+EXPORT_API(Tensor) THSTensor_argmaxT(const Tensor twrapper, const int64_t dimension, bool keepDim);
+
+// Returns the indices of the minimum values of a tensor
+EXPORT_API(Tensor) THSTensor_argmin(const Tensor tensor);
+
+// Returns the indices of the minimum values of a tensor across a dimension.
+EXPORT_API(Tensor) THSTensor_argminT(const Tensor twrapper, const int64_t dimension, bool keepDim);
+
+EXPORT_API(Tensor) THSTensor_relu(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sin(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cos(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tan(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_asin(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_acos(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_atan(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sinh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cosh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tanh(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_floor(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_ceil(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_abs(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sign(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_relu_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sin_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cos_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tan_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_asin_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_acos_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_atan_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sinh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_cosh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_floor_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_ceil_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_abs_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_neg_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_sign_(const Tensor tensor);
 
 // Performs a batch matrix - matrix product of matrices in batch1 and batch2.mat is added to the final result.
 // Batch1 and batch2 must be 3 - D tensors each containing the same number of matrices.
@@ -319,6 +388,9 @@ EXPORT_API(Tensor) THSTensor_eqS_(const Tensor left, const Scalar right);
 
 // True if two tensors have the same size and elements, False otherwise.
 EXPORT_API(int) THSTensor_equal(const Tensor left, const Tensor right);
+
+// True if two tensors have the same size and elements, False otherwise.
+EXPORT_API(int) THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan);
 
 // Returns a new tensor with the exponential of the elements of the input tensor.
 EXPORT_API(Tensor) THSTensor_exp(const Tensor twrapper);
@@ -401,6 +473,9 @@ EXPORT_API(Tensor) THSTensor_ltS_(const Tensor left, const Scalar right);
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
 // Returns a tensor where values are the maximum value of each row of the input tensor in the given dimension dimension.
+EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dimension, const bool largest, const bool sorted);
+
+// Returns a tensor where values are the maximum value of each row of the input tensor in the given dimension dimension.
 EXPORT_API(void) THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension, const bool keep_dim);
 
 // Returns the mean of all elements in the input tensor.
@@ -440,8 +515,17 @@ EXPORT_API(Tensor) THSTensor_neS_(const Tensor left, const Scalar right);
 // Returns the matrix norm or vector norm of a given tensor.
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, const int64_t dimension, const bool keep_dimension);
 
+// Takes the element-wise power of each element in input with exponent and returns a tensor with the result.
+EXPORT_API(Tensor) THSTensor_pow(const Tensor tensor, const Tensor exponent);
+
+// Takes the element-wise power of each element in input with exponent and returns a tensor with the result in place.
+EXPORT_API(Tensor) THSTensor_pow_(const Tensor tensor, const Tensor exponent);
+
 // Takes the power of each element in input with exponent and returns a tensor with the result.
-EXPORT_API(Tensor) THSTensor_pow(const Tensor twrapper, const Scalar scalar);
+EXPORT_API(Tensor) THSTensor_powS(const Tensor twrapper, const Scalar scalar);
+
+// Takes the power of each element in input with exponent and returns a tensor with the result in place.
+EXPORT_API(Tensor) THSTensor_powS_(const Tensor twrapper, const Scalar scalar);
 
 // Computes remainder.
 EXPORT_API(Tensor) THSTensor_remainder(const Tensor left, const Tensor right);
@@ -479,10 +563,106 @@ EXPORT_API(Tensor) THSTensor_subS_(const Tensor left, const Scalar right);
 EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
 
 // Returns the sum of all elements in the input tensor.
-EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper);
+EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper, bool has_type, const int8_t dtype);
 
 // Returns the sum of all elements over the input dimensions in the input tensor.
-EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension);
+EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension, bool has_type, const int8_t dtype);
 
 // Returns a tensor with a dimension of size 1 inserted at the specified position.
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
+
+// Expand tensor to the given shape
+EXPORT_API(Tensor) THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit);
+
+// Flip along the given dimensions
+EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
+
+// Narrow along the given dimension
+EXPORT_API(Tensor) THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length);
+
+// Slice along the given dimension
+EXPORT_API(Tensor) THSTensor_slice(const Tensor tensor, int64_t dim, int64_t start, int64_t finish, int64_t step);
+
+// Split the tensor to single size tensors along the given dimension
+EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dimension);
+
+// Split the tensor along the given dimension using the given sizes
+EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dimension);
+
+// Applies a conv 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv2d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv3d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose1d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose2d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+// Applies a conv transpose 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_conv_transpose3d(const Tensor input, const Tensor weight, const Tensor bias,
+    const int64_t* strides, const int strides_length,
+    const int64_t* paddings, const int paddings_length,
+    const int64_t* output_padding, const int output_paddingLength,
+    const int64_t* dilations, const int dilations_length,
+    int64_t groups);
+
+
+// Applies a maxpool 1d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool1d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+// Applies a maxpool 2d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool2d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+// Applies a maxpool 3d on the input tensor. 
+EXPORT_API(Tensor) THSTensor_maxpool3d(
+    const Tensor tensor,
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+
+
+
+
