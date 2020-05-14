@@ -1,0 +1,35 @@
+﻿<#+
+    public class TorchTypeDef {
+
+        public readonly string Name;
+        public readonly string Storage;
+        public readonly string CSType;
+
+        public readonly bool IsSignedInt;
+        public readonly bool IsFloat;
+        public readonly bool IsLong;
+
+        private TorchTypeDef(string name, string storage, string cstype) {
+            this.Name = name;
+            this.Storage = storage;
+            this.CSType = cstype;
+
+            this.IsSignedInt = name == "SByte" || name == "Short" || name == "Int" || name == "Long";
+            this.IsFloat = name == "Float" || name == "Double";
+            this.IsLong = name == "Long";
+        }
+
+        public static readonly TorchTypeDef[] Types = {
+            new TorchTypeDef("Byte",   "byte",   "Byte"  ),
+            new TorchTypeDef("SByte",  "sbyte",  "SByte" ),
+            new TorchTypeDef("Short",  "short",  "Short"  ),
+            new TorchTypeDef("Int",    "int",    "Int"  ),
+            new TorchTypeDef("Long",   "long",   "Long"  ),
+            new TorchTypeDef("Double", "double", "Double"),
+            new TorchTypeDef("Float",  "float",  "Single"),
+        };
+
+        public readonly string Ptr = "IntPtr"; // "HType";
+        public readonly string PtrDiff = "int /* ptrdiff_t */";
+    }
+#>

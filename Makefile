@@ -1,10 +1,10 @@
 all:
-	msbuild /p:Configuration=Release
+	sh build.sh
 
 docs: doc-update yaml
 
 doc-update:
-	mdoc update -i ./TorchSharp/bin/Release/netstandard2.0/TorchSharp.xml -o ecmadocs/en ./TorchSharp/bin/Release/netstandard2.0/TorchSharp.dll
+	 mdoc update -i ./bin/obj/packages/TorchSharp/lib/netstandard2.0/TorchSharp.xml -o ecmadocs/en ./bin/obj/packages/TorchSharp/lib/netstandard2.0/TorchSharp.dll
 
 yaml:
 	-rm ecmadocs/en/ns-.xml

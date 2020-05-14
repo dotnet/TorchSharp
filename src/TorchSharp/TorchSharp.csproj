@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <IncludeInPackage>TorchSharp</IncludeInPackage>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Tensor\TorchTensorTyped.tt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Tensor\TorchTensorTyped.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TorchTensorTyped.generated.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Tensor\TorchTensorTyped.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TorchTensorTyped.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
