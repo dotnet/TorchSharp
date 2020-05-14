@@ -1540,19 +1540,19 @@ namespace TorchSharp.Test
             Assert.Equal(3.1f, res[2].DataItem<float>());
         }
 
-        //[Fact]
-        //public void SplitWithSizesTest()
-        //{
-        //    var data = new float[] { 1.1f, 2.0f, 3.1f };
+        [Fact]
+        public void SplitWithSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
 
-        //    var res = FloatTensor.From(data).SplitWithSizes(new long[] { 2, 1 });
-        //    Assert.Equal(2, res.Length);
-        //    Assert.Equal(new long[] { 2 }, res[0].Shape);
-        //    Assert.Equal(new long[] { 1 }, res[1].Shape);
-        //    Assert.Equal(1.1f, res[0][0].DataItem<float>());
-        //    Assert.Equal(2.0f, res[0][1].DataItem<float>());
-        //    Assert.Equal(3.1f, res[1][0].DataItem<float>());
-        //}
+            var res = FloatTensor.From(data).SplitWithSizes(new long[] { 2, 1 });
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 2 }, res[0].Shape);
+            Assert.Equal(new long[] { 1 }, res[1].Shape);
+            Assert.Equal(1.1f, res[0][0].DataItem<float>());
+            Assert.Equal(2.0f, res[0][1].DataItem<float>());
+            Assert.Equal(3.1f, res[1][0].DataItem<float>());
+        }
 
         [Fact]
         public void RandomTest()

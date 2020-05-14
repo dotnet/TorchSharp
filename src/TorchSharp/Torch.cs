@@ -27,8 +27,8 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTorch_get_and_reset_last_err();
 
-        [Conditional("DEBUG")]
-        internal static void AssertNoErrors()
+        //[Conditional("DEBUG")]
+        internal static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
 
