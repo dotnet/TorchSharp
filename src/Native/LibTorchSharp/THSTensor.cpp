@@ -94,34 +94,60 @@ Tensor THSTensor_newLong(
     return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), deleter, options));
 }
 
+Tensor THSTensor_newSByteScalar(int8_t data, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Char))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
+}
+
 Tensor THSTensor_newByteScalar(char data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Byte))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_newShortScalar(short data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Short))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_newIntScalar(int data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Int))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_newLongScalar(int64_t data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Long))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_newDoubleScalar(double data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Double))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_newFloatScalar(float data, bool requires_grad)
 {
-    return new torch::Tensor(torch::tensor(data).set_requires_grad(requires_grad));
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Float))
+        .requires_grad(requires_grad);
+    return new torch::Tensor(torch::tensor(data, options));
 }
 
 Tensor THSTensor_rand(

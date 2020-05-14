@@ -16,7 +16,10 @@ EXPORT_API(int) THSTorch_isCudaAvailable();
 EXPORT_API(const char *) THSTorch_get_and_reset_last_err();
 
 // Returns a Scalar object from a char value.
-EXPORT_API(Scalar) THSTorch_btos(char value);
+EXPORT_API(Scalar) THSTorch_sbtos(int8_t value);
+
+// Returns a Scalar object from a byte value.
+EXPORT_API(Scalar) THSTorch_btos(uint8_t value);
 
 // Returns a Scalar object from a short value.
 EXPORT_API(Scalar) THSTorch_stos(short value);

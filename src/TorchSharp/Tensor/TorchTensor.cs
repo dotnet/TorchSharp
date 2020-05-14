@@ -1984,11 +1984,15 @@ namespace TorchSharp.Tensor
     public enum ATenScalarMapping : sbyte
     {
         Byte = 0,
+        SByte = 1,
         Short = 2,
         Int = 3,
         Long = 4,
+        Half = 5,
         Float = 6,
-        Double = 7
+        Double = 7,
+        ComplexFloat = 8,
+        ComplexDouble = 9
     }
 
     public static class TensorExtensionMethods
@@ -2002,6 +2006,10 @@ namespace TorchSharp.Tensor
                 case bool _ when typeof(T) == typeof(byte):
                     {
                         return ByteTensor.From(array as byte[], dimensions, requiresGrad); ;
+                    }
+                case bool _ when typeof(T) == typeof(sbyte):
+                    {
+                        return SByteTensor.From(array as sbyte[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
@@ -2039,6 +2047,10 @@ namespace TorchSharp.Tensor
                 case bool _ when typeof(T) == typeof(byte):
                     {
                         return ByteTensor.From((byte)(object)scalar, requiresGrad);
+                    }
+                case bool _ when typeof(T) == typeof(sbyte):
+                    {
+                        return SByteTensor.From((sbyte)(object)scalar, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {

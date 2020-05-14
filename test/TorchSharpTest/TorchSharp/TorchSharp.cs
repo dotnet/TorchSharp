@@ -180,7 +180,38 @@ namespace TorchSharp.Test
         {
             using (var tensor = 1.ToTorchTensor())
             {
+                Assert.Equal(ATenScalarMapping.Int, tensor.Type);
                 Assert.Equal(1, tensor.DataItem<int>());
+            }
+            using (var tensor = ((byte)1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Byte, tensor.Type);
+                Assert.Equal(1, tensor.DataItem<byte>());
+            }
+            using (var tensor = ((sbyte)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.SByte, tensor.Type);
+                Assert.Equal(-1, tensor.DataItem<sbyte>());
+            }
+            using (var tensor = ((short)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Short, tensor.Type);
+                Assert.Equal(-1, tensor.DataItem<short>());
+            }
+            using (var tensor = ((long)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Long, tensor.Type);
+                Assert.Equal(-1L, tensor.DataItem<short>());
+            }
+            using (var tensor = ((float)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Float, tensor.Type);
+                Assert.Equal(-1.0f, tensor.DataItem<float>());
+            }
+            using (var tensor = ((double)-1).ToTorchTensor())
+            {
+                Assert.Equal(ATenScalarMapping.Double, tensor.Type);
+                Assert.Equal(-1.0, tensor.DataItem<double>());
             }
         }
 
@@ -1524,15 +1555,11 @@ namespace TorchSharp.Test
         //}
 
         [Fact]
-        public void RandomTestFloat()
+        public void RandomTest()
         {
             var res = FloatTensor.Random(new long[] { 2 });
             Assert.Equal(new long[] { 2 }, res.Shape);
-        }
 
-        [Fact]
-        public void RandomTestInt()
-        {
             var res1 = ShortTensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res1.Shape);
 
@@ -1544,6 +1571,9 @@ namespace TorchSharp.Test
 
             var res4 = ByteTensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res4.Shape);
+
+            var res5 = SByteTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res5.Shape);
         }
 
         [Fact]

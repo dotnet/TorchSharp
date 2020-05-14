@@ -19,7 +19,12 @@ const char * THSTorch_get_and_reset_last_err()
     return tmp;
 }
 
-Scalar THSTorch_btos(char value)
+Scalar THSTorch_sbtos(int8_t value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_btos(uint8_t value)
 {
     return new torch::Scalar(value);
 }

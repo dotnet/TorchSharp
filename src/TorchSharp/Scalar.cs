@@ -17,6 +17,11 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
+        public static implicit operator Scalar(sbyte value)
+        {
+            return value.ToScalar();
+        }
+
         public static implicit operator Scalar(short value)
         {
             return value.ToScalar();
@@ -75,6 +80,14 @@ namespace TorchSharp
         public static Scalar ToScalar(this byte value)
         {
             return new Scalar(THSTorch_btos(value));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_sbtos(sbyte hanvaluedle);
+
+        public static Scalar ToScalar(this sbyte value)
+        {
+            return new Scalar(THSTorch_sbtos(value));
         }
 
         [DllImport("LibTorchSharp")]

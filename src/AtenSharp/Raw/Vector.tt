@@ -109,7 +109,7 @@ foreach (var type in TorchTypeDef.Types) {
             <#=type.Ptr#> data, long size, IntPtr /* struct THGenerator* */ generator,
             <#=type.Storage#> mean,<#=type.Storage#> stddev);
 
-<# if (type.IsInt) { #>
+<# if (type.IsSignedInt) { #>
         // y = |x| element-wise for n elements
         //
         // Corresponds to the following TH declaration:

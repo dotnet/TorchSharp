@@ -60,6 +60,9 @@ EXPORT_API(Tensor) THSTensor_newLong(
     const bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
+EXPORT_API(Tensor) THSTensor_newSByteScalar(int8_t data, bool requires_grad);
+
+//  Creates  a variable tensor wrapping the input scalar.
 EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
