@@ -85,6 +85,15 @@ EXPORT_API(Tensor) THSTensor_rand(
     const char * device,
     const bool requires_grad);
 
+// Returns a variable tensor filled with random numbers from a uniform distribution within [0, 1).
+EXPORT_API(Tensor) THSTensor_randint(
+    const int64_t max,
+    const int64_t* sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char* device,
+    const bool requires_grad);
+
 // Returns a variable tensor filled with random numbers from a normal distribution with mean 0 and variance 1.
 EXPORT_API(Tensor) THSTensor_randn(
     const int64_t * sizes,

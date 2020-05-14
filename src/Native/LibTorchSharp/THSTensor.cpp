@@ -143,6 +143,26 @@ Tensor THSTensor_rand(
     return tensor;
 }
 
+Tensor THSTensor_randint(
+    const int64_t max,
+    const int64_t* sizes,
+    const int length,
+    const int8_t scalar_type,
+    const char* device,
+    const bool requires_grad)
+{
+    Tensor tensor;
+    CATCH(
+        auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(device)
+        .requires_grad(requires_grad);
+
+        tensor = new torch::Tensor(torch::randint(max, at::IntList(sizes, length), options));
+    )
+    return tensor;
+}
+
 Tensor THSTensor_randn(
     const int64_t * sizes,
     const int length,

@@ -91,7 +91,28 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 
-                [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, <#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    return new TorchTensor (THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ATenScalarMapping.<#=type.Name#>, device, requiresGrad));
+                }
+            }
+        }
+<#
+if (type.IsFloat) {
+#>
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
@@ -128,6 +149,7 @@ foreach (var type in TorchTypeDef.Types) {
                 }
             }
         }
+<# } #>
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar, bool requiresGrad);

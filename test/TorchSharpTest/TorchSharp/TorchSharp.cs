@@ -1496,6 +1496,29 @@ namespace TorchSharp.Test
         //}
 
         [Fact]
+        public void RandomTestFloat()
+        {
+            var res = FloatTensor.Random(new long[] { 2 });
+            Assert.Equal(new long[] { 2 }, res.Shape);
+        }
+
+        [Fact]
+        public void RandomTestInt()
+        {
+            var res1 = ShortTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res1.Shape);
+
+            var res2 = IntTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res2.Shape);
+
+            var res3 = LongTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res3.Shape);
+
+            var res4 = ByteTensor.RandomIntegers(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res4.Shape);
+        }
+
+        [Fact]
         public void SqueezeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
