@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 #include "THSTorch.h"
 
 #include "torch/torch.h"

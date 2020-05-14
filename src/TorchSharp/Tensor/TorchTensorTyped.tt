@@ -5,6 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 namespace TorchSharp.Tensor {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
