@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
-    <Configurations>Debug;Release;Debug-Intrinsics;Release-Intrinsics</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
     <NativeTargetArchitecture Condition="'$(NativeTargetArchitecture)' == ''">$(TargetArchitecture)</NativeTargetArchitecture>
@@ -106,10 +106,6 @@
     <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(ToolsDir)Open.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <UseIntrinsics Condition="'$(UseIntrinsics)' == ''">$(Configuration.EndsWith('-Intrinsics'))</UseIntrinsics>
   </PropertyGroup>
 
   <!-- Need to explicitly set these properties for the -Intrinsics or -Netfx configurations becuase they are typically based off 'Debug' or 'Release' configs -->
