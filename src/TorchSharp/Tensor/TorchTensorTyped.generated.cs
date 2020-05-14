@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.Tensor {
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void GCHandleDeleter(IntPtr memory);
+
     /// <summary>
     ///   Tensor of type Byte.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
@@ -11,7 +14,7 @@ namespace TorchSharp.Tensor {
     public class ByteTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -25,7 +28,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -44,7 +47,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -63,7 +66,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -82,7 +85,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -101,7 +104,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -128,13 +131,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
         }
 
         public static TorchTensor From(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -143,7 +146,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (byte* parray = rawArray)
                 {
-                    return ByteTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
                 }
             }
         }
@@ -177,7 +184,7 @@ namespace TorchSharp.Tensor {
     public class ShortTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -191,7 +198,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -210,7 +217,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -229,7 +236,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -248,7 +255,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -267,7 +274,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -294,13 +301,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
         }
 
         public static TorchTensor From(short[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -309,7 +316,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (short* parray = rawArray)
                 {
-                    return ShortTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
                 }
             }
         }
@@ -343,7 +354,7 @@ namespace TorchSharp.Tensor {
     public class IntTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -357,7 +368,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -376,7 +387,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -395,7 +406,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -414,7 +425,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -433,7 +444,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -460,13 +471,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
         }
 
         public static TorchTensor From(int[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -475,7 +486,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (int* parray = rawArray)
                 {
-                    return IntTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
                 }
             }
         }
@@ -509,7 +524,7 @@ namespace TorchSharp.Tensor {
     public class LongTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -523,7 +538,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -542,7 +557,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -561,7 +576,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -580,7 +595,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -599,7 +614,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -626,13 +641,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newLong(IntPtr rawArray, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_newLong(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_newLong(rawArray, dimensions, dimensions.Length, requiresGrad));
+            return new TorchTensor(THSTensor_newLong(rawArray, null, dimensions, dimensions.Length, requiresGrad));
         }
 
         public static TorchTensor From(long[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -641,7 +656,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* parray = rawArray)
                 {
-                    return LongTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_newLong(addr, deleter, dimensions, dimensions.Length, requiresGrad));
                 }
             }
         }
@@ -675,7 +694,7 @@ namespace TorchSharp.Tensor {
     public class DoubleTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -689,7 +708,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -708,7 +727,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -727,7 +746,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -746,7 +765,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -765,7 +784,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -792,13 +811,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
         }
 
         public static TorchTensor From(double[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -807,7 +826,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (double* parray = rawArray)
                 {
-                    return DoubleTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
                 }
             }
         }
@@ -841,7 +864,7 @@ namespace TorchSharp.Tensor {
     public class FloatTensor
     {
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -855,7 +878,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -874,7 +897,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -893,7 +916,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -912,7 +935,7 @@ namespace TorchSharp.Tensor {
         }
 
                 [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -931,7 +954,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -958,13 +981,13 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
         {
             var length = dimensions.Length;
 
-            return new TorchTensor(THSTensor_new(rawArray, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
+            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
         }
 
         public static TorchTensor From(float[] rawArray, long[] dimensions, bool requiresGrad = false)
@@ -973,7 +996,11 @@ namespace TorchSharp.Tensor {
             {
                 fixed (float* parray = rawArray)
                 {
-                    return FloatTensor.From((IntPtr)parray, dimensions, requiresGrad);
+                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+                    var addr = dataHandle.AddrOfPinnedObject();
+                    var gchp = GCHandle.ToIntPtr(dataHandle);
+                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
                 }
             }
         }

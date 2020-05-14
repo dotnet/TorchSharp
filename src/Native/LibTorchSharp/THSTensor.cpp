@@ -66,6 +66,7 @@ Tensor THSTensor_empty(
 
 Tensor THSTensor_new(
     void * data, 
+    void (*deleter)(void *),
     const int64_t * sizes, 
     const int szlength, 
     int8_t scalar_type,
@@ -76,11 +77,12 @@ Tensor THSTensor_new(
         .is_variable(true)
         .requires_grad(requires_grad);
 
-    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), options));
+    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), deleter, options));
 }
 
 Tensor THSTensor_newLong(
     int64_t * data,
+    void (*deleter)(void*),
     const int64_t * sizes,
     const int szlength,
     const bool requires_grad)
@@ -89,7 +91,7 @@ Tensor THSTensor_newLong(
         .dtype(at::ScalarType(at::kLong))
         .is_variable(true)
         .requires_grad(requires_grad);
-    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), options));
+    return new torch::Tensor(torch::from_blob(data, at::IntList(sizes, szlength), deleter, options));
 }
 
 Tensor THSTensor_newByteScalar(char data, bool requires_grad)

@@ -46,6 +46,7 @@ EXPORT_API(Tensor) THSTensor_empty(
 //  Creates  a variable tensor out of the input data, dimensions and strides.
 EXPORT_API(Tensor) THSTensor_new(
     void * data,
+    void (*deleter)(void*),
     const int64_t * sizes,
     const int szlength,
     int8_t scalar_type,
@@ -53,6 +54,7 @@ EXPORT_API(Tensor) THSTensor_new(
 
 EXPORT_API(Tensor) THSTensor_newLong(
     int64_t * data,
+    void (*deleter)(void*),
     const int64_t * sizes,
     const int szlength,
     const bool requires_grad);
