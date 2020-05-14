@@ -1094,7 +1094,7 @@ Tensor THSTensor_conv_transpose1d(
     int64_t groups)
 {
     auto res =
-        torch::conv_transpose1d(*input, *weight, *bias,
+        torch::conv_transpose1d(*input, *weight, (bias ? *bias : at::Tensor()),
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(outputPadding, outputPaddingLength),
@@ -1112,7 +1112,7 @@ Tensor THSTensor_conv_transpose2d(
     int64_t groups)
 {
     auto res =
-        torch::conv_transpose2d(*input, *weight, *bias,
+        torch::conv_transpose2d(*input, *weight, (bias ? *bias : at::Tensor()),
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(outputPadding, outputPaddingLength),
@@ -1130,7 +1130,7 @@ Tensor THSTensor_conv_transpose3d(
     int64_t groups)
 {
     auto res =
-        torch::conv_transpose3d(*input, *weight, *bias,
+        torch::conv_transpose3d(*input, *weight, (bias ? *bias : at::Tensor()),
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(outputPadding, outputPaddingLength),
@@ -1148,12 +1148,13 @@ Tensor THSTensor_conv1d(
     const int64_t* dilation, const int dilationLength,
     int64_t groups)
 {
-    auto res =
-        torch::conv1d(*input, *weight, *bias,
+    auto res = 
+        torch::conv1d(*input, *weight, (bias ? *bias : at::Tensor()),
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(dilation, dilationLength),
-            groups);
+            groups
+        );
     return new torch::Tensor(res);
 }
 
@@ -1167,7 +1168,7 @@ Tensor THSTensor_conv2d(
     int64_t groups)
 {
     auto res =
-        torch::conv2d(*input, *weight, *bias, 
+        torch::conv2d(*input, *weight, (bias ? *bias : at::Tensor()), 
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(dilation, dilationLength),
@@ -1185,7 +1186,7 @@ Tensor THSTensor_conv3d(
     int64_t groups)
 {
     auto res =
-        torch::conv3d(*input, *weight, *bias,
+        torch::conv3d(*input, *weight, (bias ? *bias : at::Tensor()),
             at::IntList(stride, strideLength),
             at::IntList(padding, paddingLength),
             at::IntList(dilation, dilationLength),

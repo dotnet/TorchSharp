@@ -1535,5 +1535,92 @@ namespace TorchSharp.Test
             Assert.Equal(2.0f, res3[0].DataItem<float>());
             Assert.Equal(4.0f, res3[1].DataItem<float>());
         }
+        [Fact]
+        public void Conv1DTest()
+        {
+            var t1 =
+                new float[3, 4, 5]
+                   {{{0.3460f, 0.4414f, 0.2384f, 0.7905f, 0.2267f},
+                                     {0.5161f, 0.9032f, 0.6741f, 0.6492f, 0.8576f},
+                                     {0.3373f, 0.0863f, 0.8137f, 0.2649f, 0.7125f},
+                                     {0.7144f, 0.1020f, 0.0437f, 0.5316f, 0.7366f}},
+
+                                    {{0.9871f, 0.7569f, 0.4329f, 0.1443f, 0.1515f},
+                                     {0.5950f, 0.7549f, 0.8619f, 0.0196f, 0.8741f},
+                                     {0.4595f, 0.7844f, 0.3580f, 0.6469f, 0.7782f},
+                                     {0.0130f, 0.8869f, 0.8532f, 0.2119f, 0.8120f}},
+
+                                    {{0.5163f, 0.5590f, 0.5155f, 0.1905f, 0.4255f},
+                                     {0.0823f, 0.7887f, 0.8918f, 0.9243f, 0.1068f},
+                                     {0.0337f, 0.2771f, 0.9744f, 0.0459f, 0.4082f},
+                                     {0.9154f, 0.2569f, 0.9235f, 0.9234f, 0.3148f}}};
+            var t2 =
+                new float[2, 4, 3]
+                   {{{0.4941f, 0.8710f, 0.0606f},
+                     {0.2831f, 0.7930f, 0.5602f},
+                     {0.0024f, 0.1236f, 0.4394f},
+                     {0.9086f, 0.1277f, 0.2450f}},
+
+                    {{0.5196f, 0.1349f, 0.0282f},
+                     {0.1749f, 0.6234f, 0.5502f},
+                     {0.7678f, 0.0733f, 0.3396f},
+                     {0.6023f, 0.6546f, 0.3439f}}};
+
+            var t1raw = new float[3 * 4 * 5];
+            var t2raw = new float[2 * 4 * 3];
+            { for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 5; k++) { t1raw[i * 4 * 5 + j * 5 + k] = t1[i, j, k]; } }
+            { for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 3; k++) { t2raw[i * 4 * 3 + j * 3 + k] = t2[i, j, k]; } }
+            var t1t = FloatTensor.From(t1raw, new long[] { 3, 4, 5 });
+            var t2t = FloatTensor.From(t2raw, new long[] { 2, 4, 3 });
+            var t3t = t1t.Conv1D(t2t);
+
+            // Check the answer
+            var t3Correct =
+                new float[3, 2, 3]
+                    {{{2.8516f, 2.0732f, 2.6420f},
+                      {2.3239f, 1.7078f, 2.7450f}},
+
+                    {{3.0127f, 2.9651f, 2.5219f},
+                     {3.0899f, 3.1496f, 2.4110f}},
+
+                    {{3.4749f, 2.9038f, 2.7131f},
+                     {2.7692f, 2.9444f, 3.2554f}}};
+            {
+                var data = t3t.Data<float>();
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 2; j++)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            var itemCorrect = t3Correct[i, j, k];
+                            var item = data[i * 2 * 3 + j * 3 + k];
+                            Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
+                        }
+            }
+            
+            var t3p2d3 = t1t.Conv1D(t2t, padding: 2, dilation: 3);
+
+            // Check the answer
+            var t3p2d3Correct =
+                new float[3, 2, 3]
+                    {{{ 2.1121f, 0.8484f, 2.2709f},
+                      {1.6692f, 0.5406f, 1.8381f}},
+
+                     {{2.5078f, 1.2137f, 0.9173f},
+                      {2.2395f, 1.1805f, 1.1954f}},
+
+                     {{1.5215f, 1.3946f, 2.1327f},
+                      {1.0732f, 1.3014f, 2.0696f}}};
+            {
+                var data = t3p2d3.Data<float>();
+                for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 2; j++)
+                        for (int k = 0; k < 3; k++)
+                        {
+                            var itemCorrect = t3p2d3Correct[i, j, k];
+                            var item = data[i * 2 * 3 + j * 3 + k];
+                            Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
+                        }
+            }
+        }
     }
 }
