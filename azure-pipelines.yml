@@ -49,22 +49,6 @@ phases:
     queue:
       name: Hosted VS2017
 
-- template: /build/ci/phase-template.yml
-  parameters:
-    name: Windows_x64_NetFx461
-    buildScript: build.cmd
-    customMatrixes:
-      Debug_Build:
-        _configuration: Debug-netfx
-        _config_short: DFX
-        _includeBenchmarkData: false
-      Release_Build:
-        _configuration: Release-netfx
-        _config_short: RFX
-        _includeBenchmarkData: false
-    queue:
-      name: Hosted VS2017
-
 ################################################################################
 - phase: Linux_Build
 ################################################################################
