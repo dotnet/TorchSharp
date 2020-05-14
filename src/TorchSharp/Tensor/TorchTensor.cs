@@ -1377,29 +1377,29 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_sum(IntPtr src);
+        private static extern IntPtr THSTensor_sum(IntPtr src, bool has_type, sbyte scalar_type);
 
         /// <summary>
         /// Returns the sum of all elements in the :attr:`input` tensor.
         /// </summary>
-        public TorchTensor Sum()
+        public TorchTensor Sum(ATenScalarMapping? type = null)
         {
-            return new TorchTensor(THSTensor_sum(handle));
+            return new TorchTensor(THSTensor_sum(handle, type.HasValue, (sbyte)type.GetValueOrDefault()));
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_sum1(IntPtr src, IntPtr dimensions, int length, bool keep_dimension);
+        private static extern IntPtr THSTensor_sum1(IntPtr src, IntPtr dimensions, int length, bool keep_dimension, bool has_type, sbyte scalar_type);
 
         /// <summary>
         ///  Returns the sum of each row of the input tensor in the given dimensions.
         /// </summary>
-        public TorchTensor Sum(long[] dimensions, bool keepDimension = false)
+        public TorchTensor Sum(long[] dimensions, bool keepDimension = false, ATenScalarMapping? type = null)
         {
             unsafe
             {
                 fixed (long* pdims = dimensions)
                 {
-                    return new TorchTensor(THSTensor_sum1(handle, (IntPtr)pdims, dimensions.Length, keepDimension));
+                    return new TorchTensor(THSTensor_sum1(handle, (IntPtr)pdims, dimensions.Length, keepDimension, type.HasValue, (sbyte)type.GetValueOrDefault()));
                 }
             }
         }

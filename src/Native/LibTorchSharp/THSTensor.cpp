@@ -997,14 +997,20 @@ Tensor THSTensor_subS_(const Tensor left, const Scalar right)
     return new torch::Tensor(left->sub_(*right));
 }
 
-Tensor THSTensor_sum(const Tensor tensor)
+Tensor THSTensor_sum(const Tensor tensor, bool has_type, const int8_t dtype)
 {
-    return new torch::Tensor(tensor->sum());
+    if (has_type) 
+        return new torch::Tensor(tensor->sum((c10::ScalarType)dtype));
+    else
+        return new torch::Tensor(tensor->sum());
 }
 
-Tensor THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension)
+Tensor THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension, bool has_type, const int8_t dtype)
 {
-    return new torch::Tensor(tensor->sum(at::IntList(dimensions, length), keep_dimension));
+    if (has_type)
+        return new torch::Tensor(tensor->sum(at::IntList(dimensions, length), keep_dimension, (c10::ScalarType)dtype));
+    else
+        return new torch::Tensor(tensor->sum(at::IntList(dimensions, length), keep_dimension));
 }
 
 Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dimension)

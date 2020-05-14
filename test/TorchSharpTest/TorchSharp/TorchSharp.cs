@@ -1467,6 +1467,34 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void SumTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+
+            var res1 = FloatTensor.From(data).Sum();
+            var res1_0 = res1.DataItem<float>();
+            Assert.Equal(6.0f, res1_0);
+
+            var res2 = FloatTensor.From(data).Sum(type: ATenScalarMapping.Double);
+            var res2_0 = res2.DataItem<double>();
+            Assert.Equal(6.0, res2_0);
+
+            // summing integers gives long unless type is explicitly specified
+            var dataInt32 = new int[] { 1, 2, 3 };
+            var res3 = IntTensor.From(dataInt32).Sum();
+            Assert.Equal(ATenScalarMapping.Long, res3.Type);
+            var res3_0 = res3.DataItem<long>();
+            Assert.Equal(6L, res3_0);
+
+            // summing integers gives long unless type is explicitly specified
+            var res4 = IntTensor.From(dataInt32).Sum(type: ATenScalarMapping.Int);
+            Assert.Equal(ATenScalarMapping.Int, res4.Type);
+            var res4_0 = res4.DataItem<int>();
+            Assert.Equal(6L, res4_0);
+
+        }
+
+        [Fact]
         public void UnbindTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };

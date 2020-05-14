@@ -560,10 +560,10 @@ EXPORT_API(Tensor) THSTensor_subS_(const Tensor left, const Scalar right);
 EXPORT_API(Tensor) THSTensor_subS2(const Scalar left, const Tensor right);
 
 // Returns the sum of all elements in the input tensor.
-EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper);
+EXPORT_API(Tensor) THSTensor_sum(const Tensor twrapper, bool has_type, const int8_t dtype);
 
 // Returns the sum of all elements over the input dimensions in the input tensor.
-EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension);
+EXPORT_API(Tensor) THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int length, bool keep_dimension, bool has_type, const int8_t dtype);
 
 // Returns a tensor with a dimension of size 1 inserted at the specified position.
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dimension);
