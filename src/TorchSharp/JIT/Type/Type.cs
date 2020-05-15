@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
@@ -101,8 +101,8 @@ namespace TorchSharp.JIT
 
         internal enum TypeKind : sbyte
         {
-            DynamicType = 0,
-            TensorType = 1
+            TensorType = 0,
+            DimensionedTensorType = 1
         }
     }
 }

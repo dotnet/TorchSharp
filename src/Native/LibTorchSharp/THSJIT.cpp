@@ -11,7 +11,14 @@ long THSJIT_getNumModules(const JITModule module)
     return (*module)->get_modules().size();
 }
 
-JITModule THSJIT_getModuleFromName(const JITModule module, const char* name)
+JITModule THSJIT_getSubModule(const JITModule module, const int index)
+{
+	auto m = (*module)->get_modules()[index];
+
+	return new std::shared_ptr<torch::jit::script::Module>(m);
+}
+
+JITModule THSJIT_getSubModuleByName(const JITModule module, const char* name)
 {
     return new std::shared_ptr<torch::jit::script::Module>((*module)->get_module(name));
 }
@@ -46,6 +53,53 @@ JITType THSJIT_getOutputType(const JITModule module, const int n)
     auto type = outputs[n].type();
 
     return new std::shared_ptr<c10::Type>(type);
+}
+
+void* THSJIT_typeCast(const JITType type)
+{
+	switch ((*type)->kind())
+	{
+	case c10::TypeKind::TensorType:
+		return new std::shared_ptr<torch::jit::TensorType>((*type)->cast<c10::TensorType>());
+	case c10::TypeKind::DimensionedTensorType:
+		return new std::shared_ptr<torch::jit::DimensionedTensorType>((*type)->cast<c10::DimensionedTensorType>());
+	default:
+		return NULL;
+	}
+}
+
+int8_t THSJIT_typeKind(const JITType type)
+{
+	switch ((*type)->kind())
+	{
+	case c10::TypeKind::TensorType:
+		return (int8_t)TypeKind::TensorType;
+	case c10::TypeKind::DimensionedTensorType:
+		return (int8_t)TypeKind::DimensionedTensorType;
+	default:
+		return -1;
+	}
+}
+
+int8_t THSJIT_getScalarFromDimensionedTensorType(const JITDimensionedTensorType type)
+{
+	return (int8_t)(*type)->scalarType();
+}
+
+int THSJIT_getDimensionedTensorTypeDimensions(const JITDimensionedTensorType type)
+{
+	return (*type)->dim();
+}
+
+const char* THSJIT_getDimensionedTensorDevice(const JITDimensionedTensorType type)
+{
+	auto device = (*type)->device();
+
+	auto device_type = DeviceTypeName(device.type());
+
+	std::transform(device_type.begin(), device_type.end(), device_type.begin(), ::tolower);
+
+	return make_sharable_string(device_type);
 }
 
 Tensor THSJIT_forward(const JITModule module, const Tensor* tensorPtrs, const int length)

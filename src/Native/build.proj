@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' != 'windows'">lib</NativeLibPrefix>
+    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux' OR '$(AssumeOS)' == 'macos'">lib</NativeLibPrefix>
     <NativeLibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</NativeLibExtension>
     <NativeLibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</NativeLibExtension>
     <NativeLibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</NativeLibExtension>
