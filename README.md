@@ -93,6 +93,17 @@ Commands:
 - Run tests from command line: `./build.sh -runtests`
 - Build packages: `./build.sh -buildpackages`
 
+Updating PyTorch version
+------------------------
+
+This is used to update SHA hashes for LibTorch downloads:
+
+    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=linux
+    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=windows
+    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=macos
+
+Downloads will not be repeated.
+
 Updating package version for new release
 -----------------------------
 To change the package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).

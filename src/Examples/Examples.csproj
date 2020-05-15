@@ -27,13 +27,13 @@
     <NativeAssemblyReference Include="onnxifi_dummy" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT'">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and ('$(OS)' == 'Windows_NT'  OR '$(AssumeOS)' == 'windows')">
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
   </ItemGroup>
 
   <!-- Torch is 64-bit only? REVIEW check if true do we need all these? -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx'))">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and ($([MSBuild]::IsOSPlatform('osx')) OR '$(AssumeOS)' == 'mac')">
     <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="caffe2_observers" />
@@ -42,7 +42,7 @@
     <NativeAssemblyReference Include="iomp5" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux'))">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and ($([MSBuild]::IsOSPlatform('linux')) OR '$(AssumeOS)' == 'linux')">
     <NativeAssemblyReference Include="torch" ExtraExtension=".1" />
     <NativeAssemblyReference Include="gomp-8bba0e50" ExtraExtension=".1" />
   </ItemGroup>

@@ -128,7 +128,7 @@ const char * THSNN_getModuleName(const NNModule module)
 
 Tensor THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize)
 {
-    return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::IntList(outputSize, length)));
+    return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::ArrayRef<int64_t>(outputSize, length)));
 }
 
 Tensor THSNN_avgPool2DApply(const Tensor tensor,
@@ -139,8 +139,8 @@ Tensor THSNN_avgPool2DApply(const Tensor tensor,
 {
 	return new torch::Tensor(torch::avg_pool2d(
 		*tensor,
-		at::IntList(kernelSize, kernelSizeLength),
-		at::IntList(stride, strideLength)));
+		at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+		at::ArrayRef<int64_t>(stride, strideLength)));
 }
 
 Tensor THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension)
