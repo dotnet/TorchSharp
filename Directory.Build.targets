@@ -9,10 +9,10 @@
           BeforeTargets="PrepareForRun">
 
     <PropertyGroup>
-      <LibPrefix Condition="'$(OS)' != 'Windows_NT'">lib</LibPrefix>
-      <LibExtension Condition="'$(OS)' == 'Windows_NT'">.dll</LibExtension>
-      <LibExtension Condition="'$(OS)' != 'Windows_NT'">.so</LibExtension>
-      <LibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))">.dylib</LibExtension>
+      <LibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' != 'windows'">lib</LibPrefix>
+      <LibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</LibExtension>
+      <LibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</LibExtension>
+      <LibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</LibExtension>
     </PropertyGroup>
 
     <ItemGroup>

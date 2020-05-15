@@ -29,20 +29,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT'">lib</NativeLibPrefix>
-    <NativeLibExtension Condition="'$(OS)' == 'Windows_NT'">.dll</NativeLibExtension>
-    <NativeLibExtension Condition="'$(OS)' != 'Windows_NT'">.so</NativeLibExtension>
-    <NativeLibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))">.dylib</NativeLibExtension>
+    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' != 'windows'">lib</NativeLibPrefix>
+    <NativeLibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</NativeLibExtension>
+    <NativeLibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</NativeLibExtension>
+    <NativeLibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</NativeLibExtension>
 
-    <NativeLibSymbolExtension Condition="'$(OS)' == 'Windows_NT'">.pdb</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(OS)' != 'Windows_NT'">.so.dbg</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="$([MSBuild]::IsOSPlatform('osx'))">.dylib.dwarf</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
   </PropertyGroup>
 
   <PropertyGroup>
-    <LibName Condition="'$(OS)' == 'Windows_NT'">libtorch-win-shared-with-deps</LibName>
-    <LibName Condition="'$(OS)' != 'Windows_NT'">libtorch-shared-with-deps</LibName>
-    <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))">libtorch-macos</LibName>
+    <LibName Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">libtorch-win-shared-with-deps</LibName>
+    <LibName Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">libtorch-shared-with-deps</LibName>
+    <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">libtorch-macos</LibName>
 
     <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
