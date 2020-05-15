@@ -22,12 +22,6 @@ EXPORT_API(JITModule) THSJIT_loadModule(const char* filename);
 // Gets the number of submodules contained into the source module.
 EXPORT_API(long) THSJIT_getNumModules(const JITModule module);
 
-// Gets the name of the module contained into the input wrapper at the given index.
-EXPORT_API(const char *) THSJIT_getModuleName(const JITModule module, const int index);
-
-// Gets the sub-module contained into the input wrapper at the given index.
-EXPORT_API(JITModule) THSJIT_getModuleFromIndex(const JITModule module, const int index);
-
 // Gets the sub-module contained into the input wrapper with the given name.
 EXPORT_API(JITModule) THSJIT_getModuleFromName(const JITModule module, const char* name);
 
@@ -42,21 +36,6 @@ EXPORT_API(JITType) THSJIT_getInputType(const JITModule module, const int n);
 
 // Returns the type of the nth-output.
 EXPORT_API(JITType) THSJIT_getOutputType(const JITModule module, const int n);
-
-// Cast the input type to the proper type.
-EXPORT_API(void *) THSJIT_typeCast(const JITType type);
-
-// Returns the int8_t code for the input type.
-EXPORT_API(int8_t) THSJIT_typeKind(const JITType ttype);
-
-// Returns the int8_t code for the raw type of the tensor.
-EXPORT_API(int8_t) THSJIT_getScalarFromTensorType(const JITTensorType type);
-
-// Gets the number of dimensions of the input tensor type.
-EXPORT_API(int) THSJIT_getTensorTypeDimensions(const JITTensorType type);
-
-// Gets the number of device of the input tensor type.
-EXPORT_API(const char *) THSJIT_getTensorDevice(const JITTensorType type);
 
 // Forward pass over the input module using the input tensor.
 EXPORT_API(Tensor) THSJIT_forward(const JITModule module, const Tensor * tensorPtrs, const int length);
