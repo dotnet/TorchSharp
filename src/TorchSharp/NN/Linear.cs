@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -57,6 +58,19 @@ namespace TorchSharp.NN
                 return new TorchTensor(THSNN_linear_get_weight(handle));
             }
             set { THSNN_linear_set_weight(handle, value.Handle); }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_linear_load_module(string location);
+
+        public new static Linear Load(String modelPath)
+        {
+            if (!File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} does not exist.", modelPath));
+            }
+
+            return new Linear(THSNN_linear_load_module(modelPath));
         }
 
         public override IEnumerable<TorchTensor> Parameters()

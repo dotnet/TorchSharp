@@ -22,6 +22,13 @@ class ModuleWrapper : torch::nn::Module
 
 // API
 
+int THSNN_save_module(const char * location, const NNModule module)
+{
+    torch::save(*module, location);
+
+    return true;
+}
+
 NNModule THSNN_reluModule()
 {
     return new std::shared_ptr<torch::nn::Module>(torch::nn::Functional(torch::relu).ptr());
@@ -52,6 +59,32 @@ NNModule THSNN_conv2dModule(
 NNModule THSNN_new_module(const char ** names, at::Tensor ** parameters, const bool * require_grad, const int length)
 {
     torch::nn::Module* module = (torch::nn::Module*)new ModuleWrapper(names, parameters, require_grad, length);
+    return new std::shared_ptr<torch::nn::Module>(module);
+}
+
+NNModule THSNN_linear_load_module(const char * location)
+{
+    auto module = torch::nn::Linear(torch::nn::LinearOptions(0, 0));
+    torch::load(module, location);
+
+    return new std::shared_ptr<torch::nn::Module>(module.ptr());
+}
+
+NNModule THSNN_conv2d_load_module(const char * location)
+{
+    auto module = torch::nn::Conv2d(torch::nn::Conv2dOptions(0, 0, 0));
+    torch::load(module, location);
+
+    return new std::shared_ptr<torch::nn::Module>(module.ptr());
+}
+
+NNModule THSNN_load_module(const char * location, const char * name)
+{
+    auto module = new torch::nn::Module();
+    auto input = torch::serialize::InputArchive();
+
+    input.load_from(location);
+    module->load(input);
     return new std::shared_ptr<torch::nn::Module>(module);
 }
 

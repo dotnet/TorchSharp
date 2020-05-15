@@ -845,6 +845,48 @@ namespace TorchSharp.Test
         }
 
         [Fact]
+        public void TestSaveLinear()
+        {
+            var linear = NN.Module.Linear(100, 10);
+            linear.Save(".model.ts");
+            File.Delete(".model.ts");
+        }
+
+        [Fact]
+        public void TestSaveLoadLinear()
+        {
+            var linear = NN.Module.Linear(100, 10, true);
+            linear.Save(".model.ts");
+            var loadedLinear = NN.Linear.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loadedLinear);
+        }
+
+        [Fact]
+        public void TestSaveLoadConv2D()
+        {
+            var conv = NN.Module.Conv2D(100, 10, 5);
+            conv.Save(".model.ts");
+            var loaded = NN.Conv2D.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loaded);
+        }
+
+        [Fact]
+        public void TestSaveLoadSequence()
+        {
+            var lin1 = NN.Module.Linear(100, 10, true);
+            var lin2 = NN.Module.Linear(10, 5, true);
+            var seq = NN.Module.Sequential(lin1, lin2);
+            seq.Save(".");
+            var loaded = NN.Sequential.Load(".");
+            File.Delete("model-list.txt");
+            File.Delete("NN.Module.Linear-0.ts");
+            File.Delete("NN.Module.Linear-1.ts");
+            Assert.NotNull(loaded);
+        }
+
+        [Fact]
         public void TestArithmeticOperators()
         {
             // scalar-tensor operators
@@ -1088,7 +1130,6 @@ namespace TorchSharp.Test
                 throw new NotImplementedException();
             }
         }
-
 
         /// <summary>
         /// Fully connected Relu net with one hidden layer trained using gradient descent.
