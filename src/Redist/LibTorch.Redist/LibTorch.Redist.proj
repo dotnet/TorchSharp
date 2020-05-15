@@ -7,37 +7,26 @@
   
   <ItemGroup>
     <LibtorchConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\caffe2.dll;
-                        libtorch\lib\caffe2_module_test_dynamic.dll;
+      FilesFromArchive= "libtorch\lib\c10.dll;
                         libtorch\lib\caffe2_detectron_ops.dll;
-                        libtorch\lib\onnxifi.dll;
+                        libtorch\lib\caffe2_module_test_dynamic.dll;
                         libtorch\lib\libiomp5md.dll;
                         libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\torch.dll;
-                        libtorch\lib\onnxifi_dummy.dll;
-                        libtorch\lib\c10.dll;" 
+                        libtorch\lib\torch.dll" 
       Runtime="win-x64"/>
     <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\libc10.so;
-                        libtorch\lib\libcaffe2.so;
                         libtorch\lib\libcaffe2_detectron_ops.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libonnxifi.so;
-                        libtorch\lib\libonnxifi_dummy.so;
                         libtorch\lib\libtorch.so;
-                        libtorch\lib\libtorch.so.1;
-                        libtorch\lib\libgomp-8bba0e50.so.1;"
+                        libtorch\lib\libgomp-4f651535.so.1;"
       Runtime="linux-x64" />
     <LibtorchConfig Include="darwin" LibName="libtorch-macos" FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\libc10.dylib;
-                        libtorch\lib\libcaffe2.dylib;
                         libtorch\lib\libcaffe2_detectron_ops.dylib;
-                        libtorch\lib\libcaffe2_observers.dylib;
                         libtorch\lib\libcaffe2_module_test_dynamic.dylib;
-                        libtorch\lib\libonnxifi_dummy.dylib;
-                        libtorch\lib\libonnxifi.dylib;
+                        libtorch\lib\libcaffe2_observers.dylib;
                         libtorch\lib\libshm.dylib;
-                        libtorch\lib\libtorch.1.dylib;
                         libtorch\lib\libtorch.dylib;
                         libtorch\lib\libtorch_python.dylib;" 
       Runtime="osx-x64" />

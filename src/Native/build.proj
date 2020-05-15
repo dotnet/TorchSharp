@@ -89,7 +89,7 @@
 
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="LibTorch.Cuda.9.0.Redist\runtimes\$(PackageRid)\native" />
+                          RelativePath="LibTorch.Cuda.10.0.Redist\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>
