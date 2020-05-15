@@ -15,7 +15,7 @@ namespace TorchSharp.Examples
         private readonly static int _epochs = 5;
         private readonly static long _trainBatchSize = 100;
         private readonly static long _testBatchSize = 10000;
-        private readonly static string _dataLocation = @"../../../../Data";
+        private readonly static string _dataLocation = @"../../../../src/Examples/Data";
 
         private readonly static int _logInterval = 10;
         private readonly static int _numClasses = 10;
