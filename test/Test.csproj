@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -21,42 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AtenSharp\AtenSharp.csproj" />
-    <ProjectReference Include="..\SNT\SNT.csproj" />
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="SNTUnitTestGenerator.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SNTUnitTestGenerator.cs</LastGenOutput>
-    </None>
-    <None Update="TorchSharpTest\SNTUnitTestGenerator.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SNTUnitTestGenerator.cs</LastGenOutput>
-    </None>
-    <None Update="TorchSharpTest\SNT\SNTUnitTestGenerator.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SNTUnitTestGenerator.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="SNTUnitTestGenerator.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SNTUnitTestGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Update="TorchSharpTest\SNTUnitTestGenerator.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SNTUnitTestGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Update="TorchSharpTest\SNT\SNTUnitTestGenerator.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SNTUnitTestGenerator.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

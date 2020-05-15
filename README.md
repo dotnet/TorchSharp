@@ -13,14 +13,36 @@ Our current focus is to bind the entire API surfaced by libtorch.
 Things that you can try:
 
 ```csharp
-using AtenSharp;
+using TorchSharp;
+using TorchSharp.Tensor;
 
-var x = new FloatTensor (100);   // 1D-tensor with 100 elements
-FloatTensor result = new FloatTensor (100);
+var lin1 = NN.Module.Linear(1000, 100);
+var lin2 = NN.Module.Linear(100, 10);
+var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
 
-FloatTensor.Add (x, 23, result);
+var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
+var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
-Console.WriteLine (x [12]);
+double learning_rate = 0.00004f;
+float prevLoss = float.MaxValue;
+var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
+var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+
+for (int i = 0; i < 10; i++)
+{
+    var eval = seq.Forward(x);
+    var output = loss(eval, y);
+    var lossVal = output.DataItem<float>();
+
+    Assert.True(lossVal < prevLoss);
+    prevLoss = lossVal;
+
+    optimizer.ZeroGrad();
+
+    output.Backward();
+
+    optimizer.Step();
+}
 ```
 
 Discussions
