@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -88,22 +88,6 @@ namespace TorchSharp.JIT
         private static extern long THSJIT_getNumModules(HType module);
 
         [DllImport("LibTorchSharp")]
-        private static extern string THSJIT_getModuleName(HType module, int index);
-
-        public string[] GetSubModulesNames()
-        {
-            var numModules = THSJIT_getNumModules(handle);
-            string[] result = new string[numModules];
-
-            for (int i = 0; i < numModules; i++)
-            {
-                result[i] = THSJIT_getModuleName(handle, i);
-            }
-
-            return result;
-        }
-
-        [DllImport("LibTorchSharp")]
         private static extern int THSJIT_getNumberOfInputs(HType module);
 
         public int GetNumberOfInputs()
@@ -143,11 +127,11 @@ namespace TorchSharp.JIT
         {
             switch (type.Kind)
             {
-                case Type.TypeKind.DynamicType:
+                case Type.TypeKind.TensorType:
                     var dynamic = type.AsDynamicType();
                     type.Dispose();
                     return dynamic;
-                case Type.TypeKind.TensorType:
+                case Type.TypeKind.DimensionedTensorType:
                     var tensor = type.AsTensorType();
                     type.Dispose();
                     return tensor;

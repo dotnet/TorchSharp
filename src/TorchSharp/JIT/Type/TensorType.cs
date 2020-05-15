@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
@@ -19,27 +19,27 @@ namespace TorchSharp.JIT
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern short THSJIT_getScalarFromTensorType(HType handle);
+        private static extern short THSJIT_getScalarFromDimensionedTensorType(HType handle);
 
         public Tensor.ATenScalarMapping GetScalarType()
         {
-            return (Tensor.ATenScalarMapping)THSJIT_getScalarFromTensorType(handle);
+            return (Tensor.ATenScalarMapping)THSJIT_getScalarFromDimensionedTensorType(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern int THSJIT_getTensorTypeDimensions(HType handle);
+        private static extern int THSJIT_getDimensionedTensorTypeDimensions(HType handle);
 
         public int GetDimensions()
         {
-            return THSJIT_getTensorTypeDimensions(handle);
+            return THSJIT_getDimensionedTensorTypeDimensions(handle);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern string THSJIT_getTensorDevice(HType handle);
+        private static extern string THSJIT_getDimensionedTensorDevice(HType handle);
 
         public string GetDevice()
         {
-            return THSJIT_getTensorDevice(handle);
+            return THSJIT_getDimensionedTensorDevice(handle);
         }
     }
 }
