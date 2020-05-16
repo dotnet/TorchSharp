@@ -9,7 +9,7 @@
   <!-- see https://pytorch.org/get-started/locally/ for download links -->
   <!-- For example Linux, LibTorch 1.5.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip -->
     <LibtorchConfig Include="windows" 
-                    LibName="libtorch-win-shared-with-deps" 
+                    LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
                     ExtraForLibTorch150="" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
@@ -161,7 +161,7 @@
     <Exec Condition="'%(LibtorchArchive.FileExtension)' == '.tar.gz'"
           WorkingDirectory="%(LibtorchArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchArchive.ExtractDirectory)', '%(LibtorchArchive.DownloadFile)'))&quot;" />
-    <Touch Files="@(LibtorchArchive->'%(ExtractSemaphore)')" AlwaysCreate="true" />
+    <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <!-- Validate and extract Archive for MKL - DNN -->
@@ -201,7 +201,7 @@
     <Exec Condition="'%(MklDnnArchive.FileExtension)' == '.tgz'"
           WorkingDirectory="%(MklDnnArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(MklDnnArchive.ExtractDirectory)', '%(MklDnnArchive.DownloadFile)'))&quot;" />
-    <Touch Files="@(MklDnnArchive->'%(ExtractSemaphore)')" AlwaysCreate="true" />
+    <WriteLinesToFile File="@(MklDnnArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <!-- Select the files we want to copy out of each archive. -->

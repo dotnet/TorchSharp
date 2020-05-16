@@ -7,7 +7,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
-    <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
     <NativeTargetArchitecture Condition="'$(NativeTargetArchitecture)' == ''">$(TargetArchitecture)</NativeTargetArchitecture>
     <PlatformConfig>$(Platform).$(Configuration)</PlatformConfig>
@@ -45,9 +45,16 @@
     <PackageOutputPath Condition="'$(PackageOutputPath)'=='' and '$(NonShippingPackage)' == 'true'">$(BinDir)packages_noship/</PackageOutputPath>
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/</PackageOutputPath>
 
-    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
-    because LibTorch itself is in release. -->
-    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).Release\Native\</NativeOutputPath>
+    <!-- On Unix we currently hard code LibTorchSharp as Release - there is a (possibly flawed) assumption -->
+    <!-- that it needs to be built in Release because LibTorch itself is in release. -->
+    <!-- On windows a debug version of LibTorch is available for download-->
+    <NativeConfiguration>Release</NativeConfiguration>
+    <NativeConfiguration Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">$(Configuration)</NativeConfiguration>
+
+    <!-- on windows separate debug binaries are available-->
+    <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND ('$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows')">-debug</LibTorchDebug>
+
+    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
 
     <!-- Input Directories -->
     <PackagesDir>$(DotNetRestorePackagesPath)</PackagesDir>
@@ -96,11 +103,7 @@
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <RunningOnUnix Condition="'$(OS)'!='Windows_NT'">true</RunningOnUnix>
-  </PropertyGroup>
-
+ 
   <!-- Signing properties -->
   <PropertyGroup>
     <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(ToolsDir)Open.snk</AssemblyOriginatorKeyFile>

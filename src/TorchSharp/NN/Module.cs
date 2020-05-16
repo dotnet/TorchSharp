@@ -61,10 +61,10 @@ namespace TorchSharp.NN
         /// Get the AnyModule corresponding to this module, if any
         internal Module BoxedModule => new Module (this.BoxedHandle.DangerousGetHandle (), this.BoxedHandle.DangerousGetHandle ());
 
-        internal Module (IntPtr handle, IntPtr boxedHandle)
+        internal Module (IntPtr handle, IntPtr? boxedHandle)
         {
             this.handle = new HType (handle, true);
-            this.boxedHandle = new HType (boxedHandle, true);
+            this.boxedHandle = new HType (boxedHandle.GetValueOrDefault(), true);
             //Debug.Assert (!this.handle.IsInvalid);
             //Debug.Assert (!this.boxedHandle.IsInvalid);
         }
@@ -242,6 +242,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern string THSNN_Module_child_name (HType module, int index);
 
+        /// Get the sub-modules of this module
         public virtual IEnumerable<string> GetModules ()
         {
             var numModules = THSNN_Module_children_size (handle);

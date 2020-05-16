@@ -6,7 +6,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <LibtorchGPUConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
+    <LibtorchGPUConfig Include="windows"
+      LibName="libtorch-win-shared-with-deps$(LibTorchDebug)"
+      FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\asmjit.dll;
                         libtorch\lib\c10.dll;
                         libtorch\lib\c10_cuda.dll;
@@ -138,7 +140,7 @@
     <Exec Condition="'%(LibtorchGPUArchive.FileExtension)' == '.tar.gz'"
           WorkingDirectory="%(LibtorchGPUArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchGPUArchive.ExtractDirectory)', '%(LibtorchGPUArchive.DownloadFile)'))&quot;" />
-    <Touch Files="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" AlwaysCreate="true" />
+    <WriteLinesToFile File="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <!-- Select the files we want to copy out of each archive. -->

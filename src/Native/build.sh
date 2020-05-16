@@ -8,7 +8,7 @@ usage()
     echo "Options:"
     echo "  --arch <Architecture>             Target Architecture (x64, x86)"
     echo "  --configuration <Configuration>   Build Configuration (Debug, Release)"
-    echo "  --stripSymbols                    Enable symbol stripping (to external file)"
+    echo "  --stripsymbols                    Enable symbol stripping (to external file)"
     echo "  --libtorchpath <PathToLibtorch>   Path to libtorch TorchConfig.cmake"
     exit 1
 }

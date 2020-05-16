@@ -14,18 +14,17 @@ namespace TorchSharp.NN
     public class Sequential : Module
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Sequential_push_back(Module.HType module, string name, Module.HType submodule);
+        private static extern void THSNN_Sequential_push_back(Module.HType module, string name, Module.HType boxedSubModule);
 
-        public TorchTensor Add (string name, Module submodule)
+        public void Add (string name, Module submodule)
         {
             Debug.Assert (!handle.IsInvalid);
             Debug.Assert (!submodule.boxedHandle.IsInvalid);
-            var res = THSNN_Sequential_push_back (handle, name, submodule.boxedHandle);
+            THSNN_Sequential_push_back (handle, name, submodule.boxedHandle);
             Torch.CheckForErrors ();
-            return new TorchTensor (res);
         }
 
-        internal Sequential (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal Sequential (IntPtr handle) : base (handle, IntPtr.Zero)
         {
         }
 
@@ -44,13 +43,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Sequential_ctor (out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_Sequential_ctor ();
 
         static public Sequential Sequential (params (string name, Module module)[] modules)
         {
-            var handle = THSNN_Sequential_ctor (out var boxedHandle);
+            var handle = THSNN_Sequential_ctor ();
             Torch.CheckForErrors ();
-            var res = new Sequential (handle, boxedHandle);
+            var res = new Sequential (handle);
             foreach (var module in modules)
                 res.Add(module.name, module.module);
             return res;

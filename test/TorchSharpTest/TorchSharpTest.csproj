@@ -27,7 +27,6 @@
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
     <NativeAssemblyReference Include="torch" />
-    <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
   </ItemGroup>

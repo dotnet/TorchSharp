@@ -119,7 +119,7 @@ Then run these to test downloads and update SHA hashes for LibTorch downloads:
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.
 
-     bin\obj\AnyCPU.Debug\LibTorch.Redist\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
+     bin\obj\x86.Debug\LibTorch.Redist\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
 
 
 Updating package version for new release

@@ -15,7 +15,7 @@
     
     <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
     because LibTorch itself is in release. -->
-    <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).Release\Native</NativeAssetsBuiltPath>
+    <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).$(NativeConfiguration)\Native</NativeAssetsBuiltPath>
 
     <PackageRid Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">win</PackageRid>
     <PackageRid Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">linux</PackageRid>
