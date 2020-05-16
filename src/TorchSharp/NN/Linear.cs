@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
@@ -48,7 +49,20 @@ namespace TorchSharp.NN
             set { THSNN_linear_set_weight (handle, value.Handle); }
         }
 
-        public override IEnumerable<TorchTensor> Parameters ()
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_linear_load_module(string location);
+
+        public new static Linear Load(String modelPath)
+        {
+            if (!File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} does not exist.", modelPath));
+            }
+
+            return new Linear(THSNN_linear_load_module(modelPath));
+        }
+
+        public override IEnumerable<TorchTensor> Parameters()
         {
             var parameters = new List<TorchTensor> ();
 
