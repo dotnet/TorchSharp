@@ -535,7 +535,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
             var eval = seq.Forward(x);
@@ -546,7 +549,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
             var modules = seq.GetModules();
             Assert.Equal(3, modules.Count());
         }
@@ -556,7 +562,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -608,7 +617,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
             seq.ZeroGrad();
         }
 
@@ -617,7 +629,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -636,7 +651,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -659,7 +677,10 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(
+                ("lin1", lin1),
+                ("relu1", Relu()),
+                ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -731,10 +752,10 @@ namespace TorchSharp.Test
             public CondModel(bool isTrue)
             {
                 _isTrue = isTrue;
-                RegisterModule(fb);
-                RegisterModule(fbT1);
-                RegisterModule(fbF1);
-                RegisterModule(fbF2);
+                RegisterModule("fb", fb);
+                RegisterModule("fbT1", fbT1);
+                RegisterModule ("fbF1", fbF1);
+                RegisterModule ("fbF2", fbF2);
             }
 
             public TorchTensor Forward(TorchTensor input)
@@ -873,7 +894,7 @@ namespace TorchSharp.Test
             if (File.Exists (".NN.Module.Linear-1.ts")) File.Delete (".NN.Module.Linear-1.ts");
             var lin1 = Linear(100, 10, true);
             var lin2 = Linear(10, 5, true);
-            var seq = Sequential(lin1, lin2);
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
             seq.Save(".");
             var loaded = NN.Sequential.Load(".");
             File.Delete("model-list.txt");
@@ -1137,7 +1158,7 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -1176,7 +1197,7 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+                        var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
 
             double learning_rate = 0.00001;
 
@@ -1194,7 +1215,7 @@ namespace TorchSharp.Test
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(lin1, Relu(), lin2);
+            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");

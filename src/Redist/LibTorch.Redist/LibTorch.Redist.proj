@@ -25,24 +25,6 @@
                         libtorch\lib\torch_global_deps.dll" 
       Runtime="win-x64"/>
 
-    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
-                    ExtraForLibTorch150="%252Bcpu" 
-                    FileExtension=".zip" 
-                    FilesFromArchive= 
-                       "libtorch\lib\libc10.so;
-                        libtorch\lib\libcaffe2_detectron_ops.so;
-                        libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libcaffe2_observers.so;
-                        libtorch\lib\libfbjni.so;
-                        libtorch\lib\libpytorch_jni.so;
-                        libtorch\lib\libshm.so;
-                        libtorch\lib\libtorch.so;
-                        libtorch\lib\libtorch_cpu.so;
-                        libtorch\lib\libtorch_global_deps.so;
-                        libtorch\lib\libtorch_python.so;
-                        libtorch\lib\libgomp-7c85b1e2.so.1;"
-      Runtime="linux-x64" />
-
     <LibtorchConfig Include="darwin" 
                     LibName="libtorch-macos" 
                     ExtraForLibTorch150="" 
@@ -61,6 +43,24 @@
                         libtorch\lib\libtorch_global_deps.dylib;
                         libtorch\lib\libtorch_python.dylib;" 
       Runtime="osx-x64" />
+
+    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
+                    ExtraForLibTorch150="%252Bcpu" 
+                    FileExtension=".zip" 
+                    FilesFromArchive= 
+                       "libtorch\lib\libc10.so;
+                        libtorch\lib\libcaffe2_detectron_ops.so;
+                        libtorch\lib\libcaffe2_module_test_dynamic.so;
+                        libtorch\lib\libcaffe2_observers.so;
+                        libtorch\lib\libfbjni.so;
+                        libtorch\lib\libpytorch_jni.so;
+                        libtorch\lib\libshm.so;
+                        libtorch\lib\libtorch.so;
+                        libtorch\lib\libtorch_cpu.so;
+                        libtorch\lib\libtorch_global_deps.so;
+                        libtorch\lib\libtorch_python.so;
+                        libtorch\lib\libgomp-7c85b1e2.so.1;"
+      Runtime="linux-x64" />
 
     <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
   </ItemGroup>

@@ -56,35 +56,35 @@ namespace TorchSharp.Examples
             public Model(int numClasses)
             {
                 features = Sequential(
-                    Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }),
-                    Conv2D(64, 192, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }),
-                    Conv2D(192, 384, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    Conv2D(384, 256, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    Conv2D(256, 256, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }));
+                    ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),
+                    ("r1", Relu(inPlace: true)),
+                    ("mp1", MaxPool2D(kernelSize: new long[] { 2 })),
+                    ("c2", Conv2D(64, 192, kernelSize: 3, padding: 1)),
+                    ("r2", Relu(inPlace: true)),
+                    ("mp2", MaxPool2D(kernelSize: new long[] { 2 })),
+                    ("c3", Conv2D(192, 384, kernelSize: 3, padding: 1)),
+                    ("r3", Relu(inPlace: true)),
+                    ("c4", Conv2D(384, 256, kernelSize: 3, padding: 1)),
+                    ("r4", Relu(inPlace: true)),
+                    ("c5", Conv2D(256, 256, kernelSize: 3, padding: 1)),
+                    ("r5", Relu(inPlace: true)),
+                    ("mp3", MaxPool2D(kernelSize: new long[] { 2 })));
 
                 avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
 
                 classifier = Sequential(
-                    Dropout(),
-                    Linear(256 * 2 * 2, 4096),
-                    Relu(inPlace: true),
-                    Dropout(),
-                    Linear(4096, 4096),
-                    Relu(inPlace: true),
-                    Linear(4096, numClasses)
+                    ("d1", Dropout()),
+                    ("l1", Linear(256 * 2 * 2, 4096)),
+                    ("r1", Relu(inPlace: true)),
+                    ("d2", Dropout()),
+                    ("l2", Linear(4096, 4096)),
+                    ("r3", Relu(inPlace: true)),
+                    ("l3", Linear(4096, numClasses))
                 );
 
-                RegisterModule (features);
-                RegisterModule (avgPool);
-                RegisterModule(classifier);
+                RegisterModule ("features", features);
+                RegisterModule ("avg", avgPool);
+                RegisterModule ("classify", classifier);
             }
 
             public TorchTensor Forward(TorchTensor input)

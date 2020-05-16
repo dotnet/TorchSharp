@@ -12,10 +12,10 @@ namespace TorchSharp.NN
     /// </summary>
     public class Sequential : Module
     {
-        internal Sequential (IntPtr handle, IEnumerable<Module> modules) : base (handle)
+        internal Sequential (IntPtr handle, IEnumerable<(string name, Module module)> modules) : base (handle)
         {
             foreach (var module in modules) {
-                RegisterModule (module);
+                RegisterModule (module.name, module.module);
             }
         }
 
@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Sequential_ctor ();
 
-        static public Sequential Sequential (params Module[] modules)
+        static public Sequential Sequential (params (string name, Module module)[] modules)
         {
             var handle = THSNN_Sequential_ctor ();
             Torch.CheckForErrors ();

@@ -11,14 +11,11 @@ namespace TorchSharp.NN
     {
         internal Linear (IntPtr handle) : base (handle) { }
 
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_linear_load_module (string location);
-
         public new static Linear Load (String modelPath)
         {
-            var res = THSNN_linear_load_module (modelPath);
+            var res = Module.Load (modelPath);
             Torch.CheckForErrors ();
-            return new Linear (res);
+            return new Linear (res.handle.DangerousGetHandle());
         }
 
         [DllImport ("LibTorchSharp")]

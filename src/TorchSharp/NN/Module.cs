@@ -46,8 +46,6 @@ namespace TorchSharp.NN
 
         internal HType handle;
 
-        protected List<NN.Module> Modules { get; } = new List<NN.Module> ();
-
         internal Module (IntPtr handle)
         {
             this.handle = new HType (handle, true);
@@ -111,11 +109,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport ("LibTorchSharp")]
-        extern static void THSNN_Module_save (string location, HType handle);
+        extern static void THSNN_Module_save (HType handle, string location);
 
         public virtual void Save (String modelPath)
         {
-            THSNN_Module_save (modelPath, handle);
+            THSNN_Module_save (handle, modelPath);
         }
 
         [DllImport("LibTorchSharp")]
@@ -147,11 +145,11 @@ namespace TorchSharp.NN
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_Module_zeroGrad (HType module);
+        private static extern void THSNN_Module_zero_grad (HType module);
 
         public virtual void ZeroGrad ()
         {
-            THSNN_Module_zeroGrad (handle);
+            THSNN_Module_zero_grad (handle);
             Torch.CheckForErrors ();
         }
 
@@ -160,16 +158,16 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<(string name, TorchTensor parameter)> NamedParameters ()
         {
-            // If module has no children, fetch the paramters from pytorch
-            if (Modules.Any ()) {
-                IEnumerable<(string name, TorchTensor parameter)> result = Enumerable.Empty<(string name, TorchTensor parameter)> ();
+            //// If module has no children, fetch the paramters from pytorch
+            //if (Modules.Any ()) {
+            //    IEnumerable<(string name, TorchTensor parameter)> result = Enumerable.Empty<(string name, TorchTensor parameter)> ();
 
-                foreach (var module in Modules) {
-                    result = result.Concat (module.NamedParameters ());
-                }
+            //    foreach (var module in Modules) {
+            //        result = result.Concat (module.NamedParameters ());
+            //    }
 
-                return result;
-            }
+            //    return result;
+            //}
 
             IntPtr[] ptrArray;
             IntPtr[] strArray;
@@ -189,16 +187,16 @@ namespace TorchSharp.NN
 
         public virtual IEnumerable<TorchTensor> Parameters ()
         {
-            // If module has no children, fetch the paramters from pytorch, otherwise iterate over the params of the child modules
-            if (Modules.Any ()) {
-                IEnumerable<TorchTensor> result = Enumerable.Empty<TorchTensor> ();
+            //// If module has no children, fetch the paramters from pytorch, otherwise iterate over the params of the child modules
+            //if (Modules.Any ()) {
+            //    IEnumerable<TorchTensor> result = Enumerable.Empty<TorchTensor> ();
 
-                foreach (var module in Modules) {
-                    result = result.Concat (module.Parameters ());
-                }
+            //    foreach (var module in Modules) {
+            //        result = result.Concat (module.Parameters ());
+            //    }
 
-                return result;
-            }
+            //    return result;
+            //}
 
             IntPtr[] ptrArray;
 
@@ -234,17 +232,21 @@ namespace TorchSharp.NN
 
             return new TorchTensor (parameter);
         }
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_Module_register_module (HType module, string name, HType submodule);
 
-        public virtual void RegisterModule (NN.Module module)
+        public virtual Module RegisterModule (string name, Module submodule)
         {
-            Modules.Add (module);
+            var res= THSNN_Module_register_module (handle, name, submodule.handle);
+            Torch.CheckForErrors ();
+            return new Module (res);
         }
 
         [DllImport ("LibTorchSharp")]
         private static extern long THSNN_Module_children_size (HType module);
 
         [DllImport ("LibTorchSharp")]
-        private static extern string THSNN_getChildModuleName (HType module, int index);
+        private static extern string THSNN_Module_child_name (HType module, int index);
 
         public virtual IEnumerable<string> GetModules ()
         {
@@ -253,7 +255,7 @@ namespace TorchSharp.NN
             string[] result = new string[numModules];
 
             for (int i = 0; i < numModules; i++) {
-                result[i] = THSNN_getChildModuleName (handle, i);
+                result[i] = THSNN_Module_child_name (handle, i);
                 Torch.CheckForErrors ();
             }
 

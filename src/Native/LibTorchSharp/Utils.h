@@ -26,6 +26,15 @@ typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
       torch_last_err = strdup(e.what()); \
   }
 
+#define CATCH_STMT(ty, stmt) \
+    ty res; \
+    CATCH(  \
+        stmt;  \
+    );  \
+    return res;
+
+#define CATCH_RETURN(ty, expr) CATCH_STMT(ty, res = expr)
+
 #define CATCH_RETURN_TENSOR(expr) \
     at::Tensor res; \
     CATCH(  \
@@ -33,12 +42,6 @@ typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
     );  \
     return new torch::Tensor(res);
 
-#define CATCH_RETURN(ty, expr) \
-    ty res; \
-    CATCH(  \
-        res = expr;  \
-    );  \
-    return res;
 
 // Utility method used to built sharable strings.
 const char * make_sharable_string(const std::string str);

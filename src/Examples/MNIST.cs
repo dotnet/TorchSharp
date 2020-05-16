@@ -52,10 +52,10 @@ namespace TorchSharp.Examples
 
             public Model()
             {
-                RegisterModule(conv1);
-                RegisterModule(conv2);
-                RegisterModule(fc1);
-                RegisterModule(fc2);
+                RegisterModule("conv1", conv1);
+                RegisterModule("conv2", conv2);
+                RegisterModule("lin1", fc1);
+                RegisterModule("lin2", fc2);
             }
 
             public TorchTensor Forward(TorchTensor input)

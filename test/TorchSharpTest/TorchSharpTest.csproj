@@ -18,31 +18,50 @@
     <NativeAssemblyReference Include="LibTorchSharp" />
   </ItemGroup>
 
-  <!-- Torch is 64-bit only? REVIEW check if true, do we need all these? -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'">
-    <NativeAssemblyReference Include="torch" />
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT'">
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
-    <NativeAssemblyReference Include="c10" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT'">
+    <NativeAssemblyReference Include="fbgemm" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
   </ItemGroup>
 
     <!-- Torch is 64-bit only? REVIEW check if true do we need all these? -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx'))">
-    <NativeAssemblyReference Include="torch_python" />
-    <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="caffe2_detectron_ops" />
+    <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="caffe2_observers" />
+    <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="pytorch_jni" />
+    <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="mklml" />
     <NativeAssemblyReference Include="iomp5" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux'))">
-    <NativeAssemblyReference Include="torch" ExtraExtension=".1" />
-    <NativeAssemblyReference Include="gomp-4f651535" ExtraExtension=".1" />
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="caffe2_detectron_ops" />
+    <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
+    <NativeAssemblyReference Include="caffe2_observers" />
+    <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="pytorch_jni" />
+    <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="torch_python" />
+    <NativeAssemblyReference Include="gomp-7c85b1e2" ExtraExtension=".1" />
   </ItemGroup>
 
 </Project>
