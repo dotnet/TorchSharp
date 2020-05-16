@@ -1,9 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.NN.LossFunction;
+using TorchSharp.NN;
+using static TorchSharp.NN.Modules;
+using static TorchSharp.NN.Functions;
+using static TorchSharp.NN.Losses;
 
 namespace TorchSharp.Examples
 {
@@ -113,7 +116,7 @@ namespace TorchSharp.Examples
                 optimizer.ZeroGrad();
 
                 using (var prediction = model.Forward(data))
-                using (var output = loss(NN.Module.LogSoftMax(prediction, 1), target))
+                using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     output.Backward();
 
@@ -150,7 +153,7 @@ namespace TorchSharp.Examples
             foreach (var (data, target) in dataLoader)
             {
                 using (var prediction = model.Forward(data))
-                using (var output = loss(NN.Module.LogSoftMax(prediction, 1), target))
+                using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     testLoss += output.DataItem<float>();
 

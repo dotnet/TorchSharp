@@ -1,9 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.NN.LossFunction;
+using TorchSharp.NN;
+using static TorchSharp.NN.Modules;
+using static TorchSharp.NN.Functions;
+using static TorchSharp.NN.Losses;
 
 namespace TorchSharp.Examples
 {

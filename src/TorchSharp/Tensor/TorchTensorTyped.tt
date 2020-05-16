@@ -1,9 +1,10 @@
-﻿<#@ Template Language="C#" #>
+<#@ Template Language="C#" #>
 <#@ Assembly Name="System.Core" #>
 <#@ Output Extension=".generated.cs" #>
 <#@ Include File="Types.ttinclude" #>
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 namespace TorchSharp.Tensor {
@@ -21,6 +22,12 @@ foreach (var type in TorchTypeDef.Types) {
     /// </summary>
     public class <#=type.Name#>Tensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static <#=type.Name#>Tensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -192,7 +199,13 @@ if (!type.IsLong) {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
 <#
 if (!type.IsLong) {
 #>

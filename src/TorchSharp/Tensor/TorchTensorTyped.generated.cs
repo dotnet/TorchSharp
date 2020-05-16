@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 namespace TorchSharp.Tensor {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -13,6 +15,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class ByteTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static ByteTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -130,7 +138,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Byte, requiresGrad));
                 }
             }
@@ -164,6 +178,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class SByteTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static SByteTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -281,7 +301,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.SByte, requiresGrad));
                 }
             }
@@ -315,6 +341,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class ShortTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static ShortTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -432,7 +464,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Short, requiresGrad));
                 }
             }
@@ -466,6 +504,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class IntTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static IntTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -583,7 +627,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Int, requiresGrad));
                 }
             }
@@ -617,6 +667,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class LongTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static LongTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -734,7 +790,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_newLong(addr, deleter, dimensions, dimensions.Length, requiresGrad));
                 }
             }
@@ -768,6 +830,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class DoubleTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static DoubleTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -922,7 +990,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Double, requiresGrad));
                 }
             }
@@ -956,6 +1030,12 @@ namespace TorchSharp.Tensor {
     /// </summary>
     public class FloatTensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static FloatTensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
 
@@ -1110,7 +1190,13 @@ namespace TorchSharp.Tensor {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
                     return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ATenScalarMapping.Float, requiresGrad));
                 }
             }

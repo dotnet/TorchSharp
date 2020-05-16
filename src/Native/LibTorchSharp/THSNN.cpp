@@ -24,28 +24,71 @@ class ModuleWrapper : torch::nn::Module
 
 NNModule THSNN_reluModule()
 {
-    return new std::shared_ptr<torch::nn::Module>(torch::nn::Functional(torch::relu).ptr());
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::Functional(torch::relu).ptr()));
+}
+
+NNModule THSNN_dropoutModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::Dropout().ptr()));
+}
+
+NNModule THSNN_featureDropoutModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::FeatureDropout().ptr()));
+}
+
+NNModule THSNN_logSoftMaxModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(new torch::nn::Module("LogSoftMax")));
+}
+
+NNModule THSNN_avgPool2dModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(new torch::nn::Module("AvgPool2D")));
+}
+
+NNModule THSNN_maxPool2dModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(new torch::nn::Module("MaxPool2D")));
+}
+
+NNModule THSNN_adaptiveAvgPool2dModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(new torch::nn::Module("AdaptiveAvgPool2D")));
+}
+
+NNModule THSNN_sequentialModule()
+{
+	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::Sequential().ptr()));
 }
 
 NNModule THSNN_linearModule(const int64_t input_size, const int64_t output_size, const bool with_bias)
 {
-    auto options = torch::nn::LinearOptions(input_size, output_size).with_bias(with_bias);
-    return new std::shared_ptr<torch::nn::Module>(torch::nn::Linear(options).ptr());
+	NNModule res = 0;
+	CATCH(
+		auto options = torch::nn::LinearOptions(input_size, output_size).with_bias(with_bias);
+	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::Linear(options).ptr());
+	);
+	return res;
 }
 
 NNModule THSNN_conv2dModule(
     const int64_t inputChannel,
     const int64_t outputChannel,
+
     const int64_t kernelSize,
     const int64_t stride,
     const int64_t padding)
 {
-    auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize)
-        .stride(stride)
-        .padding(padding);
-    auto conv = torch::nn::Conv2d(options);
-
-    return new std::shared_ptr<torch::nn::Module>(conv.ptr());
+	NNModule res = 0;
+	CATCH(
+		auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize)
+            .stride(stride)
+            .padding(padding);
+        auto conv = torch::nn::Conv2d(options);
+		res = new std::shared_ptr<torch::nn::Module>(conv.ptr());
+    );
+	return res;
 
 }
 
@@ -62,7 +105,7 @@ int THSNN_has_parameter(const NNModule module, const char * name)
 
 Tensor THSNN_get_parameter(const NNModule module, const char * name)
 {
-    return new torch::Tensor(*(*module)->named_parameters().find(name));
+	CATCH_RETURN_TENSOR(*(*module)->named_parameters().find(name));
 }
 
 void THSNN_get_parameters(
@@ -128,7 +171,7 @@ const char * THSNN_getModuleName(const NNModule module)
 
 Tensor THSNN_adaptiveAvgPool2DApply(const Tensor tensor, const int length, const int64_t* outputSize)
 {
-    return new torch::Tensor(torch::adaptive_avg_pool2d(*tensor, at::ArrayRef<int64_t>(outputSize, length)));
+	CATCH_RETURN_TENSOR(torch::adaptive_avg_pool2d(*tensor, at::ArrayRef<int64_t>(outputSize, length)));
 }
 
 Tensor THSNN_avgPool2DApply(const Tensor tensor,
@@ -137,7 +180,7 @@ Tensor THSNN_avgPool2DApply(const Tensor tensor,
 	const int strideLength,
 	const int64_t* stride) 
 {
-	return new torch::Tensor(torch::avg_pool2d(
+	CATCH_RETURN_TENSOR(torch::avg_pool2d(
 		*tensor,
 		at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
 		at::ArrayRef<int64_t>(stride, strideLength)));
@@ -145,12 +188,12 @@ Tensor THSNN_avgPool2DApply(const Tensor tensor,
 
 Tensor THSNN_logSoftMaxApply(const Tensor tensor, const int64_t dimension)
 {
-    return new torch::Tensor(torch::log_softmax(*tensor, dimension));
+	CATCH_RETURN_TENSOR(torch::log_softmax(*tensor, dimension));
 }
 
 Tensor THSNN_featureDropoutApply(const Tensor tensor)
 {
-    return new torch::Tensor(torch::nn::FeatureDropout()->forward(*tensor));
+    CATCH_RETURN_TENSOR(torch::nn::FeatureDropout()->forward(*tensor));
 }
 
 Tensor THSNN_dropoutModuleApply(
@@ -158,25 +201,21 @@ Tensor THSNN_dropoutModuleApply(
     const double probability, 
     const bool isTraining)
 {
-    return new torch::Tensor(torch::dropout(*tensor, probability, isTraining));
+	CATCH_RETURN_TENSOR(torch::dropout(*tensor, probability, isTraining));
 }
 
 Tensor THSNN_linearModuleApply(
     const NNModule module,
     const Tensor tensor)
 {
-    at::Tensor result = (*module)->as<torch::nn::Linear>()->forward(*tensor);
-
-    return new torch::Tensor(result);
+	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->forward(*tensor));
 }
 
 Tensor THSNN_conv2DModuleApply(
     const NNModule module,
     const Tensor tensor)
 {
-    at::Tensor result = (*module)->as<torch::nn::Conv2d>()->forward(*tensor);
-
-    return new torch::Tensor(result);
+	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Conv2d>()->forward(*tensor));
 }
 
 int THSNN_linear_with_bias(const NNModule module)
@@ -243,14 +282,14 @@ Tensor THSNN_lossBCE(
     const Tensor weight, 
     const int64_t reduction)
 {
-    return weight == NULL ?
-        new torch::Tensor(torch::binary_cross_entropy(*input, *target, {}, reduction)) :
-        new torch::Tensor(torch::binary_cross_entropy(*input, *target, *weight, reduction));
+	CATCH_RETURN_TENSOR(weight == NULL ?
+        torch::binary_cross_entropy(*input, *target, {}, reduction) :
+        torch::binary_cross_entropy(*input, *target, *weight, reduction));
 }
 
 Tensor THSNN_lossMSE(const Tensor input, const Tensor target, const int64_t reduction)
 {
-    return new torch::Tensor(torch::mse_loss(*input, *target, reduction));
+	CATCH_RETURN_TENSOR(torch::mse_loss(*input, *target, reduction));
 }
 
 Tensor THSNN_lossNLL(
@@ -259,9 +298,9 @@ Tensor THSNN_lossNLL(
     const Tensor weight, 
     const int64_t reduction)
 {
-    return weight == NULL ?
-        new torch::Tensor(torch::nll_loss(*input, *target, {}, reduction)) :
-        new torch::Tensor(torch::nll_loss(*input, *target, *weight, reduction));
+	CATCH_RETURN_TENSOR(weight == NULL ?
+        torch::nll_loss(*input, *target, {}, reduction) :
+        torch::nll_loss(*input, *target, *weight, reduction));
 }
 
 Tensor THSNN_loss_poisson_nll(

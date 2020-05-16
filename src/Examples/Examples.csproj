@@ -19,12 +19,9 @@
   <!-- Torch is 64-bit only? REVIEW check if true, do we need all these? -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'">
     <NativeAssemblyReference Include="torch" />
-    <NativeAssemblyReference Include="caffe2" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="onnxifi" />
-    <NativeAssemblyReference Include="onnxifi_dummy" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and ('$(OS)' == 'Windows_NT'  OR '$(AssumeOS)' == 'windows')">
@@ -37,14 +34,12 @@
     <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="caffe2_observers" />
-    <NativeAssemblyReference Include="torch.1" />
     <NativeAssemblyReference Include="mklml" />
     <NativeAssemblyReference Include="iomp5" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and ($([MSBuild]::IsOSPlatform('linux')) OR '$(AssumeOS)' == 'linux')">
-    <NativeAssemblyReference Include="torch" ExtraExtension=".1" />
-    <NativeAssemblyReference Include="gomp-8bba0e50" ExtraExtension=".1" />
+    <NativeAssemblyReference Include="gomp-4f651535" ExtraExtension=".1" />
   </ItemGroup>
 
 </Project>

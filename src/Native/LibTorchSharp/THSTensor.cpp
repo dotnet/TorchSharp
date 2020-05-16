@@ -219,8 +219,10 @@ Tensor THSTensor_sparse(
         .device(device)
         .requires_grad(requires_grad);
 
-    auto i = torch::autograd::as_variable_ref(*indices).data();
-    auto v = torch::autograd::as_variable_ref(*values).data();
+	const torch::autograd::Variable& vindices = torch::autograd::as_variable_ref(*indices);
+	const torch::autograd::Variable& vvalues = torch::autograd::as_variable_ref(*values);
+	at::Tensor i = vindices.tensor_data();
+	at::Tensor v = vvalues.tensor_data();
 
     CATCH_RETURN_TENSOR(torch::sparse_coo_tensor(i, v, at::ArrayRef<int64_t>(sizes, length), options));
 }

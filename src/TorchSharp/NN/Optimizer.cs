@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,123 +14,120 @@ namespace TorchSharp.NN
         /// </summary>
         internal sealed class HType : SafeHandle
         {
-            public HType(IntPtr preexistingHandle, bool ownsHandle) : base(IntPtr.Zero, ownsHandle)
+            public HType (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
             {
-                SetHandle(preexistingHandle);
+                SetHandle (preexistingHandle);
             }
 
             public override bool IsInvalid => handle == IntPtr.Zero;
 
             // This is just for marshalling
-            internal HType() : base(IntPtr.Zero, true)
+            internal HType () : base (IntPtr.Zero, true)
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_optimizerDispose(HType handle);
+            [DllImport ("LibTorchSharp")]
+            private static extern void THSNN_optimizerDispose (HType handle);
 
-            protected override bool ReleaseHandle()
+            protected override bool ReleaseHandle ()
             {
-                THSNN_optimizerDispose(this);
+                THSNN_optimizerDispose (this);
                 return true;
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void Dispose (bool disposing)
             {
-                if (disposing)
-                {
-                    ReleaseHandle();
+                if (disposing) {
+                    ReleaseHandle ();
                 }
             }
         }
 
         internal HType handle;
 
-        protected Optimizer(IntPtr handle)
+        protected Optimizer (IntPtr handle)
         {
-            this.handle = new HType(handle, true);
+            this.handle = new HType (handle, true);
         }
 
-        ~Optimizer()
+        ~Optimizer ()
         {
-            Dispose(false);
+            Dispose (false);
         }
 
         /// <summary>
         ///   Releases the storage.
         /// </summary>
-        public void Dispose()
+        public void Dispose ()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose (true);
+            GC.SuppressFinalize (this);
         }
 
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
-        protected void Dispose(bool disposing)
+        protected void Dispose (bool disposing)
         {
-            if (disposing)
-            {
-                handle.Dispose();
-                handle.SetHandleAsInvalid();
+            if (disposing) {
+                handle.Dispose ();
+                handle.SetHandleAsInvalid ();
             }
         }
     }
 
     public partial class Optimizer
     {
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_optimizerAdam(IntPtr parameters, int len, double learningRate);
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_optimizerAdam (IntPtr parameters, int len, double learningRate);
 
-        public static Optimizer Adam(IEnumerable<TorchTensor> parameters, double learningRate)
+        public static Optimizer Adam (IEnumerable<TorchTensor> parameters, double learningRate)
         {
-            var parray = new PinnedArray<IntPtr>();
-            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+            var parray = new PinnedArray<IntPtr> ();
+            IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
-            return new Optimizer(THSNN_optimizerAdam(paramsRef, parray.Array.Length, learningRate));
+            return new Optimizer (THSNN_optimizerAdam (paramsRef, parray.Array.Length, learningRate));
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_optimizerSGD(IntPtr parameters, int len, double learningRate, double momentum);
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_optimizerSGD (IntPtr parameters, int len, double learningRate, double momentum);
 
-        public static Optimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0)
+        public static Optimizer SGD (IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0)
         {
-            var parray = new PinnedArray<IntPtr>();
-            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+            var parray = new PinnedArray<IntPtr> ();
+            IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
-            return new Optimizer(THSNN_optimizerSGD(paramsRef, parray.Array.Length, learningRate, momentum));
+            return new Optimizer (THSNN_optimizerSGD (paramsRef, parray.Array.Length, learningRate, momentum));
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern void THSNN_optimizerZeroGrad(HType module);
+        [DllImport ("LibTorchSharp")]
+        private static extern void THSNN_optimizerZeroGrad (HType module);
 
-        public void ZeroGrad()
+        public void ZeroGrad ()
         {
-            THSNN_optimizerZeroGrad(handle);
+            THSNN_optimizerZeroGrad (handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern void THSNN_optimizerStep(HType module);
+        [DllImport ("LibTorchSharp")]
+        private static extern void THSNN_optimizerStep (HType module);
 
-        public void Step()
+        public void Step ()
         {
-            THSNN_optimizerStep(handle);
+            THSNN_optimizerStep (handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern void THSNN_optimizer_get_parameters(HType module, AllocatePinnedArray allocator);
+        [DllImport ("LibTorchSharp")]
+        private static extern void THSNN_optimizer_get_parameters (HType module, AllocatePinnedArray allocator);
 
-        public IEnumerable<TorchTensor> GetParameters()
+        public IEnumerable<TorchTensor> GetParameters ()
         {
             IntPtr[] ptrArray;
 
-            using (var pa = new PinnedArray<IntPtr>())
-            {
-                THSNN_optimizer_get_parameters(handle, pa.CreateArray);
+            using (var pa = new PinnedArray<IntPtr> ()) {
+                THSNN_optimizer_get_parameters (handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
-            return ptrArray.Select(x => new TorchTensor(x));
+            return ptrArray.Select (x => new TorchTensor (x));
         }
     }
 }

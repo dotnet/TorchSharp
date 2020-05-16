@@ -9,8 +9,18 @@
 
 // API.
 
-// Returns a ReLu layer.
+// Returns a layer.
 EXPORT_API(NNModule) THSNN_reluModule();
+
+// Returns a layer.
+EXPORT_API(NNModule) THSNN_avgPool2dModule();
+EXPORT_API(NNModule) THSNN_maxPool2dModule();
+EXPORT_API(NNModule) THSNN_dropoutModule();
+EXPORT_API(NNModule) THSNN_featureDropoutModule();
+EXPORT_API(NNModule) THSNN_sequentialModule();
+
+// Returns a layer.
+EXPORT_API(NNModule) THSNN_adaptiveAvgPool2dModule();
 
 // Returns a linear layer.
 EXPORT_API(NNModule) THSNN_linearModule(const int64_t input_size, const int64_t output_size, const bool with_bias);

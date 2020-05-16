@@ -1,10 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.JIT;
 using TorchSharp.NN;
+using static TorchSharp.NN.Modules;
+using static TorchSharp.NN.Losses;
+using static TorchSharp.NN.Functions;
 using TorchSharp.Tensor;
 using Xunit;
 
@@ -290,64 +292,64 @@ namespace TorchSharp.Test
             }
         }
 
-        [Fact(Skip = "Need model.pt")]
-        public void ScoreModel()
-        {
-            var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
+        //[Fact(Skip = "Need model.pt")]
+        //public void ScoreModel()
+        //{
+        //    var ones = FloatTensor.Ones(new long[] { 1, 3, 224, 224 });
 
-            var module = JIT.Module.Load(@"..\..\..\Resources\model.pt");
-            Assert.NotNull(module);
+        //    var module = JIT.Module.Load(@"..\..\..\Resources\model.pt");
+        //    Assert.NotNull(module);
 
-            var result = module.Forward(ones);
-        }
+        //    var result = module.Forward(ones);
+        //}
 
-        [Fact(Skip = "Need model.pt")]
-        public void LoadModelCheckInput()
-        {
-            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.NotNull(module);
+        //[Fact(Skip = "Need model.pt")]
+        //public void LoadModelCheckInput()
+        //{
+        //    var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+        //    Assert.NotNull(module);
 
-            var num = module.GetNumberOfInputs();
+        //    var num = module.GetNumberOfInputs();
 
-            for (int i = 0; i < num; i++)
-            {
-                var type = module.GetInputType(i);
+        //    for (int i = 0; i < num; i++)
+        //    {
+        //        var type = module.GetInputType(i);
 
-                Assert.NotNull(type as DynamicType);
-            }
-        }
+        //        Assert.NotNull(type as DynamicType);
+        //    }
+        //}
 
-        [Fact(Skip = "Need model.pt")]
-        public void LoadModelCheckOutput()
-        {
-            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.NotNull(module);
+        //[Fact(Skip = "Need model.pt")]
+        //public void LoadModelCheckOutput()
+        //{
+        //    var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+        //    Assert.NotNull(module);
 
-            var num = module.GetNumberOfOutputs();
+        //    var num = module.GetNumberOfOutputs();
 
-            for (int i = 0; i < num; i++)
-            {
-                var type = module.GetOutputType(i);
+        //    for (int i = 0; i < num; i++)
+        //    {
+        //        var type = module.GetOutputType(i);
 
-                Assert.NotNull(type as DynamicType);
-            }
-        }
+        //        Assert.NotNull(type as DynamicType);
+        //    }
+        //}
 
-        [Fact(Skip = "Need model.pt")]
-        public void ScoreModelCheckOutput()
-        {
-            var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
-            Assert.NotNull(module);
+        //[Fact(Skip = "Need model.pt")]
+        //public void ScoreModelCheckOutput()
+        //{
+        //    var module = JIT.Module.Load(@"E:\Source\Repos\libtorch\model.pt");
+        //    Assert.NotNull(module);
 
-            var num = module.GetNumberOfOutputs();
+        //    var num = module.GetNumberOfOutputs();
 
-            for (int i = 0; i < num; i++)
-            {
-                var type = module.GetOutputType(i);
+        //    for (int i = 0; i < num; i++)
+        //    {
+        //        var type = module.GetOutputType(i);
 
-                Assert.NotNull(type as DynamicType);
-            }
-        }
+        //        Assert.NotNull(type as DynamicType);
+        //    }
+        //}
 
         [Fact]
         public void TestSquareEuclideanDistance()
@@ -367,7 +369,7 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateLinear()
         {
-            var lin = NN.Module.Linear(1000, 100);
+            var lin = Linear(1000, 100);
             Assert.NotNull(lin);
             var modules = lin.GetName();
         }
@@ -375,7 +377,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestGetBiasInLinear()
         {
-            var lin = NN.Module.Linear(1000, 100);
+            var lin = Linear(1000, 100);
             Assert.False(lin.WithBias);
             Assert.True(lin.Bias == null);
         }
@@ -383,7 +385,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestSetGetBiasInLinear()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
 
             var bias = FloatTensor.Ones(new long[] { 1000 });
 
@@ -395,7 +397,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestWeightAndBiasShapeInLinear()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
 
             Assert.Equal(2, lin.Weight.Shape.Length);
             Assert.Equal(100, lin.Weight.Shape[0]);
@@ -407,7 +409,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestWeightAndBiasParametersInLinear()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
             var names = lin.NamedParameters().Select(p => p.name);
             Assert.True(names.Contains("weight") == true);
             Assert.True(names.Contains("bias") == true);
@@ -416,7 +418,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestWeightParameterInLinear()
         {
-            var lin = NN.Module.Linear(1000, 100, false);
+            var lin = Linear(1000, 100, false);
             var names = lin.NamedParameters().Select(p => p.name);
             Assert.True(names.Contains("weight") == true);
             Assert.False(names.Contains("bias") == true);
@@ -425,7 +427,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestWeightAndBiasShapeInLinear3()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
             var weight = lin.GetParameter("weight");
             var bias = lin.GetParameter("bias");
             Assert.Equal(2, weight.Shape.Length);
@@ -438,7 +440,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestLinearWithBias()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
             var bias = lin.Bias;
             var weight = lin.Weight.T();
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
@@ -458,7 +460,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestLinearNoBias()
         {
-            var lin = NN.Module.Linear(1000, 100, false);
+            var lin = Linear(1000, 100, false);
             var weight = lin.Weight.Transpose(0, 1);
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
             var forward = lin.Forward(input);
@@ -477,7 +479,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestLinearEditBias()
         {
-            var lin = NN.Module.Linear(1000, 100, true);
+            var lin = Linear(1000, 100, true);
             var bias = FloatTensor.RandomN(new long[] { 100 });
             lin.Bias = bias;
 
@@ -490,9 +492,10 @@ namespace TorchSharp.Test
         [Fact]
         public void TestLinearEditWeightsAndBias()
         {
-            var lin = NN.Module.Linear(0, 0, true);
+            var lin = Linear(1000, 1000, true);
             var bias = FloatTensor.RandomN(new long[] { 100 });
             var weights = FloatTensor.RandomN(new long[] { 100, 1000 });
+
             lin.Bias = bias;
             lin.Weight = weights;
 
@@ -509,7 +512,7 @@ namespace TorchSharp.Test
         [Fact]
         public void TestLinearEditWeightsAndBiasGetParameters()
         {
-            var lin = NN.Module.Linear(0, 0, true);
+            var lin = Linear(1000, 1000, true);
             var bias = FloatTensor.RandomN(new long[] { 100 });
             var weights = FloatTensor.RandomN(new long[] { 100, 1000 });
             lin.Bias = bias;
@@ -525,7 +528,7 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateRelu()
         {
-            var rel = NN.Module.Relu();
+            var rel = Relu();
             Assert.NotNull(rel);
             var modules = rel.GetName();
         }
@@ -533,9 +536,9 @@ namespace TorchSharp.Test
         [Fact]
         public void EvalSequence()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
             var eval = seq.Forward(x);
@@ -544,9 +547,9 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateSequence()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
             var modules = seq.GetModules();
             Assert.Equal(3, modules.Count());
         }
@@ -554,15 +557,15 @@ namespace TorchSharp.Test
         [Fact]
         public void EvalLossSequence()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+            var loss = MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
             var result = output.DataItem<float>();
@@ -575,9 +578,9 @@ namespace TorchSharp.Test
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
                 var componentWiseLoss = ((TorchTensor)input.Exp()) - target * input;
-                Assert.True(componentWiseLoss.Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.None)(input, target)));
-                Assert.True(componentWiseLoss.Sum().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Sum)(input, target)));
-                Assert.True(componentWiseLoss.Mean().Equal(NN.LossFunction.PoissonNLL(reduction: NN.Reduction.Mean)(input, target)));
+                Assert.True(componentWiseLoss.Equal(PoissonNLL(reduction: NN.Reduction.None)(input, target)));
+                Assert.True(componentWiseLoss.Sum().Equal(PoissonNLL(reduction: NN.Reduction.Sum)(input, target)));
+                Assert.True(componentWiseLoss.Mean().Equal(PoissonNLL(reduction: NN.Reduction.Mean)(input, target)));
             }
         }
 
@@ -587,7 +590,7 @@ namespace TorchSharp.Test
             using (TorchTensor input = FloatTensor.Random(new long[] { 5, 2 }))
             using (TorchTensor target = FloatTensor.Random(new long[] { 5, 2 }))
             {
-                var outTensor = NN.LossFunction.PoissonNLL(true, true)(input, target);
+                var outTensor = PoissonNLL(true, true)(input, target);
             }
         }
 
@@ -598,7 +601,7 @@ namespace TorchSharp.Test
             using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f }))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
-                Assert.Throws<SEHException>(() => NN.LossFunction.PoissonNLL()(input, target));
+                Assert.Throws<SEHException>(() => PoissonNLL()(input, target));
             }
         }
 #endif
@@ -606,24 +609,24 @@ namespace TorchSharp.Test
         [Fact]
         public void TestZeroGrad()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
             seq.ZeroGrad();
         }
 
         [Fact]
         public void TestBackward()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.None);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -634,15 +637,15 @@ namespace TorchSharp.Test
         [Fact]
         public void TestGettingParameters()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.None);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -657,15 +660,15 @@ namespace TorchSharp.Test
         [Fact]
         public void TestGrad()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             var eval = seq.Forward(x);
-            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.None);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -685,7 +688,7 @@ namespace TorchSharp.Test
             var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTorchTensor(new long[] { 32, 11 }).ToType(ATenScalarMapping.Float);
             var inputs = new TorchTensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTorchTensor(new long[] { 1, 11 }).ToType(ATenScalarMapping.Float).RequiresGrad(true);
-            var linear = new NN.Linear(11, 1, true);
+            var linear = Linear(11, 1, true);
             linear.Bias = new double[] { 373.8864 }.ToTorchTensor(new long[] { 1, 1 }).ToType(ATenScalarMapping.Float).RequiresGrad(true);
             linear.Weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTorchTensor(new long[] { 1, 11 }).ToType(ATenScalarMapping.Float).RequiresGrad(true);
 
@@ -693,7 +696,7 @@ namespace TorchSharp.Test
             var afterScaler = afterCat * scaler;
             var prediction = linear.Forward(afterScaler);
 
-            var loss = NN.LossFunction.MSE();
+            var loss = MSE();
             var output = loss(prediction, y);
 
             linear.ZeroGrad();
@@ -763,7 +766,7 @@ namespace TorchSharp.Test
             modT.Train();
 
             var eval = modT.Forward(x);
-            var loss = NN.LossFunction.MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.None);
             var output = loss(eval, y);
 
             modT.ZeroGrad();
@@ -1097,16 +1100,16 @@ namespace TorchSharp.Test
         [Fact]
         public void TestTraining()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
             float learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
-            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+            var loss = MSE(NN.Reduction.Sum);
 
             for (int i = 0; i < 10; i++)
             {
@@ -1136,9 +1139,9 @@ namespace TorchSharp.Test
         [Fact]
         public void TestAdam()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             double learning_rate = 0.00001;
 
@@ -1154,9 +1157,9 @@ namespace TorchSharp.Test
         [Fact]
         public void TestTrainingAdam()
         {
-            var lin1 = NN.Module.Linear(1000, 100);
-            var lin2 = NN.Module.Linear(100, 10);
-            var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(lin1, Relu(), lin2);
 
             var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
             var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
@@ -1164,7 +1167,7 @@ namespace TorchSharp.Test
             double learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
             var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
-            var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+            var loss = MSE(NN.Reduction.Sum);
 
             for (int i = 0; i < 10; i++)
             {
@@ -1266,7 +1269,7 @@ namespace TorchSharp.Test
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = NN.Module.AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1274,7 +1277,7 @@ namespace TorchSharp.Test
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = NN.Module.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
