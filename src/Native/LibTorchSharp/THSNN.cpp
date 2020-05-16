@@ -391,7 +391,7 @@ enum class FanMode { FanIn, FanOut };
 struct Fan {
     explicit Fan(torch::Tensor& tensor) {
         const auto dimensions = tensor.ndimension();
-        AT_CHECK(
+        TORCH_CHECK(
             dimensions >= 2,
             "Fan in and fan out can not be computed for tensor with fewer than 2 dimensions");
         if (dimensions == 2) {
