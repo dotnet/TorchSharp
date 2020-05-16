@@ -30,9 +30,9 @@ public:
         size_t s,
         std::shared_ptr<Dataset> l) : 
         DatasetIteratorBase(), 
+        loaderPointer(l),
         currentIter(torch::data::Iterator<torch::data::Example<>>(i)),
-        size(s),
-        loaderPointer(l) {}
+        size(s) {}
 
         size_t getSize();
         bool moveNext();
