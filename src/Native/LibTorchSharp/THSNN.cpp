@@ -116,7 +116,7 @@ void THSNN_get_parameters(
     auto parameters = (*module)->named_parameters();
     Tensor * result1 = allocator1(parameters.size());
 
-    for (int i = 0; i < parameters.size(); i++)
+    for (size_t i = 0; i < parameters.size(); i++)
     {
         result1[i] = new torch::Tensor(parameters[i].value());
     }
@@ -132,7 +132,7 @@ void THSNN_get_named_parameters(
     Tensor * result1 = allocator1(parameters.size());
     const char ** result2 = allocator2(parameters.size());
 
-    for (int i = 0; i < parameters.size(); i++)
+    for (size_t i = 0; i < parameters.size(); i++)
     {
         result1[i] = new torch::Tensor(parameters[i].value());
         result2[i] = make_sharable_string(parameters[i].key());
@@ -270,7 +270,7 @@ void THSNN_optimizer_get_parameters(const Optimizer optimizer, Tensor* (*allocat
     auto parameters = (*optimizer)->parameters();
     Tensor * result = allocator(parameters.size());
 
-    for (int i = 0; i < parameters.size(); i++)
+    for (size_t i = 0; i < parameters.size(); i++)
     {
         result[i] = new torch::Tensor(parameters[i]);
     }
@@ -391,7 +391,7 @@ enum class FanMode { FanIn, FanOut };
 struct Fan {
     explicit Fan(torch::Tensor& tensor) {
         const auto dimensions = tensor.ndimension();
-        AT_CHECK(
+        TORCH_CHECK(
             dimensions >= 2,
             "Fan in and fan out can not be computed for tensor with fewer than 2 dimensions");
         if (dimensions == 2) {
