@@ -19,12 +19,6 @@ namespace TorchSharp.NN
             Torch.CheckForErrors ();
             return new TorchTensor (res);
         }
-    }
-    public static partial class Modules
-    {
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_conv2dModule (long inputChannel, long outputChannel, long kernelSize, long stride, long padding);
-
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_conv2d_load_module(string location);
 
@@ -37,15 +31,17 @@ namespace TorchSharp.NN
 
             return new Conv2D(THSNN_conv2d_load_module(modelPath));
         }
+    }
+    public static partial class Modules
+    {
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_conv2dModule (long inputChannel, long outputChannel, long kernelSize, long stride, long padding);
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_conv2DModuleApply(Module.HType module, IntPtr tensor);
-
-        public override TorchTensor Forward(TorchTensor tensor)
+        static public Conv2D Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
-            var res = THSNN_conv2dModule (inputChannel, outputChannel, kernelSize, stride, padding);
+            var handle = THSNN_conv2dModule (inputChannel, outputChannel, kernelSize, stride, padding);
             Torch.CheckForErrors ();
-            return new Conv2D (res);
+            return new Conv2D (handle);
         }
     }
     public static partial class Functions

@@ -102,113 +102,13 @@ namespace TorchSharp.NN
                 handle.SetHandleAsInvalid ();
             }
         }
-    }
 
-    public partial class Module
-    {
         public static Module Load(String location)
         {
             throw new NotImplementedException();
         }
 
-        static public Sequential Sequential(params Module[] modules)
-        {
-            return new Sequential(modules);
-        }
 
-        [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_train (HType module);
-
-        public virtual void Train ()
-        {
-            THSNN_train (handle);
-            Torch.CheckForErrors ();
-        }
-
-        [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_eval (HType module);
-
-        public virtual void Eval ()
-        {
-            THSNN_eval (handle);
-            Torch.CheckForErrors ();
-        }
-
-        [DllImport ("LibTorchSharp")]
-        private static extern bool THSNN_is_training (HType module);
-
-        public bool IsTraining ()
-        {
-            var res = THSNN_is_training (handle);
-            Torch.CheckForErrors ();
-            return res;
-        }
-
-        [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_moduleZeroGrad (HType module);
-
-        public virtual void ZeroGrad ()
-        {
-            THSNN_moduleZeroGrad (handle);
-            Torch.CheckForErrors ();
-        }
-
-        [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_get_named_parameters (HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-
-        static public TorchTensor AvgPool2D(TorchTensor x, long[] kernelSize, long[] stride = null)
-        {
-            using (var m = new AvgPool2D(kernelSize, stride))
-            {
-                return m.Forward(x);
-            }
-        }
-
-        static public TorchTensor AdaptiveAvgPool2D(TorchTensor x, params long[] outputSize)
-        {
-            using (var a = new AdaptiveAvgPool2D(outputSize))
-            {
-                return a.Forward(x);
-            }
-        }
-
-        static public LogSoftMax LogSoftMax(long dimension)
-        {
-            return new LogSoftMax(dimension);
-        }
-
-        static public TorchTensor LogSoftMax(TorchTensor x, long dimension)
-        {
-            using (var l = new LogSoftMax(dimension))
-            {
-                return l.Forward(x);
-            }
-        }
-
-        static public Dropout Dropout(bool isTraining, double probability = 0.5)
-        {
-            return new Dropout(isTraining, probability);
-        }
-
-        static public TorchTensor Dropout(TorchTensor x, bool isTraining, double probability = 0.5)
-        {
-            using (var d = new Dropout(isTraining, probability))
-            {
-                return d.Forward(x);
-            }
-        }
-
-        static public TorchTensor FeatureDropout(TorchTensor x)
-        {
-            using (var f = new FeatureDropout())
-            {
-                return f.Forward(x);
-            }
-        }
-    }
-
-    public abstract partial class Module : IDisposable
-    {
         public abstract TorchTensor Forward(TorchTensor input);
 
         public virtual void Save(String location)

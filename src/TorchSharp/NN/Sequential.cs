@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+using static TorchSharp.NN.Modules;
 
 namespace TorchSharp.NN
 {
@@ -80,7 +81,7 @@ namespace TorchSharp.NN
                 }
             }
 
-            return new Sequential(modules);
+            return Sequential(modules.ToArray());
         }
 
         public override void ZeroGrad()
