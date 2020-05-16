@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class ReLU : Module
     {
-        internal ReLU (IntPtr handle) : base (handle) { }
+        internal ReLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
@@ -31,13 +31,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_ReLU_ctor (bool inplace);
+        extern static IntPtr THSNN_ReLU_ctor (bool inplace, out IntPtr pBoxedModule);
 
         static public ReLU Relu (bool inPlace = false)
         {
-            var handle = THSNN_ReLU_ctor (inPlace);
+            var handle = THSNN_ReLU_ctor (inPlace, out var boxedHandle);
             Torch.CheckForErrors ();
-            return new ReLU (handle);
+            return new ReLU (handle, boxedHandle);
         }
     }
     public static partial class Functions

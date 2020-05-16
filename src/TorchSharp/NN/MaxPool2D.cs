@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class MaxPool2D : Module
     {
-        internal MaxPool2D (IntPtr handle) : base (handle)
+        internal MaxPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -27,15 +27,15 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_MaxPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength);
+        extern static IntPtr THSNN_MaxPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
 
         static public MaxPool2D MaxPool2D (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
-                    var handle = THSNN_MaxPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length));
+                    var handle = THSNN_MaxPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                     Torch.CheckForErrors ();
-                    return new MaxPool2D (handle);
+                    return new MaxPool2D (handle, boxedHandle);
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class LogSoftMax : Module
     {
-        internal LogSoftMax (IntPtr handle) : base (handle)
+        internal LogSoftMax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -27,13 +27,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_LogSoftMax_ctor (long dimension);
+        extern static IntPtr THSNN_LogSoftMax_ctor (long dimension, out IntPtr pBoxedModule);
 
         static public LogSoftMax LogSoftMax (long dimension)
         {
-            var handle = THSNN_LogSoftMax_ctor (dimension);
+            var handle = THSNN_LogSoftMax_ctor (dimension, out var boxedHandle);
             Torch.CheckForErrors ();
-            return new LogSoftMax (handle);
+            return new LogSoftMax (handle, boxedHandle);
         }
     }
 

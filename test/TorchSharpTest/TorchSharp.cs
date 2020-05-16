@@ -741,7 +741,7 @@ namespace TorchSharp.Test
             Assert.False(x.IsGradRequired);
         }
 
-        private class CondModel : NN.Module
+        private class CondModel : CustomModule
         {
             private Linear fb = Linear(1000, 100);
             private Linear fbT1 = Linear(100, 10);
@@ -758,7 +758,7 @@ namespace TorchSharp.Test
                 RegisterModule ("fbF2", fbF2);
             }
 
-            public TorchTensor Forward(TorchTensor input)
+            public override TorchTensor Forward(TorchTensor input)
             {
                 using (var x = fb.Forward(input))
                     if (_isTrue)
@@ -1135,14 +1135,14 @@ namespace TorchSharp.Test
             Assert.Equal(1000, param.Shape[1]);
         }
 
-        private class TestModule : NN.Module
+        private class TestModule : CustomModule
         {
             public TestModule(string name, TorchTensor tensor, bool withGrad)
-                : base(new NN.Parameter(name, tensor, withGrad))
+                : base(new Parameter(name, tensor, withGrad))
             {
             }
 
-            public TorchTensor Forward(TorchTensor input)
+            public override TorchTensor Forward(TorchTensor input)
             {
                 throw new NotImplementedException();
             }

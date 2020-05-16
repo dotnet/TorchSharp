@@ -10,9 +10,12 @@ extern thread_local char *torch_last_err;
 
 typedef torch::Tensor *Tensor;
 typedef torch::Scalar *Scalar;
-typedef std::shared_ptr<torch::nn::Module> * NNModule;
+typedef std::shared_ptr<torch::nn::Module>* NNModule;
+typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
+typedef std::shared_ptr<torch::nn::SequentialImpl> *NNSequential;
+//typedef std::shared_ptr<torch::nn::SequentialImpl>* NNSequential;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
-typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
+//typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
 //typedef std::shared_ptr<c10::Type> * JITType;
 //typedef std::shared_ptr<torch::jit::DimensionedTensorType>* JITDimensionedTensorType;
 
@@ -26,14 +29,14 @@ typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
       torch_last_err = strdup(e.what()); \
   }
 
-#define CATCH_STMT(ty, stmt) \
+#define CATCH_RETURN_RES(ty, stmt) \
     ty res; \
     CATCH(  \
         stmt;  \
     );  \
     return res;
 
-#define CATCH_RETURN(ty, expr) CATCH_STMT(ty, res = expr)
+#define CATCH_RETURN(ty, expr) CATCH_RETURN_RES(ty, res = expr)
 
 #define CATCH_RETURN_TENSOR(expr) \
     at::Tensor res; \

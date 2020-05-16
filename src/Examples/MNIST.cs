@@ -43,12 +43,12 @@ namespace TorchSharp.Examples
             }
         }
 
-        private class Model : NN.Module
+        private class Model : CustomModule
         {
-            private NN.Conv2D conv1 = Conv2D(1, 10, 5);
-            private NN.Conv2D conv2 = Conv2D(10, 20, 5);
-            private NN.Linear fc1 = Linear(320, 50);
-            private NN.Linear fc2 = Linear(50, 10);
+            private Conv2D conv1 = Conv2D(1, 10, 5);
+            private Conv2D conv2 = Conv2D(10, 20, 5);
+            private Linear fc1 = Linear(320, 50);
+            private Linear fc2 = Linear(50, 10);
 
             public Model()
             {
@@ -58,7 +58,7 @@ namespace TorchSharp.Examples
                 RegisterModule("lin2", fc2);
             }
 
-            public TorchTensor Forward(TorchTensor input)
+            public override TorchTensor Forward(TorchTensor input)
             {
                 using (var l11 = conv1.Forward(input))
                 using (var l12 = MaxPool2D (l11, kernelSize: new long[]{ 2 }))

@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class AdaptiveAvgPool2D : Module
     {
-        internal AdaptiveAvgPool2D (IntPtr handle) : base (handle)
+        internal AdaptiveAvgPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -27,15 +27,15 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_AdaptiveAvgPool2d_ctor (IntPtr psizes, int length);
+        extern static IntPtr THSNN_AdaptiveAvgPool2d_ctor (IntPtr psizes, int length, out IntPtr pBoxedModule);
 
         static public AdaptiveAvgPool2D AdaptiveAvgPool2D (long[] kernelSize)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize) {
-                    var handle = THSNN_AdaptiveAvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length);
+                    var handle = THSNN_AdaptiveAvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, out var boxedHandle);
                     Torch.CheckForErrors ();
-                    return new AdaptiveAvgPool2D (handle);
+                    return new AdaptiveAvgPool2D (handle, boxedHandle);
                 }
             }
         }

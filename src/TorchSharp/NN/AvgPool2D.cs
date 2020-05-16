@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class AvgPool2D : Module
     {
-        internal AvgPool2D (IntPtr handle) : base (handle)
+        internal AvgPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -27,15 +27,15 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_AvgPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength);
+        extern static IntPtr THSNN_AvgPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
 
         static public AvgPool2D AvgPool2D (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
-                    var handle = THSNN_AvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length));
+                    var handle = THSNN_AvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                     Torch.CheckForErrors ();
-                    return new AvgPool2D (handle);
+                    return new AvgPool2D (handle, boxedHandle);
                 }
             }
         }

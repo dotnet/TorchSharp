@@ -47,13 +47,13 @@ namespace TorchSharp.Examples
             }
         }
 
-        private class Model : NN.Module
+        private class Model : CustomModule
         {
-            private readonly NN.Sequential features;
-            private readonly NN.AdaptiveAvgPool2D avgPool;
-            private readonly NN.Sequential classifier;
+            private readonly Sequential features;
+            private readonly AdaptiveAvgPool2D avgPool;
+            private readonly Sequential classifier;
 
-            public Model(int numClasses)
+            public Model(int numClasses) 
             {
                 features = Sequential(
                     ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),
@@ -87,7 +87,7 @@ namespace TorchSharp.Examples
                 RegisterModule ("classify", classifier);
             }
 
-            public TorchTensor Forward(TorchTensor input)
+            public override TorchTensor Forward(TorchTensor input)
             {
                 using (var f = features.Forward(input))
                 using (var avg = avgPool.Forward(f))

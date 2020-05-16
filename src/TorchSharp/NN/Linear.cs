@@ -9,13 +9,13 @@ namespace TorchSharp.NN
 {
     public class Linear : Module
     {
-        internal Linear (IntPtr handle) : base (handle) { }
+        internal Linear (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         public new static Linear Load (String modelPath)
         {
             var res = Module.Load (modelPath);
             Torch.CheckForErrors ();
-            return new Linear (res.handle.DangerousGetHandle());
+            return new Linear (res.handle.DangerousGetHandle(), IntPtr.Zero);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -63,13 +63,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Linear_ctor (long input_size, long output_size, bool bias);
+        private static extern IntPtr THSNN_Linear_ctor (long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
 
         static public Linear Linear (long inputSize, long outputSize, bool hasBias = false)
         {
-            var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias);
+            var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
             Torch.CheckForErrors ();
-            return new Linear (res);
+            return new Linear (res, boxedHandle);
         }
     }
     public static partial class Functions

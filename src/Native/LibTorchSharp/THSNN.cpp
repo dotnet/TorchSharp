@@ -3,285 +3,407 @@
 
 #include <torch/nn/init.h>
 
-// Wrapper class used to enable the addition of parameters.
-class ModuleWrapper : torch::nn::Module
-{
-    public :
-        ModuleWrapper(
-            const char ** names, 
-            at::Tensor ** parameters, 
-            const bool * require_grad, const int length)
-            : torch::nn::Module("Module")
-        {
-            for (int i = 0; i < length; i++)
-            {
-                register_parameter(names[i], *parameters[i], require_grad[i]);
-            }
-        }
-};
-
-NNModule THSNN_new_module(const char** names, at::Tensor** parameters, const bool* require_grad, const int length)
-{
-	NNModule res;
-	CATCH(
-		torch::nn::Module * module = (torch::nn::Module*)new ModuleWrapper(names, parameters, require_grad, length);
-		res = new std::shared_ptr<torch::nn::Module>(module);
-	);
-	return res;
-}
 
 void THSNN_Module_save(const NNModule module, const char* location)
 {
-	CATCH(
-		auto output = torch::serialize::OutputArchive();
+    CATCH(
+        auto output = torch::serialize::OutputArchive();
 
-		output.save_to(location);
-		(*module)->save(output);
-	);
+        output.save_to(location);
+        (*module)->save(output);
+    );
 }
+
+//NNModule THSNN_AnyModule_get(const NNAnyModule module)
+//{
+//	return new std::shared_ptr< torch::nn::Module>(&( (*module)->get<torch::nn::Module>()));
+//}
 
 NNModule THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule)
 {
-	CATCH_STMT(NNModule,
-		res = new std::shared_ptr<torch::nn::Module>((*module)->register_module(name, *submodule));
-	);
+    CATCH_RETURN_RES(NNModule,
+        res = new std::shared_ptr<torch::nn::Module>((*module)->register_module(name, *submodule));
+    );
 }
 
 NNModule THSNN_Module_load(const char* location, const char* name)
 {
-	CATCH_STMT(NNModule,
-		auto module = new torch::nn::Module();
-		auto input = torch::serialize::InputArchive();
+    CATCH_RETURN_RES(NNModule,
+        auto module = new torch::nn::Module();
+        auto input = torch::serialize::InputArchive();
 
-		input.load_from(location);
-		module->load(input);
-		res = new std::shared_ptr<torch::nn::Module>(module);
-	);
+        input.load_from(location);
+        module->load(input);
+        res = new std::shared_ptr<torch::nn::Module>(module);
+    );
 }
 
 int THSNN_Module_has_parameter(const NNModule module, const char* name)
 {
-	CATCH_RETURN(int, (*module)->named_parameters().contains(name));
+    CATCH_RETURN(int, (*module)->named_parameters().contains(name));
 }
 
 Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
 {
-	CATCH_RETURN_TENSOR(*(*module)->named_parameters().find(name));
+    CATCH_RETURN_TENSOR(*(*module)->named_parameters().find(name));
 }
 
 void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length))
 {
-	auto parameters = (*module)->named_parameters();
-	Tensor* result1 = allocator1(parameters.size());
+    auto parameters = (*module)->named_parameters();
+    Tensor* result1 = allocator1(parameters.size());
 
-	for (size_t i = 0; i < parameters.size(); i++)
-	{
-		result1[i] = new torch::Tensor(parameters[i].value());
-	}
+    for (size_t i = 0; i < parameters.size(); i++)
+    {
+        result1[i] = new torch::Tensor(parameters[i].value());
+    }
 }
 
 void THSNN_Module_get_named_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
 {
-	auto parameters = (*module)->named_parameters();
-	Tensor* result1 = allocator1(parameters.size());
-	const char** result2 = allocator2(parameters.size());
+    auto parameters = (*module)->named_parameters();
+    Tensor* result1 = allocator1(parameters.size());
+    const char** result2 = allocator2(parameters.size());
 
-	for (size_t i = 0; i < parameters.size(); i++)
-	{
-		result1[i] = new torch::Tensor(parameters[i].value());
-		result2[i] = make_sharable_string(parameters[i].key());
-	}
+    for (size_t i = 0; i < parameters.size(); i++)
+    {
+        result1[i] = new torch::Tensor(parameters[i].value());
+        result2[i] = make_sharable_string(parameters[i].key());
+    }
 }
 
 int THSNN_Module_is_training(NNModule module)
 {
-	return (*module)->is_training();
+    return (*module)->is_training();
 }
 
 void THSNN_Module_train(NNModule module)
 {
-	(*module)->train();
+    (*module)->train();
 }
 
 void THSNN_Module_eval(NNModule module)
 {
-	(*module)->eval();
+    (*module)->eval();
 }
 
 long THSNN_Module_children_size(const NNModule module)
 {
-	return (*module)->children().size();
+    return (*module)->children().size();
 }
 
 const char* THSNN_Module_child_name(const NNModule module, const int index)
 {
-	return make_sharable_string((*module)->children()[index]->name());
+    return make_sharable_string((*module)->children()[index]->name());
 }
 
 const char* THSNN_Module_name(const NNModule module)
 {
-	return make_sharable_string((*module)->name());
+    return make_sharable_string((*module)->name());
 }
 
 
 void THSNN_Module_zero_grad(const NNModule module)
 {
-	(*module)->zero_grad();
+    (*module)->zero_grad();
 }
 
-// API
-
-NNModule THSNN_ReLU_ctor(bool inplace)
+// Wrapper class used to enable .NET definitions ot new modules describing parameters and with delegates to implement forward function
+class CustomModule : public torch::nn::Module
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::ReLUOptions(inplace);
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::ReLU(options).ptr());
-	);
+public:
+    CustomModule(
+        const char** names,
+        at::Tensor** parameters,
+        const bool* require_grad,
+        const int length,
+        Tensor(*forward)(Tensor))
+        : torch::nn::Module("Module"), _forward(forward)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            register_parameter(names[i], *parameters[i], require_grad[i]);
+        }
+
+    }
+
+    Tensor(*_forward)(Tensor);
+
+    at::Tensor forward(at::Tensor input) {
+        return *(*_forward)(&input);
+    }
+
+};
+
+NNModule THSNN_custom_module(const char** names,
+    at::Tensor** parameters,
+    const bool* require_grad,
+    const int length,
+    Tensor(*forward)(Tensor),
+    NNAnyModule *outAsAnyModule)
+{
+    //CATCH_RETURN_RES(NNModule,
+        auto mod = new CustomModule(names, parameters, require_grad, length, forward);
+
+        // Also write a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto modShared = new std::shared_ptr<CustomModule>(mod);
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<CustomModule>(*modShared));
+            //*outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        return new std::shared_ptr<torch::nn::Module>((torch::nn::Module*)mod);
+    //);
 }
 
-Tensor THSNN_ReLU_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_ReLU_ctor(bool inplace,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::ReLU>()->forward(*tensor));
+    //CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::ReLUOptions(inplace);
+        auto mod = torch::nn::ReLU(options).ptr();
+
+        // Also write a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::ReLUImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+
+        NNModule res = new std::shared_ptr<torch::nn::Module>(mod);
+        return res;
+    //);
 }
 
-NNModule THSNN_Dropout_ctor(double probability)
+Tensor THSNN_ReLU_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::DropoutOptions(probability);
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::Dropout(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::ReLU>()->forward(*tensor));
 }
 
-Tensor THSNN_Dropout_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_Dropout_ctor(double probability,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Dropout>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::DropoutOptions(probability);
+        auto mod = torch::nn::Dropout(options).ptr();
+
+        // Also write a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        //if (outAsAnyModule != NULL)
+        //    *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(new torch::nn::AnyModule(*mod));
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_FeatureAlphaDropout_ctor(double probability)
+Tensor THSNN_Dropout_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::FeatureAlphaDropoutOptions(probability);
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::FeatureAlphaDropout(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Dropout>()->forward(*tensor));
 }
 
-Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_FeatureAlphaDropout_ctor(double probability,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::FeatureAlphaDropoutOptions(probability);
+        auto mod = torch::nn::FeatureAlphaDropout(options).ptr();
+        // Also write a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        //if (outAsAnyModule != NULL)
+        //    *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(new torch::nn::AnyModule(*mod));
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_LogSoftMax_ctor(int64_t dim)
+Tensor THSNN_FeatureAlphaDropout_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::LogSoftmaxOptions(dim);
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::LogSoftmax(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
 }
 
-Tensor THSNN_LogSoftMax_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_LogSoftMax_ctor(int64_t dim,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::LogSoftmax>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::LogSoftmaxOptions(dim);
+        auto mod = torch::nn::LogSoftmax(options).ptr();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::LogSoftmaxImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength)
+Tensor THSNN_LogSoftMax_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-	    if (stride)
-		    options = options.stride(at::ArrayRef<int64_t>(stride, strideLength));
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::AvgPool2d(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::LogSoftmax>()->forward(*tensor));
 }
 
-Tensor THSNN_AvgPool2d_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::AvgPool2d>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        if (stride)
+            options = options.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        auto mod = torch::nn::AvgPool2d(options).ptr();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::AvgPool2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength)
+Tensor THSNN_AvgPool2d_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::AdaptiveAvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::AdaptiveAvgPool2d(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::AvgPool2d>()->forward(*tensor));
 }
 
-Tensor THSNN_AdaptiveAvgPool2d_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::AdaptiveAvgPool2d>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::AdaptiveAvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto mod = torch::nn::AdaptiveAvgPool2d(options).ptr();
+        //if (outAsAnyModule != NULL)
+        //    *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(new torch::nn::AnyModule(*mod));
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength)
+Tensor THSNN_AdaptiveAvgPool2d_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::MaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-	    if (stride)
-		    options = options.stride(at::ArrayRef<int64_t>(stride, strideLength));
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::MaxPool2d(options).ptr());
-	)
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::AdaptiveAvgPool2d>()->forward(*tensor));
 }
 
-Tensor THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::MaxPool2d>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::MaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto mod = torch::nn::MaxPool2d(options).ptr();
+        if (stride)
+            options = options.stride(at::ArrayRef<int64_t>(stride, strideLength));
+
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::MaxPool2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    )
 }
 
-NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias)
+Tensor THSNN_MaxPool2d_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_STMT(NNModule,
-		auto options = torch::nn::LinearOptions(input_size, output_size).bias(bias);
-	    res = new std::shared_ptr<torch::nn::Module>(torch::nn::Linear(options).ptr());
-	);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::MaxPool2d>()->forward(*tensor));
 }
 
-Tensor THSNN_Linear_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::LinearOptions(input_size, output_size).bias(bias);
+        auto mod = torch::nn::Linear(options).ptr();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::LinearImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-Tensor THSNN_Linear_bias(const NNModule module)
+Tensor THSNN_Linear_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->bias);
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->forward(*tensor));
 }
 
-void THSNN_Linear_set_bias(const NNModule module, const Tensor bias)
+Tensor THSNN_Linear_bias(const NNAnyModule module)
 {
-	CATCH(
-		(*module)->as<torch::nn::Linear>()->bias = *bias;
-	)
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->bias);
 }
 
-Tensor THSNN_Linear_weight(const NNModule module)
+void THSNN_Linear_set_bias(const NNAnyModule module, const Tensor bias)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->weight);
+    CATCH(
+        (*module)->get<torch::nn::Linear>()->bias = *bias;
+    )
 }
 
-void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
+Tensor THSNN_Linear_weight(const NNAnyModule module)
 {
-	CATCH(
-		(*module)->as<torch::nn::Linear>()->weight = *weight;
-	)
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->weight);
 }
 
-NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding)
+void THSNN_Linear_set_weight(const NNAnyModule module, const Tensor weight)
 {
-	auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
-	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::Conv2d(options).ptr()));
+    CATCH(
+        (*module)->get<torch::nn::Linear>()->weight = *weight;
+    )
 }
 
-Tensor THSNN_Conv2d_forward(const NNModule module, const Tensor tensor)
+NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelSize, const int64_t stride, const int64_t padding,
+    NNAnyModule* outAsAnyModule)
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Conv2d>()->forward(*tensor));
+    CATCH_RETURN_RES(NNModule,
+        auto options = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
+        auto mod = torch::nn::Conv2d(options).ptr();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = new torch::nn::AnyModule(torch::nn::ModuleHolder<torch::nn::Conv2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
-NNModule THSNN_Sequential_ctor()
+Tensor THSNN_Conv2d_forward(const NNAnyModule module, const Tensor tensor)
 {
-	CATCH_RETURN(NNModule, new std::shared_ptr<torch::nn::Module>(torch::nn::Sequential().ptr()));
+    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Conv2d>()->forward(*tensor));
 }
 
-Tensor THSNN_Sequential_forward(const NNModule module, const Tensor tensor)
+NNSequential THSNN_Sequential_ctor()
 {
-	CATCH_RETURN_TENSOR((*module)->as<torch::nn::Sequential>()->forward(*tensor));
+    //std::vector<torch::nn::NamedAnyModule> modules;
+    //for (int i = 0; i < length; i++)
+    //{
+    //	modules.push_back(*(*submodules[i])->as<torch::nn::NamedAnyModule>());
+    //}
+
+    //auto sm = torch::nn::Sequential(std::begin(modules), std::end(modules)).ptr();
+    //return new std::shared_ptr<torch::nn::AnyModule>(sm);
+    return new std::shared_ptr<torch::nn::SequentialImpl>(torch::nn::Sequential().ptr());
+}
+
+void THSNN_Sequential_push_back(const NNSequential module, const char *name, const NNAnyModule submodule)
+{
+    CATCH (
+        (*module)->push_back(name, *(*submodule));
+    )
+}
+
+Tensor THSNN_Sequential_forward(const NNSequential module, const Tensor tensor)
+{
+    CATCH_RETURN_TENSOR((*module)->forward(tensor));
 }
 
 void THSNN_Optimizer_zeroGrad(const Optimizer optimizer)
@@ -302,22 +424,22 @@ void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocato
 
 Tensor THSTorch_binary_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction)
 {
-	CATCH_RETURN_TENSOR(torch::binary_cross_entropy(*input, *target, (weight == NULL ? at::Tensor() : *weight), reduction));
+    CATCH_RETURN_TENSOR(torch::binary_cross_entropy(*input, *target, (weight == NULL ? at::Tensor() : *weight), reduction));
 }
 
 Tensor THSTorch_mse_loss(const Tensor input, const Tensor target, const int64_t reduction)
 {
-	CATCH_RETURN_TENSOR(torch::mse_loss(*input, *target, reduction));
+    CATCH_RETURN_TENSOR(torch::mse_loss(*input, *target, reduction));
 }
 
 Tensor THSTorch_nll_loss(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction)
 {
-	CATCH_RETURN_TENSOR(torch::nll_loss(*input, *target, (weight == NULL ? at::Tensor() : *weight), reduction));
+    CATCH_RETURN_TENSOR(torch::nll_loss(*input, *target, (weight == NULL ? at::Tensor() : *weight), reduction));
 }
 
 Tensor THSTorch_poisson_nll_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction)
 {
-	CATCH_RETURN_TENSOR(torch::poisson_nll_loss(*input, *target, logInput, full, eps, reduction));
+    CATCH_RETURN_TENSOR(torch::poisson_nll_loss(*input, *target, logInput, full, eps, reduction));
 }
 
 Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const double learnig_rate)
@@ -433,6 +555,11 @@ void THSNN_Optimizer_dispose(const Optimizer optimizer)
 }
 
 void THSNN_Module_dispose(const NNModule module)
+{
+    delete module;
+}
+
+void THSNN_AnyModule_dispose(const NNAnyModule module)
 {
     delete module;
 }

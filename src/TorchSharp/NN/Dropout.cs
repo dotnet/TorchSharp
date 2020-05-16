@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class Dropout : Module
     {
-        internal Dropout (IntPtr handle) : base (handle) { }
+        internal Dropout (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Dropout_forward (Module.HType module, IntPtr tensor);
@@ -25,13 +25,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Dropout_ctor (double probability);
+        extern static IntPtr THSNN_Dropout_ctor (double probability, out IntPtr pBoxedModule);
 
         static public Dropout Dropout (double probability = 0.5)
         {
-            var handle = THSNN_Dropout_ctor (probability);
+            var handle = THSNN_Dropout_ctor (probability, out var boxedHandle);
             Torch.CheckForErrors ();
-            return new Dropout (handle);
+            return new Dropout (handle, boxedHandle);
         }
     }
 

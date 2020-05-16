@@ -10,7 +10,7 @@ namespace TorchSharp.NN
     /// </summary>
     public class FeatureAlphaDropout : Module
     {
-        internal FeatureAlphaDropout (IntPtr handle) : base (handle)
+        internal FeatureAlphaDropout (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -27,13 +27,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_FeatureAlphaDropout_ctor (double probability);
+        extern static IntPtr THSNN_FeatureAlphaDropout_ctor (double probability, out IntPtr pBoxedModule);
 
         static public FeatureAlphaDropout FeatureAlphaDropout (double probability = 0.5)
         {
-            var handle = THSNN_FeatureAlphaDropout_ctor (probability);
+            var handle = THSNN_FeatureAlphaDropout_ctor (probability, out var boxedHandle);
             Torch.CheckForErrors ();
-            return new FeatureAlphaDropout (handle);
+            return new FeatureAlphaDropout (handle, boxedHandle);
         }
     }
 

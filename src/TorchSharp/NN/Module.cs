@@ -46,32 +46,27 @@ namespace TorchSharp.NN
 
         internal HType handle;
 
-        internal Module (IntPtr handle)
+        /// Stores the AnyModule corresponding to this module.
+        internal HType boxedHandle;
+
+        internal HType BoxedHandle
+        {
+            get
+            {
+                if (boxedHandle.IsInvalid)
+                    throw new InvalidOperationException ("A Sequential or Loaded module may not be added to a Sequential");
+                return boxedHandle;
+            }
+        }
+        /// Get the AnyModule corresponding to this module, if any
+        internal Module BoxedModule => new Module (this.BoxedHandle.DangerousGetHandle (), this.BoxedHandle.DangerousGetHandle ());
+
+        internal Module (IntPtr handle, IntPtr boxedHandle)
         {
             this.handle = new HType (handle, true);
-            Debug.Assert (!this.handle.IsInvalid);
-        }
-
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_new_module (IntPtr names, IntPtr parameters, IntPtr with_grad, int length);
-
-        protected Module (params Parameter[] parameters)
-        {
-            var names = parameters.Select (p => Marshal.StringToHGlobalAnsi (p.Name)).ToArray ();
-            var @params = parameters.Select (p => p.Tensor.Handle).ToArray ();
-            var withGrads = parameters.Select (p => p.WithGrad).ToArray ();
-
-            var namesPinned = new PinnedArray<IntPtr> ();
-            var paramsPinned = new PinnedArray<IntPtr> ();
-            var wGradPinned = new PinnedArray<bool> ();
-
-            var nparray = namesPinned.CreateArray (names);
-            var pparray = paramsPinned.CreateArray (@params);
-            var gparray = wGradPinned.CreateArray (withGrads);
-
-            var res = THSNN_new_module (nparray, pparray, gparray, names.Length);
-            Torch.CheckForErrors ();
-            handle = new HType (res, true);
+            this.boxedHandle = new HType (boxedHandle, true);
+            //Debug.Assert (!this.handle.IsInvalid);
+            //Debug.Assert (!this.boxedHandle.IsInvalid);
         }
 
         ~Module ()
@@ -105,7 +100,7 @@ namespace TorchSharp.NN
         {
             var handle = THSNN_Module_load (location);
             Torch.CheckForErrors ();
-            return new Module (handle);
+            return new Module (handle, IntPtr.Zero);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -235,11 +230,10 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Module_register_module (HType module, string name, HType submodule);
 
-        public virtual Module RegisterModule (string name, Module submodule)
+        public virtual void RegisterModule (string name, Module submodule)
         {
-            var res= THSNN_Module_register_module (handle, name, submodule.handle);
+            var res = THSNN_Module_register_module (handle, name, submodule.handle);
             Torch.CheckForErrors ();
-            return new Module (res);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -273,4 +267,39 @@ namespace TorchSharp.NN
         }
     }
 
+
+    public abstract class CustomModule : Module
+    {
+        private delegate IntPtr ForwardFunctionC (IntPtr tensor);
+
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_custom_module (IntPtr names, IntPtr parameters, IntPtr require_grad, int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
+
+        protected CustomModule (params Parameter[] parameters) : base (IntPtr.Zero, IntPtr.Zero)
+        {
+            var names = parameters.Select (p => Marshal.StringToHGlobalAnsi (p.Name)).ToArray ();
+            var @params = parameters.Select (p => p.Tensor.Handle).ToArray ();
+            var withGrads = parameters.Select (p => p.WithGrad).ToArray ();
+
+            var namesPinned = new PinnedArray<IntPtr> ();
+            var paramsPinned = new PinnedArray<IntPtr> ();
+            var wGradPinned = new PinnedArray<bool> ();
+
+            var nparray = namesPinned.CreateArray (names);
+            var pparray = paramsPinned.CreateArray (@params);
+            var gparray = wGradPinned.CreateArray (withGrads);
+
+            ForwardFunctionC forwardNative = t => (Forward (new TorchTensor (t)).Handle);
+            var res = THSNN_custom_module (nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
+            Torch.CheckForErrors ();
+            this.handle = new HType (res, true);
+            this.forwardNative = forwardNative;
+            this.boxedHandle = new HType(boxedHandle, true);
+        }
+
+        /// Keeps the callback delegate alive
+        private ForwardFunctionC forwardNative;
+
+        abstract public TorchTensor Forward (TorchTensor t);
+    }
 }
