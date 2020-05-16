@@ -32,7 +32,7 @@ Tensor THSTensor_zeros(
         .device(device)
         .requires_grad(requires_grad);
 
-    CATCH_RETURN_TENSOR(torch::zeros(at::IntList(sizes, length), options));
+    CATCH_RETURN_TENSOR(torch::zeros(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 Tensor THSTensor_ones(
@@ -47,7 +47,7 @@ Tensor THSTensor_ones(
         .device(device)
         .requires_grad(requires_grad);
 
-    CATCH_RETURN_TENSOR(torch::ones(at::IntList(sizes, length), options));
+    CATCH_RETURN_TENSOR(torch::ones(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 Tensor THSTensor_empty(
@@ -62,7 +62,7 @@ Tensor THSTensor_empty(
         .device(device)
         .requires_grad(requires_grad);
 
-    CATCH_RETURN_TENSOR(torch::empty(at::IntList(sizes, length), options));
+    CATCH_RETURN_TENSOR(torch::empty(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 Tensor THSTensor_new(
@@ -78,7 +78,7 @@ Tensor THSTensor_new(
         .is_variable(true)
         .requires_grad(requires_grad);
 
-    CATCH_RETURN_TENSOR(torch::from_blob(data, at::IntList(sizes, szlength), deleter, options));
+    CATCH_RETURN_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
 Tensor THSTensor_newLong(
@@ -92,7 +92,7 @@ Tensor THSTensor_newLong(
         .dtype(at::ScalarType(at::kLong))
         .is_variable(true)
         .requires_grad(requires_grad);
-    CATCH_RETURN_TENSOR(torch::from_blob(data, at::IntList(sizes, szlength), deleter, options));
+    CATCH_RETURN_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
 Tensor THSTensor_newSByteScalar(int8_t data, bool requires_grad)
@@ -165,7 +165,7 @@ Tensor THSTensor_rand(
             .device(device)
             .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::rand(at::IntList(sizes, length), options));
+        tensor = new torch::Tensor(torch::rand(at:: ArrayRef<int64_t>(sizes, length), options));
     )
     return tensor;
 }
@@ -185,7 +185,7 @@ Tensor THSTensor_randint(
         .device(device)
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randint(max, at::IntList(sizes, length), options));
+        tensor = new torch::Tensor(torch::randint(max, at::ArrayRef<int64_t>(sizes, length), options));
     )
     return tensor;
 }
@@ -202,7 +202,7 @@ Tensor THSTensor_randn(
         .device(device)
         .requires_grad(requires_grad);
 
-    CATCH_RETURN_TENSOR(torch::randn(at::IntList(sizes, length), options));
+    CATCH_RETURN_TENSOR(torch::randn(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 Tensor THSTensor_sparse(
@@ -222,7 +222,7 @@ Tensor THSTensor_sparse(
     auto i = torch::autograd::as_variable_ref(*indices).data();
     auto v = torch::autograd::as_variable_ref(*values).data();
 
-    CATCH_RETURN_TENSOR(torch::sparse_coo_tensor(i, v, at::IntList(sizes, length), options));
+    CATCH_RETURN_TENSOR(torch::sparse_coo_tensor(i, v, at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 int64_t THSTensor_ndimension(const Tensor tensor)
@@ -417,7 +417,7 @@ Tensor THSTensor_squeeze(Tensor tensor, int64_t dimension)
 
 Tensor THSTensor_reshape(const Tensor tensor, const int64_t * shape, const int length)
 {
-    CATCH_RETURN_TENSOR(tensor->reshape(at::IntList(shape, length)));
+    CATCH_RETURN_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
 
 Tensor THSTensor_stack(const Tensor* tensors, const int length, const int64_t dim)
@@ -442,7 +442,7 @@ Tensor THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64
 
 Tensor THSTensor_view(const Tensor tensor, const int64_t * shape, const int length)
 {
-    CATCH_RETURN_TENSOR(tensor->view(at::IntList(shape, length)));
+    CATCH_RETURN_TENSOR(tensor->view(at::ArrayRef<int64_t>(shape, length)));
 }
 
 Tensor THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha)
@@ -1047,9 +1047,9 @@ Tensor THSTensor_sum1(const Tensor tensor, const int64_t * dimensions, int lengt
 {
     CATCH_RETURN_TENSOR(
         has_type ?
-            tensor->sum(at::IntList(dimensions, length), keep_dimension, (c10::ScalarType)dtype)
+            tensor->sum(at::ArrayRef<int64_t>(dimensions, length), keep_dimension, (c10::ScalarType)dtype)
         :
-            tensor->sum(at::IntList(dimensions, length), keep_dimension))
+            tensor->sum(at::ArrayRef<int64_t>(dimensions, length), keep_dimension))
 }
 
 Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dimension)
@@ -1059,12 +1059,12 @@ Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dimension)
 
 Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit)
 {
-    CATCH_RETURN_TENSOR(tensor->expand(at::IntList(sizes, length), implicit));
+    CATCH_RETURN_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
 
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
 {
-    CATCH_RETURN_TENSOR(tensor->flip(at::IntList(sizes, length)));
+    CATCH_RETURN_TENSOR(tensor->flip(at::ArrayRef<int64_t>(sizes, length)));
 }
 
 Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length)
@@ -1096,7 +1096,7 @@ void THSTensor_split_with_sizes(
     const int64_t dimension)
 {
     CATCH(
-        auto res = tensor->split_with_sizes(at::IntList(sizes, length), dimension);
+        auto res = tensor->split_with_sizes(at::ArrayRef<int64_t>(sizes, length), dimension);
         const size_t sz = res.size();
         Tensor* result = allocator(sz);
         for (size_t i = 0; i < sz; i++)
@@ -1114,10 +1114,10 @@ Tensor THSTensor_maxpool1d(
 {
     CATCH_RETURN_TENSOR(torch::max_pool1d(
         *tensor,
-        at::IntList(kernelSize, kernelSizeLength),
-        at::IntList(stride, strideLength),
-        at::IntList(padding, paddingLength),
-        at::IntList(dilation, dilationLength),
+        at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength),
+        at::ArrayRef<int64_t>(dilation, dilationLength),
         ceil_mode));
 }
 
@@ -1130,12 +1130,9 @@ Tensor THSTensor_maxpool2d(
     bool ceil_mode)
 {
     CATCH_RETURN_TENSOR(torch::max_pool2d(
-        *tensor,
-        at::IntList(kernelSize, kernelSizeLength),
-        at::IntList(stride, strideLength),
-        at::IntList(padding, paddingLength),
-        at::IntList(dilation, dilationLength),
-        ceil_mode));
+        *tensor, 
+        at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength)));
 }
 
 Tensor THSTensor_maxpool3d(
@@ -1148,10 +1145,10 @@ Tensor THSTensor_maxpool3d(
 {
     CATCH_RETURN_TENSOR(torch::max_pool3d(
             *tensor,
-            at::IntList(kernelSize, kernelSizeLength),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(dilation, dilationLength),
+            at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
             ceil_mode));
 }
 
@@ -1165,11 +1162,11 @@ Tensor THSTensor_conv_transpose1d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv_transpose1d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(outputPadding, outputPaddingLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(outputPadding, outputPaddingLength),
             groups,
-            at::IntList(dilation, dilationLength)));
+            at::ArrayRef<int64_t>(dilation, dilationLength)));
 }
 
 Tensor THSTensor_conv_transpose2d(
@@ -1181,11 +1178,11 @@ Tensor THSTensor_conv_transpose2d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv_transpose2d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(outputPadding, outputPaddingLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(outputPadding, outputPaddingLength),
             groups,
-            at::IntList(dilation, dilationLength)));
+            at::ArrayRef<int64_t>(dilation, dilationLength)));
 }
 
 Tensor THSTensor_conv_transpose3d(
@@ -1197,11 +1194,11 @@ Tensor THSTensor_conv_transpose3d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv_transpose3d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(outputPadding, outputPaddingLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(outputPadding, outputPaddingLength),
             groups,
-            at::IntList(dilation, dilationLength)));
+            at::ArrayRef<int64_t>(dilation, dilationLength)));
 }
 
 Tensor THSTensor_conv1d(
@@ -1214,9 +1211,9 @@ Tensor THSTensor_conv1d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv1d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(dilation, dilationLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
             groups));
 }
 
@@ -1230,9 +1227,9 @@ Tensor THSTensor_conv2d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv2d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(dilation, dilationLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
             groups));
 }
 
@@ -1246,9 +1243,9 @@ Tensor THSTensor_conv3d(
     int64_t groups)
 {
     CATCH_RETURN_TENSOR(torch::conv3d(*input, *weight, (bias ? *bias : at::Tensor()),
-            at::IntList(stride, strideLength),
-            at::IntList(padding, paddingLength),
-            at::IntList(dilation, dilationLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
             groups));
 }
 

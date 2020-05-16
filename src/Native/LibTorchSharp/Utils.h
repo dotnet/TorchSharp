@@ -14,8 +14,8 @@ typedef std::shared_ptr<torch::nn::Module> * NNModule;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
 typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
 typedef std::shared_ptr<c10::Type> * JITType;
-typedef std::shared_ptr<torch::jit::DynamicType> * JITDynamicType;
-typedef std::shared_ptr<torch::jit::TensorType> * JITTensorType;
+typedef std::shared_ptr<torch::jit::TensorType>* JITTensorType;
+typedef std::shared_ptr<torch::jit::DimensionedTensorType>* JITDimensionedTensorType;
 
 #define THS_API TH_API
 

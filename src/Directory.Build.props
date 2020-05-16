@@ -17,9 +17,9 @@
     because LibTorch itself is in release. -->
     <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).Release\Native</NativeAssetsBuiltPath>
 
-    <PackageRid Condition="'$(OS)' == 'Windows_NT'">win</PackageRid>
-    <PackageRid Condition="'$(OS)' != 'Windows_NT'">linux</PackageRid>
-    <PackageRid Condition="$([MSBuild]::IsOSPlatform('osx'))">osx</PackageRid>
+    <PackageRid Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">win</PackageRid>
+    <PackageRid Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">linux</PackageRid>
+    <PackageRid Condition="$([MSBuild]::IsOSPlatform('osx')) OR '$(AssumeOS)' == 'mac'">osx</PackageRid>
     <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
   </PropertyGroup>
 

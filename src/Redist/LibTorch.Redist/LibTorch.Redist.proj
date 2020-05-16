@@ -82,18 +82,6 @@
   </Target>
 
   <UsingTask TaskName="DownloadFilesFromUrl" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-  <Target Name="DownloadArchives" 
-          DependsOnTargets="PrepareArchives"
-          Inputs="$(MSBuildProjectFile)"
-          Outputs="@(LibtorchArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)')">
-    <MakeDir Directories="$(IntermediateOutputPath)" />
-    <ItemGroup>
-      <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
-      <_downloadFiles Include="@(LibtorchArchive);@(AdditionalDownloadFile)" Url="%(Identity)" DestinationFile="%(DownloadFile)" />
-    </ItemGroup>
-    <Message Importance="High" Text="Downloading '%(_downloadFiles.Url)' to '%(_downloadFiles.DestinationFile)'." />
-    <DownloadFilesFromUrl Items="@(_downloadFiles)" />
-  </Target>
 
   <!-- Download both libtorch and mkl-dnn -->
   <Target Name="DownloadArchives" 
@@ -105,8 +93,9 @@
       <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
       <_downloadFiles Include="@(LibtorchArchive);@(AdditionalDownloadFile);@(MklDnnArchive)" Url="%(Identity)" DestinationFile="%(DownloadFile)" />
     </ItemGroup>
-    <Message Importance="High" Text="Downloading '%(_downloadFiles.Url)' to '%(_downloadFiles.DestinationFile)'." />
-    <DownloadFilesFromUrl Items="@(_downloadFiles)" />
+    <Message Importance="High" Text="Downloading '%(_downloadFiles.Url)' to '%(_downloadFiles.DestinationFile)'." Condition="!Exists('%(_downloadFiles.DestinationFile)')" />
+    <Message Importance="High" Text="Skipping download of '%(_downloadFiles.Url)' because  '%(_downloadFiles.DestinationFile)' exists." Condition="Exists('%(_downloadFiles.DestinationFile)')" />
+    <DownloadFilesFromUrl Items="@(_downloadFiles)"  Condition="!Exists('%(_downloadFiles.DestinationFile)')" />
   </Target>
   
   <UsingTask TaskName="GenerateChecksums" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
