@@ -75,7 +75,6 @@ Tensor THSTensor_new(
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .is_variable(true)
         .requires_grad(requires_grad);
 
     CATCH_RETURN_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
@@ -90,7 +89,6 @@ Tensor THSTensor_newLong(
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(at::kLong))
-        .is_variable(true)
         .requires_grad(requires_grad);
     CATCH_RETURN_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }

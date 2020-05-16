@@ -10,15 +10,16 @@ namespace TorchSharp.NN
     /// </summary>
     public class ReLU : Module
     {
-        internal ReLU (IntPtr handle, bool inPlace = false) : base (handle)
-        {
-            _inPlace = inPlace;
-        }
-        private readonly bool _inPlace;
+        internal ReLU (IntPtr handle) : base (handle) { }
 
-        public override TorchTensor Forward (TorchTensor tensor)
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
+
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            return _inPlace ? tensor.ReluInPlace () : tensor.Relu ();
+            var res = THSNN_ReLU_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
 
         public override string GetName ()
@@ -30,13 +31,13 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_reluModule ();
+        extern static IntPtr THSNN_ReLU_ctor (bool inplace);
 
         static public ReLU Relu (bool inPlace = false)
         {
-            var handle = THSNN_reluModule ();
+            var handle = THSNN_ReLU_ctor (inPlace);
             Torch.CheckForErrors ();
-            return new ReLU (handle, inPlace);
+            return new ReLU (handle);
         }
     }
     public static partial class Functions

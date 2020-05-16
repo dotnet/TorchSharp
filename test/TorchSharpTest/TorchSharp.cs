@@ -378,7 +378,6 @@ namespace TorchSharp.Test
         public void TestGetBiasInLinear()
         {
             var lin = Linear(1000, 100);
-            Assert.False(lin.WithBias);
             Assert.True(lin.Bias == null);
         }
 
@@ -386,9 +385,7 @@ namespace TorchSharp.Test
         public void TestSetGetBiasInLinear()
         {
             var lin = Linear(1000, 100, true);
-
-            var bias = FloatTensor.Ones(new long[] { 1000 });
-
+            var bias = FloatTensor.Ones (new long[] { 1000 });
             lin.Bias = bias;
 
             Assert.Equal(lin.Bias?.NumberOfElements, bias.NumberOfElements);
@@ -725,10 +722,10 @@ namespace TorchSharp.Test
 
         private class CondModel : NN.Module
         {
-            private NN.Module fb = Linear(1000, 100);
-            private NN.Module fbT1 = Linear(100, 10);
-            private NN.Module fbF1 = Linear(100, 50);
-            private NN.Module fbF2 = Linear(50, 10);
+            private Linear fb = Linear(1000, 100);
+            private Linear fbT1 = Linear(100, 10);
+            private Linear fbF1 = Linear(100, 50);
+            private Linear fbF2 = Linear(50, 10);
             private bool _isTrue = false;
 
             public CondModel(bool isTrue)
@@ -740,7 +737,7 @@ namespace TorchSharp.Test
                 RegisterModule(fbF2);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public TorchTensor Forward(TorchTensor input)
             {
                 using (var x = fb.Forward(input))
                     if (_isTrue)
@@ -845,6 +842,44 @@ namespace TorchSharp.Test
                     Assert.Equal(0, xdata[i + j]);
                 }
             }
+        }
+        [Fact]
+        public void TestSaveLoadLinear()
+        {
+            if (File.Exists (".model.ts")) File.Delete (".model.ts");
+            var linear = Linear(100, 10, true);
+            linear.Save(".model.ts");
+            var loadedLinear = NN.Linear.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loadedLinear);
+        }
+
+        [Fact]
+        public void TestSaveLoadConv2D()
+        {
+            if (File.Exists (".model.ts")) File.Delete (".model.ts");
+            var conv = Conv2D(100, 10, 5);
+            conv.Save(".model.ts");
+            var loaded = NN.Conv2D.Load(".model.ts");
+            File.Delete(".model.ts");
+            Assert.NotNull(loaded);
+        }
+
+        [Fact]
+        public void TestSaveLoadSequence()
+        {
+            if (File.Exists (".model-list.txt")) File.Delete (".model-list.txt");
+            if (File.Exists (".NN.Module.Linear-0.ts")) File.Delete (".NN.Module.Linear-0.ts");
+            if (File.Exists (".NN.Module.Linear-1.ts")) File.Delete (".NN.Module.Linear-1.ts");
+            var lin1 = Linear(100, 10, true);
+            var lin2 = Linear(10, 5, true);
+            var seq = Sequential(lin1, lin2);
+            seq.Save(".");
+            var loaded = NN.Sequential.Load(".");
+            File.Delete("model-list.txt");
+            File.Delete("NN.Module.Linear-0.ts");
+            File.Delete("NN.Module.Linear-1.ts");
+            Assert.NotNull(loaded);
         }
 
         [Fact]
@@ -1086,7 +1121,7 @@ namespace TorchSharp.Test
             {
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public TorchTensor Forward(TorchTensor input)
             {
                 throw new NotImplementedException();
             }
@@ -1269,7 +1304,7 @@ namespace TorchSharp.Test
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = Functions.AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1277,7 +1312,7 @@ namespace TorchSharp.Test
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = Functions.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 

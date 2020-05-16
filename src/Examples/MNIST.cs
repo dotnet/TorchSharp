@@ -45,10 +45,10 @@ namespace TorchSharp.Examples
 
         private class Model : NN.Module
         {
-            private NN.Module conv1 = Conv2D(1, 10, 5);
-            private NN.Module conv2 = Conv2D(10, 20, 5);
-            private NN.Module fc1 = Linear(320, 50);
-            private NN.Module fc2 = Linear(50, 10);
+            private NN.Conv2D conv1 = Conv2D(1, 10, 5);
+            private NN.Conv2D conv2 = Conv2D(10, 20, 5);
+            private NN.Linear fc1 = Linear(320, 50);
+            private NN.Linear fc2 = Linear(50, 10);
 
             public Model()
             {
@@ -58,22 +58,22 @@ namespace TorchSharp.Examples
                 RegisterModule(fc2);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public TorchTensor Forward(TorchTensor input)
             {
                 using (var l11 = conv1.Forward(input))
-                using (var l12 = MaxPool2D(l11, kernelSize: new long[]{ 2 }))
+                using (var l12 = MaxPool2D (l11, kernelSize: new long[]{ 2 }))
                 using (var l13 = Relu(l12))
 
                 using (var l21 = conv2.Forward(l13))
-                using (var l22 = FeatureDropout(l21))
-                using (var l23 = MaxPool2D(l22, kernelSize: new long[] { 2 }))
+                using (var l22 = FeatureAlphaDropout(l21))
+                using (var l23 = MaxPool2D (l22, kernelSize: new long[] { 2 }))
                 using (var l24 = Relu(l23))
 
                 using (var x = l24.View(new long[] { -1, 320 }))
 
                 using (var l31 = fc1.Forward(x))
                 using (var l32 = Relu(l31))
-                using (var l33 = Dropout(l32, IsTraining()))
+                using (var l33 = Dropout(l32))
 
                 using (var l41 = fc2.Forward(l33))
 
@@ -82,7 +82,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-            NN.Module model,
+            Model model,
             NN.Optimizer optimizer,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
@@ -119,7 +119,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Test(
-            NN.Module model,
+            Model model,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)

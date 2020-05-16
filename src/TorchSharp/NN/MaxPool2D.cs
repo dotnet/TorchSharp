@@ -10,41 +10,44 @@ namespace TorchSharp.NN
     /// </summary>
     public class MaxPool2D : Module
     {
-        internal MaxPool2D (IntPtr handle, long[] kernelSize, long[] stride) : base (handle)
+        internal MaxPool2D (IntPtr handle) : base (handle)
         {
-            _kernelSize = kernelSize;
-            _stride = stride ?? new long[0];
         }
 
-        private readonly long[] _kernelSize;
-        private readonly long[] _stride;
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_MaxPool2d_forward (Module.HType module, IntPtr tensor);
 
-        public override TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            return tensor.MaxPool2D (_kernelSize, _stride);
+            var res = THSNN_MaxPool2d_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
     }
-
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_maxPool2dModule ();
-        static public MaxPool2D MaxPool2D (long[] kernelSize, long[] stride = null)
-        {
-            var handle = THSNN_maxPool2dModule ();
-            Torch.CheckForErrors ();
-            return new MaxPool2D (handle, kernelSize, stride);
-        }
-    }
-    public static partial class Functions
-    {
+        extern static IntPtr THSNN_MaxPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength);
 
-        static public TorchTensor MaxPool2D (TorchTensor x, long[] kernelSize, long[] stride = null)
+        static public MaxPool2D MaxPool2D (long[] kernelSize, long[] strides = null)
         {
-            using (var m = Modules.MaxPool2D (kernelSize, stride)) {
-                return m.Forward (x);
+            unsafe {
+                fixed (long* pkernelSize = kernelSize, pstrides = strides) {
+                    var handle = THSNN_MaxPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length));
+                    Torch.CheckForErrors ();
+                    return new MaxPool2D (handle);
+                }
             }
         }
+    }
 
+    public static partial class Functions
+    {
+        static public TorchTensor MaxPool2D (TorchTensor x, long[] kernelSize, long[] strides = null)
+        {
+            using (var d = Modules.MaxPool2D (kernelSize, strides)) {
+                return d.Forward (x);
+            }
+        }
     }
 }

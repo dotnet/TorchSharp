@@ -49,9 +49,9 @@ namespace TorchSharp.Examples
 
         private class Model : NN.Module
         {
-            private readonly NN.Module features;
-            private readonly NN.Module avgPool;
-            private readonly NN.Module classifier;
+            private readonly NN.Sequential features;
+            private readonly NN.AdaptiveAvgPool2D avgPool;
+            private readonly NN.Sequential classifier;
 
             public Model(int numClasses)
             {
@@ -70,23 +70,24 @@ namespace TorchSharp.Examples
                     Relu(inPlace: true),
                     MaxPool2D(kernelSize: new long[] { 2 }));
 
-                avgPool = AdaptiveAvgPool2D(2, 2);
+                avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
 
                 classifier = Sequential(
-                    Dropout(IsTraining()),
+                    Dropout(),
                     Linear(256 * 2 * 2, 4096),
                     Relu(inPlace: true),
-                    Dropout(IsTraining()),
+                    Dropout(),
                     Linear(4096, 4096),
                     Relu(inPlace: true),
                     Linear(4096, numClasses)
                 );
 
-                RegisterModule(features);
+                RegisterModule (features);
+                RegisterModule (avgPool);
                 RegisterModule(classifier);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public TorchTensor Forward(TorchTensor input)
             {
                 using (var f = features.Forward(input))
                 using (var avg = avgPool.Forward(f))
@@ -97,7 +98,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-        NN.Module model,
+        Model model,
         NN.Optimizer optimizer,
         Loss loss,
         IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
@@ -140,7 +141,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Test(
-            NN.Module model,
+            Model model,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)

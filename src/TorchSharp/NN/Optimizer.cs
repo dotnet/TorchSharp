@@ -27,11 +27,11 @@ namespace TorchSharp.NN
             }
 
             [DllImport ("LibTorchSharp")]
-            private static extern void THSNN_optimizerDispose (HType handle);
+            private static extern void THSNN_Optimizer_dispose (HType handle);
 
             protected override bool ReleaseHandle ()
             {
-                THSNN_optimizerDispose (this);
+                THSNN_Optimizer_dispose (this);
                 return true;
             }
 
@@ -79,52 +79,52 @@ namespace TorchSharp.NN
     public partial class Optimizer
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_optimizerAdam (IntPtr parameters, int len, double learningRate);
+        private static extern IntPtr THSNN_Adam_ctor (IntPtr parameters, int len, double learningRate);
 
         public static Optimizer Adam (IEnumerable<TorchTensor> parameters, double learningRate)
         {
             var parray = new PinnedArray<IntPtr> ();
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
-            return new Optimizer (THSNN_optimizerAdam (paramsRef, parray.Array.Length, learningRate));
+            return new Optimizer (THSNN_Adam_ctor (paramsRef, parray.Array.Length, learningRate));
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_optimizerSGD (IntPtr parameters, int len, double learningRate, double momentum);
+        private static extern IntPtr THSNN_SGD_ctor (IntPtr parameters, int len, double learningRate, double momentum);
 
         public static Optimizer SGD (IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0)
         {
             var parray = new PinnedArray<IntPtr> ();
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
-            return new Optimizer (THSNN_optimizerSGD (paramsRef, parray.Array.Length, learningRate, momentum));
+            return new Optimizer (THSNN_SGD_ctor (paramsRef, parray.Array.Length, learningRate, momentum));
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_optimizerZeroGrad (HType module);
+        private static extern void THSNN_Optimizer_zeroGrad (HType module);
 
         public void ZeroGrad ()
         {
-            THSNN_optimizerZeroGrad (handle);
+            THSNN_Optimizer_zeroGrad (handle);
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_optimizerStep (HType module);
+        private static extern void THSNN_Optimizer_step (HType module);
 
         public void Step ()
         {
-            THSNN_optimizerStep (handle);
+            THSNN_Optimizer_step (handle);
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_optimizer_get_parameters (HType module, AllocatePinnedArray allocator);
+        private static extern void THSNN_Optimizer_getParameters (HType module, AllocatePinnedArray allocator);
 
         public IEnumerable<TorchTensor> GetParameters ()
         {
             IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr> ()) {
-                THSNN_optimizer_get_parameters (handle, pa.CreateArray);
+                THSNN_Optimizer_getParameters (handle, pa.CreateArray);
                 ptrArray = pa.Array;
             }
             return ptrArray.Select (x => new TorchTensor (x));

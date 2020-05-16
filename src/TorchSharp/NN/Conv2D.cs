@@ -10,11 +10,11 @@ namespace TorchSharp.NN
         internal Conv2D (IntPtr handle) : base (handle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_conv2DModuleApply (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Conv2d_forward (Module.HType module, IntPtr tensor);
 
-        public override TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            var res = THSNN_conv2DModuleApply (handle, tensor.Handle);
+            var res = THSNN_Conv2d_forward (handle, tensor.Handle);
             Torch.CheckForErrors ();
             return new TorchTensor (res);
         }
@@ -22,11 +22,11 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_conv2dModule (long inputChannel, long outputChannel, long kernelSize, long stride, long padding);
+        private static extern IntPtr THSNN_Conv2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding);
 
         static public Conv2D Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
-            var res = THSNN_conv2dModule (inputChannel, outputChannel, kernelSize, stride, padding);
+            var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding);
             Torch.CheckForErrors ();
             return new Conv2D (res);
         }

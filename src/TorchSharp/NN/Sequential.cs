@@ -19,64 +19,26 @@ namespace TorchSharp.NN
             }
         }
 
-        public override TorchTensor Forward (TorchTensor tensor)
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_Sequential_forward (Module.HType module, IntPtr tensor);
+
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            if (!Modules.Any ()) {
-                throw new ArgumentException ("Cannot do forward pass over empty Sequence module.");
-            }
-
-            var (head, tail) = Modules;
-            var result = head.Forward (tensor);
-
-            foreach (var module in tail) {
-                var tmp = module.Forward (result);
-                result.Dispose ();
-                result = tmp;
-            }
-
-            return result;
+            var res = THSNN_Sequential_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
 
-        public override void ZeroGrad ()
-        {
-            foreach (var module in Modules) {
-                module.ZeroGrad ();
-            }
-        }
 
-        public override IEnumerable<string> GetModules ()
-        {
-            List<string> result = new List<string> ();
-
-            foreach (var module in Modules) {
-                result.Add (module.GetName ());
-            }
-
-            return result;
-        }
-
-        public override void Train ()
-        {
-            foreach (var module in Modules) {
-                module.Train ();
-            }
-        }
-
-        public override void Eval ()
-        {
-            foreach (var module in Modules) {
-                module.Eval ();
-            }
-        }
     }
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_sequentialModule ();
+        extern static IntPtr THSNN_Sequential_ctor ();
 
         static public Sequential Sequential (params Module[] modules)
         {
-            var handle = THSNN_sequentialModule ();
+            var handle = THSNN_Sequential_ctor ();
             Torch.CheckForErrors ();
             return new Sequential (handle, modules);
         }

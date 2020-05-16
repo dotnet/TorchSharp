@@ -10,41 +10,36 @@ namespace TorchSharp.NN
     /// </summary>
     public class Dropout : Module
     {
-        private double _probability;
-        private bool _isTraining;
-
-        internal Dropout (IntPtr handle, bool isTraining, double probability = 0.5) : base (handle)
-        {
-            _probability = probability;
-            _isTraining = isTraining;
-        }
+        internal Dropout (IntPtr handle) : base (handle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_dropoutModuleApply (IntPtr tensor, double probability, bool isTraining);
+        private static extern IntPtr THSNN_Dropout_forward (Module.HType module, IntPtr tensor);
 
-        public override TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            return new TorchTensor (THSNN_dropoutModuleApply (tensor.Handle, _probability, _isTraining));
+            var res = THSNN_Dropout_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
     }
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_dropoutModule ();
+        extern static IntPtr THSNN_Dropout_ctor (double probability);
 
-        static public Dropout Dropout (bool isTraining, double probability = 0.5)
+        static public Dropout Dropout (double probability = 0.5)
         {
-            var handle = THSNN_dropoutModule ();
+            var handle = THSNN_Dropout_ctor (probability);
             Torch.CheckForErrors ();
-            return new Dropout (handle, isTraining, probability);
+            return new Dropout (handle);
         }
     }
 
     public static partial class Functions
     {
-        static public TorchTensor Dropout (TorchTensor x, bool isTraining, double probability = 0.5)
+        static public TorchTensor Dropout (TorchTensor x, double probability = 0.5)
         {
-            using (var d = Modules.Dropout (isTraining, probability)) {
+            using (var d = Modules.Dropout (probability)) {
                 return d.Forward (x);
             }
         }
