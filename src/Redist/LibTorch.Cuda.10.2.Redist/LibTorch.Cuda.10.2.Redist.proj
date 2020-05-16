@@ -32,11 +32,20 @@
                         libtorch\lib\libc10d_cuda_test.so;
                         libtorch\lib\libcaffe2_detectron_ops_gpu.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
+                        libtorch\lib\libcaffe2_nvrtc.so;
+                        libtorch\lib\libcaffe2_observers.so;
+                        libtorch\lib\libfbjni.so;
                         libtorch\lib\libnvrtc-builtins.so;
+                        libtorch\lib\libpytorch_jni.so;
+                        libtorch\lib\libshm.so;
                         libtorch\lib\libtorch.so;
-                        libtorch\lib\libcudart-1581fefa.so.10.0;
-                        libtorch\lib\libnvrtc-a0b34244.so.10.0;
-                        libtorch\lib\libgomp-4f651535.so.1;
+                        libtorch\lib\libtorch_cpu.so;
+                        libtorch\lib\libtorch_cuda.so;
+                        libtorch\lib\libtorch_global_deps.so;
+                        libtorch\lib\libtorch_python.so;
+                        libtorch\lib\libcudart-80664282.so.10.2;
+                        libtorch\lib\libnvrtc-08c4863f.so.10.2;
+                        libtorch\lib\libgomp-7c85b1e2.so.1;
                         libtorch\lib\libnvToolsExt-3965bdd0.so.1;"
 
       Runtime="linux-x64" />

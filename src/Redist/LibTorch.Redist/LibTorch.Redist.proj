@@ -6,6 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+  <!-- see https://pytorch.org/get-started/locally/ for download links -->
     <LibtorchConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\c10.dll;
                         libtorch\lib\caffe2_detectron_ops.dll;
@@ -14,7 +15,7 @@
                         libtorch\lib\libiompstubs5md.dll;
                         libtorch\lib\torch.dll" 
       Runtime="win-x64"/>
-    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
+    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension="%252Bcpu.zip" 
       FilesFromArchive= "libtorch\lib\libc10.so;
                         libtorch\lib\libcaffe2_detectron_ops.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
