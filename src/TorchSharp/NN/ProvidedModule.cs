@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
+using System.IO;
 using System.Collections.Generic;
 using TorchSharp.Tensor;
+using System.Runtime.InteropServices;
 
 namespace TorchSharp.NN
 {
     /// <summary>
-    /// This class is used to represent a functional module (e.g., ReLU).
+    /// This class is used to represent a module provided by Torch (e.g., Linear).
     /// </summary>
     public abstract class ProvidedModule : Module
     {
@@ -16,6 +18,19 @@ namespace TorchSharp.NN
 
         internal ProvidedModule(IntPtr handle) : base(handle)
         {
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSNN_save_module(string location, HType handle);
+
+        public override void Save(String modelPath)
+        {
+            if (File.Exists(modelPath))
+            {
+                throw new Exception(string.Format("{0} already existing.", modelPath));
+            }
+
+            THSNN_save_module(modelPath, handle);
         }
     }
 }

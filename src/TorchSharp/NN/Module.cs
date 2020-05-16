@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
@@ -107,6 +109,11 @@ namespace TorchSharp.NN
 
     public partial class Module
     {
+        public static Module Load(String location)
+        {
+            throw new NotImplementedException();
+        }
+
         static public Sequential Sequential(params Module[] modules)
         {
             return new Sequential(modules);
@@ -213,6 +220,11 @@ namespace TorchSharp.NN
     public abstract partial class Module : IDisposable
     {
         public abstract TorchTensor Forward(TorchTensor input);
+
+        public virtual void Save(String location)
+        {
+            throw new NotImplementedException();
+        }
 
         [DllImport("LibTorchSharp")]
         private static extern void THSNN_train(HType module);
