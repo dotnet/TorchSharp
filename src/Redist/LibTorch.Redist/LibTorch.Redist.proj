@@ -7,28 +7,58 @@
   
   <ItemGroup>
   <!-- see https://pytorch.org/get-started/locally/ for download links -->
-    <LibtorchConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\c10.dll;
+  <!-- For example Linux, LibTorch 1.5.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip -->
+    <LibtorchConfig Include="windows" 
+                    LibName="libtorch-win-shared-with-deps" 
+                    ExtraForLibTorch150="" 
+                    FileExtension=".zip" 
+                    FilesFromArchive= 
+                       "libtorch\lib\asmjit.dll;
+                        libtorch\lib\c10.dll;
                         libtorch\lib\caffe2_detectron_ops.dll;
                         libtorch\lib\caffe2_module_test_dynamic.dll;
+                        libtorch\lib\fbgemm.dll;
                         libtorch\lib\libiomp5md.dll;
                         libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\torch.dll" 
+                        libtorch\lib\torch.dll;
+                        libtorch\lib\torch_cpu.dll;
+                        libtorch\lib\torch_global_deps.dll" 
       Runtime="win-x64"/>
-    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension="%252Bcpu.zip" 
-      FilesFromArchive= "libtorch\lib\libc10.so;
+
+    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
+                    ExtraForLibTorch150="%252Bcpu" 
+                    FileExtension=".zip" 
+                    FilesFromArchive= 
+                       "libtorch\lib\libc10.so;
                         libtorch\lib\libcaffe2_detectron_ops.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
+                        libtorch\lib\libcaffe2_observers.so;
+                        libtorch\lib\libfbjni.so;
+                        libtorch\lib\libpytorch_jni.so;
+                        libtorch\lib\libshm.so;
                         libtorch\lib\libtorch.so;
-                        libtorch\lib\libgomp-4f651535.so.1;"
+                        libtorch\lib\libtorch_cpu.so;
+                        libtorch\lib\libtorch_global_deps.so;
+                        libtorch\lib\libtorch_python.so;
+                        libtorch\lib\libgomp-7c85b1e2.so.1;"
       Runtime="linux-x64" />
-    <LibtorchConfig Include="darwin" LibName="libtorch-macos" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\libc10.dylib;
+
+    <LibtorchConfig Include="darwin" 
+                    LibName="libtorch-macos" 
+                    ExtraForLibTorch150="" 
+                    FileExtension=".zip" 
+                    FilesFromArchive= 
+                       "libtorch\lib\libc10.dylib;
                         libtorch\lib\libcaffe2_detectron_ops.dylib;
                         libtorch\lib\libcaffe2_module_test_dynamic.dylib;
                         libtorch\lib\libcaffe2_observers.dylib;
+                        libtorch\lib\libfbjni.dylib;
+                        libtorch\lib\libiomp5.dylib;
+                        libtorch\lib\libpytorch_jni.dylib;
                         libtorch\lib\libshm.dylib;
                         libtorch\lib\libtorch.dylib;
+                        libtorch\lib\libtorch_cpu.dylib;
+                        libtorch\lib\libtorch_global_deps.dylib;
                         libtorch\lib\libtorch_python.dylib;" 
       Runtime="osx-x64" />
 
@@ -51,7 +81,7 @@
       <!-- although we could extract all archives on all machines, mac requires a fixup which can only be run on mac 
            so we split these per-rid and join during the official build packaging.  -->
       <LibtorchArchive Condition="'$(PackageRid)' == '%(Runtime)'"
-                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(FileExtension)')" />
+                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(ExtraForLibTorch150)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
       <LibtorchArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"

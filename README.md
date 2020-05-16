@@ -15,18 +15,20 @@ Things that you can try:
 ```csharp
 using TorchSharp;
 using TorchSharp.Tensor;
+using TorchSharp.NN;
+using static TorchSharp.Tensor.Modules;
 
-var lin1 = NN.Module.Linear(1000, 100);
-var lin2 = NN.Module.Linear(100, 10);
-var seq = NN.Module.Sequential(lin1, NN.Module.Relu(), lin2);
+var lin1 = Linear(1000, 100);
+var lin2 = Linear(100, 10);
+var seq = Sequential(lin1, Relu(), lin2);
 
 var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
 var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
 double learning_rate = 0.00004f;
 float prevLoss = float.MaxValue;
-var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
-var loss = NN.LossFunction.MSE(NN.Reduction.Sum);
+var optimizer = Optimizer.Adam(seq.Parameters(), learning_rate);
+var loss = Losses.MSE(NN.Reduction.Sum);
 
 for (int i = 0; i < 10; i++)
 {
@@ -96,13 +98,29 @@ Commands:
 Updating PyTorch version
 ------------------------
 
-This is used to update SHA hashes for LibTorch downloads:
+This project grabs LibTorch and makes a C API wrapper for it, then calls these from C#.
+
+See https://pytorch.org/get-started/locally/ for download links.
+
+For example Linux, LibTorch 1.5.0 uses link
+
+    https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip
+
+To update the version, update these:
+
+    <LibtorchVersion>1.5.0</LibtorchVersion>
+
+Then run these to test downloads and update SHA hashes for LibTorch downloads:
 
     msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=linux
     msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=windows
-    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=macos
+    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=mac
 
-Downloads will not be repeated.
+You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
+of the unzip of the archive, e.g.
+
+     bin\obj\AnyCPU.Debug\LibTorch.Redist\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
+
 
 Updating package version for new release
 -----------------------------
