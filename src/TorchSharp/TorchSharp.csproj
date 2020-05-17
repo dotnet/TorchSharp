@@ -1,4 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <!-- Implicit top import -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
@@ -35,4 +37,10 @@
     </Compile>
   </ItemGroup>
 
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="..\Redist\build.proj" Condition="'$(BuildingInsideVisualStudio)'!='true'" />
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(BuildingInsideVisualStudio)'!='true'" />
+  </Target>
 </Project>

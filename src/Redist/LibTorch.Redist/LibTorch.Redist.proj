@@ -62,7 +62,9 @@
                         libtorch\lib\libgomp-7c85b1e2.so.1;"
       Runtime="linux-x64" />
 
-    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
+    <AdditionalDownloadFile 
+        Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" 
+        DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
   </ItemGroup>
 
 
@@ -72,7 +74,9 @@
                         mklml_mac_$(MklDnnVersion)\lib\libiomp5.dylib;" 
       Runtime="osx-x64" />
 
-    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
+    <AdditionalDownloadFile 
+        Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" 
+        DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
   </ItemGroup>
 
 
@@ -83,7 +87,7 @@
       <LibtorchArchive Condition="'$(PackageRid)' == '%(Runtime)'"
                          Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(ExtraForLibTorch150)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
-      <LibtorchArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
+      <LibtorchArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
                          ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
                          ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
@@ -93,8 +97,8 @@
     <ItemGroup Condition="'$(PackageRid)' == 'osx-x64'">
       <MklDnnArchive Include="@(MklDnnConfig->'https://github.com/intel/mkl-dnn/releases/download/v0.19/mklml_mac_$(MklDnnVersion)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
-      <MklDnnArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
-                         DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
+      <MklDnnArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
+                         DownloadShaFile="$(MassiveDownloadRoot)%(FileName)%(Extension).sha"
                          ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
                          ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
                          LocalShaFile="$(MSBuildProjectDirectory)\%(FileName)%(Extension).sha"/>

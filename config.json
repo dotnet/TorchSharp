@@ -9,7 +9,7 @@
     "TargetArchitecture": {
       "description": "Sets the architecture for the native assets you want to build.",
       "valueType": "property",
-      "values": [ "x64", "x86" ],
+      "values": [ "x64" ],
       "defaultValue": "x64"
     },
     "OfficialBuildId": {

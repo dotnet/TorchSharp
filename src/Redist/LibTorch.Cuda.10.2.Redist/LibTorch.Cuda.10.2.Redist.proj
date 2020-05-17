@@ -62,7 +62,9 @@
 
       <!-- No GPU support for Mac -->
 
-    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
+    <AdditionalDownloadFile 
+         Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" 
+         DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
   </ItemGroup>
 
 
@@ -72,7 +74,7 @@
       <LibtorchGPUArchive Condition="'$(PackageRid)' == '%(Runtime)'"
                          Include="@(LibtorchGPUConfig->'https://download.pytorch.org/libtorch/cu$(CudaVersion)/%(LibName)-$(LibtorchVersion)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
-      <LibtorchGPUArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
+      <LibtorchGPUArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
                          ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
                          ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"

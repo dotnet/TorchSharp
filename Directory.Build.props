@@ -27,6 +27,8 @@
     <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
+    <!-- massive downloads get placed up one directory so we can clean without triggering a re-download-->
+    <MassiveDownloadRoot>$(RepoRoot)../</MassiveDownloadRoot>
 
     <!-- Output directories -->
     <BinDir Condition="'$(BinDir)'==''">$(RepoRoot)bin/</BinDir>
@@ -57,9 +59,6 @@
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
 
     <!-- Input Directories -->
-    <PackagesDir>$(DotNetRestorePackagesPath)</PackagesDir>
-    <PackagesDir Condition="'$(PackagesDir)'==''">$(RepoRoot)packages/</PackagesDir>
-    <RestorePackagesPath>$(PackagesDir)</RestorePackagesPath>
     <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>
   </PropertyGroup>
 
