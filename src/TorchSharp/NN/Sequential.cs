@@ -14,13 +14,17 @@ namespace TorchSharp.NN
     public class Sequential : Module
     {
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_Sequential_push_back(Module.HType module, string name, Module.HType boxedSubModule);
+        private static extern void THSNN_Sequential_push_back(Module.HType module,
+            [MarshalAs(UnmanagedType.LPStr)] string name,
+            BoxedModule.HType boxedSubModule);
 
         public void Add (string name, Module submodule)
         {
             Debug.Assert (!handle.IsInvalid);
-            Debug.Assert (!submodule.boxedHandle.IsInvalid);
-            THSNN_Sequential_push_back (handle, name, submodule.boxedHandle);
+            if (submodule.BoxedModule == null)
+                throw new InvalidOperationException ("A Sequential or loaded module may not be added to a Sequential");
+
+            THSNN_Sequential_push_back (handle, name, submodule.BoxedModule.handle);
             Torch.CheckForErrors ();
         }
 
@@ -45,13 +49,13 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Sequential_ctor ();
 
-        static public Sequential Sequential (params (string name, Module module)[] modules)
+        static public Sequential Sequential (params (string name, Module submodule)[] modules)
         {
             var handle = THSNN_Sequential_ctor ();
             Torch.CheckForErrors ();
             var res = new Sequential (handle);
             foreach (var module in modules)
-                res.Add(module.name, module.module);
+                res.Add(module.name, module.submodule);
             return res;
         }
 

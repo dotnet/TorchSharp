@@ -29,8 +29,8 @@ namespace TorchSharp.Examples
 
             using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
-            using (var model = new Model(_numClasses))
-            using (var optimizer = NN.Optimizer.Adam(model.Parameters(), 0.001))
+            using (var model = new Model("model", _numClasses))
+            using (var optimizer = NN.Optimizer.Adam(model.GetParameters(), 0.001))
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -53,7 +53,7 @@ namespace TorchSharp.Examples
             private readonly AdaptiveAvgPool2D avgPool;
             private readonly Sequential classifier;
 
-            public Model(int numClasses) 
+            public Model(string name, int numClasses) : base(name)
             {
                 features = Sequential(
                     ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),

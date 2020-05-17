@@ -17,7 +17,7 @@ if(WIN32)
     add_compile_options($<$<CONFIG:Debug>:-DDEBUG>)
     add_compile_options($<$<CONFIG:Release>:-DNDEBUG>)
     add_compile_options($<$<CONFIG:Debug>:/Od>)
-    add_compile_options($<$<CONFIG:Debug>:/MTd>) # /MT will static link the VC runtime library, so it doesn't need to be installed on the target machine
+    add_compile_options($<$<CONFIG:Debug>:/MDd>) # /MT will static link the VC runtime library, so it doesn't need to be installed on the target machine
     add_compile_options($<$<CONFIG:Release>:/MT>)
     add_compile_options(/guard:cf)
     add_compile_options(/d2Zi+) # make optimized builds debugging easier

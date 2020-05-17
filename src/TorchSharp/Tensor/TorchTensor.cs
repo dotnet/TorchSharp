@@ -218,6 +218,7 @@ namespace TorchSharp.Tensor
         public ATenScalarMapping Type => (ATenScalarMapping)THSTensor_type(handle);
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         private static extern string THSTensor_deviceType(IntPtr handle);
 
         public string Device

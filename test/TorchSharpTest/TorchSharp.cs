@@ -29,7 +29,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 10; i++)
             {
-                using (var tmp = FloatTensor.Ones(new long[] { 1000, 1000, 1000 }))
+                using (var tmp = FloatTensor.Ones(new long[] { 100, 100, 100 }))
                 {
                     ones = tmp;
                     Assert.NotNull(ones);
@@ -371,14 +371,24 @@ namespace TorchSharp.Test
         {
             var lin = Linear(1000, 100);
             Assert.NotNull(lin);
-            var modules = lin.GetName();
+            Assert.True(lin.Bias.HasValue);
+            //var name = lin.GetName();
+
+            var ps = lin.GetParameters();
+            Assert.Equal(2, ps.Length);
         }
 
         [Fact]
         public void TestGetBiasInLinear()
         {
-            var lin = Linear(1000, 100);
+            var lin = Linear(1000, 100, false);
+            var ps = lin.GetParameters();
+            var nps = ps.Length;
+            Assert.Equal(1, nps);
             Assert.True(lin.Bias == null);
+
+            var lin2 = Linear(1000, 100, true);
+            Assert.True(lin2.Bias != null);
         }
 
         [Fact]
@@ -387,6 +397,7 @@ namespace TorchSharp.Test
             var lin = Linear(1000, 100, true);
             var bias = FloatTensor.Ones (new long[] { 1000 });
             lin.Bias = bias;
+            Assert.True(lin.Bias.HasValue);
 
             Assert.Equal(lin.Bias?.NumberOfElements, bias.NumberOfElements);
         }
@@ -458,6 +469,8 @@ namespace TorchSharp.Test
         public void TestLinearNoBias()
         {
             var lin = Linear(1000, 100, false);
+            Assert.False(lin.Bias.HasValue);
+
             var weight = lin.Weight.Transpose(0, 1);
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
             var forward = lin.Forward(input);
@@ -511,11 +524,11 @@ namespace TorchSharp.Test
         {
             var lin = Linear(1000, 1000, true);
             var bias = FloatTensor.RandomN(new long[] { 100 });
-            var weights = FloatTensor.RandomN(new long[] { 100, 1000 });
+            var weights = FloatTensor.RandomN(new long[] { 1000, 1000 });
             lin.Bias = bias;
             lin.Weight = weights;
 
-            var parameters = lin.Parameters().ToArray();
+            var parameters = lin.GetParameters().ToArray();
 
             Assert.Equal(lin.Weight.Shape.Length, parameters[0].Shape.Length);
             Assert.Equal(lin.Weight.Shape[0], parameters[0].Shape[0]);
@@ -553,8 +566,13 @@ namespace TorchSharp.Test
                 ("lin1", lin1),
                 ("relu1", Relu()),
                 ("lin2", lin2));
-            var modules = seq.GetModules();
-            Assert.Equal(3, modules.Count());
+            var parameters = seq.GetParameters();
+            var parametersCount = parameters.Count ();
+            Assert.Equal (4, parametersCount);
+
+            var namedParams = seq.GetParameters ();
+            var namedParamsCount = namedParams.Count ();
+            Assert.Equal(4, namedParamsCount);
         }
 
         [Fact]
@@ -601,13 +619,13 @@ namespace TorchSharp.Test
         }
 
 #if DEBUG
-        [Fact(Skip = "Not working on Mac and Ubuntu")]
+        [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
         public void TestErrorHandling()
         {
             using (TorchTensor input = FloatTensor.From(new float[] { 0.5f, 1.5f }))
             using (TorchTensor target = FloatTensor.From(new float[] { 1f, 2f, 3f }))
             {
-                Assert.Throws<SEHException>(() => PoissonNLL()(input, target));
+                Assert.Throws<ExternalException>(() => PoissonNLL()(input, target));
             }
         }
 #endif
@@ -634,11 +652,11 @@ namespace TorchSharp.Test
                 ("relu1", Relu()),
                 ("lin2", lin2));
 
-            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0", requiresGrad: true);
 
             var eval = seq.Forward(x);
-            var loss = MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -656,18 +674,18 @@ namespace TorchSharp.Test
                 ("relu1", Relu()),
                 ("lin2", lin2));
 
-            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0", requiresGrad: true);
 
             var eval = seq.Forward(x);
-            var loss = MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
 
             output.Backward();
 
-            foreach (var parm in seq.Parameters())
+            foreach (var parm in seq.GetParameters())
             {
             }
         }
@@ -682,18 +700,18 @@ namespace TorchSharp.Test
                 ("relu1", Relu()),
                 ("lin2", lin2));
 
-            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0", requiresGrad: true);
 
             var eval = seq.Forward(x);
-            var loss = MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
 
             output.Backward();
 
-            foreach (var parm in seq.Parameters())
+            foreach (var parm in seq.GetParameters())
             {
                 var grad = parm.Grad();
             }
@@ -743,13 +761,13 @@ namespace TorchSharp.Test
 
         private class CondModel : CustomModule
         {
-            private Linear fb = Linear(1000, 100);
-            private Linear fbT1 = Linear(100, 10);
-            private Linear fbF1 = Linear(100, 50);
-            private Linear fbF2 = Linear(50, 10);
+            private Linear fb = Linear(1000, 100, false);
+            private Linear fbT1 = Linear(100, 10, false);
+            private Linear fbF1 = Linear(100, 50, false);
+            private Linear fbF2 = Linear(50, 10, false);
             private bool _isTrue = false;
 
-            public CondModel(bool isTrue)
+            public CondModel(string name, bool isTrue) : base(name)
             {
                 _isTrue = isTrue;
                 RegisterModule("fb", fb);
@@ -775,16 +793,22 @@ namespace TorchSharp.Test
         [Fact]
         public void TestGradConditional()
         {
-            var modT = new CondModel(true);
-            var modF = new CondModel(false);
+            var modT = new CondModel("modT", true);
+            var modF = new CondModel("modF", false);
 
-            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+            var psT = modT.GetParameters();
+            Assert.Equal(4, psT.Length);
+
+            var psF = modF.GetParameters();
+            Assert.Equal(4, psF.Length);
+
+            var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0", requiresGrad: true);
+            var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0", requiresGrad: true);
 
             modT.Train();
 
             var eval = modT.Forward(x);
-            var loss = MSE(NN.Reduction.None);
+            var loss = MSE(NN.Reduction.Sum);
             var output = loss(eval, y);
 
             modT.ZeroGrad();
@@ -792,7 +816,7 @@ namespace TorchSharp.Test
             output.Backward();
             var gradCounts = 0;
 
-            foreach (var parm in modT.Parameters())
+            foreach (var parm in modT.GetParameters())
             {
                 var grad = parm.Grad();
                 gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
@@ -811,7 +835,7 @@ namespace TorchSharp.Test
             output.Backward();
             gradCounts = 0;
 
-            foreach (var parm in modF.Parameters())
+            foreach (var parm in modF.GetParameters())
             {
                 var grad = parm.Grad();
                 gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
@@ -820,7 +844,7 @@ namespace TorchSharp.Test
             Assert.Equal(3, gradCounts);
         }
 
-        [Fact(Skip = "Not working on MacOS")]
+        [Fact(Skip = "Not working on MacOS (note: may now be working, we need to recheck)")]
         public void TestAutoGradMode()
         {
             var x = FloatTensor.RandomN(new long[] { 2, 3 }, device: "cpu:0", requiresGrad: true);
@@ -828,9 +852,9 @@ namespace TorchSharp.Test
             {
                 Assert.False(AutoGradMode.IsAutogradEnabled());
                 var sum = x.Sum();
-                sum.Backward();
-                var grad = x.Grad();
-                Assert.True(grad.Handle == IntPtr.Zero);
+                Assert.Throws<ExternalException>(() => sum.Backward());
+                //var grad = x.Grad();
+                //Assert.True(grad.Handle == IntPtr.Zero);
             }
             using (var mode = new AutoGradMode(true))
             {
@@ -891,16 +915,12 @@ namespace TorchSharp.Test
         public void TestSaveLoadSequence()
         {
             if (File.Exists (".model-list.txt")) File.Delete (".model-list.txt");
-            if (File.Exists (".NN.Module.Linear-0.ts")) File.Delete (".NN.Module.Linear-0.ts");
-            if (File.Exists (".NN.Module.Linear-1.ts")) File.Delete (".NN.Module.Linear-1.ts");
             var lin1 = Linear(100, 10, true);
             var lin2 = Linear(10, 5, true);
             var seq = Sequential(("lin1", lin1), ("lin2", lin2));
-            seq.Save(".");
-            var loaded = NN.Sequential.Load(".");
+            seq.Save(".model-list.txt");
+            var loaded = NN.Sequential.Load(".model-list.txt");
             File.Delete("model-list.txt");
-            File.Delete("NN.Module.Linear-0.ts");
-            File.Delete("NN.Module.Linear-1.ts");
             Assert.NotNull(loaded);
         }
 
@@ -1114,7 +1134,11 @@ namespace TorchSharp.Test
             var module = new TestModule("test", FloatTensor.RandomN(new long[] { 2, 2 }), true);
             var name = module.GetName();
             Assert.NotNull(name);
+            Assert.Equal("test", name);
             Assert.True(module.HasParameter("test"));
+
+            var ps = module.GetParameters();
+            Assert.Equal(1, ps.Length);
         }
 
         [Fact]
@@ -1139,7 +1163,7 @@ namespace TorchSharp.Test
         private class TestModule : CustomModule
         {
             public TestModule(string name, TorchTensor tensor, bool withGrad)
-                : base(new Parameter(name, tensor, withGrad))
+                : base(name, new Parameter(name, tensor, withGrad))
             {
             }
 
@@ -1183,7 +1207,7 @@ namespace TorchSharp.Test
 
                 using (var noGrad = new AutoGradMode(false))
                 {
-                    foreach (var param in seq.Parameters())
+                    foreach (var param in seq.GetParameters())
                     {
                         var grad = param.Grad();
                         var update = grad.Mul(learning_rate.ToScalar());
@@ -1202,7 +1226,7 @@ namespace TorchSharp.Test
 
             double learning_rate = 0.00001;
 
-            var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
+            var optimizer = NN.Optimizer.Adam(seq.GetParameters(), learning_rate);
 
             Assert.NotNull(optimizer);
         }
@@ -1223,7 +1247,7 @@ namespace TorchSharp.Test
 
             double learning_rate = 0.00004f;
             float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adam(seq.Parameters(), learning_rate);
+            var optimizer = NN.Optimizer.Adam(seq.GetParameters(), learning_rate);
             var loss = MSE(NN.Reduction.Sum);
 
             for (int i = 0; i < 10; i++)
@@ -1326,7 +1350,7 @@ namespace TorchSharp.Test
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = Functions.AvgPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = Functions.AvgPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1334,7 +1358,7 @@ namespace TorchSharp.Test
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = FloatTensor.Ones(new long[] { 2, 2, 2 });
-            var obj = Functions.MaxPool2D(ones, new long[] { 2 }, new long[] { 2 });
+            var obj = Functions.MaxPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 

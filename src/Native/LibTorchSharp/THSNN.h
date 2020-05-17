@@ -17,18 +17,18 @@ EXPORT_API(int)         THSNN_Module_is_training(NNModule module);
 EXPORT_API(void)        THSNN_Module_train(NNModule module);
 EXPORT_API(void)        THSNN_Module_eval(NNModule module);
 EXPORT_API(long)        THSNN_Module_children_size(const NNModule module);
-EXPORT_API(const char*) THSNN_Module_child_name(const NNModule module, const int index);
+EXPORT_API(NNModule)    THSNN_Module_child(const NNModule module, const int index);
 EXPORT_API(const char*) THSNN_Module_name(const NNModule module);
 EXPORT_API(void)        THSNN_Module_zero_grad(const NNModule module);
 EXPORT_API(void)        THSNN_Module_save(const NNModule module, const char * location);
 EXPORT_API(NNModule)    THSNN_Module_load(const char * location, const char * name);
-EXPORT_API(NNModule)    THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule);
+EXPORT_API(void)        THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule);
 EXPORT_API(void)        THSNN_Module_dispose(const NNModule module);
 
 EXPORT_API(void)        THSNN_AnyModule_dispose(const NNAnyModule module);
 //EXPORT_API(NNModule)    THSNN_AnyModule_get(const NNAnyModule module);
 
-EXPORT_API(NNModule) THSNN_custom_module(const char** names, at::Tensor** parameters, const bool* require_grad, const int length, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_custom_module(const char* name, const char** names, at::Tensor** parameters, const bool* require_grad, const int length, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
 EXPORT_API(NNModule) THSNN_AdaptiveAvgPool2d_ctor(const int64_t* sizes, const int length, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_AdaptiveAvgPool2d_forward(const NNModule module, const Tensor tensor);
 
@@ -57,19 +57,19 @@ EXPORT_API(void)     THSNN_Linear_set_weight(const NNModule module, const Tensor
 EXPORT_API(NNModule) THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_ReLU_forward(const NNModule module, const Tensor tensor);
 
-EXPORT_API(NNSequential) THSNN_Sequential_ctor();
-EXPORT_API(void)     THSNN_Sequential_push_back(const NNSequential module, const char* name, const NNAnyModule submodule);
-EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNSequential module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Sequential_ctor();
+EXPORT_API(void)     THSNN_Sequential_push_back(const NNModule module, const char* name, const NNAnyModule submodule);
+EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tensor tensor);
 
 EXPORT_API(void) THSNN_Optimizer_zeroGrad(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 
-EXPORT_API(Tensor) THSTorch_binary_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSTorch_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSTorch_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSTorch_poisson_nll_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_binary_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_poisson_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);
 
 EXPORT_API(Optimizer) THSNN_Adam_ctor(const Tensor* parameters, const int len, const double learnig_rate);
 

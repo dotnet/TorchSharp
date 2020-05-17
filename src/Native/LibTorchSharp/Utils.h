@@ -12,8 +12,6 @@ typedef torch::Tensor *Tensor;
 typedef torch::Scalar *Scalar;
 typedef std::shared_ptr<torch::nn::Module>* NNModule;
 typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
-typedef std::shared_ptr<torch::nn::SequentialImpl> *NNSequential;
-//typedef std::shared_ptr<torch::nn::SequentialImpl>* NNSequential;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
 //typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
 //typedef std::shared_ptr<c10::Type> * JITType;
@@ -29,21 +27,27 @@ typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
       torch_last_err = strdup(e.what()); \
   }
 
-#define CATCH_RETURN_RES(ty, stmt) \
-    ty res; \
+#define CATCH_RETURN_RES(ty, dflt, stmt) \
+    ty res = dflt; \
     CATCH(  \
         stmt;  \
     );  \
     return res;
 
-#define CATCH_RETURN(ty, expr) CATCH_RETURN_RES(ty, res = expr)
+#define CATCH_RETURN(ty, dflt, expr) CATCH_RETURN_RES(ty, dflt, res = expr)
+#define CATCH_RETURN_NNModule(stmt) CATCH_RETURN_RES(NNModule, NULL, stmt)
+#define CATCH_RETURN_Tensor(stmt) CATCH_RETURN_RES(Tensor, NULL, stmt)
 
-#define CATCH_RETURN_TENSOR(expr) \
-    at::Tensor res; \
+// Return undefined tensors as NULL to C#
+Tensor ResultTensor(const at::Tensor & res);
+
+#define CATCH_TENSOR(expr) \
+    at::Tensor res = at::Tensor(); \
     CATCH(  \
         res = expr;  \
     );  \
-    return new torch::Tensor(res);
+    return ResultTensor(res);
+
 
 
 // Utility method used to built sharable strings.

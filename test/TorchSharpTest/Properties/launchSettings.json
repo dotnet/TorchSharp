@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TorchSharpTest": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

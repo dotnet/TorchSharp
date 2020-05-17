@@ -46,7 +46,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Linear_weight (Module.HType module);
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Linear_set_weight (Module.HType module, IntPtr tensor);
+        extern static void THSNN_Linear_set_weight (Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
                 return new TorchTensor (res);
             }
             set {
-                var res = THSNN_Linear_set_weight (handle, value.Handle);
+                THSNN_Linear_set_weight (handle, value.Handle);
                 Torch.CheckForErrors ();
             }
         }
@@ -65,7 +65,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Linear_ctor (long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
 
-        static public Linear Linear (long inputSize, long outputSize, bool hasBias = false)
+        static public Linear Linear (long inputSize, long outputSize, bool hasBias = true)
         {
             var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
             Torch.CheckForErrors ();
@@ -74,7 +74,7 @@ namespace TorchSharp.NN
     }
     public static partial class Functions
     {
-        static public TorchTensor Linear (TorchTensor x, long inputSize, long outputSize, bool hasBias = false)
+        static public TorchTensor Linear (TorchTensor x, long inputSize, long outputSize, bool hasBias = true)
         {
             using (var d = Modules.Linear (inputSize, outputSize, hasBias)) {
                 return d.Forward (x);

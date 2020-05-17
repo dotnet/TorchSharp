@@ -25,8 +25,8 @@ namespace TorchSharp.Examples
 
             using (var train = Data.Loader.MNIST(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.MNIST(_dataLocation, _testBatchSize, false))
-            using (var model = new Model())
-            using (var optimizer = NN.Optimizer.SGD(model.Parameters(), 0.01, 0.5))
+            using (var model = new Model("model"))
+            using (var optimizer = NN.Optimizer.SGD(model.GetParameters(), 0.01, 0.5))
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -50,7 +50,7 @@ namespace TorchSharp.Examples
             private Linear fc1 = Linear(320, 50);
             private Linear fc2 = Linear(50, 10);
 
-            public Model()
+            public Model(string name) : base(name)
             {
                 RegisterModule("conv1", conv1);
                 RegisterModule("conv2", conv2);
