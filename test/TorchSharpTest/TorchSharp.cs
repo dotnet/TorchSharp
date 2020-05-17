@@ -800,6 +800,7 @@ namespace TorchSharp.Test
 
             Assert.Equal(2, gradCounts);
 
+            //{ "grad can be implicitly created only for scalar outputs (_make_grads at ..\\..\\torch\\csrc\\autograd\\autograd.cpp:47)\n(no backtrace available)"}
             modF.Train();
 
             eval = modF.Forward(x);

@@ -39,11 +39,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LibName Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">libtorch-win-shared-with-deps</LibName>
+    <LibName Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibName>
     <LibName Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">libtorch-shared-with-deps</LibName>
     <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">libtorch-macos</LibName>
 
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibName)-$(LibtorchVersion)$(LibTorchDebug)\libtorch\share\cmake\Torch</LibtorchPath>
+    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <Target Name="BuildNativeUnix"

@@ -177,9 +177,9 @@ NNModule THSNN_ReLU_ctor(bool inplace,
     //);
 }
 
-Tensor THSNN_ReLU_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_ReLU_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::ReLU>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::ReLU>()->forward(*tensor));
 }
 
 NNModule THSNN_Dropout_ctor(double probability,
@@ -197,9 +197,9 @@ NNModule THSNN_Dropout_ctor(double probability,
     );
 }
 
-Tensor THSNN_Dropout_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_Dropout_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Dropout>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::Dropout>()->forward(*tensor));
 }
 
 NNModule THSNN_FeatureAlphaDropout_ctor(double probability,
@@ -216,9 +216,9 @@ NNModule THSNN_FeatureAlphaDropout_ctor(double probability,
     );
 }
 
-Tensor THSNN_FeatureAlphaDropout_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
 }
 
 NNModule THSNN_LogSoftMax_ctor(int64_t dim,
@@ -239,9 +239,9 @@ NNModule THSNN_LogSoftMax_ctor(int64_t dim,
     );
 }
 
-Tensor THSNN_LogSoftMax_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_LogSoftMax_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::LogSoftmax>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::LogSoftmax>()->forward(*tensor));
 }
 
 NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
@@ -264,9 +264,9 @@ NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLen
     );
 }
 
-Tensor THSNN_AvgPool2d_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_AvgPool2d_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::AvgPool2d>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::AvgPool2d>()->forward(*tensor));
 }
 
 NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
@@ -281,9 +281,9 @@ NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kerne
     );
 }
 
-Tensor THSNN_AdaptiveAvgPool2d_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_AdaptiveAvgPool2d_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::AdaptiveAvgPool2d>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::AdaptiveAvgPool2d>()->forward(*tensor));
 }
 
 NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
@@ -304,9 +304,9 @@ NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLen
     )
 }
 
-Tensor THSNN_MaxPool2d_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::MaxPool2d>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::MaxPool2d>()->forward(*tensor));
 }
 
 NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
@@ -327,32 +327,32 @@ NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, 
     );
 }
 
-Tensor THSNN_Linear_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_Linear_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->forward(*tensor));
 }
 
-Tensor THSNN_Linear_bias(const NNAnyModule module)
+Tensor THSNN_Linear_bias(const NNModule module)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->bias);
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->bias);
 }
 
-void THSNN_Linear_set_bias(const NNAnyModule module, const Tensor bias)
+void THSNN_Linear_set_bias(const NNModule module, const Tensor bias)
 {
     CATCH(
-        (*module)->get<torch::nn::Linear>()->bias = *bias;
+        (*module)->as<torch::nn::Linear>()->bias = *bias;
     )
 }
 
-Tensor THSNN_Linear_weight(const NNAnyModule module)
+Tensor THSNN_Linear_weight(const NNModule module)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Linear>()->weight);
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::Linear>()->weight);
 }
 
-void THSNN_Linear_set_weight(const NNAnyModule module, const Tensor weight)
+void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
 {
     CATCH(
-        (*module)->get<torch::nn::Linear>()->weight = *weight;
+        (*module)->as<torch::nn::Linear>()->weight = *weight;
     )
 }
 
@@ -376,9 +376,9 @@ NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChann
     );
 }
 
-Tensor THSNN_Conv2d_forward(const NNAnyModule module, const Tensor tensor)
+Tensor THSNN_Conv2d_forward(const NNModule module, const Tensor tensor)
 {
-    CATCH_RETURN_TENSOR((*module)->get<torch::nn::Conv2d>()->forward(*tensor));
+    CATCH_RETURN_TENSOR((*module)->as<torch::nn::Conv2d>()->forward(*tensor));
 }
 
 NNSequential THSNN_Sequential_ctor()
