@@ -49,7 +49,7 @@
     
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
-    <NativeConfiguration>$(Configration)</NativeConfiguration>
+    <NativeConfiguration>$(Configuration)</NativeConfiguration>
 
     <!-- OLD: On Unix hard code LibTorchSharp as Release - there is a (possibly outdated) assumption -->
     <!-- that it needs to be built in Release because LibTorch itself is in release. -->
