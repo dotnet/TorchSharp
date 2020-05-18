@@ -92,6 +92,7 @@ endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_compile_options(-v)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --for-linker=-v")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --use-ld=/usr/local/opt/llvm/bin/lld")
 endif()
 
 add_definitions(-D_NO_ASYNCRTIMP)
