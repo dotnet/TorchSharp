@@ -113,7 +113,7 @@
           Inputs="$(MSBuildProjectFile)"
           Outputs="@(LibtorchArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)';@(MklDnnArchive->'%(DownloadFile))">
     <MakeDir Directories="$(IntermediateOutputPath)" />
-    <MakeDir Directories="$(MassiveDownloadRoot)" />
+    <MakeDir Directories="$(MassiveDownloadRoot)$(MSBuildProjectName)\" />
     <ItemGroup>
       <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
       <_downloadFiles Include="@(LibtorchArchive);@(AdditionalDownloadFile);@(MklDnnArchive)" Url="%(Identity)" DestinationFile="%(DownloadFile)" />
