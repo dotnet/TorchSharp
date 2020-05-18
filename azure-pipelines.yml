@@ -24,14 +24,14 @@ jobs:
     name: MacOS_x64_NetCoreApp30
     buildScript: ./build.sh
     pool:
-      name: macOS-10.15
+      name: Hosted macOS
 
 - template: /build/ci/job-template.yml
   parameters:
     name: Windows_x64_NetCoreApp30
     buildScript: build.cmd
     pool:
-      name: windows-2019
+      name: Hosted VS2017
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -100,7 +100,7 @@ jobs:
     _UseEsrpSigning: true
     _TeamName: DotNetCore
   pool:
-    name: windows-2019	
+    name: Hosted VS2017	
   steps:
 
   # Build both native and managed assets. 
@@ -133,7 +133,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: windows-2019	
+    name: Hosted VS2017	
   steps:
 
   # Download all agent packages from all previous jobs
