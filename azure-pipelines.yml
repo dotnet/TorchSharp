@@ -143,7 +143,7 @@ phases:
       sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
       targetFolder: $(Build.SourcesDirectory)/../
   
-  - script: build.cmd pack -c release 
+  - script: build.cmd pack -c Release 
     displayName: Create Packages
 
   - script: rm $(Build.SourcesDirectory)/bin/packages/*.symbols.*
