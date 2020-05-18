@@ -19,7 +19,7 @@ jobs:
       ${{ if eq(variables._codeCoverage, 'true') }}:
         timeoutInMinutes: 60
     strategy:
-      parallel: 99
+      maxParallel: 99
       matrix:
         ${{ if eq(parameters.customMatrixes, '') }}:
           Debug_Build:

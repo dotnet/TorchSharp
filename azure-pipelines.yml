@@ -2,13 +2,13 @@
 # TorchSharp's PR validation build
 ################################################################################
 
-resources:
-  containers:
-  - container: CentosContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
+# resources:
+#   containers:
+#   - container: CentosContainer
+#     image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
   
-  - container: UbuntuContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20200515184230-2c829e8
+#   - container: UbuntuContainer
+#     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20200515184230-2c829e8
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -16,22 +16,27 @@ jobs:
     name: Ubuntu_x64_NetCoreApp30
     buildScript: ./build.sh
     pool:
-      name: Hosted Ubuntu 1604
-      container: UbuntuContainer
+      name: ubuntu-latest
+#      container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
   parameters:
     name: MacOS_x64_NetCoreApp30
     buildScript: ./build.sh
     pool:
-      name: Hosted macOS
+      name: macOS-latest
 
 - template: /build/ci/job-template.yml
   parameters:
     name: Windows_x64_NetCoreApp30
     buildScript: build.cmd
     pool:
-      name: Hosted VS2017
+      name: windows-latest
+
+################################################################################
+# {Build} --> combine --> package to build native bits on multiple OS's
+################################################################################
+
 
 ################################################################################
 - job: Linux_Build
@@ -43,8 +48,8 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: Hosted Ubuntu 1604
-    container: UbuntuContainer
+    name: ubuntu-latest
+#    container: ubuntu-16.04
   steps:
   # Only build native assets to avoid conflicts.
   - script: ./build.sh -buildNative -$(BuildConfig) -skipRIDAgnosticAssets
@@ -67,7 +72,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: Hosted macOS
+    name: macos-latest
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
     displayName: Install build dependencies
@@ -83,45 +88,6 @@ jobs:
       artifactType: container
 
 ################################################################################
-# - job: Windows_x86_Build 
-################################################################################
-#   variables:
-#     BuildConfig: Release
-#     OfficialBuildId: $(BUILD.BUILDNUMBER)
-#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
-#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-#     DOTNET_MULTILEVEL_LOOKUP: 0
-#     _SignType: real
-#     _UseEsrpSigning: true
-#     _TeamName: DotNetCore
-#   pool:
-#     name: Hosted VS2017
-#   steps:
-
-#   # Only build native assets to avoid conflicts.
-#   - script: ./build.cmd -buildNative -$(BuildConfig) -buildArch=x86 -skipRIDAgnosticAssets
-#     displayName: Build
-  
-#   - task: MSBuild@1
-#     displayName: Sign Windows_x86 Binaries
-#     inputs:
-#       solution: build/sign.proj
-#       msbuildArguments: /p:SignType=$(_SignType)
-#       msbuildVersion: 15.0
-#     continueOnError: false
-
-#   - task: PublishBuildArtifacts@1
-#     displayName: Publish Windows_x86 package assets
-#     inputs:
-#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
-#       artifactName: PackageAssets
-#       artifactType: container
-
-#   # Terminate all dotnet build processes.
-#   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
-#     displayName: Dotnet Server Shutdown
-
-################################################################################
 - job: Windows_x64_Build
 ################################################################################
   variables:
@@ -134,7 +100,7 @@ jobs:
     _UseEsrpSigning: true
     _TeamName: DotNetCore
   pool:
-    name: Hosted VS2017
+    name: windows-latest
   steps:
 
   # Build both native and managed assets. 
@@ -167,7 +133,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: Hosted VS2017
+    name: windows-latest
   steps:
 
   # Download all agent packages from all previous jobs
