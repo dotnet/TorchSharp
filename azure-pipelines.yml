@@ -16,7 +16,7 @@ jobs:
     name: Ubuntu_x64_NetCoreApp30
     buildScript: ./build.sh
     pool:
-      name: ubuntu-16.04
+      name: ubuntu-16.04 container
       container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
@@ -48,8 +48,8 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: ubuntu-16.04
-#    container: ubuntu-16.04
+    name: ubuntu-16.04 container
+    container: UbuntuContainer
   steps:
   # Only build native assets to avoid conflicts.
   - script: ./build.sh -buildNative -$(BuildConfig) -skipRIDAgnosticAssets
