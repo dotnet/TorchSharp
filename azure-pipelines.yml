@@ -68,7 +68,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: Publish Linux package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/Release/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
       artifactName: PackageAssets
       artifactType: container
 
@@ -95,7 +95,7 @@ jobs:
 #   - task: PublishBuildArtifacts@1
 #     displayName: Publish macOS package assets
 #     inputs:
-#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/Release/packages
+#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
 #       artifactName: PackageAssets
 #       artifactType: container
 
@@ -116,7 +116,7 @@ jobs:
     name: Hosted VS2017	
   steps:
 
-  # Download all agent packages from all previous jobs
+  # Download all bits contributing to the packages from the Linux and Mac builds
   - task: DownloadBuildArtifacts@0
     displayName: Download package assets
     inputs:
@@ -126,27 +126,27 @@ jobs:
 
   # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
-    displayName: Copy package assets to correct folder
+    displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
-      targetFolder: $(Build.SourcesDirectory)/../
+      targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
   
   # remove to free up space
-  - script: rmdir /s /q $(Build.SourcesDirectory)/../PackageAssets
-    displayName: Create Packages
+  - script: rmdir /s /q $(Build.SourcesDirectory)\..\PackageAssets
+    displayName: Free up space
 
-  # build the windows bits including CUDA support
-  - script: build.cmd pack -c Release 
-    displayName: Create Packages
+  # build the windows bits contributing to the packages and make the packages
+  - script: build.cmd pack -c $(BuildConfig) 
+    displayName: Build Windows and Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/packages/Release
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
-  #      cp $(Build.SourcesDirectory)\bin\obj\packages\Release\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #      cp $(Build.SourcesDirectory)\bin\obj\packages\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
   #    displayName: Copy Nugets in staging directory
 
