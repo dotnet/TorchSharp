@@ -246,11 +246,6 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern bool THSTensor_isVariable(IntPtr handle);
-
-        public bool IsVariable => THSTensor_isVariable(handle);
-
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
 
         public TorchTensor ToType(ATenScalarMapping type)

@@ -78,11 +78,6 @@ else()
     add_compile_options(-fvisibility=hidden)
 endif()
 
-# Older CMake doesn't support CMAKE_CXX_STANDARD and GCC/Clang need a switch to enable C++ 11
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "(Clang|GNU)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
-
 # This is required to map a symbol reference to a matching definition local to the module (.so)
 # containing the reference instead of using definitions from other modules.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")

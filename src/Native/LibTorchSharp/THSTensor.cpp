@@ -341,11 +341,6 @@ int THSTensor_isSparse(const Tensor tensor)
     CATCH_RETURN(int, 0, tensor->is_sparse());
 }
 
-int THSTensor_isVariable(const Tensor tensor)
-{
-    CATCH_RETURN(int, 0, tensor->is_variable());
-}
-
 Tensor THSTensor_indices(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_indices());

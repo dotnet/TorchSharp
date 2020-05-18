@@ -4,11 +4,7 @@ if(APPLE)
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
-if(APPLE)
-    find_package(torch REQUIRED PATHS ${LIBTORCH_PATH})
-else()
-    find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
-endif()
+find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
     cifar10.h
@@ -46,7 +42,9 @@ include_directories(${TORCH_INCLUDE_DIRS})
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
+
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
+#    CMAKE_CXX_FLAGS:STRING=-std=c++14
 
 if(APPLE)
     set_target_properties(LibTorchSharp PROPERTIES INSTALL_RPATH "@loader_path;@executable_path;")
