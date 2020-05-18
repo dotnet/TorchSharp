@@ -21,14 +21,14 @@ jobs:
       name: Hosted Ubuntu 1604
     container: UbuntuContainer
 
-- template: /build/ci/job-template.yml
-  parameters:
-    prepScript: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
-    name: MacOS_x64_NetCoreApp30
-    buildScript: ./build.sh build /p:SkipCuda=true -c 
-    testScript: ./build.sh test /p:SkipCuda=true -c 
-    pool:
-      name: Hosted macOS
+# - template: /build/ci/job-template.yml
+#   parameters:
+#     prepScript: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
+#     name: MacOS_x64_NetCoreApp30
+#     buildScript: ./build.sh build /p:SkipCuda=true -c 
+#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     pool:
+#       name: Hosted macOS
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -72,32 +72,32 @@ jobs:
       artifactName: PackageAssets
       artifactType: container
 
-################################################################################
-- job: MacOS_Build_For_Package
-################################################################################
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-    TORCHSHARP_MAKING_PACKAGE: 1
-  pool:
-    name: Hosted macOS
-  steps:
-  - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
-    displayName: Install build dependencies (macOS)
-  - script: ls -Flas /usr/local/opt/llvm/bin/
-    displayName: Debug Stuff
-  - script: ./build.sh build -c $(BuildConfig)
-    displayName: Build
+# ################################################################################
+# - job: MacOS_Build_For_Package
+# ################################################################################
+#   variables:
+#     BuildConfig: Release
+#     OfficialBuildId: $(BUILD.BUILDNUMBER)
+#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+#     DOTNET_MULTILEVEL_LOOKUP: 0
+#     TORCHSHARP_MAKING_PACKAGE: 1
+#   pool:
+#     name: Hosted macOS
+#   steps:
+#   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
+#     displayName: Install build dependencies (macOS)
+#   - script: ls -Flas /usr/local/opt/llvm/bin/
+#     displayName: Debug Stuff
+#   - script: ./build.sh build -c $(BuildConfig)
+#     displayName: Build
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish macOS package assets
-    inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/Release/packages
-      artifactName: PackageAssets
-      artifactType: container
+#   - task: PublishBuildArtifacts@1
+#     displayName: Publish macOS package assets
+#     inputs:
+#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/Release/packages
+#       artifactName: PackageAssets
+#       artifactType: container
 
 
 ################################################################################
@@ -105,7 +105,7 @@ jobs:
 ################################################################################
   dependsOn:
   - Linux_Build_For_Package
-  - MacOS_Build_For_Package
+  # - MacOS_Build_For_Package
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)

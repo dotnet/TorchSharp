@@ -92,8 +92,8 @@ endif()
 # Experimenting with trying to solve a linker problem
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_compile_options(-v)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --for-linker=-v")
-    set(CMAKE_LINK_WHAT_YOU_USE FALSE)
+#    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --for-linker=-v")
+#    set(CMAKE_LINK_WHAT_YOU_USE FALSE)
 endif()
 
 add_definitions(-D_NO_ASYNCRTIMP)

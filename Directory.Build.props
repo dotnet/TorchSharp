@@ -51,16 +51,13 @@
 
     <NativeConfiguration>$(Configuration)</NativeConfiguration>
 
+    <!-- Setting TargetOS allows us to download LibTorch for Linux etc, update the SHA and update file lists under src\Redist -->
+    <!-- The only thing we can't do locally is build the C++ code for all the various target platforms (which is ultimately done on Azure Pipelines) -->
     <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' == 'Windows_NT'">windows</TargetOS>
     <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' != 'Windows_NT'">linux</TargetOS>
     <TargetOS Condition="'$(TargetOS)' == '' AND $([MSBuild]::IsOSPlatform('osx'))">mac</TargetOS>
 
-    <!-- OLD: On Unix hard code LibTorchSharp as Release - there is a (possibly outdated) assumption -->
-    <!-- that it needs to be built in Release because LibTorch itself is in release. -->
-    <!-- On windows a debug version of LibTorch is available for download-->
-    <!-- <NativeConfiguration Condition="'$(TargetOS)' != 'windows'">Release</NativeConfiguration> -->
-
-    <!-- on windows separate debug binaries are available-->
+    <!-- on windows separate debug binaries of LibTorch are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
 
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
