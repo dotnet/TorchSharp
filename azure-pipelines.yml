@@ -72,7 +72,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: macos-latest
+    name: Hosted macOS
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
     displayName: Install build dependencies
