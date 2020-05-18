@@ -123,13 +123,13 @@ To update the version, update these:
 
 Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=linux
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=windows
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=mac
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
 
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=linux
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=windows
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=mac
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
 
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.

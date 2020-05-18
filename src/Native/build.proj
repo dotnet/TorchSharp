@@ -27,26 +27,6 @@
     <GenerateNativeVersionInfo>true</GenerateNativeVersionInfo>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux' OR '$(AssumeOS)' == 'mac'">lib</NativeLibPrefix>
-    <NativeLibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</NativeLibExtension>
-    <NativeLibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</NativeLibExtension>
-    <NativeLibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</NativeLibExtension>
-
-    <NativeLibSymbolExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LibTorchArchiveBase Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)-$(LibtorchVersion)</LibTorchArchiveBase>
-    <!-- note the very odd characters %2Bcpu in the Linux LibTorch 1.5.0 download name. The % is encoded via %25 -->
-    <ExtraForLibTorch150Linux>%252Bcpu</ExtraForLibTorch150Linux>
-    <LibTorchArchiveBase Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)$(ExtraForLibTorch150Linux)</LibTorchArchiveBase>
-    <LibTorchArchiveBase Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
-  </PropertyGroup>
-
   <Target Name="BuildNativeUnix"
           Condition="'$(OS)' != 'Windows_NT'"
           DependsOnTargets="GenerateVersionSourceFile">

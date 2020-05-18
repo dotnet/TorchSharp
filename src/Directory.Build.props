@@ -17,10 +17,30 @@
     because LibTorch itself is in release. -->
     <NativeAssetsBuiltPath>$(BaseOutputPath)$(TargetArchitecture).$(NativeConfiguration)\Native</NativeAssetsBuiltPath>
 
-    <PackageRid Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">win</PackageRid>
-    <PackageRid Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">linux</PackageRid>
-    <PackageRid Condition="$([MSBuild]::IsOSPlatform('osx')) OR '$(AssumeOS)' == 'mac'">osx</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'windows'">win</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'linux'">linux</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'mac'">osx</PackageRid>
     <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
+
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)-$(LibtorchVersion)</LibTorchArchiveBase>
+    <!-- note the very odd characters %2Bcpu in the Linux LibTorch 1.5.0 download name. The % is encoded via %25 -->
+    <ExtraForLibTorch150Linux>%252Bcpu</ExtraForLibTorch150Linux>
+    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)$(ExtraForLibTorch150Linux)</LibTorchArchiveBase>
+    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
+    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <ItemGroup>
