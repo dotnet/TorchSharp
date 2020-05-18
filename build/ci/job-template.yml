@@ -82,5 +82,3 @@ jobs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: ${{ parameters.name }} $(_config_short)
         artifactType: container
-    - script: $(_buildScript) pack
-      displayName: Build Packages

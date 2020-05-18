@@ -70,53 +70,26 @@
     <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Restore" />
     <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Restore" />
 
-    <Message Text="Downloading and unpacking Libtorch Cuda binaries for linux..." Importance="high"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
-    <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
-             Properties="AssumeOS=linux"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
-             Targets="Build"  />
+    <Message Text="Packing TorchSharp nupkg..." Importance="high" />
+    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
 
-    <Message Text="Downloading and unpacking Libtorch Cuda binaries for mac..." Importance="high" 
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "/>
-    <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
-             Properties="AssumeOS=mac"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
-             Targets="Build"   />
+    <Error Message="You must have built the LibTorchSharp.so binaries for linux-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')" />
 
-    <Message Text="Downloading and unpacking Libtorch Cuda binaries for windows..." Importance="high"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
-    <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
-             Properties="AssumeOS=windows"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
-             Targets="Build"   />
+    <Error Message="You must have built the LibTorchSharp.so binaries for osx-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\osx-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\osx-x64\native\libLibTorchSharp.so')" />
 
-    <Message Text="Downloading and unpacking Libtorch CPU binaries for linux..." Importance="high" />
-    <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
-             Properties="AssumeOS=linux"
-             Condition="'$(SkipNative)' != 'true'"
-             Targets="Build"   />
-
-    <Message Text="Downloading and unpacking Libtorch CPU binaries for mac..." Importance="high" />
-    <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
-             Properties="AssumeOS=mac"
-             Condition="'$(SkipNative)' != 'true'"
-             Targets="Build"   />
-
-    <Message Text="Downloading and unpacking Libtorch CPU binaries for windows..." Importance="high" />
-    <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
-             Properties="AssumeOS=windows"
-             Condition="'$(SkipNative)' != 'true'"
-             Targets="Build"   />
+    <Error Message="You must have built the LibTorchSharp.so binaries for win-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\osx-x64\native\libLibTorchSharp.so')" />
 
     <Message Text="Packing LibTorch.Cuda.$(CudaVersionDot).Redist nupkg (takes a long time!)..." Importance="high"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "  />
     <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
 
     <Message Text="Packing LibTorch.Redist nupkg..." Importance="high"  Condition="'$(SkipNative)' != 'true'" />
     <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true'" />
-
-    <Message Text="Packing TorchSharp nupkg..." Importance="high" />
-    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
 
     <Message Text="Done packing!" Importance="high" />
   </Target>

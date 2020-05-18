@@ -65,11 +65,10 @@ Requirements:
 - cmake (tested with 3.14)
 
 Commands:
-- Building: `build.cmd`
+- Building: `build.cmd build` (can use  `dotnet build` after first time)
 - Building from Visual Studio: first build using the command line
 - See all configurations: `build.cmd -?`
-- Run tests from command line: `build.cmd -runtests`
-- Build packages: `build.cmd -buildpackages`
+- Run tests from command line: `dotnet test`
 
 
 Linux/Mac
@@ -92,8 +91,20 @@ Commands:
 - Building: `./build.sh`
 - Building from Visual Studio: first build using the command line
 - See all configurations: `./build.sh -?`
-- Run tests from command line: `./build.sh -runtests`
-- Build packages: `./build.sh -buildpackages`
+- Run tests from command line: `dotnet test`
+- Build packages: `dotnet pack`
+
+
+
+Building packages
+------------------------
+
+The managed package can be built with `dotnet pack`
+
+Complete LibTorch.Redist packages can't be built using your local machine alone, since they won't contain the
+full range of native bits. Instead they are built using Azure Pipelines.
+
+
 
 Updating PyTorch version
 ------------------------
