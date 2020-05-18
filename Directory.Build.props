@@ -31,7 +31,7 @@
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
     <MassiveDownloadRoot>$(RepoRoot)../</MassiveDownloadRoot>
-    <MassiveDownloadRoot Condition="'$(BUILD_BUILDNUMBER )' != ''">(RepoRoot)bin/downloads/</MassiveDownloadRoot>
+    <MassiveDownloadRoot Condition="'$(TF_BUILD)' != ''">(RepoRoot)bin/downloads/</MassiveDownloadRoot>
 
     <!-- Output directories -->
     <BinDir Condition="'$(BinDir)'==''">$(RepoRoot)bin/</BinDir>
