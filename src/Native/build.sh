@@ -8,7 +8,7 @@ usage()
     echo "Options:"
     echo "  --arch <Architecture>             Target Architecture (x64, x86)"
     echo "  --configuration <Configuration>   Build Configuration (Debug, Release)"
-    echo "  --stripSymbols                    Enable symbol stripping (to external file)"
+    echo "  --stripsymbols                    Enable symbol stripping (to external file)"
     echo "  --libtorchpath <PathToLibtorch>   Path to libtorch TorchConfig.cmake"
     exit 1
 }
@@ -68,21 +68,21 @@ mkdir -p "$__BinDir"
 mkdir -p "$__IntermediatesDir"
 
 # Set up the environment to be used for building with clang.
-if command -v "clang-3.5" > /dev/null 2>&1; then
-    export CC="$(command -v clang-3.5)"
-    export CXX="$(command -v clang++-3.5)"
-elif command -v "clang-3.6" > /dev/null 2>&1; then
-    export CC="$(command -v clang-3.6)"
-    export CXX="$(command -v clang++-3.6)"
-elif command -v "clang-3.9" > /dev/null 2>&1; then
-    export CC="$(command -v clang-3.9)"
-    export CXX="$(command -v clang++-3.9)"
+if command -v "clang-6.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-6.0)"
+    export CXX="$(command -v clang++-6.0)"
+elif command -v "clang-5.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-5.0)"
+    export CXX="$(command -v clang++-5.0)"
+elif command -v "clang-4.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-4.0)"
+    export CXX="$(command -v clang++-4.0)"
 elif command -v clang > /dev/null 2>&1; then
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++)"
 else
     echo "Unable to find Clang Compiler"
-    echo "Install clang-3.5 or clang3.6 or clang3.9"
+    echo "Install clang-6.0, clang-5.0, or clang-4.0"
     exit 1
 fi
 

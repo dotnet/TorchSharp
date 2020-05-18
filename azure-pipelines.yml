@@ -14,22 +14,28 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64_NetCoreApp30
-    buildScript: ./build.sh
+    prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+    buildScript: ./build.sh build /p:SkipCuda=true -c 
+    testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
       name: Hosted Ubuntu 1604
     container: UbuntuContainer
 
-- template: /build/ci/job-template.yml
-  parameters:
-    name: MacOS_x64_NetCoreApp30
-    buildScript: ./build.sh
-    pool:
-      name: Hosted macOS
+# - template: /build/ci/job-template.yml
+#   parameters:
+#     prepScript: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
+#     name: MacOS_x64_NetCoreApp30
+#     buildScript: ./build.sh build /p:SkipCuda=true -c 
+#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     pool:
+#       name: Hosted macOS
 
 - template: /build/ci/job-template.yml
   parameters:
+    prepScript: echo "no prep needed"
     name: Windows_x64_NetCoreApp30
-    buildScript: build.cmd
+    buildScript: build.cmd  build  /p:SkipCuda=true -c 
+    testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
       name: Hosted VS2017
 
@@ -39,7 +45,7 @@ jobs:
 
 
 ################################################################################
-- job: Linux_Build
+- job: Linux_Build_For_Package
 ################################################################################
   variables:
     BuildConfig: Release
@@ -47,85 +53,59 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
+    TORCHSHARP_MAKING_PACKAGE: 1
   pool:
     name: Hosted Ubuntu 1604
   container: UbuntuContainer
   steps:
-  # Only build native assets to avoid conflicts.
-  - script: ./build.sh -buildNative -$(BuildConfig) -skipRIDAgnosticAssets
+  - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+  - script: sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
+  - script: sudo apt-get -y update
+  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+  - script: ./build.sh build -c $(BuildConfig) 
     displayName: Build
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Linux package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
       artifactName: PackageAssets
       artifactType: container
 
-################################################################################
-- job: MacOS_Build
-################################################################################
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-  pool:
-    name: Hosted macOS
-  steps:
-  - script: brew update && brew install libomp && brew link libomp --force
-    displayName: Install build dependencies
-  # Only build native assets to avoid conflicts.
-  - script: ./build.sh -buildNative -$(BuildConfig) -skipRIDAgnosticAssets
-    displayName: Build
+# ################################################################################
+# - job: MacOS_Build_For_Package
+# ################################################################################
+#   variables:
+#     BuildConfig: Release
+#     OfficialBuildId: $(BUILD.BUILDNUMBER)
+#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+#     DOTNET_MULTILEVEL_LOOKUP: 0
+#     TORCHSHARP_MAKING_PACKAGE: 1
+#   pool:
+#     name: Hosted macOS
+#   steps:
+#   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
+#     displayName: Install build dependencies (macOS)
+#   - script: ls -Flas /usr/local/opt/llvm/bin/
+#     displayName: Debug Stuff
+#   - script: ./build.sh build -c $(BuildConfig)
+#     displayName: Build
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish macOS package assets
-    inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
-      artifactName: PackageAssets
-      artifactType: container
+#   - task: PublishBuildArtifacts@1
+#     displayName: Publish macOS package assets
+#     inputs:
+#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+#       artifactName: PackageAssets
+#       artifactType: container
 
-################################################################################
-- job: Windows_x64_Build
-################################################################################
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-    _SignType: real
-    _UseEsrpSigning: true
-    _TeamName: DotNetCore
-  pool:
-    name: Hosted VS2017	
-  steps:
-
-  # Build both native and managed assets. 
-  - script: ./build.cmd -$(BuildConfig)
-    displayName: Build
-
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Windows_x64 package assets
-    inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
-      artifactName: PackageAssets
-      artifactType: container
-
-  # Terminate all dotnet build processes.
-  - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
-    displayName: Dotnet Server Shutdown
 
 ################################################################################
 - job: Package
 ################################################################################
   dependsOn:
-  - Linux_Build
-  - MacOS_Build
-  # - Windows_x86_Build
-  - Windows_x64_Build
+  - Linux_Build_For_Package
+  # - MacOS_Build_For_Package
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -136,35 +116,37 @@ jobs:
     name: Hosted VS2017	
   steps:
 
-  # Download all agent packages from all previous jobs
+  # Download all bits contributing to the packages from the Linux and Mac builds
   - task: DownloadBuildArtifacts@0
     displayName: Download package assets
     inputs:
       artifactName: PackageAssets
-      downloadPath: $(Build.SourcesDirectory)/bin/obj/packages
+      downloadPath: $(Build.SourcesDirectory)/..
       parallelizationLimit: 1
 
   # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
-    displayName: Copy package assets to correct folder
+    displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packages/
+      sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
+      targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
   
-  - script: ./build.cmd -release -buildPackages
-    displayName: Create Packages
+  # remove to free up space
+  - script: rmdir /s /q $(Build.SourcesDirectory)\..\PackageAssets
+    displayName: Free up space
 
-  - script: rm $(Build.SourcesDirectory)/bin/packages/*.symbols.*
-    displayName: Remove symbols nuget
+  # build the windows bits contributing to the packages and make the packages
+  - script: build.cmd pack -c $(BuildConfig) 
+    displayName: Build Windows and Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/packages
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
-  #      cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #      cp $(Build.SourcesDirectory)\bin\obj\packages\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
   #    displayName: Copy Nugets in staging directory
 
@@ -172,8 +154,6 @@ jobs:
   #      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    displayName: Dotnet Publish
 
-  # TODO: Deal with symbols.
-  
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
   

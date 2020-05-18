@@ -9,15 +9,15 @@
           BeforeTargets="PrepareForRun">
 
     <PropertyGroup>
-      <LibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux' OR '$(AssumeOS)' == 'macos'">lib</LibPrefix>
-      <LibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</LibExtension>
-      <LibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</LibExtension>
-      <LibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</LibExtension>
+      <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
+      <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
+      <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
+      <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
     </PropertyGroup>
 
     <ItemGroup>
       <NativeAssemblyReference>
-        <FullAssemblyPath>$(NativeOutputPath)$(LibPrefix)%(NativeAssemblyReference.Identity)$(LibExtension)%(NativeAssemblyReference.ExtraExtension)</FullAssemblyPath>
+        <FullAssemblyPath>$(NativeOutputPath)$(NativeLibPrefix)%(NativeAssemblyReference.Identity)$(NativeLibExtension)%(NativeAssemblyReference.ExtraExtension)</FullAssemblyPath>
       </NativeAssemblyReference>
     </ItemGroup>
 
@@ -33,5 +33,4 @@
     
   </Target>
   
-  <Import Project="$(ToolsDir)/versioning.targets" Condition="Exists('$(ToolsDir)/versioning.targets')" />
 </Project>

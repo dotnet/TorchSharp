@@ -125,8 +125,8 @@ set __msbuildArgs=/p:Platform=%__BuildArch% /p:PlatformToolset="%__PlatformTools
 
 cd %__rootDir%
 
-echo msbuild "%__IntermediatesDir%\INSTALL.vcxproj" /t:rebuild /p:Configuration=%CMAKE_BUILD_TYPE% %__msbuildArgs%
-call msbuild "%__IntermediatesDir%\INSTALL.vcxproj" /t:rebuild /p:Configuration=%CMAKE_BUILD_TYPE% %__msbuildArgs%
+echo msbuild "%__IntermediatesDir%\INSTALL.vcxproj" /t:build /p:Configuration=%CMAKE_BUILD_TYPE% %__msbuildArgs%
+call msbuild "%__IntermediatesDir%\INSTALL.vcxproj" /t:build /p:Configuration=%CMAKE_BUILD_TYPE% %__msbuildArgs%
 IF ERRORLEVEL 1 (
     goto :Failure
 )

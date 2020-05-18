@@ -5,9 +5,8 @@
     <!-- Use this flag to ensure native assets take stable version -->
     <UseStableVersionForNativeAssets>true</UseStableVersionForNativeAssets>
 
-    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
-    because LibTorch itself is in release. -->
-    <StripNativeSymbols Condition="'$(StripNativeSymbols)' == ''">True</StripNativeSymbols>
+    <!-- Do we split unix symbols into separate files -->
+    <StripNativeSymbols Condition="'$(Configuration)' == ''">True</StripNativeSymbols>
   </PropertyGroup>
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
@@ -28,35 +27,14 @@
     <GenerateNativeVersionInfo>true</GenerateNativeVersionInfo>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <NativeLibPrefix Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux' OR '$(AssumeOS)' == 'macos'">lib</NativeLibPrefix>
-    <NativeLibExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.dll</NativeLibExtension>
-    <NativeLibExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so</NativeLibExtension>
-    <NativeLibExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib</NativeLibExtension>
-
-    <NativeLibSymbolExtension Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LibName Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">libtorch-win-shared-with-deps</LibName>
-    <LibName Condition="'$(OS)' != 'Windows_NT' OR '$(AssumeOS)' == 'linux'">libtorch-shared-with-deps</LibName>
-    <LibName Condition="$([MSBuild]::IsOSPlatform('osx'))  OR '$(AssumeOS)' == 'mac'">libtorch-macos</LibName>
-
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)LibTorch.Redist\$(LibName)-$(LibtorchVersion)\libtorch\share\cmake\Torch</LibtorchPath>
-  </PropertyGroup>
-
   <Target Name="BuildNativeUnix"
           Condition="'$(OS)' != 'Windows_NT'"
           DependsOnTargets="GenerateVersionSourceFile">
 
     <PropertyGroup>
       
-      <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
-      because LibTorch itself is in release. -->
-      <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripSymbols</StripArgs>
-      <BuildArgs>--configuration Release --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchPath)</BuildArgs>
+      <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripsymbols</StripArgs>
+      <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchPath)</BuildArgs>
     </PropertyGroup>
 
     <Message Text="$(MSBuildProjectDirectory)/build.sh $(BuildArgs)" Importance="High"/>
@@ -69,9 +47,7 @@
           DependsOnTargets="GenerateVersionHeader">
           
     <PropertyGroup>
-      <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
-      because LibTorch itself is in release. -->
-      <BuildArgs>Release $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
+     <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
     </PropertyGroup>
 
     <!-- Run script that invokes Cmake to create VS files, and then calls msbuild to compile them -->
@@ -89,7 +65,7 @@
 
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="LibTorch.Cuda.9.0.Redist\runtimes\$(PackageRid)\native" />
+                          RelativePath="LibTorch.Cuda.10.2.Redist\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>

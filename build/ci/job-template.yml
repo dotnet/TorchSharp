@@ -1,53 +1,39 @@
 parameters:
   name: ''
-  architecture: x64
+  prepScript: ''
   buildScript: ''
+  testScript: ''
   pool: {}
   container: ''
-  customMatrixes: ''
-  codeCoverage: false
 
 jobs:
   - job: ${{ parameters.name }}
     variables:
+      _prepScript: ${{ parameters.prepScript }}
+      _testScript: ${{ parameters.testScript }}
       _buildScript: ${{ parameters.buildScript }}
       _jobName: ${{ parameters.name }}
-      _arch: ${{ parameters.architecture }}
-      _codeCoverage: ${{ parameters.codeCoverage }}
     pool:
-      ${{ if eq(variables._codeCoverage, 'false') }}:
-        timeoutInMinutes: 30
-      ${{ if eq(variables._codeCoverage, 'true') }}:
-        timeoutInMinutes: 60
+      timeoutInMinutes: 30
       ${{ insert }}: ${{ parameters.pool }}
     ${{ if ne(parameters.container, '') }}:
       container: ${{ parameters.container }}
     strategy:
       maxParallel: 99
       matrix:
-        ${{ if eq(parameters.customMatrixes, '') }}:
-          Debug_Build:
-            _configuration: Debug
-            _config_short: D
-            _includeBenchmarkData: false
-          Release_Build:
-            _configuration: Release
-            _config_short: R
-            _includeBenchmarkData: true
-        ${{ if ne(parameters.customMatrixes, '') }}:
-          ${{ insert }}: ${{ parameters.customMatrixes }}
+        Debug_Build:
+          _configuration: Debug
+          _config_short: D
+        Release_Build:
+          _configuration: Release
+          _config_short: R
     steps:
-    - ${{ if eq(parameters.pool.name, 'Hosted macOS') }}:
-      - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-        displayName: Install build dependencies
-    - script: $(_buildScript) -$(_configuration) -buildArch=$(_arch)
+    - script: $(_prepScript)
+      displayName: Install build dependencies
+    - script: $(_buildScript) $(_configuration)  
       displayName: Build
-    - script: $(_buildScript) -$(_configuration) -runtests -coverage=$(_codeCoverage)
-      displayName: Run Tests.
-    # REVIEW: Code coverage should be reactivated.
-    # - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet msbuild build/Codecoverage.proj /p:CodeCovToken=$(CODECOV_TOKEN)
-    #   displayName: Upload coverage to codecov.io
-    #   condition: and(succeeded(), eq(variables._codeCoverage, 'true'))
+    - script: $(_testScript) $(_configuration) 
+      displayName: Run Tests
     - task: PublishTestResults@2
       displayName: Publish Test Results
       condition: succeededOrFailed()
@@ -81,5 +67,3 @@ jobs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: ${{ parameters.name }} $(_config_short)
         artifactType: container
-    - script: $(_buildScript) -buildPackages
-      displayName: Build Packages

@@ -1,9 +1,10 @@
-﻿<#@ Template Language="C#" #>
+<#@ Template Language="C#" #>
 <#@ Assembly Name="System.Core" #>
 <#@ Output Extension=".generated.cs" #>
 <#@ Include File="Types.ttinclude" #>
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 namespace TorchSharp.Tensor {
@@ -21,8 +22,14 @@ foreach (var type in TorchTypeDef.Types) {
     /// </summary>
     public class <#=type.Name#>Tensor
     {
+        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
+        static <#=type.Name#>Tensor()
+        {
+            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+        }
+
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -36,7 +43,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -55,7 +62,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -74,7 +81,7 @@ foreach (var type in TorchTypeDef.Types) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -114,7 +121,7 @@ foreach (var type in TorchTypeDef.Types) {
 if (type.IsFloat) {
 #>
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -133,7 +140,7 @@ if (type.IsFloat) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -192,7 +199,13 @@ if (!type.IsLong) {
                     var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
                     var addr = dataHandle.AddrOfPinnedObject();
                     var gchp = GCHandle.ToIntPtr(dataHandle);
-                    var deleter = new GCHandleDeleter((IntPtr ptr) => GCHandle.FromIntPtr(gchp).Free());
+                    GCHandleDeleter deleter = null;
+                    deleter =
+                        new GCHandleDeleter(delegate (IntPtr ptr) {
+                            GCHandle.FromIntPtr(gchp).Free();
+                            deleters.TryRemove(deleter, out deleter);
+                         });
+                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
 <#
 if (!type.IsLong) {
 #>
@@ -210,7 +223,7 @@ if (!type.IsLong) {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
         {

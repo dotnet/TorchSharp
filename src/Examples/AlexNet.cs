@@ -1,9 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.NN.LossFunction;
+using TorchSharp.NN;
+using static TorchSharp.NN.Modules;
+using static TorchSharp.NN.Functions;
+using static TorchSharp.NN.Losses;
 
 namespace TorchSharp.Examples
 {
@@ -26,8 +29,8 @@ namespace TorchSharp.Examples
 
             using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
-            using (var model = new Model(_numClasses))
-            using (var optimizer = NN.Optimizer.Adam(model.Parameters(), 0.001))
+            using (var model = new Model("model", _numClasses))
+            using (var optimizer = NN.Optimizer.Adam(model.GetParameters(), 0.001))
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -44,43 +47,44 @@ namespace TorchSharp.Examples
             }
         }
 
-        private class Model : NN.Module
+        private class Model : CustomModule
         {
-            private readonly NN.Module features;
-            private readonly NN.Module avgPool;
-            private readonly NN.Module classifier;
+            private readonly Sequential features;
+            private readonly AdaptiveAvgPool2D avgPool;
+            private readonly Sequential classifier;
 
-            public Model(int numClasses)
+            public Model(string name, int numClasses) : base(name)
             {
                 features = Sequential(
-                    Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }),
-                    Conv2D(64, 192, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }),
-                    Conv2D(192, 384, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    Conv2D(384, 256, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    Conv2D(256, 256, kernelSize: 3, padding: 1),
-                    Relu(inPlace: true),
-                    MaxPool2D(kernelSize: new long[] { 2 }));
+                    ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),
+                    ("r1", Relu(inPlace: true)),
+                    ("mp1", MaxPool2D(kernelSize: new long[] { 2 })),
+                    ("c2", Conv2D(64, 192, kernelSize: 3, padding: 1)),
+                    ("r2", Relu(inPlace: true)),
+                    ("mp2", MaxPool2D(kernelSize: new long[] { 2 })),
+                    ("c3", Conv2D(192, 384, kernelSize: 3, padding: 1)),
+                    ("r3", Relu(inPlace: true)),
+                    ("c4", Conv2D(384, 256, kernelSize: 3, padding: 1)),
+                    ("r4", Relu(inPlace: true)),
+                    ("c5", Conv2D(256, 256, kernelSize: 3, padding: 1)),
+                    ("r5", Relu(inPlace: true)),
+                    ("mp3", MaxPool2D(kernelSize: new long[] { 2 })));
 
-                avgPool = AdaptiveAvgPool2D(2, 2);
+                avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
 
                 classifier = Sequential(
-                    Dropout(IsTraining()),
-                    Linear(256 * 2 * 2, 4096),
-                    Relu(inPlace: true),
-                    Dropout(IsTraining()),
-                    Linear(4096, 4096),
-                    Relu(inPlace: true),
-                    Linear(4096, numClasses)
+                    ("d1", Dropout()),
+                    ("l1", Linear(256 * 2 * 2, 4096)),
+                    ("r1", Relu(inPlace: true)),
+                    ("d2", Dropout()),
+                    ("l2", Linear(4096, 4096)),
+                    ("r3", Relu(inPlace: true)),
+                    ("l3", Linear(4096, numClasses))
                 );
 
-                RegisterModule(features);
-                RegisterModule(classifier);
+                RegisterModule ("features", features);
+                RegisterModule ("avg", avgPool);
+                RegisterModule ("classify", classifier);
             }
 
             public override TorchTensor Forward(TorchTensor input)
@@ -94,7 +98,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-        NN.Module model,
+        Model model,
         NN.Optimizer optimizer,
         Loss loss,
         IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
@@ -113,7 +117,7 @@ namespace TorchSharp.Examples
                 optimizer.ZeroGrad();
 
                 using (var prediction = model.Forward(data))
-                using (var output = loss(NN.Module.LogSoftMax(prediction, 1), target))
+                using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     output.Backward();
 
@@ -137,7 +141,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Test(
-            NN.Module model,
+            Model model,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
@@ -150,7 +154,7 @@ namespace TorchSharp.Examples
             foreach (var (data, target) in dataLoader)
             {
                 using (var prediction = model.Forward(data))
-                using (var output = loss(NN.Module.LogSoftMax(prediction, 1), target))
+                using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     testLoss += output.DataItem<float>();
 

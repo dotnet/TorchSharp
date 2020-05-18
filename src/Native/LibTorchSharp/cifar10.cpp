@@ -50,14 +50,14 @@ std::pair<at::Tensor, at::Tensor> read_dir(const std::string& root, bool train) 
 
 std::pair<at::Tensor, at::Tensor> read_cifar10(std::string path) {
     std::ifstream data(path, std::ios::binary);
-    AT_CHECK(data, "Error opening data file at ", path);
+    TORCH_CHECK(data, "Error opening data file at ", path);
     auto content = torch::empty(kImagesPerFile * kBytesPerImage, torch::kByte);
     at::Tensor images = torch::zeros({ kImagesPerFile, kChannel, kHight, kWidth }, torch::kFloat32);
     at::Tensor labels = torch::zeros({ kImagesPerFile, }, torch::kInt64);
 
     data.read(reinterpret_cast<char*>(content.data_ptr()), content.numel());
 
-    for (int32_t i = 0; i < kImagesPerFile; i++)
+    for (uint32_t i = 0; i < kImagesPerFile; i++)
     {
         auto offset = kBytesPerImage * i;
         labels.narrow(0, i, 1).copy_(content.narrow(0, offset, 1));

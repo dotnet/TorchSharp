@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -218,6 +218,7 @@ namespace TorchSharp.Tensor
         public ATenScalarMapping Type => (ATenScalarMapping)THSTensor_type(handle);
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         private static extern string THSTensor_deviceType(IntPtr handle);
 
         public string Device
@@ -243,11 +244,6 @@ namespace TorchSharp.Tensor
                 return res;
             }
         }
-
-        [DllImport("LibTorchSharp")]
-        private static extern bool THSTensor_isVariable(IntPtr handle);
-
-        public bool IsVariable => THSTensor_isVariable(handle);
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
@@ -1973,7 +1969,7 @@ namespace TorchSharp.Tensor
         }
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool1d(IntPtr input,
-                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
                 IntPtr dilation, int dilationLength,
@@ -1988,11 +1984,11 @@ namespace TorchSharp.Tensor
             var dilations = new long[] { dilation ?? 1 };
             unsafe
             {
-                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations)
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations)
                 {
                     var res =
                         THSTensor_maxpool1d(handle, 
-                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, paddings.Length,
                             (IntPtr)pdilation, dilations.Length,
@@ -2005,25 +2001,25 @@ namespace TorchSharp.Tensor
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool2d(IntPtr input,
-                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
                 IntPtr dilation, int dilationLength,
                 bool ceil_mode);
 
-        public TorchTensor MaxPool2D(long[] kernelSizes, long[] strides = null,
+        public TorchTensor MaxPool2D(long[] kernelSize, long[] strides = null,
             long[] padding = null, long[] dilation = null, bool ceil_mode = false)
         {
-            strides = strides ?? kernelSizes.Select(x => 1L).ToArray();
-            padding = padding ?? kernelSizes.Select(x => 0L).ToArray();
-            dilation = dilation ?? kernelSizes.Select(x => 1L).ToArray();
+            strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
             unsafe
             {
-                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = padding, pdilation = dilation)
+                fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation)
                 {
                     var res =
                         THSTensor_maxpool2d(handle,
-                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, padding.Length,
                             (IntPtr)pdilation, dilation.Length,
@@ -2036,25 +2032,25 @@ namespace TorchSharp.Tensor
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool3d(IntPtr input,
-                IntPtr kernelSizes, int kernelSizesLength,
+                IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
                 IntPtr dilation, int dilationLength,
                 bool ceil_mode);
 
-        public TorchTensor MaxPool3D(long[] kernelSizes, long[] strides = null,
+        public TorchTensor MaxPool3D(long[] kernelSize, long[] strides = null,
             long[] padding = null, long[] dilation = null, bool ceil_mode = false)
         {
-            strides = strides ?? kernelSizes.Select(x => 1L).ToArray();
-            padding = padding ?? kernelSizes.Select(x => 0L).ToArray();
-            dilation = dilation ?? kernelSizes.Select(x => 1L).ToArray();
+            strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
             unsafe
             {
-                fixed (long* pkernelSizes = kernelSizes, pstrides = strides, ppadding = padding, pdilation = dilation)
+                fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation)
                 {
                     var res =
                         THSTensor_maxpool3d(handle,
-                            (IntPtr)pkernelSizes, kernelSizes.Length,
+                            (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, padding.Length,
                             (IntPtr)pdilation, dilation.Length,

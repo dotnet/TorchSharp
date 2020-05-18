@@ -186,9 +186,6 @@ EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 // Set the value for requires grad.
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
-// Returns whether the input tensor is a variable or not.
-EXPORT_API(int) THSTensor_isVariable(const Tensor twrapper);
-
 // Returns the indices  of the sparse tensor.
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 

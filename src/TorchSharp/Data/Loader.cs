@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
@@ -7,7 +7,9 @@ namespace TorchSharp.Data
     public class Loader
     {
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSData_loaderMNIST(string filename, long batchSize, bool isTrain);
+        private static extern IntPtr THSData_loaderMNIST([MarshalAs(UnmanagedType.LPStr)]string filename,
+            long batchSize,
+            bool isTrain);
 
         /// <summary>
         /// Create an iterator scanning the MNIST dataset.
@@ -22,7 +24,8 @@ namespace TorchSharp.Data
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSData_loaderCIFAR10(string path, long batchSize, bool isTrain);
+        private static extern IntPtr THSData_loaderCIFAR10([MarshalAs(UnmanagedType.LPStr)] string path,
+            long batchSize, bool isTrain);
 
         /// <summary>
         /// Create an iterator scanning the CIFAR10 dataset.

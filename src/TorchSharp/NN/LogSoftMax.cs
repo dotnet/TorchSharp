@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
@@ -8,21 +8,43 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a log softmax module.
     /// </summary>
-    public class LogSoftMax : FunctionalModule<LogSoftMax>
+    public class LogSoftMax : Module
     {
-        private long _dimension;
-
-        internal LogSoftMax(long dimension) : base()
+        internal LogSoftMax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
-            _dimension = dimension;
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_logSoftMaxApply(IntPtr tensor, long dimension);
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_LogSoftMax_forward (Module.HType handle, IntPtr tensor);
 
-        public override TorchTensor Forward(TorchTensor tensor)
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            return new TorchTensor(THSNN_logSoftMaxApply(tensor.Handle, _dimension));
+            var res = THSNN_LogSoftMax_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
     }
+    public static partial class Modules
+    {
+        [DllImport ("LibTorchSharp")]
+        extern static IntPtr THSNN_LogSoftMax_ctor (long dimension, out IntPtr pBoxedModule);
+
+        static public LogSoftMax LogSoftMax (long dimension)
+        {
+            var handle = THSNN_LogSoftMax_ctor (dimension, out var boxedHandle);
+            Torch.CheckForErrors ();
+            return new LogSoftMax (handle, boxedHandle);
+        }
+    }
+
+    public static partial class Functions
+    {
+        static public TorchTensor LogSoftMax (TorchTensor x, long dimension)
+        {
+            using (var l = Modules.LogSoftMax (dimension)) {
+                return l.Forward (x);
+            }
+        }
+    }
+
 }

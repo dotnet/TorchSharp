@@ -16,11 +16,9 @@ if(WIN32)
     endif()
     add_compile_options($<$<CONFIG:Debug>:-DDEBUG>)
     add_compile_options($<$<CONFIG:Release>:-DNDEBUG>)
-    add_compile_options($<$<CONFIG:RelWithDebInfo>:-DNDEBUG>)
     add_compile_options($<$<CONFIG:Debug>:/Od>)
-    add_compile_options($<$<CONFIG:Debug>:/MTd>) # /MT will static link the VC runtime library, so it doesn't need to be installed on the target machine
+    add_compile_options($<$<CONFIG:Debug>:/MDd>) # /MT will static link the VC runtime library, so it doesn't need to be installed on the target machine
     add_compile_options($<$<CONFIG:Release>:/MT>)
-    add_compile_options($<$<CONFIG:RelWithDebInfo>:/MT>)
     add_compile_options(/guard:cf)
     add_compile_options(/d2Zi+) # make optimized builds debugging easier
     add_compile_options(/nologo) # Suppress Startup Banner
@@ -71,12 +69,6 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
 
-    # RelWithDebInfo specific flags
-    set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} /DEBUG /OPT:REF /OPT:ICF")
-    set(CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO} /DEBUG /OPT:REF /OPT:ICF")
-    set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /DEBUG /OPT:REF /OPT:ICF")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
-    set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
     list(APPEND RESOURCES ${CMAKE_SOURCE_DIR}/../../Tools/NativeVersion.rc)
 else()
     add_definitions(-Werror) # treat warnings as errors
@@ -84,11 +76,6 @@ else()
     add_compile_options(-Wno-unused-local-typedef)
     add_compile_options(-fPIC)
     add_compile_options(-fvisibility=hidden)
-endif()
-
-# Older CMake doesn't support CMAKE_CXX_STANDARD and GCC/Clang need a switch to enable C++ 11
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "(Clang|GNU)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 # This is required to map a symbol reference to a matching definition local to the module (.so)
@@ -100,6 +87,13 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_compile_options(-fstack-protector-strong)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_compile_options(-fstack-protector)
+endif()
+
+# Experimenting with trying to solve a linker problem
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_compile_options(-v)
+#    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --for-linker=-v")
+#    set(CMAKE_LINK_WHAT_YOU_USE FALSE)
 endif()
 
 add_definitions(-D_NO_ASYNCRTIMP)

@@ -7,7 +7,7 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
-    <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
     <NativeTargetArchitecture Condition="'$(NativeTargetArchitecture)' == ''">$(TargetArchitecture)</NativeTargetArchitecture>
     <PlatformConfig>$(Platform).$(Configuration)</PlatformConfig>
@@ -28,6 +28,11 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
+    <!-- when building on local machines the massive downloads get placed up one directory -->
+    <!-- so we can clean without triggering a re-download-->
+    <MassiveDownloadRoot>$(RepoRoot)../</MassiveDownloadRoot>
+    <MassiveDownloadRoot Condition="'$(TF_BUILD)' != ''">$(RepoRoot)bin/downloads/</MassiveDownloadRoot>
+
     <!-- Output directories -->
     <BinDir Condition="'$(BinDir)'==''">$(RepoRoot)bin/</BinDir>
     <BaseOutputPath Condition="'$(BaseOutputPath)'==''">$(BinDir)</BaseOutputPath>
@@ -40,36 +45,31 @@
 
     <OutputPath Condition="'$(OutputPath)'==''">$(BaseOutputPath)$(PlatformConfig)\$(MSBuildProjectName)\</OutputPath>
 
-    <PackageAssetsPath>$(ObjDir)/packages/</PackageAssetsPath>
+    <PackageAssetsPath>$(ObjDir)/$(Configuration)/packages/</PackageAssetsPath>
     
-    <PackageOutputPath Condition="'$(PackageOutputPath)'=='' and '$(NonShippingPackage)' == 'true'">$(BinDir)packages_noship/</PackageOutputPath>
-    <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/</PackageOutputPath>
+    <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
-    <!-- Note that Release is hard coded because LibTorchSharp needs to be built in Release
-    because LibTorch itself is in release. -->
-    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).Release\Native\</NativeOutputPath>
+    <NativeConfiguration>$(Configuration)</NativeConfiguration>
+
+    <!-- Setting TargetOS allows us to download LibTorch for Linux etc, update the SHA and update file lists under src\Redist -->
+    <!-- The only thing we can't do locally is build the C++ code for all the various target platforms (which is ultimately done on Azure Pipelines) -->
+    <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' == 'Windows_NT'">windows</TargetOS>
+    <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' != 'Windows_NT'">linux</TargetOS>
+    <TargetOS Condition="'$(TargetOS)' == '' AND $([MSBuild]::IsOSPlatform('osx'))">mac</TargetOS>
+
+    <!-- on windows separate debug binaries of LibTorch are available-->
+    <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
+
+    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
 
     <!-- Input Directories -->
-    <PackagesDir>$(DotNetRestorePackagesPath)</PackagesDir>
-    <PackagesDir Condition="'$(PackagesDir)'==''">$(RepoRoot)packages/</PackagesDir>
-    <RestorePackagesPath>$(PackagesDir)</RestorePackagesPath>
     <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>
   </PropertyGroup>
-
-  <Import Project="$(ToolsDir)BuildVersion.targets" 
-          Condition="Exists('$(ToolsDir)BuildVersion.targets')" />
 
   <!-- Version properties -->
   <PropertyGroup>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
-    <AssemblyFileVersion Condition="'$(AssemblyFileVersion)'==''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor).$(BuildNumberMinor)</AssemblyFileVersion>
-
-    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
-    <IncludeBuildNumberInPackageVersion Condition="'$(IncludeBuildNumberInPackageVersion)' == '' and '$(StabilizePackageVersion)' != 'true'">true</IncludeBuildNumberInPackageVersion>
-
     <VersionSuffix></VersionSuffix>
-    <VersionSuffix Condition="'$(StabilizePackageVersion)' != 'true'">$(PreReleaseLabel)</VersionSuffix>
-    <VersionSuffix Condition="'$(IncludeBuildNumberInPackageVersion)' == 'true'">$(VersionSuffix)-$(BuildNumberMajor)-$(BuildNumberMinor)</VersionSuffix>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
@@ -88,19 +88,12 @@
     <SourceRevisionId>$(LatestCommit)</SourceRevisionId>
   </PropertyGroup>
 
-  <Import Project="$(ToolsDir)versioning.props" 
-          Condition="Exists('$(ToolsDir)versioning.props') and '$(DisableImportVersioningProps)' != 'true'" />
- 
   <!-- Language configuration -->
   <PropertyGroup>
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <RunningOnUnix Condition="'$(OS)'!='Windows_NT'">true</RunningOnUnix>
-  </PropertyGroup>
-
+ 
   <!-- Signing properties -->
   <PropertyGroup>
     <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(ToolsDir)Open.snk</AssemblyOriginatorKeyFile>

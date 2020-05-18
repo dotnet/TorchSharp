@@ -1,27 +1,53 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class AvgPool2D : FunctionalModule<AdaptiveAvgPool2D>
+    /// <summary>
+    /// This class is used to represent a AvgPool2D module.
+    /// </summary>
+    public class AvgPool2D : Module
     {
-        private readonly long[] _kernelSize;
-        private readonly long[] _stride;
-
-        internal AvgPool2D(long[] kernelSize, long[] stride) : base()
+        internal AvgPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
-            _kernelSize = kernelSize;
-            _stride = stride ?? new long[0];
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_avgPool2DApply(IntPtr tensor, int kernelSizeLength, long[] kernelSize, int strideLength, long[] stride);
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_AvgPool2d_forward (IntPtr module, IntPtr tensor);
 
-        public override TorchTensor Forward(TorchTensor tensor)
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            return new TorchTensor(THSNN_avgPool2DApply(tensor.Handle, _kernelSize.Length, _kernelSize, _stride.Length, _stride));
+            var res = THSNN_AvgPool2d_forward (handle.DangerousGetHandle (), tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
+        }
+    }
+    public static partial class Modules
+    {
+        [DllImport ("LibTorchSharp")]
+        extern static IntPtr THSNN_AvgPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
+
+        static public AvgPool2D AvgPool2D (long[] kernelSize, long[] strides = null)
+        {
+            unsafe {
+                fixed (long* pkernelSize = kernelSize, pstrides = strides) {
+                    var handle = THSNN_AvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
+                    Torch.CheckForErrors ();
+                    return new AvgPool2D (handle, boxedHandle);
+                }
+            }
+        }
+    }
+
+    public static partial class Functions
+    {
+        static public TorchTensor AvgPool2D (TorchTensor x, long[] kernelSize, long[] strides = null)
+        {
+            using (var d = Modules.AvgPool2D (kernelSize, strides)) {
+                return d.Forward (x);
+            }
         }
     }
 }

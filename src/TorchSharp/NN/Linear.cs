@@ -1,97 +1,85 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Linear : ProvidedModule
+    public class Linear : Module
     {
-        public Linear(IntPtr handle) : base(handle)
+        internal Linear (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+
+        public new static Linear Load (String modelPath)
         {
+            var res = Module.Load (modelPath);
+            Torch.CheckForErrors ();
+            return new Linear (res.handle.DangerousGetHandle(), IntPtr.Zero);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_linearModule(long input_size, long output_size, bool with_bias);
+        [DllImport ("LibTorchSharp")]
+        extern static IntPtr THSNN_Linear_forward (Module.HType module, IntPtr tensor);
 
-        public Linear(long inputSize, long outputSize, bool hasBias = false) : base()
+        public TorchTensor Forward (TorchTensor tensor)
         {
-            handle = new HType(THSNN_linearModule(inputSize, outputSize, hasBias), true);
+            var res = THSNN_Linear_forward (handle, tensor.Handle);
+            Torch.CheckForErrors ();
+            return new TorchTensor (res);
         }
+        [DllImport ("LibTorchSharp")]
+        extern static IntPtr THSNN_Linear_bias (Module.HType module);
+        [DllImport ("LibTorchSharp")]
+        extern static void THSNN_Linear_set_bias (Module.HType module, IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
-        extern static bool THSNN_linear_with_bias(Module.HType module);
-
-        public bool WithBias
-        {
-            get { return THSNN_linear_with_bias(handle); }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_linear_get_bias(Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSNN_linear_set_bias(Module.HType module, IntPtr tensor);
-
-        public TorchTensor? Bias
-        {
-            get
-            {
-                var bias = THSNN_linear_get_bias(handle);
-                return bias == IntPtr.Zero ? (TorchTensor?)null : new TorchTensor(bias);
+        public TorchTensor? Bias {
+            get {
+                var res = THSNN_Linear_bias (handle);
+                Torch.CheckForErrors ();
+                return ((res == IntPtr.Zero) ? null : (TorchTensor ?)new TorchTensor (res));
             }
-            set { THSNN_linear_set_bias(handle, value?.Handle ?? throw new ArgumentNullException("bias")); }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_linear_get_weight(Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSNN_linear_set_weight(Module.HType module, IntPtr tensor);
-
-        public TorchTensor Weight
-        {
-            get
-            {
-                return new TorchTensor(THSNN_linear_get_weight(handle));
+            set {
+                THSNN_Linear_set_bias (handle, (value.HasValue ? value.Value.Handle : IntPtr.Zero));
+                Torch.CheckForErrors ();
             }
-            set { THSNN_linear_set_weight(handle, value.Handle); }
         }
+        [DllImport ("LibTorchSharp")]
+        extern static IntPtr THSNN_Linear_weight (Module.HType module);
+        [DllImport ("LibTorchSharp")]
+        extern static void THSNN_Linear_set_weight (Module.HType module, IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_linear_load_module(string location);
-
-        public new static Linear Load(String modelPath)
-        {
-            if (!File.Exists(modelPath))
-            {
-                throw new Exception(string.Format("{0} does not exist.", modelPath));
+        public TorchTensor Weight {
+            get {
+                var res = THSNN_Linear_weight (handle);
+                Torch.CheckForErrors ();
+                return new TorchTensor (res);
             }
-
-            return new Linear(THSNN_linear_load_module(modelPath));
-        }
-
-        public override IEnumerable<TorchTensor> Parameters()
-        {
-            var parameters = new List<TorchTensor>();
-
-            parameters.Add(Weight);
-
-            if (WithBias)
-            {
-                parameters.Add(Bias.Value);
+            set {
+                THSNN_Linear_set_weight (handle, value.Handle);
+                Torch.CheckForErrors ();
             }
-            return parameters;
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_linearModuleApply(Module.HType module, IntPtr tensor);
-
-        public override TorchTensor Forward(TorchTensor tensor)
-        {
-            return new TorchTensor(THSNN_linearModuleApply(handle, tensor.Handle));
         }
     }
+    public static partial class Modules
+    {
+        [DllImport ("LibTorchSharp")]
+        private static extern IntPtr THSNN_Linear_ctor (long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
+
+        static public Linear Linear (long inputSize, long outputSize, bool hasBias = true)
+        {
+            var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
+            Torch.CheckForErrors ();
+            return new Linear (res, boxedHandle);
+        }
+    }
+    public static partial class Functions
+    {
+        static public TorchTensor Linear (TorchTensor x, long inputSize, long outputSize, bool hasBias = true)
+        {
+            using (var d = Modules.Linear (inputSize, outputSize, hasBias)) {
+                return d.Forward (x);
+            }
+        }
+    }
+
 }

@@ -1,11 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+  <!-- Implicit top import -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFramework>netstandard2.0</TargetFramework>
+      <TargetFrameworks>netstandard2.0</TargetFrameworks>
       <IncludeInPackage>TorchSharp</IncludeInPackage>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
       <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+      <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +37,58 @@
       <DependentUpon>TorchTensorTyped.tt</DependentUpon>
     </Compile>
   </ItemGroup>
+
+
+  <PropertyGroup>
+      <PackDependsOn>
+          $(PackDependsOn);
+          RealPack
+      </PackDependsOn>
+  </PropertyGroup>
+
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
+             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
+             Targets="Build" />
+
+    <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
+            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
+            Targets="Build" />
+
+    <MSBuild Projects="..\Native\build.proj" 
+            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
+            Targets="Build" />
+
+  </Target>
+
+  <Target Name="RealPack">
+    <Message Text="Restoring packaging projects..." Importance="high" />
+    <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Restore" />
+
+    <Message Text="Packing TorchSharp nupkg..." Importance="high" />
+    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
+
+    <Warning Text="Packages will be incomplete and unusable on other platforms. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
+             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\win-x64\native\libLibTorchSharp.so')
+                     " />
+    <!--                  OR !Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\osx-x64\native\libLibTorchSharp.so') -->
+<!--                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\osx-x64\native\libLibTorchSharp.so') -->
+
+    <Message Text="Packing LibTorch.Cuda.$(CudaVersionDot).Redist nupkg (takes a long time!)..." Importance="high"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "  />
+    <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
+
+    <Message Text="Packing LibTorch.Redist nupkg..." Importance="high"  Condition="'$(SkipNative)' != 'true'" />
+    <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true'" />
+
+    <Message Text="Done packing!" Importance="high" />
+  </Target>
 
 </Project>

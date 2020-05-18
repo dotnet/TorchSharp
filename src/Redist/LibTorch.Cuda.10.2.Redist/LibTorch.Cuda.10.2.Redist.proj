@@ -6,58 +6,65 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <LibtorchGPUConfig Include="windows" LibName="libtorch-win-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\c10.dll;
+    <LibtorchGPUConfig Include="windows"
+      LibName="libtorch-win-shared-with-deps$(LibTorchDebug)"
+      FileExtension=".zip" 
+      FilesFromArchive= "libtorch\lib\asmjit.dll;
+                        libtorch\lib\c10.dll;
                         libtorch\lib\c10_cuda.dll;
-                        libtorch\lib\caffe2.dll;
                         libtorch\lib\caffe2_detectron_ops_gpu.dll;
-                        libtorch\lib\caffe2_gpu.dll;
                         libtorch\lib\caffe2_module_test_dynamic.dll;
-                        libtorch\lib\cublas64_90.dll;
-                        libtorch\lib\cudart64_90.dll;
+                        libtorch\lib\caffe2_nvrtc.dll;
+                        libtorch\lib\cublas64_10.dll;
+                        libtorch\lib\cublasLt64_10.dll;
+                        libtorch\lib\cudart64_102.dll;
                         libtorch\lib\cudnn64_7.dll;
-                        libtorch\lib\curand64_90.dll;
-                        libtorch\lib\cufftw64_90.dll;
-                        libtorch\lib\cufft64_90.dll;
-                        libtorch\lib\cusparse64_90.dll;
-                        libtorch\lib\foxi.dll;
-                        libtorch\lib\foxi_dummy.dll;
+                        libtorch\lib\cufft64_10.dll;
+                        libtorch\lib\cufftw64_10.dll;
+                        libtorch\lib\curand64_10.dll;
+                        libtorch\lib\cusparse64_10.dll;
+                        libtorch\lib\fbgemm.dll;
                         libtorch\lib\libiomp5md.dll;
                         libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\nvrtc64_90.dll;
-                        libtorch\lib\nvrtc-builtins64_90.dll;
+                        libtorch\lib\nvrtc64_102_0.dll;
+                        libtorch\lib\nvrtc-builtins64_102.dll;
                         libtorch\lib\nvToolsExt64_1.dll;
-                        libtorch\lib\onnxifi.dll;
-                        libtorch\lib\onnxifi_dummy.dll;
-                        libtorch\lib\torch.dll;"
+                        libtorch\lib\torch.dll;
+                        libtorch\lib\torch_cpu.dll;
+                        libtorch\lib\torch.dll;
+                        libtorch\lib\torch_cuda.dll;
+                        libtorch\lib\torch_global_deps.dll;"
 
       Runtime="win-x64"/>
     <LibtorchGPUConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
       FilesFromArchive= "libtorch\lib\libc10.so;
-                        libtorch\lib\libc10d_cuda_test.so;
                         libtorch\lib\libc10_cuda.so;
-                        libtorch\lib\libcaffe2.so;
+                        libtorch\lib\libc10d_cuda_test.so;
                         libtorch\lib\libcaffe2_detectron_ops_gpu.so;
-                        libtorch\lib\libcaffe2_gpu.so;
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libfoxi.so;
-                        libtorch\lib\libfoxi_dummy.so;
-                        libtorch\lib\libonnxifi.so;
-                        libtorch\lib\libonnxifi_dummy.so;
-                        libtorch\lib\libtorch.so;
-                        libtorch\lib\libthnvrtc.so;
-                        libtorch\lib\libcudart-f7fdd8d7.so.9.0;
-                        libtorch\lib\libnvrtc-007d19c9.so.9.0;
-                        libtorch\lib\libgomp-4f651535.so.1;
+                        libtorch\lib\libcaffe2_nvrtc.so;
+                        libtorch\lib\libcaffe2_observers.so;
+                        libtorch\lib\libfbjni.so;
                         libtorch\lib\libnvrtc-builtins.so;
-                        libtorch\lib\libnvToolsExt-3965bdd0.so.1;
-                        libtorch\lib\libtorch.so.1;"
+                        libtorch\lib\libpytorch_jni.so;
+                        libtorch\lib\libshm.so;
+                        libtorch\lib\libtorch.so;
+                        libtorch\lib\libtorch_cpu.so;
+                        libtorch\lib\libtorch_cuda.so;
+                        libtorch\lib\libtorch_global_deps.so;
+                        libtorch\lib\libtorch_python.so;
+                        libtorch\lib\libcudart-80664282.so.10.2;
+                        libtorch\lib\libnvrtc-08c4863f.so.10.2;
+                        libtorch\lib\libgomp-7c85b1e2.so.1;
+                        libtorch\lib\libnvToolsExt-3965bdd0.so.1;"
 
       Runtime="linux-x64" />
 
       <!-- No GPU support for Mac -->
 
-    <AdditionalDownloadFile Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
+    <AdditionalDownloadFile 
+         Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" 
+         DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
   </ItemGroup>
 
 
@@ -67,7 +74,7 @@
       <LibtorchGPUArchive Condition="'$(PackageRid)' == '%(Runtime)'"
                          Include="@(LibtorchGPUConfig->'https://download.pytorch.org/libtorch/cu$(CudaVersion)/%(LibName)-$(LibtorchVersion)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
-      <LibtorchGPUArchive DownloadFile="$(IntermediateOutputPath)%(FileName)%(Extension)"
+      <LibtorchGPUArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
                          ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
                          ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
@@ -83,6 +90,7 @@
           Inputs="$(MSBuildProjectFile)"
           Outputs="@(LibtorchGPUArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)';">
     <MakeDir Directories="$(IntermediateOutputPath)" />
+    <MakeDir Directories="$(MassiveDownloadRoot)$(MSBuildProjectName)\" />
     <ItemGroup>
       <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
       <_downloadFiles Include="@(LibtorchGPUArchive);@(AdditionalDownloadFile);" Url="%(Identity)" DestinationFile="%(DownloadFile)" />
@@ -135,7 +143,12 @@
     <Exec Condition="'%(LibtorchGPUArchive.FileExtension)' == '.tar.gz'"
           WorkingDirectory="%(LibtorchGPUArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchGPUArchive.ExtractDirectory)', '%(LibtorchGPUArchive.DownloadFile)'))&quot;" />
-    <Touch Files="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" AlwaysCreate="true" />
+    <WriteLinesToFile File="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
+
+    <!-- delete the archive files when running on CI -->
+    <Message Importance="High" Text="Deleting '%(LibtorchGPUArchive.DownloadFile)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="%(LibtorchGPUArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
+
   </Target>
 
   <!-- Select the files we want to copy out of each archive. -->
