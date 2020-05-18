@@ -84,8 +84,7 @@ Example to fulfill the requirements in Ubuntu 16:
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
 sudo apt-get -y update
-sudo apt-get -y install clang-6.0
-sudo apt-get -y install git cmake libunwind8 curl libssl1.0.0 libomp-dev
+sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
 ```
 
 Commands:
