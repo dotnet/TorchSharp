@@ -65,20 +65,10 @@
     <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>
   </PropertyGroup>
 
-  <Import Project="$(ToolsDir)BuildVersion.targets" 
-          Condition="Exists('$(ToolsDir)BuildVersion.targets')" />
-
   <!-- Version properties -->
   <PropertyGroup>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
-    <AssemblyFileVersion Condition="'$(AssemblyFileVersion)'==''">$(MajorVersion).$(MinorVersion).$(BuildNumberMajor).$(BuildNumberMinor)</AssemblyFileVersion>
-
-    <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">false</StabilizePackageVersion>
-    <IncludeBuildNumberInPackageVersion Condition="'$(IncludeBuildNumberInPackageVersion)' == '' and '$(StabilizePackageVersion)' != 'true'">true</IncludeBuildNumberInPackageVersion>
-
     <VersionSuffix></VersionSuffix>
-    <VersionSuffix Condition="'$(StabilizePackageVersion)' != 'true'">$(PreReleaseLabel)</VersionSuffix>
-    <VersionSuffix Condition="'$(IncludeBuildNumberInPackageVersion)' == 'true'">$(VersionSuffix)-$(BuildNumberMajor)-$(BuildNumberMinor)</VersionSuffix>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
@@ -97,9 +87,6 @@
     <SourceRevisionId>$(LatestCommit)</SourceRevisionId>
   </PropertyGroup>
 
-  <Import Project="$(ToolsDir)versioning.props" 
-          Condition="Exists('$(ToolsDir)versioning.props') and '$(DisableImportVersioningProps)' != 'true'" />
- 
   <!-- Language configuration -->
   <PropertyGroup>
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->

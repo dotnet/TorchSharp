@@ -51,13 +51,16 @@
 
   <Target Name="BeforeBuild">
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
-             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" />
+             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
+             Targets="Build" />
 
     <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
-            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" />
+            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
+            Targets="Build" />
 
     <MSBuild Projects="..\Native\build.proj" 
-            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" />
+            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
+            Targets="Build" />
 
   </Target>
 

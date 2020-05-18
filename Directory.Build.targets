@@ -33,5 +33,4 @@
     
   </Target>
   
-  <Import Project="$(ToolsDir)/versioning.targets" Condition="Exists('$(ToolsDir)/versioning.targets')" />
 </Project>
