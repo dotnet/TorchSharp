@@ -46,12 +46,10 @@ jobs:
       - script: sudo apt-get -y update
       - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
         displayName: Install build dependencies (ubuntu)
-    - script: $(_buildScript) build -c $(_configuration)
+    - script: $(_buildScript) build -c $(_configuration) /p:SkipCude:true
       displayName: Build
-      env: { SkipCuda: true }  # space-constrained
-    - script: $(_buildScript) test -c $(_configuration)
+    - script: $(_buildScript) test -c $(_configuration)  /p:SkipCude:true
       displayName: Run Tests
-      env: { SkipCuda: true }  # space-constrained
     # -coverage=$(_codeCoverage)
     # REVIEW: Code coverage should be reactivated.
     # - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet msbuild build/Codecoverage.proj /p:CodeCovToken=$(CODECOV_TOKEN)

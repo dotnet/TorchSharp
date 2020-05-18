@@ -1,6 +1,10 @@
 project(LibTorchSharp)
 
 if(APPLE)
+ include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
+ link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
+endif()
+if(APPLE)
     find_package(torch REQUIRED PATHS ${LIBTORCH_PATH})
 else()
     find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
