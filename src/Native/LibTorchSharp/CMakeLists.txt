@@ -1,6 +1,10 @@
 project(LibTorchSharp)
 
-find_package(torch REQUIRED PATHS ${LIBTORCH_PATH})
+if(APPLE)
+    find_package(torch REQUIRED PATHS ${LIBTORCH_PATH})
+else()
+    find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
+endif()
 
 set(SOURCES
     cifar10.h
