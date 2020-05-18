@@ -97,7 +97,7 @@ phases:
   steps:
 
   # Build both native and managed assets. 
-- script: build.cmd build -v:n
+  - script: build.cmd build -v:n
     displayName: Build
 
   - task: PublishBuildArtifacts@1
