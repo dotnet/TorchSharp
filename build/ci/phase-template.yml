@@ -36,10 +36,11 @@ phases:
     - ${{ if eq(parameters.queue.name, 'Hosted macOS') }}:
       - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
         displayName: Install build dependencies
-    - script: $(_buildScript) -$(_configuration) -buildArch=$(_arch)
+    - script: $(_buildScript) build -c $(_configuration)
       displayName: Build
-    - script: $(_buildScript) -$(_configuration) -runtests -coverage=$(_codeCoverage)
+    - script: $(_buildScript) test -c $(_configuration)
       displayName: Run Tests.
+    # -coverage=$(_codeCoverage)
     # REVIEW: Code coverage should be reactivated.
     # - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet msbuild build/Codecoverage.proj /p:CodeCovToken=$(CODECOV_TOKEN)
     #   displayName: Upload coverage to codecov.io
@@ -77,5 +78,5 @@ phases:
         pathToPublish: $(Build.ArtifactStagingDirectory)
         artifactName: ${{ parameters.name }} $(_config_short)
         artifactType: container
-    - script: $(_buildScript) -buildPackages
+    - script: $(_buildScript) pack
       displayName: Build Packages
