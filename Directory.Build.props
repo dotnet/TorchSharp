@@ -27,8 +27,11 @@
     <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
-    <!-- massive downloads get placed up one directory so we can clean without triggering a re-download-->
+
+    <!-- when building on local machines the massive downloads get placed up one directory -->
+    <!-- so we can clean without triggering a re-download-->
     <MassiveDownloadRoot>$(RepoRoot)../</MassiveDownloadRoot>
+    <MassiveDownloadRoot Condition="'$(tf_build)' != ''">(RepoRoot)bin/downloads/</MassiveDownloadRoot>
 
     <!-- Output directories -->
     <BinDir Condition="'$(BinDir)'==''">$(RepoRoot)bin/</BinDir>
