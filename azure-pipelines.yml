@@ -97,37 +97,6 @@ jobs:
       artifactName: PackageAssets
       artifactType: container
 
-################################################################################
-- job: Windows_x64_Build_For_Package
-################################################################################
-  variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
-    TORCHSHARP_MAKING_PACKAGE: 1
-    _SignType: real
-    _UseEsrpSigning: true
-    _TeamName: DotNetCore
-  pool:
-    name: Hosted VS2017	
-  steps:
-
-  # Build both native and managed assets. 
-  - script: build.cmd build -v:n -c $(BuildConfig)
-    displayName: Build
-
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Windows_x64 package assets
-    inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/Release/packages
-      artifactName: PackageAssets
-      artifactType: container
-
-  # Terminate all dotnet build processes.
-  - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
-    displayName: Dotnet Server Shutdown
 
 ################################################################################
 - job: Package
@@ -135,7 +104,6 @@ jobs:
   dependsOn:
   - Linux_Build_For_Package
   - MacOS_Build_For_Package
-  - Windows_x64_Build_For_Package
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -161,11 +129,13 @@ jobs:
       sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
       targetFolder: $(Build.SourcesDirectory)/../
   
-  - script: build.cmd pack -c Release 
+  # remove to free up space
+  - script: rmdir /s /q $(Build.SourcesDirectory)/../PackageAssets
     displayName: Create Packages
 
-  - script: rm -f $(Build.SourcesDirectory)/bin/packages/Release/*.symbols.*
-    displayName: Remove symbols nuget
+  # build the windows bits including CUDA support
+  - script: build.cmd pack -c Release 
+    displayName: Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
@@ -182,8 +152,6 @@ jobs:
   #      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    displayName: Dotnet Publish
 
-  # TODO: Deal with symbols.
-  
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
   
