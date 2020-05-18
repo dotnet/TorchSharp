@@ -49,11 +49,12 @@
     
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
-    <!-- On Unix we currently hard code LibTorchSharp as Release - there is a (possibly outdated) assumption -->
+    <NativeConfiguration>$(Configration)</NativeConfiguration>
+
+    <!-- OLD: On Unix hard code LibTorchSharp as Release - there is a (possibly outdated) assumption -->
     <!-- that it needs to be built in Release because LibTorch itself is in release. -->
     <!-- On windows a debug version of LibTorch is available for download-->
-    <NativeConfiguration>Release</NativeConfiguration>
-    <NativeConfiguration Condition="'$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows'">$(Configuration)</NativeConfiguration>
+    <!-- <NativeConfiguration Condition="'$(OS)' != 'Windows_NT' AND '$(AssumeOS)' != 'windows'">Release</NativeConfiguration> -->
 
     <!-- on windows separate debug binaries are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND ('$(OS)' == 'Windows_NT' OR '$(AssumeOS)' == 'windows')">-debug</LibTorchDebug>

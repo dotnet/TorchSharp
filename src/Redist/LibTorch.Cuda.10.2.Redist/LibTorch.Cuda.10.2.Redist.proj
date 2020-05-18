@@ -144,6 +144,10 @@
           WorkingDirectory="%(LibtorchGPUArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchGPUArchive.ExtractDirectory)', '%(LibtorchGPUArchive.DownloadFile)'))&quot;" />
     <WriteLinesToFile File="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
+
+    <!-- delete the archive files when running on CI -->
+    <Delete Files="%(LibtorchGPUArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
+
   </Target>
 
   <!-- Select the files we want to copy out of each archive. -->

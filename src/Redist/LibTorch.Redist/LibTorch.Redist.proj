@@ -162,11 +162,15 @@
                                DestinationDirectory="%(LibtorchArchive.ExtractDirectory)"
                                OverwriteDestination="true" />
 
+
     <Message Importance="High" Condition="'%(LibtorchArchive.FileExtension)' == '.tar.gz'" Text="Decompressing '%(LibtorchArchive.DownloadFile)' to '%(LibtorchArchive.ExtractDirectory)'." />
     <Exec Condition="'%(LibtorchArchive.FileExtension)' == '.tar.gz'"
           WorkingDirectory="%(LibtorchArchive.ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchArchive.ExtractDirectory)', '%(LibtorchArchive.DownloadFile)'))&quot;" />
     <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
+
+    <!-- delete the archive files when running on CI -->
+    <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
   </Target>
 
   <!-- Validate and extract Archive for MKL - DNN -->
