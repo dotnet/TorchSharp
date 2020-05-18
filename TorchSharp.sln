@@ -47,7 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Debug", "Native-Debu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redist", "Redist", "{D8C60CD8-8429-45F2-A755-47B6CD10FDF8}"
 	ProjectSection(SolutionItems) = preProject
-		src\Redist\build.proj = src\Redist\build.proj
 		src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj = src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj
 		src\Redist\LibTorch.Redist\LibTorch.Redist.proj = src\Redist\LibTorch.Redist\LibTorch.Redist.proj
 	EndProjectSection

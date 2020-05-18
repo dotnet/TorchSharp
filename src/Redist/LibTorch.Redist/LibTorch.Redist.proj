@@ -98,7 +98,7 @@
       <MklDnnArchive Include="@(MklDnnConfig->'https://github.com/intel/mkl-dnn/releases/download/v0.19/mklml_mac_$(MklDnnVersion)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
       <MklDnnArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
-                         DownloadShaFile="$(MassiveDownloadRoot)%(FileName)%(Extension).sha"
+                         DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
                          ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
                          ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
                          LocalShaFile="$(MSBuildProjectDirectory)\%(FileName)%(Extension).sha"/>

@@ -110,11 +110,15 @@ To update the version, update these:
 
     <LibtorchVersion>1.5.0</LibtorchVersion>
 
-Then run these to test downloads and update SHA hashes for LibTorch downloads:
+Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=linux
-    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=windows
-    msbuild src\Redist\build.proj /p:UpdateSHA=true /p:AssumeOS=mac
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=linux
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=windows
+    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:AssumeOS=mac
+
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=linux
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=windows
+    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:AssumeOS=mac
 
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.

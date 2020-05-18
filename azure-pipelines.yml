@@ -31,7 +31,7 @@ phases:
     name: Windows_x64_NetCoreApp30
     buildScript: build.cmd
     queue:
-      name: Hosted VS2017
+      name: Hosted VS2019
 
 ################################################################################
 - phase: Linux_Build
@@ -46,8 +46,7 @@ phases:
     name: Hosted Ubuntu 1604
     container: UbuntuContainer
   steps:
-  # Only build native assets to avoid conflicts.
-  - script: dotnet build src\Native\build.proj./build.sh -buildNative -$(BuildConfig) 
+  - script: ./build.sh build -c $(BuildConfig) 
     displayName: Build
 
   - task: PublishBuildArtifacts@1
@@ -71,8 +70,7 @@ phases:
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
     displayName: Install build dependencies
-  # Only build native assets to avoid conflicts.
-  - script: ./build.sh -buildNative -$(BuildConfig)
+  - script: ./build.sh build -c -$(BuildConfig)
     displayName: Build
 
   - task: PublishBuildArtifacts@1
@@ -95,13 +93,11 @@ phases:
     _UseEsrpSigning: true
     _TeamName: DotNetCore
   queue:
-    name: Hosted VS2017
+    name: Hosted VS2019
   steps:
 
   # Build both native and managed assets. 
-- script: |
-      dotnet build src\Native\build.proj
-      dotnet build 
+- script: build.cmd build -v:n
     displayName: Build
 
   - task: PublishBuildArtifacts@1
@@ -121,7 +117,6 @@ phases:
   dependsOn:
   - Linux_Build
   - MacOS_Build
-  # - Windows_x86_Build
   - Windows_x64_Build
   variables:
     BuildConfig: Release
@@ -130,7 +125,7 @@ phases:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   queue:
-    name: Hosted VS2017
+    name: Hosted VS2019
   steps:
 
   # Download all agent packages from all previous phases
@@ -138,17 +133,17 @@ phases:
     displayName: Download package assets
     inputs:
       artifactName: PackageAssets
-      downloadPath: $(Build.SourcesDirectory)/bin/obj/packages
+      downloadPath: $(Build.SourcesDirectory)/..
       parallelizationLimit: 1
 
   # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
     displayName: Copy package assets to correct folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packages/
+      sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
+      targetFolder: $(Build.SourcesDirectory)/../
   
-  - script: ./build.cmd -release -buildPackages
+  - script: build.cmd pack -c release 
     displayName: Create Packages
 
   - script: rm $(Build.SourcesDirectory)/bin/packages/*.symbols.*

@@ -72,8 +72,8 @@
       "values": [],
       "defaultValue": ""
     },
-    "RunTests": {
-      "description": "MsBuild target that run the tests. Call this after building.",
+    "VSTest": {
+      "description": "Same as 'dotnet test'",
       "valueType": "target",
       "values": [],
       "defaultValue": ""
@@ -118,12 +118,6 @@
             "BuildNative": "default"
           }
         },
-        "skipRIDAgnosticAssets": {
-          "description": "Avoid building RID agnostic assets in redist.",
-          "settings": {
-            "SkipRIDAgnosticAssets": "default"
-          }
-        },
         "buildPackages": {
           "description": "Builds the NuGet packages.",
           "settings": {
@@ -133,7 +127,8 @@
         "runtests": {
           "description": "Runs the tests. Call this after building.",
           "settings": {
-            "RunTests": "default"
+            "RunTests": "default",
+            "Target": "VSTest"
           }
         },
         "verbose": {
@@ -146,7 +141,7 @@
       "defaultValues": {
         "toolName": "msbuild",
         "settings": {
-          "Project": "build.proj",
+          "Project": "TorchSharp.sln",
           "Configuration": "default",
           "MsBuildLogging": "default",
           "MsBuildWarning": "default",
