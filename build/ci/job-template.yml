@@ -3,6 +3,7 @@ parameters:
   architecture: x64
   buildScript: ''
   pool: {}
+  container: ''
   customMatrixes: ''
   codeCoverage: false
 
@@ -19,6 +20,8 @@ jobs:
       ${{ if eq(variables._codeCoverage, 'true') }}:
         timeoutInMinutes: 60
       ${{ insert }}: ${{ parameters.pool }}
+    ${{ if ne(parameters.container, '') }}:
+      ${{ insert }}: ${{ parameters.container }}
     strategy:
       maxParallel: 99
       matrix:
