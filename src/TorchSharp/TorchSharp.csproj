@@ -73,15 +73,15 @@
     <Message Text="Packing TorchSharp nupkg..." Importance="high" />
     <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
 
-    <Error Message="You must have built the LibTorchSharp.so binaries for linux-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+    <Error Text="You must have built the LibTorchSharp.so binaries for linux-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
              Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
                      OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')" />
 
-    <!-- <Error Message="You must have built the LibTorchSharp.so binaries for osx-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+    <!-- <Error Text="You must have built the LibTorchSharp.so binaries for osx-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
              Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\osx-x64\native\libLibTorchSharp.so')
                      OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\osx-x64\native\libLibTorchSharp.so')" /> -->
 
-    <Error Message="You must have built the LibTorchSharp.so binaries for win-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
+    <Error Text="You must have built the LibTorchSharp.so binaries for win-x64 and copied it into $(PackageAssetsPath) before packing. This is automated by Azure Pipelines." Importance="high"
              Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\libLibTorchSharp.so')
                      OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\osx-x64\native\libLibTorchSharp.so')" />
 
