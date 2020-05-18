@@ -14,22 +14,28 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64_NetCoreApp30
-    buildScript: ./build.sh
+    prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+    buildScript: ./build.sh build /p:SkipCuda=true -c 
+    testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
       name: Hosted Ubuntu 1604
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
   parameters:
+    prepScript: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
     name: MacOS_x64_NetCoreApp30
-    buildScript: ./build.sh
+    buildScript: ./build.sh build /p:SkipCuda=true -c 
+    testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
       name: Hosted macOS
 
 - template: /build/ci/job-template.yml
   parameters:
+    prepScript: echo "no prep needed"
     name: Windows_x64_NetCoreApp30
-    buildScript: build.cmd
+    buildScript: build.cmd  build  /p:SkipCuda=true -c 
+    testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
       name: Hosted VS2017
 
@@ -52,6 +58,10 @@ jobs:
     name: Hosted Ubuntu 1604
   container: UbuntuContainer
   steps:
+  - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+  - script: sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
+  - script: sudo apt-get -y update
+  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
   - script: ./build.sh build -c $(BuildConfig) 
     displayName: Build
 
@@ -75,8 +85,8 @@ jobs:
   pool:
     name: Hosted macOS
   steps:
-  - script: brew update && brew install libomp && brew link libomp --force
-    displayName: Install build dependencies
+  - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
+    displayName: Install build dependencies (macOS)
   - script: ./build.sh build -c $(BuildConfig)
     displayName: Build
 
@@ -154,7 +164,7 @@ jobs:
   - script: build.cmd pack -c Release 
     displayName: Create Packages
 
-  - script: rm $(Build.SourcesDirectory)/bin/packages/Release/*.symbols.*
+  - script: rm -f $(Build.SourcesDirectory)/bin/packages/Release/*.symbols.*
     displayName: Remove symbols nuget
 
   - task: CopyFiles@2

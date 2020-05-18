@@ -89,6 +89,10 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_compile_options(-fstack-protector)
 endif()
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_compile_options(-v)
+endif()
+
 add_definitions(-D_NO_ASYNCRTIMP)
 add_definitions(-D_NO_PPLXIMP)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
