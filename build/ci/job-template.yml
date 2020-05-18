@@ -38,7 +38,7 @@ jobs:
           ${{ insert }}: ${{ parameters.customMatrixes }}
     steps:
     - ${{ if eq(parameters.pool.name, 'Hosted macOS') }}:
-      - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
+      - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
         displayName: Install build dependencies (macOS)
     - ${{ if eq(parameters.pool.name, 'Hosted Ubuntu 1604') }}:
       - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
