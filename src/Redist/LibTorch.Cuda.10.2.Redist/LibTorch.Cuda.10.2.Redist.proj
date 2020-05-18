@@ -146,6 +146,7 @@
     <WriteLinesToFile File="@(LibtorchGPUArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
 
     <!-- delete the archive files when running on CI -->
+    <Message Importance="High" Text="Deleting '%(LibtorchGPUArchive.DownloadFile)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
     <Delete Files="%(LibtorchGPUArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
 
   </Target>

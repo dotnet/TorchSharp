@@ -170,6 +170,7 @@
     <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
 
     <!-- delete the archive files when running on CI -->
+    <Message Importance="High" Text="Deleting '%(LibtorchArchive.DownloadFile)' to free up space." Condition="'$(TF_BUILD)' != ''" />
     <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
   </Target>
 
