@@ -90,6 +90,7 @@
           Inputs="$(MSBuildProjectFile)"
           Outputs="@(LibtorchGPUArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)';">
     <MakeDir Directories="$(IntermediateOutputPath)" />
+    <MakeDir Directories="$(MassiveDownloadRoot)" />
     <ItemGroup>
       <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
       <_downloadFiles Include="@(LibtorchGPUArchive);@(AdditionalDownloadFile);" Url="%(Identity)" DestinationFile="%(DownloadFile)" />

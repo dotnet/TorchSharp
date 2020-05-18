@@ -74,34 +74,40 @@
              Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
              Properties="AssumeOS=linux"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
+             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
+             Targets="Build"  />
 
     <Message Text="Downloading and unpacking Libtorch Cuda binaries for mac..." Importance="high" 
              Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "/>
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
              Properties="AssumeOS=mac"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
+             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
+             Targets="Build"   />
 
     <Message Text="Downloading and unpacking Libtorch Cuda binaries for windows..." Importance="high"
              Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
              Properties="AssumeOS=windows"
-             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
+             Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "
+             Targets="Build"   />
 
     <Message Text="Downloading and unpacking Libtorch CPU binaries for linux..." Importance="high" />
     <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
              Properties="AssumeOS=linux"
-             Condition="'$(SkipNative)' != 'true'" />
+             Condition="'$(SkipNative)' != 'true'"
+             Targets="Build"   />
 
     <Message Text="Downloading and unpacking Libtorch CPU binaries for mac..." Importance="high" />
     <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
              Properties="AssumeOS=mac"
-             Condition="'$(SkipNative)' != 'true'" />
+             Condition="'$(SkipNative)' != 'true'"
+             Targets="Build"   />
 
     <Message Text="Downloading and unpacking Libtorch CPU binaries for windows..." Importance="high" />
     <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
              Properties="AssumeOS=windows"
-             Condition="'$(SkipNative)' != 'true'" />
+             Condition="'$(SkipNative)' != 'true'"
+             Targets="Build"   />
 
     <Message Text="Packing LibTorch.Cuda.$(CudaVersionDot).Redist nupkg (takes a long time!)..." Importance="high"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "  />
     <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />

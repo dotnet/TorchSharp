@@ -45,12 +45,11 @@
 
     <OutputPath Condition="'$(OutputPath)'==''">$(BaseOutputPath)$(PlatformConfig)\$(MSBuildProjectName)\</OutputPath>
 
-    <PackageAssetsPath>$(ObjDir)/packages/</PackageAssetsPath>
+    <PackageAssetsPath>$(ObjDir)/$(Configuration)/packages/</PackageAssetsPath>
     
-    <PackageOutputPath Condition="'$(PackageOutputPath)'=='' and '$(NonShippingPackage)' == 'true'">$(BinDir)packages_noship/</PackageOutputPath>
-    <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/</PackageOutputPath>
+    <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
-    <!-- On Unix we currently hard code LibTorchSharp as Release - there is a (possibly flawed) assumption -->
+    <!-- On Unix we currently hard code LibTorchSharp as Release - there is a (possibly outdated) assumption -->
     <!-- that it needs to be built in Release because LibTorch itself is in release. -->
     <!-- On windows a debug version of LibTorch is available for download-->
     <NativeConfiguration>Release</NativeConfiguration>
