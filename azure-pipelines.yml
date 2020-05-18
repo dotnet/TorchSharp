@@ -39,7 +39,7 @@ jobs:
 
 
 ################################################################################
-- job: Linux_Build
+- job: Linux_Build_For_Package
 ################################################################################
   variables:
     BuildConfig: Release
@@ -47,6 +47,7 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
+    TORCHSHARP_MAKING_PACKAGE: 1
   pool:
     name: Hosted Ubuntu 1604
   container: UbuntuContainer
@@ -62,7 +63,7 @@ jobs:
       artifactType: container
 
 ################################################################################
-- job: MacOS_Build
+- job: MacOS_Build_For_Package
 ################################################################################
   variables:
     BuildConfig: Release
@@ -70,6 +71,7 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
+    TORCHSHARP_MAKING_PACKAGE: 1
   pool:
     name: Hosted macOS
   steps:
@@ -86,7 +88,7 @@ jobs:
       artifactType: container
 
 ################################################################################
-- job: Windows_x64_Build
+- job: Windows_x64_Build_For_Package
 ################################################################################
   variables:
     BuildConfig: Release
@@ -94,6 +96,7 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
+    TORCHSHARP_MAKING_PACKAGE: 1
     _SignType: real
     _UseEsrpSigning: true
     _TeamName: DotNetCore
