@@ -10,7 +10,7 @@
   <!-- For example Linux, LibTorch 1.5.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip -->
     <LibtorchConfig Include="windows" 
                     LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
-                    ExtraForLibTorch150="" 
+                    LibNameSuffix="" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
                        "libtorch\lib\asmjit.dll;
@@ -27,7 +27,7 @@
 
     <LibtorchConfig Include="darwin" 
                     LibName="libtorch-macos" 
-                    ExtraForLibTorch150="" 
+                    LibNameSuffix="" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
                        "libtorch\lib\libc10.dylib;
@@ -45,7 +45,7 @@
       Runtime="osx-x64" />
 
     <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
-                    ExtraForLibTorch150="%252Bcpu" 
+                    LibNameSuffix="$(ExtraForLibTorch150Linux)" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
                        "libtorch\lib\libc10.so;
@@ -85,7 +85,7 @@
       <!-- although we could extract all archives on all machines, mac requires a fixup which can only be run on mac 
            so we split these per-rid and join during the official build packaging.  -->
       <LibtorchArchive Condition="'$(PackageRid)' == '%(Runtime)'"
-                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(ExtraForLibTorch150)%(FileExtension)')" />
+                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(LibNameSuffix)%(FileExtension)')" />
       <!-- set up metdata used by all targets -->
       <LibtorchArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
@@ -170,7 +170,7 @@
     <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
 
     <!-- delete the archive files when running on CI -->
-    <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
+    <!-- <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" /> --> 
   </Target>
 
   <!-- Validate and extract Archive for MKL - DNN -->
