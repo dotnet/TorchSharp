@@ -52,7 +52,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish Linux package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages/Release
       artifactName: PackageAssets
       artifactType: container
 
@@ -76,7 +76,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish macOS package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages/Release
       artifactName: PackageAssets
       artifactType: container
 
@@ -103,7 +103,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish Windows_x64 package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages/Release
       artifactName: PackageAssets
       artifactType: container
 
@@ -146,17 +146,17 @@ phases:
   - script: build.cmd pack -c Release 
     displayName: Create Packages
 
-  - script: rm $(Build.SourcesDirectory)/bin/packages/*.symbols.*
+  - script: rm $(Build.SourcesDirectory)/bin/packages/Release/*.symbols.*
     displayName: Remove symbols nuget
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/packages
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/Release
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
-  #      cp $(Build.SourcesDirectory)\bin\obj\packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #      cp $(Build.SourcesDirectory)\bin\obj\packages\Release\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
   #    displayName: Copy Nugets in staging directory
 
