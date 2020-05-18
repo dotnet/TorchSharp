@@ -170,7 +170,7 @@
     <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
 
     <!-- delete the archive files when running on CI -->
-    <!-- <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" /> --> 
+    <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
   </Target>
 
   <!-- Validate and extract Archive for MKL - DNN -->

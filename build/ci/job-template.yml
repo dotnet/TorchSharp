@@ -41,7 +41,8 @@ jobs:
       - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
         displayName: Install build dependencies (macOS)
     - ${{ if eq(parameters.pool.name, 'Hosted Ubuntu 1604') }}:
-      - script: sudo apt-get install git clang cmake libunwind8 curl libssl1.0.0 libomp-dev
+      - script: sudo apt-get -y update
+      - script: sudo apt-get -y install git clang cmake libunwind8 curl libssl1.0.0 libomp-dev
         displayName: Install build dependencies (ubuntu)
     - script: $(_buildScript) build -c $(_configuration)
       displayName: Build
