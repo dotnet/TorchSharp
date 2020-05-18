@@ -1,6 +1,6 @@
 project(LibTorchSharp)
 
-find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
+find_package(torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
     cifar10.h

@@ -77,14 +77,12 @@ Requirements:
 - requirements to run .NET Core 2.0
 - git
 - cmake (tested with 3.14)
-- clang 3.9
+- clang 4.x
 
 Example to fulfill the requirements in Ubuntu 16:
 ```
 sudo apt-get update
-sudo apt-get install git clang cmake libunwind8 curl
-sudo apt-get install libssl1.0.0
-sudo apt-get install libomp-dev
+sudo apt-get install git clang cmake libunwind8 curl libssl1.0.0 libomp-dev
 ```
 
 Commands:
