@@ -123,9 +123,9 @@ jobs:
 - job: Package
 ################################################################################
   dependsOn:
-  - Linux_Build
-  - MacOS_Build
-  - Windows_x64_Build
+  - Linux_Build_For_Package
+  - MacOS_Build_For_Package
+  - Windows_x64_Build_For_Package
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
