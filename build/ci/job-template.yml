@@ -18,6 +18,7 @@ jobs:
         timeoutInMinutes: 30
       ${{ if eq(variables._codeCoverage, 'true') }}:
         timeoutInMinutes: 60
+      ${{ insert }}: ${{ parameters.pool }}
     strategy:
       maxParallel: 99
       matrix:
@@ -32,7 +33,6 @@ jobs:
             _includeBenchmarkData: true
         ${{ if ne(parameters.customMatrixes, '') }}:
           ${{ insert }}: ${{ parameters.customMatrixes }}
-      ${{ insert }}: ${{ parameters.pool }}
     steps:
     - ${{ if eq(parameters.pool.name, 'Hosted macOS') }}:
       - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
