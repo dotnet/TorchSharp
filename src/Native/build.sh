@@ -70,7 +70,6 @@ mkdir -p "$__IntermediatesDir"
 # Set up the environment to be used for building with clang.
 # Use the homebrew if it is available, see https://stackoverflow.com/questions/43555410/enable-openmp-support-in-clang-in-mac-os-x-sierra-mojave
 if command -v "/usr/local/opt/llvm/bin/clang" > /dev/null 2>&1; then
-    export LD="$(command -v /usr/local/opt/llvm/bin/lld)"
     export CC="$(command -v /usr/local/opt/llvm/bin/clang)"
     export CXX="$(command -v /usr/local/opt/llvm/bin/clang++)"
 elif command -v "clang-6.0" > /dev/null 2>&1; then
