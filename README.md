@@ -128,17 +128,10 @@ of the unzip of the archive, e.g.
 
 Updating package version for new release
 -----------------------------
+
 To change the package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
-Everything is currently considered in preview.
 
-Use the following two MSBuild arguments in order to control the -preview and the build numbers in the name of the nuget packages produced (use one of the two generally):
-
-|Name | Value| Example Version Output|
-|---|---|---|
-|StabilizePackageVersion |  true  | 1.0.0|
-|IncludeBuildNumberInPackageVersion | false | 1.0.0-preview|
-
-Sample command: `./build.cmd -release -buildpackages -- /p:StabilizePackageVersion=true`
+Sample command: `./build.cmd pack`
 
 GPU support
 ============
