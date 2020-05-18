@@ -70,7 +70,7 @@ phases:
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
     displayName: Install build dependencies
-  - script: ./build.sh build -c -$(BuildConfig)
+  - script: ./build.sh build -c $(BuildConfig)
     displayName: Build
 
   - task: PublishBuildArtifacts@1

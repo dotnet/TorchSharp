@@ -14,5 +14,6 @@ __toolRuntime=$__scriptpath/Tools
 __dotnet=$__toolRuntime/dotnetcli/dotnet
 
 cd "$__scriptpath"
+echo "$__dotnet" "$@"
 "$__dotnet" "$@"
 exit $?
