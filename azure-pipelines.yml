@@ -4,37 +4,37 @@
 
 resources:
   containers:
-  # - container: CentosContainer
-  #  image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
+  - container: CentosContainer
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
   
   - container: UbuntuContainer
-    image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-207e097-20190312152303
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20200515184230-2c829e8
 
-phases:
-- template: /build/ci/phase-template.yml
+jobs:
+- template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64_NetCoreApp30
     buildScript: ./build.sh
-    queue:
+    pool:
       name: Hosted Ubuntu 1604
       container: UbuntuContainer
 
-- template: /build/ci/phase-template.yml
+- template: /build/ci/job-template.yml
   parameters:
     name: MacOS_x64_NetCoreApp30
     buildScript: ./build.sh
-    queue:
+    pool:
       name: Hosted macOS
 
-- template: /build/ci/phase-template.yml
+- template: /build/ci/job-template.yml
   parameters:
     name: Windows_x64_NetCoreApp30
     buildScript: build.cmd
-    queue:
+    pool:
       name: Hosted VS2017
 
 ################################################################################
-- phase: Linux_Build
+- job: Linux_Build
 ################################################################################
   variables:
     BuildConfig: Release
@@ -42,7 +42,7 @@ phases:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-  queue:
+  pool:
     name: Hosted Ubuntu 1604
     container: UbuntuContainer
   steps:
@@ -58,7 +58,7 @@ phases:
       artifactType: container
 
 ################################################################################
-- phase: MacOS_Build
+- job: MacOS_Build
 ################################################################################
   variables:
     BuildConfig: Release
@@ -66,7 +66,7 @@ phases:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-  queue:
+  pool:
     name: Hosted macOS
   steps:
   - script: brew update && brew install libomp && brew link libomp --force
@@ -83,7 +83,7 @@ phases:
       artifactType: container
 
 ################################################################################
-# - phase: Windows_x86_Build 
+# - job: Windows_x86_Build 
 ################################################################################
 #   variables:
 #     BuildConfig: Release
@@ -94,7 +94,7 @@ phases:
 #     _SignType: real
 #     _UseEsrpSigning: true
 #     _TeamName: DotNetCore
-#   queue:
+#   pool:
 #     name: Hosted VS2017
 #   steps:
 
@@ -122,7 +122,7 @@ phases:
 #     displayName: Dotnet Server Shutdown
 
 ################################################################################
-- phase: Windows_x64_Build
+- job: Windows_x64_Build
 ################################################################################
   variables:
     BuildConfig: Release
@@ -133,7 +133,7 @@ phases:
     _SignType: real
     _UseEsrpSigning: true
     _TeamName: DotNetCore
-  queue:
+  pool:
     name: Hosted VS2017
   steps:
 
@@ -153,7 +153,7 @@ phases:
     displayName: Dotnet Server Shutdown
 
 ################################################################################
-- phase: Package
+- job: Package
 ################################################################################
   dependsOn:
   - Linux_Build
@@ -166,11 +166,11 @@ phases:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-  queue:
+  pool:
     name: Hosted VS2017
   steps:
 
-  # Download all agent packages from all previous phases
+  # Download all agent packages from all previous jobs
   - task: DownloadBuildArtifacts@0
     displayName: Download package assets
     inputs:

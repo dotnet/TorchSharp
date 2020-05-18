@@ -2,22 +2,23 @@ parameters:
   name: ''
   architecture: x64
   buildScript: ''
-  queue: {}
+  pool: {}
   customMatrixes: ''
   codeCoverage: false
 
-phases:
-  - phase: ${{ parameters.name }}
+jobs:
+  - job: ${{ parameters.name }}
     variables:
       _buildScript: ${{ parameters.buildScript }}
-      _phaseName: ${{ parameters.name }}
+      _jobName: ${{ parameters.name }}
       _arch: ${{ parameters.architecture }}
       _codeCoverage: ${{ parameters.codeCoverage }}
-    queue:
+    pool:
       ${{ if eq(variables._codeCoverage, 'false') }}:
         timeoutInMinutes: 30
       ${{ if eq(variables._codeCoverage, 'true') }}:
         timeoutInMinutes: 60
+    strategy:
       parallel: 99
       matrix:
         ${{ if eq(parameters.customMatrixes, '') }}:
@@ -31,9 +32,9 @@ phases:
             _includeBenchmarkData: true
         ${{ if ne(parameters.customMatrixes, '') }}:
           ${{ insert }}: ${{ parameters.customMatrixes }}
-      ${{ insert }}: ${{ parameters.queue }}
+      ${{ insert }}: ${{ parameters.pool }}
     steps:
-    - ${{ if eq(parameters.queue.name, 'Hosted macOS') }}:
+    - ${{ if eq(parameters.pool.name, 'Hosted macOS') }}:
       - script: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
         displayName: Install build dependencies
     - script: $(_buildScript) -$(_configuration) -buildArch=$(_arch)
@@ -51,7 +52,7 @@ phases:
         testRunner: 'vSTest'
         searchFolder: '$(System.DefaultWorkingDirectory)/bin'
         testResultsFiles: '**/*.trx'
-        testRunTitle: Machinelearning_Tests_$(_phaseName)_$(_configuration)_$(Build.BuildNumber)
+        testRunTitle: Machinelearning_Tests_$(_jobName)_$(_configuration)_$(Build.BuildNumber)
         configuration: $(_configuration)
         mergeTestResults: true
     - task: CopyFiles@2
