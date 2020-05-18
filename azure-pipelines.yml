@@ -87,6 +87,8 @@ jobs:
   steps:
   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
     displayName: Install build dependencies (macOS)
+  - script: ls -Flas /usr/local/opt/llvm/bin/
+    displayName: Debug Stuff
   - script: ./build.sh build -c $(BuildConfig)
     displayName: Build
 
