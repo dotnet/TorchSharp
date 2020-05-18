@@ -46,9 +46,9 @@ jobs:
       - script: sudo apt-get -y update
       - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
         displayName: Install build dependencies (ubuntu)
-    - script: $(_buildScript) build -c $(_configuration) /p:SkipCude:true
+    - script: $(_buildScript) build -c $(_configuration) /p:SkipCuda=true
       displayName: Build
-    - script: $(_buildScript) test -c $(_configuration)  /p:SkipCude:true
+    - script: $(_buildScript) test -c $(_configuration)  /p:SkipCuda=true
       displayName: Run Tests
     # -coverage=$(_codeCoverage)
     # REVIEW: Code coverage should be reactivated.
