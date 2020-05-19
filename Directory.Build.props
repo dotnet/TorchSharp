@@ -72,7 +72,8 @@
     <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
 
-    <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$(BUILD_BUILDNUMBER)</VersionPrefix>
+    <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCE_BRANCHNAME)' != 'master'">-$(BUILD_DEFINITIONNAME)-$(BUILD_BUILDNUMBER)-$(BUILD_SOURCE_BRANCHNAME)</VersionPrefix>
+    <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
