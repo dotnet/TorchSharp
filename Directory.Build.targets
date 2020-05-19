@@ -30,7 +30,7 @@
           UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
-    
+
   </Target>
   
 </Project>

@@ -50,6 +50,7 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <Target Name="BeforeBuild">
+    <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
              Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
              Targets="Build" />
