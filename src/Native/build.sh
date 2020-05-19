@@ -59,7 +59,7 @@ while [ "$1" != "" ]; do
 done
 
 # Force the build to be release since libtorch is in release.
-__cmake_defines="-DCMAKE_BUILD_TYPE=Release ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath}"
+__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath}"
 
 __IntermediatesDir="$__baseIntermediateOutputPath/$__build_arch.$__configuration/Native"
 __BinDir="$__rootBinPath/$__build_arch.$__configuration/Native"
@@ -95,7 +95,20 @@ if [ ! -f $__versionSourceFile ]; then
     echo $__versionSourceLine > $__versionSourceFile
 fi
 
-__cmake_defines="${__cmake_defines} -DVERSION_FILE_PATH:STRING=${__versionSourceFile}"
+OSName=$(uname -s)
+case $OSName in
+    Darwin)
+        
+        # PyTorch is looking for OpenMP support but Apple's OpenMP support is lacking e.g. -fopenmp not supported
+        # See    https://github.com/oneapi-src/oneDNN/issues/591 for this workaround
+        LIBOMP=/usr/local/opt/libomp
+        __cmake_defines='${__cmake_defines} -DCMAKE_CXX_FLAGS="-I$LIBOMP/include" -DCMAKE_C_FLAGS="-I$LIBOMP/include"  -DCMAKE_SHARED_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib" -DCMAKE_EXE_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib'
+    *)
+    echo "Unsupported OS '$OSName' detected. Downloading linux-$__PKG_ARCH tools."
+        OS=Linux
+        __PKG_RID=linux
+        ;;
+esac
 
 cd "$__IntermediatesDir"
 

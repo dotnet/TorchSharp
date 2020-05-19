@@ -37,7 +37,7 @@ jobs:
     buildScript: build.cmd  build  /p:SkipCuda=true -c 
     testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'windows-2019'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -107,7 +107,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'windows-2019'
   steps:
 
     # Download all bits contributing to the packages from the Linux and Mac builds
