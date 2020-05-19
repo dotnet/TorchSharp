@@ -65,12 +65,8 @@ jobs:
   - script: ./build.sh build -c $(BuildConfig) 
     displayName: Build
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Linux package assets
-    inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
-      artifactName: PackageAssets
-      artifactType: container
+  - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+    artifact: LinuxAssets
 
 # ################################################################################
 # - job: MacOS_Build_For_Package
@@ -94,10 +90,8 @@ jobs:
 
 #   - task: PublishBuildArtifacts@1
 #     displayName: Publish macOS package assets
-#     inputs:
-#       pathToPublish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
-#       artifactName: PackageAssets
-#       artifactType: container
+#   - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+#     artifact: MacAssets
 
 
 ################################################################################
@@ -116,24 +110,27 @@ jobs:
     name: Hosted VS2017	
   steps:
 
-  # Download all bits contributing to the packages from the Linux and Mac builds
-  - task: DownloadBuildArtifacts@0
-    displayName: Download package assets
-    inputs:
-      artifactName: PackageAssets
-      downloadPath: $(Build.SourcesDirectory)/..
-      parallelizationLimit: 1
+    # Download all bits contributing to the packages from the Linux and Mac builds
+  - download: current
+    artifact: LinuxAssets
 
-  # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
     displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/../PackageAssets
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets
       targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
   
-  # remove to free up space
-  - script: rmdir /s /q $(Build.SourcesDirectory)\..\PackageAssets
+  - script: rmdir /s /q  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space
+
+  # - task: CopyFiles@2
+  #   displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
+  #   inputs:
+  #     sourceFolder: $(Pipeline.Workspace)/MacAssets
+  #     targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
+
+  # - script: rmdir /s /q  $(Pipeline.Workspace)/LinuxAssets
+  #   displayName: Free up space
 
   # build the windows bits contributing to the packages and make the packages
   - script: build.cmd pack -c $(BuildConfig) 
@@ -156,8 +153,9 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: packages
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: packages
   
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
