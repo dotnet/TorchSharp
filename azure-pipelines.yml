@@ -156,6 +156,8 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: packages
   
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
