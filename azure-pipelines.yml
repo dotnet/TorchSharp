@@ -18,7 +18,7 @@ jobs:
     buildScript: ./build.sh build /p:SkipCuda=true -c 
     testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
-      name: ubuntu-16.04
+      vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
@@ -28,7 +28,7 @@ jobs:
     buildScript: ./build.sh build /p:SkipCuda=true -c 
     testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
-      name: macOS-latest
+      vmImage: 'macOS-latest'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -37,7 +37,7 @@ jobs:
     buildScript: build.cmd  build  /p:SkipCuda=true -c 
     testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
-      name: windows-latest
+      vmImage: 'windows-latest'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -55,7 +55,7 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
     TORCHSHARP_MAKING_PACKAGE: 1
   pool:
-    name: ubuntu-16.04
+    vmImage: 'ubuntu-16.04'
   container: UbuntuContainer
   steps:
   - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
@@ -107,7 +107,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: windows-latest	
+    vmImage: 'windows-latest'
   steps:
 
     # Download all bits contributing to the packages from the Linux and Mac builds
