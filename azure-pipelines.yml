@@ -28,7 +28,7 @@ jobs:
     buildScript: ./build.sh build /p:SkipCuda=true -c 
     testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'macOS-latest'
+      vmImage: 'macos-10.15'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -79,7 +79,7 @@ jobs:
 #     DOTNET_MULTILEVEL_LOOKUP: 0
 #     TORCHSHARP_MAKING_PACKAGE: 1
 #   pool:
-#     name: Hosted macOS
+#     vmImage: 'macos-10.15'
 #   steps:
 #   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
 #     displayName: Install build dependencies (macOS)
@@ -120,7 +120,7 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
       targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
   
-  - script: rmdir /s /q  $(Pipeline.Workspace)/LinuxAssets
+  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space
 
   # - task: CopyFiles@2
