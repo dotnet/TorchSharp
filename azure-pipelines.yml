@@ -118,7 +118,7 @@ jobs:
     displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
-      targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space
