@@ -21,14 +21,14 @@ jobs:
       name: ubuntu-16.04
     container: UbuntuContainer
 
- - template: /build/ci/job-template.yml
-   parameters:
-     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-     name: MacOS_x64_NetCoreApp30
-     buildScript: ./build.sh build /p:SkipCuda=true -c 
-     testScript: ./build.sh test /p:SkipCuda=true -c 
-     pool:
-       name: macOS-latest
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
+    name: MacOS_x64_NetCoreApp30
+    buildScript: ./build.sh build /p:SkipCuda=true -c 
+    testScript: ./build.sh test /p:SkipCuda=true -c 
+    pool:
+      name: macOS-latest
 
 - template: /build/ci/job-template.yml
   parameters:
