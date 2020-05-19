@@ -1,4 +1,4 @@
-<Project InitialTargets="CheckForBuildTools">
+<Project>
   
   <Target Name="CheckForBuildTools">
     <Error Condition="!Exists('$(ToolsDir)')"
