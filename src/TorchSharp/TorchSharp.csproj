@@ -52,7 +52,6 @@
  <!-- This is an odd place to trigger the download of the redist bits and the build of the C++ project -->
  <!--     1. the Redist download projects use .proj which is not recognised in Visual Studio or 'dotnet build' on TorchSharp.sln  --> 
  <!--     2. the C++ project uses a generated project file under Release/Debug also not recognised in TorchSharp.sln --> 
- this is an odd place to trigger the download of the redist bits and the build of the C++ project -->
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
@@ -79,7 +78,7 @@
     <Message Text="Packing TorchSharp nupkg..." Importance="high" />
     <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
 
-    <Warning Text="Packages will be incomplete and unusable on linux platform. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
+    <Warning Text="Packages will be incomplete and unusable on linux platforms. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
              Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
                      OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
                      " />
