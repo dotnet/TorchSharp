@@ -133,8 +133,11 @@ jobs:
   #   displayName: Free up space
 
   # build the windows bits contributing to the packages and make the packages
+  - script: build.cmd build -c $(BuildConfig) 
+    displayName: Build Windows
+
   - script: build.cmd pack -c $(BuildConfig) 
-    displayName: Build Windows and Create Packages
+    displayName: Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
