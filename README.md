@@ -1,5 +1,4 @@
-[![Build Status (master)](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)  [![(Windows](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master&jobName=Windows_x64_NetCoreApp30&configuration=Windows_x64_NetCoreApp30%20Release_Build)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master) [![Ubuntu 16.04](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master&jobName=Ubuntu_x64_NetCoreApp30&configuration=Ubuntu_x64_NetCoreApp30%20Release_Build)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)
-
+[![Build Status (master)](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)  
 
 TorchSharp
 ==========
