@@ -707,4 +707,13 @@ EXPORT_API(Tensor) THSTensor_maxunpool3d(
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength);
 
+EXPORT_API(Tensor) THSTensor_gather(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index);
 
+EXPORT_API(Tensor) THSTensor_scatter(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index,
+    const Tensor source);

@@ -1355,3 +1355,19 @@ Tensor THSTensor_conv3d(
             groups));
 }
 
+Tensor THSTensor_gather(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index)
+{
+    CATCH_TENSOR(torch::gather(*tensor, dimension, *index));
+}
+
+Tensor THSTensor_scatter(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(torch::scatter(*tensor, dimension, *index, *source));
+}

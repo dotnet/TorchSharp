@@ -1706,6 +1706,34 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_scatter(IntPtr tensor, long dimension, IntPtr index, IntPtr source);
+
+        /// <summary>
+        ///  Writes all values from the tensor src into self at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public TorchTensor Scatter(long dimension, TorchTensor index, TorchTensor src)
+        {
+            var res = THSTensor_scatter(handle, dimension, index.Handle, src.Handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_gather(IntPtr tensor, long dimension, IntPtr index);
+
+        /// <summary>
+        /// Gathers values along an axis specified by dim.
+        /// </summary>
+        public TorchTensor Gather(long dimension, TorchTensor index)
+        {
+            var res = THSTensor_gather(handle, dimension, index.Handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_flip(IntPtr src, IntPtr psizes, int length);
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
@@ -56,9 +56,12 @@ internal sealed class PinnedArray<T> : IDisposable where T : struct
 
     public void Dispose()
     {
-        foreach (var val in Array)
+        if (Array != null)
         {
-            (val as IDisposable)?.Dispose();
+            foreach (var val in Array)
+            {
+                (val as IDisposable)?.Dispose();
+            }
         }
         FreeHandle();
     }
