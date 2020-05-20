@@ -18,17 +18,17 @@ jobs:
     buildScript: ./build.sh build /p:SkipCuda=true -c 
     testScript: ./build.sh test /p:SkipCuda=true -c 
     pool:
-      name: ubuntu-16.04
+      vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
 
- - template: /build/ci/job-template.yml
-   parameters:
-     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-     name: MacOS_x64_NetCoreApp30
-     buildScript: ./build.sh build /p:SkipCuda=true -c 
-     testScript: ./build.sh test /p:SkipCuda=true -c 
-     pool:
-       name: macOS-latest
+# - template: /build/ci/job-template.yml
+#   parameters:
+#     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
+#     name: MacOS_x64_NetCoreApp30
+#     buildScript: ./build.sh build /p:SkipCuda=true -c 
+#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     pool:
+#       vmImage: 'macos-10.15'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -37,7 +37,7 @@ jobs:
     buildScript: build.cmd  build  /p:SkipCuda=true -c 
     testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
-      name: windows-latest
+      vmImage: 'windows-2019'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -55,7 +55,7 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
     TORCHSHARP_MAKING_PACKAGE: 1
   pool:
-    name: ubuntu-16.04
+    vmImage: 'ubuntu-16.04'
   container: UbuntuContainer
   steps:
   - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
@@ -79,7 +79,7 @@ jobs:
 #     DOTNET_MULTILEVEL_LOOKUP: 0
 #     TORCHSHARP_MAKING_PACKAGE: 1
 #   pool:
-#     name: Hosted macOS
+#     vmImage: 'macos-10.15'
 #   steps:
 #   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
 #     displayName: Install build dependencies (macOS)
@@ -107,7 +107,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    name: windows-latest	
+    vmImage: 'windows-2019'
   steps:
 
     # Download all bits contributing to the packages from the Linux and Mac builds
@@ -118,9 +118,9 @@ jobs:
     displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
-      targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
   
-  - script: rmdir /s /q  $(Pipeline.Workspace)/LinuxAssets
+  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space
 
   # - task: CopyFiles@2
@@ -133,8 +133,11 @@ jobs:
   #   displayName: Free up space
 
   # build the windows bits contributing to the packages and make the packages
+  - script: build.cmd build -c $(BuildConfig) 
+    displayName: Build Windows
+
   - script: build.cmd pack -c $(BuildConfig) 
-    displayName: Build Windows and Create Packages
+    displayName: Create Packages
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
@@ -157,6 +160,15 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet Authenticate'
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    inputs:
+      command: push
+      publishVstsFeed: 'TorchSharp/packages'
+      allowPackageConflicts: true
+
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
     displayName: Dotnet Server Shutdown
