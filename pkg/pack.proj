@@ -1,0 +1,51 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+  <Target Name="Pack">
+    <Message Text="Restoring packaging projects..." Importance="high" />
+
+    <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
+             Condition="!Exists('$(PackageAssetsPath)\libtorch-cpu-redist\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackageAssetsPath)\libtorch-cuda-$(CudaVersionDot)-redist\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     " />
+    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
+             Condition="!Exists('$(PackageAssetsPath)\libtorch-cpu-redist\runtimes\win-x64\native\LibTorchSharp.dll')
+                     OR !Exists('$(PackageAssetsPath)\libtorch-cuda-$(CudaVersionDot)-redist\runtimes\win-x64\native\LibTorchSharp.dll')
+                     " />
+
+
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part1\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part1.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part2\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part2.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part1\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part1.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part2\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part2.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part3\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part3.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64\libtorch-cuda-$(CudaVersionDot)-redist-win-x64.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist\libtorch-cuda-$(CudaVersionDot)-redist.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="libtorch-cpu-redist\libtorch-cpu-redist.nupkgproj" Targets="Restore" />
+    <MSBuild Projects="TorchSharp\TorchSharp.nupkgproj" Targets="Restore" />
+
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part1\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part1.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part2\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64-part2.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-linux-x64\libtorch-cuda-$(CudaVersionDot)-redist-linux-x64.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part1\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part1.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part2\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part2.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part3\libtorch-cuda-$(CudaVersionDot)-redist-win-x64-part3.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist-win-x64\libtorch-cuda-$(CudaVersionDot)-redist-win-x64.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cuda-$(CudaVersionDot)-redist\libtorch-cuda-$(CudaVersionDot)-redist.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="libtorch-cpu-redist\libtorch-cpu-redist.nupkgproj" Targets="Pack" />
+    <Message Text="Packing..." Importance="high" />
+    <MSBuild Projects="TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
+
+    <Message Text="Done packing!" Importance="high" />
+  </Target>
+
+</Project>

@@ -107,16 +107,16 @@ The managed package can be built with `dotnet pack`, e.g.
 Locally built packages have names like this, names update every day.  If repeatedly rebuilding them locally you may have to remove them
 from your local `.nuget` package cache.
 
-    bin/packages/Debug/LibTorch.Cuda.10.2.Redist.0.3.0-local-Debug-20200520.nupkg
-    bin/packages/Debug/LibTorch.Redist.0.3.0-local-Debug-20200520.nupkg
-    bin/packages/Debug/TorchSharp.Redist.0.3.0-local-Debug-20200520.nupkg
+    bin/packages/Debug/libtorch-cuda-10.2-redist.0.3.0-local-Debug-20200520.nupkg
+    bin/packages/Debug/libtorch-cpu-redist.0.3.0-local-Debug-20200520.nupkg
+    bin/packages/Debug/TorchSharp.0.3.0-local-Debug-20200520.nupkg
 
-    bin/packages/Release/LibTorch.Cuda.10.2.Redist.0.3.0-local-Release-20200520.nupkg
-    bin/packages/Release/LibTorch.Redist.0.3.0-local-Release-20200520.nupkg
-    bin/packages/Release/TorchSharp.Redist.0.3.0-local-Release-20200520.nupkg
+    bin/packages/Release/libtorch-cuda-10.2-redist.0.3.0-local-Release-20200520.nupkg
+    bin/packages/Release/libtorch-cpu-redist.0.3.0-local-Release-20200520.nupkg
+    bin/packages/Release/TorchSharp.0.3.0-local-Release-20200520.nupkg
 
 
-Complete LibTorch.Redist packages can't be built using your local machine alone, since they won't contain the
+Complete libtorch-cpu-redist packages can't be built using your local machine alone, since they won't contain the
 full range of native bits. Instead they are built using Azure Pipelines.
 
 An ephemeral feed of packages from CI is available 
@@ -143,18 +143,17 @@ To update the version, update these:
 
 Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
-    msbuild src\Redist\LibTorch.Cuda.10.2.Redist\LibTorch.Cuda.10.2.Redist.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
+    msbuild src\Redist\libtorch-cuda-10.2-redist\libtorch-cuda-10.2-redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+    msbuild src\Redist\libtorch-cuda-10.2-redist\libtorch-cuda-10.2-redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
 
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
-    msbuild src\Redist\LibTorch.Redist\LibTorch.Redist.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
+    msbuild src\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+    msbuild src\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
+    msbuild src\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
 
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.
 
-     bin\obj\x86.Debug\LibTorch.Redist\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
+     bin\obj\x86.Debug\libtorch-cpu-redist\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
 
 
 Updating package version for new release

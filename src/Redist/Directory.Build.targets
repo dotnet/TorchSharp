@@ -1,74 +1,6 @@
 <Project>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <LibtorchGPUConfig Include="windows"
-      LibName="libtorch-win-shared-with-deps$(LibTorchDebug)"
-      FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\asmjit.dll;
-                        libtorch\lib\c10.dll;
-                        libtorch\lib\c10_cuda.dll;
-                        libtorch\lib\caffe2_detectron_ops_gpu.dll;
-                        libtorch\lib\caffe2_module_test_dynamic.dll;
-                        libtorch\lib\caffe2_nvrtc.dll;
-                        libtorch\lib\cublas64_10.dll;
-                        libtorch\lib\cublasLt64_10.dll;
-                        libtorch\lib\cudart64_102.dll;
-                        libtorch\lib\cudnn64_7.dll;
-                        libtorch\lib\cufft64_10.dll;
-                        libtorch\lib\cufftw64_10.dll;
-                        libtorch\lib\curand64_10.dll;
-                        libtorch\lib\cusparse64_10.dll;
-                        libtorch\lib\fbgemm.dll;
-                        libtorch\lib\libiomp5md.dll;
-                        libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\nvrtc64_102_0.dll;
-                        libtorch\lib\nvrtc-builtins64_102.dll;
-                        libtorch\lib\nvToolsExt64_1.dll;
-                        libtorch\lib\torch.dll;
-                        libtorch\lib\torch_cpu.dll;
-                        libtorch\lib\torch.dll;
-                        libtorch\lib\torch_cuda.dll;
-                        libtorch\lib\torch_global_deps.dll;"
-
-      Runtime="win-x64"/>
-    <LibtorchGPUConfig Include="linux" LibName="libtorch-shared-with-deps" FileExtension=".zip" 
-      FilesFromArchive= "libtorch\lib\libc10.so;
-                        libtorch\lib\libc10_cuda.so;
-                        libtorch\lib\libc10d_cuda_test.so;
-                        libtorch\lib\libcaffe2_detectron_ops_gpu.so;
-                        libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libcaffe2_nvrtc.so;
-                        libtorch\lib\libcaffe2_observers.so;
-                        libtorch\lib\libfbjni.so;
-                        libtorch\lib\libnvrtc-builtins.so;
-                        libtorch\lib\libpytorch_jni.so;
-                        libtorch\lib\libshm.so;
-                        libtorch\lib\libtorch.so;
-                        libtorch\lib\libtorch_cpu.so;
-                        libtorch\lib\libtorch_cuda.so;
-                        libtorch\lib\libtorch_global_deps.so;
-                        libtorch\lib\libtorch_python.so;
-                        libtorch\lib\libcudart-80664282.so.10.2;
-                        libtorch\lib\libnvrtc-08c4863f.so.10.2;
-                        libtorch\lib\libgomp-7c85b1e2.so.1;
-                        libtorch\lib\libnvToolsExt-3965bdd0.so.1;"
-
-      Runtime="linux-x64" />
-
-      <!-- No GPU support for Mac -->
-
-    <AdditionalDownloadFile 
-         Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" 
-         DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
-  </ItemGroup>
-
-
-  <Target Name="PrepareArchives">
+  <Target Name="PrepareArchives1">
     <ItemGroup>
 
       <LibtorchGPUArchive Condition="'$(PackageRid)' == '%(Runtime)'"
@@ -85,8 +17,8 @@
   <UsingTask TaskName="DownloadFilesFromUrl" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
 
   <!-- Download libtorch for gpu -->
-  <Target Name="DownloadArchives" 
-          DependsOnTargets="PrepareArchives"
+  <Target Name="DownloadArchives1" 
+          DependsOnTargets="PrepareArchives1"
           Inputs="$(MSBuildProjectFile)"
           Outputs="@(LibtorchGPUArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)';">
     <MakeDir Directories="$(IntermediateOutputPath)" />
@@ -104,8 +36,8 @@
   <UsingTask TaskName="ZipFileExtractToDirectory" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
 
   <!-- Validate and extract Archive for Libtorch -->
-  <Target Name="ValidateAndExtractArchivesLibtorch" 
-          DependsOnTargets="DownloadArchives"
+  <Target Name="ValidateAndExtractArchivesLibtorch1" 
+          DependsOnTargets="DownloadArchives1"
           Inputs="@(LibtorchGPUArchive->'%(DownloadFile)')"
           Outputs="@(LibtorchGPUArchive->'%(ExtractSemaphore)')">
     <!-- GenerateChecksums writes a sha checksum to the file specified by DestinationPath metadata -->
@@ -152,8 +84,8 @@
   </Target>
 
   <!-- Select the files we want to copy out of each archive. -->
-  <Target Name="GetFilesFromArchive"
-          DependsOnTargets="ValidateAndExtractArchivesLibtorch" >
+  <Target Name="GetFilesFromArchive1"
+          DependsOnTargets="ValidateAndExtractArchivesLibtorch1" >
     <ItemGroup>
       <!-- batch rather than transform so that we can split FilesFromArchive metadata -->
       <_fileFromArchive Include="%(LibtorchGPUArchive.FilesFromArchive)" ExtractDirectory="%(LibtorchGPUArchive.ExtractDirectory)" Runtime="%(LibtorchGPUArchive.Runtime)" />
@@ -174,18 +106,10 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="CopyFilesFromArchive"
-          DependsOnTargets="GetFilesFromArchive">
+  <Target Name="CopyFilesFromArchive1"
+          DependsOnTargets="GetFilesFromArchive1">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetPath)" />
     <Copy SourceFiles="@(FilesFromArchive)"
           DestinationFiles="@(FilesFromArchive->'%(TargetPath)')" />
-  </Target>
-
-  <!-- Define Build to do the work of downloading and copying assets -->
-  <Target Name="Build"
-          DependsOnTargets="CopyFilesFromArchive"  />
-
-  <Target Name="Clean">
-    <RemoveDir Directories="$(IntermediateOutputPath)" />
   </Target>
 </Project>
