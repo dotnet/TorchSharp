@@ -52,6 +52,12 @@ Discussions
 
 We have a chat room on Gitter [![Gitter](https://badges.gitter.im/xamarin/TorchSharp.svg)](https://gitter.im/xamarin/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+
+Active nuget package feed
+============================
+
+An ephemeral feed of packages from CI is available at https://pkgs.dev.azure.com/migueldeicaza/TorchSharp/_packaging/packages%40Local/nuget/v3/index.json. 
+
 Building
 ============
 
