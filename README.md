@@ -101,7 +101,21 @@ Commands:
 Building packages
 ------------------------
 
-The managed package can be built with `dotnet pack`
+The managed package can be built with `dotnet pack`, e.g.
+
+    dotnet pack /p:SkipCuda=true
+
+Locally built packages have names like this, names update every day.  If repeatedly rebuilding them locally you may have to remove them
+from your local `.nuget` package cache.
+
+    bin/packages/Debug/LibTorch.Cuda.10.2.Redist.0.3.0-local-Debug-20200520.nupkg
+    bin/packages/Debug/LibTorch.Redist.0.3.0-local-Debug-20200520.nupkg
+    bin/packages/Debug/TorchSharp.Redist.0.3.0-local-Debug-20200520.nupkg
+
+    bin/packages/Release/LibTorch.Cuda.10.2.Redist.0.3.0-local-Release-20200520.nupkg
+    bin/packages/Release/LibTorch.Redist.0.3.0-local-Release-20200520.nupkg
+    bin/packages/Release/TorchSharp.Redist.0.3.0-local-Release-20200520.nupkg
+
 
 Complete LibTorch.Redist packages can't be built using your local machine alone, since they won't contain the
 full range of native bits. Instead they are built using Azure Pipelines.

@@ -166,7 +166,7 @@ jobs:
     displayName: 'NuGet push'
     inputs:
       command: push
-      publishVstsFeed: 'TorchSharp/packages'
+      publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
 
   # Terminate all dotnet build processes.

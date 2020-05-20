@@ -215,7 +215,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern sbyte THSTensor_type(IntPtr handle);
 
-        public ATenScalarMapping Type => (ATenScalarMapping)THSTensor_type(handle);
+        public ScalarType Type => (ScalarType)THSTensor_type(handle);
 
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.LPStr)]
@@ -248,7 +248,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
 
-        public TorchTensor ToType(ATenScalarMapping type)
+        public TorchTensor ToType(ScalarType type)
         {
             var res = THSTensor_to_type(handle, (sbyte)type);
             Torch.CheckForErrors();
@@ -1659,7 +1659,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns the sum of all elements in the :attr:`input` tensor.
         /// </summary>
-        public TorchTensor Sum(ATenScalarMapping? type = null)
+        public TorchTensor Sum(ScalarType? type = null)
         {
             var res = THSTensor_sum(handle, type.HasValue, (sbyte)type.GetValueOrDefault());
             Torch.CheckForErrors();
@@ -1672,7 +1672,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Returns the sum of each row of the input tensor in the given dimensions.
         /// </summary>
-        public TorchTensor Sum(long[] dimensions, bool keepDimension = false, ATenScalarMapping? type = null)
+        public TorchTensor Sum(long[] dimensions, bool keepDimension = false, ScalarType? type = null)
         {
             unsafe
             {
@@ -1703,6 +1703,34 @@ namespace TorchSharp.Tensor
                     return new TorchTensor(res);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_scatter(IntPtr tensor, long dimension, IntPtr index, IntPtr source);
+
+        /// <summary>
+        ///  Writes all values from the tensor src into self at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public TorchTensor Scatter(long dimension, TorchTensor index, TorchTensor src)
+        {
+            var res = THSTensor_scatter(handle, dimension, index.Handle, src.Handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_gather(IntPtr tensor, long dimension, IntPtr index);
+
+        /// <summary>
+        /// Gathers values along an axis specified by dim.
+        /// </summary>
+        public TorchTensor Gather(long dimension, TorchTensor index)
+        {
+            var res = THSTensor_gather(handle, dimension, index.Handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2000,6 +2028,41 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_maxpool1d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public (TorchTensor output, TorchTensor indices) MaxPool1DWithIndices(long kernelSize, long? stride = null,
+            long? padding = null, long? dilation = null, bool ceil_mode = false)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            var dilations = new long[] { dilation ?? 1 };
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
+                        THSTensor_maxpool1d_with_indices(handle,
+                            pa.CreateArray,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            (IntPtr)pdilation, dilations.Length,
+                            ceil_mode);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool2d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
@@ -2031,6 +2094,40 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_maxpool2d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public (TorchTensor output, TorchTensor indices) MaxPool2DWithIndices(long[] kernelSize, long[] strides = null,
+            long[] padding = null, long[] dilation = null, bool ceil_mode = false)
+        {
+            strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                        THSTensor_maxpool2d_with_indices(handle,
+                            pa.CreateArray,
+                            (IntPtr)pkernelSize, kernelSize.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            ceil_mode);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool3d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
@@ -2055,6 +2152,73 @@ namespace TorchSharp.Tensor
                             (IntPtr)ppadding, padding.Length,
                             (IntPtr)pdilation, dilation.Length,
                             ceil_mode);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_maxpool3d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                IntPtr dilation, int dilationLength,
+                bool ceil_mode);
+
+        public (TorchTensor output, TorchTensor indices) MaxPool3DWithIndices(long[] kernelSize, long[] strides = null,
+            long[] padding = null, long[] dilation = null, bool ceil_mode = false)
+        {
+            strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+            padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+            dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                        THSTensor_maxpool3d_with_indices(handle,
+                            pa.CreateArray,
+                            (IntPtr)pkernelSize, kernelSize.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, padding.Length,
+                            (IntPtr)pdilation, dilation.Length,
+                            ceil_mode);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_maxunpool2d(IntPtr input, IntPtr indices, IntPtr outputSize, int outputSizeLength);
+
+        public TorchTensor MaxUnpool2D(TorchTensor indices, long[] outputSize)
+        {
+            unsafe {
+                fixed (long* poutputSize = outputSize) {
+                    var res = THSTensor_maxunpool2d(handle, indices.Handle,
+                        (IntPtr)poutputSize, outputSize.Length);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_maxunpool3d(IntPtr input, IntPtr indices, IntPtr outputSize, int outputSizeLength, IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength);
+
+        public TorchTensor MaxUnpool3D(TorchTensor indices, long[] outputSize, long[] strides, long[] padding)
+        {
+            unsafe {
+                fixed (long* poutputSize = outputSize, pstrides = strides, ppadding = padding) {
+                    var res = THSTensor_maxunpool3d(handle, indices.Handle,
+                        (IntPtr)poutputSize, outputSize.Length,
+                        (IntPtr)pstrides, strides.Length,
+                        (IntPtr)ppadding, padding.Length);
                     Torch.CheckForErrors();
                     return new TorchTensor(res);
                 }
@@ -2280,7 +2444,7 @@ namespace TorchSharp.Tensor
         }
     }
 
-    public enum ATenScalarMapping : sbyte
+    public enum ScalarType : sbyte
     {
         Byte = 0,
         SByte = 1,
@@ -2290,8 +2454,14 @@ namespace TorchSharp.Tensor
         Half = 5,
         Float = 6,
         Double = 7,
-        ComplexFloat = 8,
-        ComplexDouble = 9
+        //ComplexHalf = 8,
+        //ComplexFloat = 9,
+        //ComplexDouble = 10,
+        Bool = 11,
+        //QInt8 = 12,
+        //QUInt8 = 13,
+        //QUInt32 = 14,
+        //BFloat16 = 15
     }
 
     public static class TensorExtensionMethods
@@ -2330,6 +2500,18 @@ namespace TorchSharp.Tensor
                     {
                         return FloatTensor.From(array as float[], dimensions, requiresGrad);
                     }
+                case bool _ when typeof(T) == typeof(Half):
+                    {
+                        return HalfTensor.From(array as Half[], dimensions, requiresGrad);
+                    }
+                case bool _ when typeof(T) == typeof(bool):
+                    {
+                        return BoolTensor.From(array as bool[], dimensions, requiresGrad);
+                    }
+                //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
+                //    {
+                //        return ComplexDoubleTensor.From(array as System.Numerics.Complex[], dimensions, requiresGrad);
+                //    }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }

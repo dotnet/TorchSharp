@@ -67,6 +67,12 @@ EXPORT_API(Tensor) THSTensor_newSByteScalar(int8_t data, bool requires_grad);
 EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
+EXPORT_API(Tensor) THSTensor_newBoolScalar(bool data, bool requires_grad);
+
+//  Creates  a variable tensor wrapping the input scalar.
+EXPORT_API(Tensor) THSTensor_newHalfScalar(c10::Half data, bool requires_grad);
+
+//  Creates  a variable tensor wrapping the input scalar.
 EXPORT_API(Tensor) THSTensor_newShortScalar(short data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
@@ -660,7 +666,54 @@ EXPORT_API(Tensor) THSTensor_maxpool3d(
     const int64_t* dilation, const int dilationLength,
     bool ceil_mode);
 
+EXPORT_API(void) THSTensor_maxpool1d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_maxpool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_maxpool3d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
 
 
+EXPORT_API(Tensor) THSTensor_maxunpool2d(
+    const Tensor tensor,
+    const Tensor indices,
+    const int64_t* outputSize, const int outputSizeLength);
 
 
+EXPORT_API(Tensor) THSTensor_maxunpool3d(
+    const Tensor tensor,
+    const Tensor indices,
+    const int64_t* outputSize, const int outputSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength);
+
+EXPORT_API(Tensor) THSTensor_gather(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index);
+
+EXPORT_API(Tensor) THSTensor_scatter(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index,
+    const Tensor source);
