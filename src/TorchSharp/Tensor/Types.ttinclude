@@ -1,4 +1,4 @@
-﻿<#+
+<#+
     public class TorchTypeDef {
 
         public readonly string Name;
@@ -9,10 +9,9 @@
         public readonly bool IsFloat;
         public readonly bool IsLong;
 
-        private TorchTypeDef(string name, string storage, string cstype) {
+        private TorchTypeDef(string name, string storage) {
             this.Name = name;
             this.Storage = storage;
-            this.CSType = cstype;
 
             this.IsSignedInt = name == "SByte" || name == "Short" || name == "Int" || name == "Long";
             this.IsFloat = name == "Float" || name == "Double";
@@ -20,13 +19,22 @@
         }
 
         public static readonly TorchTypeDef[] Types = {
-            new TorchTypeDef("Byte",   "byte",   "Byte"  ),
-            new TorchTypeDef("SByte",  "sbyte",  "SByte" ),
-            new TorchTypeDef("Short",  "short",  "Short"  ),
-            new TorchTypeDef("Int",    "int",    "Int"  ),
-            new TorchTypeDef("Long",   "long",   "Long"  ),
-            new TorchTypeDef("Double", "double", "Double"),
-            new TorchTypeDef("Float",  "float",  "Single"),
+            new TorchTypeDef("Byte",   "byte"),
+            new TorchTypeDef("SByte",  "sbyte"),
+            new TorchTypeDef("Short",  "short"),
+            new TorchTypeDef("Int",    "int"),
+            new TorchTypeDef("Long",   "long"),
+            new TorchTypeDef("Half",   "TorchSharp.Half"),
+            new TorchTypeDef("Float",  "float"),
+            new TorchTypeDef("Double", "double"),
+            //new TorchTypeDef("ComplexHalf",  "ComplexHalf"),
+            //new TorchTypeDef("ComplexFloat",  "ComplexFloat"),
+            //new TorchTypeDef("ComplexDouble",  "System.Numerics.Complex"),
+            new TorchTypeDef("Bool",  "bool"),
+            //new TorchTypeDef("QInt8",  "QInt8"),
+            //new TorchTypeDef("QUInt8",  "QUInt8"),
+            //new TorchTypeDef("QUInt32",  "QUInt32"),
+            //new TorchTypeDef("BFloat16",  "BFloat16"),
         };
 
         public readonly string Ptr = "IntPtr"; // "HType";

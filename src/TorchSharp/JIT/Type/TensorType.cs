@@ -21,9 +21,9 @@
 //        [DllImport("LibTorchSharp")]
 //        private static extern short THSJIT_getScalarFromDimensionedTensorType(HType handle);
 
-//        public Tensor.ATenScalarMapping GetScalarType()
+//        public Tensor.ScalarType GetScalarType()
 //        {
-//            return (Tensor.ATenScalarMapping)THSJIT_getScalarFromDimensionedTensorType(handle);
+//            return (Tensor.ScalarType)THSJIT_getScalarFromDimensionedTensorType(handle);
 //        }
 
 //        [DllImport("LibTorchSharp")]

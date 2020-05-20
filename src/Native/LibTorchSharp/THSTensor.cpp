@@ -109,6 +109,22 @@ Tensor THSTensor_newByteScalar(char data, bool requires_grad)
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
+Tensor THSTensor_newBoolScalar(bool  data, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Bool))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newHalfScalar(c10::Half data, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Half))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
 Tensor THSTensor_newShortScalar(short data, bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -1114,6 +1130,30 @@ Tensor THSTensor_maxpool1d(
         ceil_mode));
 }
 
+void THSTensor_maxpool1d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    CATCH (
+        auto res = torch::max_pool1d_with_indices(
+            *tensor,
+            at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
+            ceil_mode);
+    
+        Tensor* result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(res));
+        result[1] = new torch::Tensor(std::get<1>(res));
+    )
+}
+
 Tensor THSTensor_maxpool2d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -1125,7 +1165,32 @@ Tensor THSTensor_maxpool2d(
     CATCH_TENSOR(torch::max_pool2d(
         *tensor, 
         at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
-        at::ArrayRef<int64_t>(stride, strideLength)));
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength),
+        at::ArrayRef<int64_t>(dilation, dilationLength)));
+}
+
+void THSTensor_maxpool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    CATCH(
+        auto res = torch::max_pool2d_with_indices(
+            *tensor,
+            at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
+            ceil_mode);
+        Tensor* result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(res));
+        result[1] = new torch::Tensor(std::get<1>(res));
+    )
 }
 
 Tensor THSTensor_maxpool3d(
@@ -1145,6 +1210,54 @@ Tensor THSTensor_maxpool3d(
             ceil_mode));
 }
 
+void THSTensor_maxpool3d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode)
+{
+    CATCH(
+        auto res = torch::max_pool3d_with_indices(
+            *tensor,
+            at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
+            at::ArrayRef<int64_t>(stride, strideLength),
+            at::ArrayRef<int64_t>(padding, paddingLength),
+            at::ArrayRef<int64_t>(dilation, dilationLength),
+            ceil_mode);
+        Tensor* result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(res));
+        result[1] = new torch::Tensor(std::get<1>(res));
+    )
+}
+
+Tensor THSTensor_maxunpool2d(
+    const Tensor tensor,
+    const Tensor indices,
+    const int64_t* outputSize, const int outputSizeLength)
+{
+    CATCH_TENSOR(torch::max_unpool2d(
+        *tensor,
+        *indices,
+        at::ArrayRef<int64_t>(outputSize, outputSizeLength)));
+}
+
+Tensor THSTensor_maxunpool3d(
+    const Tensor tensor,
+    const Tensor indices,
+    const int64_t* outputSize, const int outputSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength)
+{
+    CATCH_TENSOR(torch::max_unpool3d(
+        *tensor,
+        *indices,
+        at::ArrayRef<int64_t>(outputSize, outputSizeLength),
+        at::ArrayRef<int64_t>(stride, strideLength),
+        at::ArrayRef<int64_t>(padding, paddingLength)));
+}
 
 Tensor THSTensor_conv_transpose1d(
     const Tensor input, const Tensor weight, const Tensor bias,

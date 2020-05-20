@@ -20,40 +20,60 @@ const char * THSTorch_get_and_reset_last_err()
     return tmp;
 }
 
-Scalar THSTorch_sbtos(int8_t value)
+Scalar THSTorch_int8_to_scalar(int8_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_btos(uint8_t value)
+Scalar THSTorch_uint8_to_scalar(uint8_t value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_stos(short value)
+Scalar THSTorch_short_to_scalar(short value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_itos(int value)
+Scalar THSTorch_int32_to_scalar(int value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_ltos(long value)
+Scalar THSTorch_long_to_scalar(long value)
 {
     return new torch::Scalar(int64_t(value));
 }
 
-Scalar THSTorch_ftos(float value)
+Scalar THSTorch_float32_to_scalar(float value)
 {
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_dtos(double value)
+Scalar THSTorch_float64_to_scalar(double value)
 {
     return new torch::Scalar(value);
 }
+
+Scalar THSTorch_half_to_scalar(c10::Half value)
+{
+    return new torch::Scalar(value);
+}
+
+Scalar THSTorch_bool_to_scalar(bool value)
+{
+    return new torch::Scalar(value);
+}
+
+//Scalar THSTorch_complex32_to_scalar(std::complex<float> value)
+//{
+//    return new torch::Scalar(value);
+//}
+//
+//Scalar THSTorch_complex64_to_scalar(std::complex<double> value)
+//{
+//    return new torch::Scalar(value);
+//}
 
 void THSThorch_dispose_scalar(Scalar scalar)
 {

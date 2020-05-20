@@ -70,7 +70,7 @@
   <PropertyGroup>
      
     <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionSuffix>local-$(Configuration)-$([System.DateTime]::Now.ToString(yyyyMMdd))</VersionSuffix>
 
     <VersionSuffix Condition="'$(TF_BUILD)' != ''">$([System.String]::Copy('$(BUILD_BUILDNUMBER)').Replace('.',''))</VersionSuffix>
     <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)-$(BUILD_SOURCEBRANCHNAME)</VersionSuffix>
