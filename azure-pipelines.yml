@@ -160,6 +160,15 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet Authenticate'
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    inputs:
+      command: push
+      publishVstsFeed: 'TorchSharp/packages'
+      allowPackageConflicts: true
+
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
     displayName: Dotnet Server Shutdown
