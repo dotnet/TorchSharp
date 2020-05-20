@@ -83,8 +83,8 @@
                      OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
                      " />
     <Warning Text="Packages will be incomplete and unusable on win-x64 platform. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\libLibTorchSharp.so')
-                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\win-x64\native\libLibTorchSharp.so')
+             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\LibTorchSharp.dll')
+                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\win-x64\native\LibTorchSharp.dll')
                      " />
 
     <Message Text="Packing LibTorch.Cuda.$(CudaVersionDot).Redist nupkg (takes a long time!)..." Importance="high"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "  />
