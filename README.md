@@ -1,4 +1,5 @@
-[![Build Status](https://migueldeicaza.visualstudio.com/TorchSharp/_apis/build/status/TorchSharp-CI)](https://migueldeicaza.visualstudio.com/TorchSharp/_build/latest?definitionId=5)
+[![Build Status (master)](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)  [![(Windows](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master&jobName=Windows_x64_NetCoreApp30&configuration=Windows_x64_NetCoreApp30%20Release_Build)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master) [![Ubuntu 16.04](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master&jobName=Ubuntu_x64_NetCoreApp30&configuration=Ubuntu_x64_NetCoreApp30%20Release_Build)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)
+
 
 TorchSharp
 ==========
@@ -52,6 +53,7 @@ Discussions
 
 We have a chat room on Gitter [![Gitter](https://badges.gitter.im/xamarin/TorchSharp.svg)](https://gitter.im/xamarin/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+
 Building
 ============
 
@@ -103,6 +105,11 @@ The managed package can be built with `dotnet pack`
 
 Complete LibTorch.Redist packages can't be built using your local machine alone, since they won't contain the
 full range of native bits. Instead they are built using Azure Pipelines.
+
+An ephemeral feed of packages from CI is available 
+
+* View link: https://dev.azure.com/migueldeicaza/TorchSharp/_packaging?_a=feed&feed=packages%40Local
+* Nuget link: https://pkgs.dev.azure.com/migueldeicaza/TorchSharp/_packaging/packages%40Local/nuget/v3/index.json. 
 
 
 
