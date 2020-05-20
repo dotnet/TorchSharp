@@ -106,7 +106,10 @@ The managed package can be built with `dotnet pack`
 Complete LibTorch.Redist packages can't be built using your local machine alone, since they won't contain the
 full range of native bits. Instead they are built using Azure Pipelines.
 
-An ephemeral feed of packages from CI is available at https://pkgs.dev.azure.com/migueldeicaza/TorchSharp/_packaging/packages%40Local/nuget/v3/index.json. 
+An ephemeral feed of packages from CI is available 
+
+* View link: https://dev.azure.com/migueldeicaza/TorchSharp/_packaging?_a=feed&feed=packages%40Local
+* Nuget link: https://pkgs.dev.azure.com/migueldeicaza/TorchSharp/_packaging/packages%40Local/nuget/v3/index.json. 
 
 
 
