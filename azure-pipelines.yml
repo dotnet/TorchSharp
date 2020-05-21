@@ -47,6 +47,7 @@ jobs:
 ################################################################################
 - job: Linux_Build_For_Package
 ################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranch'], 'master'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -71,6 +72,7 @@ jobs:
 # ################################################################################
 # - job: MacOS_Build_For_Package
 # ################################################################################
+#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranch'], 'master'))
 #   variables:
 #     BuildConfig: Release
 #     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -97,6 +99,7 @@ jobs:
 ################################################################################
 - job: Package
 ################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranch'], 'master'))
   dependsOn:
   - Linux_Build_For_Package
   # - MacOS_Build_For_Package
@@ -155,13 +158,13 @@ jobs:
   #    displayName: Dotnet Publish
 
   - task: PublishBuildArtifacts@1
-    condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
+
   - task: NuGetCommand@2
     displayName: 'NuGet push'
     inputs:
