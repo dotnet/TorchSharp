@@ -1,8 +1,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup>
+    <FraggerPrimaryPackage Include="$(MSBuildThisFileDirectory)..\..\runtimes\" 
+             Condition="'$(MSBuildProjectName.IndexOf(`-primary`)' != '-1'"/>
 
-    <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"
+    <!-- <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"
              Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' == 'Windows_NT'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
@@ -22,7 +24,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>
-    </Content>
+    </Content> -->
 
   </ItemGroup>
 

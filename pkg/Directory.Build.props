@@ -2,7 +2,7 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
-    <Authors>PyTorch and TorchSharp contributors</Authors>
+    <Authors>PyTorch contributors;TorchSharp contributors</Authors>
     <PackageLicenseFile>THIRD-PARTY-NOTICES.TXT</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
     <!-- space separated -->
@@ -36,6 +36,7 @@
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\lib\**\*" Pack="true" PackagePath="lib" />
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\analyzers\**\*" Pack="true" PackagePath="analyzers" />
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\runtimes\**\*" Pack="true" PackagePath="runtimes" />
+    <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\fragments\**\*" Pack="true" PackagePath="fragments" />
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\tools\**\*" Pack="true" PackagePath="tools" />
   </ItemGroup>
 

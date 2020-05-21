@@ -7,78 +7,81 @@
     TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
-      <FraggerDirectory ParameterType="System.String" Required="true" />
+      <FraggerPrimaryPackage ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-            if (Directory.Exists(FraggerDirectory))
+            if (Directory.Exists(FraggerPrimaryPackage))
             {
-                System.Console.WriteLine("Searching for primary files in {0}", FraggerDirectory);
-                foreach (var p in Directory.EnumerateFiles(FraggerDirectory, "*.primary", SearchOption.AllDirectories))
+                //System.Console.WriteLine("Searching for primary files in {0}", FraggerPrimaryPackage);
+                foreach (var p in Directory.EnumerateFiles(FraggerPrimaryPackage, "*", SearchOption.AllDirectories))
                 {
 
                     var primaryFile = Path.GetFullPath(p);
-                    Console.WriteLine("Found primary file at {0}", primaryFile);
-                    var restoredFile = primaryFile.Replace(".primary", "");
+                    //Console.WriteLine("Found primary file at {0}", primaryFile);
 
-                    // Find the fragments in the parallel nuget package
-                    var fragmentFile1 = primaryFile.Replace("-primary", "-fragment1").Replace(".primary", ".fragment1");
-                    var fragmentFile2 = primaryFile.Replace("-primary", "-fragment2").Replace(".primary", ".fragment2");
-                    var fragmentFile3 = primaryFile.Replace("-primary", "-fragment3").Replace(".primary", ".fragment3");
+                    // See if there are fragments in the parallel nuget packages. If the primary is 
+                    //        some-package-primary\runtimes\....\a.so 
+                    // then the expected fragments are
+                    //        some-package-fragment1\fragments\....\a.so 
+                    //        some-package-fragment2\fragments\....\a.so 
+                    //        some-package-fragment3\fragments\....\a.so 
+                    var fragmentFile1 = primaryFile.Replace("-primary", "-fragment1").Replace("runtimes", "fragments") + ".fragment1";
+                    var fragmentFile2 = primaryFile.Replace("-primary", "-fragment2").Replace("runtimes", "fragments") + ".fragment2";
+                    var fragmentFile3 = primaryFile.Replace("-primary", "-fragment3").Replace("runtimes", "fragments") + ".fragment3";
 
-                    if (!File.Exists(fragmentFile1))
-                        throw (new Exception(String.Format("Couldn't find parallel fragment file for multi-package deliver of single massive binary file. Primary file {0} found, expected corresponding fragment at {1}.  You may be missing a nuget package reference.", primaryFile, fragmentFile1)));
-
-                    if (!File.Exists(fragmentFile2))
-                        throw (new Exception(String.Format("Couldn't find parallel fragment file for multi-package deliver of single massive binary file. Primary file {0} found, expected corresponding fragment at {1}.  You may be missing a nuget package reference.", primaryFile, fragmentFile2)));
-
-                    if (!File.Exists(fragmentFile3))
-                        throw (new Exception(String.Format("Couldn't find parallel fragment file for multi-package deliver of single massive binary file. Primary file {0} found, expected corresponding fragment at {1}.  You may be missing a nuget package reference.", primaryFile, fragmentFile3)));
-
-                    Console.WriteLine("Found fragment file at {0}", fragmentFile1);
-                    Console.WriteLine("Found fragment file at {0}", fragmentFile2);
-                    Console.WriteLine("Found fragment file at {0}", fragmentFile3);
-                    var primaryBytes = File.ReadAllBytes(primaryFile);
-                    var fragmentBytes1 = File.ReadAllBytes(fragmentFile1);
-                    var fragmentBytes2 = File.ReadAllBytes(fragmentFile2);
-                    var fragmentBytes3 = File.ReadAllBytes(fragmentFile3);
-
-                    if (primaryBytes.Length != fragmentBytes1.Length)
-                        throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile1)));
-
-                    if (primaryBytes.Length != fragmentBytes2.Length)
-                        throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile2)));
-
-                    if (primaryBytes.Length != fragmentBytes3.Length)
-                        throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile3)));
-
-                    for (int i = 0; i < primaryBytes.Length; i++)
+                    if (File.Exists(fragmentFile1) && File.Exists(fragmentFile2) && File.Exists(fragmentFile3))
                     {
-                        if ((primaryBytes[i] > 0) && (fragmentBytes1[i] > 0) && (primaryBytes[i] != fragmentBytes1[i]))
-                            throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile1)));
-                        if ((primaryBytes[i] > 0) && (fragmentBytes2[i] > 0) && (primaryBytes[i] != fragmentBytes2[i]))
-                            throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile2)));
-                        if ((primaryBytes[i] > 0) && (fragmentBytes3[i] > 0) && (primaryBytes[i] != fragmentBytes3[i]))
-                            throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile3)));
-                        primaryBytes[i] |= fragmentBytes1[i];
-                        primaryBytes[i] |= fragmentBytes2[i];
-                        primaryBytes[i] |= fragmentBytes3[i];
+                        System.Console.WriteLine("Fragment files in parallel nuget packages for {0}", primaryFile);
+
+                        Console.WriteLine("Found fragment file at {0}", fragmentFile1);
+                        Console.WriteLine("Found fragment file at {0}", fragmentFile2);
+                        Console.WriteLine("Found fragment file at {0}", fragmentFile3);
+                        var primaryBytes = File.ReadAllBytes(primaryFile);
+                        var fragmentBytes1 = File.ReadAllBytes(fragmentFile1);
+                        var fragmentBytes2 = File.ReadAllBytes(fragmentFile2);
+                        var fragmentBytes3 = File.ReadAllBytes(fragmentFile3);
+
+                        if (primaryBytes.Length != fragmentBytes1.Length)
+                            throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile1)));
+
+                        if (primaryBytes.Length != fragmentBytes2.Length)
+                            throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile2)));
+
+                        if (primaryBytes.Length != fragmentBytes3.Length)
+                            throw (new Exception(String.Format("Mismatched file sizes for multi-package deliver of single massive binary file. Primary file {0} found, but the corresponding fragment at {1} has a different size.  You may have inconsistent nuget package references.", primaryFile, fragmentFile3)));
+
+                        for (int i = 0; i < primaryBytes.Length; i++)
+                        {
+                            if ((primaryBytes[i] > 0) && (fragmentBytes1[i] > 0) && (primaryBytes[i] != fragmentBytes1[i]))
+                                throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile1)));
+                            if ((primaryBytes[i] > 0) && (fragmentBytes2[i] > 0) && (primaryBytes[i] != fragmentBytes2[i]))
+                                throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile2)));
+                            if ((primaryBytes[i] > 0) && (fragmentBytes3[i] > 0) && (primaryBytes[i] != fragmentBytes3[i]))
+                                throw (new Exception(String.Format("Inconsistent file contents for multi-package deliver of single massive binary file. Primary file {0} and corresponding fragment {1} had inconsistent contents.  You may have inconsistent nuget package references.", primaryFile, fragmentFile3)));
+                            primaryBytes[i] |= fragmentBytes1[i];
+                            primaryBytes[i] |= fragmentBytes2[i];
+                            primaryBytes[i] |= fragmentBytes3[i];
+                        }
+
+                        var tmpFile = Path.GetTempFileName();
+                        Console.WriteLine("Writing restored primary file at {0}", tmpFile);
+                        File.WriteAllBytes(tmpFile, primaryBytes);
+                        Console.WriteLine("Deleting {0}", primaryFile);
+                        File.Delete(primaryFile);
+                        Console.WriteLine("Moving {0} --> {1}", tmpFile, primaryFile);
+                        File.Move(tmpFile, primaryFile);
+
+                        Console.WriteLine("Deleting {0}", fragmentFile1);
+                        File.Delete(fragmentFile1);  // free up space and prevent us doing this again 
+                        Console.WriteLine("Deleting {0}", fragmentFile2);
+                        File.Delete(fragmentFile2);  // free up space and prevent us doing this again 
+                        Console.WriteLine("Deleting {0}", fragmentFile3);
+                        File.Delete(fragmentFile3);  // free up space and prevent us doing this again 
                     }
-
-                    Console.WriteLine("Writing restored file at {0}", restoredFile);
-                    File.WriteAllBytes(restoredFile, primaryBytes);
-
-                    Console.WriteLine("Deleting {0}", primaryFile);
-                    File.Delete(primaryFile); // free up space and prevent us doing this again 
-                    Console.WriteLine("Deleting {0}", fragmentFile1);
-                    File.Delete(fragmentFile1);  // free up space and prevent us doing this again 
-                    Console.WriteLine("Deleting {0}", fragmentFile2);
-                    File.Delete(fragmentFile2);  // free up space and prevent us doing this again 
-                    Console.WriteLine("Deleting {0}", fragmentFile3);
-                    File.Delete(fragmentFile3);  // free up space and prevent us doing this again 
                 }
             }
 ]]>
@@ -93,7 +96,7 @@
   </PropertyGroup>
 
   <Target Name="FileDefragger">
-    <FileDefragger FraggerDirectory="$(MSBuildThisFileDirectory)\..\..\runtimes\" />
+    <FileDefragger FraggerPrimaryPackage="%(FraggerPrimaryPackage.Identity)" />
   </Target>
 
 

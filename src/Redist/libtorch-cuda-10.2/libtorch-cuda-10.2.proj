@@ -161,8 +161,10 @@
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-string name = Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment" + Index);
+string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
 byte[] bytes = File.ReadAllBytes(SourceFile);
+if (Start !=  0)
+    DestinationFolder = DestinationFolder.Replace("runtimes","fragments");
 Directory.CreateDirectory(DestinationFolder);
 string outfile = Path.Combine(DestinationFolder, name);
 int lengthToKeep = System.Math.Max(System.Math.Min(Size, bytes.Length - Start), 0);
