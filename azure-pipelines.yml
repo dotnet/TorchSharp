@@ -124,7 +124,7 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
-    displayName: Free up space
+    displayName: Free up space (linux assets in workspace)
 
   # - task: CopyFiles@2
   #   displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
@@ -143,7 +143,24 @@ jobs:
     displayName: Create Packages
 
   - script: rmdir /q /s bin\obj
-    displayName: Clean up space
+    displayName: Clean up space (bin\obj)
+    continueOnError: true
+
+  - script: rmdir /q /s bin\AnyCPU.Release
+    displayName: Clean up space (bin\AnyCPU.Release)
+    continueOnError: true
+
+  - script: rmdir /q /s bin\x64.Release
+    displayName: Clean up space (bin\x64.Release)
+    continueOnError: true
+
+  - script: rmdir /q /s downloads
+    displayName: Clean up space (downloads)
+    continueOnError: true
+
+  - script: rmdir /q /s packages
+    displayName: Clean up space (packages)
+    continueOnError: true
 
   - task: CopyFiles@2
     displayName: Copy packaged assets to staging folder
@@ -168,6 +185,7 @@ jobs:
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
 
+  # Doing these one by one as we're getting a lot of failurs pushing them
   # push the TorchSharp 
   - task: NuGetCommand@2
     displayName: 'NuGet push (TorchSharp)'
