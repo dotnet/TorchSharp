@@ -14,7 +14,7 @@
     <PropertyGroup>
       <!-- The OutDir and IntermediateOutputPath properties are required by MicroBuild. MicroBuild only
            signs files that are under these paths. -->
-      <OutDir Condition="'$(OutDir)' == '' AND '$(SignNugetPackages)' != 'true'">$(PackageAssetsPath)</OutDir>
+      <OutDir Condition="'$(OutDir)' == '' AND '$(SignNugetPackages)' != 'true'">$(PackagePreparationPath)</OutDir>
       <OutDir Condition="'$(OutDir)' == '' AND '$(SignNugetPackages)' == 'true'">$(PackageOutputPath)</OutDir>
       <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">$(IntermediateOutputRootPath)</IntermediateOutputPath>
 

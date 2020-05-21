@@ -149,7 +149,7 @@ jobs:
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
-  #      cp $(Build.SourcesDirectory)\bin\obj\packages\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+  #      cp $(Build.SourcesDirectory)\bin\obj\packprep\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
   #    displayName: Copy Nugets in staging directory
 

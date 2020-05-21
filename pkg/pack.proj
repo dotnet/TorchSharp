@@ -3,13 +3,13 @@
   <Target Name="Pack">
     <Message Text="Restoring packaging projects..." Importance="high" />
 
-    <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="!Exists('$(PackageAssetsPath)\libtorch-cpu\runtimes\linux-x64\native\libLibTorchSharp.so')
-                     OR !Exists('$(PackageAssetsPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\linux-x64\native\libLibTorchSharp.so')
+    <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
+             Condition="!Exists('$(PackagePreparationPath)\libtorch-cpu\runtimes\linux-x64\native\libLibTorchSharp.so')
+                     OR !Exists('$(PackagePreparationPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\linux-x64\native\libLibTorchSharp.so')
                      " />
-    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="!Exists('$(PackageAssetsPath)\libtorch-cpu\runtimes\win-x64\native\LibTorchSharp.dll')
-                     OR !Exists('$(PackageAssetsPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\win-x64\native\LibTorchSharp.dll')
+    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
+             Condition="!Exists('$(PackagePreparationPath)\libtorch-cpu\runtimes\win-x64\native\LibTorchSharp.dll')
+                     OR !Exists('$(PackagePreparationPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\win-x64\native\LibTorchSharp.dll')
                      " />
 
 

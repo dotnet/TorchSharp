@@ -75,7 +75,7 @@
     </ItemGroup>
     
     <Copy SourceFiles="@(NativePackageAsset)"
-          DestinationFolder="$(PackageAssetsPath)%(NativePackageAsset.RelativePath)" />
+          DestinationFolder="$(PackagePreparationPath)%(NativePackageAsset.RelativePath)" />
 
   </Target>
 

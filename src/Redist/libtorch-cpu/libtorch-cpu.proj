@@ -231,12 +231,12 @@
 
       <!-- copy to packaging location -->
       <FilesFromArchive Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
-                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\%(PackagePath)" />
+                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\%(PackagePath)" />
       <!-- include LICENSE that was downloaded from GitHub -->
       <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-LIBTORCH"
-                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE-LIBTORCH.txt" />
+                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\LICENSE-LIBTORCH.txt" />
       <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-MKL-DNN"
-                        TargetPath="$(PackageAssetsPath)$(MSBuildProjectName)\LICENSE-MKL-DNN.txt" />
+                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\LICENSE-MKL-DNN.txt" />
 
       <!-- copy to NativeAssets location, only for current RID, so that they may be used by tests -->
       <FilesFromArchive Condition="'$(PackageRID)' == '%(_fileFromArchive.Runtime)'"

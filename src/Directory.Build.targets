@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <Copy SourceFiles="@(PackageAsset)"
-          DestinationFolder="$(PackageAssetsPath)%(PackageAsset.RelativePath)" />
+          DestinationFolder="$(PackagePreparationPath)%(PackageAsset.RelativePath)" />
 
   </Target>
 

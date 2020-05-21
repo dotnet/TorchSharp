@@ -24,7 +24,7 @@
     <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
-    <MainPackageFolder>$(PackageAssetsPath)$(MSBuildProjectName)-$(Runtime)</MainPackageFolder>
+    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(Runtime)</MainPackageFolder>
     <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
 
   </PropertyGroup>
@@ -74,9 +74,9 @@
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileFraggerIndex="1" FileFraggerStart="300000001" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileFraggerIndex="2" FileFraggerStart="600000001" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="600000001" FileFraggerSize="2000000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="900000000" FileFraggerSize="2000000000" />
 
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
@@ -145,6 +145,7 @@
 
   </Target>
 
+    <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
   <UsingTask
     TaskName="FileFragger"
     TaskFactory="RoslynCodeTaskFactory"
@@ -162,18 +163,15 @@
       <Code Type="Fragment" Language="cs">
 <![CDATA[
 string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
-byte[] bytes = File.ReadAllBytes(SourceFile);
+byte[] srcBytes = File.ReadAllBytes(SourceFile);
 if (Start !=  0)
     DestinationFolder = DestinationFolder.Replace("runtimes","fragments");
 Directory.CreateDirectory(DestinationFolder);
 string outfile = Path.Combine(DestinationFolder, name);
-int lengthToKeep = System.Math.Max(System.Math.Min(Size, bytes.Length - Start), 0);
-// clear everything but the part we're keeping, the defragger will bitwise-or the file together
-// the zero-part will compress well
-if (Start > 0) Array.Clear(bytes, 0, Start - 1);
-int lengthAfter = bytes.Length - (Start + lengthToKeep);
-if (lengthAfter > 0) Array.Clear(bytes, Start+lengthToKeep, lengthAfter);
-File.WriteAllBytes(outfile, bytes);
+int lengthToKeep = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
+var outBytes = new byte[lengthToKeep];
+Array.Copy(srcBytes, Start, outBytes, 0, lengthToKeep);
+File.WriteAllBytes(outfile, outBytes);
 ]]>
       </Code>
     </Task>

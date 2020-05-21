@@ -29,7 +29,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish Linux package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packprep
       artifactName: PackageAssets
       artifactType: container
 
@@ -55,7 +55,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish macOS package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packprep
       artifactName: PackageAssets
       artifactType: container
 
@@ -103,7 +103,7 @@ phases:
   - task: PublishBuildArtifacts@1
     displayName: Publish Windows_x64 package assets
     inputs:
-      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packages
+      pathToPublish: $(Build.SourcesDirectory)/bin/obj/packprep
       artifactName: PackageAssets
       artifactType: container
 
@@ -152,20 +152,20 @@ phases:
     displayName: Download package assets
     inputs:
       artifactName: PackageAssets
-      downloadPath: $(Build.SourcesDirectory)/bin/obj/packages
+      downloadPath: $(Build.SourcesDirectory)/bin/obj/packprep
 
   # Workaround https://github.com/Microsoft/vsts-tasks/issues/6739
   - task: CopyFiles@2
     displayName: Copy package assets to correct folder
     inputs:
-      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packages/PackageAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packages
+      sourceFolder: $(Build.SourcesDirectory)/bin/obj/packprep/PackageAssets
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep
   
   - script: ./build.cmd pack -c $(BuildConfig)
     displayName: Create Packages
     
   - script: |
-      cp $(Build.SourcesDirectory)/bin/obj/packages*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
+      cp $(Build.SourcesDirectory)/bin/obj/packprep*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
       rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
     displayName: Copy Nugets in staging directory
 

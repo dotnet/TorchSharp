@@ -45,7 +45,7 @@
 
     <OutputPath Condition="'$(OutputPath)'==''">$(BaseOutputPath)$(PlatformConfig)\$(MSBuildProjectName)\</OutputPath>
 
-    <PackageAssetsPath>$(ObjDir)/$(Configuration)/packages/</PackageAssetsPath>
+    <PackagePreparationPath>$(ObjDir)/$(Configuration)/packprep/</PackagePreparationPath>
     
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 

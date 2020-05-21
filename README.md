@@ -121,8 +121,8 @@ full range of native bits. Instead they are built using Azure Pipelines.
 
 An ephemeral feed of packages from CI is available 
 
-* View link: https://dev.azure.com/migueldeicaza/TorchSharp/_packaging?_a=feed&feed=packages%40Local
-* Nuget link: https://pkgs.dev.azure.com/migueldeicaza/TorchSharp/_packaging/packages%40Local/nuget/v3/index.json. 
+* View link: https://donsyme.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=packages2
+* Nuget feed: https://donsyme.pkgs.visualstudio.com/TorchSharp/_packaging/packages2/nuget/v3/index.json
 
 
 
