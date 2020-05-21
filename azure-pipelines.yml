@@ -168,12 +168,36 @@ jobs:
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
 
+  # push the TorchSharp and CPU runtime packages first as they are useful even if pushing the huge cuda packages fails
   - task: NuGetCommand@2
-    displayName: 'NuGet push'
+    displayName: 'NuGet push (cpu)'
     inputs:
       command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg;$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
+
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (windows cuda)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+      continueOnError: true
+
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (linux cuda)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+      continueOnError: true
 
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
