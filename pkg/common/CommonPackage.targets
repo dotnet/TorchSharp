@@ -34,15 +34,15 @@
                     var fragmentFile2 = primaryFile.Replace("-primary", "-fragment2").Replace("runtimes", "fragments") + ".fragment2";
                     var fragmentFile3 = primaryFile.Replace("-primary", "-fragment3").Replace("runtimes", "fragments") + ".fragment3";
 
-                    if (File.Exists(fragmentFile1) && File.Exists(fragmentFile2) && File.Exists(fragmentFile3))
+                    if (File.Exists(fragmentFile1))
                     {
                         Console.WriteLine("Found fragment file at {0}", fragmentFile1);
                         Console.WriteLine("Found fragment file at {0}", fragmentFile2);
                         Console.WriteLine("Found fragment file at {0}", fragmentFile3);
                         var primaryBytes = File.ReadAllBytes(primaryFile);
                         var fragmentBytes1 = File.ReadAllBytes(fragmentFile1);
-                        var fragmentBytes2 = File.ReadAllBytes(fragmentFile2);
-                        var fragmentBytes3 = File.ReadAllBytes(fragmentFile3);
+                        var fragmentBytes2 = (File.Exists(fragmentFile2) ? File.ReadAllBytes(fragmentFile2) : new byte[0]);
+                        var fragmentBytes3 = (File.Exists(fragmentFile3) ? File.ReadAllBytes(fragmentFile3) : new byte[0]);
                         var outputBytes = new byte[primaryBytes.Length + fragmentBytes1.Length + fragmentBytes2.Length + fragmentBytes3.Length];
 
                         Array.Copy(primaryBytes, 0, outputBytes, 0, primaryBytes.Length);
@@ -60,10 +60,14 @@
 
                         Console.WriteLine("Deleting {0}", fragmentFile1);
                         File.Delete(fragmentFile1);  // free up space and prevent us doing this again 
+
                         Console.WriteLine("Deleting {0}", fragmentFile2);
-                        File.Delete(fragmentFile2);  // free up space and prevent us doing this again 
+                        if (File.Exists(fragmentFile2))
+                            File.Delete(fragmentFile2);  // free up space and prevent us doing this again 
+
                         Console.WriteLine("Deleting {0}", fragmentFile3);
-                        File.Delete(fragmentFile3);  // free up space and prevent us doing this again 
+                        if (File.Exists(fragmentFile3))
+                            File.Delete(fragmentFile3);  // free up space and prevent us doing this again 
                     }
                 }
             }

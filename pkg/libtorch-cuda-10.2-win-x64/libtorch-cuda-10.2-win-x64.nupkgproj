@@ -5,10 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part1-primary/libtorch-cuda-10.2-win-x64-part1-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part1-fragment1/libtorch-cuda-10.2-win-x64-part1-fragment1.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part1/libtorch-cuda-10.2-win-x64-part1.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part2/libtorch-cuda-10.2-win-x64-part2.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part3/libtorch-cuda-10.2-win-x64-part3.nupkgproj" />
-     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part4/libtorch-cuda-10.2-win-x64-part4.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part4-primary/libtorch-cuda-10.2-win-x64-part4-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part4-fragment1/libtorch-cuda-10.2-win-x64-part4-fragment1.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64-part5/libtorch-cuda-10.2-win-x64-part5.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

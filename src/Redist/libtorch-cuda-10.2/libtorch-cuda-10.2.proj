@@ -39,22 +39,29 @@
     <File Include= "libtorch\lib\cublas64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cublasLt64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cudart64_102.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\cudnn64_7.dll" PackageSuffix="part1" />
+
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="-1" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\cusparse64_10.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part4" />
-    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part2" />
-    <File Include= "libtorch\lib\torch_cuda.dll" PackageSuffix="part3"/>
-    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\cusparse64_10.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="-1" />
+    <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />
@@ -76,7 +83,7 @@
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="900000000" FileFraggerSize="2000000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="900000000" FileFraggerSize="-1" />
 
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
@@ -163,14 +170,17 @@
       <Code Type="Fragment" Language="cs">
 <![CDATA[
 string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
+if (Size == -1)
+    Size = System.Int32.MaxValue;
 byte[] srcBytes = File.ReadAllBytes(SourceFile);
 if (Start !=  0)
     DestinationFolder = DestinationFolder.Replace("runtimes","fragments");
 Directory.CreateDirectory(DestinationFolder);
 string outfile = Path.Combine(DestinationFolder, name);
-int lengthToKeep = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
-var outBytes = new byte[lengthToKeep];
-Array.Copy(srcBytes, Start, outBytes, 0, lengthToKeep);
+Size = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
+var outBytes = new byte[Size];
+if (Size > 0)
+    Array.Copy(srcBytes, Start, outBytes, 0, Size);
 File.WriteAllBytes(outfile, outBytes);
 ]]>
       </Code>

@@ -1,4 +1,4 @@
-[![Build Status (master)](https://dev.azure.com/migueldeicaza/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://dev.azure.com/migueldeicaza/TorchSharp/_build/latest?definitionId=17&branchName=master)  
+[![Build Status](https://donsyme.visualstudio.com/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=1&branchName=master)
 
 TorchSharp
 ==========
