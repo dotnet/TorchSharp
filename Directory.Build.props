@@ -72,7 +72,7 @@
     <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix>local-$(Configuration)-$([System.DateTime]::Now.ToString(yyyyMMdd))</VersionSuffix>
 
-    <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$([System.String]::Copy('$(BUILD_BUILDNUMBER)').Replace('.',''))</VersionPrefix>
+    <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$([System.String]::Copy('$(BUILD_BUILDNUMBER)').Replace('.','').Replace("202",""))</VersionPrefix>
     <VersionSuffix Condition="'$(TF_BUILD)' != ''  AND '$(BUILD_SOURCEBRANCHNAME)' == 'master'"></VersionSuffix>
     <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)-$(BUILD_SOURCEBRANCHNAME)</VersionSuffix>
   </PropertyGroup>
