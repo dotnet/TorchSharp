@@ -160,10 +160,10 @@ jobs:
   #      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
   #    displayName: Dotnet Publish
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: packages
+  # - task: PublishBuildArtifacts@1
+  #   inputs:
+  #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
+  #     artifactName: packages
   
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
