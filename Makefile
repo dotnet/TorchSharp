@@ -4,7 +4,7 @@ all:
 docs: doc-update yaml
 
 doc-update:
-	 mdoc update -i ./bin/obj/packprep/TorchSharp/lib/netstandard2.0/TorchSharp.xml -o ecmadocs/en ./bin/obj/packprep/TorchSharp/lib/netstandard2.0/TorchSharp.dll
+	 mdoc update -i ./bin/obj/packprep/Debug/TorchSharp/lib/netstandard2.0/TorchSharp.xml -o ecmadocs/en ./bin/obj/packprep/Debug/TorchSharp/lib/netstandard2.0/TorchSharp.dll
 
 yaml:
 	-rm ecmadocs/en/ns-.xml

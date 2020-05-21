@@ -66,7 +66,7 @@ jobs:
   - script: ./build.sh build -c $(BuildConfig) 
     displayName: Build
 
-  - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+  - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
 
 # ################################################################################
@@ -121,7 +121,7 @@ jobs:
     displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space
