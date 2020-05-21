@@ -30,31 +30,31 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
-    <File Include= "libtorch\lib\asmjit.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\c10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\c10_cuda.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\caffe2_detectron_ops_gpu.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\caffe2_module_test_dynamic.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cublas64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cublasLt64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cudart64_102.dll" PackagePart="part1" />
+    <File Include= "libtorch\lib\asmjit.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\c10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\c10_cuda.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\caffe2_detectron_ops_gpu.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\caffe2_module_test_dynamic.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\cublas64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\cublasLt64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\cudart64_102.dll" PackagePart="part2" />
     <File Include= "libtorch\lib\cudnn64_7.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cufft64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cufftw64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\curand64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cusparse64_10.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\fbgemm.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\libiomp5md.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\libiompstubs5md.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\torch.dll" PackagePart="part1" />
+    <File Include= "libtorch\lib\cufft64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\cufftw64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\cusparse64_10.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\fbgemm.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\libiomp5md.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\libiompstubs5md.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch.dll" PackagePart="part1" />
+    <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
     <File Include= "libtorch\lib\torch_cuda.dll" PackagePart="part3" />
-    <File Include= "libtorch\lib\torch_global_deps.dll" PackagePart="part1" />
+    <File Include= "libtorch\lib\torch_global_deps.dll" PackagePart="part2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include= "libtorch\lib\libc10.so"  PackagePart="part1"  />
