@@ -145,11 +145,11 @@ jobs:
   - script: rmdir /q /s bin\obj
     displayName: Clean up space
 
-   - task: CopyFiles@2
-     displayName: Copy packaged assets to staging folder
-     inputs:
-       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
-       targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: CopyFiles@2
+    displayName: Copy packaged assets to staging folder
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
+      targetFolder: $(Build.ArtifactStagingDirectory)
  
   #  - script: |
   #      cp $(Build.SourcesDirectory)\bin\obj\packprep\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
