@@ -1,24 +1,32 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+
+
+
   <ItemGroup>
+
     <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"
              Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' == 'Windows_NT'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>
     </Content>
+
     <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\*.so"
              Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' != 'Windows_NT' AND !$([MSBuild]::IsOSPlatform('osx'))">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>
     </Content>
+
     <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\osx-x64\native\*.dynlib"
              Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' != 'Windows_NT' AND $([MSBuild]::IsOSPlatform('osx'))">
+
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>
     </Content>
+
   </ItemGroup>
 
 </Project>

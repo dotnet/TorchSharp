@@ -53,7 +53,7 @@
     <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackagePart="part2" />
     <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch_cuda.dll" PackagePart="part3" />
+    <File Include= "libtorch\lib\torch_cuda.dll" PackagePart="part3"/>
     <File Include= "libtorch\lib\torch_global_deps.dll" PackagePart="part2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
@@ -70,7 +70,10 @@
     <File Include= "libtorch\lib\libshm.so"  PackagePart="part1"  />
     <File Include= "libtorch\lib\libtorch.so"  PackagePart="part1"  />
     <File Include= "libtorch\lib\libtorch_cpu.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackagePart="part2"  />
+    
+    <!-- this vast file needs a special magic -->
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackagePart="part2-primary"  FileFraggerStart="0" FileFraggerSize="500000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackagePart="part2-fragment"   FileFraggerStart="500000001" FileFraggerSize="2000000000" />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackagePart="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackagePart="part1"  />
     <File Include= "libtorch\lib\libcudart-80664282.so.10.2" PackagePart="part1"  />
@@ -138,9 +141,44 @@
 
   </Target>
 
+  <UsingTask
+    TaskName="FileFragger"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+      <SourceFile ParameterType="System.String" Required="true" />
+      <DestinationFolder ParameterType="System.String" Required="true" />
+      <Start ParameterType="System.Int32" Required="true" />
+      <Size ParameterType="System.Int32" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.Xml"/>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+string name = System.IO.Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment");
+byte[] bytes = System.IO.File.ReadAllBytes(SourceFile);
+System.IO.Directory.CreateDirectory(DestinationFolder);
+string outfile = System.IO.Path.Combine(DestinationFolder, name);
+int lengthToKeep = System.Math.Max(System.Math.Min(Size, bytes.Length - Start), 0);
+// clear everything but the part we're keeping, the defragger will bitwise-or the file together
+// the zero-part will compress well
+if (Start > 0) Array.Clear(bytes, 0, Start - 1);
+int lengthAfter = bytes.Length - (Start + lengthToKeep);
+if (lengthAfter > 0) Array.Clear(bytes, Start+lengthToKeep, lengthAfter);
+System.IO.File.WriteAllBytes(outfile, bytes);
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetFolder)" />
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackagePart)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" />
+
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackagePart)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileFraggerStart)' == ''" />
+    <FileFragger SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackagePart)\runtimes\$(Runtime)\native\" Start="%(File.FileFraggerStart)" Size="%(File.FileFraggerSize)" Condition="'%(File.FileFraggerStart)' != ''" />
+
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
