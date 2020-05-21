@@ -2,13 +2,16 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
-    <Authors></Authors>
-    <Copyright>Copyright (c) Microsoft Corporation</Copyright>
-    <Owners>TorchSharp repository maintainers</Owners>
+    <Authors>PyTorch and TorchSharp contributors</Authors>
+    <PackageLicenseFile>THIRD-PARTY-NOTICES.TXT</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
+    <!-- space separated -->
+    <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
+    <Copyright>Copyright - see https://github.com/xamarin/TorchSharp and https://pytorch.org</Copyright>
+    <Owners>TorchSharp maintainers</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageDescription>$(MSBuildProjectName) contains the PyTorch C++ frontend LibTorch library version $(LibTorchVersion) redistributed as a NuGet package. </PackageDescription>
+    <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://pytorch.org/</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -28,14 +31,6 @@
     <BaseIntermediateOutputPath>$(IntermediateOutputPath)</BaseIntermediateOutputPath>
   </PropertyGroup>
 
-  <!-- nuspec properties -->
-  <PropertyGroup>
-    <Authors>Microsoft</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
-    <!-- space separated -->
-    <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
-  </PropertyGroup>
 
   <ItemGroup>
     <Content Include="$(PackageAssetsPath)$(PackageIdFolderName)\lib\**\*" Pack="true" PackagePath="lib" />

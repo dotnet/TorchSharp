@@ -60,12 +60,12 @@
   
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="libtorch-cpu-redist\runtimes\$(PackageRid)\native" />
+                          RelativePath="libtorch-cpu\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>
       <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
-                          RelativePath="libtorch-cuda-10.2-redist\runtimes\$(PackageRid)\native" />
+                          RelativePath="libtorch-cuda-10.2\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
     <ItemGroup>

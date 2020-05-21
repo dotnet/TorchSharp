@@ -30,56 +30,60 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
-    <File Include= "libtorch\lib\asmjit.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\c10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\c10_cuda.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\caffe2_detectron_ops_gpu.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\caffe2_module_test_dynamic.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cublas64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cublasLt64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cudart64_102.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cudnn64_7.dll" PackagePart="part1" />
-    <File Include= "libtorch\lib\cufft64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cufftw64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\curand64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\cusparse64_10.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\fbgemm.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\libiomp5md.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\libiompstubs5md.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch_cpu.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch.dll" PackagePart="part2" />
-    <File Include= "libtorch\lib\torch_cuda.dll" PackagePart="part3"/>
-    <File Include= "libtorch\lib\torch_global_deps.dll" PackagePart="part2" />
+    <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\c10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\caffe2_detectron_ops_gpu.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\caffe2_module_test_dynamic.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cublas64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cublasLt64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cudart64_102.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cudnn64_7.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\cusparse64_10.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\nvrtc64_102_0.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part2" />
+    <File Include= "libtorch\lib\torch_cuda.dll" PackageSuffix="part3"/>
+    <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
-    <File Include= "libtorch\lib\libc10.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libc10_cuda.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_detectron_ops_gpu.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_module_test_dynamic.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_observers.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libfbjni.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libpytorch_jni.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libshm.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libtorch.so"  PackagePart="part1"  />
-    <File Include= "libtorch\lib\libtorch_cpu.so"  PackagePart="part1"  />
+    <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcaffe2_detectron_ops_gpu.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcaffe2_module_test_dynamic.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcaffe2_observers.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libfbjni.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-builtins.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part1"  />
     
-    <!-- this vast file needs a special magic -->
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackagePart="part2-primary"  FileFraggerStart="0" FileFraggerSize="500000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackagePart="part2-fragment"   FileFraggerStart="500000001" FileFraggerSize="2000000000" />
-    <File Include= "libtorch\lib\libtorch_global_deps.so" PackagePart="part1"  />
-    <File Include= "libtorch\lib\libtorch_python.so" PackagePart="part1"  />
-    <File Include= "libtorch\lib\libcudart-80664282.so.10.2" PackagePart="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-08c4863f.so.10.2" PackagePart="part1"  />
-    <File Include= "libtorch\lib\libgomp-7c85b1e2.so.1" PackagePart="part1"  />
-    <File Include= "libtorch\lib\libnvToolsExt-3965bdd0.so.1" PackagePart="part1"  />
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileFraggerIndex="1" FileFraggerStart="300000001" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileFraggerIndex="2" FileFraggerStart="600000001" FileFraggerSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="600000001" FileFraggerSize="2000000000" />
+
+    <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudart-80664282.so.10.2" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-08c4863f.so.10.2" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libgomp-7c85b1e2.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvToolsExt-3965bdd0.so.1" PackageSuffix="part1"  />
 
   </ItemGroup>
 
@@ -150,13 +154,14 @@
       <DestinationFolder ParameterType="System.String" Required="true" />
       <Start ParameterType="System.Int32" Required="true" />
       <Size ParameterType="System.Int32" Required="true" />
+      <Index ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-string name = Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment");
+string name = Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment" + Index);
 byte[] bytes = File.ReadAllBytes(SourceFile);
 Directory.CreateDirectory(DestinationFolder);
 string outfile = Path.Combine(DestinationFolder, name);
@@ -175,8 +180,8 @@ File.WriteAllBytes(outfile, bytes);
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetFolder)" />
 
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackagePart)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileFraggerStart)' == ''" />
-    <FileFragger SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackagePart)\runtimes\$(Runtime)\native\" Start="%(File.FileFraggerStart)" Size="%(File.FileFraggerSize)" Condition="'%(File.FileFraggerStart)' != ''" />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileFraggerStart)' == ''" />
+    <FileFragger SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" Start="%(File.FileFraggerStart)" Size="%(File.FileFraggerSize)" Index="%(File.FileFraggerIndex)" Condition="'%(File.FileFraggerStart)' != ''" />
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />

@@ -53,11 +53,11 @@
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
-    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)-redist\libtorch-cuda-$(CudaVersionDot)-redist.proj" 
+    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj" 
              Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
              Targets="Build" />
 
-    <MSBuild Projects="..\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj" 
+    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" 
             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
             Targets="Build" />
 

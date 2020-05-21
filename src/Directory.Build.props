@@ -40,7 +40,7 @@
     <ExtraForLibTorch150Linux>%252Bcpu</ExtraForLibTorch150Linux>
     <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)$(ExtraForLibTorch150Linux)</LibTorchArchiveBase>
     <LibTorchArchiveBase Condition="'$(TargetOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)libtorch-cpu-redist\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
+    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <ItemGroup>

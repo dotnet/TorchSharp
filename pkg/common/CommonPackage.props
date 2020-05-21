@@ -1,8 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-
-
-
   <ItemGroup>
 
     <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"

@@ -3,11 +3,18 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+     <ProjectReference Include="../libtorch-cuda-10.2-linux-x64/libtorch-cuda-10.2-linux-x64.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-10.2-win-x64/libtorch-cuda-10.2-win-x64.nupkgproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\common\CommonPackage.props" Pack="true" PackagePath="build\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\CommonPackage.targets" Pack="true" PackagePath="build\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
   </ItemGroup>
 </Project>

@@ -21,6 +21,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{A84717CB-F11A-41C5-A74D-C0F1D47B7431}"
 	ProjectSection(SolutionItems) = preProject
 		pkg\common\CommonPackage.props = pkg\common\CommonPackage.props
+		pkg\common\CommonPackage.targets = pkg\common\CommonPackage.targets
 		pkg\common\DnnImageFeaturizer.props = pkg\common\DnnImageFeaturizer.props
 	EndProjectSection
 EndProject
@@ -47,8 +48,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Debug", "Native-Debu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redist", "Redist", "{D8C60CD8-8429-45F2-A755-47B6CD10FDF8}"
 	ProjectSection(SolutionItems) = preProject
-		src\Redist\libtorch-cuda-10.2-redist\libtorch-cuda-10.2-redist.proj = src\Redist\libtorch-cuda-10.2-redist\libtorch-cuda-10.2-redist.proj
-		src\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj = src\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj
+		src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj = src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj
+		src\Redist\libtorch-cpu\libtorch-cpu.proj = src\Redist\libtorch-cpu\libtorch-cpu.proj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Release", "Native-Release", "{4DB9E84D-324C-408F-87A6-246E86205540}"
