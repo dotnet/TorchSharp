@@ -1,14 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
-
   <PropertyGroup>
-    <Authors></Authors>
-    <Copyright>Copyright (c) Microsoft Corporation</Copyright>
-    <Owners>Microsoft Corporation</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageDescription>$(MSBuildProjectName) contains the PyTorch C++ frontend LibTorch library version $(LibTorchVersion) 
-    for GPU with Cuda 10.2 redistributed as a NuGet package. </PackageDescription>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://pytorch.org/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

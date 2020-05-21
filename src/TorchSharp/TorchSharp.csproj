@@ -49,16 +49,14 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
- <!-- This is an odd place to trigger the download of the redist bits and the build of the C++ project -->
- <!--     1. the Redist download projects use .proj which is not recognised in Visual Studio or 'dotnet build' on TorchSharp.sln  --> 
- <!--     2. the C++ project uses a generated project file under Release/Debug also not recognised in TorchSharp.sln --> 
+ <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
-    <MSBuild Projects="..\Redist\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.proj" 
+    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)-redist\libtorch-cuda-$(CudaVersionDot)-redist.proj" 
              Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
              Targets="Build" />
 
-    <MSBuild Projects="..\Redist\LibTorch.Redist\LibTorch.Redist.proj" 
+    <MSBuild Projects="..\Redist\libtorch-cpu-redist\libtorch-cpu-redist.proj" 
             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" 
             Targets="Build" />
 
@@ -68,32 +66,12 @@
 
   </Target>
 
- <!-- The packaging logic - package all assets when we pack TorchSharp  -->
   <Target Name="RealPack">
-    <Message Text="Restoring packaging projects..." Importance="high" />
-    <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Restore" />
-    <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Restore" />
-    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Restore" />
-
-    <Message Text="Packing TorchSharp nupkg..." Importance="high" />
-    <MSBuild Projects="..\..\pkg\TorchSharp\TorchSharp.nupkgproj" Targets="Pack" />
-
-    <Warning Text="Packages will be incomplete and unusable on linux platforms. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
-                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\linux-x64\native\libLibTorchSharp.so')
-                     " />
-    <Warning Text="Packages will be incomplete and unusable on win-x64 platform. You build the LibTorchSharp.so binaries on other platforms and copy them into '$(PackageAssetsPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="!Exists('$(PackageAssetsPath)\LibTorch.Redist\runtimes\win-x64\native\LibTorchSharp.dll')
-                     OR !Exists('$(PackageAssetsPath)\LibTorch.Cuda.$(CudaVersionDot).Redist\runtimes\win-x64\native\LibTorchSharp.dll')
-                     " />
-
-    <Message Text="Packing LibTorch.Cuda.$(CudaVersionDot).Redist nupkg (takes a long time!)..." Importance="high"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' "  />
-    <MSBuild Projects="..\..\pkg\LibTorch.Cuda.$(CudaVersionDot).Redist\LibTorch.Cuda.$(CudaVersionDot).Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true' AND '$(SkipCuda)' != 'true' " />
-
-    <Message Text="Packing LibTorch.Redist nupkg..." Importance="high"  Condition="'$(SkipNative)' != 'true'" />
-    <MSBuild Projects="..\..\pkg\LibTorch.Redist\LibTorch.Redist.nupkgproj" Targets="Pack"  Condition="'$(SkipNative)' != 'true'" />
-
-    <Message Text="Done packing!" Importance="high" />
+    <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
   </Target>
 
+  <ItemGroup>
+ 
+    <Content Include="..\common\CommonPackage.props" Pack="true" PackagePath="build\netstandard2.0\$(MSBuildProjectName).props" />
+  </ItemGroup>
 </Project>

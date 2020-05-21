@@ -2,6 +2,16 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
+    <Authors></Authors>
+    <Copyright>Copyright (c) Microsoft Corporation</Copyright>
+    <Owners>TorchSharp repository maintainers</Owners>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageDescription>$(MSBuildProjectName) contains the PyTorch C++ frontend LibTorch library version $(LibTorchVersion) redistributed as a NuGet package. </PackageDescription>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://pytorch.org/</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <NoBuild>true</NoBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
