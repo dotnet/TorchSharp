@@ -143,7 +143,7 @@
 
   <UsingTask
     TaskName="FileFragger"
-    TaskFactory="CodeTaskFactory"
+    TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
       <SourceFile ParameterType="System.String" Required="true" />
@@ -152,22 +152,21 @@
       <Size ParameterType="System.Int32" Required="true" />
     </ParameterGroup>
     <Task>
-      <Reference Include="System.Xml"/>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-string name = System.IO.Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment");
-byte[] bytes = System.IO.File.ReadAllBytes(SourceFile);
-System.IO.Directory.CreateDirectory(DestinationFolder);
-string outfile = System.IO.Path.Combine(DestinationFolder, name);
+string name = Path.GetFileName(SourceFile) + ((Start == 0) ? ".primary" : ".fragment");
+byte[] bytes = File.ReadAllBytes(SourceFile);
+Directory.CreateDirectory(DestinationFolder);
+string outfile = Path.Combine(DestinationFolder, name);
 int lengthToKeep = System.Math.Max(System.Math.Min(Size, bytes.Length - Start), 0);
 // clear everything but the part we're keeping, the defragger will bitwise-or the file together
 // the zero-part will compress well
 if (Start > 0) Array.Clear(bytes, 0, Start - 1);
 int lengthAfter = bytes.Length - (Start + lengthToKeep);
 if (lengthAfter > 0) Array.Clear(bytes, Start+lengthToKeep, lengthAfter);
-System.IO.File.WriteAllBytes(outfile, bytes);
+File.WriteAllBytes(outfile, bytes);
 ]]>
       </Code>
     </Task>

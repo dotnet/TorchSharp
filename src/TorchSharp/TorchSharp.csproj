@@ -52,6 +52,7 @@
  <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
+    <Message Importance="High" Text="Using Version = $(Version)" />
     <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)-redist\libtorch-cuda-$(CudaVersionDot)-redist.proj" 
              Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" 
              Targets="Build" />

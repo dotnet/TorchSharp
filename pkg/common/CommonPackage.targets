@@ -4,34 +4,33 @@
 <!-- some massive files are deliverd in fragments across multiple nuget packages -->
   <UsingTask
     TaskName="FileDefragger"
-    TaskFactory="CodeTaskFactory"
+    TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
       <FraggerDirectory ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
-      <Reference Include="System.Xml"/>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
             System.Console.WriteLine("Searching for primary files in {0}", FraggerDirectory);
-            foreach (var p in Directory.EnumerateFiles(FraggerDirectory, "*.primary", System.IO.SearchOption.AllDirectories))
+            foreach (var p in Directory.EnumerateFiles(FraggerDirectory, "*.primary", SearchOption.AllDirectories))
             {
 
                 var primaryFile = Path.GetFullPath(p);
-                System.Console.WriteLine("Found primary files at {0}", primaryFile);
+                Console.WriteLine("Found primary files at {0}", primaryFile);
                 var restoredFile = Path.GetFileNameWithoutExtension(primaryFile);
                 var fragmentFile = primaryFile.Replace("-primary", "-fragment");
                 var primaryBytes = File.ReadAllBytes(primaryFile);
                 var fragmentBytes = File.ReadAllBytes(fragmentFile);
                 if (primaryBytes.Length != fragmentBytes.Length)
-                    System.Console.Error.WriteLine("WARNING: mismatch fragment sizes! p={0}, f = {1}", p, fragmentFile);
+                    Console.Error.WriteLine("WARNING: mismatch fragment sizes! p={0}, f = {1}", p, fragmentFile);
                 for (int i = 0; i < primaryBytes.Length; i++)
                     primaryBytes[i] |= fragmentBytes[i];
                 File.WriteAllBytes(restoredFile, primaryBytes);
-                System.IO.File.Delete(primaryFile); // free up space and prevent us doing this again 
-                System.IO.File.Delete(fragmentFile);  // free up space and prevent us doing this again 
+                File.Delete(primaryFile); // free up space and prevent us doing this again 
+                File.Delete(fragmentFile);  // free up space and prevent us doing this again 
             }
 ]]>
       </Code>
