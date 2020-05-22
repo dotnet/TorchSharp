@@ -2,7 +2,7 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
-    <_IsAuxPackage Condition="$(MSBuildProjectName.IndexOf(`-part`)' != '-1'">true</_IsAuxPackage>
+    <_IsAuxPackage Condition="'$(MSBuildProjectName.IndexOf(`-part`)' != '-1'">true</_IsAuxPackage>
     <Authors>PyTorch contributors;TorchSharp contributors</Authors>
     <PackageLicenseFile>THIRD-PARTY-NOTICES.TXT</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
@@ -14,7 +14,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$'(_IsAuxPackage)' == 'true'">
+  <PropertyGroup Condition="'$(_IsAuxPackage)' == 'true'">
     <Authors>(see main package)</Authors>
     <PackageLicenseFile>(see main package)</PackageLicenseFile>
     <PackageProjectUrl>(see main package)</PackageProjectUrl>
