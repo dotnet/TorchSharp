@@ -72,9 +72,9 @@
     <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix>local-$(Configuration)-$([System.DateTime]::Now.ToString(yyyyMMdd))</VersionSuffix>
 
-    <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$([System.String]::Copy('$(BUILD_BUILDNUMBER)').Replace('.','').Substring(3))</VersionPrefix>
+    <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$(MyRunNumber)</VersionPrefix>
     <VersionSuffix Condition="'$(TF_BUILD)' != ''  AND '$(BUILD_SOURCEBRANCHNAME)' == 'master'"></VersionSuffix>
-    <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)-$(BUILD_SOURCEBRANCHNAME)</VersionSuffix>
+    <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)</VersionSuffix>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
