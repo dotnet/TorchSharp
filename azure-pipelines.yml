@@ -142,6 +142,7 @@ jobs:
   - script: build.cmd pack -c $(BuildConfig) 
     displayName: Create Packages
 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
   - script: rmdir /q /s bin\obj
     displayName: Clean up space (bin\obj)
     continueOnError: true
@@ -154,12 +155,17 @@ jobs:
     displayName: Clean up space (bin\x64.Release)
     continueOnError: true
 
-  - script: rmdir /q /s downloads
-    displayName: Clean up space (downloads)
+  - script: rmdir /q /s bin\downloads
+    displayName: Clean up space (bin\downloads)
     continueOnError: true
 
   - script: rmdir /q /s packages
     displayName: Clean up space (packages)
+    continueOnError: true
+
+  # yup we even nuke the .git
+  - script: rmdir /q /s .git
+    displayName: Clean up space (.git)
     continueOnError: true
 
   - task: CopyFiles@2
@@ -168,15 +174,6 @@ jobs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
-  #  - script: |
-  #      cp $(Build.SourcesDirectory)\bin\obj\packprep\$(BuildConfig)\*.nupkg $BUILD_ARTIFACTSTAGINGDIRECTORY
-  #    # rm $BUILD_ARTIFACTSTAGINGDIRECTORY/*.symbols.nupkg
-  #    displayName: Copy Nugets in staging directory
-
-  #  - script: |
-  #      dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-  #    displayName: Dotnet Publish
-
   # - task: PublishBuildArtifacts@1
   #   inputs:
   #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
@@ -194,6 +191,7 @@ jobs:
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
+    continueOnError: true
 
   # push the CPU runtime packages
   - task: NuGetCommand@2
@@ -203,6 +201,7 @@ jobs:
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
+    continueOnError: true
 
   # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
   - task: NuGetCommand@2
@@ -213,7 +212,7 @@ jobs:
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
-      continueOnError: true
+    continueOnError: true
 
   # push the Linux Cuda packages 
   - task: NuGetCommand@2
@@ -224,7 +223,7 @@ jobs:
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
-      continueOnError: true
+    continueOnError: true
 
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
