@@ -5,7 +5,7 @@
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 variables: 
-  MyRunNumber: '$(Date:MMdd)$(Rev:rr)'
+  MyRunNumber: $(Date:MMdd)$(Rev:rr)
 
 resources:
   containers:
