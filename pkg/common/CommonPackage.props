@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <RestitchPrimaryPackage Include="$(MSBuildThisFileDirectory)..\..\runtimes\" 
-             Condition="'$(MSBuildProjectName.IndexOf(`-primary`)' != '-1'"/>
+             Condition="'$(MSBuildProjectName.IndexOf(`-primary`))' != '-1'"/>
 
     <!-- <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"
              Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' == 'Windows_NT'">
