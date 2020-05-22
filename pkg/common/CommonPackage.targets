@@ -4,21 +4,21 @@
 <!-- Some massive files > 1GB are delivered in fragments across multiple nuget packages. -->
 <!-- Here we hack them back together on first build using the package install -->
   <UsingTask
-    TaskName="FileDefragger"
+    TaskName="FileFileRestitcher"
     TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
-      <FraggerPrimaryPackage ParameterType="System.String" Required="true" />
+      <RestitchPrimaryPackage ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-            if (Directory.Exists(FraggerPrimaryPackage))
+            if (Directory.Exists(RestitchPrimaryPackage))
             {
-                //System.Console.WriteLine("Searching for primary files in {0}", FraggerPrimaryPackage);
-                foreach (var p in Directory.EnumerateFiles(FraggerPrimaryPackage, "*", SearchOption.AllDirectories))
+                //System.Console.WriteLine("Searching for primary files in {0}", RestitchPrimaryPackage);
+                foreach (var p in Directory.EnumerateFiles(RestitchPrimaryPackage, "*", SearchOption.AllDirectories))
                 {
 
                     var primaryFile = Path.GetFullPath(p);
@@ -76,14 +76,10 @@
     </Task>
   </UsingTask>
 
-  <PropertyGroup>
-   <BuildDependsOn>
-      FileDefragger;$(BuildDependsOn)
-    </BuildDependsOn>
-  </PropertyGroup>
-
-  <Target Name="FileDefragger">
-    <FileDefragger FraggerPrimaryPackage="%(FraggerPrimaryPackage.Identity)" />
+  <Target Name="FileFileRestitcher"
+    DependsOnTargets="ResolveReferences"
+    BeforeTargets="PrepareForBuild">
+    <FileFileRestitcher RestitchPrimaryPackage="%(RestitchPrimaryPackage.Identity)" />
   </Target>
 
 

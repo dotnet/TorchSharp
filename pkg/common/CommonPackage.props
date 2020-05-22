@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup>
-    <FraggerPrimaryPackage Include="$(MSBuildThisFileDirectory)..\..\runtimes\" 
+    <RestitchPrimaryPackage Include="$(MSBuildThisFileDirectory)..\..\runtimes\" 
              Condition="'$(MSBuildProjectName.IndexOf(`-primary`)' != '-1'"/>
 
     <!-- <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll"
@@ -11,19 +11,6 @@
       <Link>%(Filename)%(Extension)</Link>
     </Content>
 
-    <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\*.so"
-             Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' != 'Windows_NT' AND !$([MSBuild]::IsOSPlatform('osx'))">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-      <Link>%(Filename)%(Extension)</Link>
-    </Content>
-
-    <Content Include="$(MSBuildThisFileDirectory)\..\..\runtimes\osx-x64\native\*.dynlib"
-             Condition="'$(PlatformTarget)' == 'x64' AND '$(OS)' != 'Windows_NT' AND $([MSBuild]::IsOSPlatform('osx'))">
-
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-      <Link>%(Filename)%(Extension)</Link>
     </Content> -->
 
   </ItemGroup>

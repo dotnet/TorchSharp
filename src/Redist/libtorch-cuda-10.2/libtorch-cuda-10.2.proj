@@ -42,9 +42,9 @@
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="-1" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part3" />
@@ -58,9 +58,9 @@
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part3" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
@@ -80,10 +80,10 @@
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileFraggerIndex="0" FileFraggerStart="0" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileFraggerIndex="1" FileFraggerStart="300000000" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileFraggerIndex="2" FileFraggerStart="600000000" FileFraggerSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileFraggerIndex="3" FileFraggerStart="900000000" FileFraggerSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileUnstitchIndex="3" FileUnstitchStart="900000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
@@ -154,7 +154,7 @@
 
     <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
   <UsingTask
-    TaskName="FileFragger"
+    TaskName="FileUnstitch"
     TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
@@ -190,8 +190,8 @@ File.WriteAllBytes(outfile, outBytes);
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetFolder)" />
 
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileFraggerStart)' == ''" />
-    <FileFragger SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" Start="%(File.FileFraggerStart)" Size="%(File.FileFraggerSize)" Index="%(File.FileFraggerIndex)" Condition="'%(File.FileFraggerStart)' != ''" />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == ''" />
+    <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != ''" />
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
