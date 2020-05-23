@@ -9,8 +9,4 @@
     <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="..\common\CommonPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-  </ItemGroup>
-
 </Project>

@@ -8,8 +8,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\common\CommonPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\CommonPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
   </ItemGroup>
 </Project>
