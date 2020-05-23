@@ -8,17 +8,17 @@
     TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
     <ParameterGroup>
-      <RestitcherPrimaryPackage ParameterType="System.String" Required="true" />
+      <RestitcherPackage ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-            if (Directory.Exists(RestitcherPrimaryPackage))
+            if (Directory.Exists(RestitcherPackage))
             {
-                //System.Console.WriteLine("Searching for primary files in {0}", RestitcherPrimaryPackage);
-                foreach (var p in Directory.EnumerateFiles(RestitcherPrimaryPackage, "*", SearchOption.AllDirectories))
+                //System.Console.WriteLine("Searching for primary files in {0}", RestitcherPackage);
+                foreach (var p in Directory.EnumerateFiles(RestitcherPackage, "*", SearchOption.AllDirectories))
                 {
 
                     var primaryFile = Path.GetFullPath(p);
@@ -77,10 +77,11 @@
   </UsingTask>
 
   <Target Name="FileRestitch"
-    Outputs="%(RestitcherPrimaryPackage.Identity)\.restiched"
+    Outputs="%(RestitcherPackage.Identity)\.restiched"
     AfterTargets="ResolveReferences"
     BeforeTargets="PrepareForBuild">
-    <FileRestitch RestitcherPrimaryPackage="@(RestitcherPrimaryPackage->'%(RestitcherPrimaryPackage.Identity)'" />
+   <!-- <Message Text="Checking for restitch files under %(RestitcherPackage.Identity)" /> -->
+    <FileRestitch RestitcherPackage="%(RestitcherPackage.Identity)" />
   </Target>
 
 
