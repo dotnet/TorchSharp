@@ -42,9 +42,7 @@
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part3" />
@@ -58,9 +56,7 @@
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part3" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
