@@ -71,8 +71,4 @@
     <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
   </Target>
 
-  <ItemGroup>
- 
-    <Content Include="..\common\CommonPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-  </ItemGroup>
 </Project>
