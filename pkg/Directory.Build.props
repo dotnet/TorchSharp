@@ -3,17 +3,23 @@
 
   <PropertyGroup>
     <_IsAuxPackage Condition="'$(MSBuildProjectName.IndexOf(`-part`))' != '-1'">true</_IsAuxPackage>
+    <_IsLibTorchPackage Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">true</_IsLibTorchPackage>
+  </PropertyGroup>
+
+  <!-- libtorch main parts -->
+  <PropertyGroup Condition="'$(_IsAuxPackage)' != 'true' AND '$(_IsLibTorchPackage)' == 'true'">
     <Authors>PyTorch contributors;TorchSharp contributors</Authors>
-    <PackageLicenseFile>THIRD-PARTY-NOTICES.TXT</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE-LIBTORCH.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
-    <Copyright>Copyright Microsoft, PyTorch, TorchSharp contributors</Copyright>
+    <Copyright>Copyright PyTorch contributors</Copyright>
     <Owners>TorchSharp maintainers</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
+  <!-- libtorch aux parts -->
   <PropertyGroup Condition="'$(_IsAuxPackage)' == 'true'">
     <Authors>(see main package)</Authors>
     <PackageTags></PackageTags>
@@ -21,6 +27,19 @@
     <Owners>TorchSharp maintainers</Owners>
     <PackageDescription>(see main package)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <!-- TorchSharp -->
+  <PropertyGroup Condition="'$(_IsLibTorchPackage)' != 'true'">
+    <Authors>TorchSharp contributors</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
+    <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
+    <Copyright>Copyright Microsoft, TorchSharp contributors</Copyright>
+    <Owners>TorchSharp maintainers</Owners>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -46,11 +65,6 @@
     <Content Include="$(PackagePreparationPath)$(PackageIdFolderName)\runtimes\**\*" Pack="true" PackagePath="runtimes" />
     <Content Include="$(PackagePreparationPath)$(PackageIdFolderName)\fragments\**\*" Pack="true" PackagePath="fragments" />
     <Content Include="$(PackagePreparationPath)$(PackageIdFolderName)\tools\**\*" Pack="true" PackagePath="tools" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(IncludeNotices)' != 'false'">
-    <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
-    <Content Include="$(RepoRoot)\LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsSymbolsPackage)' != 'true'">

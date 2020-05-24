@@ -30,6 +30,8 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1" />
+
     <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part2" />
@@ -39,13 +41,10 @@
     <File Include= "libtorch\lib\cublas64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cublasLt64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cudart64_102.dll" PackageSuffix="part2" />
-
-    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
-    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part3" />
+
     <File Include= "libtorch\lib\cusparse64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part3" />
@@ -56,8 +55,14 @@
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part3" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4" />
+
+    <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
+    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="400000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="400000000" FileUnstitchSize="-1" />
+
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part5" />
+
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />

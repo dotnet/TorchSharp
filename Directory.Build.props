@@ -75,6 +75,18 @@
     <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$(MyRunNumber)</VersionPrefix>
     <VersionSuffix Condition="'$(TF_BUILD)' != ''  AND '$(BUILD_SOURCEBRANCHNAME)' == 'master'"></VersionSuffix>
     <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)</VersionSuffix>
+
+  </PropertyGroup>
+
+  <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
+  <!-- we manually update these -->
+  <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
+    <LibTorchPackageVersion>1.5.0</LibTorchPackageVersion>
+    <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BuildLibTorchPackages>true</BuildLibTorchPackages>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->

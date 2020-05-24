@@ -1,7 +1,8 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
   <ItemGroup>
-    <PackProject Include="**\*.nupkgproj" />
+    <PackProject Include="**\libtorch-*.nupkgproj" Condition="'$(BuildLibTorchPackages)' == 'true'" />
+    <PackProject Include="**\TorchSharp.nupkgproj" />
   </ItemGroup>
   <Target Name="Pack">
     <Message Text="Restoring packaging projects..." Importance="high" />
