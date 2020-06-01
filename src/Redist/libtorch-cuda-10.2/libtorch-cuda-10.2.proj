@@ -30,7 +30,8 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="500000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileUnstitchIndex="1" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part2" />
