@@ -13,21 +13,6 @@
 
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\Source.ruleset</CodeAnalysisRuleSet>
     
-    <PackageRid Condition="'$(TargetOS)' == 'windows'">win</PackageRid>
-    <PackageRid Condition="'$(TargetOS)' == 'linux'">linux</PackageRid>
-    <PackageRid Condition="'$(TargetOS)' == 'mac'">osx</PackageRid>
-    <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
-
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
   </PropertyGroup>
 
   <PropertyGroup>

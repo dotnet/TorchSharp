@@ -8,13 +8,6 @@
   <Target Name="CopyNativeAssemblies"
           BeforeTargets="PrepareForRun">
 
-    <PropertyGroup>
-      <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
-      <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
-      <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
-      <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
-    </PropertyGroup>
-
     <ItemGroup>
       <NativeAssemblyReference>
         <FullAssemblyPath>$(NativeAssetsBuiltPath)$(NativeLibPrefix)%(NativeAssemblyReference.Identity)</FullAssemblyPath>

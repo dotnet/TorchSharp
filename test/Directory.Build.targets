@@ -16,89 +16,89 @@
 
     <!-- Torch is 64-bit only? REVIEW check if true do we need all these? -->
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('osx')) and '$(TestCuda)' != 'true'">
-    <NativeAssemblyReference Include="LibTorchSharp.dylib" />
-    <NativeAssemblyReferenceCpu Include="c10.dylib" />
-    <NativeAssemblyReferenceCpu Include="caffe2_detectron_ops.dylib" />
-    <NativeAssemblyReferenceCpu Include="caffe2_module_test_dynamic.dylib" />
-    <NativeAssemblyReferenceCpu Include="caffe2_observers.dylib" />
-    <NativeAssemblyReferenceCpu Include="fbjni.dylib" />
-    <NativeAssemblyReferenceCpu Include="pytorch_jni.dylib" />
-    <NativeAssemblyReferenceCpu Include="shm.dylib" />
-    <NativeAssemblyReferenceCpu Include="torch.dylib" />
-    <NativeAssemblyReferenceCpu Include="torch_cpu.dylib" />
-    <NativeAssemblyReferenceCpu Include="torch_global_deps.dylib" />
-    <NativeAssemblyReferenceCpu Include="torch_python.dylib" />
-    <NativeAssemblyReferenceCpu Include="mklml.dylib" />
-    <NativeAssemblyReferenceCpu Include="iomp5.dylib" />
+    <NativeAssemblyReference Include="libLibTorchSharp.dylib" />
+    <NativeAssemblyReferenceCpu Include="libc10.dylib" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_detectron_ops.dylib" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_module_test_dynamic.dylib" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_observers.dylib" />
+    <NativeAssemblyReferenceCpu Include="libfbjni.dylib" />
+    <NativeAssemblyReferenceCpu Include="libpytorch_jni.dylib" />
+    <NativeAssemblyReferenceCpu Include="libshm.dylib" />
+    <NativeAssemblyReferenceCpu Include="libtorch.dylib" />
+    <NativeAssemblyReferenceCpu Include="libtorch_cpu.dylib" />
+    <NativeAssemblyReferenceCpu Include="libtorch_global_deps.dylib" />
+    <NativeAssemblyReferenceCpu Include="libtorch_python.dylib" />
+    <NativeAssemblyReferenceCpu Include="libmklml.dylib" />
+    <NativeAssemblyReferenceCpu Include="libiomp5.dylib" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(TestCuda)' != 'true'">
-    <NativeAssemblyReference Include="LibTorchSharp.so" />
-    <NativeAssemblyReferenceCpu Include="c10.so" />
-    <NativeAssemblyReferenceCpu Include="caffe2_detectron_ops.so" />
-    <NativeAssemblyReferenceCpu Include="caffe2_module_test_dynamic.so" />
-    <NativeAssemblyReferenceCpu Include="caffe2_observers.so" />
-    <NativeAssemblyReferenceCpu Include="fbjni.so" />
-    <NativeAssemblyReferenceCpu Include="pytorch_jni.so" />
-    <NativeAssemblyReferenceCpu Include="shm.so" />
-    <NativeAssemblyReferenceCpu Include="torch.so" />
-    <NativeAssemblyReferenceCpu Include="torch_cpu.so" />
-    <NativeAssemblyReferenceCpu Include="torch_global_deps.so" />
-    <NativeAssemblyReferenceCpu Include="torch_python.so" />
-    <NativeAssemblyReferenceCpu Include="gomp-7c85b1e2.so.1" />
+    <NativeAssemblyReference Include="libLibTorchSharp.so" />
+    <NativeAssemblyReferenceCpu Include="libc10.so" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_detectron_ops.so" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_module_test_dynamic.so" />
+    <NativeAssemblyReferenceCpu Include="libcaffe2_observers.so" />
+    <NativeAssemblyReferenceCpu Include="libfbjni.so" />
+    <NativeAssemblyReferenceCpu Include="libpytorch_jni.so" />
+    <NativeAssemblyReferenceCpu Include="libshm.so" />
+    <NativeAssemblyReferenceCpu Include="libtorch.so" />
+    <NativeAssemblyReferenceCpu Include="libtorch_cpu.so" />
+    <NativeAssemblyReferenceCpu Include="libtorch_global_deps.so" />
+    <NativeAssemblyReferenceCpu Include="libtorch_python.so" />
+    <NativeAssemblyReferenceCpu Include="libgomp-7c85b1e2.so.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetOS)' == 'windows' and '$(TestCuda)' == 'true'">
     <NativeAssemblyReference Include="LibTorchSharp.dll" />
-    <NativeAssemblyReferenceCuda Include= "cudnn64_7.dll" />
-    <NativeAssemblyReferenceCuda Include= "asmjit.dll" />
-    <NativeAssemblyReferenceCuda Include= "c10.dll" />
-    <NativeAssemblyReferenceCuda Include= "c10_cuda.dll" />
-    <NativeAssemblyReferenceCuda Include= "caffe2_detectron_ops_gpu.dll" />
-    <NativeAssemblyReferenceCuda Include= "caffe2_module_test_dynamic.dll" />
-    <NativeAssemblyReferenceCuda Include= "caffe2_nvrtc.dll" />
-    <NativeAssemblyReferenceCuda Include= "cublas64_10.dll" />
-    <NativeAssemblyReferenceCuda Include= "cublasLt64_10.dll" />
-    <NativeAssemblyReferenceCuda Include= "cudart64_102.dll" />
-    <NativeAssemblyReferenceCuda Include= "cufft64_10.dll" />
-    <NativeAssemblyReferenceCuda Include= "cufftw64_10.dll"/>
-    <NativeAssemblyReferenceCuda Include= "curand64_10.dll"/>
-    <NativeAssemblyReferenceCuda Include= "cusparse64_10.dll"/>
-    <NativeAssemblyReferenceCuda Include= "fbgemm.dll"/>
-    <NativeAssemblyReferenceCuda Include= "libiomp5md.dll"/>
-    <NativeAssemblyReferenceCuda Include= "libiompstubs5md.dll"/>
-    <NativeAssemblyReferenceCuda Include= "nvrtc64_102_0.dll"/>
-    <NativeAssemblyReferenceCuda Include= "nvrtc-builtins64_102.dll"/>
-    <NativeAssemblyReferenceCuda Include= "nvToolsExt64_1.dll"/>
-    <NativeAssemblyReferenceCuda Include= "torch.dll"/>
-    <NativeAssemblyReferenceCuda Include= "torch.dll"/>
-    <NativeAssemblyReferenceCuda Include= "torch_global_deps.dll"/>
-    <NativeAssemblyReferenceCuda Include= "torch_cuda.dll" />
-    <NativeAssemblyReferenceCuda Include= "torch_cpu.dll" />
+    <NativeAssemblyReferenceCuda Include="cudnn64_7.dll" />
+    <NativeAssemblyReferenceCuda Include="asmjit.dll" />
+    <NativeAssemblyReferenceCuda Include="c10.dll" />
+    <NativeAssemblyReferenceCuda Include="c10_cuda.dll" />
+    <NativeAssemblyReferenceCuda Include="caffe2_detectron_ops_gpu.dll" />
+    <NativeAssemblyReferenceCuda Include="caffe2_module_test_dynamic.dll" />
+    <NativeAssemblyReferenceCuda Include="caffe2_nvrtc.dll" />
+    <NativeAssemblyReferenceCuda Include="cublas64_10.dll" />
+    <NativeAssemblyReferenceCuda Include="cublasLt64_10.dll" />
+    <NativeAssemblyReferenceCuda Include="cudart64_102.dll" />
+    <NativeAssemblyReferenceCuda Include="cufft64_10.dll" />
+    <NativeAssemblyReferenceCuda Include="cufftw64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include="curand64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include="cusparse64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include="fbgemm.dll"/>
+    <NativeAssemblyReferenceCuda Include="libiomp5md.dll"/>
+    <NativeAssemblyReferenceCuda Include="libiompstubs5md.dll"/>
+    <NativeAssemblyReferenceCuda Include="nvrtc64_102_0.dll"/>
+    <NativeAssemblyReferenceCuda Include="nvrtc-builtins64_102.dll"/>
+    <NativeAssemblyReferenceCuda Include="nvToolsExt64_1.dll"/>
+    <NativeAssemblyReferenceCuda Include="torch.dll"/>
+    <NativeAssemblyReferenceCuda Include="torch.dll"/>
+    <NativeAssemblyReferenceCuda Include="torch_global_deps.dll"/>
+    <NativeAssemblyReferenceCuda Include="torch_cuda.dll" />
+    <NativeAssemblyReferenceCuda Include="torch_cpu.dll" />
 
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(TestCuda)' == 'true'">
-    <NativeAssemblyReference Include="LibTorchSharp.so" />
-    <NativeAssemblyReferenceCuda Include= "libc10.so" />
-    <NativeAssemblyReferenceCuda Include= "libc10_cuda.so" />
-    <NativeAssemblyReferenceCuda Include= "libc10d_cuda_test.so" />
-    <NativeAssemblyReferenceCuda Include= "libcaffe2_detectron_ops_gpu.so" />
-    <NativeAssemblyReferenceCuda Include= "libcaffe2_module_test_dynamic.so" />
-    <NativeAssemblyReferenceCuda Include= "libcaffe2_nvrtc.so" />
-    <NativeAssemblyReferenceCuda Include= "libcaffe2_observers.so" />
-    <NativeAssemblyReferenceCuda Include= "libfbjni.so" />
-    <NativeAssemblyReferenceCuda Include= "libnvrtc-builtins.so" />
-    <NativeAssemblyReferenceCuda Include= "libpytorch_jni.so" />
-    <NativeAssemblyReferenceCuda Include= "libshm.so" />
-    <NativeAssemblyReferenceCuda Include= "libtorch.so" />
-    <NativeAssemblyReferenceCuda Include= "libtorch_cpu.so" />
-    <NativeAssemblyReferenceCuda Include= "libtorch_cuda.so" />
-    <NativeAssemblyReferenceCuda Include= "libtorch_global_deps.so"/>
-    <NativeAssemblyReferenceCuda Include= "libtorch_python.so"/>
-    <NativeAssemblyReferenceCuda Include= "libcudart-80664282.so.10.2"/>
-    <NativeAssemblyReferenceCuda Include= "libnvrtc-08c4863f.so.10.2"/>
-    <NativeAssemblyReferenceCuda Include= "libgomp-7c85b1e2.so.1"/>
-    <NativeAssemblyReferenceCuda Include= "libnvToolsExt-3965bdd0.so.1"/>
+    <NativeAssemblyReference Include="libLibTorchSharp.so" />
+    <NativeAssemblyReferenceCuda Include="libc10.so" />
+    <NativeAssemblyReferenceCuda Include="libc10_cuda.so" />
+    <NativeAssemblyReferenceCuda Include="libc10d_cuda_test.so" />
+    <NativeAssemblyReferenceCuda Include="libcaffe2_detectron_ops_gpu.so" />
+    <NativeAssemblyReferenceCuda Include="libcaffe2_module_test_dynamic.so" />
+    <NativeAssemblyReferenceCuda Include="libcaffe2_nvrtc.so" />
+    <NativeAssemblyReferenceCuda Include="libcaffe2_observers.so" />
+    <NativeAssemblyReferenceCuda Include="libfbjni.so" />
+    <NativeAssemblyReferenceCuda Include="libnvrtc-builtins.so" />
+    <NativeAssemblyReferenceCuda Include="libpytorch_jni.so" />
+    <NativeAssemblyReferenceCuda Include="libshm.so" />
+    <NativeAssemblyReferenceCuda Include="libtorch.so" />
+    <NativeAssemblyReferenceCuda Include="libtorch_cpu.so" />
+    <NativeAssemblyReferenceCuda Include="libtorch_cuda.so" />
+    <NativeAssemblyReferenceCuda Include="libtorch_global_deps.so"/>
+    <NativeAssemblyReferenceCuda Include="libtorch_python.so"/>
+    <NativeAssemblyReferenceCuda Include="libcudart-80664282.so.10.2"/>
+    <NativeAssemblyReferenceCuda Include="libnvrtc-08c4863f.so.10.2"/>
+    <NativeAssemblyReferenceCuda Include="libgomp-7c85b1e2.so.1"/>
+    <NativeAssemblyReferenceCuda Include="libnvToolsExt-3965bdd0.so.1"/>
 
   </ItemGroup>
 
