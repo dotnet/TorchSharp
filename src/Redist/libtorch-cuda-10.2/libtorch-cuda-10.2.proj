@@ -197,6 +197,8 @@ File.WriteAllBytes(outfile, outBytes);
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
+
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeAssetsBuiltPathCuda)\" SkipUnchangedFiles="true" />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->

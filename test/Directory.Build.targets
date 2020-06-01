@@ -1,11 +1,128 @@
 <Project>
 
+  <ItemGroup Condition="'$(OS)' == 'Windows_NT' and '$(TestCuda)' != 'true'">
+    <NativeAssemblyReference Include="LibTorchSharp.dll" />
+    <NativeAssemblyReferenceCpu Include="c10.dll" />
+    <NativeAssemblyReferenceCpu Include="asmjit.dll" />
+    <NativeAssemblyReferenceCpu Include="caffe2_detectron_ops.dll" />
+    <NativeAssemblyReferenceCpu Include="caffe2_module_test_dynamic.dll" />
+    <NativeAssemblyReferenceCpu Include="fbgemm.dll" />
+    <NativeAssemblyReferenceCpu Include="libiomp5md.dll" />
+    <NativeAssemblyReferenceCpu Include="libiompstubs5md.dll" />
+    <NativeAssemblyReferenceCpu Include="torch.dll" />
+    <NativeAssemblyReferenceCpu Include="torch_cpu.dll" />
+    <NativeAssemblyReferenceCpu Include="torch_global_deps.dll" />
+  </ItemGroup>
+
+    <!-- Torch is 64-bit only? REVIEW check if true do we need all these? -->
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('osx')) and '$(TestCuda)' != 'true'">
+    <NativeAssemblyReference Include="LibTorchSharp.dylib" />
+    <NativeAssemblyReferenceCpu Include="c10.dylib" />
+    <NativeAssemblyReferenceCpu Include="caffe2_detectron_ops.dylib" />
+    <NativeAssemblyReferenceCpu Include="caffe2_module_test_dynamic.dylib" />
+    <NativeAssemblyReferenceCpu Include="caffe2_observers.dylib" />
+    <NativeAssemblyReferenceCpu Include="fbjni.dylib" />
+    <NativeAssemblyReferenceCpu Include="pytorch_jni.dylib" />
+    <NativeAssemblyReferenceCpu Include="shm.dylib" />
+    <NativeAssemblyReferenceCpu Include="torch.dylib" />
+    <NativeAssemblyReferenceCpu Include="torch_cpu.dylib" />
+    <NativeAssemblyReferenceCpu Include="torch_global_deps.dylib" />
+    <NativeAssemblyReferenceCpu Include="torch_python.dylib" />
+    <NativeAssemblyReferenceCpu Include="mklml.dylib" />
+    <NativeAssemblyReferenceCpu Include="iomp5.dylib" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(TestCuda)' != 'true'">
+    <NativeAssemblyReference Include="LibTorchSharp.so" />
+    <NativeAssemblyReferenceCpu Include="c10.so" />
+    <NativeAssemblyReferenceCpu Include="caffe2_detectron_ops.so" />
+    <NativeAssemblyReferenceCpu Include="caffe2_module_test_dynamic.so" />
+    <NativeAssemblyReferenceCpu Include="caffe2_observers.so" />
+    <NativeAssemblyReferenceCpu Include="fbjni.so" />
+    <NativeAssemblyReferenceCpu Include="pytorch_jni.so" />
+    <NativeAssemblyReferenceCpu Include="shm.so" />
+    <NativeAssemblyReferenceCpu Include="torch.so" />
+    <NativeAssemblyReferenceCpu Include="torch_cpu.so" />
+    <NativeAssemblyReferenceCpu Include="torch_global_deps.so" />
+    <NativeAssemblyReferenceCpu Include="torch_python.so" />
+    <NativeAssemblyReferenceCpu Include="gomp-7c85b1e2.so.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetOS)' == 'windows' and '$(TestCuda)' == 'true'">
+    <NativeAssemblyReference Include="LibTorchSharp.dll" />
+    <NativeAssemblyReferenceCuda Include= "cudnn64_7.dll" />
+    <NativeAssemblyReferenceCuda Include= "asmjit.dll" />
+    <NativeAssemblyReferenceCuda Include= "c10.dll" />
+    <NativeAssemblyReferenceCuda Include= "c10_cuda.dll" />
+    <NativeAssemblyReferenceCuda Include= "caffe2_detectron_ops_gpu.dll" />
+    <NativeAssemblyReferenceCuda Include= "caffe2_module_test_dynamic.dll" />
+    <NativeAssemblyReferenceCuda Include= "caffe2_nvrtc.dll" />
+    <NativeAssemblyReferenceCuda Include= "cublas64_10.dll" />
+    <NativeAssemblyReferenceCuda Include= "cublasLt64_10.dll" />
+    <NativeAssemblyReferenceCuda Include= "cudart64_102.dll" />
+    <NativeAssemblyReferenceCuda Include= "cufft64_10.dll" />
+    <NativeAssemblyReferenceCuda Include= "cufftw64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include= "curand64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include= "cusparse64_10.dll"/>
+    <NativeAssemblyReferenceCuda Include= "fbgemm.dll"/>
+    <NativeAssemblyReferenceCuda Include= "libiomp5md.dll"/>
+    <NativeAssemblyReferenceCuda Include= "libiompstubs5md.dll"/>
+    <NativeAssemblyReferenceCuda Include= "nvrtc64_102_0.dll"/>
+    <NativeAssemblyReferenceCuda Include= "nvrtc-builtins64_102.dll"/>
+    <NativeAssemblyReferenceCuda Include= "nvToolsExt64_1.dll"/>
+    <NativeAssemblyReferenceCuda Include= "torch.dll"/>
+    <NativeAssemblyReferenceCuda Include= "torch.dll"/>
+    <NativeAssemblyReferenceCuda Include= "torch_global_deps.dll"/>
+    <NativeAssemblyReferenceCuda Include= "torch_cuda.dll" />
+    <NativeAssemblyReferenceCuda Include= "torch_cpu.dll" />
+
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(TestCuda)' == 'true'">
+    <NativeAssemblyReference Include="LibTorchSharp.so" />
+    <NativeAssemblyReferenceCuda Include= "libc10.so" />
+    <NativeAssemblyReferenceCuda Include= "libc10_cuda.so" />
+    <NativeAssemblyReferenceCuda Include= "libc10d_cuda_test.so" />
+    <NativeAssemblyReferenceCuda Include= "libcaffe2_detectron_ops_gpu.so" />
+    <NativeAssemblyReferenceCuda Include= "libcaffe2_module_test_dynamic.so" />
+    <NativeAssemblyReferenceCuda Include= "libcaffe2_nvrtc.so" />
+    <NativeAssemblyReferenceCuda Include= "libcaffe2_observers.so" />
+    <NativeAssemblyReferenceCuda Include= "libfbjni.so" />
+    <NativeAssemblyReferenceCuda Include= "libnvrtc-builtins.so" />
+    <NativeAssemblyReferenceCuda Include= "libpytorch_jni.so" />
+    <NativeAssemblyReferenceCuda Include= "libshm.so" />
+    <NativeAssemblyReferenceCuda Include= "libtorch.so" />
+    <NativeAssemblyReferenceCuda Include= "libtorch_cpu.so" />
+    <NativeAssemblyReferenceCuda Include= "libtorch_cuda.so" />
+    <NativeAssemblyReferenceCuda Include= "libtorch_global_deps.so"/>
+    <NativeAssemblyReferenceCuda Include= "libtorch_python.so"/>
+    <NativeAssemblyReferenceCuda Include= "libcudart-80664282.so.10.2"/>
+    <NativeAssemblyReferenceCuda Include= "libnvrtc-08c4863f.so.10.2"/>
+    <NativeAssemblyReferenceCuda Include= "libgomp-7c85b1e2.so.1"/>
+    <NativeAssemblyReferenceCuda Include= "libnvToolsExt-3965bdd0.so.1"/>
+
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Coverage)' == 'true'">
+      <CollectCoverage>true</CollectCoverage>
+      <SingleHit>true</SingleHit>
+      <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> <!-- https://github.com/tonerdo/coverlet/issues/72 -->
+      <CoverletOutputFormat>opencover</CoverletOutputFormat>
+      <CoverletOutput>$(BaseOutputPath)$(PlatformConfig)\coverage\$(MSBuildProjectName).coverage</CoverletOutput>
+      <Include>[Microsoft.ML.*]*</Include>
+      <!-- Excluding for perf reasons. These classes have tests that can be run conditionally
+           but they need to be migrated. Excluding these classes should have very minimal effect on code coverage.
+      -->
+      <ExcludeByAttribute>Obsolete,ExcludeFromCodeCoverage</ExcludeByAttribute>
+  </PropertyGroup>
+
   <Import Project="..\Directory.Build.targets" />
+
 
   <PropertyGroup>
     <!-- This needs to be in Directory.Build.targets or the default value for AllowedReferenceRelatedFileExtensions will not be applied. 
          This is required in order to have following extension files in the output folder of the projects referencing other projects. -->
     <AllowedReferenceRelatedFileExtensions>$(AllowedReferenceRelatedFileExtensions);.runtimeconfig.json;.runtimeconfig.dev.json;.deps.json</AllowedReferenceRelatedFileExtensions>  
   </PropertyGroup>
+
 
 </Project>

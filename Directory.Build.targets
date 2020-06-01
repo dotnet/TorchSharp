@@ -17,17 +17,25 @@
 
     <ItemGroup>
       <NativeAssemblyReference>
-        <FullAssemblyPath>$(NativeOutputPath)$(NativeLibPrefix)%(NativeAssemblyReference.Identity)$(NativeLibExtension)%(NativeAssemblyReference.ExtraExtension)</FullAssemblyPath>
+        <FullAssemblyPath>$(NativeAssetsBuiltPath)$(NativeLibPrefix)%(NativeAssemblyReference.Identity)</FullAssemblyPath>
       </NativeAssemblyReference>
+      <NativeAssemblyReferenceCpu>
+        <FullAssemblyPath>$(NativeAssetsBuiltPathCpu)$(NativeLibPrefix)%(NativeAssemblyReferenceCpu.Identity)</FullAssemblyPath>
+      </NativeAssemblyReferenceCpu>
+      <NativeAssemblyReferenceCuda>
+        <FullAssemblyPath>$(NativeAssetsBuiltPathCuda)$(NativeLibPrefix)%(NativeAssemblyReferenceCuda.Identity)</FullAssemblyPath>
+      </NativeAssemblyReferenceCuda>
     </ItemGroup>
 
-    <Copy SourceFiles = "@(NativeAssemblyReference->'%(FullAssemblyPath)')"
-          DestinationFolder="$(OutputPath)"
-          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
-          Retries="$(CopyRetryCount)"
-          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
-          UseHardlinksIfPossible="$(CreateHardLinksForPublishFilesIfPossible)"
-          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">
+    <Copy SourceFiles = "@(NativeAssemblyReference->'%(FullAssemblyPath)')" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+    </Copy>
+
+    <Copy SourceFiles = "@(NativeAssemblyReferenceCpu->'%(FullAssemblyPath)')" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+    </Copy>
+
+    <Copy SourceFiles = "@(NativeAssemblyReferenceCuda->'%(FullAssemblyPath)')" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true">
       <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
     </Copy>
 

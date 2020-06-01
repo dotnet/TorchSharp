@@ -60,7 +60,9 @@
     <!-- on windows separate debug binaries of LibTorch are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
 
-    <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
+    <NativeAssetsBuiltPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeAssetsBuiltPath>
+    <NativeAssetsBuiltPathCpu>$(NativeAssetsBuiltPath)cpu\</NativeAssetsBuiltPathCpu>
+    <NativeAssetsBuiltPathCuda>$(NativeAssetsBuiltPath)cuda\</NativeAssetsBuiltPathCuda>
 
     <!-- Input Directories -->
     <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>

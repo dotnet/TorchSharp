@@ -241,7 +241,7 @@
       <!-- copy to NativeAssets location, only for current RID, so that they may be used by tests -->
       <FilesFromArchive Condition="'$(PackageRID)' == '%(_fileFromArchive.Runtime)'"
                         Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
-                        TargetPath="$(NativeAssetsBuiltPath)\%(_fileFromArchive.DestinationFile)" />
+                        TargetPath="$(NativeAssetsBuiltPathCpu)\%(_fileFromArchive.DestinationFile)" />
 
       <!-- copy mkldnn -->
     </ItemGroup>
