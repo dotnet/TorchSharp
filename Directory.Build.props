@@ -88,7 +88,7 @@
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
   <PropertyGroup>
-    <BuildLibTorchPackages>true</BuildLibTorchPackages>
+    <BuildLibTorchPackages>false</BuildLibTorchPackages>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
