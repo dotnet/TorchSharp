@@ -10,13 +10,13 @@
 
     <ItemGroup>
       <NativeAssemblyReference>
-        <FullAssemblyPath>$(NativeAssetsBuiltPath)$(NativeLibPrefix)%(NativeAssemblyReference.Identity)</FullAssemblyPath>
+        <FullAssemblyPath>$(NativeAssetsBuiltPath)%(NativeAssemblyReference.Identity)</FullAssemblyPath>
       </NativeAssemblyReference>
       <NativeAssemblyReferenceCpu>
-        <FullAssemblyPath>$(NativeAssetsBuiltPathCpu)$(NativeLibPrefix)%(NativeAssemblyReferenceCpu.Identity)</FullAssemblyPath>
+        <FullAssemblyPath>$(NativeAssetsBuiltPathCpu)%(NativeAssemblyReferenceCpu.Identity)</FullAssemblyPath>
       </NativeAssemblyReferenceCpu>
       <NativeAssemblyReferenceCuda>
-        <FullAssemblyPath>$(NativeAssetsBuiltPathCuda)$(NativeLibPrefix)%(NativeAssemblyReferenceCuda.Identity)</FullAssemblyPath>
+        <FullAssemblyPath>$(NativeAssetsBuiltPathCuda)%(NativeAssemblyReferenceCuda.Identity)</FullAssemblyPath>
       </NativeAssemblyReferenceCuda>
     </ItemGroup>
 
