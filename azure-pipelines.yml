@@ -20,8 +20,8 @@ jobs:
   parameters:
     name: Ubuntu_x64_NetCoreApp30
     prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
-    buildScript: ./build.sh build /p:SkipCuda=true -c 
-    testScript: ./build.sh test /p:SkipCuda=true -c 
+    buildScript: ./build.sh build -c 
+    testScript: ./build.sh test -c 
     pool:
       vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
@@ -30,8 +30,8 @@ jobs:
 #   parameters:
 #     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
 #     name: MacOS_x64_NetCoreApp30
-#     buildScript: ./build.sh build /p:SkipCuda=true -c 
-#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     buildScript: ./build.sh build -c 
+#     testScript: ./build.sh test -c 
 #     pool:
 #       vmImage: 'macos-10.15'
 
@@ -39,8 +39,8 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCoreApp30
-    buildScript: build.cmd  build  /p:SkipCuda=true -c 
-    testScript: build.cmd test /p:SkipCuda=true -c 
+    buildScript: build.cmd  build  -c 
+    testScript: build.cmd test -c 
     pool:
       vmImage: 'windows-2019'
 
@@ -198,209 +198,209 @@ jobs:
       allowPackageConflicts: true
     continueOnError: true
 
-  # # push the CPU runtime packages
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (libtorch-cpu)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #   continueOnError: true
+  # push the CPU runtime packages
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (libtorch-cpu)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+    continueOnError: true
 
-  # # push the CPU runtime packages (retry - we get so many failures!)
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (libtorch-cpu - retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #   continueOnError: true
+  # push the CPU runtime packages (retry - we get so many failures!)
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (libtorch-cpu - retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+    continueOnError: true
 
-  # # push the CPU runtime packages (retry - we get so many failures!)
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (libtorch-cpu - retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #   continueOnError: true
+  # push the CPU runtime packages (retry - we get so many failures!)
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (libtorch-cpu - retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+    continueOnError: true
 
-  # # push the CPU runtime packages (retry - we get so many failures!)
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (libtorch-cpu - retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #   continueOnError: true
+  # push the CPU runtime packages (retry - we get so many failures!)
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (libtorch-cpu - retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+    continueOnError: true
 
-  # # push the CPU runtime packages (retry - we get so many failures!)
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (libtorch-cpu - retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #   continueOnError: true
+  # push the CPU runtime packages (retry - we get so many failures!)
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (libtorch-cpu - retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+    continueOnError: true
 
-  # # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda win-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda win-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda win-x64 retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda win-x64 retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda win-x64 retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda win-x64 retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda win-x64 retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda win-x64 retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda win-x64 retry)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda win-x64 retry)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
-  # # push the Linux Cuda packages 
-  # - task: NuGetCommand@2
-  #   displayName: 'NuGet push (cuda linux-x64)'
-  #   inputs:
-  #     command: push
-  #     packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-  #     publishVstsFeed: 'TorchSharp/packages2'
-  #     allowPackageConflicts: true
-  #     # often fails - try but ignore the error until we sort it out
-  #   continueOnError: true
+  # push the Linux Cuda packages 
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (cuda linux-x64)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      publishVstsFeed: 'TorchSharp/packages2'
+      allowPackageConflicts: true
+      # often fails - try but ignore the error until we sort it out
+    continueOnError: true
 
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown

@@ -102,7 +102,7 @@ Building packages
 
 The managed package can be built with `dotnet pack`, e.g.
 
-    dotnet pack /p:SkipCuda=true
+    dotnet pack
 
 Locally built packages have names like this, names update every day.  If repeatedly rebuilding them locally you may have to remove them
 from your local `.nuget` package cache.
