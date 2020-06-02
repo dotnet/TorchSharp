@@ -155,6 +155,10 @@ of the unzip of the archive, e.g.
 
      bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
 
+To publish packages:
+
+    set APIKEY= ...
+    c:\bin\nuget.exe push %USERPROFILE%\Downloads\*.nupkg %APIKEY% -Timeout 30000 -Source https://www.nuget.org/api/v2
 
 Updating package version for new release
 -----------------------------
