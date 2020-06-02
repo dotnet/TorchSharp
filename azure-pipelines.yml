@@ -402,6 +402,177 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
+
+
+
+
+  ###############################################################
+  # push to nuget.org (normally disabled)
+  ################################################################
+  - task: NuGetAuthenticate@0
+    inputs:
+      nuGetServiceConnections: 'nugetorg'
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      allowPackageConflicts: true
+    continueOnError: true
+
   # Terminate all dotnet build processes.
   - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
     displayName: Dotnet Server Shutdown
