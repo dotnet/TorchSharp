@@ -57,6 +57,9 @@ EXPORT_API(void)     THSNN_Linear_set_weight(const NNModule module, const Tensor
 EXPORT_API(NNModule) THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_ReLU_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(NNModule) THSNN_LogSoftMax_ctor(int64_t dim, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_LogSoftMax_forward(const NNModule module, const Tensor tensor);
+
 EXPORT_API(NNModule) THSNN_Sequential_ctor();
 EXPORT_API(void)     THSNN_Sequential_push_back(const NNModule module, const char* name, const NNAnyModule submodule);
 EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tensor tensor);
