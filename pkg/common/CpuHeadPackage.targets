@@ -1,0 +1,10 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="CheckOneTorchSharpRuntime"
+    AfterTargets="ResolveReferences"
+    BeforeTargets="PrepareForBuild">
+    <Error Text="Two TorchSharp runtime packages have been referenced (both libtorch-cpu and libtorch-cuda)" Condition="'$(TorchSharpCudaPackage)' == 'true' AND '$(TorchSharpCpuPackage)' == 'true'" />
+  </Target>
+
+
+</Project>
