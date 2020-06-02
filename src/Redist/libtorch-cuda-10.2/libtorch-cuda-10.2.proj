@@ -171,19 +171,35 @@
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
-if (Size == -1)
-    Size = System.Int32.MaxValue;
-byte[] srcBytes = File.ReadAllBytes(SourceFile);
-if (Start !=  0)
-    DestinationFolder = DestinationFolder.Replace("runtimes","fragments");
-Directory.CreateDirectory(DestinationFolder);
-string outfile = Path.Combine(DestinationFolder, name);
-Size = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
-var outBytes = new byte[Size];
-if (Size > 0)
-    Array.Copy(srcBytes, Start, outBytes, 0, Size);
-File.WriteAllBytes(outfile, outBytes);
+            string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
+            if (Size == -1)
+                Size = System.Int32.MaxValue;
+            byte[] srcBytes = File.ReadAllBytes(SourceFile);
+            if (Start != 0)
+                DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
+            Directory.CreateDirectory(DestinationFolder);
+            string outfile = Path.Combine(DestinationFolder, name);
+            Size = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
+            var outBytes = new byte[Size];
+            if (Size > 0)
+                Array.Copy(srcBytes, Start, outBytes, 0, Size);
+            File.WriteAllBytes(outfile, outBytes);
+            if (Start == 0)
+            {
+                using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
+                {
+                    byte[] bytes = sha256Hash.ComputeHash(srcBytes);
+                    var builder = new System.Text.StringBuilder();
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        builder.Append(bytes[i].ToString("x2"));
+                    }
+                    var sha = builder.ToString();
+                    string shaFileName = Path.Combine(DestinationFolder, Path.GetFileName(SourceFile) + ".sha");
+                    File.WriteAllText(shaFileName, sha);
+
+                }
+            }
 ]]>
       </Code>
     </Task>

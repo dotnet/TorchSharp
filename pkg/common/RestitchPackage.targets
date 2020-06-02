@@ -30,6 +30,7 @@
                     //        some-package-fragment1\fragments\....\a.so 
                     //        some-package-fragment2\fragments\....\a.so 
                     //        some-package-fragment3\fragments\....\a.so 
+                    var shaFile = primaryFile + ".sha";
                     var fragmentFile1 = primaryFile.Replace("-primary", "-fragment1").Replace("runtimes", "fragments") + ".fragment1";
                     var fragmentFile2 = primaryFile.Replace("-primary", "-fragment2").Replace("runtimes", "fragments") + ".fragment2";
                     var fragmentFile3 = primaryFile.Replace("-primary", "-fragment3").Replace("runtimes", "fragments") + ".fragment3";
@@ -49,6 +50,31 @@
                         Array.Copy(fragmentBytes1, 0, outputBytes, primaryBytes.Length, fragmentBytes1.Length);
                         Array.Copy(fragmentBytes2, 0, outputBytes, primaryBytes.Length + fragmentBytes1.Length, fragmentBytes2.Length);
                         Array.Copy(fragmentBytes3, 0, outputBytes, primaryBytes.Length + fragmentBytes1.Length + fragmentBytes2.Length, fragmentBytes3.Length);
+
+                        var shaExpected = File.ReadAllText(shaFile);
+
+                        using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
+                        {
+                            byte[] bytes = sha256Hash.ComputeHash(outputBytes);
+                            var builder = new System.Text.StringBuilder();
+                            for (int i = 0; i < bytes.Length; i++)
+                            {
+                                builder.Append(bytes[i].ToString("x2"));
+                            }
+                            var shaReconstituted = builder.ToString();
+                            if (shaExpected != shaReconstituted)
+                            {
+                                string msg =
+                                        $"Error downloading and reviving packages. Reconsituted file contents have incorrect SHA\n\tExpected SHA: ${shaExpected}\n\tActual SHA: ${shaReconstituted}\n\tFile was reconstituted from:"
+                                      + $"\n\t{primaryFile} (length ${primaryBytes.Length})"
+                                      + (File.Exists(fragmentFile1) ? $"\n\t{fragmentFile1} (length ${fragmentBytes1.Length})" : "")
+                                      + (File.Exists(fragmentFile2) ? $"\n\t{fragmentFile2} (length ${fragmentBytes2.Length})" : "")
+                                      + (File.Exists(fragmentFile3) ? $"\n\t{fragmentFile3} (length ${fragmentBytes3.Length})" : "");
+                                Console.Error.WriteLine(msg);
+                                throw new Exception(msg);
+                            }
+
+                        }
 
                         var tmpFile = Path.GetTempFileName();
                         Console.WriteLine("Writing restored primary file at {0}", tmpFile);
