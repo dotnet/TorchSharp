@@ -186,6 +186,8 @@ jobs:
   
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
+    inputs:
+      nuGetServiceConnections: 'nugetorg'
 
   # Doing these one by one as we're getting a lot of failurs pushing them
   # push the TorchSharp 
@@ -409,9 +411,6 @@ jobs:
   ###############################################################
   # push to nuget.org (normally disabled)
   ################################################################
-  - task: NuGetAuthenticate@0
-    inputs:
-      nuGetServiceConnections: 'nugetorg'
 
   - task: NuGetCommand@2
     inputs:
