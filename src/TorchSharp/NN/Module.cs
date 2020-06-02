@@ -91,15 +91,6 @@ namespace TorchSharp.NN
                 handle.SetHandleAsInvalid ();
             }
         }
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
-
-        public static Module Load(String location)
-        {
-            var handle = THSNN_Module_load (location);
-            Torch.CheckForErrors ();
-            return new Module (handle, IntPtr.Zero);
-        }
 
         [DllImport ("LibTorchSharp")]
         extern static void THSNN_Module_save (HType handle, [MarshalAs(UnmanagedType.LPStr)] string location);

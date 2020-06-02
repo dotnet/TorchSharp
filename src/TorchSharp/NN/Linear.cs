@@ -11,13 +11,6 @@ namespace TorchSharp.NN
     {
         internal Linear (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
-        public new static Linear Load (String modelPath)
-        {
-            var res = Module.Load (modelPath);
-            Torch.CheckForErrors ();
-            return new Linear (res.handle.DangerousGetHandle(), IntPtr.Zero);
-        }
-
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Linear_forward (Module.HType module, IntPtr tensor);
 
