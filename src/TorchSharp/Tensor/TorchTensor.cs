@@ -256,6 +256,26 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_load([MarshalAs(UnmanagedType.LPStr)] string location);
+
+        public static TorchTensor Load(string location)
+        {
+            var res = THSTensor_load(location);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_save(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string location);
+
+        public TorchTensor Save(string location)
+        {
+            var res = THSTensor_save(handle, location);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern bool THSTensor_requires_grad(IntPtr handle);
 
         public bool IsGradRequired => THSTensor_requires_grad(handle);

@@ -377,6 +377,23 @@ Tensor THSTensor_cuda(const Tensor tensor)
     CATCH_TENSOR(tensor->cuda());
 }
 
+Tensor THSTensor_load(const char* location)
+{
+    CATCH_RETURN_Tensor(
+        torch::Tensor tensor;
+        torch::load(tensor, location);
+        res = ResultTensor(tensor);
+    );
+}
+
+void THSTensor_save(const Tensor tensor, const char* location)
+{
+    CATCH(
+        torch::save(*tensor, location);
+    );
+}
+
+
 Tensor THSTensor_grad(const Tensor tensor)
 {
     Tensor res;
