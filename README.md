@@ -165,6 +165,15 @@ For this reason, we do the following
    [this manually invoked release pipeline](https://donsyme.visualstudio.com/TorchSharp/_release?_a=releases&view=mine&definitionId=1) in
    Azure DevOps CI (so they don't have to be manually downloaded and pushed to `nuget.org`)
 
+   a. [Go to release pipeline](https://donsyme.visualstudio.com/TorchSharp/_release?_a=releases&view=mine&definitionId=1)
+
+   b. Press 'New Release'
+
+   c. Select the successful master CI build that includes the `libtorch` packages, create the release and wait for it to finish. You should
+      see `Initialize job`, `Download artifact - _xamarin.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
+
+   d. All packages should now be pushed to `nuget.org` and will appear after indexing.
+
 
 ### Updating PyTorch version for libtorch packages
 
