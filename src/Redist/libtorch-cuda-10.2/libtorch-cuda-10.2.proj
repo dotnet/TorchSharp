@@ -30,8 +30,8 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="500000000" />
-    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileUnstitchIndex="1" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\cudnn64_7.dll"  PackageSuffix="part1-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part2" />
@@ -59,8 +59,8 @@
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="400000000" />
-    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="400000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part5" />
 
@@ -82,10 +82,10 @@
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileUnstitchIndex="3" FileUnstitchStart="900000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part2-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
