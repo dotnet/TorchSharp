@@ -311,8 +311,8 @@ namespace TorchSharp.Test
                 Assert.True(sparse.IsSparse);
                 Assert.False(i.IsSparse);
                 Assert.False(v.IsSparse);
-                Assert.Equal(sparse.Indices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
-                Assert.Equal(sparse.Values.Data<float>().ToArray(), new float[] { 3, 4, 5 });
+                Assert.Equal(sparse.SparseIndices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+                Assert.Equal(sparse.SparseValues.Data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
         }
 
@@ -1006,6 +1006,34 @@ namespace TorchSharp.Test
             }
         }
 
+
+        [Fact]
+        public void TestSaveLoadTensorDouble()
+        {
+            var file = ".saveload.double.ts";
+            if (File.Exists(file)) File.Delete(file);
+            var tensor = DoubleTensor.Ones(new long[] { 5, 6 });
+            tensor.Save(file);
+            var tensorLoaded = TorchTensor.Load(file);
+            File.Delete(file);
+            Assert.NotNull(tensorLoaded);
+            Assert.Equal(tensorLoaded.Type, tensor.Type);
+            Assert.Equal(tensorLoaded, tensor);
+        }
+
+        [Fact]
+        public void TestSaveLoadTensorFloat()
+        {
+            var file = ".saveload.float.ts";
+            if (File.Exists(file)) File.Delete(file);
+            var tensor = FloatTensor.Ones(new long[] { 5, 6 });
+            tensor.Save(file);
+            var tensorLoaded = TorchTensor.Load(file);
+            File.Delete(file);
+            Assert.NotNull(tensorLoaded);
+            Assert.Equal(tensorLoaded.Type, tensor.Type);
+            Assert.Equal(tensorLoaded, tensor);
+        }
 
         [Fact]
         public void TestSaveLoadLinear()

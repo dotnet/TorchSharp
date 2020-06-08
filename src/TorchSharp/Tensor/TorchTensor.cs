@@ -19,7 +19,8 @@ namespace TorchSharp.Tensor
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            return (obj is TorchTensor) && this.Equal((obj as TorchTensor)!);
+
         }
 
         public override int GetHashCode()
@@ -95,7 +96,10 @@ namespace TorchSharp.Tensor
             }
             unsafe
             {
-                return new Span<T>((void*)THSTensor_data(handle), (int)NumberOfElements);
+                var res = THSTensor_data(handle);
+                Torch.CheckForErrors();
+                // NOTE: there is no safety here.
+                return new Span<T>((void*)res, (int)NumberOfElements);
             }
         }
 
@@ -270,11 +274,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_save(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string location);
 
-        public TorchTensor Save(string location)
+        public void Save(string location)
         {
-            var res = THSTensor_save(handle, location);
+            THSTensor_save(handle, location);
             Torch.CheckForErrors();
-            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
@@ -372,7 +375,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_indices(IntPtr handle);
 
-        public TorchTensor Indices {
+        public TorchTensor SparseIndices {
             get {
                 var res = THSTensor_indices(handle);
                 Torch.CheckForErrors();
@@ -383,7 +386,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_values(IntPtr handle);
 
-        public TorchTensor Values {
+        public TorchTensor SparseValues {
             get {
                 var res = THSTensor_values(handle);
                 Torch.CheckForErrors();
