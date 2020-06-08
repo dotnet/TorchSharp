@@ -29,4 +29,4 @@ EXPORT_API(Scalar) THSTorch_half_to_scalar(c10::Half value);
 //EXPORT_API(Scalar) THSTorch_complex64_to_scalar(std::complex<double> value);
 
 // Dispose the scalar.
-EXPORT_API(void) THSThorch_dispose_scalar(Scalar scalar);
+EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);

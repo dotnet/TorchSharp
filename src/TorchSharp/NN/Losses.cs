@@ -3,6 +3,8 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
+#nullable enable
+
 namespace TorchSharp.NN
 {
     public delegate TorchTensor Loss (TorchTensor source, TorchTensor target);

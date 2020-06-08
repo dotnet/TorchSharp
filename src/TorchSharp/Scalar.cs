@@ -62,9 +62,12 @@ namespace TorchSharp
         {
             return value.ToScalar();
         }
+
         /// <summary>
-        ///   Releases the storage.
+        ///   Finalize the tensor. Releases the tensor and its associated data.
         /// </summary>
+        ~Scalar() => Dispose(false);
+ 
         public void Dispose()
         {
             Dispose(true);
@@ -72,16 +75,15 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void THSThorch_dispose_scalar(IntPtr handle);
+        extern static void THSTorch_dispose_scalar(IntPtr handle);
 
         /// <summary>
         ///   Implements the .NET Dispose pattern.
         /// </summary>
-        internal void Dispose(bool disposing)
+        void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                THSThorch_dispose_scalar(Handle);
+            if (Handle != IntPtr.Zero) {
+                THSTorch_dispose_scalar(Handle);
                 Handle = IntPtr.Zero;
             }
         }
