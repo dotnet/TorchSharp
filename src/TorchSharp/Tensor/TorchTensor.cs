@@ -1726,6 +1726,91 @@ namespace TorchSharp.Tensor
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_bernoulli(IntPtr src, double p);
+
+        public TorchTensor Bernoulli(double p)
+        {
+            var res = THSTensor_bernoulli(handle, p);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_bernoulli_(IntPtr src, double p);
+
+        public TorchTensor BernoulliInPlace(double p)
+        {
+            var res = THSTensor_bernoulli_(handle, p);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_cauchy_(IntPtr src, double median, double sigma);
+
+        public TorchTensor CauchyInPlace(double median = 0.0, double sigma = 1.0)
+        {
+            var res = THSTensor_cauchy_(handle, median, sigma);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_exponential_(IntPtr src, double lambd);
+
+        public TorchTensor ExponentialInPlace(double lambd = 1.0)
+        {
+            var res = THSTensor_exponential_(handle, lambd);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_geometric_(IntPtr src, double p);
+
+        public TorchTensor GeometricInPlace(double p)
+        {
+            var res = THSTensor_geometric_(handle, p);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_log_normal_(IntPtr src, double mean, double std);
+
+        public TorchTensor LogNormalInPlace(double mean = 1.0, double std = 2.0)
+        {
+            var res = THSTensor_log_normal_(handle, mean, std);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_normal_(IntPtr src, double mean, double std);
+
+        public TorchTensor NormalInPlace(double mean = 0.0, double std = 1.0)
+        {
+            var res = THSTensor_normal_(handle, mean, std);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_uniform_(IntPtr src, double from, double to);
+
+        public TorchTensor UniformInPlace(double from = 0.0, double to = 1.0)
+        {
+            var res = THSTensor_uniform_(handle, from, to);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_multinomial(IntPtr src, double num_samples, bool replacement);
+
+        public TorchTensor Multinomial(double num_samples, bool replacement = false)
+        {
+            var res = THSTensor_multinomial(handle, num_samples, replacement);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_expand(IntPtr src, IntPtr psizes, int length, bool isImplicit);
