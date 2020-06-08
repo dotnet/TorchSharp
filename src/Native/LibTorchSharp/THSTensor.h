@@ -712,6 +712,12 @@ EXPORT_API(Tensor) THSTensor_gather(
     const int64_t dimension,
     const Tensor index);
 
+EXPORT_API(Tensor) THSTensor_scatter(
+    const Tensor tensor,
+    const int64_t dimension,
+    const Tensor index,
+    const Tensor source);
+
 EXPORT_API(Tensor) THSTensor_load(const char* location);
 
 EXPORT_API(void) THSTensor_save(const Tensor tensor, const char* location);
