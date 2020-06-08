@@ -305,7 +305,7 @@ namespace TorchSharp.Tensor
         {
             var res = THSTensor_size(handle, dim);
             Torch.CheckForErrors();
-            return THSTensor_size(handle, dim);
+            return res;
         }
 
         /// <summary>
@@ -350,12 +350,24 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_indices(IntPtr handle);
 
-        public TorchTensor Indices => new TorchTensor(THSTensor_indices(handle));
+        public TorchTensor Indices {
+            get {
+                var res = THSTensor_indices(handle);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_values(IntPtr handle);
 
-        public TorchTensor Values => new TorchTensor(THSTensor_values(handle));
+        public TorchTensor Values {
+            get {
+                var res = THSTensor_values(handle);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         private static extern long THSTensor_stride(IntPtr handle, long dimension);
@@ -365,7 +377,9 @@ namespace TorchSharp.Tensor
         /// </summary>
         public long GetTensorStride(int dim)
         {
-            return THSTensor_stride(handle, dim);
+            var res = THSTensor_stride(handle, dim);
+            Torch.CheckForErrors();
+            return res;
         }
 
         [DllImport("LibTorchSharp")]
@@ -392,7 +406,9 @@ namespace TorchSharp.Tensor
 
         public TorchTensor Clone()
         {
-            return new TorchTensor(THSTensor_clone(handle));
+            var res = THSTensor_clone(handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
