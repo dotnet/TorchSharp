@@ -1819,7 +1819,7 @@ namespace TorchSharp.Tensor
             var strides = new long[] { stride ?? 1 };
             var paddingArray = new long[] { padding ?? 0 }; 
             var dilationArray = new long[] { dilation ?? 1 };
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = paddingArray, pdilation = dilationArray)
@@ -1853,7 +1853,7 @@ namespace TorchSharp.Tensor
             strides = (strides == null) ? new long[] { 1 } : strides;
             padding = (padding == null) ? new long[] { 0 } : padding;
             dilation = (dilation == null) ? new long[] { 1 } : dilation;
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation)
@@ -1886,7 +1886,7 @@ namespace TorchSharp.Tensor
             strides = (strides == null) ? new long[] { 1 } : strides;
             padding = (padding == null) ? new long[] { 0 } : padding;
             dilation = (dilation == null) ? new long[] { 1 } : dilation;
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation)
@@ -1922,7 +1922,7 @@ namespace TorchSharp.Tensor
             var paddings = new long[] { padding ?? 0 };
             var outputPaddings = new long[] { outputPadding ?? 0 };
             var dilations = new long[] { dilation ?? 1 };
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = paddings, poutputPadding = outputPaddings, pdilation = dilations)
@@ -1959,7 +1959,7 @@ namespace TorchSharp.Tensor
             padding = (padding == null) ? new long[] { 0, 0 } : padding;
             outputPadding = (outputPadding == null) ? new long[] { 0, 0 } : outputPadding;
             dilation = (dilation == null) ? new long[] { 1, 1 } : dilation;
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation)
@@ -1996,7 +1996,7 @@ namespace TorchSharp.Tensor
             padding = (padding == null) ? new long[] { 0, 0, 0 } : padding;
             outputPadding = (outputPadding == null) ? new long[] { 0, 0, 0 } : outputPadding;
             dilation = (dilation == null) ? new long[] { 1, 1, 1 } : dilation;
-            var biasHandle = ((object?)bias != null ? bias.Handle : IntPtr.Zero);
+            var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
             unsafe
             {
                 fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation)

@@ -458,7 +458,7 @@ namespace TorchSharp.Test
             var ps = lin.GetParameters();
             var nps = ps.Length;
             Assert.Equal(1, nps);
-            Assert.True((object?)lin.Bias == null);
+            Assert.True(lin.Bias is null);
 
             var lin2 = Linear(1000, 100, true);
             Assert.True(!(lin2.Bias is null));

@@ -40,7 +40,7 @@ namespace TorchSharp.NN
                 return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
             }
             set {
-                THSNN_Linear_set_bias (handle, (((object?)value != null) ? value.Handle : IntPtr.Zero));
+                THSNN_Linear_set_bias (handle, (value is null ? IntPtr.Zero : value.Handle));
                 Torch.CheckForErrors ();
             }
         }
