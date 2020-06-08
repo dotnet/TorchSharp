@@ -966,6 +966,39 @@ namespace TorchSharp.Test
                 }
             }
         }
+
+        [Fact]
+        public void TestMemoryDisposalZeros()
+        {
+            for (int i = 0; i < 1024; i++) {
+                var x = DoubleTensor.Zeros(new long[] { 1024, 1024 });
+                x.Dispose();
+                //System.GC.Collect();
+            }
+        }
+
+        [Fact]
+        public void TestMemoryDisposalOnes()
+        {
+            for (int i = 0; i < 1024; i++) {
+                var x = DoubleTensor.Ones(new long[] { 1024, 1024 });
+                x.Dispose();
+            }
+        }
+
+        [Fact]
+        public void TestMemoryDisposalScalars()
+        {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 1000 * 100; j++) {
+                    var x = DoubleTensor.From(i * j * 3.1415);
+                    x.Dispose();
+                }
+                //System.GC.Collect();
+            }
+        }
+
+
         [Fact]
         public void TestSaveLoadLinear()
         {
