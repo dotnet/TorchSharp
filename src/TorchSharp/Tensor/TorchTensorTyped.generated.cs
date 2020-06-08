@@ -35,6 +35,19 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Byte, device, requiresGrad));
         }
 		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Byte, device, requiresGrad));
+        }
+		
 		[DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
@@ -196,6 +209,19 @@ namespace TorchSharp.Tensor {
             TorchTensor.CheckForCUDA (device);
 
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.SByte, device, requiresGrad));
+        }
+		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.SByte, device, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -361,6 +387,19 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Short, device, requiresGrad));
         }
 		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Short, device, requiresGrad));
+        }
+		
 		[DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
@@ -522,6 +561,19 @@ namespace TorchSharp.Tensor {
             TorchTensor.CheckForCUDA (device);
 
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Int, device, requiresGrad));
+        }
+		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Int, device, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -687,6 +739,19 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Long, device, requiresGrad));
         }
 		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Long, device, requiresGrad));
+        }
+		
 		[DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
@@ -850,6 +915,19 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Half, device, requiresGrad));
         }
 		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, device, requiresGrad));
+        }
+		
 		[DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
@@ -1011,6 +1089,19 @@ namespace TorchSharp.Tensor {
             TorchTensor.CheckForCUDA (device);
 
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Float, device, requiresGrad));
+        }
+		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float, device, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -1213,6 +1304,19 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Double, device, requiresGrad));
         }
 		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Double, device, requiresGrad));
+        }
+		
 		[DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
 
@@ -1411,6 +1515,19 @@ namespace TorchSharp.Tensor {
             TorchTensor.CheckForCUDA (device);
 
             return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.Bool, device, requiresGrad));
+        }
+		
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+
+        /// <summary>
+        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        {
+            TorchTensor.CheckForCUDA (device);
+
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Bool, device, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]

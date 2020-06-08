@@ -562,6 +562,70 @@ Tensor THSTensor_relu_(const Tensor tensor)
     CATCH_TENSOR(tensor->relu_());
 }
 
+Tensor THSTensor_bernoulli(const Tensor tensor, const double p)
+{
+    CATCH_TENSOR(tensor->bernoulli(p));
+}
+
+Tensor THSTensor_bernoulli_(const Tensor tensor, const double p)
+{
+    CATCH_TENSOR(tensor->bernoulli_(p));
+}
+
+Tensor THSTensor_cauchy_(const Tensor tensor, const double median, const double sigma)
+{
+    CATCH_TENSOR(tensor->cauchy_(median, sigma));
+}
+
+Tensor THSTensor_exponential_(const Tensor tensor, const double lambd)
+{
+    CATCH_TENSOR(tensor->exponential_(lambd));
+}
+
+Tensor THSTensor_geometric_(const Tensor tensor, const double p)
+{
+    CATCH_TENSOR(tensor->geometric_(p));
+}
+
+Tensor THSTensor_log_normal_(const Tensor tensor, const double mean, const double std)
+{
+    CATCH_TENSOR(tensor->log_normal_(mean, std));
+}
+
+Tensor THSTensor_normal_(const Tensor tensor, const double mean, const double std)
+{
+    CATCH_TENSOR(tensor->normal_(mean, std));
+}
+
+Tensor THSTensor_uniform_(const Tensor tensor, const double from, const double to)
+{
+    CATCH_TENSOR(tensor->uniform_(from, to));
+}
+
+Tensor THSTensor_randperm(const int64_t n,
+    const int8_t scalar_type,
+    const char * device,
+    const bool requires_grad)
+{
+    Tensor tensor;
+    CATCH(
+        auto options =
+            at::TensorOptions()
+            .dtype(at::ScalarType(scalar_type))
+            .device(device)
+            .requires_grad(requires_grad);
+
+        tensor = new torch::Tensor(torch::randperm(n, options));
+    )
+    return tensor;
+}
+
+Tensor THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement)
+{
+    CATCH_TENSOR(tensor->multinomial(num_samples, replacement));
+}
+
+
 Tensor THSTensor_acos(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->acos());
