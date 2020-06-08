@@ -11,6 +11,8 @@ using static TorchSharp.NN.Functions;
 using TorchSharp.Tensor;
 using Xunit;
 
+#nullable enable
+
 namespace TorchSharp.Test
 {
     public class TorchSharp
@@ -139,16 +141,10 @@ namespace TorchSharp.Test
         [Fact]
         public void CreateFloatTensorFromData2()
         {
-            CreateFloatTensorFromData2Generic<float>();
-        }
+            var data = new float[1000];
 
-        private static void CreateFloatTensorFromData2Generic<T>()
-        {
-            var data = new T[1000];
-
-            using (var tensor = data.ToTorchTensor(new long[] { 10, 100 }))
-            {
-                Assert.Equal(default(T), tensor.Data<T>()[100]);
+            using (var tensor = data.ToTorchTensor(new long[] { 10, 100 })) {
+                Assert.Equal(default(float), tensor.Data<float>()[100]);
             }
         }
 
@@ -448,7 +444,7 @@ namespace TorchSharp.Test
         {
             var lin = Linear(1000, 100);
             Assert.NotNull(lin);
-            Assert.True(lin.Bias.HasValue);
+            Assert.True(!(lin.Bias is null));
             //var name = lin.GetName();
 
             var ps = lin.GetParameters();
@@ -462,10 +458,10 @@ namespace TorchSharp.Test
             var ps = lin.GetParameters();
             var nps = ps.Length;
             Assert.Equal(1, nps);
-            Assert.True(lin.Bias == null);
+            Assert.True(lin.Bias is null);
 
             var lin2 = Linear(1000, 100, true);
-            Assert.True(lin2.Bias != null);
+            Assert.True(!(lin2.Bias is null));
         }
 
         [Fact]
@@ -474,7 +470,7 @@ namespace TorchSharp.Test
             var lin = Linear(1000, 100, true);
             var bias = FloatTensor.Ones (new long[] { 1000 });
             lin.Bias = bias;
-            Assert.True(lin.Bias.HasValue);
+            Assert.True(!(lin.Bias is null));
 
             Assert.Equal(lin.Bias?.NumberOfElements, bias.NumberOfElements);
         }
@@ -526,11 +522,11 @@ namespace TorchSharp.Test
         public void TestLinearWithBias()
         {
             var lin = Linear(1000, 100, true);
-            var bias = lin.Bias;
+            var bias = lin.Bias!;
             var weight = lin.Weight.T();
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
             var forward = lin.Forward(input);
-            var matmul = input.MatMul(weight).Add(bias.Value);
+            var matmul = input.MatMul(weight).Add(bias);
 
             Assert.Equal(forward.Shape.Length, matmul.Shape.Length);
             Assert.Equal(forward.Shape[0], matmul.Shape[0]);
@@ -546,7 +542,7 @@ namespace TorchSharp.Test
         public void TestLinearNoBias()
         {
             var lin = Linear(1000, 100, false);
-            Assert.False(lin.Bias.HasValue);
+            Assert.False(!(lin.Bias is null));
 
             var weight = lin.Weight.Transpose(0, 1);
             var input = FloatTensor.RandomN(new long[] { 1, 1000 });
@@ -572,7 +568,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.Equal(lin.Bias.Value.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(lin.Bias.Data<float>()[i], bias.Data<float>()[i]);
             }
         }
 
@@ -592,7 +588,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 100; i++)
             {
-                Assert.Equal(lin.Bias.Value.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(lin.Bias.Data<float>()[i], bias.Data<float>()[i]);
             }
         }
 
@@ -818,7 +814,7 @@ namespace TorchSharp.Test
 
             var scalerGrad = scaler.Grad();
             var weightGrad = linear.Weight.Grad();
-            var biasGrad = linear.Bias.Value.Grad();
+            var biasGrad = linear.Bias.Grad();
             Assert.True(scalerGrad.Shape.Length == 2);
             Assert.True(weightGrad.Shape.Length == 2);
             Assert.True(biasGrad.Shape.Length == 2);
@@ -987,11 +983,23 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void TestMemoryDisposalScalars()
+        public void TestMemoryDisposalScalarTensors()
         {
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 1000 * 100; j++) {
                     var x = DoubleTensor.From(i * j * 3.1415);
+                    x.Dispose();
+                }
+                //System.GC.Collect();
+            }
+        }
+
+        [Fact]
+        public void TestMemoryDisposalScalars()
+        {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 1000 * 100; j++) {
+                    var x = (i * j * 3.1415).ToScalar();
                     x.Dispose();
                 }
                 //System.GC.Collect();
