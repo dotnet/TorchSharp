@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
+#nullable enable
 namespace TorchSharp.NN
 {
     public class Linear : Module
@@ -36,10 +37,10 @@ namespace TorchSharp.NN
             get {
                 var res = THSNN_Linear_bias (handle);
                 Torch.CheckForErrors ();
-                return ((res == IntPtr.Zero) ? null : (TorchTensor ?)new TorchTensor (res));
+                return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
             }
             set {
-                THSNN_Linear_set_bias (handle, (value.HasValue ? value.Value.Handle : IntPtr.Zero));
+                THSNN_Linear_set_bias (handle, (value is null ? IntPtr.Zero : value.Handle));
                 Torch.CheckForErrors ();
             }
         }

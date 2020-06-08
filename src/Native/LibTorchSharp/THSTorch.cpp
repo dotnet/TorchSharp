@@ -75,7 +75,7 @@ Scalar THSTorch_bool_to_scalar(bool value)
 //    return new torch::Scalar(value);
 //}
 
-void THSThorch_dispose_scalar(Scalar scalar)
+void THSTorch_dispose_scalar(Scalar scalar)
 {
     delete scalar;
 }

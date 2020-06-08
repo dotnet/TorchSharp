@@ -258,8 +258,19 @@ int64_t* THSTensor_strides(const Tensor tensor)
 
 int64_t THSTensor_size(const Tensor tensor, const int64_t dimension)
 {
-    return tensor->size(dimension);
+    CATCH_RETURN(int64_t, 0, tensor->size(dimension));
 }
+
+//void THSTensor_sizes(const Tensor tensor, int64_t* (*allocator)(size_t length))
+//{
+//    CATCH(
+//        auto res = tensor->sizes();
+//        const size_t sz = res.size();
+//        int64_t* result = allocator(sz);
+//        for (size_t i = 0; i < sz; i++)
+//            result[i] = res[i];
+//    )
+//}
 
 void THSTensor_dispose(const Tensor tensor)
 {
@@ -268,7 +279,7 @@ void THSTensor_dispose(const Tensor tensor)
 
 void * THSTensor_data(const Tensor tensor)
 {
-    return tensor->data_ptr();
+    CATCH_RETURN(void *, NULL, tensor->data_ptr());
 }
 
 Scalar THSTensor_item(const Tensor tensor)
