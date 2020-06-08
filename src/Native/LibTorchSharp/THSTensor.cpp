@@ -272,16 +272,6 @@ int64_t THSTensor_size(const Tensor tensor, const int64_t dimension)
 //    )
 //}
 
-void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dimension, const bool largest, const bool sorted)
-{
-    CATCH(
-        auto topk = tensor->topk(k, dimension, largest, sorted);
-        Tensor * result = allocator(2);
-        result[0] = new torch::Tensor(std::get<0>(topk));
-        result[1] = new torch::Tensor(std::get<1>(topk));
-    )
-}
-
 void THSTensor_dispose(const Tensor tensor)
 {
     delete tensor;
