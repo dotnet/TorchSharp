@@ -24,9 +24,7 @@ EXPORT_API(Scalar) THSTorch_long_to_scalar(long value);
 EXPORT_API(Scalar) THSTorch_float32_to_scalar(float value);
 EXPORT_API(Scalar) THSTorch_float64_to_scalar(double value);
 EXPORT_API(Scalar) THSTorch_bool_to_scalar(bool value);
-EXPORT_API(Scalar) THSTorch_half_to_scalar(c10::Half value);
-//EXPORT_API(Scalar) THSTorch_complex32_to_scalar(std::complex<float> value);
-//EXPORT_API(Scalar) THSTorch_complex64_to_scalar(std::complex<double> value);
+EXPORT_API(Scalar) THSTorch_half_to_scalar(float value);
 
 // Dispose the scalar.
 EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);

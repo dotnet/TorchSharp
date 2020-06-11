@@ -5,17 +5,14 @@
         public readonly string Storage;
         public readonly string CSType;
 
-        public readonly bool IsSignedInt;
-        public readonly bool IsFloat;
-        public readonly bool IsLong;
+        public bool IsSignedInt => (Name == "SByte" || Name == "Short" || Name == "Int" || Name == "Long");
+        public bool IsFloatingPoint => (Name == "Half" || Name == "Float" || Name == "Double");
+        public bool IsLong => Name == "Long";
+        public bool IsHalf => Name == "Half";
 
         private TorchTypeDef(string name, string storage) {
             this.Name = name;
             this.Storage = storage;
-
-            this.IsSignedInt = name == "SByte" || name == "Short" || name == "Int" || name == "Long";
-            this.IsFloat = name == "Float" || name == "Double";
-            this.IsLong = name == "Long";
         }
 
         public static readonly TorchTypeDef[] Types = {
@@ -24,17 +21,17 @@
             new TorchTypeDef("Short",  "short"),
             new TorchTypeDef("Int",    "int"),
             new TorchTypeDef("Long",   "long"),
-            new TorchTypeDef("Half",   "TorchSharp.Half"),
+            new TorchTypeDef("Half",   "float"),
             new TorchTypeDef("Float",  "float"),
             new TorchTypeDef("Double", "double"),
-            //new TorchTypeDef("ComplexHalf",  "ComplexHalf"),
-            //new TorchTypeDef("ComplexFloat",  "ComplexFloat"),
+            //new TorchTypeDef("ComplexHalf",  "(float, float)"),
+            //new TorchTypeDef("ComplexFloat",  "(float, float)"),
             //new TorchTypeDef("ComplexDouble",  "System.Numerics.Complex"),
             new TorchTypeDef("Bool",  "bool"),
             //new TorchTypeDef("QInt8",  "QInt8"),
             //new TorchTypeDef("QUInt8",  "QUInt8"),
             //new TorchTypeDef("QUInt32",  "QUInt32"),
-            //new TorchTypeDef("BFloat16",  "BFloat16"),
+            //new TorchTypeDef("BHalf",  "BHalf"),
         };
 
         public readonly string Ptr = "IntPtr"; // "HType";

@@ -35,11 +35,11 @@ foreach (var type in TorchTypeDef.Types) {
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(<#=type.Storage#> start, <#=type.Storage#> stop, <#=type.Storage#> step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
         {
             TorchTensor.CheckForCUDA (device);
 
-            return new TorchTensor (THSTensor_arange (start.ToScalar().Handle, stop.ToScalar().Handle, step.ToScalar().Handle, (sbyte)ScalarType.<#=type.Name#>, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, device, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
@@ -131,7 +131,7 @@ foreach (var type in TorchTypeDef.Types) {
             }
         }
 <#
-if (type.IsFloat) {
+if (type.IsFloatingPoint) {
 #>
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(<#=type.Ptr#> psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
@@ -181,55 +181,64 @@ if (type.IsFloat) {
         }
 
 <#
-if (!type.IsLong) {
+if (type.IsLong) {
+#>
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_new<#=type.Name#>(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+<#
+} else if (type.IsHalf) {
+#>
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_new<#=type.Name#>(IntPtr rawArray, IntPtr dataArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+<#
+} else {
 #>
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
-<# } else { #>
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newLong(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
 <# } #>
 
-        public static TorchTensor From(IntPtr rawArray, long[] dimensions, bool requiresGrad)
-        {
-            var length = dimensions.Length;
-
-<#
-if (!type.IsLong) {
-#>
-            return new TorchTensor(THSTensor_new(rawArray, null, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad));
-<# } else { #>
-            return new TorchTensor(THSTensor_newLong(rawArray, null, dimensions, dimensions.Length, requiresGrad));
-<# } #>
-        }
-        
         public static TorchTensor From(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+<#
+if (type.IsHalf) {
+#>
+            var dataArray = new Int16[rawArray.Length];
+<#
+} else {
+#>
+            var dataArray = rawArray;
+<# } #>
             unsafe
             {
-                fixed (<#=type.Storage#>* parray = rawArray)
-                {
-                    var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
-                    var addr = dataHandle.AddrOfPinnedObject();
-                    var gchp = GCHandle.ToIntPtr(dataHandle);
-                    GCHandleDeleter deleter = null;
-                    deleter =
-                        new GCHandleDeleter(delegate (IntPtr ptr) {
-                            GCHandle.FromIntPtr(gchp).Free();
-                            deleters.TryRemove(deleter, out deleter);
-                         });
-                    deleters.TryAdd(deleter, deleter); // keep the delegate alive
+                var dataHandle = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
+                var dataArrayAddr = dataHandle.AddrOfPinnedObject();
+                var gchp = GCHandle.ToIntPtr(dataHandle);
+                GCHandleDeleter deleter = null;
+                deleter =
+                    new GCHandleDeleter(delegate (IntPtr ptr) {
+                        GCHandle.FromIntPtr(gchp).Free();
+                        deleters.TryRemove(deleter, out deleter);
+                        });
+                deleters.TryAdd(deleter, deleter); // keep the delegate alive
 <#
-if (!type.IsLong) {
+if (type.IsLong) {
 #>
-                    return new TorchTensor(THSTensor_new(addr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad));
-<# } else { #>
-                    return new TorchTensor(THSTensor_newLong(addr, deleter, dimensions, dimensions.Length, requiresGrad));
-<# } #>
+                return new TorchTensor(THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+<#
+} else if (type.IsHalf) {
+#>
+                fixed (<#=type.Storage#>* pRawArray = rawArray)
+                {
+                    return new TorchTensor(THSTensor_new<#=type.Name#>((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
                 }
+<#
+} else {
+#>
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad));
+<# } #>
             }
         }
-
+        
         public static TorchTensor From(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
         {
             return From(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
