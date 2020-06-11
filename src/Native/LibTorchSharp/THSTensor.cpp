@@ -94,7 +94,8 @@ Tensor THSTensor_newLong(
 }
 
 // The data is passed in as float and copied into the array of Half in the C++ code
-Tensor THSTensor_newFloat16(
+// since .NET doesn't know about 'half' values.
+Tensor THSTensor_newHalf(
     float* rawArray,
     c10::Half* dataArray,
     void (*deleter)(void*),
@@ -139,7 +140,7 @@ Tensor THSTensor_newBoolScalar(bool  data, bool requires_grad)
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
-Tensor THSTensor_newFloat16Scalar(float data, bool requires_grad)
+Tensor THSTensor_newHalfScalar(float data, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Half))

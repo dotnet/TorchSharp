@@ -70,14 +70,14 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void CreateFloat16TensorOnes()
+        public void CreateHalfTensorOnes()
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = Float16Tensor.Ones(shape);
+            TorchTensor t = HalfTensor.Ones(shape);
             Assert.Equal(shape, t.Shape);
-            Assert.Equal(1.0f, t.ReadFloat16(0));
-            Assert.Equal(1.0f, t.ReadFloat16(3));
+            Assert.Equal(1.0f, t.ReadHalf(0));
+            Assert.Equal(1.0f, t.ReadHalf(3));
         }
 
         //[Fact]
@@ -264,15 +264,15 @@ namespace TorchSharp.Test
 
 
         [Fact]
-        public void CreateFloat16TensorFromDataCheckStrides()
+        public void CreateHalfTensorFromDataCheckStrides()
         {
             var data = new float[] { 0.2663158f, 0.1144736f, 0.1147367f, 0.1249998f, 0.1957895f, 0.1231576f, 0.1944732f, 0.111842f, 0.1065789f, 0.667881f, 0.5682123f, 0.5824502f, 0.4824504f, 0.4844371f, 0.6463582f, 0.5334439f, 0.5079474f, 0.2281452f };
-            var dataTensor = Float16Tensor.From(data, new long[] { 2, 9 });
+            var dataTensor = HalfTensor.From(data, new long[] { 2, 9 });
 
             for (int r = 0; r < 2; r++) {
                 for (int i = 0; i < 9; i++) {
                     var fromData = data[(r * 9) + i];
-                    var fromTensor = dataTensor.ReadFloat16((r * 9) + i);
+                    var fromTensor = dataTensor.ReadHalf((r * 9) + i);
                     Assert.True(Math.Abs(fromData - fromTensor) < 0.01);
                 }
             }
@@ -281,7 +281,7 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 9; i++) {
                 var fromData = data[i];
-                var fromChunk = firstHalf.ReadFloat16(i);
+                var fromChunk = firstHalf.ReadHalf(i);
                 Assert.True(Math.Abs(fromData - fromChunk) < 0.01);
             }
         }
@@ -299,12 +299,12 @@ namespace TorchSharp.Test
         }
 
         [Fact]
-        public void CreateFloat16TensorFromScalar()
+        public void CreateHalfTensorFromScalar()
         {
             float scalar = 333.0f;
 
-            using (var tensor = Float16Tensor.From(scalar)) {
-                Assert.Equal(333.0f, tensor.ReadFloat16(0));
+            using (var tensor = HalfTensor.From(scalar)) {
+                Assert.Equal(333.0f, tensor.ReadHalf(0));
             }
         }
 
@@ -1824,10 +1824,10 @@ namespace TorchSharp.Test
             var res5 = SByteTensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res5.Shape);
 
-            var res6 = Float16Tensor.RandomIntegers(10, new long[] { 200 });
+            var res6 = HalfTensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res6.Shape);
 
-            //var res7 = ComplexFloat16Tensor.RandomIntegers(10, new long[] { 200 });
+            //var res7 = ComplexHalfTensor.RandomIntegers(10, new long[] { 200 });
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
             //var res8 = ComplexFloatTensor.RandomIntegers(10, new long[] { 200 });

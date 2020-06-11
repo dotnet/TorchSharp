@@ -60,7 +60,7 @@ EXPORT_API(Tensor) THSTensor_newLong(
     const int szlength,
     const bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newFloat16(
+EXPORT_API(Tensor) THSTensor_newHalf(
     float* rawArray,
     c10::Half* dataArray,
     void (*deleter)(void*),
@@ -78,7 +78,7 @@ EXPORT_API(Tensor) THSTensor_newByteScalar(char data, bool requires_grad);
 EXPORT_API(Tensor) THSTensor_newBoolScalar(bool data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
-EXPORT_API(Tensor) THSTensor_newFloat16Scalar(float data, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newHalfScalar(float data, bool requires_grad);
 
 //  Creates  a variable tensor wrapping the input scalar.
 EXPORT_API(Tensor) THSTensor_newShortScalar(short data, bool requires_grad);

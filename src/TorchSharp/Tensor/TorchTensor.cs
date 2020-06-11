@@ -114,7 +114,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern float THSTensor_data_idx_float16(IntPtr handle, long i);
 
-        public float ReadFloat16(long i)
+        public float ReadHalf(long i)
         {
             if (i >= NumberOfElements) {
                 throw new IndexOutOfRangeException("The index is greater than the number of elements in the tensor");
@@ -2624,17 +2624,17 @@ namespace TorchSharp.Tensor
         Short = 2,
         Int = 3,
         Long = 4,
-        Float16 = 5,
+        Half = 5,
         Float = 6,
         Double = 7,
-        //ComplexFloat16 = 8,
+        //ComplexHalf = 8,
         ComplexFloat = 9,
         ComplexDouble = 10,
         Bool = 11,
         //QInt8 = 12,
         //QUInt8 = 13,
         //QUInt32 = 14,
-        //BFloat16 = 15
+        //BHalf = 15
     }
 
     public static class TensorExtensionMethods

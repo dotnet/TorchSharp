@@ -844,14 +844,14 @@ namespace TorchSharp.Tensor {
         }
     }
     /// <summary>
-    ///   Tensor of type Float16.
+    ///   Tensor of type Half.
     ///   This tensor maps to a Torch variable (see torch/csrc/autograd/variable.h).
     ///   Please do no mix Aten Tensors and Torch Tensors.
     /// </summary>
-    public class Float16Tensor
+    public class HalfTensor
     {
         static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
-        static Float16Tensor()
+        static HalfTensor()
         {
             deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
         }
@@ -867,7 +867,7 @@ namespace TorchSharp.Tensor {
         {
             TorchTensor.CheckForCUDA (device);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float16, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, device, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
@@ -880,7 +880,7 @@ namespace TorchSharp.Tensor {
         {
             TorchTensor.CheckForCUDA (device);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float16, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, device, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -897,7 +897,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
@@ -916,7 +916,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
@@ -935,7 +935,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
@@ -954,7 +954,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
@@ -972,7 +972,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
@@ -991,21 +991,21 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newFloat16Scalar(float scalar, bool requiresGrad);
+        extern static IntPtr THSTensor_newHalfScalar(float scalar, bool requiresGrad);
 
         public static TorchTensor From(float scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newFloat16Scalar(scalar, requiresGrad));
+            return new TorchTensor(THSTensor_newHalfScalar(scalar, requiresGrad));
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newFloat16(IntPtr rawArray, IntPtr dataArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_newHalf(IntPtr rawArray, IntPtr dataArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
 
         public static TorchTensor From(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -1024,7 +1024,7 @@ namespace TorchSharp.Tensor {
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
                 fixed (float* pRawArray = rawArray)
                 {
-                    return new TorchTensor(THSTensor_newFloat16((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                    return new TorchTensor(THSTensor_newHalf((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
                 }
             }
         }
@@ -1045,7 +1045,7 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
                 }
             }
         }

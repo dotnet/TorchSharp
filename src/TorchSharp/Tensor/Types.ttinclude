@@ -6,9 +6,9 @@
         public readonly string CSType;
 
         public bool IsSignedInt => (Name == "SByte" || Name == "Short" || Name == "Int" || Name == "Long");
-        public bool IsFloatingPoint => (Name == "Float16" || Name == "Float" || Name == "Double");
+        public bool IsFloatingPoint => (Name == "Half" || Name == "Float" || Name == "Double");
         public bool IsLong => Name == "Long";
-        public bool IsFloat16 => Name == "Float16";
+        public bool IsHalf => Name == "Half";
 
         private TorchTypeDef(string name, string storage) {
             this.Name = name;
@@ -21,17 +21,17 @@
             new TorchTypeDef("Short",  "short"),
             new TorchTypeDef("Int",    "int"),
             new TorchTypeDef("Long",   "long"),
-            new TorchTypeDef("Float16",   "float"),
+            new TorchTypeDef("Half",   "float"),
             new TorchTypeDef("Float",  "float"),
             new TorchTypeDef("Double", "double"),
-            //new TorchTypeDef("ComplexFloat16",  "(float, float)"),
+            //new TorchTypeDef("ComplexHalf",  "(float, float)"),
             //new TorchTypeDef("ComplexFloat",  "(float, float)"),
             //new TorchTypeDef("ComplexDouble",  "System.Numerics.Complex"),
             new TorchTypeDef("Bool",  "bool"),
             //new TorchTypeDef("QInt8",  "QInt8"),
             //new TorchTypeDef("QUInt8",  "QUInt8"),
             //new TorchTypeDef("QUInt32",  "QUInt32"),
-            //new TorchTypeDef("BFloat16",  "BFloat16"),
+            //new TorchTypeDef("BHalf",  "BHalf"),
         };
 
         public readonly string Ptr = "IntPtr"; // "HType";

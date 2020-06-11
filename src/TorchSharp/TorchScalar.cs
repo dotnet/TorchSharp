@@ -81,7 +81,7 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_float16_to_scalar(float value);
 
-        public static TorchScalar CreateFloat16(float value)
+        public static TorchScalar CreateHalf(float value)
         {
             return value.ToScalar();
         }

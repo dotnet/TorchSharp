@@ -186,7 +186,7 @@ if (type.IsLong) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
 <#
-} else if (type.IsFloat16) {
+} else if (type.IsHalf) {
 #>
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>(IntPtr rawArray, IntPtr dataArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
@@ -200,7 +200,7 @@ if (type.IsLong) {
         public static TorchTensor From(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
 <#
-if (type.IsFloat16) {
+if (type.IsHalf) {
 #>
             var dataArray = new Int16[rawArray.Length];
 <#
@@ -225,7 +225,7 @@ if (type.IsLong) {
 #>
                 return new TorchTensor(THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
 <#
-} else if (type.IsFloat16) {
+} else if (type.IsHalf) {
 #>
                 fixed (<#=type.Storage#>* pRawArray = rawArray)
                 {
