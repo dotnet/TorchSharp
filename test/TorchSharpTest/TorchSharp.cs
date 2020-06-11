@@ -21,36 +21,124 @@ namespace TorchSharp.Test
         public void CreateFloatTensorOnes()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor ones = FloatTensor.Ones(shape);
-            Assert.Equal(shape, ones.Shape);
-            Assert.Equal(1.0f, ones[0,0].DataItem<float>());
-            Assert.Equal(1.0f, ones[1,1].DataItem<float>());
-
-            TorchTensor onesB = ByteTensor.Ones(shape);
-            Assert.Equal(shape, onesB.Shape);
-            Assert.Equal((byte)1, onesB[0,0].DataItem<byte>());
-            Assert.Equal((byte)1, onesB[1,1].DataItem<byte>());
-
-            TorchTensor onesI = IntTensor.Ones(shape);
-            Assert.Equal(shape, onesI.Shape);
-            Assert.Equal(1, onesI[0,0].DataItem<int>());
-            Assert.Equal(1, onesI[1,1].DataItem<int>());
-
-            TorchTensor onesL = LongTensor.Ones(shape);
-            Assert.Equal(shape, onesL.Shape);
-            Assert.Equal((long)1, onesL[0,0].DataItem<int>());
-            Assert.Equal((long)1, onesL[1,1].DataItem<int>());
-
-            TorchTensor onesBool = BoolTensor.Ones(shape);
-            Assert.Equal(shape, onesBool.Shape);
-            Assert.Equal((object)true, onesBool[0,0].DataItem<bool>());
-            Assert.Equal((object)true, onesBool[1,1].DataItem<bool>());
-
-            TorchTensor onesHalf = HalfTensor.Ones(shape);
-            Assert.Equal(shape, onesHalf.Shape);
-            Assert.Equal((Half)1, onesHalf[0, 0].DataItem<Half>());
-            Assert.Equal((Half)1, onesHalf[1, 1].DataItem<Half>());
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 1].DataItem<float>());
         }
+
+        [Fact]
+        public void CreateByteTensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ByteTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal((byte)1, t[0,0].DataItem<byte>());
+            Assert.Equal((byte)1, t[1,1].DataItem<byte>());
+        }
+
+        [Fact]
+        public void CreateIntTensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = IntTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1, t[0,0].DataItem<int>());
+            Assert.Equal(1, t[1,1].DataItem<int>());
+        }
+
+        [Fact]
+        public void CreateLongTensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = LongTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal((long)1, t[0,0].DataItem<int>());
+            Assert.Equal((long)1, t[1,1].DataItem<int>());
+        }
+
+        [Fact]
+        public void CreateBoolTensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = BoolTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal((object)true, t[0,0].DataItem<bool>());
+            Assert.Equal((object)true, t[1,1].DataItem<bool>());
+        }
+
+        [Fact]
+        public void CreateFloat16TensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = Float16Tensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t.ReadFloat16(0));
+            Assert.Equal(1.0f, t.ReadFloat16(3));
+        }
+
+        //[Fact]
+        //public void CreateComplexFloatTensorZeros()
+        //{
+        //    var shape = new long[] { 2, 2 };
+
+        //    TorchTensor t = ComplexFloatTensor.Zeros(shape);
+        //    Assert.Equal(shape, t.Shape);
+        //    t.ReadComplexFloat(0, out var r3, out var i3);
+        //    Assert.Equal(0.0f, r3);
+        //    Assert.Equal(0.0f, i3);
+        //    t.ReadComplexFloat(3, out var r4, out var i4);
+        //    Assert.Equal(0.0f, r4);
+        //    Assert.Equal(0.0f, i4);
+
+        //}
+
+        //[Fact]
+        //public void CreateComplexFloatTensorOnes()
+        //{
+        //    var shape = new long[] { 2, 2 };
+
+        //    TorchTensor t = ComplexFloatTensor.Ones(shape);
+        //    Assert.Equal(shape, t.Shape);
+        //    t.ReadComplexFloat(0, out var r3, out var i3);
+        //    Assert.Equal(1.0f, r3);
+        //    Assert.Equal(0.0f, i3);
+        //    t.ReadComplexFloat(3, out var r4, out var i4);
+        //    Assert.Equal(1.0f, r4);
+        //    Assert.Equal(0.0f, i4);
+
+        //}
+
+        //[Fact]
+        //public void CreateComplexDoubleTensorZeros()
+        //{
+        //    var shape = new long[] { 2, 2 };
+
+        //    TorchTensor t = ComplexDoubleTensor.Zeros(shape);
+        //    Assert.Equal(shape, t.Shape);
+        //    var v3 = t.ReadComplexDouble(0);
+        //    Assert.Equal(0.0, v3.Real);
+        //    Assert.Equal(0.0, v3.Imaginary);
+        //    var v4 = t.ReadComplexDouble(3);
+        //    Assert.Equal(0.0, v4.Real);
+        //    Assert.Equal(0.0, v4.Imaginary);
+
+        //}
+
+        //[Fact]
+        //public void CreateComplexDoubleTensorOnes()
+        //{
+        //    var shape = new long[] { 2, 2 };
+        //    TorchTensor t = ComplexDoubleTensor.Ones(shape);
+        //    Assert.Equal(shape, t.Shape);
+        //    var v5 = t.ReadComplexDouble(0);
+        //    Assert.Equal(new Complex(1.0, 0.0), v5);
+        //    var v6 = t.ReadComplexDouble(3);
+        //    Assert.Equal(new Complex(1.0, 0.0), v6);
+        //}
 
         [Fact]
         public void CreateFloatTensorCheckMemory()
@@ -176,15 +264,15 @@ namespace TorchSharp.Test
 
 
         [Fact]
-        public void CreateHalfTensorFromDataCheckStrides()
+        public void CreateFloat16TensorFromDataCheckStrides()
         {
-            var data = new Half[] { (Half)0.2663158, (Half)0.1144736, (Half)0.1147367, (Half)0.1249998, (Half)0.1957895, (Half)0.1231576, (Half)0.1944732, (Half)0.111842, (Half)0.1065789, (Half)0.667881, (Half)0.5682123, (Half)0.5824502, (Half)0.4824504, (Half)0.4844371, (Half)0.6463582, (Half)0.5334439, (Half)0.5079474, (Half)0.2281452 };
-            var dataTensor = data.ToTorchTensor(new long[] { 2, 9 });
+            var data = new float[] { 0.2663158f, 0.1144736f, 0.1147367f, 0.1249998f, 0.1957895f, 0.1231576f, 0.1944732f, 0.111842f, 0.1065789f, 0.667881f, 0.5682123f, 0.5824502f, 0.4824504f, 0.4844371f, 0.6463582f, 0.5334439f, 0.5079474f, 0.2281452f };
+            var dataTensor = Float16Tensor.From(data, new long[] { 2, 9 });
 
             for (int r = 0; r < 2; r++) {
                 for (int i = 0; i < 9; i++) {
                     var fromData = data[(r * 9) + i];
-                    var fromTensor = dataTensor[r, i].DataItem<Half> ();
+                    var fromTensor = dataTensor.ReadFloat16((r * 9) + i);
                     Assert.True(Math.Abs(fromData - fromTensor) < 0.01);
                 }
             }
@@ -193,36 +281,12 @@ namespace TorchSharp.Test
 
             for (int i = 0; i < 9; i++) {
                 var fromData = data[i];
-                var fromChunk = firstHalf[i].DataItem<Half>();
+                var fromChunk = firstHalf.ReadFloat16(i);
                 Assert.True(Math.Abs(fromData - fromChunk) < 0.01);
             }
         }
 
 
-        //[Fact]
-        //public void CreateComplexDoubleTensorFromDataCheckStrides()
-        //{
-        //    var data = new Complex[] { new Complex(0.2663158,1.0), 0.1144736, 0.1147367, 0.1249998, 0.1957895, 0.1231576, 0.1944732, 0.111842, 0.1065789, 0.667881, 0.5682123, 0.5824502, 0.4824504, 0.4844371, 0.6463582, 0.5334439, 0.5079474, 0.2281452 };
-        //    var dataTensor = data.ToTorchTensor(new long[] { 2, 9 });
-
-        //    for (int r = 0; r < 2; r++) {
-        //        for (int i = 0; i < 9; i++) {
-        //            var fromData = data[(r * 9) + i];
-        //            var fromTensor = dataTensor[r, i].DataItem<Complex>();
-        //            Assert.True(Math.Abs((fromData - fromTensor).Real) < 0.00001);
-        //            Assert.True(Math.Abs((fromData - fromTensor).Imaginary) < 0.00001);
-        //        }
-        //    }
-
-        //    var firstHalf = dataTensor[0];
-
-        //    for (int i = 0; i < 9; i++) {
-        //        var fromData = data[i];
-        //        var fromChunk = firstHalf[i].DataItem<Complex>();
-        //        Assert.True(Math.Abs((fromData - fromChunk).Real) < 0.00001);
-        //        Assert.True(Math.Abs((fromData - fromChunk).Imaginary) < 0.00001);
-        //    }
-        //}
         [Fact]
         public void CreateFloatTensorFromScalar()
         {
@@ -230,7 +294,17 @@ namespace TorchSharp.Test
 
             using (var tensor = FloatTensor.From(scalar))
             {
-                Assert.Equal(333, tensor.DataItem<float>());
+                Assert.Equal(333.0f, tensor.DataItem<float>());
+            }
+        }
+
+        [Fact]
+        public void CreateFloat16TensorFromScalar()
+        {
+            float scalar = 333.0f;
+
+            using (var tensor = Float16Tensor.From(scalar)) {
+                Assert.Equal(333.0f, tensor.ReadFloat16(0));
             }
         }
 
@@ -1750,8 +1824,17 @@ namespace TorchSharp.Test
             var res5 = SByteTensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res5.Shape);
 
-            var res6 = HalfTensor.RandomIntegers(10, new long[] { 200 });
+            var res6 = Float16Tensor.RandomIntegers(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res6.Shape);
+
+            //var res7 = ComplexFloat16Tensor.RandomIntegers(10, new long[] { 200 });
+            //Assert.Equal(new long[] { 200 }, res7.Shape);
+
+            //var res8 = ComplexFloatTensor.RandomIntegers(10, new long[] { 200 });
+            //Assert.Equal(new long[] { 200 }, res8.Shape);
+
+            //var res9 = ComplexDoubleTensor.RandomIntegers(10, new long[] { 200 });
+            //Assert.Equal(new long[] { 200 }, res9.Shape);
         }
 
         [Fact]

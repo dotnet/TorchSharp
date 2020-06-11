@@ -93,6 +93,28 @@ Tensor THSTensor_newLong(
     CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
+// The data is passed in as float and copied into the array of Half in the C++ code
+Tensor THSTensor_newFloat16(
+    float* rawArray,
+    c10::Half* dataArray,
+    void (*deleter)(void*),
+    const int64_t* sizes,
+    const int szlength,
+    const bool requires_grad)
+{
+    CATCH_RETURN_Tensor(
+        int64_t sz = 1;
+        for (int k = 0; k < szlength; k++)
+            sz *= sizes[k];
+        for (size_t i = 0; i < sz; i++)
+            dataArray[i] = (c10::Half)rawArray[i];
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::kHalf))
+            .requires_grad(requires_grad);
+        res = ResultTensor(torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
+    )
+}
+
 Tensor THSTensor_newSByteScalar(int8_t data, bool requires_grad)
 {
     auto options = at::TensorOptions()
@@ -117,12 +139,12 @@ Tensor THSTensor_newBoolScalar(bool  data, bool requires_grad)
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
-Tensor THSTensor_newHalfScalar(c10::Half data, bool requires_grad)
+Tensor THSTensor_newFloat16Scalar(float data, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Half))
         .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
+    CATCH_TENSOR(torch::tensor((c10::Half)data, options));
 }
 
 Tensor THSTensor_newShortScalar(short data, bool requires_grad)
@@ -281,6 +303,29 @@ void * THSTensor_data(const Tensor tensor)
 {
     CATCH_RETURN(void *, NULL, tensor->data_ptr());
 }
+
+float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
+{
+    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::Half>())[i]);
+}
+
+//void THSTensor_data_idx_complex32(const Tensor tensor, int64_t i, float *pReal, float* pImaginary)
+//{
+//    CATCH(
+//        auto v = tensor->data_ptr<std::complex<float>>()[i];
+//        *pReal = v.real();
+//        *pImaginary = v.imag();
+//    );
+//}
+//
+//void THSTensor_data_idx_complex64(const Tensor tensor, int64_t i, double* pReal, double* pImaginary)
+//{
+//    CATCH(
+//        auto v = tensor->data_ptr<std::complex<double>>()[i];
+//        *pReal = v.real();
+//        *pImaginary = v.imag();
+//    );
+//}
 
 Scalar THSTensor_item(const Tensor tensor)
 {
