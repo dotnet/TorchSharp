@@ -112,50 +112,15 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern float THSTensor_data_idx_float16(IntPtr handle, long i);
+        private static extern float THSTensor_data_idx_half(IntPtr handle, long i);
 
         public float ReadHalf(long i)
         {
             if (i >= NumberOfElements) {
                 throw new IndexOutOfRangeException("The index is greater than the number of elements in the tensor");
             }
-            return THSTensor_data_idx_float16(handle, i);
+            return THSTensor_data_idx_half(handle, i);
         }
-
-        //[DllImport("LibTorchSharp")]
-        //private static extern void THSTensor_data_idx_complex32(IntPtr handle, long i, IntPtr pReal, IntPtr pImg);
-
-        //public void ReadComplexFloat(long i, out float real, out float imaginary)
-        //{
-        //    if (i >= NumberOfElements) {
-        //        throw new ArgumentException("Span only supports up to int.MaxValue elements.");
-        //    }
-        //    unsafe {
-        //        float r1 = 0.0f;
-        //        float r2 = 0.0f;
-        //        THSTensor_data_idx_complex32(handle, i, (IntPtr)(&r1), (IntPtr)(&r2));
-        //        Torch.CheckForErrors();
-        //        real = r1;
-        //        imaginary = r2;
-        //    }
-        //}
-
-        //[DllImport("LibTorchSharp")]
-        //private static extern void THSTensor_data_idx_complex64(IntPtr handle, long i, IntPtr pReal, IntPtr pImg);
-
-        //public Complex ReadComplexDouble(long i)
-        //{
-        //    if (i >= NumberOfElements) {
-        //        throw new ArgumentException("Span only supports up to int.MaxValue elements.");
-        //    }
-        //    unsafe {
-        //        double real = 0.0;
-        //        double img = 0.0;
-        //        THSTensor_data_idx_complex64(handle, i, (IntPtr)(&real), (IntPtr)(&img));
-        //        Torch.CheckForErrors();
-        //        return new Complex(real, img);
-        //    }
-        //}
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_item(IntPtr handle);

@@ -55,7 +55,7 @@ Scalar THSTorch_float64_to_scalar(double value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_float16_to_scalar(float value)
+Scalar THSTorch_half_to_scalar(float value)
 {
     return new torch::Scalar((c10::Half)value);
 }
@@ -64,15 +64,6 @@ Scalar THSTorch_bool_to_scalar(bool value)
 {
     return new torch::Scalar(value);
 }
-
-//Scalar THSTorch_complex32_to_scalar(float real, float imaginary)
-//{
-//    return new torch::Scalar(std::complex<float>(real, imaginary));
-//}
-//Scalar THSTorch_complex64_to_scalar(double real, double imaginary)
-//{
-//    return new torch::Scalar(std::complex<double>(real, imaginary));
-//}
 
 void THSTorch_dispose_scalar(Scalar scalar)
 {

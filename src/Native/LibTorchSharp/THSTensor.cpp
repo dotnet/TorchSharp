@@ -305,28 +305,10 @@ void * THSTensor_data(const Tensor tensor)
     CATCH_RETURN(void *, NULL, tensor->data_ptr());
 }
 
-float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
+float THSTensor_data_idx_half(const Tensor tensor, const int64_t i)
 {
     CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::Half>())[i]);
 }
-
-//void THSTensor_data_idx_complex32(const Tensor tensor, int64_t i, float *pReal, float* pImaginary)
-//{
-//    CATCH(
-//        auto v = tensor->data_ptr<std::complex<float>>()[i];
-//        *pReal = v.real();
-//        *pImaginary = v.imag();
-//    );
-//}
-//
-//void THSTensor_data_idx_complex64(const Tensor tensor, int64_t i, double* pReal, double* pImaginary)
-//{
-//    CATCH(
-//        auto v = tensor->data_ptr<std::complex<double>>()[i];
-//        *pReal = v.real();
-//        *pImaginary = v.imag();
-//    );
-//}
 
 Scalar THSTensor_item(const Tensor tensor)
 {

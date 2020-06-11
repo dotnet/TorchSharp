@@ -149,11 +149,7 @@ EXPORT_API(void) THSTensor_dispose(const Tensor twrapper);
 // Returns a pointer to the tensor data
 EXPORT_API(void *) THSTensor_data(const Tensor tensor);
 
-EXPORT_API(float) THSTensor_data_idx_float16(const Tensor tensor, const int64_t i);
-
-EXPORT_API(void) THSTensor_data_idx_complex32(const Tensor tensor, const int64_t i, float* pReal, float* pImaginary);
-
-EXPORT_API(void) THSTensor_data_idx_complex64(const Tensor tensor, const int64_t i, double* pReal, double* pImaginary);
+EXPORT_API(float) THSTensor_data_idx_half(const Tensor tensor, const int64_t i);
 
 // Returns the value of this tensor as a Scalar.
 // This only works for tensors with one element.

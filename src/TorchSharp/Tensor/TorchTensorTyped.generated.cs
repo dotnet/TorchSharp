@@ -133,7 +133,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -150,7 +150,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Byte, requiresGrad));
             }
         }
         
@@ -300,7 +300,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(sbyte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -317,7 +317,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.SByte, requiresGrad));
             }
         }
         
@@ -467,7 +467,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(short[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -484,7 +484,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Short, requiresGrad));
             }
         }
         
@@ -634,7 +634,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(int[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -651,7 +651,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int, requiresGrad));
             }
         }
         
@@ -1212,7 +1212,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -1229,7 +1229,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Float, requiresGrad));
             }
         }
         
@@ -1416,7 +1416,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(double[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -1433,7 +1433,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Double, requiresGrad));
             }
         }
         
@@ -1583,7 +1583,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, bool requiresGrad);
+        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 
         public static TorchTensor From(bool[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
@@ -1600,7 +1600,7 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Bool, requiresGrad));
             }
         }
         

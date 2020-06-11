@@ -79,28 +79,13 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_float16_to_scalar(float value);
+        extern static IntPtr THSTorch_half_to_scalar(float value);
 
         public static TorchScalar CreateHalf(float value)
         {
             return value.ToScalar();
         }
 
-        //[DllImport("LibTorchSharp")]
-        //extern static IntPtr THSTorch_complex32_to_scalar(float real, float imaginary);
-
-        //public static TorchScalar CreateComplex32(float real, float imaginary)
-        //{
-        //    return new TorchScalar(THSTorch_complex32_to_scalar(real, imaginary));
-        //}
-
-        //[DllImport("LibTorchSharp")]
-        //extern static IntPtr THSTorch_complex64_to_scalar(double real, double imaginary);
-
-        //public static TorchScalar CreateComplex64(System.Numerics.Complex value)
-        //{
-        //    return new TorchScalar(THSTorch_complex64_to_scalar(value.Real, value.Imaginary));
-        //}
     }
 
     public static class ScalarExtensionMethods
