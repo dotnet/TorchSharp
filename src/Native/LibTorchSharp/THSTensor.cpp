@@ -107,7 +107,7 @@ Tensor THSTensor_newHalf(
         int64_t sz = 1;
         for (int k = 0; k < szlength; k++)
             sz *= sizes[k];
-        for (size_t i = 0; i < sz; i++)
+        for (int64_t i = 0; i < sz; i++)
             dataArray[i] = (c10::Half)rawArray[i];
         auto options = at::TensorOptions()
             .dtype(at::ScalarType(at::kHalf))
