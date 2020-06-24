@@ -37,9 +37,9 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
@@ -50,9 +50,9 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -63,13 +63,13 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -82,13 +82,13 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -101,13 +101,13 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -120,13 +120,13 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -141,13 +141,13 @@ if (type.IsFloatingPoint) {
         /// </summary>
         static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -160,13 +160,13 @@ if (type.IsFloatingPoint) {
         /// </summary>
         static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -249,13 +249,13 @@ if (type.IsLong) {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device_type, device_index);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device_type, device_index, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
