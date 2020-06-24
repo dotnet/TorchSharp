@@ -22,104 +22,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Byte, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -160,17 +160,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -189,104 +189,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.SByte, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.SByte, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -327,17 +327,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -356,104 +356,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Short, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Short, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -494,17 +494,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -523,104 +523,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Int, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -661,17 +661,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -690,104 +690,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Long, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Long, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -828,17 +828,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -857,141 +857,141 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1035,17 +1035,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1064,141 +1064,141 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1239,17 +1239,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1268,141 +1268,141 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Double, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Double, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor Random(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor RandomN(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1443,17 +1443,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1472,104 +1472,104 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, device, requiresGrad));
+            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Bool, device, requiresGrad));
+            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, device, requiresGrad));
+                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, device, requiresGrad));
+                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, device, requiresGrad));
+                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, string device, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, string device = "cpu", bool requiresGrad = false)
+        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, device, requiresGrad));
+                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }
@@ -1610,17 +1610,17 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, [MarshalAs(UnmanagedType.LPStr)] string device, bool requiresGrad);
+        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, string device = "cpu", bool requiresGrad = false)
+        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (device);
+            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, device, requiresGrad));
+                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
                 }
             }
         }

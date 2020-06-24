@@ -9,12 +9,12 @@ Tensor THSTensor_arange(
     const Scalar end,
     const Scalar step,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::arange(*start, *end, *step, options));
@@ -24,12 +24,12 @@ Tensor THSTensor_zeros(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::zeros(at::ArrayRef<int64_t>(sizes, length), options));
@@ -39,12 +39,12 @@ Tensor THSTensor_ones(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::ones(at::ArrayRef<int64_t>(sizes, length), options));
@@ -54,12 +54,12 @@ Tensor THSTensor_empty(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::empty(at::ArrayRef<int64_t>(sizes, length), options));
@@ -192,14 +192,14 @@ Tensor THSTensor_rand(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     Tensor tensor;
     CATCH(
         auto options = at::TensorOptions()
             .dtype(at::ScalarType(scalar_type))
-            .device(device)
+            .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
             .requires_grad(requires_grad);
 
         tensor = new torch::Tensor(torch::rand(at:: ArrayRef<int64_t>(sizes, length), options));
@@ -212,14 +212,14 @@ Tensor THSTensor_randint(
     const int64_t* sizes,
     const int length,
     const int8_t scalar_type,
-    const char* device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     Tensor tensor;
     CATCH(
         auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
         tensor = new torch::Tensor(torch::randint(max, at::ArrayRef<int64_t>(sizes, length), options));
@@ -231,12 +231,12 @@ Tensor THSTensor_randn(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::randn(at::ArrayRef<int64_t>(sizes, length), options));
@@ -248,12 +248,12 @@ Tensor THSTensor_sparse(
     const int64_t * sizes,
     const int length,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .device(device)
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
 	const torch::autograd::Variable& vindices = torch::autograd::as_variable_ref(*indices);
@@ -373,12 +373,23 @@ Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type)
     CATCH_TENSOR(tensor->toType(at::ScalarType(scalar_type)));
 }
 
-const char* THSTensor_deviceType(const Tensor tensor)
+const char* THSTensor_device_str(const Tensor tensor)
 {
     auto device = tensor->device();
-    auto device_type = DeviceTypeName(device.type(), true);
 
-    return make_sharable_string(device_type);
+    return make_sharable_string(device.str());
+}
+
+int THSTensor_device_index(const Tensor tensor)
+{
+    auto device = tensor->device();
+    return device.index();
+}
+
+int THSTensor_device_type(const Tensor tensor)
+{
+    auto device = tensor->device();
+    return (int)device.type();
 }
 
 int THSTensor_requires_grad(const Tensor tensor)
@@ -391,7 +402,7 @@ Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad
    CATCH_TENSOR(tensor->set_requires_grad(requires_grad));
 }
 
-int THSTensor_isSparse(const Tensor tensor)
+int THSTensor_is_sparse(const Tensor tensor)
 {
     CATCH_RETURN(int, 0, tensor->is_sparse());
 }
@@ -414,6 +425,14 @@ Tensor THSTensor_cpu(const Tensor tensor)
 Tensor THSTensor_cuda(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->cuda());
+}
+
+Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+        res = ResultTensor(tensor->to(device));
+    );
 }
 
 Tensor THSTensor_load(const char* location)
@@ -632,7 +651,7 @@ Tensor THSTensor_uniform_(const Tensor tensor, const double from, const double t
 
 Tensor THSTensor_randperm(const int64_t n,
     const int8_t scalar_type,
-    const char * device,
+    const int device_type, const int device_index,
     const bool requires_grad)
 {
     Tensor tensor;
@@ -640,7 +659,7 @@ Tensor THSTensor_randperm(const int64_t n,
         auto options =
             at::TensorOptions()
             .dtype(at::ScalarType(scalar_type))
-            .device(device)
+            .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
             .requires_grad(requires_grad);
 
         tensor = new torch::Tensor(torch::randperm(n, options));
