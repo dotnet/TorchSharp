@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <!-- Windows CPU libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and '$(TestCuda)' != 'true'">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true')">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <!-- Windows CUDA 10.2 libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and '$(TestCuda)' == 'true'">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true')">
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
@@ -69,7 +69,7 @@
 
   <!-- OSX CPU libtorch binary list used for examples and testing -->
   <!-- NOTE: On OSX, examples and testing do not currently use Linux CUDA binaries -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true' and '$(TestCuda)' != 'true'">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true' ">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
