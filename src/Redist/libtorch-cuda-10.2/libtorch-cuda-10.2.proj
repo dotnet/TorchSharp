@@ -211,6 +211,10 @@
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == ''" />
     <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != ''" />
 
+    <!-- Copy to NativeCudaOutputPath to use in tests -->
+    <MakeDir Directories="$(NativeCudaOutputPath)"  Condition="'$(SkipCuda)' != 'true'"  />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeCudaOutputPath)" SkipUnchangedFiles="true" Condition="'$(SkipCuda)' != 'true' AND ('%(File.FileUnstitchStart)' == '' OR '%(File.FileUnstitchStart)' == '0') " />
+
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>

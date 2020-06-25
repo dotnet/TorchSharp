@@ -346,26 +346,19 @@ namespace TorchSharp.Tensor
 
         public TorchTensor Cuda()
         {
-            if (!Torch.IsCudaAvailable())
-            {
-                throw new InvalidOperationException("CUDA non available in the current machine.");
-            }
-
+            Torch.InitializeDevice(DeviceType.CUDA, 0);
             var res = THSTensor_cuda(handle);
             Torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_to_device(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string name);
+        private static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index);
 
-        public TorchTensor ToDevice(string device)
+        public TorchTensor ToDevice(DeviceType deviceType, int deviceIndex = 0)
         {
-            if (!Torch.IsCudaAvailable()) {
-                throw new InvalidOperationException("CUDA non available in the current machine.");
-            }
-
-            var res = THSTensor_to_device(handle, device);
+            Torch.InitializeDeviceType(deviceType);
+            var res = THSTensor_to_device(handle, (int)deviceType, deviceIndex);
             Torch.CheckForErrors();
             return new TorchTensor(res);
         }
@@ -2613,11 +2606,6 @@ namespace TorchSharp.Tensor
             return sb.ToString();
         }
 
-        internal static void CheckForCUDA(DeviceType device, int device_index)
-        {
-            if (device == DeviceType.CUDA && !Torch.IsCudaAvailable())
-                throw new InvalidOperationException("CUDA non available in the current machine.");
-        }
     }
 
     public enum ScalarType : sbyte

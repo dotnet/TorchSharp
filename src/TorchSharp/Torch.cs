@@ -17,11 +17,50 @@ namespace TorchSharp
             THSTorch_seed(seed);
         }
 
+        internal static bool TryInitializeDeviceType(DeviceType deviceType)
+        {
+            if (deviceType == DeviceType.CUDA) {
+
+                // See https://github.com/pytorch/pytorch/issues/33415
+                if (System.Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                    LoadLibrary(@"torch_cuda.dll");
+                }
+                return THSTorchCuda_is_available();
+
+            }
+            return true;
+        }
+
+        internal static void InitializeDeviceType(DeviceType deviceType)
+        {
+            if (!TryInitializeDeviceType(deviceType)) {
+                throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine.");
+            }
+
+        }
+
+        internal static bool TryInitializeDevice(DeviceType deviceType, int deviceIndex)
+        {
+            return TryInitializeDeviceType(deviceType);
+        }
+
+        internal static void InitializeDevice(DeviceType deviceType, int deviceIndex)
+        {
+            if (!TryInitializeDevice(deviceType, deviceIndex)) {
+                throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine.");
+            }
+
+        }
+
         [DllImport("LibTorchSharp")]
         private static extern bool THSTorchCuda_is_available();
 
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LoadLibrary(string dllToLoad);
+
         public static bool IsCudaAvailable()
         {
+            TryInitializeDeviceType(DeviceType.CUDA);
             return THSTorchCuda_is_available();
         }
 
@@ -30,23 +69,17 @@ namespace TorchSharp
 
         public static bool IsCudnnAvailable()
         {
+            TryInitializeDeviceType(DeviceType.CUDA);
             return THSTorchCuda_cudnn_is_available();
         }
 
         [DllImport("LibTorchSharp")]
         private static extern int THSTorchCuda_device_count();
 
-        public static int DeviceCount()
+        public static int CudaDeviceCount()
         {
+            TryInitializeDeviceType(DeviceType.CUDA);
             return THSTorchCuda_device_count();
-        }
-
-        [DllImport("LibTorchSharp")]
-        private static extern int THSTorchCuda_device_capability();
-
-        public static int GetDeviceCapability()
-        {
-            return THSTorchCuda_device_capability();
         }
 
         [DllImport("LibTorchSharp")]

@@ -30,7 +30,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -43,7 +43,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -56,7 +56,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -75,7 +75,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -94,7 +94,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -113,7 +113,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -164,7 +164,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -197,7 +197,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -210,7 +210,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -223,7 +223,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -242,7 +242,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -261,7 +261,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -280,7 +280,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -331,7 +331,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -364,7 +364,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -377,7 +377,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -390,7 +390,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -409,7 +409,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -428,7 +428,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -447,7 +447,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -498,7 +498,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -531,7 +531,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -544,7 +544,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -557,7 +557,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -576,7 +576,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -595,7 +595,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -614,7 +614,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -665,7 +665,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -698,7 +698,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -711,7 +711,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -724,7 +724,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -743,7 +743,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -762,7 +762,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -781,7 +781,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -832,7 +832,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -865,7 +865,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -878,7 +878,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -891,7 +891,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -910,7 +910,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -929,7 +929,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -948,7 +948,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -966,7 +966,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -985,7 +985,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1039,7 +1039,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1072,7 +1072,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1085,7 +1085,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1098,7 +1098,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1117,7 +1117,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1136,7 +1136,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1155,7 +1155,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1173,7 +1173,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1192,7 +1192,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1243,7 +1243,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1276,7 +1276,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1289,7 +1289,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1302,7 +1302,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1321,7 +1321,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1340,7 +1340,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1359,7 +1359,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1377,7 +1377,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1396,7 +1396,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1447,7 +1447,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1480,7 +1480,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1493,7 +1493,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
         }
@@ -1506,7 +1506,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1525,7 +1525,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1544,7 +1544,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1563,7 +1563,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
@@ -1614,7 +1614,7 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            TorchTensor.CheckForCUDA (deviceType, deviceIndex);
+            Torch.InitializeDevice (deviceType, deviceIndex);
 
             unsafe
             {
