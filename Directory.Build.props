@@ -61,6 +61,7 @@
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
 
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
+    <NativeCudaOutputPath>$(NativeOutputPath)cuda\</NativeCudaOutputPath>
 
     <!-- Input Directories -->
     <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>

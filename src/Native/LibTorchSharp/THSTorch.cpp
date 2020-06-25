@@ -2,15 +2,26 @@
 #include "THSTorch.h"
 
 #include "torch/torch.h"
+#include "torch/cuda.h"
 
 void THSTorch_seed(const int64_t seed)
 {
     torch::manual_seed(seed);
 }
 
-int THSTorch_isCudaAvailable()
+int THSTorchCuda_is_available()
 {
     return torch::cuda::is_available();
+}
+
+int THSTorchCuda_cudnn_is_available()
+{
+    return torch::cuda::cudnn_is_available();
+}
+
+int THSTorchCuda_device_count()
+{
+    return (int)torch::cuda::device_count();
 }
 
 const char * THSTorch_get_and_reset_last_err()

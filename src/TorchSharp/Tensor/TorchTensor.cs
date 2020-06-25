@@ -237,13 +237,13 @@ namespace TorchSharp.Tensor
 
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.LPStr)]
-        private static extern string THSTensor_deviceType(IntPtr handle);
+        private static extern string THSTensor_device_str(IntPtr handle);
 
-        public string Device
+        public string DeviceString
         {
             get
             {
-                var res = THSTensor_deviceType(handle);
+                var res = THSTensor_device_str(handle);
                 Torch.CheckForErrors();
                 return res;
             }
@@ -251,13 +251,37 @@ namespace TorchSharp.Tensor
 
 
         [DllImport("LibTorchSharp")]
-        private static extern bool THSTensor_isSparse(IntPtr handle);
+        private static extern int THSTensor_device_index(IntPtr handle);
+
+        public int DeviceIndex {
+            get {
+                var res = THSTensor_device_index(handle);
+                Torch.CheckForErrors();
+                return res;
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern int THSTensor_device_type(IntPtr handle);
+
+        public DeviceType DeviceType {
+            get {
+                var res = THSTensor_device_type(handle);
+                Torch.CheckForErrors();
+                return (DeviceType)res;
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern bool THSTensor_is_sparse(IntPtr handle);
 
         public bool IsSparse
         {
             get
             {
-                var res = THSTensor_isSparse(handle);
+                var res = THSTensor_is_sparse(handle);
                 Torch.CheckForErrors();
                 return res;
             }
@@ -322,12 +346,19 @@ namespace TorchSharp.Tensor
 
         public TorchTensor Cuda()
         {
-            if (!Torch.IsCudaAvailable())
-            {
-                throw new InvalidOperationException("CUDA non available in the current machine.");
-            }
-
+            Torch.InitializeDevice(DeviceType.CUDA, 0);
             var res = THSTensor_cuda(handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index);
+
+        public TorchTensor ToDevice(DeviceType deviceType, int deviceIndex = 0)
+        {
+            Torch.InitializeDeviceType(deviceType);
+            var res = THSTensor_to_device(handle, (int)deviceType, deviceIndex);
             Torch.CheckForErrors();
             return new TorchTensor(res);
         }
@@ -2571,15 +2602,10 @@ namespace TorchSharp.Tensor
             }
 
             sb.Append("]");
-            sb.Append($", device = {Device}");
+            sb.Append($", device = {DeviceString}");
             return sb.ToString();
         }
 
-        internal static void CheckForCUDA(string device)
-        {
-            if (!Torch.IsCudaAvailable() && device.ToLower().Contains("cuda"))
-                throw new InvalidOperationException("CUDA non available in the current machine.");
-        }
     }
 
     public enum ScalarType : sbyte

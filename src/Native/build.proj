@@ -59,7 +59,7 @@
   <Target Name="PreparePackageAssets">
   
     <ItemGroup>
-      <NativePackageAsset Include="$(NativeAssetsBuiltPath)\$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
+      <NativePackageAsset Include="$(NativeOutputPath)$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
                           RelativePath="TorchSharp\runtimes\$(PackageRid)\native" />
     </ItemGroup>
 
