@@ -109,6 +109,7 @@
           DestinationFolder="$(OutputPath)"
           OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
           Retries="$(CopyRetryCount)"
+          SkipUnchangedFiles="true"
           RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
           UseHardlinksIfPossible="$(CreateHardLinksForPublishFilesIfPossible)"
           UseSymboliclinksIfPossible="$(CreateSymbolicLinksForPublishFilesIfPossible)">

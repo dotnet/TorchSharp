@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp
@@ -17,13 +16,19 @@ namespace TorchSharp
             THSTorch_seed(seed);
         }
 
+        [DllImport("kernel32.dll")]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
         internal static bool TryInitializeDeviceType(DeviceType deviceType)
         {
             if (deviceType == DeviceType.CUDA) {
 
                 // See https://github.com/pytorch/pytorch/issues/33415
-                if (System.Environment.OSVersion.Platform == PlatformID.Win32NT) {
-                    LoadLibrary(@"torch_cuda.dll");
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                    NativeLibrary.TryLoad("torch_cuda", typeof(Torch).Assembly, null, out var res1);
+                    NativeLibrary.TryLoad("nvrtc-builtins64_102", typeof(Torch).Assembly, null, out var res2);
+                    NativeLibrary.TryLoad("caffe2_nvrtc", typeof(Torch).Assembly, null, out var res3);
+                    NativeLibrary.TryLoad("nvrtc64_102_0", typeof(Torch).Assembly, null, out var res4);
                 }
                 return THSTorchCuda_is_available();
 
@@ -55,8 +60,6 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         private static extern bool THSTorchCuda_is_available();
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr LoadLibrary(string dllToLoad);
 
         public static bool IsCudaAvailable()
         {

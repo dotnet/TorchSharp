@@ -452,6 +452,67 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCat()
+        {
+            var zeros = FloatTensor.Zeros(new long[] { 1, 9 });
+            var ones = FloatTensor.Ones(new long[] { 1, 9 });
+            var centroids = new TorchTensor[] { zeros, ones }.Cat(0);
+
+            var shape = centroids.Shape;
+            Assert.Equal(new long[] { 2, 9 }, shape);
+        }
+
+        [Fact]
+        public void TestCatCuda()
+        {
+            if (Torch.IsCudaAvailable()) {
+                var zeros = FloatTensor.Zeros(new long[] { 1, 9 }).Cuda();
+                var ones = FloatTensor.Ones(new long[] { 1, 9 }).Cuda();
+                var centroids = new TorchTensor[] { zeros, ones }.Cat(0);
+                var shape = centroids.Shape;
+                Assert.Equal(new long[] { 2, 9 }, shape);
+                Assert.Equal(DeviceType.CUDA, centroids.DeviceType);
+            }
+        }
+
+        void TestStackGen(DeviceType device)
+        {
+            {
+                var t1 = FloatTensor.Zeros( new long[] { }, device );
+                var t2 = FloatTensor.Ones(new long[] { }, device);
+                var t3 = FloatTensor.Ones(new long[] { }, device);
+                var res = new TorchTensor[] { t1, t2, t3 }.Stack(0);
+
+                var shape = res.Shape;
+                Assert.Equal(new long[] { 3 }, shape);
+                Assert.Equal(device, res.DeviceType);
+            }
+            {
+                var t1 = FloatTensor.Zeros(new long[] { 2, 9 }, device);
+                var t2 = FloatTensor.Ones(new long[] { 2, 9 }, device);
+                var res = new TorchTensor[] { t1, t2 }.Stack(0);
+
+                var shape = res.Shape;
+                Assert.Equal(new long[] { 2, 2, 9 }, shape);
+                Assert.Equal(device, res.DeviceType);
+            }
+        }
+
+        [Fact]
+        public void TestStackCpu()
+        {
+            TestStackGen(DeviceType.CPU);
+        }
+
+        [Fact]
+        public void TestStackCuda()
+        {
+            if (Torch.IsCudaAvailable()) {
+                TestStackGen(DeviceType.CUDA);
+            }
+        }
+
+        [Fact]
         public void TestSetGrad()
         {
             var x = FloatTensor.Random(new long[] { 10, 10 });
