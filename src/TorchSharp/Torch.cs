@@ -16,9 +16,6 @@ namespace TorchSharp
             THSTorch_seed(seed);
         }
 
-        [DllImport("kernel32.dll")]
-        static extern IntPtr LoadLibrary(string lpFileName);
-
         internal static bool TryInitializeDeviceType(DeviceType deviceType)
         {
             if (deviceType == DeviceType.CUDA) {
