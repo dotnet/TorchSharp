@@ -25,6 +25,8 @@ typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
     x \
   } catch (const c10::Error e) { \
       torch_last_err = strdup(e.what()); \
+  } catch (const std::runtime_error e) { \
+      torch_last_err = strdup(e.what()); \
   }
 
 #define CATCH_RETURN_RES(ty, dflt, stmt) \

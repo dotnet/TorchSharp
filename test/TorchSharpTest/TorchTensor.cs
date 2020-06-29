@@ -847,6 +847,45 @@ namespace TorchSharp
             }
         }
 
+        void TestMmGen(DeviceType device)
+        {
+            {
+                var x1 = FloatTensor.Ones(new long[] { 1, 2 }, deviceType: device);
+                var x2 = FloatTensor.Ones(new long[] { 2, 1 }, deviceType: device);
+
+                var y = x1.Mm(x2).ToDevice(DeviceType.CPU);
+
+                var ydata = y.Data<float>();
+
+                Assert.Equal(2.0f, ydata[0]);
+            }
+            //System.Runtime.InteropServices.ExternalException : addmm for CUDA tensors only supports floating - point types.Try converting the tensors with.float() at C:\w\b\windows\pytorch\aten\src\THC / generic / THCTensorMathBlas.cu:453
+            if (device == DeviceType.CPU) {
+                var x1 = LongTensor.Ones(new long[] { 1, 2 }, deviceType: device);
+                var x2 = LongTensor.Ones(new long[] { 2, 1 }, deviceType: device);
+
+                var y = x1.Mm(x2).ToDevice(DeviceType.CPU);
+
+                var ydata = y.Data<long>();
+
+                Assert.Equal(2L, ydata[0]);
+            }
+        }
+
+        [Fact]
+        public void TestMmCpu()
+        {
+            TestMmGen(DeviceType.CPU);
+        }
+
+        [Fact]
+        public void TestMmCuda()
+        {
+            if (Torch.IsCudaAvailable()) {
+                TestMmGen(DeviceType.CUDA);
+            }
+        }
+
         [Fact]
         public void SinTest()
         {
