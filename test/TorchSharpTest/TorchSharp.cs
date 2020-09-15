@@ -33,10 +33,6 @@ namespace TorchSharp
             //Assert.Equal(1.0f, t[1, 1].DataItem<float>());
         }
 
-    }
-
-    public class TestTorchMemoryPressure1
-    {
         [Fact]
         public void ExplicitDisposal()
         {
@@ -50,9 +46,7 @@ namespace TorchSharp
             }
             Console.WriteLine("Hello World!");
         }
-    }
-    public class TestTorchMemoryPressure2
-    {
+
         [Fact]
         public void FinalizeWithExplicitMemoryPressure()
         {
