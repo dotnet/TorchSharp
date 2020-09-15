@@ -1132,7 +1132,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
-        ///  Create a new tensor filled with ones
+        ///  Create a new tensor filled with arbitrary values
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {

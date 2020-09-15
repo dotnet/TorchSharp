@@ -137,6 +137,12 @@ EXPORT_API(int64_t) THSTensor_ndimension(const Tensor tensor);
 // Returns the size of the target dimension of the input tensor.
 EXPORT_API(int64_t) THSTensor_size(const Tensor tensor, const int64_t dimension);
 
+// Returns the number of elements in the tensor.
+EXPORT_API(int64_t) THSTensor_numel(const Tensor tensor);
+
+// Returns the size of elements in the tensor.
+EXPORT_API(int64_t) THSTensor_element_size(const Tensor tensor);
+
 // Returns the stride of the target dimension of the input tensor.
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dimension);
 
@@ -167,6 +173,12 @@ EXPORT_API(Tensor) THSTensor_get3(const Tensor tensor, int64_t index1, int64_t i
 // Returns the sub-tensor identified by the indexes.
 EXPORT_API(Tensor) THSTensor_get4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4);
 
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5);
+
+// Returns the sub-tensor identified by the indexes.
+EXPORT_API(Tensor) THSTensor_get6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6);
+
 // Fill the tensor with a given value.
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
@@ -181,6 +193,12 @@ EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t ind
 
 // Set the sub-tensor identified by the indexes to value.
 EXPORT_API(void) THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, Scalar value);
+
+// Set the sub-tensor identified by the indexes to value.
+EXPORT_API(void) THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, Scalar value);
 
 // Returns the inner type of the tensor.
 EXPORT_API(int8_t) THSTensor_type(const Tensor tensor);
