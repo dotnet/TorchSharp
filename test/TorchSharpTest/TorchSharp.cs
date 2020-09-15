@@ -38,7 +38,7 @@ namespace TorchSharp
         {
             // Allocate many 256MB tensors. Without explicit disposal memory use relies on finalization.
             // This will often succeed but not reliably
-            int n = 50;
+            int n = 25;
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
@@ -53,7 +53,7 @@ namespace TorchSharp
             // 
             // Allocate many 512MB tensors. Without explicit disposal memory use relies on finalization.
             // Use explicit memory pressure for large tensors makes this succeed reliably.
-            int n = 50;
+            int n = 25;
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("FinalizeWithExplicitMemoryPressure: Loop iteration {0}", i);
 
