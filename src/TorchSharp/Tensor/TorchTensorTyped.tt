@@ -39,7 +39,14 @@ foreach (var type in TorchTypeDef.Types) {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            }
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -52,7 +59,14 @@ foreach (var type in TorchTypeDef.Types) {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            }
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -69,7 +83,14 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -88,7 +109,14 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -107,7 +135,14 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -126,7 +161,14 @@ foreach (var type in TorchTypeDef.Types) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -147,7 +189,14 @@ if (type.IsFloatingPoint) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -166,7 +215,14 @@ if (type.IsFloatingPoint) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -177,7 +233,9 @@ if (type.IsFloatingPoint) {
 
         public static TorchTensor From(<#=type.Storage#> scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_new<#=type.Name#>Scalar(scalar, requiresGrad));
+            var handle = THSTensor_new<#=type.Name#>Scalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
 <#
@@ -223,18 +281,39 @@ if (type.IsHalf) {
 <#
 if (type.IsLong) {
 #>
-                return new TorchTensor(THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                var handle = THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                if (handle == IntPtr.Zero) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    handle = THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                }
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
 <#
 } else if (type.IsHalf) {
 #>
                 fixed (<#=type.Storage#>* pRawArray = rawArray)
                 {
-                    return new TorchTensor(THSTensor_new<#=type.Name#>((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                    var handle = THSTensor_new<#=type.Name#>((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_new<#=type.Name#>((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor(handle);
                 }
 <#
 } else {
 #>
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad);
+                if (handle == IntPtr.Zero) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad);
+                }
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
 <# } #>
             }
         }
@@ -255,7 +334,14 @@ if (type.IsLong) {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    }
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }

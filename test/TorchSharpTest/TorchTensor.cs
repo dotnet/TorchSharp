@@ -316,6 +316,67 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void GetSetItem2()
+        {
+            var shape = new long[] { 2, 3 };
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 2].DataItem<float>());
+            t[1, 2] = FloatTensor.From(2.0f);
+            Assert.Equal(2.0f, t[1, 2].DataItem<float>());
+        }
+
+        [Fact]
+        public void GetSetItem3()
+        {
+            var shape = new long[] { 2, 3, 4 };
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 2, 3].DataItem<float>());
+            t[1, 2, 3] = FloatTensor.From(2.0f);
+            Assert.Equal(2.0f, t[1, 2, 3].DataItem<float>());
+        }
+
+        [Fact]
+        public void GetSetItem4()
+        {
+            var shape = new long[] { 2, 3, 4, 5 };
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0, 0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 2, 3, 4].DataItem<float>());
+            t[1, 2, 3, 4] = FloatTensor.From(2.0f);
+            Assert.Equal(2.0f, t[1, 2, 3, 4].DataItem<float>());
+        }
+
+        [Fact]
+        public void GetSetItem5()
+        {
+            var shape = new long[] { 2, 3, 4, 5, 6 };
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0, 0, 0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 2, 3, 4, 5].DataItem<float>());
+            t[1, 2, 3, 4, 5] = FloatTensor.From(2.0f);
+            Assert.Equal(2.0f, t[1, 2, 3, 4, 5].DataItem<float>());
+        }
+
+
+        [Fact]
+        public void GetSetItem6()
+        {
+            var shape = new long[] { 2, 3, 4, 5, 6, 7 };
+            TorchTensor t = FloatTensor.Ones(shape);
+            Assert.Equal(shape, t.Shape);
+            Assert.Equal(1.0f, t[0, 0, 0, 0, 0, 0].DataItem<float>());
+            Assert.Equal(1.0f, t[1, 2, 3, 4, 5, 6].DataItem<float>());
+            t[1, 2, 3, 4, 5, 6] = FloatTensor.From(2.0f);
+            Assert.Equal(2.0f, t[1, 2, 3, 4, 5, 6].DataItem<float>());
+        }
+
+        [Fact]
         public void TestScalarToTensor()
         {
             Assert.Throws<ArgumentException>(() => 1.ToTorchTensor(requiresGrad: true));

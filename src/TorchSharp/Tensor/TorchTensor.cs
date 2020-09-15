@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -16,6 +17,30 @@ namespace TorchSharp.Tensor
         internal TorchTensor(IntPtr handle)
         {
             this.handle = handle;
+        }
+
+        internal class MemoryPressureHandle
+        {
+            internal MemoryPressureHandle(long pressure) { this.pressure = pressure; }
+            long pressure;
+            internal void Cleanup() { GC.RemoveMemoryPressure(pressure);  } 
+
+        }
+        static ConditionalWeakTable<TorchTensor, MemoryPressureHandle>? memoryPressureRegistrations = null;
+
+        /// <summary>
+        /// Records that the created tensor adds CPU memory pressure.  The pressure will be removed
+        /// when this particular TorchTensor handle is disposed or finalised.
+        /// </summary>
+        public void RegisterAsMemoryPressure()
+        {
+            if (DeviceType == DeviceType.CPU) {
+                if (memoryPressureRegistrations == null)
+                    memoryPressureRegistrations = new ConditionalWeakTable<TorchTensor, MemoryPressureHandle>();
+                long pressure = this.ElementSize * this.NumberOfElements;
+                GC.AddMemoryPressure(pressure);
+                memoryPressureRegistrations.Add(this, new MemoryPressureHandle(pressure));
+            }
         }
 
         public override bool Equals(object? obj)
@@ -49,6 +74,12 @@ namespace TorchSharp.Tensor
         void Dispose(bool disposing)
         {
             if (handle != IntPtr.Zero) {
+                if (memoryPressureRegistrations != null) {
+                    if (memoryPressureRegistrations.TryGetValue(this, out var pressure)) {
+                        pressure.Cleanup();
+                        memoryPressureRegistrations.Remove(this);
+                    }
+                }
                 THSTensor_dispose(handle);
                 handle = IntPtr.Zero;
             }
@@ -64,24 +95,21 @@ namespace TorchSharp.Tensor
         /// </summary>
         public long Dimensions => THSTensor_ndimension(handle);
 
+        [DllImport("LibTorchSharp")]
+        private static extern long THSTensor_element_size(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
+        private static extern long THSTensor_numel(IntPtr handle);
+
         /// <summary>
-        ///  Returns a pointer to the unmanaged data managed by this tensor.
+        ///  Get the number of elements in the tensor.
         /// </summary>
-        public long NumberOfElements
-        {
-            get
-            {
-                switch (Dimensions)
-                {
-                    case 0:
-                        return 1;
-                    case 1:
-                        return (int)Shape[0];
-                    default:
-                        return (int)Shape.Aggregate((x, y) => x * y);
-                }
-            }
-        }
+        public long NumberOfElements => THSTensor_numel(handle);
+
+        /// <summary>
+        ///  Get the size of each element in the tensor.
+        /// </summary>
+        public long ElementSize => THSTensor_element_size(handle);
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_data(IntPtr handle);
@@ -230,6 +258,44 @@ namespace TorchSharp.Tensor
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_get5(IntPtr handle, long i1, long i2, long i3, long i4, long i5);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
+
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3, long i4, long i5] {
+            get {
+                var res = THSTensor_get5(handle, i1, i2, i3, i4, i5);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set5(handle, i1, i2, i3, i4, i5, value.Item().Handle);
+                Torch.CheckForErrors();
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_get6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
+
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3, long i4, long i5, long i6] {
+            get {
+                var res = THSTensor_get6(handle, i1, i2, i3, i4, i5, i6);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set6(handle, i1, i2, i3, i4, i5, i6, value.Item().Handle);
+                Torch.CheckForErrors();
+            }
+        }
         [DllImport("LibTorchSharp")]
         private static extern sbyte THSTensor_type(IntPtr handle);
 

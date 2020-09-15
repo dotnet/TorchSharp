@@ -284,6 +284,16 @@ int64_t THSTensor_size(const Tensor tensor, const int64_t dimension)
     CATCH_RETURN(int64_t, 0, tensor->size(dimension));
 }
 
+int64_t THSTensor_numel(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->numel());
+}
+
+int64_t THSTensor_element_size(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->element_size());
+}
+
 //void THSTensor_sizes(const Tensor tensor, int64_t* (*allocator)(size_t length))
 //{
 //    CATCH(
@@ -335,6 +345,16 @@ Tensor THSTensor_get4(const Tensor tensor, int64_t index1, int64_t index2, int64
     CATCH_TENSOR((*tensor)[index1][index2][index3][index4]);
 }
 
+Tensor THSTensor_get5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5)
+{
+    CATCH_TENSOR((*tensor)[index1][index2][index3][index4][index5]);
+}
+
+Tensor THSTensor_get6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6)
+{
+    CATCH_TENSOR((*tensor)[index1][index2][index3][index4][index5][index6]);
+}
+
 void THSTensor_set1(const Tensor tensor, int64_t index, Scalar value)
 {
     CATCH(
@@ -360,6 +380,20 @@ void THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t
 {
     CATCH(
         (*tensor)[index1][index2][index3][index4] = *value;
+    )
+}
+
+void THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, Scalar value)
+{
+    CATCH(
+        (*tensor)[index1][index2][index3][index4][index5] = *value;
+    )
+}
+
+void THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, Scalar value)
+{
+    CATCH(
+        (*tensor)[index1][index2][index3][index4][index5][index6] = *value;
     )
 }
 
