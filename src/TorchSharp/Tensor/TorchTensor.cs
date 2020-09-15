@@ -19,6 +19,30 @@ namespace TorchSharp.Tensor
             this.handle = handle;
         }
 
+        internal class MemoryPressureHandle
+        {
+            internal MemoryPressureHandle(long pressure) { this.pressure = pressure; }
+            long pressure;
+            internal void Cleanup() { GC.RemoveMemoryPressure(pressure);  } 
+
+        }
+        static ConditionalWeakTable<TorchTensor, MemoryPressureHandle>? memoryPressureRegistrations = null;
+
+        /// <summary>
+        /// Records that the created tensor adds CPU memory pressure.  The pressure will be removed
+        /// when this particular TorchTensor handle is disposed or finalised.
+        /// </summary>
+        public void RegisterForMemoryPressure()
+        {
+            if (DeviceType == DeviceType.CPU) {
+                if (memoryPressureRegistrations == null)
+                    memoryPressureRegistrations = new ConditionalWeakTable<TorchTensor, MemoryPressureHandle>();
+                long pressure = this.ElementSize * this.NumberOfElements;
+                GC.AddMemoryPressure(pressure);
+                memoryPressureRegistrations.Add(this, new MemoryPressureHandle(pressure));
+            }
+        }
+
         public override bool Equals(object? obj)
         {
             return (obj is TorchTensor) && this.Equal((obj as TorchTensor)!);
@@ -50,6 +74,12 @@ namespace TorchSharp.Tensor
         void Dispose(bool disposing)
         {
             if (handle != IntPtr.Zero) {
+                if (memoryPressureRegistrations != null) {
+                    if (memoryPressureRegistrations.TryGetValue(this, out var pressure)) {
+                        pressure.Cleanup();
+                        memoryPressureRegistrations.Remove(this);
+                    }
+                }
                 THSTensor_dispose(handle);
                 handle = IntPtr.Zero;
             }

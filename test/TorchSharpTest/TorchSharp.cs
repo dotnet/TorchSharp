@@ -33,19 +33,38 @@ namespace TorchSharp
             //Assert.Equal(1.0f, t[1, 1].DataItem<float>());
         }
 
+    }
+
+    [CollectionDefinition("TestTorchImplicitMemoryPressure", DisableParallelization = true)]
+    public class TestTorchMemoryPressure
+    {
         [Fact]
-        public void TestMemoryUsage()
+        public void ExplicitDisposal()
         {
-            int n = 1000;
+            // Allocate many 512MB tensors. Without explicit disposal memory use relies on finalization.
+            // This will often succeed but not reliably
+            int n = 50;
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("Loop iteration %d", i);
 
-                // This will fail:
-                // var x = FloatTensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU);
+                using (var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU)) { }
+            }
+            Console.WriteLine("Hello World!");
+        }
 
-                // This will succeed:
-                using (var x = FloatTensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU)) { }
+        [Fact]
+        public void FinalizeWithExplicitMemoryPressure()
+        {
+            // 
+            // Allocate many 512MB tensors. Without explicit disposal memory use relies on finalization.
+            // Use explicit memory pressure for large tensors makes this succeed reliably.
+            int n = 50;
+            for (int i = 0; i < n; i++) {
+                Console.WriteLine("Loop iteration %d", i);
 
+                // Allocate a 512MB tensor
+                var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU);
+                x.RegisterForMemoryPressure();
             }
             Console.WriteLine("Hello World!");
         }
