@@ -41,13 +41,13 @@ namespace TorchSharp
         [Fact]
         public void ExplicitDisposal()
         {
-            // Allocate many 512MB tensors. Without explicit disposal memory use relies on finalization.
+            // Allocate many 256MB tensors. Without explicit disposal memory use relies on finalization.
             // This will often succeed but not reliably
             int n = 50;
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
-                using (var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU)) { }
+                using (var x = FloatTensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU)) { }
             }
             Console.WriteLine("Hello World!");
         }
@@ -62,8 +62,8 @@ namespace TorchSharp
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("FinalizeWithExplicitMemoryPressure: Loop iteration {0}", i);
 
-                // Allocate a 512MB tensor
-                var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU);
+                // Allocate a 256MB tensor
+                var x = FloatTensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU);
                 x.RegisterAsMemoryPressure();
             }
             Console.WriteLine("Hello World!");
