@@ -32,7 +32,7 @@ namespace TorchSharp.Tensor
         /// Records that the created tensor adds CPU memory pressure.  The pressure will be removed
         /// when this particular TorchTensor handle is disposed or finalised.
         /// </summary>
-        public void RegisterForMemoryPressure()
+        public void RegisterAsMemoryPressure()
         {
             if (DeviceType == DeviceType.CPU) {
                 if (memoryPressureRegistrations == null)
