@@ -32,7 +32,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -45,7 +47,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -62,7 +66,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -81,7 +87,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -100,7 +108,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -119,7 +129,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -129,7 +141,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(byte scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newByteScalar(scalar, requiresGrad));
+            var handle = THSTensor_newByteScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -150,7 +164,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Byte, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Byte, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -170,7 +186,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -199,7 +217,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -212,7 +232,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -229,7 +251,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -248,7 +272,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -267,7 +293,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -286,7 +314,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -296,7 +326,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(sbyte scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newSByteScalar(scalar, requiresGrad));
+            var handle = THSTensor_newSByteScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -317,7 +349,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.SByte, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.SByte, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -337,7 +371,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.SByte, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -366,7 +402,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -379,7 +417,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -396,7 +436,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -415,7 +457,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -434,7 +478,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -453,7 +499,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -463,7 +511,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(short scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newShortScalar(scalar, requiresGrad));
+            var handle = THSTensor_newShortScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -484,7 +534,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Short, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Short, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -504,7 +556,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Short, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -533,7 +587,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -546,7 +602,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -563,7 +621,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -582,7 +642,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -601,7 +663,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -620,7 +684,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -630,7 +696,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(int scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newIntScalar(scalar, requiresGrad));
+            var handle = THSTensor_newIntScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -651,7 +719,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -671,7 +741,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -700,7 +772,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -713,7 +787,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -730,7 +806,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -749,7 +827,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -768,7 +848,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -787,7 +869,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -797,7 +881,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(long scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newLongScalar(scalar, requiresGrad));
+            var handle = THSTensor_newLongScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -818,7 +904,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_newLong(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                var handle = THSTensor_newLong(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -838,7 +926,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Long, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -867,7 +957,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -880,7 +972,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -897,7 +991,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -916,7 +1012,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -935,7 +1033,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -954,7 +1054,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -972,7 +1074,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -991,7 +1095,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1001,7 +1107,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(float scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newHalfScalar(scalar, requiresGrad));
+            var handle = THSTensor_newHalfScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1024,7 +1132,9 @@ namespace TorchSharp.Tensor {
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
                 fixed (float* pRawArray = rawArray)
                 {
-                    return new TorchTensor(THSTensor_newHalf((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad));
+                    var handle = THSTensor_newHalf((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(handle);
                 }
             }
         }
@@ -1045,7 +1155,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Half, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1074,7 +1186,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -1087,7 +1201,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -1104,7 +1220,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1123,7 +1241,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1132,7 +1252,7 @@ namespace TorchSharp.Tensor {
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
-        ///  Create a new tensor filled with arbitrary values
+        ///  Create a new tensor filled with ones
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
@@ -1142,7 +1262,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1161,7 +1283,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1179,7 +1303,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1198,7 +1324,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1208,7 +1336,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(float scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newFloatScalar(scalar, requiresGrad));
+            var handle = THSTensor_newFloatScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1229,7 +1359,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Float, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Float, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -1249,7 +1381,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1278,7 +1412,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -1291,7 +1427,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -1308,7 +1446,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1327,7 +1467,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1346,7 +1488,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1365,7 +1509,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1383,7 +1529,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1402,7 +1550,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1412,7 +1562,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(double scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newDoubleScalar(scalar, requiresGrad));
+            var handle = THSTensor_newDoubleScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1433,7 +1585,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Double, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Double, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -1453,7 +1607,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Double, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1482,7 +1638,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
         [DllImport("LibTorchSharp")]
@@ -1495,7 +1653,9 @@ namespace TorchSharp.Tensor {
         {
             Torch.InitializeDevice (deviceType, deviceIndex);
 
-            return new TorchTensor (THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -1512,7 +1672,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1531,7 +1693,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1550,7 +1714,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1569,7 +1735,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
@@ -1579,7 +1747,9 @@ namespace TorchSharp.Tensor {
 
         public static TorchTensor From(bool scalar, bool requiresGrad = false)
         {
-            return new TorchTensor(THSTensor_newBoolScalar(scalar, requiresGrad));
+            var handle = THSTensor_newBoolScalar(scalar, requiresGrad);
+            Torch.CheckForErrors();
+            return new TorchTensor(handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1600,7 +1770,9 @@ namespace TorchSharp.Tensor {
                         deleters.TryRemove(deleter, out deleter);
                         });
                 deleters.TryAdd(deleter, deleter); // keep the delegate alive
-                return new TorchTensor(THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Bool, requiresGrad));
+                var handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Bool, requiresGrad);
+                Torch.CheckForErrors();
+                return new TorchTensor(handle);
             }
         }
         
@@ -1620,7 +1792,9 @@ namespace TorchSharp.Tensor {
             {
                 fixed (long* psizes = size)
                 {
-                    return new TorchTensor (THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad));
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) deviceType, deviceIndex, requiresGrad);
+                    Torch.CheckForErrors();
+                    return new TorchTensor (handle);
                 }
             }
         }
