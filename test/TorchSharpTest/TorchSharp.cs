@@ -45,7 +45,7 @@ namespace TorchSharp
             // This will often succeed but not reliably
             int n = 50;
             for (int i = 0; i < n; i++) {
-                Console.WriteLine("Loop iteration %d", i);
+                Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
                 using (var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU)) { }
             }
@@ -60,11 +60,11 @@ namespace TorchSharp
             // Use explicit memory pressure for large tensors makes this succeed reliably.
             int n = 50;
             for (int i = 0; i < n; i++) {
-                Console.WriteLine("Loop iteration %d", i);
+                Console.WriteLine("FinalizeWithExplicitMemoryPressure: Loop iteration {0}", i);
 
                 // Allocate a 512MB tensor
                 var x = FloatTensor.Empty(new long[] { 64000, 2000 }, deviceType: DeviceType.CPU);
-                x.RegisterForMemoryPressure();
+                x.RegisterAsMemoryPressure();
             }
             Console.WriteLine("Hello World!");
         }
