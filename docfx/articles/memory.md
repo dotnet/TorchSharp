@@ -58,7 +58,15 @@ then TorchSharp forces a .NET garbage collection and execution of all pending fi
 
 This is not yet done when using general tensor operations.  It is possible a more general retry-after-GC-on-out-of-memory will be added at some point.
 
+## Links and resources
 
+These articles might give you ides about techniques to use to analyse memory. The code is in python but generally will translate across:
+
+* https://gitmemory.com/issue/pytorch/pytorch/31252/565550016
+
+* https://discuss.pytorch.org/t/how-to-debug-causes-of-gpu-memory-leaks/6741
+
+* https://discuss.pytorch.org/t/i-run-out-of-memory-after-a-certain-amount-of-batches-when-training-a-resnet18/1911
 
 
 
