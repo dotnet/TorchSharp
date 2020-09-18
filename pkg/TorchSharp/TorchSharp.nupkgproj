@@ -1,17 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorcu-cpu, libtorch-cuda-$(CudaVersion), libtorch-cuda-$(CudaVersion)-win-x64 or libtorch-cuda-$(CudaVersion)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersion), libtorch-cuda-$(CudaVersion)-win-x64 or libtorch-cuda-$(CudaVersion)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
-  </ItemGroup>
-
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netcoreapp3.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.0\$(MSBuildProjectName).targets" />
     <Content Include="$(RepoRoot)\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
