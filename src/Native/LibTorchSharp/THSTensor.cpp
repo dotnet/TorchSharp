@@ -1482,8 +1482,13 @@ Tensor THSTensor_rand(
         return tensor;
 }
 
+Tensor THSTensor_rand_out(const int64_t* sizes, const int length, const Tensor out)
+{
+    CATCH_TENSOR(torch::rand_out(*out, at::ArrayRef<int64_t>(sizes, length)));
+}
+
 Tensor THSTensor_randint(
-    const int64_t max,
+    const int64_t high,
     const int64_t* sizes,
     const int length,
     const int8_t scalar_type,
@@ -1497,9 +1502,14 @@ Tensor THSTensor_randint(
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randint(max, at::ArrayRef<int64_t>(sizes, length), options));
+        tensor = new torch::Tensor(torch::randint(high, at::ArrayRef<int64_t>(sizes, length), options));
     )
     return tensor;
+}
+
+Tensor THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out)
+{
+    CATCH_TENSOR(torch::randint_out(*out, high, at::ArrayRef<int64_t>(sizes, length)));
 }
 
 Tensor THSTensor_randn(
@@ -1515,6 +1525,11 @@ Tensor THSTensor_randn(
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::randn(at::ArrayRef<int64_t>(sizes, length), options));
+}
+
+Tensor THSTensor_randn_out(const int64_t* sizes, const int length, const Tensor out)
+{
+    CATCH_TENSOR(torch::randn_out(*out, at::ArrayRef<int64_t>(sizes, length)));
 }
 
 Tensor THSTensor_randperm(const int64_t n,
@@ -1533,6 +1548,11 @@ Tensor THSTensor_randperm(const int64_t n,
         tensor = new torch::Tensor(torch::randperm(n, options));
     )
     return tensor;
+}
+
+Tensor THSTensor_randperm_out(const int64_t n, const Tensor out)
+{
+    CATCH_TENSOR(torch::randperm_out(*out, n));
 }
 
 Tensor THSTensor_relu(const Tensor tensor)
