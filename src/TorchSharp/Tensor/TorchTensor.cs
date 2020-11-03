@@ -1012,7 +1012,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_cosh_(IntPtr tensor);
 
-        public TorchTensor CosInPlaceh()
+        public TorchTensor CoshInPlace()
         {
             var res = THSTensor_cosh_(handle);
             Torch.CheckForErrors();
