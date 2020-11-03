@@ -1,6 +1,6 @@
 # Memory Management
 
-Three approaches are available for memory management. Technique 1 is the default and simplest way to program.
+Two approaches are available for memory management. Technique 1 is the default and simplest way to program.
 
 - If having trouble with CPU memory you may have to resort to technique 2.
 
