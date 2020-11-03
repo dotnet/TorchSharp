@@ -8,7 +8,7 @@
 // API.
 
 // Sets manually the seed.
-EXPORT_API(void) THSTorch_seed(const int64_t seed);
+EXPORT_API(void) THSTorch_manual_seed(const int64_t seed);
 
 EXPORT_API(int) THSTorchCuda_is_available();
 EXPORT_API(int) THSTorchCuda_cudnn_is_available();

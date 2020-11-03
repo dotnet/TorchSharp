@@ -505,9 +505,9 @@ namespace TorchSharp
             var ones = FloatTensor.Ones(new long[] { 1, 9 });
             var centroids = new TorchTensor[] { zeros, ones }.Cat(0);
 
-            var distanceFromZero = input.Reshape(new long[] { -1, 1, 9 }).Sub(zeros).Pow(2.ToScalar()).Sum(new long[] { 2 });
-            var distanceFromOne = input.Reshape(new long[] { -1, 1, 9 }).Sub(ones).Pow(2.ToScalar()).Sum(new long[] { 2 });
-            var distanceFromCentroids = input.Reshape(new long[] { -1, 1, 9 }).Sub(centroids).Pow(2.ToScalar()).Sum(new long[] { 2 });
+            var distanceFromZero = input.Reshape(new long[] { -1, 1, 9 }).Sub(zeros).PowScalar(2.ToScalar()).Sum(new long[] { 2 });
+            var distanceFromOne = input.Reshape(new long[] { -1, 1, 9 }).Sub(ones).PowScalar(2.ToScalar()).Sum(new long[] { 2 });
+            var distanceFromCentroids = input.Reshape(new long[] { -1, 1, 9 }).Sub(centroids).PowScalar(2.ToScalar()).Sum(new long[] { 2 });
 
             Assert.True(true);
         }
@@ -717,15 +717,15 @@ namespace TorchSharp
             TestOneTensor<float, float>(a => a / 0.5f, a => a / 0.5f);
             TestOneTensor<float, float>(a => 0.5f / a, a => 0.5f / a);
 
-            TestOneTensor<float, float>(a => a.Add(0.5f), a => a + 0.5f);
-            TestOneTensor<float, float>(a => a.Sub(0.5f), a => a - 0.5f);
-            TestOneTensor<float, float>(a => a.Mul(0.5f), a => a * 0.5f);
-            TestOneTensor<float, float>(a => a.Div(0.5f), a => a / 0.5f);
+            TestOneTensor<float, float>(a => a.AddScalar(0.5f), a => a + 0.5f);
+            TestOneTensor<float, float>(a => a.SubScalar(0.5f), a => a - 0.5f);
+            TestOneTensor<float, float>(a => a.MulScalar(0.5f), a => a * 0.5f);
+            TestOneTensor<float, float>(a => a.DivScalar(0.5f), a => a / 0.5f);
 
             TestOneTensorInPlace<float>(a => a.AddInPlace(0.5f), a => a + 0.5f);
-            TestOneTensorInPlace<float>(a => a.SubInPlace(0.5f), a => a - 0.5f);
-            TestOneTensorInPlace<float>(a => a.MulInPlace(0.5f), a => a * 0.5f);
-            TestOneTensorInPlace<float>(a => a.DivInPlace(0.5f), a => a / 0.5f);
+            TestOneTensorInPlace<float>(a => a.SubScalarInPlace(0.5f), a => a - 0.5f);
+            TestOneTensorInPlace<float>(a => a.MulScalarInPlace(0.5f), a => a * 0.5f);
+            TestOneTensorInPlace<float>(a => a.DivScalarInPlace(0.5f), a => a / 0.5f);
 
             // tensor-tensor operators
             TestTwoTensor<float, float>((a, b) => a + b, (a, b) => a + b);
@@ -750,8 +750,8 @@ namespace TorchSharp
             // scalar-tensor operators
             TestOneTensor<float, bool>(a => a == 5.0f, a => a == 5.0f);
             TestOneTensor<float, bool>(a => a != 5.0f, a => a != 5.0f);
-            TestOneTensorInPlace<float>(a => a.EqInPlace(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
-            TestOneTensorInPlace<float>(a => a.NeInPlace(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.EqScalarInPlace(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.NeScalarInPlace(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
 
             TestOneTensor<float, bool>(a => a < 5.0f, a => a < 5.0f);
             TestOneTensor<float, bool>(a => 5.0f < a, a => 5.0f < a);
@@ -762,10 +762,10 @@ namespace TorchSharp
             TestOneTensor<float, bool>(a => a >= 5.0f, a => a >= 5.0f);
             TestOneTensor<float, bool>(a => 5.0f >= a, a => 5.0f >= a);
 
-            TestOneTensorInPlace<float>(a => a.LtInPlace(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
-            TestOneTensorInPlace<float>(a => a.LeInPlace(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
-            TestOneTensorInPlace<float>(a => a.GtInPlace(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
-            TestOneTensorInPlace<float>(a => a.GeInPlace(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.LtScalarInPlace(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.LeScalarInPlace(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GtScalarInPlace(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
+            TestOneTensorInPlace<float>(a => a.GeScalarInPlace(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
 
             TestOneTensor<float, float>(a => 5.0f % a, a => 5.0f % a);
             TestOneTensor<float, float>(a => a % 5.0f, a => a % 5.0f);
@@ -894,7 +894,7 @@ namespace TorchSharp
         {
             var x = FloatTensor.Ones(new long[] { 100, 100 });
 
-            var y = x.Mul(0.5f.ToScalar());
+            var y = x.MulScalar(0.5f.ToScalar());
 
             var ydata = y.Data<float>();
             var xdata = x.Data<float>();
