@@ -2748,10 +2748,72 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randn_out(IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        public TorchTensor RandomNInPlace(long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_randn_out((IntPtr)psizes, sizes.Length, handle);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rand_out(IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to be filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        public TorchTensor RandInPlace(long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_rand_out((IntPtr)psizes, sizes.Length, handle);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint_out(long high, IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        public TorchTensor RandomIntegersInPlace(long high, long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_randint_out(high, (IntPtr)psizes, sizes.Length, handle);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randperm_out(long n, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        public TorchTensor RandomPermutationInPlace(long n)
+        {
+            var res = THSTensor_randperm_out(n, handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones_out(IntPtr psizes, int length, IntPtr tensorOut);
 
         /// <summary>
-        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+        ///  Mutates the tensor to have the given size with all values set to 1
         /// </summary>
         public TorchTensor OnesInPlace(long[] sizes)
         {
@@ -2768,7 +2830,7 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_zeros_out(IntPtr psizes, int length, IntPtr tensorOut);
 
         /// <summary>
-        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+        ///  Mutates the tensor to have the given size with all values set to 0
         /// </summary>
         public TorchTensor ZerosInPlace(long[] sizes)
         {
