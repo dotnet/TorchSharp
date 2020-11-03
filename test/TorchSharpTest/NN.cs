@@ -628,7 +628,7 @@ namespace TorchSharp
                     foreach (var param in seq.GetParameters())
                     {
                         var grad = param.Grad();
-                        var update = grad.MulScalar(learning_rate.ToScalar());
+                        var update = grad.Mul(learning_rate.ToScalar());
                         param.SubInPlace(update);
                     }
                 }
