@@ -1422,6 +1422,12 @@ Tensor THSTensor_ones(
     CATCH_TENSOR(torch::ones(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
+
+Tensor THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor out)
+{
+    CATCH_TENSOR(torch::ones_out(*out, at::ArrayRef<int64_t>(sizes, length)));
+}
+
 Tensor THSTensor_polygamma(const Tensor tensor, int64_t n)
 {
     CATCH_TENSOR(tensor->polygamma(n));
@@ -1918,6 +1924,11 @@ Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dim)
 Tensor THSTensor_values(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_values());
+}
+
+Tensor THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out)
+{
+    CATCH_TENSOR(torch::zeros_out(*out, at::ArrayRef<int64_t>(sizes, length)));
 }
 
 Tensor THSTensor_zeros(

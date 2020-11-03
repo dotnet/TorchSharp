@@ -2748,6 +2748,40 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_ones_out(IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+        /// </summary>
+        public TorchTensor OnesInPlace(long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_ones_out((IntPtr)psizes, sizes.Length, handle);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_zeros_out(IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+        /// </summary>
+        public TorchTensor ZerosInPlace(long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_zeros_out((IntPtr)psizes, sizes.Length, handle);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_scatter(IntPtr tensor, long dimension, IntPtr index, IntPtr source);
 
         /// <summary>

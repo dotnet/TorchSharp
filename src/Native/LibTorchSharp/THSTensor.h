@@ -534,6 +534,8 @@ EXPORT_API(int64_t) THSTensor_numel(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor out);
+
 EXPORT_API(Tensor) THSTensor_pow(const Tensor tensor, const Tensor exponent);
 
 EXPORT_API(Tensor) THSTensor_pow_(const Tensor tensor, const Tensor exponent);
@@ -690,3 +692,5 @@ EXPORT_API(Tensor) THSTensor_values(Tensor tensor);
 EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, const int length);
 
 EXPORT_API(Tensor) THSTensor_zeros(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out);
