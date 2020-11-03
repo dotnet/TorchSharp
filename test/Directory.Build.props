@@ -36,13 +36,7 @@
       <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> <!-- https://github.com/tonerdo/coverlet/issues/72 -->
       <CoverletOutputFormat>opencover</CoverletOutputFormat>
       <CoverletOutput>$(BaseOutputPath)$(PlatformConfig)\coverage\$(MSBuildProjectName).coverage</CoverletOutput>
-      <Include>[Microsoft.ML.*]*</Include>
-      <!-- Excluding for perf reasons. These classes have tests that can be run conditionally
-           but they need to be migrated. Excluding these classes should have very minimal effect on code coverage.
-      -->
-      <Exclude>[*]Microsoft.ML.*Contracts*,[*]Microsoft.ML.Internal.Utilities*,[*]Microsoft.ML.Data.VBuffer*</Exclude>
       <ExcludeByAttribute>Obsolete,ExcludeFromCodeCoverage</ExcludeByAttribute>
-      <ExcludeByFile>$(BaseOutputPath)..\src\Microsoft.ML.OnnxConverter\OnnxMl.cs,$(BaseOutputPath)..\src\Microsoft.ML.TensorFlow\TensorFlow\Buffer.cs,$(BaseOutputPath)..\src\Microsoft.ML.TensorFlow\TensorFlow\Tensor.cs,$(BaseOutputPath)..\src\Microsoft.ML.TensorFlow\TensorFlow\Tensorflow.cs</ExcludeByFile>
   </PropertyGroup>
 
 </Project>

@@ -37,7 +37,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -57,7 +57,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -77,7 +77,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -103,7 +103,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -129,7 +129,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -155,7 +155,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// </summary>
         static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -183,7 +183,7 @@ if (type.IsFloatingPoint) {
         /// </summary>
         static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -209,7 +209,7 @@ if (type.IsFloatingPoint) {
         /// </summary>
         static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {
@@ -328,7 +328,7 @@ if (type.IsLong) {
 
         public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
-            Torch.InitializeDevice (deviceType, deviceIndex);
+            Torch.InitializeDeviceType (deviceType);
 
             unsafe
             {

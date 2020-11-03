@@ -4,7 +4,7 @@
 #include "torch/torch.h"
 #include "torch/cuda.h"
 
-void THSTorch_seed(const int64_t seed)
+void THSTorch_manual_seed(const int64_t seed)
 {
     torch::manual_seed(seed);
 }

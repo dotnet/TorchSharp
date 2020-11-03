@@ -47,22 +47,5 @@ namespace TorchSharp
             Console.WriteLine("Hello World!");
         }
 
-        [Fact]
-        public void FinalizeWithExplicitMemoryPressure()
-        {
-            // 
-            // Allocate many 512MB tensors. Without explicit disposal memory use relies on finalization.
-            // Use explicit memory pressure for large tensors makes this succeed reliably.
-            int n = 25;
-            for (int i = 0; i < n; i++) {
-                Console.WriteLine("FinalizeWithExplicitMemoryPressure: Loop iteration {0}", i);
-
-                // Allocate a 256MB tensor
-                var x = FloatTensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU);
-                x.RegisterAsMemoryPressure();
-            }
-            Console.WriteLine("Hello World!");
-        }
-
     }
 }
