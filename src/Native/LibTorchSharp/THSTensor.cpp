@@ -134,6 +134,11 @@ Tensor THSTensor_arange(const Scalar start, const Scalar end, const Scalar step,
     CATCH_TENSOR(torch::arange(*start, *end, *step, options));
 }
 
+Tensor THSTensor_arange_out(const Scalar start, const Scalar end, const Scalar step, const Tensor out)
+{
+    CATCH_TENSOR(torch::arange_out(*out, *start, *end, *step));
+}
+
 Tensor THSTensor_argmax(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->argmax());
@@ -676,6 +681,24 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
 Tensor THSTensor_fft(const Tensor tensor, const int64_t dim, const bool normalized)
 {
     CATCH_TENSOR(tensor->fft(dim, normalized));
+}
+
+Tensor THSTensor_ifft(const Tensor tensor, const int64_t signal_ndim, const bool normalized)
+{
+    CATCH_TENSOR(tensor->ifft(signal_ndim, normalized));
+}
+
+Tensor THSTensor_irfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided, const int64_t* signal_sizes, const int signal_sizes_length)
+{
+    CATCH_TENSOR(
+        signal_sizes == NULL
+           ? tensor->irfft(signal_ndim, normalized, onesided)
+           : tensor->irfft(signal_ndim, normalized, onesided, at::ArrayRef<int64_t>(signal_sizes, signal_sizes_length)));
+}
+
+Tensor THSTensor_rfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided)
+{
+    CATCH_TENSOR(tensor->rfft(signal_ndim, normalized, onesided));
 }
 
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
