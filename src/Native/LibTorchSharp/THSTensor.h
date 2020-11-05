@@ -58,6 +58,8 @@ EXPORT_API(Tensor) THSTensor_angle(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_arange(const Scalar start, const Scalar end, const Scalar step, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_arange_out(const Scalar start, const Scalar end, const Scalar step, const Tensor out);
+
 EXPORT_API(Tensor) THSTensor_argmax(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_argmax_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
@@ -257,6 +259,12 @@ EXPORT_API(Tensor) THSTensor_erfinv_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
 EXPORT_API(Tensor) THSTensor_fft(const Tensor tensor, const int64_t dim, const bool normalized);
+
+EXPORT_API(Tensor) THSTensor_ifft(const Tensor tensor, const int64_t signal_ndim, const bool normalized);
+
+EXPORT_API(Tensor) THSTensor_irfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided, const int64_t* signal_sizes, const int signal_sizes_length);
+
+EXPORT_API(Tensor) THSTensor_rfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided);
 
 EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
 

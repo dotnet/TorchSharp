@@ -1940,9 +1940,46 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_fft(IntPtr tensor, long dim, bool normalized);
 
-        public TorchTensor Fft(long dim, bool normalized = false)
+        public TorchTensor fft(long dim, bool normalized = false)
         {
             var res = THSTensor_fft(handle, dim, normalized);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_ifft(IntPtr tensor, long signal_ndim, bool normalized);
+
+        public TorchTensor ifft(long signal_ndim, bool normalized = false)
+        {
+            var res = THSTensor_ifft(handle, signal_ndim, normalized);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_irfft(IntPtr tensor, long signal_ndim, bool normalized, bool onesided, IntPtr signal_sizes, int signal_sizes_length);
+
+        public TorchTensor irfft(long signal_ndim, bool normalized = false, bool onesided = true, long[]? signal_sizes = null)
+        {
+            unsafe {
+                fixed (long* psignal_sizes = signal_sizes) {
+                    var res =
+                        signal_sizes == null
+                        ? THSTensor_irfft(handle, signal_ndim, normalized, onesided, IntPtr.Zero, 0)
+                        : THSTensor_irfft(handle, signal_ndim, normalized, onesided, (IntPtr)psignal_sizes, signal_sizes.Length);
+                    Torch.CheckForErrors();
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_rfft(IntPtr tensor, long signal_ndim, bool normalized, bool onesided);
+
+        public TorchTensor rfft(long signal_ndim, bool normalized = false, bool onesided = true)
+        {
+            var res = THSTensor_rfft(handle, signal_ndim, normalized, onesided);
             Torch.CheckForErrors();
             return new TorchTensor(res);
         }
@@ -2805,6 +2842,20 @@ namespace TorchSharp.Tensor
         public TorchTensor RandomPermutationInPlace(long n)
         {
             var res = THSTensor_randperm_out(n, handle);
+            Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_arange_out(IntPtr start, IntPtr strp, IntPtr step, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to be filled with with values from interval [start, end) and
+		/// common difference step, starting from start.
+        /// </summary>
+        public TorchTensor ArangeInPlace(TorchScalar start, TorchScalar stop, TorchScalar step)
+        {
+            var res = THSTensor_arange_out(start.Handle, stop.Handle, step.Handle, handle);
             Torch.CheckForErrors();
             return new TorchTensor(res);
         }
