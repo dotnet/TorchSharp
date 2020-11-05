@@ -3746,10 +3746,11 @@ namespace TorchSharp.Tensor
                 return tensors[0];
             }
 
-            var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            return new TorchTensor(THSTensor_cat(tensorsRef, parray.Array.Length, dimension));
+                return new TorchTensor(THSTensor_cat(tensorsRef, parray.Array.Length, dimension));
+            }
         }
 
         [DllImport("LibTorchSharp")]
@@ -3757,12 +3758,27 @@ namespace TorchSharp.Tensor
 
         public static TorchTensor Stack(this TorchTensor[] tensors, long dimension)
         {
-            var parray = new PinnedArray<IntPtr>();
-            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-            var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
-            Torch.CheckForErrors();
-            return new TorchTensor(res);
+                var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
+
+        public static TorchTensor Einsum(string equation, params TorchTensor[] tensors)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
+                Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
         }
 
     }

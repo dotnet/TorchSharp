@@ -573,6 +573,11 @@ Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->div_(*right));
 }
 
+Tensor THSTensor_einsum(const char* equation, const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::einsum(equation, toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
 int64_t THSTensor_element_size(const Tensor tensor)
 {
     CATCH_RETURN(int64_t, 0, tensor->element_size());
