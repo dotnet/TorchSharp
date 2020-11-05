@@ -215,6 +215,8 @@ EXPORT_API(Tensor) THSTensor_div_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_div_scalar_(const Tensor left, const Scalar right);
 
+EXPORT_API(Tensor) THSTensor_einsum(const char* equation, const Tensor* tensors, const int length);
+
 EXPORT_API(int64_t) THSTensor_element_size(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_empty(
