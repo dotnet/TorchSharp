@@ -1756,12 +1756,7 @@ Tensor THSTensor_sparse(
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-    const torch::autograd::Variable& vindices = torch::autograd::as_variable_ref(*indices);
-    const torch::autograd::Variable& vvalues = torch::autograd::as_variable_ref(*values);
-    at::Tensor i = vindices.tensor_data();
-    at::Tensor v = vvalues.tensor_data();
-
-    CATCH_TENSOR(torch::sparse_coo_tensor(i, v, at::ArrayRef<int64_t>(sizes, length), options));
+    CATCH_TENSOR(torch::sparse_coo_tensor(*indices, *values, at::ArrayRef<int64_t>(sizes, length), options));
 }
 
 void THSTensor_split_with_sizes(

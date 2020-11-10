@@ -151,6 +151,6 @@ Then run these to test downloads and update SHA hashes for the various LibTorch 
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.
 
-     bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
+     bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.7.0\libtorch\lib
 
 You must also adjust the set of binaries referenced for tests, see various files under `tests`.
