@@ -21,10 +21,3 @@ const char * make_sharable_string(const std::string str)
     return result;
 }
 
-Tensor ResultTensor(const at::Tensor& res)
-{
-    if (res.defined())
-        return new torch::Tensor(res);
-    else
-        return NULL;
-}

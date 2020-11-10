@@ -87,7 +87,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
             var res = THSNN_Adam_ctor (paramsRef, parray.Array.Length, learningRate);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Optimizer (res);
         }
 
@@ -100,7 +100,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
             var res = THSNN_SGD_ctor (paramsRef, parray.Array.Length, learningRate, momentum);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Optimizer (res);
         }
 

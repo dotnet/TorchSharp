@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_AdaptiveAvgPool2d_forward (handle.DangerousGetHandle (), tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* pkernelSize = kernelSize) {
                     var handle = THSNN_AdaptiveAvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, out var boxedHandle);
-                    Torch.CheckForErrors ();
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new AdaptiveAvgPool2D (handle, boxedHandle);
                 }
             }

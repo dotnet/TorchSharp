@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_FeatureAlphaDropout_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
         static public FeatureAlphaDropout FeatureAlphaDropout (double probability = 0.5)
         {
             var handle = THSNN_FeatureAlphaDropout_ctor (probability, out var boxedHandle);
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new FeatureAlphaDropout (handle, boxedHandle);
         }
     }

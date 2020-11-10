@@ -22,7 +22,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_binary_cross_entropy (src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, (long)reduction);
-                Torch.CheckForErrors ();
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor (res);
             };
         }
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                     var res = THSNN_mse_loss (src.Handle, target.Handle, (long)reduction);
-                    Torch.CheckForErrors ();
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (res);
                 };
         }
@@ -46,7 +46,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_nll_loss (src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, (long)reduction);
-                Torch.CheckForErrors ();
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor (res);
             };
         }
@@ -58,7 +58,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_poisson_loss (src.Handle, target.Handle, logInput, full, eps, (long)reduction);
-                Torch.CheckForErrors ();
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor (res);
             };
         }

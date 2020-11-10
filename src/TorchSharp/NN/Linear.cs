@@ -15,7 +15,6 @@ namespace TorchSharp.NN
         public new static Linear Load (String modelPath)
         {
             var res = Module.Load (modelPath);
-            Torch.CheckForErrors ();
             return new Linear (res.handle.DangerousGetHandle(), IntPtr.Zero);
         }
 
@@ -25,7 +24,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_Linear_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
         [DllImport ("LibTorchSharp")]
@@ -36,7 +35,7 @@ namespace TorchSharp.NN
         public TorchTensor? Bias {
             get {
                 var res = THSNN_Linear_bias (handle);
-                Torch.CheckForErrors ();
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
             }
             set {
@@ -52,7 +51,7 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_Linear_weight (handle);
-                Torch.CheckForErrors ();
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor (res);
             }
             set {
@@ -69,7 +68,7 @@ namespace TorchSharp.NN
         static public Linear Linear (long inputSize, long outputSize, bool hasBias = true)
         {
             var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Linear (res, boxedHandle);
         }
     }
