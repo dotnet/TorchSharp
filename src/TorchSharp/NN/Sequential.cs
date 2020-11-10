@@ -38,7 +38,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_Sequential_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -52,7 +52,7 @@ namespace TorchSharp.NN
         static public Sequential Sequential (params (string name, Module submodule)[] modules)
         {
             var handle = THSNN_Sequential_ctor ();
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             var res = new Sequential (handle);
             foreach (var module in modules)
                 res.Add(module.name, module.submodule);

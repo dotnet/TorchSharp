@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_LogSoftMax_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
         static public LogSoftMax LogSoftMax (long dimension)
         {
             var handle = THSNN_LogSoftMax_ctor (dimension, out var boxedHandle);
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new LogSoftMax (handle, boxedHandle);
         }
     }

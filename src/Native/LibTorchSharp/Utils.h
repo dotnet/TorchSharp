@@ -41,7 +41,13 @@ typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
 #define CATCH_RETURN_Tensor(stmt) CATCH_RETURN_RES(Tensor, NULL, stmt)
 
 // Return undefined tensors as NULL to C#
-Tensor ResultTensor(const at::Tensor & res);
+inline Tensor ResultTensor(const at::Tensor & res)
+{
+    if (res.defined())
+        return new torch::Tensor(res);
+    else
+        return NULL;
+}
 
 #define CATCH_TENSOR(expr) \
     at::Tensor res = at::Tensor(); \

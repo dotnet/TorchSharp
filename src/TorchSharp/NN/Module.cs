@@ -97,7 +97,7 @@ namespace TorchSharp.NN
         public static Module Load(String location)
         {
             var handle = THSNN_Module_load (location);
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Module (handle, IntPtr.Zero);
         }
 

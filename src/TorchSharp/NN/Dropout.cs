@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_Dropout_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -30,7 +30,7 @@ namespace TorchSharp.NN
         static public Dropout Dropout (double probability = 0.5)
         {
             var handle = THSNN_Dropout_ctor (probability, out var boxedHandle);
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Dropout (handle, boxedHandle);
         }
     }

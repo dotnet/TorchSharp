@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public TorchTensor Forward (TorchTensor tensor)
         {
             var res = THSNN_ReLU_forward (handle, tensor.Handle);
-            Torch.CheckForErrors ();
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         static public ReLU Relu (bool inPlace = false)
         {
             var handle = THSNN_ReLU_ctor (inPlace, out var boxedHandle);
-            Torch.CheckForErrors ();
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new ReLU (handle, boxedHandle);
         }
     }
