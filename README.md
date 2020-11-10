@@ -3,11 +3,12 @@
 # TorchSharp
 
 TorchSharp is a .NET library that provides access to the library that powers
-PyTorch.  It is a work in progress, but already provides a .NET API that can
-be used to perform (1) various operations on ATen Tensors; (2) scoring of 
-TorchScript models; (3) Training of simple neural networks.
+PyTorch.  
 
-Our current focus is to bind the entire API surfaced by libtorch.
+The focus is to bind the API surfaced by libtorch with a particular focus on tensors.
+
+The technology is a "wrapepr library" no more no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
+repository extensively and has been a major factor in iterating support.
 
 Things that you can try:
 
@@ -53,11 +54,6 @@ See [docfx/articles/memory.md](docfx/articles/memory.md).
 # Developing
 
 See [DEVGUIDE.md](DEVGUIDE.md).
-
-# Discussions
-
-We have a chat room on Gitter [![Gitter](https://badges.gitter.im/xamarin/TorchSharp.svg)](https://gitter.im/xamarin/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
 
 # Uses
 

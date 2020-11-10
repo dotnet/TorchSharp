@@ -15,10 +15,10 @@ Commands:
 - Run tests from command line: `dotnet test`
 
 
-## Linux/Mac
+## Linux
 
 Requirements:
-- requirements to run .NET Core 2.0
+- requirements to run .NET Core 3.1
 - git
 - cmake (tested with 3.14)
 - clang 4.x +
