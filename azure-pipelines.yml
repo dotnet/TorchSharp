@@ -75,7 +75,7 @@ jobs:
     artifact: LinuxAssets
 
 ################################################################################
-- job: Windiows_Native_Build_For_Package
+- job: Windows_Native_Build_For_Package
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   variables:
@@ -95,7 +95,7 @@ jobs:
     artifact: WindowsAssets
 
 # ################################################################################
-# - job: MacOS_Build_For_Package
+# - job: MacOS_Native_Build_For_Package
 # ################################################################################
 #   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
 #   variables:
@@ -128,7 +128,7 @@ jobs:
   dependsOn:
   - Linux_Native_Build_For_Package
   - Windows_Native_Build_For_Package
-  # - MacOS_Build_For_Package
+  # - MacOS_Native_Build_For_Package
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
