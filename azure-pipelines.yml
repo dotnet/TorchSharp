@@ -161,11 +161,11 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
   
-  - script: dir /s $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-    displayName: Show packprep
-
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
+
+  - script: build.cmd build -c $(BuildConfig) -v:n /p:SkipNative=true
+    displayName: Build Managed
 
   - script: build.cmd pack -c $(BuildConfig) -v:n /p:SkipNative=true
     displayName: Create Packages
