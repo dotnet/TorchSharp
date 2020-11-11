@@ -3556,11 +3556,6 @@ namespace TorchSharp.Tensor
             return left.Sub(right);
         }
 
-        public static TorchTensor operator -(TorchScalar left, TorchTensor right)
-        {
-            return ScalarSub(left, right);
-        }
-
         public static TorchTensor operator /(TorchTensor left, TorchTensor right)
         {
             return left.Div(right);
@@ -3571,11 +3566,6 @@ namespace TorchSharp.Tensor
             return left.Div(right);
         }
 
-        public static TorchTensor operator /(TorchScalar left, TorchTensor right)
-        {
-            return ScalarDiv(left, right);
-        }
-
         public static TorchTensor operator %(TorchTensor left, TorchTensor right)
         {
             return left.Remainder(right);
@@ -3584,11 +3574,6 @@ namespace TorchSharp.Tensor
         public static TorchTensor operator %(TorchTensor left, TorchScalar right)
         {
             return left.Remainder(right);
-        }
-
-        public static TorchTensor operator %(TorchScalar left, TorchTensor right)
-        {
-            return ScalarRemainder(left, right);
         }
 
         public static TorchTensor operator <(TorchTensor left, TorchTensor right)
