@@ -1856,16 +1856,6 @@ namespace TorchSharp.Tensor
 
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_scalar_div(IntPtr scalar, IntPtr tensor);
-
-        public static TorchTensor ScalarDiv(TorchScalar scalar, TorchTensor divisor)
-        {
-            var res = THSTensor_scalar_div(scalar.Handle, divisor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_erf(IntPtr tensor);
 
         public TorchTensor Erf()
@@ -2595,15 +2585,6 @@ namespace TorchSharp.Tensor
 
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_scalar_remainder(IntPtr scalar, IntPtr tensor);
-
-        public static TorchTensor ScalarRemainder(TorchScalar scalar, TorchTensor divisor)
-        {
-            var res = THSTensor_scalar_remainder(scalar.Handle, divisor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_remainder_scalar_(IntPtr tensor, IntPtr scalar);
 
         public TorchTensor RemainderInPlace(TorchScalar scalar)
@@ -2720,17 +2701,6 @@ namespace TorchSharp.Tensor
         public TorchTensor SubInPlace(TorchScalar target)
         {
             var res = THSTensor_sub_scalar_(handle, target.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_scalar_sub(IntPtr scalar, IntPtr tensor);
-
-        public static TorchTensor ScalarSub(TorchScalar scalar, TorchTensor divisor)
-        {
-            var res = THSTensor_scalar_sub(scalar.Handle, divisor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

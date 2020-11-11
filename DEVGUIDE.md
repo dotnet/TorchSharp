@@ -121,6 +121,9 @@ For this reason, we do the following
 
    d. All packages should now be pushed to `nuget.org` and will appear after indexing.
 
+6. If updating libtorch packages, remember to delete all massive artifacts from Azure DevOps and reset this:
+
+         <BuildLibTorchPackages>false</BuildLibTorchPackages>
 
 ### Updating PyTorch version for libtorch packages
 
@@ -207,3 +210,6 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 10. Submit to CI and debug problems
 
+11. Remember to delete all massive artifacts from Azure DevOps and reset this:
+
+         <BuildLibTorchPackages>false</BuildLibTorchPackages>
