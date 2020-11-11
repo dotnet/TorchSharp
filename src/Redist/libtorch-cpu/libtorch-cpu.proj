@@ -254,8 +254,6 @@
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetPath)" />
     <Copy SourceFiles="@(FilesFromArchive)"
           DestinationFiles="@(FilesFromArchive->'%(TargetPath)')" />
-    <Message Importance="High" Text="Deleting '@(FilesFromArchive)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
-    <Delete Files="@(FilesFromArchive)"  Condition="'$(TF_BUILD)' != ''" />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->

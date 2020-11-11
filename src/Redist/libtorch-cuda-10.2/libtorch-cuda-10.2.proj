@@ -218,7 +218,6 @@
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
 
-    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->
