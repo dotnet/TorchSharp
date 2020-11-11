@@ -3,6 +3,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
+    <LibTorchArchiveNameSuffix>%252Bcpu</LibTorchArchiveNameSuffix>
   </PropertyGroup>
   
   <ItemGroup>
@@ -10,7 +12,7 @@
   <!-- For example Linux, LibTorch 1.5.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip -->
     <LibtorchConfig Include="windows" 
                     LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
-                    LibNameSuffix="" 
+                    LibNameSuffix="$(LibTorchArchiveNameSuffix)" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
                        "libtorch\lib\asmjit.dll;
@@ -45,7 +47,7 @@
       Runtime="osx-x64" />
 
     <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
-                    LibNameSuffix="$(ExtraForLibTorch150Linux)" 
+                    LibNameSuffix="$(LibTorchArchiveNameSuffix)" 
                     FileExtension=".zip" 
                     FilesFromArchive= 
                        "libtorch\lib\libc10.so;
@@ -85,12 +87,12 @@
       <!-- although we could extract all archives on all machines, mac requires a fixup which can only be run on mac 
            so we split these per-rid and join during the official build packaging.  -->
       <LibtorchArchive Condition="'$(PackageRid)' == '%(Runtime)'"
-                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(LibNameSuffix)%(FileExtension)')" />
+                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(LibNameSuffix)%(FileExtension)')"
+                         ExtractDirectory="@(LibtorchConfig->'$(IntermediateOutputPath)%(LibName)-$(LibtorchVersion)\')" />
       <!-- set up metdata used by all targets -->
       <LibtorchArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
                          DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
-                         ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
-                         ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
+                         ExtractSemaphore="%(ExtractDirectory).extracted"
                          LocalShaFile="$(MSBuildProjectDirectory)\%(FileName)%(Extension).sha"/>
     </ItemGroup>
 

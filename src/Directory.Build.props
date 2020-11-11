@@ -32,9 +32,7 @@
 
   <PropertyGroup>
     <LibTorchArchiveBase Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)-$(LibtorchVersion)</LibTorchArchiveBase>
-    <!-- note the very odd characters %2Bcpu in the Linux LibTorch 1.5.0 download name. The % is encoded via %25 -->
-    <ExtraForLibTorch150Linux>%252Bcpu</ExtraForLibTorch150Linux>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)$(ExtraForLibTorch150Linux)</LibTorchArchiveBase>
+    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)</LibTorchArchiveBase>
     <LibTorchArchiveBase Condition="'$(TargetOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
     <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>

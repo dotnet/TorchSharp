@@ -15,10 +15,10 @@ Commands:
 - Run tests from command line: `dotnet test`
 
 
-## Linux/Mac
+## Linux
 
 Requirements:
-- requirements to run .NET Core 2.0
+- requirements to run .NET Core 3.1
 - git
 - cmake (tested with 3.14)
 - clang 4.x +
@@ -140,15 +140,17 @@ To update the version, update these:
 Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
     msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
+    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
     msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build
-    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
+    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+
 
 You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
 of the unzip of the archive, e.g.
 
-     bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.5.0%2Bcpu\libtorch\lib
+     bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.7.0\libtorch\lib
 
 You must also adjust the set of binaries referenced for tests, see various files under `tests`.
