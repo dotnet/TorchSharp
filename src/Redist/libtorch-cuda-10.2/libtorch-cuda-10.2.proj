@@ -43,9 +43,11 @@
     <File Include= "libtorch\lib\cublasLt64_10.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cudart64_102.dll" PackageSuffix="part2" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part2" />
+
     <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part3" />
-
+    <File Include= "libtorch\lib\cusolver64_10.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\cusolverMg64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\cusparse64_10.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part3" />
@@ -54,8 +56,8 @@
     <File Include= "libtorch\lib\nvrtc-builtins64_102.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
-    <File Include= "libtorch\lib\torch.dll" PackageSuffix="part3" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part3" />
+    <File Include= "libtorch\lib\uv.dll" PackageSuffix="part3" />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->

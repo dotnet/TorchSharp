@@ -19,6 +19,7 @@
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="uv" />
   </ItemGroup>
 
   <!-- Windows CUDA 10.2 libtorch binary list used for examples and testing -->
@@ -36,6 +37,8 @@
     <NativeAssemblyReference Include="cufft64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cufftw64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusolver64_10" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusolverMg64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cusparse64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
@@ -47,6 +50,7 @@
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_global_deps" Variant="cuda\" />
+    <NativeAssemblyReference Include="uv" Variant="cuda\" />
   </ItemGroup>
 
   <!-- Linux libtorch binary list used for examples and testing -->
