@@ -88,10 +88,10 @@ For this reason, we do the following
 
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
-   libtorch-cpu
-   libtorch-cuda-10.2
-   libtorch-cuda-10.2-linux-x64
-   libtorch-cuda-10.2-win-x64
+       libtorch-cpu
+       libtorch-cuda-10.2
+       libtorch-cuda-10.2-linux-x64
+       libtorch-cuda-10.2-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
 
@@ -127,30 +127,83 @@ For this reason, we do the following
 This project grabs LibTorch and makes a C API wrapper for it, then calls these from C#. When updating to a newer
 version of PyTorch then quite a lot of careful work needs to be done.
 
-See https://pytorch.org/get-started/locally/ for download links.
+0. Make sure you have plenty of disk space, e.g. 15GB
 
-For example Linux, LibTorch 1.7.0 uses link
+1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-    https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip
+   For example Linux, LibTorch 1.7.0 uses link
 
-To update the version, update these:
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip
 
-    <LibtorchVersion>1.7.0</LibtorchVersion>
+   The downloads are acquired automatically in the build process. To update the version, update these:
 
-Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
+       <LibtorchVersion>1.7.0</LibtorchVersion>
 
-    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-    msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-    msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+
+       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+
+   Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done on CI.
+
+3. Add the SHA files:
+
+       git add src\Redist\libtorch-cpu\*.sha
+       git add src\Redist\libtorch-cuda-10.2\*.sha
+
+   After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
+
+4. Build the native code without CUDA
+
+       .\build build.cmd /p:SkipCuda=true
+
+   The first stage unzips the archives, then CMAKE is run.
+
+   Unzipping the archives may take quite a while
+
+   Note that things may have changed in the LibTorch header files, linking flags etc.  There is a CMakeLists.txt that acquires
+   the cmake information delievered in the LibTorch download. It can be subtle.
+   If the vxcproj for the native code gets configured by cmake then you should now be able to start developing the C++ code in Visual Studio.
+
+       devenv TorchSharp.sln
+
+   e.g. the vcxproj is created here:
+   
+       bin\obj\x64.Debug\Native\LibTorchSharp\LibTorchSharp.vcxproj
+
+5. Similarly build the native code with CUDA
+
+       .\build build.cmd
+
+6. You must also **very very carefully** update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
+  of the unzip of the archive, e.g.
+
+       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.7.0\libtorch\lib
+
+7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
+`TorchSharp\Directory.Build.targets`.
+
+8. Run tests
+
+       .\build build.cmd test -c Debug
+       .\build build.cmd test -c Release
+
+9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
+   get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` this:
 
 
-You must also update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
-of the unzip of the archive, e.g.
+       <LibTorchPackageVersion>1.7.0</LibTorchPackageVersion>
+       <BuildLibTorchPackages>true</BuildLibTorchPackages>
 
-     bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.7.0\libtorch\lib
+       .\build pack -c Debug /p:SkipCuda=true
+       .\build pack -c Release /p:SkipCuda=true
+       .\build pack -c Debug
+       .\build pack -c Release
 
-You must also adjust the set of binaries referenced for tests, see various files under `tests`.
+10. Submit to CI and debug problems
+
