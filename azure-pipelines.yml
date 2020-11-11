@@ -50,7 +50,7 @@ jobs:
 
 
 ################################################################################
-- job: Linux_Build_For_Package
+- job: Linux_Native_Build_For_Package
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   variables:
@@ -73,6 +73,26 @@ jobs:
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
+
+################################################################################
+- job: Windiows_Native_Build_For_Package
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+    TORCHSHARP_MAKING_PACKAGE: 1
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+  - script: build.cmd build -c $(BuildConfig) 
+    displayName: Build Windows
+
+  - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+    artifact: WindowsAssets
 
 # ################################################################################
 # - job: MacOS_Build_For_Package
@@ -106,7 +126,8 @@ jobs:
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   dependsOn:
-  - Linux_Build_For_Package
+  - Linux_Native_Build_For_Package
+  - Windows_Native_Build_For_Package
   # - MacOS_Build_For_Package
   variables:
     BuildConfig: Release
@@ -123,7 +144,7 @@ jobs:
     artifact: LinuxAssets
 
   - task: CopyFiles@2
-    displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy linux native assets to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -131,20 +152,22 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (linux assets in workspace)
 
-  # - task: CopyFiles@2
-  #   displayName: Copy package assets to correct folder where the bits contributing to the packages are assembled
-  #   inputs:
-  #     sourceFolder: $(Pipeline.Workspace)/MacAssets
-  #     targetFolder: $(Build.SourcesDirectory)/../bin/obj/$(BuildConfig)/packages
+  - download: current
+    artifact: WindowsAssets
 
-  # - script: rmdir /s /q  $(Pipeline.Workspace)/LinuxAssets
-  #   displayName: Free up space
+  - task: CopyFiles@2
+    displayName: Copy windows native assets to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+  
+  - script: dir /s $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+    displayName: Show packprep
 
-  # build the windows bits contributing to the packages and make the packages
-  - script: build.cmd build -c $(BuildConfig) 
-    displayName: Build Windows
+  - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
+    displayName: Free up space (windows assets in workspace)
 
-  - script: build.cmd pack -c $(BuildConfig) 
+  - script: build.cmd pack -c $(BuildConfig) -v:n /p:SkipNative=true
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
