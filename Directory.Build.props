@@ -82,12 +82,12 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.5.6</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.7.0</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
   <PropertyGroup>
-    <BuildLibTorchPackages>false</BuildLibTorchPackages>
+    <BuildLibTorchPackages>true</BuildLibTorchPackages>
   </PropertyGroup>
 
   <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->

@@ -9,7 +9,7 @@
   
   <ItemGroup>
   <!-- see https://pytorch.org/get-started/locally/ for download links -->
-  <!-- For example Linux, LibTorch 1.5.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip -->
+  <!-- For example Linux, LibTorch 1.7.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip -->
     <LibtorchConfig Include="windows" 
                     LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
                     LibNameSuffix="$(LibTorchArchiveNameSuffix)" 

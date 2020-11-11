@@ -129,13 +129,13 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 See https://pytorch.org/get-started/locally/ for download links.
 
-For example Linux, LibTorch 1.5.0 uses link
+For example Linux, LibTorch 1.7.0 uses link
 
-    https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.5.0%2Bcpu.zip
+    https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip
 
 To update the version, update these:
 
-    <LibtorchVersion>1.5.0</LibtorchVersion>
+    <LibtorchVersion>1.7.0</LibtorchVersion>
 
 Then run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
