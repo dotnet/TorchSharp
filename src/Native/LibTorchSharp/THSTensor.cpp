@@ -825,6 +825,16 @@ Tensor THSTensor_get6(const Tensor tensor, int64_t index1, int64_t index2, int64
     CATCH_TENSOR((*tensor)[index1][index2][index3][index4][index5][index6]);
 }
 
+Tensor THSTensor_gcd(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->gcd(*other));
+}
+
+Tensor THSTensor_gcd_(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->gcd_(*other));
+}
+
 Tensor THSTensor_grad(const Tensor tensor)
 {
     Tensor res;
@@ -873,6 +883,16 @@ int THSTensor_is_sparse(const Tensor tensor)
 Scalar THSTensor_item(const Tensor tensor)
 {
     CATCH_RETURN(Scalar, NULL, new torch::Scalar(tensor->item()));
+}
+
+Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->lcm(*other));
+}
+
+Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->lcm_(*other));
 }
 
 Tensor THSTensor_le(const Tensor left, const Tensor right)
