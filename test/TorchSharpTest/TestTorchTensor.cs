@@ -711,11 +711,9 @@ namespace TorchSharp
             TestOneTensor<float, float>(a => a + 0.5f, a => a + 0.5f);
             TestOneTensor<float, float>(a => 0.5f + a, a => 0.5f + a);
             TestOneTensor<float, float>(a => a - 0.5f, a => a - 0.5f);
-            TestOneTensor<float, float>(a => 0.5f - a, a => 0.5f - a);
             TestOneTensor<float, float>(a => a * 0.5f, a => a * 0.5f);
             TestOneTensor<float, float>(a => 0.5f * a, a => 0.5f * a);
             TestOneTensor<float, float>(a => a / 0.5f, a => a / 0.5f);
-            TestOneTensor<float, float>(a => 0.5f / a, a => 0.5f / a);
 
             TestOneTensor<float, float>(a => a.Add(0.5f), a => a + 0.5f);
             TestOneTensor<float, float>(a => a.Sub(0.5f), a => a - 0.5f);
@@ -767,7 +765,6 @@ namespace TorchSharp
             TestOneTensorInPlace<float>(a => a.GtInPlace(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
             TestOneTensorInPlace<float>(a => a.GeInPlace(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
 
-            TestOneTensor<float, float>(a => 5.0f % a, a => 5.0f % a);
             TestOneTensor<float, float>(a => a % 5.0f, a => a % 5.0f);
             TestOneTensorInPlace<float>(a => a.RemainderInPlace(5.0f), a => a % 5.0f);
 

@@ -179,14 +179,6 @@ jobs:
     displayName: Clean up space (bin\AnyCPU.Release)
     continueOnError: true
 
-  - script: rmdir /q /s bin\x64.Release
-    displayName: Clean up space (bin\x64.Release)
-    continueOnError: true
-
-  - script: rmdir /q /s bin\downloads
-    displayName: Clean up space (bin\downloads)
-    continueOnError: true
-
   - script: rmdir /q /s packages
     displayName: Clean up space (packages)
     continueOnError: true

@@ -562,12 +562,6 @@ Tensor THSTensor_div_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->div(*right));
 }
 
-// TODO: this derived operation should not be at this level
-Tensor THSTensor_scalar_div(const Scalar left, const Tensor right)
-{
-    CATCH_TENSOR(at::empty(right->sizes(), right->options()).fill_(*left).div_(*right));
-}
-
 Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->div_(*right));
@@ -744,12 +738,6 @@ Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
 Tensor THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->fmod_(*right));
-}
-
-// TODO: this derived operation should not be at this level
-Tensor THSTensor_scalar_fmod(const Scalar left, const Tensor right)
-{
-    CATCH_TENSOR(at::empty(right->sizes(), right->options()).fill_(*left).fmod_(*right));
 }
 
 Tensor THSTensor_frac(const Tensor tensor)
@@ -1633,12 +1621,6 @@ Tensor THSTensor_remainder_scalar_(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->remainder_(*right));
 }
 
-// TODO: this derived operation should not be at this level
-Tensor THSTensor_scalar_remainder(const Scalar left, const Tensor right)
-{
-    CATCH_TENSOR(at::empty(right->sizes(), right->options()).fill_(*left).remainder_(*right));
-}
-
 Tensor THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm)
 {
     CATCH_TENSOR(tensor->renorm(p, dim, maxnorm));
@@ -1853,12 +1835,6 @@ Tensor THSTensor_sub_(const Tensor left, const Tensor right)
 Tensor THSTensor_sub_scalar(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->sub(*right));
-}
-
-// TODO: this derived operation should not be at this level
-Tensor THSTensor_scalar_sub(const Scalar left, const Tensor right)
-{
-    CATCH_TENSOR(at::empty(right->sizes(), right->options()).fill_(*left).sub_(*right));
 }
 
 Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)

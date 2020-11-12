@@ -286,8 +286,6 @@ EXPORT_API(Tensor) THSTensor_fmod_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_fmod_scalar_(const Tensor left, const Scalar right);
 
-EXPORT_API(Tensor) THSTensor_scalar_fmod(const Scalar left, const Tensor right);
-
 EXPORT_API(Tensor) THSTensor_digamma(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_digamma_(const Tensor tensor);
@@ -604,11 +602,7 @@ EXPORT_API(Tensor) THSTensor_rsqrt(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_rsqrt_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_scalar_remainder(const Scalar left, const Tensor right);
-
 EXPORT_API(Tensor) THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm);
-
-EXPORT_API(Tensor) THSTensor_scalar_div(const Scalar left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor tensor);
 
@@ -639,8 +633,6 @@ EXPORT_API(Tensor) THSTensor_sub_(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_sub_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_sub_scalar_(const Tensor left, const Scalar right);
-
-EXPORT_API(Tensor) THSTensor_scalar_sub(const Scalar left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_sum(const Tensor tensor, bool has_type, const int8_t dtype);
 

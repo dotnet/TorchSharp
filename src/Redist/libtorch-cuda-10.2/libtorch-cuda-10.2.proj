@@ -60,7 +60,6 @@
     <File Include= "libtorch\lib\uv.dll" PackageSuffix="part3" />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
-    <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part4-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
