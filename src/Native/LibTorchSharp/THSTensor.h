@@ -326,6 +326,10 @@ EXPORT_API(Tensor) THSTensor_get5(const Tensor tensor, int64_t index1, int64_t i
 
 EXPORT_API(Tensor) THSTensor_get6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6);
 
+EXPORT_API(Tensor) THSTensor_gcd(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_gcd_(const Tensor tensor, const Tensor other);
+
 EXPORT_API(Tensor) THSTensor_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_gt(const Tensor left, const Tensor right);
@@ -343,6 +347,10 @@ EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor ind
 EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_lcm(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_lcm_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_le(const Tensor left, const Tensor right);
 
