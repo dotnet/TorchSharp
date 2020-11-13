@@ -544,15 +544,15 @@ EXPORT_API(Tensor) THSTensor_newFloat16Scalar(float data, const int device_type,
 
 EXPORT_API(Tensor) THSTensor_newBFloat16Scalar(float data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newShortScalar(short data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newInt16Scalar(short data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newIntScalar(int data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newInt32Scalar(int data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newLongScalar(int64_t data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newInt64Scalar(int64_t data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newDoubleScalar(double data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newFloat64Scalar(double data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newFloatScalar(float data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newFloat32Scalar(float data, const int device_type, const int device_index, bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, float p);
 
