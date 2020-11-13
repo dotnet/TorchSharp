@@ -22,8 +22,8 @@ var lin1 = Linear(1000, 100);
 var lin2 = Linear(100, 10);
 var seq = Sequential(lin1, Relu(), lin2);
 
-var x = FloatTensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-var y = FloatTensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+var x = Float32Tensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
+var y = Float32Tensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
 
 double learning_rate = 0.00004f;
 float prevLoss = float.MaxValue;
@@ -34,7 +34,7 @@ for (int i = 0; i < 10; i++)
 {
     var eval = seq.Forward(x);
     var output = loss(eval, y);
-    var lossVal = output.DataItem<float>();
+    var lossVal = output.ToSingle();
 
     Assert.True(lossVal < prevLoss);
     prevLoss = lossVal;

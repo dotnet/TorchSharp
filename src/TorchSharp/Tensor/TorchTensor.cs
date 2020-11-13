@@ -109,21 +109,41 @@ namespace TorchSharp.Tensor
             return Data<T>()[0];
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern float THSTensor_data_idx_half(IntPtr handle, long i);
+        public double ReadCpuDouble(long i) => Data<double>()[(int)i];
+        public float ReadCpuSingle(long i) => Data<float>()[(int)i];
+        public int ReadCpuInt32(long i) => Data<int>()[(int)i];
+        public long ReadCpuInt64(long i) => Data<long>()[(int)i];
+        public byte ReadCpuByte(long i) => Data<byte>()[(int)i];
+        public sbyte ReadCpuSByte(long i) => Data<sbyte>()[(int)i];
+        public short ReadCpuInt16(long i) => Data<short>()[(int)i];
+        public bool ReadCpuBool(long i) => Data<bool>()[(int)i];
 
-        public float ReadHalf(long i)
+        [DllImport("LibTorchSharp")]
+        private static extern float THSTensor_data_idx_float16(IntPtr handle, long i);
+
+        public float ReadCpuFloat16(long i)
         {
             if (i >= NumberOfElements) {
                 throw new IndexOutOfRangeException("The index is greater than the number of elements in the tensor");
             }
-            return THSTensor_data_idx_half(handle, i);
+            return THSTensor_data_idx_float16(handle, i);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern float THSTensor_data_idx_bfloat16(IntPtr handle, long i);
+
+        public float ReadCpuBFloat16(long i)
+        {
+            if (i >= NumberOfElements) {
+                throw new IndexOutOfRangeException("The index is greater than the number of elements in the tensor");
+            }
+            return THSTensor_data_idx_bfloat16(handle, i);
         }
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_item(IntPtr handle);
 
-        public TorchScalar Item()
+        public TorchScalar ToScalar()
         {
             var res = THSTensor_item(Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -157,7 +177,7 @@ namespace TorchSharp.Tensor
             }
             set
             {
-                THSTensor_set1(handle, i1, value.Item().Handle);
+                THSTensor_set1(handle, i1, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -179,7 +199,7 @@ namespace TorchSharp.Tensor
             }
             set
             {
-                THSTensor_set2(handle, i1, i2, value.Item().Handle);
+                THSTensor_set2(handle, i1, i2, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -202,7 +222,7 @@ namespace TorchSharp.Tensor
             }
             set
             {
-                THSTensor_set3(handle, i1, i2, i3, value.Item().Handle);
+                THSTensor_set3(handle, i1, i2, i3, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -225,7 +245,7 @@ namespace TorchSharp.Tensor
             }
             set
             {
-                THSTensor_set4(handle, i1, i2, i3, i4, value.Item().Handle);
+                THSTensor_set4(handle, i1, i2, i3, i4, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -245,7 +265,7 @@ namespace TorchSharp.Tensor
                 return new TorchTensor(res);
             }
             set {
-                THSTensor_set5(handle, i1, i2, i3, i4, i5, value.Item().Handle);
+                THSTensor_set5(handle, i1, i2, i3, i4, i5, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -266,7 +286,7 @@ namespace TorchSharp.Tensor
                 return new TorchTensor(res);
             }
             set {
-                THSTensor_set6(handle, i1, i2, i3, i4, i5, i6, value.Item().Handle);
+                THSTensor_set6(handle, i1, i2, i3, i4, i5, i6, value.ToScalar().Handle);
                 Torch.CheckForErrors();
             }
         }
@@ -3700,26 +3720,34 @@ namespace TorchSharp.Tensor
             return sb.ToString();
         }
 
+        public static explicit operator float (TorchTensor value) => value.ToSingle();
+        public static explicit operator double (TorchTensor value) => value.ToDouble();
+        public static explicit operator sbyte (TorchTensor value) => value.ToSByte();
+        public static explicit operator byte (TorchTensor value) => value.ToByte();
+        public static explicit operator short (TorchTensor value) => value.ToInt16();
+        public static explicit operator int (TorchTensor value) => value.ToInt32();
+        public static explicit operator long (TorchTensor value) => value.ToInt64();
+        public static explicit operator bool (TorchTensor value) => value.ToBoolean();
     }
 
     public enum ScalarType : sbyte
     {
         Byte = 0,
-        SByte = 1,
-        Short = 2,
-        Int = 3,
-        Long = 4,
-        Half = 5,
-        Float = 6,
-        Double = 7,
-        //ComplexHalf = 8,
-        ComplexFloat = 9,
-        ComplexDouble = 10,
+        Int8 = 1,
+        Int16 = 2,
+        Int32 = 3,
+        Int64 = 4,
+        Float16 = 5,
+        Float32 = 6,
+        Float64 = 7,
+        //ComplexFloat16 = 8,
+        ComplexFloat32 = 9,
+        ComplexFloat64 = 10,
         Bool = 11,
         //QInt8 = 12,
         //QUInt8 = 13,
         //QUInt32 = 14,
-        //BHalf = 15
+        BFloat16 = 15
     }
 
     public static class TensorExtensionMethods
@@ -3736,83 +3764,62 @@ namespace TorchSharp.Tensor
                     }
                 case bool _ when typeof(T) == typeof(sbyte):
                     {
-                        return SByteTensor.From(array as sbyte[], dimensions, requiresGrad); ;
+                        return Int8Tensor.From(array as sbyte[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        return ShortTensor.From(array as short[], dimensions, requiresGrad); ;
+                        return Int16Tensor.From(array as short[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        return IntTensor.From(array as int[], dimensions, requiresGrad);
+                        return Int32Tensor.From(array as int[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        return LongTensor.From(array as long[], dimensions, requiresGrad);
+                        return Int64Tensor.From(array as long[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        return DoubleTensor.From(array as double[], dimensions, requiresGrad);
+                        return Float64Tensor.From(array as double[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return FloatTensor.From(array as float[], dimensions, requiresGrad);
+                        return Float32Tensor.From(array as float[], dimensions, requiresGrad);
                     }
-                //case bool _ when typeof(T) == typeof(Half):
-                //    {
-                //        return HalfTensor.From(array as Half[], dimensions, requiresGrad);
-                //    }
                 case bool _ when typeof(T) == typeof(bool):
                     {
                         return BoolTensor.From(array as bool[], dimensions, requiresGrad);
                     }
                 //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
                 //    {
-                //        return ComplexDoubleTensor.From(array as System.Numerics.Complex[], dimensions, requiresGrad);
+                //        return ComplexFloat64Tensor.From(array as System.Numerics.Complex[], dimensions, requiresGrad);
                 //    }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
         }
 
-        public static TorchTensor ToTorchTensor<T>(this T scalar, bool requiresGrad = false) where T : struct
+        public static TorchTensor ToTorchTensor<T>(this T scalar, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double))
             {
                 throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");
             }
 
-            switch (true)
-            {
-                case bool _ when typeof(T) == typeof(byte):
-                    {
-                        return ByteTensor.From((byte)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(sbyte):
-                    {
-                        return SByteTensor.From((sbyte)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(short):
-                    {
-                        return ShortTensor.From((short)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(int):
-                    {
-                        return IntTensor.From((int)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(long):
-                    {
-                        return LongTensor.From((long)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(double):
-                    {
-                        return DoubleTensor.From((double)(object)scalar, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(float):
-                    {
-                        return FloatTensor.From((float)(object)scalar, requiresGrad);
-                    }
-                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
-            }
+            if (typeof(T) == typeof(byte))
+                return ByteTensor.From((byte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(sbyte))
+                return Int8Tensor.From((sbyte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(short))
+                return Int16Tensor.From((short)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(int))
+                return Int32Tensor.From((int)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(long))
+                return Int64Tensor.From((long)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(double))
+                return Float64Tensor.From((double)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            if (typeof(T) == typeof(float))
+                return Float32Tensor.From((float)(object)scalar, deviceType, deviceIndex, requiresGrad);
+            throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
         [DllImport("LibTorchSharp")]
@@ -3864,5 +3871,13 @@ namespace TorchSharp.Tensor
             }
         }
 
+        public static float ToSingle(this TorchTensor value) => value.ToScalar().ToSingle();
+        public static double ToDouble(this TorchTensor value) => value.ToScalar().ToDouble();
+        public static sbyte ToSByte(this TorchTensor value) => value.ToScalar().ToSByte();
+        public static byte ToByte(this TorchTensor value) => value.ToScalar().ToByte();
+        public static short ToInt16(this TorchTensor value) => value.ToScalar().ToInt16();
+        public static int ToInt32(this TorchTensor value) => value.ToScalar().ToInt32();
+        public static long ToInt64(this TorchTensor value) => value.ToScalar().ToInt64();
+        public static bool ToBoolean(this TorchTensor value) => value.ToScalar().ToBoolean();
     }
 }

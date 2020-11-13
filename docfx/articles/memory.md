@@ -12,7 +12,7 @@ Note DiffSharp (which uses TorchSharp) relies on techniques 1.
 
 In this technique all tensors (CPU and GPU) are implicitly disposed via .NET finalizers.
 
-When allocation of tensors via `FloatTensor.*` (likewise `LongTensor.*` etc.) fails (whether on GPU or CPU),
+When allocation of tensors via `Float32Tensor.*` (likewise `Int64Tensor.*` etc.) fails (whether on GPU or CPU),
 then TorchSharp forces a .NET garbage collection and execution of all pending finalizers.
 
 This is not yet done when using general tensor operations.  It is possible a more general retry-after-GC-on-out-of-memory will be added at some point.

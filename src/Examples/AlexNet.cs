@@ -125,11 +125,11 @@ namespace TorchSharp.Examples
 
                     var predicted = prediction.Argmax(1);
                     total += target.Shape[0];
-                    correct += predicted.Eq(target).Sum().DataItem<long>();
+                    correct += predicted.Eq(target).Sum().ToInt64();
 
                     if (batchId % _logInterval == 0)
                     {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.DataItem<float>()} Acc: { (float)correct / total }");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()} Acc: { (float)correct / total }");
                     }
 
                     batchId++;
@@ -156,11 +156,11 @@ namespace TorchSharp.Examples
                 using (var prediction = model.Forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
-                    testLoss += output.DataItem<float>();
+                    testLoss += output.ToSingle();
 
                     var pred = prediction.Argmax(1);
 
-                    correct += pred.Eq(target).Sum().DataItem<long>();
+                    correct += pred.Eq(target).Sum().ToInt64();
 
                     data.Dispose();
                     target.Dispose();

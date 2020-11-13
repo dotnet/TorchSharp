@@ -6,7 +6,7 @@ __PACKAGES_DIR="$__scriptpath/packages"
 __TOOLRUNTIME_DIR="$__scriptpath/Tools"
 __DOTNET_PATH="$__TOOLRUNTIME_DIR/dotnetcli"
 __DOTNET_CMD="$__DOTNET_PATH/dotnet"
-__TARGET_FRAMEWORK="netcoreapp3.0"
+__TARGET_FRAMEWORK="netcoreapp3.1"
 if [ -z "${__BUILDTOOLS_SOURCE:-}" ]; then __BUILDTOOLS_SOURCE=https://dotnet.myget.org/F/dotnet-buildtools/api/v3/index.json; fi
 export __BUILDTOOLS_USE_CSPROJ=true
 __BUILD_TOOLS_PACKAGE_VERSION=$(cat "$__scriptpath/BuildToolsVersion.txt" | sed 's/\r$//') # remove CR if mounted repo on Windows drive
@@ -16,7 +16,7 @@ DotNetCliFileName="DotnetCLIVersion.txt"
 for i do
     if [[ "$i" == *"Intrinsics"* ]]; then
         DotNetCliFileName="DotnetCLIVersion.netcoreapp.latest.txt"
-        __TARGET_FRAMEWORK="netcoreapp3.0"
+        __TARGET_FRAMEWORK="netcoreapp3.1"
     fi
 done
 
