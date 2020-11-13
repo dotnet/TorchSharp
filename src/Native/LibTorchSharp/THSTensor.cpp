@@ -4,26 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-Tensor THSTensor_abs(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->abs());
-}
-
-Tensor THSTensor_abs_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->abs_());
-}
-
-Tensor THSTensor_acos(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->acos());
-}
-
-Tensor THSTensor_acos_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->acos_());
-}
-
 Tensor THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha)
 {
     CATCH_TENSOR(left->add(*right, *alpha));
@@ -159,36 +139,6 @@ Tensor THSTensor_argmin_along_dimension(const Tensor tensor, const int64_t dim, 
     CATCH_TENSOR(tensor->argmin(dim, keepdim));
 }
 
-Tensor THSTensor_asin(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->asin());
-}
-
-Tensor THSTensor_asin_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->asin_());
-}
-
-Tensor THSTensor_atan(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->atan());
-}
-
-Tensor THSTensor_atan_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->atan_());
-}
-
-Tensor THSTensor_atan2(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->atan2(*other));
-}
-
-Tensor THSTensor_atan2_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->atan2_(*other));
-}
-
 void THSTensor_backward(Tensor tensor)
 {
     CATCH(
@@ -221,46 +171,6 @@ Tensor THSTensor_bincount(const Tensor tensor, const Tensor weights, const int64
     CATCH_TENSOR(tensor->bincount((weights ? *weights : at::Tensor()), minlength));
 }
 
-Tensor THSTensor_bitwise_and(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_and(*other));
-}
-
-Tensor THSTensor_bitwise_and_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_and_(*other));
-}
-
-Tensor THSTensor_bitwise_not(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->bitwise_not());
-}
-
-Tensor THSTensor_bitwise_not_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->bitwise_not_());
-}
-
-Tensor THSTensor_bitwise_or(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_or(*other));
-}
-
-Tensor THSTensor_bitwise_or_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_or_(*other));
-}
-
-Tensor THSTensor_bitwise_xor(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_xor(*other));
-}
-
-Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->bitwise_xor_(*other));
-}
-
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
 {
     CATCH_TENSOR(batch1->bmm(*batch2));
@@ -276,15 +186,6 @@ Tensor THSTensor_cauchy_(const Tensor tensor, const double median, const double 
     CATCH_TENSOR(tensor->cauchy_(median, sigma));
 }
 
-Tensor THSTensor_ceil(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->ceil());
-}
-
-Tensor THSTensor_ceil_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->ceil_());
-}
 
 Tensor THSTensor_cholesky(const Tensor tensor, const bool upper)
 {
@@ -437,25 +338,6 @@ Tensor THSTensor_conv3d(
         groups));
 }
 
-Tensor THSTensor_cos(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->cos());
-}
-
-Tensor THSTensor_cos_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->cos_());
-}
-
-Tensor THSTensor_cosh(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->cosh());
-}
-
-Tensor THSTensor_cosh_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->cosh_());
-}
 
 Tensor THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim)
 {
@@ -547,26 +429,6 @@ Tensor THSTensor_dist(const Tensor tensor, const Tensor other, const float p)
     CATCH_TENSOR(tensor->dist(*other, p));
 }
 
-Tensor THSTensor_div(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->div(*right));
-}
-
-Tensor THSTensor_div_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->div_(*right));
-}
-
-Tensor THSTensor_div_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->div(*right));
-}
-
-Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->div_(*right));
-}
-
 Tensor THSTensor_einsum(const char* equation, const Tensor* tensors, const int length)
 {
     CATCH_TENSOR(torch::einsum(equation, toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
@@ -590,26 +452,6 @@ Tensor THSTensor_empty(
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::empty(at::ArrayRef<int64_t>(sizes, length), options));
-}
-
-Tensor THSTensor_eq(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->eq(*right));
-}
-
-Tensor THSTensor_eq_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->eq_(*right));
-}
-
-Tensor THSTensor_eq_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->eq(*right));
-}
-
-Tensor THSTensor_eq_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->eq_(*right));
 }
 
 int THSTensor_equal(const Tensor left, const Tensor right)
@@ -720,26 +562,6 @@ Tensor THSTensor_floor_(const Tensor tensor)
     CATCH_TENSOR(tensor->floor_());
 }
 
-Tensor THSTensor_fmod(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->fmod(*right));
-}
-
-Tensor THSTensor_fmod_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->fmod_(*right));
-}
-
-Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->fmod(*right));
-}
-
-Tensor THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->fmod_(*right));
-}
-
 Tensor THSTensor_frac(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->frac());
@@ -756,26 +578,6 @@ Tensor THSTensor_gather(
     const Tensor index)
 {
     CATCH_TENSOR(torch::gather(*tensor, dim, *index));
-}
-
-Tensor THSTensor_ge(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->ge(*right));
-}
-
-Tensor THSTensor_ge_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->ge_(*right));
-}
-
-Tensor THSTensor_ge_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->ge(*right));
-}
-
-Tensor THSTensor_ge_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->ge_(*right));
 }
 
 Tensor THSTensor_geometric_(const Tensor tensor, const double p)
@@ -833,26 +635,6 @@ Tensor THSTensor_grad(const Tensor tensor)
     return res;
 }
 
-Tensor THSTensor_gt(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->gt(*right));
-}
-
-Tensor THSTensor_gt_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->gt_(*right));
-}
-
-Tensor THSTensor_gt_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->gt(*right));
-}
-
-Tensor THSTensor_gt_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->gt_(*right));
-}
-
 Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
 {
     CATCH_TENSOR(tensor->index_select(dim, *index));
@@ -881,26 +663,6 @@ Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
 Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->lcm_(*other));
-}
-
-Tensor THSTensor_le(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->le(*right));
-}
-
-Tensor THSTensor_le_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->le_(*right));
-}
-
-Tensor THSTensor_le_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->le(*right));
-}
-
-Tensor THSTensor_le_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->le_(*right));
 }
 
 Tensor THSTensor_lgamma(const Tensor tensor)
@@ -975,66 +737,6 @@ Tensor THSTensor_lerp(const Tensor tensor, const Tensor end, const Tensor weight
 Tensor THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight)
 {
     CATCH_TENSOR(tensor->lerp_(*end, *weight));
-}
-
-Tensor THSTensor_logical_and(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_and(*other));
-}
-
-Tensor THSTensor_logical_and_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_and_(*other));
-}
-
-Tensor THSTensor_logical_not(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->logical_not());
-}
-
-Tensor THSTensor_logical_not_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->logical_not_());
-}
-
-Tensor THSTensor_logical_or(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_or(*other));
-}
-
-Tensor THSTensor_logical_or_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_or_(*other));
-}
-
-Tensor THSTensor_logical_xor(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_xor(*other));
-}
-
-Tensor THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->logical_xor_(*other));
-}
-
-Tensor THSTensor_lt(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->lt(*right));
-}
-
-Tensor THSTensor_lt_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->lt_(*right));
-}
-
-Tensor THSTensor_lt_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->lt(*right));
-}
-
-Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->lt_(*right));
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
@@ -1225,26 +927,6 @@ Tensor THSTensor_mm(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->mm(*right));
 }
 
-Tensor THSTensor_mul(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->mul(*right));
-}
-
-Tensor THSTensor_mul_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->mul_(*right));
-}
-
-Tensor THSTensor_mul_scalar(const Tensor tensor, const Scalar scalar)
-{
-    CATCH_TENSOR(tensor->mul(*scalar));
-}
-
-Tensor THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar)
-{
-    CATCH_TENSOR(tensor->mul_(*scalar));
-}
-
 Tensor THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement)
 {
     CATCH_TENSOR(tensor->multinomial(num_samples, replacement));
@@ -1260,11 +942,6 @@ Tensor THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
     CATCH_TENSOR(tensor->mvlgamma_(p));
 }
 
-Tensor THSTensor_ne(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->ne(*right));
-}
-
 Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length)
 {
     CATCH_TENSOR(tensor->narrow(dim, start, length))
@@ -1273,21 +950,6 @@ Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t
 Tensor THSTensor_normal_(const Tensor tensor, const double mean, const double std)
 {
     CATCH_TENSOR(tensor->normal_(mean, std));
-}
-
-Tensor THSTensor_ne_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->ne_(*right));
-}
-
-Tensor THSTensor_ne_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->ne(*right));
-}
-
-Tensor THSTensor_ne_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->ne_(*right));
 }
 
 Tensor THSTensor_neg(const Tensor tensor)
@@ -1474,26 +1136,6 @@ Tensor THSTensor_polygamma_(const Tensor tensor, int64_t n)
     CATCH_TENSOR(tensor->polygamma_(n));
 }
 
-Tensor THSTensor_pow(const Tensor tensor, const Tensor exponent)
-{
-    CATCH_TENSOR(tensor->pow(*exponent));
-}
-
-Tensor THSTensor_pow_(const Tensor tensor, const Tensor exponent)
-{
-    CATCH_TENSOR(tensor->pow_(*exponent));
-}
-
-Tensor THSTensor_pow_scalar(const Tensor tensor, const Scalar exponent)
-{
-    CATCH_TENSOR(tensor->pow(*exponent));
-}
-
-Tensor THSTensor_pow_scalar_(const Tensor tensor, const Scalar exponent)
-{
-    CATCH_TENSOR(tensor->pow_(*exponent));
-}
-
 Tensor THSTensor_prelu(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->prelu(*right));
@@ -1599,26 +1241,6 @@ Tensor THSTensor_relu(const Tensor tensor)
 Tensor THSTensor_relu_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->relu_());
-}
-
-Tensor THSTensor_remainder(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->remainder(*right));
-}
-
-Tensor THSTensor_remainder_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->remainder_(*right));
-}
-
-Tensor THSTensor_remainder_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->remainder(*right));
-}
-
-Tensor THSTensor_remainder_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->remainder_(*right));
 }
 
 Tensor THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm)
@@ -1822,21 +1444,6 @@ int64_t THSTensor_size(const Tensor tensor, const int64_t dim)
     CATCH_RETURN(int64_t, 0, tensor->size(dim));
 }
 
-Tensor THSTensor_sub(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->sub(*right));
-}
-
-Tensor THSTensor_sub_(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->sub_(*right));
-}
-
-Tensor THSTensor_sub_scalar(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->sub(*right));
-}
-
 Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
 {
     CATCH_TENSOR(tensor->set_requires_grad(requires_grad));
@@ -1845,11 +1452,6 @@ Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad
 Tensor THSTensor_stack(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
-}
-
-Tensor THSTensor_sub_scalar_(const Tensor left, const Scalar right)
-{
-    CATCH_TENSOR(left->sub_(*right));
 }
 
 Tensor THSTensor_sum(const Tensor tensor, bool has_type, const int8_t dtype)
