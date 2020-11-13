@@ -1320,7 +1320,7 @@ Tensor THSTensor_new(
     CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
-Tensor THSTensor_newLong(
+Tensor THSTensor_newInt64(
     int64_t* data,
     void (*deleter)(void*),
     const int64_t* sizes,
@@ -1379,7 +1379,7 @@ Tensor THSTensor_newBFloat16(
     )
 }
 
-Tensor THSTensor_newSByteScalar(int8_t data, const int device_type, const int device_index, bool requires_grad)
+Tensor THSTensor_newInt8Scalar(int8_t data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Char))

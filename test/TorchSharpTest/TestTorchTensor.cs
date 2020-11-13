@@ -890,8 +890,8 @@ namespace TorchSharp
         {
             foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
                 if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = Float32Tensor.Arange(0, 10, 1, deviceType: deviceType);
-                    var c2 = Float32Tensor.Arange(10, 0, -1, deviceType: deviceType);
+                    var c1 = Float32Tensor.Arange(0, 10, 1, deviceType: deviceType).Expand(new long[] { 10, 10 });
+                    var c2 = Float32Tensor.Arange(10, 0, -1, deviceType: deviceType).Expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.Ones(new long[] { 10, 10 }, deviceType: deviceType);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i,j].ToSingle();
                     // scalar-tensor operators
@@ -936,8 +936,8 @@ namespace TorchSharp
         {
             foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
                 if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = Float64Tensor.Arange(0, 10, 1, deviceType: deviceType);
-                    var c2 = Float64Tensor.Arange(10, 0, -1, deviceType: deviceType);
+                    var c1 = Float64Tensor.Arange(0, 10, 1, deviceType: deviceType).Expand(new long[] { 10, 10 });
+                    var c2 = Float64Tensor.Arange(10, 0, -1, deviceType: deviceType).Expand(new long[] { 10, 10 });
                     var c3 = Float64Tensor.Ones(new long[] { 10, 10 }, deviceType: deviceType);
                     Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble(); 
                     // scalar-tensor operators
@@ -982,8 +982,8 @@ namespace TorchSharp
         {
             foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
                 if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 =Float32Tensor.Arange(0, 10, 1, deviceType: deviceType);
-                    var c2 = Float32Tensor.Arange(10, 0, -1, deviceType: deviceType);
+                    var c1 =Float32Tensor.Arange(0, 10, 1, deviceType: deviceType).Expand(new long[] { 10, 10 });
+                    var c2 = Float32Tensor.Arange(10, 0, -1, deviceType: deviceType).Expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.Ones(new long[] { 10, 10 }, deviceType: deviceType);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle(); 
                     Func<TorchTensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean(); 
