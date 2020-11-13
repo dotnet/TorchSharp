@@ -3,7 +3,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+      <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
       <IncludeInPackage>TorchSharp</IncludeInPackage>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
@@ -57,7 +57,7 @@
 
     <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" Targets="Build" />
 
-    <MSBuild Projects="..\Native\build.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" Targets="Build" />
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" Targets="Build" />
 
   </Target>
 

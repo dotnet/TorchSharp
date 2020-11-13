@@ -5,10 +5,11 @@
         public readonly string Storage;
         public readonly string CSType;
 
-        public bool IsSignedInt => (Name == "SByte" || Name == "Short" || Name == "Int" || Name == "Long");
-        public bool IsFloatingPoint => (Name == "Half" || Name == "Float" || Name == "Double");
-        public bool IsLong => Name == "Long";
-        public bool IsHalf => Name == "Half";
+        public bool IsSignedInt => (Name == "Int8" || Name == "Int16" || Name == "Int32" || Name == "Unt64");
+        public bool IsFloatingPoint => (Name == "Float16" || Name == "BFloat16" || Name == "Float32" || Name == "Float64");
+        public bool IsInt64 => Name == "Int64";
+        public bool IsFloat16 => Name == "Float16";
+        public bool IsBFloat16 => Name == "BFloat16";
 
         private TorchTypeDef(string name, string storage) {
             this.Name = name;
@@ -17,21 +18,22 @@
 
         public static readonly TorchTypeDef[] Types = {
             new TorchTypeDef("Byte",   "byte"),
-            new TorchTypeDef("SByte",  "sbyte"),
-            new TorchTypeDef("Short",  "short"),
-            new TorchTypeDef("Int",    "int"),
-            new TorchTypeDef("Long",   "long"),
-            new TorchTypeDef("Half",   "float"),
-            new TorchTypeDef("Float",  "float"),
-            new TorchTypeDef("Double", "double"),
-            //new TorchTypeDef("ComplexHalf",  "(float, float)"),
-            //new TorchTypeDef("ComplexFloat",  "(float, float)"),
-            //new TorchTypeDef("ComplexDouble",  "System.Numerics.Complex"),
+            new TorchTypeDef("Int8",  "sbyte"),
+            new TorchTypeDef("Int16",  "short"),
+            new TorchTypeDef("Int32",   "int"),
+            new TorchTypeDef("Int64",   "long"),
+            new TorchTypeDef("Float16", "float"),
+            new TorchTypeDef("BFloat16","float"),
+            new TorchTypeDef("Float32", "float"),
+            new TorchTypeDef("Float64", "double"),
+            //new TorchTypeDef("ComplexFloat16",  "(float, float)"),
+            //new TorchTypeDef("ComplexFloat32",  "(float, float)"),
+            //new TorchTypeDef("ComplexFloat64",  "System.Numerics.Complex"),
             new TorchTypeDef("Bool",  "bool"),
             //new TorchTypeDef("QInt8",  "QInt8"),
             //new TorchTypeDef("QUInt8",  "QUInt8"),
             //new TorchTypeDef("QUInt32",  "QUInt32"),
-            //new TorchTypeDef("BHalf",  "BHalf"),
+            //new TorchTypeDef("BFloat16",  "BFloat16"),
         };
 
         public readonly string Ptr = "IntPtr"; // "HType";

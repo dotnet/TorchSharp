@@ -41,7 +41,7 @@ Scalar THSTorch_uint8_to_scalar(uint8_t value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_short_to_scalar(short value)
+Scalar THSTorch_int16_to_scalar(short value)
 {
     return new torch::Scalar(value);
 }
@@ -51,7 +51,7 @@ Scalar THSTorch_int32_to_scalar(int value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_long_to_scalar(long value)
+Scalar THSTorch_int64_to_scalar(long value)
 {
     return new torch::Scalar(int64_t(value));
 }
@@ -66,14 +66,59 @@ Scalar THSTorch_float64_to_scalar(double value)
     return new torch::Scalar(value);
 }
 
-Scalar THSTorch_half_to_scalar(float value)
+Scalar THSTorch_float16_to_scalar(float value)
 {
     return new torch::Scalar((c10::Half)value);
+}
+
+Scalar THSTorch_bfloat16_to_scalar(float value)
+{
+    return new torch::Scalar((c10::BFloat16)value);
 }
 
 Scalar THSTorch_bool_to_scalar(bool value)
 {
     return new torch::Scalar(value);
+}
+
+int8_t THSTorch_scalar_to_int8(Scalar value)
+{
+    return value->toChar();
+}
+
+uint8_t THSTorch_scalar_to_uint8(Scalar value)
+{
+    return value->toByte();
+}
+
+int16_t THSTorch_scalar_to_int16(Scalar value)
+{
+    return value->toShort();
+}
+
+int32_t THSTorch_scalar_to_int32(Scalar value)
+{
+    return value->toInt();
+}
+
+int64_t THSTorch_scalar_to_int64(Scalar value)
+{
+    return value->toLong();
+}
+
+float THSTorch_scalar_to_float32(Scalar value)
+{
+    return value->toFloat();
+}
+
+double THSTorch_scalar_to_float64(Scalar value)
+{
+    return value->toDouble();
+}
+
+bool THSTorch_scalar_to_bool(Scalar value)
+{
+    return value->toBool();
 }
 
 void THSTorch_dispose_scalar(Scalar scalar)

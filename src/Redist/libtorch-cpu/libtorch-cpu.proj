@@ -25,7 +25,7 @@
                         libtorch\lib\torch.dll;
                         libtorch\lib\torch_cpu.dll;
                         libtorch\lib\torch_global_deps.dll;
-                        libtorch\lib\uv.dll" 
+                        libtorch\lib\uv.dll;" 
       Runtime="win-x64"/>
 
     <LibtorchConfig Include="darwin" 

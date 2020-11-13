@@ -503,9 +503,14 @@ void* THSTensor_data(const Tensor tensor)
     CATCH_RETURN(void*, NULL, tensor->data_ptr());
 }
 
-float THSTensor_data_idx_half(const Tensor tensor, const int64_t i)
+float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
 {
     CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::Half>())[i]);
+}
+
+float THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t i)
+{
+    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
 }
 
 const char* THSTensor_device_str(const Tensor tensor)
@@ -1315,7 +1320,7 @@ Tensor THSTensor_new(
     CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
-Tensor THSTensor_newLong(
+Tensor THSTensor_newInt64(
     int64_t* data,
     void (*deleter)(void*),
     const int64_t* sizes,
@@ -1329,8 +1334,8 @@ Tensor THSTensor_newLong(
 }
 
 // The data is passed in as float and copied into the array of Half in the C++ code
-// since .NET doesn't know about 'half' values.
-Tensor THSTensor_newHalf(
+// since .NET doesn't know about 'float16' values.
+Tensor THSTensor_newFloat16(
     float* rawArray,
     c10::Half* dataArray,
     void (*deleter)(void*),
@@ -1351,76 +1356,117 @@ Tensor THSTensor_newHalf(
     )
 }
 
-Tensor THSTensor_newSByteScalar(int8_t data, bool requires_grad)
+// The data is passed in as float and copied into the array of Half in the C++ code
+// since .NET doesn't know about 'float16' values.
+Tensor THSTensor_newBFloat16(
+    float* rawArray,
+    c10::BFloat16* dataArray,
+    void (*deleter)(void*),
+    const int64_t* sizes,
+    const int szlength,
+    const bool requires_grad)
+{
+    CATCH_RETURN_Tensor(
+        int64_t sz = 1;
+    for (int k = 0; k < szlength; k++)
+        sz *= sizes[k];
+    for (int64_t i = 0; i < sz; i++)
+        dataArray[i] = (c10::BFloat16)rawArray[i];
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(at::kBFloat16))
+        .requires_grad(requires_grad);
+    res = ResultTensor(torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
+    )
+}
+
+Tensor THSTensor_newInt8Scalar(int8_t data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Char))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
-Tensor THSTensor_newByteScalar(char data, bool requires_grad)
+Tensor THSTensor_newByteScalar(char data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Byte))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
-Tensor THSTensor_newBoolScalar(bool  data, bool requires_grad)
+Tensor THSTensor_newBoolScalar(bool  data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Bool))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
-Tensor THSTensor_newHalfScalar(float data, bool requires_grad)
+Tensor THSTensor_newInt16Scalar(short data, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Short))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newInt32Scalar(int data, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Int))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newInt64Scalar(int64_t data, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Long))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newFloat64Scalar(double data, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Double))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newFloat32Scalar(float data, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::Float))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newFloat16Scalar(float data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(c10::ScalarType::Half))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
     CATCH_TENSOR(torch::tensor((c10::Half)data, options));
 }
 
-Tensor THSTensor_newShortScalar(short data, bool requires_grad)
+Tensor THSTensor_newBFloat16Scalar(float data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()
-        .dtype(at::ScalarType(c10::ScalarType::Short))
+        .dtype(at::ScalarType(c10::ScalarType::BFloat16))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
-}
-
-Tensor THSTensor_newIntScalar(int data, bool requires_grad)
-{
-    auto options = at::TensorOptions()
-        .dtype(at::ScalarType(c10::ScalarType::Int))
-        .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
-}
-
-Tensor THSTensor_newLongScalar(int64_t data, bool requires_grad)
-{
-    auto options = at::TensorOptions()
-        .dtype(at::ScalarType(c10::ScalarType::Long))
-        .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
-}
-
-Tensor THSTensor_newDoubleScalar(double data, bool requires_grad)
-{
-    auto options = at::TensorOptions()
-        .dtype(at::ScalarType(c10::ScalarType::Double))
-        .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
-}
-
-Tensor THSTensor_newFloatScalar(float data, bool requires_grad)
-{
-    auto options = at::TensorOptions()
-        .dtype(at::ScalarType(c10::ScalarType::Float))
-        .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::tensor(data, options));
+    CATCH_TENSOR(torch::tensor((c10::BFloat16)data, options));
 }
 
 Tensor THSTensor_norm(const Tensor tensor, float p)

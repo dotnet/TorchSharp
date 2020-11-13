@@ -70,7 +70,7 @@ namespace TorchSharp
                     //
                     // So we shadow copy the DLLs to the TorchSharp package, make a copy of the native DLL and continue
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\netcoreapp3.0\TorchSharp.dll
+                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\netcoreapp3.1\TorchSharp.dll
                     var cpuRootPackage = "libtorch-cpu";
                     var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                     var torchsharpLoc = Path.GetDirectoryName(typeof(Torch).Assembly.Location);

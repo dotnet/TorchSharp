@@ -77,19 +77,11 @@ namespace TorchSharp
                 Handle = IntPtr.Zero;
             }
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_half_to_scalar(float value);
-
-        public static TorchScalar CreateHalf(float value)
-        {
-            return value.ToScalar();
-        }
-
     }
 
     public static class ScalarExtensionMethods
     {
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_uint8_to_scalar(byte value);
 
@@ -107,11 +99,11 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_short_to_scalar(short value);
+        extern static IntPtr THSTorch_int16_to_scalar(short value);
 
         public static TorchScalar ToScalar(this short value)
         {
-            return new TorchScalar(THSTorch_short_to_scalar(value));
+            return new TorchScalar(THSTorch_int16_to_scalar(value));
         }
 
         [DllImport("LibTorchSharp")]
@@ -123,11 +115,11 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_long_to_scalar(long value);
+        extern static IntPtr THSTorch_int64_to_scalar(long value);
 
         public static TorchScalar ToScalar(this long value)
         {
-            return new TorchScalar(THSTorch_long_to_scalar(value));
+            return new TorchScalar(THSTorch_int64_to_scalar(value));
         }
 
         [DllImport("LibTorchSharp")]
@@ -152,5 +144,86 @@ namespace TorchSharp
         {
             return new TorchScalar(THSTorch_bool_to_scalar(value));
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_float16_to_scalar(float value);
+
+        public static TorchScalar ToFloat16Scalar(this float value)
+        {
+            return new TorchScalar(THSTorch_float16_to_scalar(value));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_bfloat16_to_scalar(float value);
+
+        public static TorchScalar ToBFloat16Scalar(this float value)
+        {
+            return new TorchScalar(THSTorch_bfloat16_to_scalar(value));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static float THSTorch_scalar_to_float32(IntPtr handle);
+
+        public static float ToSingle(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_float32(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static double THSTorch_scalar_to_float64(IntPtr handle);
+
+        public static double ToDouble(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_float64(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static sbyte THSTorch_scalar_to_int8(IntPtr handle);
+
+        public static sbyte ToSByte(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_int8(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static byte THSTorch_scalar_to_uint8(IntPtr handle);
+
+        public static byte ToByte(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_uint8(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static short THSTorch_scalar_to_int16(IntPtr handle);
+
+        public static short ToInt16(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_int16(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static int THSTorch_scalar_to_int32(IntPtr handle);
+
+        public static int ToInt32(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_int32(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static long THSTorch_scalar_to_int64(IntPtr handle);
+
+        public static long ToInt64(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_int64(value.Handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static bool THSTorch_scalar_to_bool(IntPtr handle);
+
+        public static bool ToBoolean(this TorchScalar value)
+        {
+            return THSTorch_scalar_to_bool(value.Handle);
+        }
+
     }
 }
