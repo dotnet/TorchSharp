@@ -360,10 +360,6 @@ EXPORT_API(Tensor) THSTensor_mvlgamma(const Tensor tensor, int64_t p);
 
 EXPORT_API(Tensor) THSTensor_mvlgamma_(const Tensor tensor, int64_t p);
 
-EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);
-
-EXPORT_API(Tensor) THSTensor_polygamma_(const Tensor tensor, int64_t n);
-
 EXPORT_API(Tensor) THSTensor_gather(const Tensor tensor, const int64_t dim, const Tensor index);
 
 EXPORT_API(Tensor) THSTensor_ge(const Tensor left, const Tensor right);
@@ -642,6 +638,12 @@ EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const 
 
 EXPORT_API(Tensor) THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length);
+
+EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);
+
+EXPORT_API(Tensor) THSTensor_polygamma_(const Tensor tensor, int64_t n);
+
 EXPORT_API(Tensor) THSTensor_pow(const Tensor tensor, const Tensor exponent);
 
 EXPORT_API(Tensor) THSTensor_pow_(const Tensor tensor, const Tensor exponent);
@@ -770,6 +772,8 @@ EXPORT_API(Tensor) THSTensor_sparse(
     const int8_t scalar_type,
     const int device_type, const int device_index,
     const bool requires_grad);
+
+EXPORT_API(void) THSTensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
 
 EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
 

@@ -2579,6 +2579,22 @@ namespace TorchSharp.Tensor
 
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
+
+        public TorchTensor[] SplitWithSize(long size, int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_split_with_size(handle, pa.CreateArray, size, dimension);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern void THSTensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
 
         public TorchTensor[] SplitWithSizes(long[] sizes, int dimension = 0)
@@ -3186,6 +3202,23 @@ namespace TorchSharp.Tensor
             var res = THSTensor_arange_out(start.Handle, stop.Handle, step.Handle, handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_permute(IntPtr tensor, IntPtr psizes, int length);
+
+        /// <summary>
+        ///  Mutates the tensor to have the given size with all values set to 1
+        /// </summary>
+        public TorchTensor Permute(long[] permutation)
+        {
+            unsafe {
+                fixed (long* pPermutation = permutation) {
+                    var res = THSTensor_permute(handle, (IntPtr)pPermutation, permutation.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
         }
 
         [DllImport("LibTorchSharp")]
