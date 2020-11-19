@@ -1309,6 +1309,28 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_relu6(IntPtr tensor);
+
+        public TorchTensor Relu6()
+        {
+            var res = THSTensor_relu6(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_relu6_(IntPtr tensor);
+
+        public TorchTensor Relu6InPlace()
+        {
+            var res = THSTensor_relu6_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_celu(IntPtr tensor);
 
         public TorchTensor Celu()
@@ -3490,6 +3512,7 @@ namespace TorchSharp.Tensor
                 }
             }
         }
+
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_maxpool1d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
@@ -3714,6 +3737,155 @@ namespace TorchSharp.Tensor
                         (IntPtr)poutputSize, outputSize.Length,
                         (IntPtr)pstrides, strides.Length,
                         (IntPtr)ppadding, padding.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_avg_pool1d(IntPtr input,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                bool ceil_mode,
+                bool count_include_pad);
+
+        public TorchTensor AvgPool1D(long kernelSize, long? stride = null,
+            long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            unsafe {
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                    var res =
+                        THSTensor_avg_pool1d(handle,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            ceil_mode,
+                            count_include_pad);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_avg_pool2d(IntPtr input,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                bool ceil_mode,
+                bool count_include_pad);
+
+        public TorchTensor AvgPool2D(long kernelSize, long? stride = null,
+            long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            unsafe {
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                    var res =
+                        THSTensor_avg_pool2d(handle,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            ceil_mode,
+                            count_include_pad);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_avg_pool3d(IntPtr input,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                bool ceil_mode,
+                bool count_include_pad);
+
+        public TorchTensor AvgPool3D(long kernelSize, long? stride = null,
+            long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            unsafe {
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                    var res =
+                        THSTensor_avg_pool3d(handle,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            ceil_mode,
+                            count_include_pad);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_avg_pool2d_backward(IntPtr gradOutput, IntPtr originalInput,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                bool ceil_mode,
+                bool count_include_pad,
+                long divisorOverride);
+
+        public TorchTensor AvgPool2DBackward(TorchTensor originalInput, long kernelSize, long? stride = null,
+            long? padding = null, bool ceil_mode = false, bool count_include_pad = true, long divisorOverride = 0)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            unsafe {
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                    var res =
+                        THSTensor_avg_pool2d_backward(handle, originalInput.Handle,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            ceil_mode,
+                            count_include_pad,
+                            divisorOverride);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_avg_pool3d_backward(IntPtr gradOutput, IntPtr originalInput,
+                IntPtr kernelSize, int kernelSizeLength,
+                IntPtr strides, int stridesLength,
+                IntPtr padding, int paddingLength,
+                bool ceil_mode,
+                bool count_include_pad,
+                long divisorOverride);
+
+        public TorchTensor AvgPool3DBackward(TorchTensor originalInput, long kernelSize, long? stride = null,
+            long? padding = null, bool ceil_mode = false, bool count_include_pad = true, long divisorOverride = 0)
+        {
+            var kernelSizes = new long[] { kernelSize };
+            var strides = new long[] { stride ?? 1 };
+            var paddings = new long[] { padding ?? 0 };
+            unsafe {
+                fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                    var res =
+                        THSTensor_avg_pool3d_backward(handle, originalInput.Handle,
+                            (IntPtr)pkernelSize, kernelSizes.Length,
+                            (IntPtr)pstrides, strides.Length,
+                            (IntPtr)ppadding, paddings.Length,
+                            ceil_mode,
+                            count_include_pad,
+                            divisorOverride);
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
