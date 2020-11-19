@@ -1215,6 +1215,42 @@ Tensor THSTensor_avg_pool3d_backward(
         (divisor_override == 0 ? NULL : c10::optional<int64_t>(divisor_override))));
 }
 
+Tensor THSTensor_adaptive_avg_pool1d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength)
+{
+    CATCH_TENSOR(torch::adaptive_avg_pool1d(
+        *tensor,
+        at::ArrayRef<int64_t>(outputSize, outputSizeLength)));
+}
+
+Tensor THSTensor_adaptive_avg_pool2d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength)
+{
+    CATCH_TENSOR(torch::adaptive_avg_pool2d(
+        *tensor,
+        at::ArrayRef<int64_t>(outputSize, outputSizeLength)));
+}
+
+Tensor THSTensor_adaptive_avg_pool3d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength)
+{
+    CATCH_TENSOR(torch::adaptive_avg_pool3d(
+        *tensor,
+        at::ArrayRef<int64_t>(outputSize, outputSizeLength)));
+}
+
+Tensor THSTensor_adaptive_avg_pool3d_backward(
+    const Tensor grad_output,
+    const Tensor tensor)
+{
+    CATCH_TENSOR(torch::adaptive_avg_pool3d_backward(
+        *grad_output,
+        *tensor));
+}
+
 Tensor THSTensor_maxpool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,

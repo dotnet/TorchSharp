@@ -16,6 +16,14 @@ EXPORT_API(Tensor) THSTensor_acos(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_acos_(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_adaptive_avg_pool1d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength);
+
+EXPORT_API(Tensor) THSTensor_adaptive_avg_pool2d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength);
+
+EXPORT_API(Tensor) THSTensor_adaptive_avg_pool3d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength);
+
+EXPORT_API(Tensor) THSTensor_adaptive_avg_pool3d_backward(const Tensor grad_output, const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha);
 
 EXPORT_API(Tensor) THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha);
