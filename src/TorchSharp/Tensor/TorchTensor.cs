@@ -1452,22 +1452,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_leaky_relu(IntPtr tensor, IntPtr negval);
+        private static extern IntPtr THSTensor_leaky_relu(IntPtr tensor, IntPtr negative_slope);
 
-        public TorchTensor LeakyRelu(TorchScalar negval)
+        public TorchTensor LeakyRelu(TorchScalar negative_slope)
         {
-            var res = THSTensor_leaky_relu(handle, negval.Handle);
+            var res = THSTensor_leaky_relu(handle, negative_slope.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_leaky_relu_(IntPtr tensor, IntPtr negval);
+        private static extern IntPtr THSTensor_leaky_relu_(IntPtr tensor, IntPtr negative_slope);
 
-        public TorchTensor LeakyReluInPlace(TorchScalar negval)
+        public TorchTensor LeakyReluInPlace(TorchScalar negative_slope)
         {
-            var res = THSTensor_leaky_relu_(handle, negval.Handle);
+            var res = THSTensor_leaky_relu_(handle, negative_slope.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -1557,6 +1557,28 @@ namespace TorchSharp.Tensor
         public TorchTensor AbsInPlace()
         {
             var res = THSTensor_abs_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_log_sigmoid(IntPtr tensor);
+
+        public TorchTensor LogSigmoid()
+        {
+            var res = THSTensor_log_sigmoid(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_logcumsumexp(IntPtr tensor, long dim);
+
+        public TorchTensor LogCumulativeSumExp(long dim)
+        {
+            var res = THSTensor_logcumsumexp(handle, dim);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -2579,6 +2601,22 @@ namespace TorchSharp.Tensor
 
 
         [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
+
+        public TorchTensor[] SplitWithSize(long size, int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_split_with_size(handle, pa.CreateArray, size, dimension);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
         private static extern void THSTensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
 
         public TorchTensor[] SplitWithSizes(long[] sizes, int dimension = 0)
@@ -3186,6 +3224,23 @@ namespace TorchSharp.Tensor
             var res = THSTensor_arange_out(start.Handle, stop.Handle, step.Handle, handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_permute(IntPtr tensor, IntPtr psizes, int length);
+
+        /// <summary>
+        ///  Mutates the tensor to have the given size with all values set to 1
+        /// </summary>
+        public TorchTensor Permute(long[] permutation)
+        {
+            unsafe {
+                fixed (long* pPermutation = permutation) {
+                    var res = THSTensor_permute(handle, (IntPtr)pPermutation, permutation.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
         }
 
         [DllImport("LibTorchSharp")]
@@ -3890,6 +3945,64 @@ namespace TorchSharp.Tensor
                     return new TorchTensor(res);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_adaptive_avg_pool1d(IntPtr input,
+                IntPtr outputSize, int outputSizeLength);
+
+        public TorchTensor AdaptiveAvgPool1D(long outputSize)
+        {
+            var outputSizes = new long[] { outputSize };
+            unsafe {
+                fixed (long* poutputSize = outputSizes) {
+                    var res =
+                        THSTensor_adaptive_avg_pool1d(handle, (IntPtr)poutputSize, outputSizes.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_adaptive_avg_pool2d(IntPtr input,
+                IntPtr outputSize, int outputSizeLength);
+
+        public TorchTensor AdaptiveAvgPool2D(long[] outputSizes)
+        {
+            unsafe {
+                fixed (long* poutputSize = outputSizes) {
+                    var res =
+                        THSTensor_adaptive_avg_pool2d(handle, (IntPtr)poutputSize, outputSizes.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_adaptive_avg_pool3d(IntPtr input, IntPtr outputSize, int outputSizeLength);
+
+        public TorchTensor AdaptiveAvgPool3D(long[] outputSizes)
+        {
+            unsafe {
+                fixed (long* poutputSize = outputSizes) {
+                    var res =
+                        THSTensor_adaptive_avg_pool3d(handle, (IntPtr)poutputSize, outputSizes.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_adaptive_avg_pool3d_backward(IntPtr gradOutput, IntPtr originalInput);
+
+        public TorchTensor AdaptiveAvgPool3Backward(TorchTensor originalInput)
+        {
+            var res = THSTensor_adaptive_avg_pool3d_backward(handle, originalInput.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
         }
 
         /// <summary>
