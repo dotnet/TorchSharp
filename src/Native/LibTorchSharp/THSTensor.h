@@ -114,6 +114,10 @@ EXPORT_API(Tensor) THSTensor_ceil(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_ceil_(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_celu(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_celu_(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_cholesky(const Tensor tensor, const bool upper);
 
 EXPORT_API(Tensor) THSTensor_cholesky_inverse(const Tensor tensor, const bool upper);
@@ -221,6 +225,10 @@ EXPORT_API(Tensor) THSTensor_einsum(const char* equation, const Tensor* tensors,
 
 EXPORT_API(int64_t) THSTensor_element_size(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_elu(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_elu_(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_empty(
     const int64_t* sizes,
     const int length,
@@ -314,6 +322,8 @@ EXPORT_API(Tensor) THSTensor_ge_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_ge_scalar_(const Tensor left, const Scalar right);
 
+EXPORT_API(Tensor) THSTensor_gelu(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_get1(const Tensor tensor, int64_t index);
 
 EXPORT_API(Tensor) THSTensor_get2(const Tensor tensor, int64_t index1, int64_t index2);
@@ -340,6 +350,18 @@ EXPORT_API(Tensor) THSTensor_gt_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_gt_scalar_(const Tensor left, const Scalar right);
 
+EXPORT_API(Tensor) THSTensor_hardtanh(const Tensor tensor, Scalar min, Scalar max);
+
+EXPORT_API(Tensor) THSTensor_hardtanh_(const Tensor tensor, Scalar min, Scalar max);
+
+EXPORT_API(Tensor) THSTensor_hardsigmoid(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_hardsigmoid_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_hardswish(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_hardswish_(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
@@ -348,9 +370,9 @@ EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_lcm(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_lcm(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_lcm_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_lcm_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_le(const Tensor left, const Tensor right);
 
@@ -359,6 +381,10 @@ EXPORT_API(Tensor) THSTensor_le_(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_le_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_le_scalar_(const Tensor left, const Scalar right);
+
+EXPORT_API(Tensor) THSTensor_leaky_relu(const Tensor tensor, const Scalar negval);
+
+EXPORT_API(Tensor) THSTensor_leaky_relu_(const Tensor tensor, const Scalar negval);
 
 EXPORT_API(Tensor) THSTensor_load(const char* location);
 
@@ -616,6 +642,10 @@ EXPORT_API(Tensor) THSTensor_rsqrt_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm);
 
+EXPORT_API(Tensor) THSTensor_selu(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_selu_(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_sigmoid(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sigmoid_(const Tensor tensor);
@@ -623,6 +653,10 @@ EXPORT_API(Tensor) THSTensor_sigmoid_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sign(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sign_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_silu(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_silu_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sin(const Tensor tensor);
 
