@@ -434,6 +434,10 @@ EXPORT_API(Tensor) THSTensor_leaky_relu(const Tensor tensor, const Scalar negval
 
 EXPORT_API(Tensor) THSTensor_leaky_relu_(const Tensor tensor, const Scalar negval);
 
+EXPORT_API(Tensor) THSTensor_lerp(const Tensor tensor, const Tensor end, const Tensor weight);
+
+EXPORT_API(Tensor) THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight);
+
 EXPORT_API(Tensor) THSTensor_load(const char* location);
 
 EXPORT_API(Tensor) THSTensor_log(const Tensor tensor);
@@ -448,9 +452,11 @@ EXPORT_API(Tensor) THSTensor_log10(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_log10_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_lerp(const Tensor tensor, const Tensor end, const Tensor weight);
+EXPORT_API(Tensor) THSTensor_log_normal_(const Tensor tensor, const double mean, const double std);
 
-EXPORT_API(Tensor) THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight);
+EXPORT_API(Tensor) THSTensor_log_sigmoid(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_logcumsumexp(const Tensor tensor, const long dimension);
 
 EXPORT_API(Tensor) THSTensor_log1p(const Tensor tensor);
 

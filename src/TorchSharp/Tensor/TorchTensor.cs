@@ -1452,22 +1452,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_leaky_relu(IntPtr tensor, IntPtr negval);
+        private static extern IntPtr THSTensor_leaky_relu(IntPtr tensor, IntPtr negative_slope);
 
-        public TorchTensor LeakyRelu(TorchScalar negval)
+        public TorchTensor LeakyRelu(TorchScalar negative_slope)
         {
-            var res = THSTensor_leaky_relu(handle, negval.Handle);
+            var res = THSTensor_leaky_relu(handle, negative_slope.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_leaky_relu_(IntPtr tensor, IntPtr negval);
+        private static extern IntPtr THSTensor_leaky_relu_(IntPtr tensor, IntPtr negative_slope);
 
-        public TorchTensor LeakyReluInPlace(TorchScalar negval)
+        public TorchTensor LeakyReluInPlace(TorchScalar negative_slope)
         {
-            var res = THSTensor_leaky_relu_(handle, negval.Handle);
+            var res = THSTensor_leaky_relu_(handle, negative_slope.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -1557,6 +1557,28 @@ namespace TorchSharp.Tensor
         public TorchTensor AbsInPlace()
         {
             var res = THSTensor_abs_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_log_sigmoid(IntPtr tensor);
+
+        public TorchTensor LogSigmoid()
+        {
+            var res = THSTensor_log_sigmoid(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_logcumsumexp(IntPtr tensor, long dim);
+
+        public TorchTensor LogCumulativeSumExp(long dim)
+        {
+            var res = THSTensor_logcumsumexp(handle, dim);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);

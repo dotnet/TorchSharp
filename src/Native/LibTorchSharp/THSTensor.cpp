@@ -1092,14 +1092,14 @@ Tensor THSTensor_le_scalar_(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->le_(*right));
 }
 
-Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negval)
+Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negative_slope)
 {
-    CATCH_TENSOR(torch::leaky_relu(*tensor, *negval));
+    CATCH_TENSOR(torch::leaky_relu(*tensor, *negative_slope));
 }
 
-Tensor THSTensor_leaky_relu_(const Tensor tensor, const Scalar negval)
+Tensor THSTensor_leaky_relu_(const Tensor tensor, const Scalar negative_slope)
 {
-    CATCH_TENSOR(torch::leaky_relu_(*tensor, *negval));
+    CATCH_TENSOR(torch::leaky_relu_(*tensor, *negative_slope));
 }
 
 Tensor THSTensor_lgamma(const Tensor tensor)
@@ -1125,6 +1125,21 @@ Tensor THSTensor_log_normal_(const Tensor tensor, const double mean, const doubl
 {
     CATCH_TENSOR(tensor->log_normal_(mean, std));
 }
+
+Tensor THSTensor_log_sigmoid(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::log_sigmoid(*tensor));
+}
+
+Tensor THSTensor_logcumsumexp(const Tensor tensor, const long dimension)
+{
+    CATCH_TENSOR(torch::logcumsumexp(*tensor, dimension));
+}
+
+//Tensor THSTensor_log_sigmoid_backward(const Tensor tensor)
+//{
+//    CATCH_TENSOR(torch::log_sigmoid_backward(*tensor));
+//}
 
 Tensor THSTensor_log(const Tensor tensor)
 {
