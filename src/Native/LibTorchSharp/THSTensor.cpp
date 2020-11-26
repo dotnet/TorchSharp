@@ -277,7 +277,7 @@ Tensor THSTensor_avg_pool2d_backward(
         at::ArrayRef<int64_t>(padding, paddingLength),
         ceil_mode,
         count_include_pad,
-        (divisor_override == 0 ? NULL : c10::optional<int64_t>(divisor_override))));
+        (divisor_override == 0 ? c10::optional<int64_t>(): c10::optional<int64_t>(divisor_override))));
 }
 
 Tensor THSTensor_avg_pool3d(
@@ -315,7 +315,7 @@ Tensor THSTensor_avg_pool3d_backward(
         at::ArrayRef<int64_t>(padding, paddingLength),
         ceil_mode,
         count_include_pad,
-        (divisor_override == 0 ? NULL : c10::optional<int64_t>(divisor_override))));
+        (divisor_override == 0 ? c10::optional<int64_t>() : c10::optional<int64_t>(divisor_override))));
 }
 
 void THSTensor_backward(Tensor tensor)

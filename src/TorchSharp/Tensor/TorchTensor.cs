@@ -3836,7 +3836,7 @@ namespace TorchSharp.Tensor
                 bool count_include_pad);
 
         public TorchTensor AvgPool2D(long[] kernelSizes,
-            long[]? strides,
+            long[]? strides = null,
             long[]? paddings = null,
             bool ceil_mode = false,
             bool count_include_pad = true)
@@ -3867,7 +3867,7 @@ namespace TorchSharp.Tensor
                 bool count_include_pad);
 
         public TorchTensor AvgPool3D(long[] kernelSizes,
-            long[]? strides,
+            long[]? strides = null,
             long[]? paddings = null,
             bool ceil_mode = false,
             bool count_include_pad = true)
@@ -3900,7 +3900,7 @@ namespace TorchSharp.Tensor
 
         public TorchTensor AvgPool2DBackward(TorchTensor originalInput,
             long[] kernelSizes,
-            long[]? strides,
+            long[]? strides = null,
             long[]? paddings = null,
             bool ceil_mode = false,
             bool count_include_pad = true,
@@ -3935,7 +3935,7 @@ namespace TorchSharp.Tensor
 
         public TorchTensor AvgPool3DBackward(TorchTensor originalInput,
             long[] kernelSizes,
-            long[]? strides,
+            long[]? strides = null,
             long[]? paddings = null,
             bool ceil_mode = false,
             bool count_include_pad = true,
