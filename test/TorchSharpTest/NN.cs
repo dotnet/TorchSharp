@@ -812,6 +812,22 @@ namespace TorchSharp
             // This gets back to the original uniform input
             Assert.True(res.AllClose(ones));
         }
+
+        [Fact]
+        public void AvgPool3DBackwardTensorExplicitDivisor()
+        {
+            var ones = Float32Tensor.Ones(new long[] { 4, 2, 2, 2, 2 });
+            var kernelSize = new long[] { 2, 2, 2 };
+            var avg = Float32Tensor.Ones(new long[] { 4, 2, 1, 1, 1 });
+            var res = avg.AvgPool3DBackward(ones, kernelSize, divisorOverride: 6) * 6.0;
+
+            var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
+            var res0000 = res[0, 0, 0, 0, 0].ToSingle();
+            Assert.True(Math.Abs(ones0000 - res0000) < 0.00001);
+            // This gets back to the original uniform input
+            Assert.True(res.AllClose(ones));
+        }
+
         [Fact]
         public void MaxPool2DObjectInitialized()
         {
