@@ -1353,22 +1353,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_elu(IntPtr tensor);
+        private static extern IntPtr THSTensor_elu(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
 
-        public TorchTensor elu()
+        public TorchTensor Elu(TorchScalar alpha, TorchScalar scale, TorchScalar input_scale)
         {
-            var res = THSTensor_elu(handle);
+            var res = THSTensor_elu(handle, alpha.Handle, scale.Handle, input_scale.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_elu_(IntPtr tensor);
+        private static extern IntPtr THSTensor_elu_(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
 
-        public TorchTensor EluInPlace()
+        public TorchTensor EluInPlace(TorchScalar alpha, TorchScalar scale, TorchScalar input_scale)
         {
-            var res = THSTensor_elu_(handle);
+            var res = THSTensor_elu_(handle, alpha.Handle, scale.Handle, input_scale.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -3569,7 +3569,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_maxpool1d(IntPtr input,
+        private static extern IntPtr THSTensor_max_pool1d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3588,7 +3588,7 @@ namespace TorchSharp.Tensor
                 fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations)
                 {
                     var res =
-                        THSTensor_maxpool1d(handle, 
+                        THSTensor_max_pool1d(handle, 
                             (IntPtr)pkernelSize, kernelSizes.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, paddings.Length,
@@ -3601,7 +3601,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_maxpool1d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+        private static extern void THSTensor_max_pool1d_with_indices(IntPtr input, AllocatePinnedArray allocator,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3620,7 +3620,7 @@ namespace TorchSharp.Tensor
             using (var pa = new PinnedArray<IntPtr>()) {
                 unsafe {
                     fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
-                        THSTensor_maxpool1d_with_indices(handle,
+                        THSTensor_max_pool1d_with_indices(handle,
                             pa.CreateArray,
                             (IntPtr)pkernelSize, kernelSizes.Length,
                             (IntPtr)pstrides, strides.Length,
@@ -3636,7 +3636,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_maxpool2d(IntPtr input,
+        private static extern IntPtr THSTensor_max_pool2d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3654,7 +3654,7 @@ namespace TorchSharp.Tensor
                 fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation)
                 {
                     var res =
-                        THSTensor_maxpool2d(handle,
+                        THSTensor_max_pool2d(handle,
                             (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, padding.Length,
@@ -3667,7 +3667,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_maxpool2d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+        private static extern void THSTensor_max_pool2d_with_indices(IntPtr input, AllocatePinnedArray allocator,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3685,7 +3685,7 @@ namespace TorchSharp.Tensor
             using (var pa = new PinnedArray<IntPtr>()) {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                        THSTensor_maxpool2d_with_indices(handle,
+                        THSTensor_max_pool2d_with_indices(handle,
                             pa.CreateArray,
                             (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
@@ -3701,7 +3701,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_maxpool3d(IntPtr input,
+        private static extern IntPtr THSTensor_max_pool3d(IntPtr input,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3719,7 +3719,7 @@ namespace TorchSharp.Tensor
                 fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation)
                 {
                     var res =
-                        THSTensor_maxpool3d(handle,
+                        THSTensor_max_pool3d(handle,
                             (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
                             (IntPtr)ppadding, padding.Length,
@@ -3732,7 +3732,7 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_maxpool3d_with_indices(IntPtr input, AllocatePinnedArray allocator,
+        private static extern void THSTensor_max_pool3d_with_indices(IntPtr input, AllocatePinnedArray allocator,
                 IntPtr kernelSize, int kernelSizeLength,
                 IntPtr strides, int stridesLength,
                 IntPtr padding, int paddingLength,
@@ -3750,7 +3750,7 @@ namespace TorchSharp.Tensor
             using (var pa = new PinnedArray<IntPtr>()) {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                        THSTensor_maxpool3d_with_indices(handle,
+                        THSTensor_max_pool3d_with_indices(handle,
                             pa.CreateArray,
                             (IntPtr)pkernelSize, kernelSize.Length,
                             (IntPtr)pstrides, strides.Length,
@@ -4016,6 +4016,156 @@ namespace TorchSharp.Tensor
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest1d(IntPtr input,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest1D(long? outputSize, double? scaleFactor)
+        {
+            var outputSizes = outputSize.HasValue ? new long[] { outputSize.Value } : null;
+            var outputSizesLength = outputSize.HasValue ? 1 : 0;
+            var scaleFactors = scaleFactor.HasValue ? new double[] { scaleFactor.Value } : null;
+            var scaleFactorsLength = scaleFactor.HasValue ? 1 : 0;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest1d(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest1d_backward(IntPtr grad_output,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr inputSize, int inputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest1DBackward(long? outputSize, long inputSize, double? scaleFactor)
+        {
+            var outputSizes = outputSize.HasValue ? new long[] { outputSize.Value } : null;
+            var outputSizesLength = outputSize.HasValue ? 1 : 0;
+            var inputSizes = new long[] { inputSize };
+            var scaleFactors = scaleFactor.HasValue ? new double[] { scaleFactor.Value } : null;
+            var scaleFactorsLength = scaleFactor.HasValue ? 1 : 0;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest1d_backward(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pinputSizes, inputSizes.Length,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest2d(IntPtr input,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest2D(long[]? outputSizes = null, double[]? scaleFactors = null)
+        {
+            var outputSizesLength = outputSizes == null ?  0 : outputSizes.Length;
+            var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest2d(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest2d_backward(IntPtr grad_output,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr inputSize, int inputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest2DBackward(long[] inputSizes, long[]? outputSizes = null, double[]? scaleFactors = null)
+        {
+            var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+            var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest2d_backward(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pinputSizes, inputSizes.Length,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest3d_backward(IntPtr grad_output,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr inputSize, int inputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest3DBackward(long[] inputSizes, long[]? outputSizes = null, double[]? scaleFactors = null)
+        {
+            var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+            var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest3d_backward(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pinputSizes, inputSizes.Length,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_upsample_nearest3d(IntPtr input,
+                IntPtr outputSize, int outputSizeLength,
+                IntPtr scaleFactors, int scaleFactorsLength);
+
+        public TorchTensor UpSampleNearest3D(long[]? outputSizes = null, double[]? scaleFactors = null)
+        {
+            var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+            var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+            unsafe {
+                fixed (long* poutputSizes = outputSizes) {
+                    fixed (double* pscaleFactors = scaleFactors) {
+                        var res =
+                            THSTensor_upsample_nearest3d(handle,
+                                (IntPtr)poutputSizes, outputSizesLength,
+                                (IntPtr)pscaleFactors, scaleFactorsLength);
+                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         ///  Returns a new tensor with a dimension of size one inserted at the specified position.
