@@ -490,7 +490,7 @@ EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
 EXPORT_API(void) THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);
 
-EXPORT_API(Tensor) THSTensor_maxpool1d(
+EXPORT_API(Tensor) THSTensor_max_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
@@ -498,7 +498,7 @@ EXPORT_API(Tensor) THSTensor_maxpool1d(
     const int64_t* dilation, const int dilationLength,
     bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_maxpool2d(
+EXPORT_API(Tensor) THSTensor_max_pool2d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
@@ -506,7 +506,7 @@ EXPORT_API(Tensor) THSTensor_maxpool2d(
     const int64_t* dilation, const int dilationLength,
     bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_maxpool3d(
+EXPORT_API(Tensor) THSTensor_max_pool3d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
@@ -514,16 +514,7 @@ EXPORT_API(Tensor) THSTensor_maxpool3d(
     const int64_t* dilation, const int dilationLength,
     bool ceil_mode);
 
-EXPORT_API(void) THSTensor_maxpool1d_with_indices(
-    const Tensor tensor,
-    Tensor* (*allocator)(size_t length),
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* stride, const int strideLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* dilation, const int dilationLength,
-    bool ceil_mode);
-
-EXPORT_API(void) THSTensor_maxpool2d_with_indices(
+EXPORT_API(void) THSTensor_max_pool1d_with_indices(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -532,7 +523,16 @@ EXPORT_API(void) THSTensor_maxpool2d_with_indices(
     const int64_t* dilation, const int dilationLength,
     bool ceil_mode);
 
-EXPORT_API(void) THSTensor_maxpool3d_with_indices(
+EXPORT_API(void) THSTensor_max_pool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool3d_with_indices(
     const Tensor tensor,
     Tensor* (*allocator)(size_t length),
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -816,6 +816,39 @@ EXPORT_API(int8_t) THSTensor_type(const Tensor tensor);
 EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dim);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest1d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest1d_backward(
+    const Tensor grad_output,
+    const int64_t* outputSize, const int outputSizeLength,
+    const int64_t* inputSize, const int inputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest2d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest2d_backward(
+    const Tensor grad_output,
+    const int64_t* outputSize, const int outputSizeLength,
+    const int64_t* inputSize, const int inputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest3d(
+    const Tensor tensor,
+    const int64_t* outputSize, const int outputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
+
+EXPORT_API(Tensor) THSTensor_upsample_nearest3d_backward(
+    const Tensor grad_output,
+    const int64_t* outputSize, const int outputSizeLength,
+    const int64_t* inputSize, const int inputSizeLength,
+    const double* scaleFactors, const int scaleFactorsLength);
 
 EXPORT_API(Tensor) THSTensor_values(Tensor tensor);
 
