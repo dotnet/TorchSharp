@@ -277,9 +277,11 @@ EXPORT_API(Tensor) THSTensor_einsum(const char* equation, const Tensor* tensors,
 
 EXPORT_API(int64_t) THSTensor_element_size(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_elu(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_elu(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale);
 
-EXPORT_API(Tensor) THSTensor_elu_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale);
+
+EXPORT_API(Tensor) THSTensor_elu_backward(const Tensor grad_output, const Scalar alpha, const Scalar scale, const Scalar input_scale, const Tensor output);
 
 EXPORT_API(Tensor) THSTensor_empty(
     const int64_t* sizes,

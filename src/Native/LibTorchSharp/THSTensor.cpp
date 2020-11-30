@@ -731,9 +731,9 @@ Tensor THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scal
     CATCH_TENSOR(torch::elu_(*tensor, *alpha, *scale, *input_scale));
 }
 
-Tensor THSTensor_elu_backward(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale, const Tensor output)
+Tensor THSTensor_elu_backward(const Tensor grad_output, const Scalar alpha, const Scalar scale, const Scalar input_scale, const Tensor output)
 {
-    CATCH_TENSOR(torch::elu_backward(*tensor, *alpha, *scale, *input_scale, *output));
+    CATCH_TENSOR(torch::elu_backward(*grad_output, *alpha, *scale, *input_scale, *output));
 }
 
 Tensor THSTensor_empty(

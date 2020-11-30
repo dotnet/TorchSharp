@@ -1353,22 +1353,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_elu(IntPtr tensor);
+        private static extern IntPtr THSTensor_elu(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
 
-        public TorchTensor elu()
+        public TorchTensor Elu(TorchScalar alpha, TorchScalar scale, TorchScalar input_scale)
         {
-            var res = THSTensor_elu(handle);
+            var res = THSTensor_elu(handle, alpha.Handle, scale.Handle, input_scale.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_elu_(IntPtr tensor);
+        private static extern IntPtr THSTensor_elu_(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
 
-        public TorchTensor EluInPlace()
+        public TorchTensor EluInPlace(TorchScalar alpha, TorchScalar scale, TorchScalar input_scale)
         {
-            var res = THSTensor_elu_(handle);
+            var res = THSTensor_elu_(handle, alpha.Handle, scale.Handle, input_scale.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
