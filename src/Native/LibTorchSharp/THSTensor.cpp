@@ -1261,10 +1261,20 @@ Tensor THSTensor_matmul(const Tensor left, const Tensor right)
     return  new torch::Tensor(left->matmul(*right));
 }
 
-void THSTensor_max(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
+void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
 {
     CATCH(
         auto max = tensor->max(dim, keepdim);
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(max));
+        result[1] = new torch::Tensor(std::get<1>(max));
+    )
+}
+
+void THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
+{
+    CATCH(
+        auto max = tensor->min(dim, keepdim);
         Tensor * result = allocator(2);
         result[0] = new torch::Tensor(std::get<0>(max));
         result[1] = new torch::Tensor(std::get<1>(max));

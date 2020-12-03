@@ -2640,8 +2640,18 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_max(IntPtr tensor, AllocatePinnedArray allocator, long dimension,
+        private static extern void THSTensor_max_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dimension,
             bool keep_dim);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_max(IntPtr tensor);
+
+        public TorchTensor Max()
+        {
+            var res = THSTensor_max(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
 
         public (TorchTensor values, TorchTensor indexes) Max(long dimension, bool keepDim = false)
         {
@@ -2649,7 +2659,7 @@ namespace TorchSharp.Tensor
 
             using (var pa = new PinnedArray<IntPtr>())
             {
-                THSTensor_max(handle, pa.CreateArray, dimension, keepDim);
+                THSTensor_max_along_dimension(handle, pa.CreateArray, dimension, keepDim);
                 Torch.CheckForErrors();
                 ptrArray = pa.Array;
             }
@@ -2689,6 +2699,33 @@ namespace TorchSharp.Tensor
             var res = THSTensor_median(handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_min(IntPtr tensor);
+
+        public TorchTensor Min()
+        {
+            var res = THSTensor_min(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_min_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dimension,
+            bool keep_dim);
+
+        public (TorchTensor values, TorchTensor indexes) Min(long dimension, bool keepDim = false)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_min_along_dimension(handle, pa.CreateArray, dimension, keepDim);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return (new TorchTensor(ptrArray[0]), new TorchTensor(ptrArray[1]));
         }
 
         [DllImport("LibTorchSharp")]
