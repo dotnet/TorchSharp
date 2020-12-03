@@ -2640,10 +2640,6 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern void THSTensor_max_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dimension,
-            bool keep_dim);
-
-        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_max(IntPtr tensor);
 
         public TorchTensor Max()
@@ -2652,6 +2648,21 @@ namespace TorchSharp.Tensor
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_max_elementwise(IntPtr tensor, IntPtr other);
+
+        public TorchTensor Max(TorchTensor other)
+        {
+            var res = THSTensor_max_elementwise(handle, other.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSTensor_max_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dimension,
+            bool keep_dim);
 
         public (TorchTensor values, TorchTensor indexes) Max(long dimension, bool keepDim = false)
         {
@@ -2707,6 +2718,16 @@ namespace TorchSharp.Tensor
         public TorchTensor Min()
         {
             var res = THSTensor_min(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_min_elementwise(IntPtr tensor, IntPtr other);
+
+        public TorchTensor Min(TorchTensor other)
+        {
+            var res = THSTensor_min_elementwise(handle, other.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

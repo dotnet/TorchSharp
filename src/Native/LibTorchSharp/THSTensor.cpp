@@ -1266,6 +1266,11 @@ Tensor THSTensor_max(const Tensor tensor)
     CATCH_TENSOR(tensor->max());
 }
 
+Tensor THSTensor_max_elementwise(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->max(*other));
+}
+
 void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
 {
     CATCH(
@@ -1445,6 +1450,11 @@ Tensor THSTensor_median(const Tensor tensor)
 Tensor THSTensor_min(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->min());
+}
+
+Tensor THSTensor_min_elementwise(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->min(*other));
 }
 
 void THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)

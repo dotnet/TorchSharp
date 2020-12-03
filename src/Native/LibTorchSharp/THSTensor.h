@@ -494,6 +494,8 @@ EXPORT_API(Tensor) THSTensor_max(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);
 
+EXPORT_API(Tensor) THSTensor_max_elementwise(const Tensor tensor, const Tensor other);
+
 EXPORT_API(Tensor) THSTensor_max_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -562,6 +564,8 @@ EXPORT_API(Tensor) THSTensor_mean(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_median(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_min(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_min_elementwise(const Tensor tensor, const Tensor other);
 
 EXPORT_API(void) THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);
 
