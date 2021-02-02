@@ -7,7 +7,7 @@ PyTorch.
 
 The focus is to bind the API surfaced by libtorch with a particular focus on tensors.
 
-The technology is a "wrapepr library" no more no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
+The technology is a "wrapper library" no more no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
 repository extensively and has been a major factor in iterating support.
 
 Things that you can try:
