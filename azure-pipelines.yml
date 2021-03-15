@@ -20,8 +20,8 @@ jobs:
   parameters:
     name: Ubuntu_x64
     prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
-    buildScript: ./build.sh build /p:SkipCuda=true -c 
-    testScript: ./build.sh test /p:SkipCuda=true -c 
+    buildScript: dotnet build /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
     pool:
       vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
@@ -30,8 +30,8 @@ jobs:
 #   parameters:
 #     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
 #     name: MacOS_x64
-#     buildScript: ./build.sh build /p:SkipCuda=true -c 
-#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     buildScript: ./dotnet build /p:SkipCuda=true -c 
+#     testScript: ./dotnet test /p:SkipCuda=true -c 
 #     pool:
 #       vmImage: 'macos-10.15'
 
@@ -39,8 +39,8 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64
-    buildScript: build.cmd  build  /p:SkipCuda=true -c 
-    testScript: build.cmd test /p:SkipCuda=true -c 
+    buildScript: dotnet  build  /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
     pool:
       vmImage: 'windows-2019'
 
@@ -68,7 +68,7 @@ jobs:
   - script: sudo apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
   - script: sudo apt-get -y update
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
-  - script: ./build.sh build -c $(BuildConfig) 
+  - script: dotnet build -c $(BuildConfig) 
     displayName: Build
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -88,7 +88,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: build.cmd build -c $(BuildConfig) 
+  - script: dotnet build -c $(BuildConfig) 
     displayName: Build Windows
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -112,7 +112,7 @@ jobs:
 #     displayName: Install build dependencies (macOS)
 #   - script: ls -Flas /usr/local/opt/llvm/bin/
 #     displayName: Debug Stuff
-#   - script: ./build.sh build -c $(BuildConfig)
+#   - script: dotnet build -c $(BuildConfig)
 #     displayName: Build
 
 #   - task: PublishBuildArtifacts@1
@@ -164,10 +164,10 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: build.cmd build -c $(BuildConfig) -v:n /p:SkipNative=true
+  - script: dotnet build -c $(BuildConfig) -v:n /p:SkipNative=true
     displayName: Build Managed
 
-  - script: build.cmd pack -c $(BuildConfig) -v:n /p:SkipNative=true
+  - script: dotnet pack -c $(BuildConfig) -v:n /p:SkipNative=true
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 

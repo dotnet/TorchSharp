@@ -1,6 +1,11 @@
 
 # Building
 
+    dotnet build
+    dotnet build /p:SkipNative=true
+    dotnet test
+    dotnet pack
+    dotnet pack /p:BuildLibTorchPackages=true
 
 ## Windows
 
@@ -10,9 +15,7 @@ Requirements:
 - cmake (tested with 3.14)
 
 Commands:
-- Building: `build.cmd build` (can use  `dotnet build` after first time)
 - Building from Visual Studio: first build using the command line
-- Run tests from command line: `dotnet test`
 
 
 ## Linux
@@ -32,10 +35,6 @@ sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-d
 ```
 
 Commands:
-- Building: `./build.sh`
-- Building from Visual Studio: first build using the command line
-- Run tests from command line: `dotnet test`
-- Build packages: `dotnet pack`
 
 
 ## Packages
@@ -47,14 +46,6 @@ An ephemeral feed of packages from CI is available
 
 
 ## Building the TorchSharp package
-
-The managed package can be built with `dotnet pack`, e.g.
-
-    ./build.cmd pack
-
-or just 
-
-    dotnet pack
 
 Locally built packages have names like this, names update every day.  If repeatedly rebuilding them locally you may have to remove them
 from your local `.nuget` package cache.
@@ -162,7 +153,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 4. Build the native code without CUDA
 
-       .\build build.cmd /p:SkipCuda=true
+       dotnet build /p:SkipCuda=true
 
    The first stage unzips the archives, then CMAKE is run.
 
@@ -180,7 +171,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 5. Similarly build the native code with CUDA
 
-       .\build build.cmd
+       dotnet build
 
 6. You must also **very very carefully** update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
   of the unzip of the archive, e.g.
@@ -192,8 +183,8 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 8. Run tests
 
-       .\build build.cmd test -c Debug
-       .\build build.cmd test -c Release
+       dotnet build test -c Debug
+       dotnet build test -c Release
 
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` this:
@@ -202,10 +193,10 @@ version of PyTorch then quite a lot of careful work needs to be done.
        <LibTorchPackageVersion>1.8.0</LibTorchPackageVersion>
        <BuildLibTorchPackages>true</BuildLibTorchPackages>
 
-       .\build pack -c Debug /p:SkipCuda=true
-       .\build pack -c Release /p:SkipCuda=true
-       .\build pack -c Debug
-       .\build pack -c Release
+       dotnet pack -c Debug /p:SkipCuda=true
+       dotnet pack -c Release /p:SkipCuda=true
+       dotnet pack -c Debug
+       dotnet pack -c Release
 
 10. Submit to CI and debug problems
 
