@@ -28,8 +28,7 @@
   </PropertyGroup>
 
   <Target Name="BuildNativeUnix"
-          Condition="'$(OS)' != 'Windows_NT'"
-          DependsOnTargets="GenerateVersionSourceFile">
+          Condition="'$(OS)' != 'Windows_NT'">
 
     <PropertyGroup>
       
@@ -43,8 +42,7 @@
   </Target>
 
   <Target Name="BuildNativeWindows"
-          Condition="'$(OS)' == 'Windows_NT'"
-          DependsOnTargets="GenerateVersionHeader">
+          Condition="'$(OS)' == 'Windows_NT'">
           
     <PropertyGroup>
      <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
@@ -73,7 +71,5 @@
           DestinationFolder="$(PackagePreparationPath)%(NativePackageAsset.RelativePath)" />
 
   </Target>
-
-  <Import Project="$(ToolsDir)/versioning.targets" />
 
 </Project>

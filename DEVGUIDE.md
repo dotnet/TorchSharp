@@ -21,7 +21,7 @@ Requirements:
 - requirements to run .NET Core 3.1
 - git
 - cmake (tested with 3.14)
-- clang 4.x +
+- clang 6.x +
 
 Example to fulfill the requirements in Ubuntu 16:
 ```

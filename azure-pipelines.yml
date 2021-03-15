@@ -18,7 +18,7 @@ resources:
 jobs:
 - template: /build/ci/job-template.yml
   parameters:
-    name: Ubuntu_x64_NetCoreApp30
+    name: Ubuntu_x64
     prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
     buildScript: ./build.sh build /p:SkipCuda=true -c 
     testScript: ./build.sh test /p:SkipCuda=true -c 
@@ -29,7 +29,7 @@ jobs:
 # - template: /build/ci/job-template.yml
 #   parameters:
 #     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-#     name: MacOS_x64_NetCoreApp30
+#     name: MacOS_x64
 #     buildScript: ./build.sh build /p:SkipCuda=true -c 
 #     testScript: ./build.sh test /p:SkipCuda=true -c 
 #     pool:
@@ -38,7 +38,7 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     prepScript: echo "no prep needed"
-    name: Windows_x64_NetCoreApp30
+    name: Windows_x64
     buildScript: build.cmd  build  /p:SkipCuda=true -c 
     testScript: build.cmd test /p:SkipCuda=true -c 
     pool:
@@ -423,6 +423,6 @@ jobs:
 
 
   # Terminate all dotnet build processes.
-  - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
+  - script: dotnet build-server shutdown
     displayName: Dotnet Server Shutdown
 

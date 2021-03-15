@@ -5,6 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LibTorchArchiveNameSuffix>%252Bcpu</LibTorchArchiveNameSuffix>
+    <CopyToPackageSemaphore>$(NativeOutputPath)\.copied</CopyToPackageSemaphore>
   </PropertyGroup>
   
   <ItemGroup>
@@ -256,11 +257,11 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="CopyFilesFromArchive"
-          DependsOnTargets="GetFilesFromArchive">
+  <Target Name="CopyFilesFromArchive" DependsOnTargets="GetFilesFromArchive"  Inputs="$(MSBuildProjectFile)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetPath)" />
     <Copy SourceFiles="@(FilesFromArchive)"
           DestinationFiles="@(FilesFromArchive->'%(TargetPath)')" />
+    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->

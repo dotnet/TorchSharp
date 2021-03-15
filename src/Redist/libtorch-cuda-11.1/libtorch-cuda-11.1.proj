@@ -18,7 +18,6 @@
     <ArchiveShaFile>$(IntermediateOutputPath)$(FileBaseName)$(FileExtension).sha</ArchiveShaFile>
     <ExtractDirectory>$(IntermediateOutputPath)$(FileBaseName)</ExtractDirectory>
     <ExtractSemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</ExtractSemaphore>
-    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
     <CopySemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</CopySemaphore>
     <LocalShaFile>$(MSBuildProjectDirectory)\$(FileBaseName)$(FileExtension).sha</LocalShaFile>
     <LicenseUrl>https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE</LicenseUrl>
@@ -242,7 +241,7 @@
     </Task>
   </UsingTask>
 
-  <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Outputs="$(CopyToPackageSemaphore)">
+  <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetFolder)" />
 
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == ''" />
