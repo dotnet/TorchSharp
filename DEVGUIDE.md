@@ -26,7 +26,7 @@ Requirements:
 Example to fulfill the requirements in Ubuntu 16:
 ```
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
+sudo apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
 sudo apt-get -y update
 sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
 ```
@@ -143,13 +143,13 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
-
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done on CI.
 
