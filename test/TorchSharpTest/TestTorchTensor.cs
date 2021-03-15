@@ -792,8 +792,8 @@ namespace TorchSharp
         [Fact]
         public void TestArithmeticOperatorsFloat16()
         {
-            // Float16 arange_cuda not available on cuda in LibTorch 1.7.0
-            // Float16 arange_cpu not available on cuda in LibTorch 1.7.0
+            // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
+            // Float16 arange_cpu not available on cuda in LibTorch 1.8.0
             foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
                 if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
                     var c1 = Float16Tensor.Ones(new long[] { 10, 10 }, deviceType: deviceType);
@@ -840,8 +840,8 @@ namespace TorchSharp
         [Fact]
         public void TestArithmeticOperatorsBFloat16()
         {
-            // BFloat16 arange_cuda not available on cuda in LibTorch 1.7.0
-            // BFloat16 arange_cpu not available on cuda in LibTorch 1.7.0
+            // BFloat16 arange_cuda not available on cuda in LibTorch 1.8.0
+            // BFloat16 arange_cpu not available on cuda in LibTorch 1.8.0
             foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
                 if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
                     var c1 = BFloat16Tensor.Ones(new long[] { 10, 10 }, deviceType: deviceType);

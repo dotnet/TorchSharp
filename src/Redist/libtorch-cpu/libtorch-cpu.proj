@@ -9,7 +9,7 @@
   
   <ItemGroup>
   <!-- see https://pytorch.org/get-started/locally/ for download links -->
-  <!-- For example Linux, LibTorch 1.7.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip -->
+  <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
     <LibtorchConfig Include="windows" 
                     LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
                     LibNameSuffix="$(LibTorchArchiveNameSuffix)" 
@@ -20,8 +20,10 @@
                         libtorch\lib\caffe2_detectron_ops.dll;
                         libtorch\lib\caffe2_module_test_dynamic.dll;
                         libtorch\lib\fbgemm.dll;
+                        libtorch\lib\fbjni.dll;
                         libtorch\lib\libiomp5md.dll;
                         libtorch\lib\libiompstubs5md.dll;
+                        libtorch\lib\pytorch_jni.dll;
                         libtorch\lib\torch.dll;
                         libtorch\lib\torch_cpu.dll;
                         libtorch\lib\torch_global_deps.dll;
@@ -56,13 +58,17 @@
                         libtorch\lib\libcaffe2_module_test_dynamic.so;
                         libtorch\lib\libcaffe2_observers.so;
                         libtorch\lib\libfbjni.so;
+                        libtorch\lib\libjitbackend_test.so;
+                        libtorch\lib\libprocess_group_agent.so;
                         libtorch\lib\libpytorch_jni.so;
                         libtorch\lib\libshm.so;
+                        libtorch\lib\libtensorpipe_agent.so;
                         libtorch\lib\libtorch.so;
                         libtorch\lib\libtorch_cpu.so;
                         libtorch\lib\libtorch_global_deps.so;
                         libtorch\lib\libtorch_python.so;
-                        libtorch\lib\libgomp-7c85b1e2.so.1;"
+                        libtorch\lib\libtorchbind_test.so;
+                        libtorch\lib\libgomp-a34b3233.so.1;"
       Runtime="linux-x64" />
 
     <AdditionalDownloadFile 
