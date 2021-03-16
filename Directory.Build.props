@@ -111,12 +111,16 @@
   <PropertyGroup>
     <LibTorchCpuArchiveNameSuffix>%252Bcpu</LibTorchCpuArchiveNameSuffix>
     <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersion)</LibTorchCudaArchiveNameSuffix>
+    <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
+    <LibTorchCudaLocalNameSuffix>cu$(CudaVersion)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>  
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName> 
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
-    <LibtorchCmakePath Condition="'$(LibtorchCmakePath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuArchiveBase)\libtorch\share\cmake\Torch</LibtorchCmakePath>
+    <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>
+    <LibTorchCudaLocalBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCudaLocalNameSuffix)</LibTorchCudaLocalBase>
+    <LibTorchCmakePath>$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\libtorch\share\cmake\Torch</LibTorchCmakePath>
   </PropertyGroup>
 
   <!-- Language configuration -->

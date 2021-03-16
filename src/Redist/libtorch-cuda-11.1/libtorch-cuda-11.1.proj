@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LocalBaseName>$(LibTorchCudaLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCudaArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
     <ArchiveUrl>https://download.pytorch.org/libtorch/cu$(CudaVersion)/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
@@ -13,9 +14,8 @@
     <DownloadedArchiveFileName>$(ArchiveBaseName)$(ArchiveExtension)</DownloadedArchiveFileName>
     <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
     <ArchiveShaFile>$(IntermediateOutputPath)$(ArchiveBaseName)$(ArchiveExtension).sha</ArchiveShaFile>
-    <ExtractDirectory>$(IntermediateOutputPath)$(ArchiveBaseName)</ExtractDirectory>
-    <ExtractSemaphore>$(IntermediateOutputPath)$(ArchiveBaseName)\.extracted</ExtractSemaphore>
-    <CopySemaphore>$(IntermediateOutputPath)$(ArchiveBaseName)\.extracted</CopySemaphore>
+    <ExtractDirectory>$(IntermediateOutputPath)$(LocalBaseName)</ExtractDirectory>
+    <ExtractSemaphore>$(ExtractDirectory)\.extracted</ExtractSemaphore>
     <LocalShaFile>$(MSBuildProjectDirectory)\$(ArchiveBaseName)$(ArchiveExtension).sha</LocalShaFile>
     <LicenseUrl>https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE</LicenseUrl>
     <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
@@ -189,35 +189,51 @@
     <Task>
       <Using Namespace="System"/>
       <Using Namespace="System.IO"/>
+      <Using Namespace="System.IO.MemoryMappedFiles"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
-            string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
-            if (Size == -1)
-                Size = System.Int32.MaxValue;
-            byte[] srcBytes = File.ReadAllBytes(SourceFile);
-            if (Start != 0)
-                DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
-            Directory.CreateDirectory(DestinationFolder);
-            string outfile = Path.Combine(DestinationFolder, name);
-            Size = System.Math.Max(System.Math.Min(Size, srcBytes.Length - Start), 0);
-            var outBytes = new byte[Size];
-            if (Size > 0)
-                Array.Copy(srcBytes, Start, outBytes, 0, Size);
-            File.WriteAllBytes(outfile, outBytes);
+            {
+                string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
+                if (Size == -1)
+                    Size = Int32.MaxValue;
+                var fi = new FileInfo(SourceFile);
+                Console.WriteLine($"Opening source {SourceFile} for fragment {Index}...");
+                using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile))
+                {
+                    var totSize = (int)fi.Length;
+                    if (Start != 0)
+                        DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
+                    Directory.CreateDirectory(DestinationFolder);
+                    string outfile = Path.Combine(DestinationFolder, name);
+                    Size = Math.Max(Math.Min(Size, totSize - Start), 0);
+                    Console.WriteLine($"Reading fragment {Index} ({Start}..{Start + Size - 1}) from {SourceFile}...");
+                    var outBytes = new byte[Size];
+                    using (var accessor = mmf.CreateViewAccessor(Start, Size))
+                    {
+                        accessor.ReadArray<byte>(0, outBytes, 0, Size);
+                    }
+                    Console.WriteLine($"Writing fragment to {outfile}...");
+                    File.WriteAllBytes(outfile, outBytes);
+                }
+            }
             if (Start == 0)
             {
                 using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
                 {
-                    byte[] bytes = sha256Hash.ComputeHash(srcBytes);
-                    var builder = new System.Text.StringBuilder();
-                    for (int i = 0; i < bytes.Length; i++)
+                    using (FileStream stream = File.OpenRead(SourceFile))
                     {
-                        builder.Append(bytes[i].ToString("x2"));
+                        Console.WriteLine("Computing SHA...");
+                        byte[] bytes = sha256Hash.ComputeHash(stream);
+                        var builder = new System.Text.StringBuilder();
+                        for (int i = 0; i < bytes.Length; i++)
+                        {
+                            builder.Append(bytes[i].ToString("x2"));
+                        }
+                        var sha = builder.ToString();
+                        string shaFileName = Path.Combine(DestinationFolder, Path.GetFileName(SourceFile) + ".sha");
+                        File.WriteAllText(shaFileName, sha);
+                        Console.WriteLine($"Computed SHA {sha}...");
                     }
-                    var sha = builder.ToString();
-                    string shaFileName = Path.Combine(DestinationFolder, Path.GetFileName(SourceFile) + ".sha");
-                    File.WriteAllText(shaFileName, sha);
-
                 }
             }
 ]]>

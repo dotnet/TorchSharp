@@ -33,7 +33,7 @@
     <PropertyGroup>
       
       <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripsymbols</StripArgs>
-      <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchCmakePath)</BuildArgs>
+      <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
 
     <Message Text="$(MSBuildProjectDirectory)/build.sh $(BuildArgs)" Importance="High"/>
@@ -45,7 +45,7 @@
           Condition="'$(OS)' == 'Windows_NT'">
           
     <PropertyGroup>
-     <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibtorchCmakePath)</BuildArgs>
+     <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
 
     <!-- Run script that invokes Cmake to create VS files, and then calls msbuild to compile them -->

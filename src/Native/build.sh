@@ -9,7 +9,7 @@ usage()
     echo "  --arch <Architecture>             Target Architecture (x64, x86)"
     echo "  --configuration <Configuration>   Build Configuration (Debug, Release)"
     echo "  --stripsymbols                    Enable symbol stripping (to external file)"
-    echo "  --LibtorchCmakePath <PathToLibtorch>   Path to libtorch TorchConfig.cmake"
+    echo "  --libtorchpath <PathToLibtorch>   Path to libtorch TorchConfig.cmake"
     exit 1
 }
 
@@ -48,7 +48,7 @@ while [ "$1" != "" ]; do
         --stripsymbols)
             __strip_argument="-DSTRIP_SYMBOLS=true"
             ;;
-        --LibtorchCmakePath)
+        --libtorchpath)
             shift
             __libtorchpath=$1
             ;;
