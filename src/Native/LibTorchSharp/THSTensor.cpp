@@ -1048,6 +1048,46 @@ Tensor THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar m
     CATCH_TENSOR(torch::hardtanh_(*tensor, *min, *max));
 }
 
+Tensor THSTensor_index(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength)
+{
+    at::indexing::TensorIndex *indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength*sizeof(at::indexing::TensorIndex));
+    for (int i = 0; i++; i < indicesLength)
+    {
+        auto n = indexStarts[i];
+        if (n == 0x8000000000000000)
+            indicesArray[i] = at::indexing::TensorIndex(c10::nullopt);
+        else if (n == 0x8000000000000001)
+            indicesArray[i] = at::indexing::TensorIndex(false);
+        else if (n == 0x8000000000000002)
+            indicesArray[i] = at::indexing::TensorIndex(true);
+        else if (n == 0x8000000000000003)
+            indicesArray[i] = at::indexing::TensorIndex(at::indexing::Ellipsis);
+        else if (n == 0x8000000000000004)
+            indicesArray[i] = at::indexing::TensorIndex(at::indexing::None);
+        else 
+        {
+            auto start = (n < 0xe000000000000000)n - 0xc000000000000000;
+            auto end = (indexEnds == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
+            auto step = (indexSteps == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
+
+
+            indicesArray[i] = at::indexing::TensorIndex(at::indexing::Slice(n));
+        }
+        }
+        else if (indexTensors != NULL && indexTensors[i] != NULL)
+            indicesArray[i] = at::indexing::TensorIndex(*indexTensors[i]);
+        else
+            indicesArray[i] = at::indexing::TensorIndex(indexStarts[i]);
+    }
+    auto indicesRef = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index(indicesRef));
+}
+
 Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
 {
     CATCH_TENSOR(tensor->index_select(dim, *index));
@@ -1337,7 +1377,8 @@ Tensor THSTensor_max_pool2d(
         at::ArrayRef<int64_t>(kernelSize, kernelSizeLength),
         at::ArrayRef<int64_t>(stride, strideLength),
         at::ArrayRef<int64_t>(padding, paddingLength),
-        at::ArrayRef<int64_t>(dilation, dilationLength)));
+        at::ArrayRef<int64_t>(dilation, dilationLength),
+        ceil_mode));
 }
 
 void THSTensor_max_pool2d_with_indices(
