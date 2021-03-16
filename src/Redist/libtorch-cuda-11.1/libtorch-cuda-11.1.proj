@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <ArchiveBaseName>$(LibTorchArchiveBase)$(CudaVersion)</ArchiveBaseName>
+    <ArchiveBaseName>$(LibTorchCudaArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
     <ArchiveUrl>https://download.pytorch.org/libtorch/cu$(CudaVersion)/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
     <Runtime Condition="'$(TargetOS)' == 'windows'">win-x64</Runtime>

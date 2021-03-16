@@ -7,7 +7,7 @@
     <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <CopyToPackageSemaphore>$(NativeOutputPath)\.copied</CopyToPackageSemaphore>
-    <ArchiveBaseName>$(LibTorchArchiveBase)</ArchiveBaseName>
+    <ArchiveBaseName>$(LibTorchCpuArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
     <ArchiveUrl>https://download.pytorch.org/libtorch/cpu/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
     <Runtime Condition="'$(TargetOS)' == 'windows'">win-x64</Runtime>

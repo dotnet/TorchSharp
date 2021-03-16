@@ -75,6 +75,7 @@
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
+
   <PropertyGroup>
     <BuildLibTorchPackages>false</BuildLibTorchPackages>
   </PropertyGroup>
@@ -87,6 +88,35 @@
     <PrivateRepositoryUrl>https://github.com/dotnet/$(GitHubRepositoryName)</PrivateRepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <SourceRevisionId>$(LatestCommit)</SourceRevisionId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageRid Condition="'$(TargetOS)' == 'windows'">win</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'linux'">linux</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'mac'">osx</PackageRid>
+    <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
+
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LibTorchCpuArchiveNameSuffix>%252Bcpu</LibTorchCpuArchiveNameSuffix>
+    <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersion)</LibTorchCudaArchiveNameSuffix>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>  
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName> 
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
+    <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
+    <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
+    <LibtorchCmakePath Condition="'$(LibtorchCmakePath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuArchiveBase)\libtorch\share\cmake\Torch</LibtorchCmakePath>
   </PropertyGroup>
 
   <!-- Language configuration -->
