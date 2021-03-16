@@ -13,7 +13,7 @@ namespace TorchSharp
     public static class Torch
     {
         const string libtorchPackageVersion = "1.5.6";
-        const string cudaVersion = "10.2";
+        const string cudaVersion = "11.1";
 
         [DllImport("LibTorchSharp")]
         private static extern void THSTorch_manual_seed(long seed);

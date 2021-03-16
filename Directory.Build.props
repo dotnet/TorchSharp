@@ -13,15 +13,6 @@
     <PlatformConfig>$(Platform).$(Configuration)</PlatformConfig>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <RestoreSources>
-      https://api.nuget.org/v3/index.json;
-      https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json;
-      https://dotnet.myget.org/F/dotnet-core/api/v3/index.json;
-      https://dotnet.myget.org/F/roslyn-analyzers/api/v3/index.json;
-    </RestoreSources>
-  </PropertyGroup>
-
   <!-- Common repo directories -->
   <PropertyGroup>
     <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
@@ -63,8 +54,6 @@
     <NativeOutputPath>$(BaseOutputPath)$(NativeTargetArchitecture).$(NativeConfiguration)\Native\</NativeOutputPath>
     <NativeCudaOutputPath>$(NativeOutputPath)cuda\</NativeCudaOutputPath>
 
-    <!-- Input Directories -->
-    <ToolsDir Condition="'$(ToolsDir)'==''">$(RepoRoot)Tools/</ToolsDir>
   </PropertyGroup>
 
   <!-- Version properties -->
@@ -82,18 +71,13 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.7.0.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.8.0</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
+
   <PropertyGroup>
     <BuildLibTorchPackages>false</BuildLibTorchPackages>
-  </PropertyGroup>
-
-  <!-- SourceLink properties used by dotnet/buildtools - need to be set before importing $(ToolsDir)versioning.props -->
-  <PropertyGroup>
-    <UseSourceLink>true</UseSourceLink>
-    <GitHubRepositoryName>machinelearning</GitHubRepositoryName>
   </PropertyGroup>
 
   <!--
@@ -106,19 +90,45 @@
     <SourceRevisionId>$(LatestCommit)</SourceRevisionId>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageRid Condition="'$(TargetOS)' == 'windows'">win</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'linux'">linux</PackageRid>
+    <PackageRid Condition="'$(TargetOS)' == 'mac'">osx</PackageRid>
+    <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
+    <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
+
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
+    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LibTorchCpuArchiveNameSuffix>%252Bcpu</LibTorchCpuArchiveNameSuffix>
+    <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersion)</LibTorchCudaArchiveNameSuffix>
+    <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
+    <LibTorchCudaLocalNameSuffix>cu$(CudaVersion)</LibTorchCudaLocalNameSuffix>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>  
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName> 
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
+    <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
+    <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
+    <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>
+    <LibTorchCudaLocalBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchCudaLocalNameSuffix)</LibTorchCudaLocalBase>
+    <LibTorchCmakePath>$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchCpuLocalBase)\libtorch\share\cmake\Torch</LibTorchCmakePath>
+  </PropertyGroup>
+
   <!-- Language configuration -->
   <PropertyGroup>
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
  
-  <!-- Signing properties -->
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(ToolsDir)Open.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-  </PropertyGroup>
-
   <!-- Need to explicitly set these properties for the -Intrinsics or -Netfx configurations becuase they are typically based off 'Debug' or 'Release' configs -->
   <!-- Taken from https://github.com/dotnet/sdk/blob/073c98b92c81066c6c2e17c3674adbb6e833409a/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.props#L41-L47 -->
   <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
@@ -130,7 +140,4 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <CustomAfterMicrosoftCommonTargets>$(RepoRoot)build\AfterCommonTargets.targets</CustomAfterMicrosoftCommonTargets>
-  </PropertyGroup>
 </Project>

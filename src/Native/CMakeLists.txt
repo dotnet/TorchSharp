@@ -35,6 +35,8 @@ if(WIN32)
     add_compile_options(/wd4522) # warnings from pytorch
     add_compile_options(/wd4018) # warnings from pytorch
     add_compile_options(/wd4273) # warnings from pytorch
+    add_compile_options(/wd4067) # warnings from pytorch
+    add_compile_options(/wd4624) # warnings from pytorch
 
     add_compile_options(/Oi) # enable intrinsics
     add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
@@ -69,7 +71,6 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
 
-    list(APPEND RESOURCES ${CMAKE_SOURCE_DIR}/../../Tools/NativeVersion.rc)
 else()
     add_definitions(-Werror) # treat warnings as errors
     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)

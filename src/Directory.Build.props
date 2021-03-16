@@ -10,36 +10,12 @@
     -->
     <NoWarn>$(NoWarn);1591</NoWarn>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);1591</WarningsNotAsErrors>
-
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\Source.ruleset</CodeAnalysisRuleSet>
-    
-    <PackageRid Condition="'$(TargetOS)' == 'windows'">win</PackageRid>
-    <PackageRid Condition="'$(TargetOS)' == 'linux'">linux</PackageRid>
-    <PackageRid Condition="'$(TargetOS)' == 'mac'">osx</PackageRid>
-    <PackageRid>$(PackageRid)-$(TargetArchitecture)</PackageRid>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'windows'">.dll</NativeLibExtension>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'linux'">.so</NativeLibExtension>
-    <NativeLibExtension Condition="'$(TargetOS)' == 'mac'">.dylib</NativeLibExtension>
-
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'windows'">.pdb</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'linux'">.so.dbg</NativeLibSymbolExtension>
-    <NativeLibSymbolExtension Condition="'$(TargetOS)' == 'mac'">.dylib.dwarf</NativeLibSymbolExtension>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Condition="'$(UseStyleCopAnalyzer)' != 'false' and '$(MSBuildProjectExtension)' == '.csproj'"
-      Include="StyleCop.Analyzers" Version="1.1.0-beta008" PrivateAssets="All" />
+      Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

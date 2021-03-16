@@ -7,40 +7,31 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 variables: 
   MyRunNumber:  $[counter('MyRunNumber', 52201)]
 
-resources:
-  containers:
-#   - container: CentosContainer
-#     image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
-  
-   - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20200515184230-2c829e8
-
 jobs:
 - template: /build/ci/job-template.yml
   parameters:
-    name: Ubuntu_x64_NetCoreApp30
-    prepScript: (wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -) && sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
-    buildScript: ./build.sh build /p:SkipCuda=true -c 
-    testScript: ./build.sh test /p:SkipCuda=true -c 
+    name: Ubuntu_x64
+    prepScript:  sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
+    buildScript: dotnet build /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'ubuntu-16.04'
-    container: UbuntuContainer
+      vmImage: 'ubuntu-20.04'
 
 # - template: /build/ci/job-template.yml
 #   parameters:
 #     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-#     name: MacOS_x64_NetCoreApp30
-#     buildScript: ./build.sh build /p:SkipCuda=true -c 
-#     testScript: ./build.sh test /p:SkipCuda=true -c 
+#     name: MacOS_x64
+#     buildScript: ./dotnet build /p:SkipCuda=true -c 
+#     testScript: ./dotnet test /p:SkipCuda=true -c 
 #     pool:
 #       vmImage: 'macos-10.15'
 
 - template: /build/ci/job-template.yml
   parameters:
     prepScript: echo "no prep needed"
-    name: Windows_x64_NetCoreApp30
-    buildScript: build.cmd  build  /p:SkipCuda=true -c 
-    testScript: build.cmd test /p:SkipCuda=true -c 
+    name: Windows_x64
+    buildScript: dotnet  build  /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
     pool:
       vmImage: 'windows-2019'
 
@@ -61,14 +52,10 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
     TORCHSHARP_MAKING_PACKAGE: 1
   pool:
-    vmImage: 'ubuntu-16.04'
-  container: UbuntuContainer
+    vmImage: 'ubuntu-20.04'
   steps:
-  - script: wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-  - script: sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
-  - script: sudo apt-get -y update
-  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
-  - script: ./build.sh build -c $(BuildConfig) 
+  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
+  - script: dotnet build -c $(BuildConfig) src\TorchSharp\TorchSharp.csproj
     displayName: Build
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -88,7 +75,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: build.cmd build -c $(BuildConfig) 
+  - script: dotnet build -c $(BuildConfig) src\TorchSharp\TorchSharp.csproj
     displayName: Build Windows
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -112,7 +99,7 @@ jobs:
 #     displayName: Install build dependencies (macOS)
 #   - script: ls -Flas /usr/local/opt/llvm/bin/
 #     displayName: Debug Stuff
-#   - script: ./build.sh build -c $(BuildConfig)
+#   - script: dotnet build -c $(BuildConfig)
 #     displayName: Build
 
 #   - task: PublishBuildArtifacts@1
@@ -164,23 +151,31 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: build.cmd build -c $(BuildConfig) -v:n /p:SkipNative=true
+  - script: dotnet build -c $(BuildConfig) -v:n /p:SkipNative=true src\TorchSharp\TorchSharp.csproj
     displayName: Build Managed
 
-  - script: build.cmd pack -c $(BuildConfig) -v:n /p:SkipNative=true
+  - script: rmdir /q /s bin\obj\x64.Release
+    displayName: Clean up space (bin\obj\x64.Release)
+    continueOnError: true
+
+  - script: rmdir /q /s bin\obj\AnyCPU.Release
+    displayName: Clean up space (bin\obj\AnyCPU.Release)
+    continueOnError: true
+
+  - script: rmdir /q /s bin\x64.Release
+    displayName: Clean up space (bin\x64.Release)
+    continueOnError: true
+
+  - script: rmdir /q /s bin\x64.Release
+    displayName: Clean up space (bin\AnyCPU.Release)
+    continueOnError: true
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true src\TorchSharp\TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
   - script: rmdir /q /s bin\obj
     displayName: Clean up space (bin\obj)
-    continueOnError: true
-
-  - script: rmdir /q /s bin\AnyCPU.Release
-    displayName: Clean up space (bin\AnyCPU.Release)
-    continueOnError: true
-
-  - script: rmdir /q /s packages
-    displayName: Clean up space (packages)
     continueOnError: true
 
   # yup we even nuke the .git
@@ -423,6 +418,6 @@ jobs:
 
 
   # Terminate all dotnet build processes.
-  - script: $(Build.SourcesDirectory)/Tools/dotnetcli/dotnet.exe build-server shutdown
+  - script: dotnet build-server shutdown
     displayName: Dotnet Server Shutdown
 

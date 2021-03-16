@@ -28,13 +28,12 @@
   </PropertyGroup>
 
   <Target Name="BuildNativeUnix"
-          Condition="'$(OS)' != 'Windows_NT'"
-          DependsOnTargets="GenerateVersionSourceFile">
+          Condition="'$(OS)' != 'Windows_NT'">
 
     <PropertyGroup>
       
       <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripsymbols</StripArgs>
-      <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibtorchPath)</BuildArgs>
+      <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
 
     <Message Text="$(MSBuildProjectDirectory)/build.sh $(BuildArgs)" Importance="High"/>
@@ -43,11 +42,10 @@
   </Target>
 
   <Target Name="BuildNativeWindows"
-          Condition="'$(OS)' == 'Windows_NT'"
-          DependsOnTargets="GenerateVersionHeader">
+          Condition="'$(OS)' == 'Windows_NT'">
           
     <PropertyGroup>
-     <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibtorchPath)</BuildArgs>
+     <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
 
     <!-- Run script that invokes Cmake to create VS files, and then calls msbuild to compile them -->
@@ -73,7 +71,5 @@
           DestinationFolder="$(PackagePreparationPath)%(NativePackageAsset.RelativePath)" />
 
   </Target>
-
-  <Import Project="$(ToolsDir)/versioning.targets" />
 
 </Project>

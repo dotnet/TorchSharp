@@ -1,6 +1,11 @@
 
 # Building
 
+    dotnet build
+    dotnet build /p:SkipNative=true
+    dotnet test
+    dotnet pack
+    dotnet pack /p:BuildLibTorchPackages=true
 
 ## Windows
 
@@ -10,9 +15,7 @@ Requirements:
 - cmake (tested with 3.14)
 
 Commands:
-- Building: `build.cmd build` (can use  `dotnet build` after first time)
 - Building from Visual Studio: first build using the command line
-- Run tests from command line: `dotnet test`
 
 
 ## Linux
@@ -21,21 +24,17 @@ Requirements:
 - requirements to run .NET Core 3.1
 - git
 - cmake (tested with 3.14)
-- clang 4.x +
+- clang 6.x +
 
 Example to fulfill the requirements in Ubuntu 16:
 ```
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
+sudo apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
 sudo apt-get -y update
-sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
 ```
 
 Commands:
-- Building: `./build.sh`
-- Building from Visual Studio: first build using the command line
-- Run tests from command line: `dotnet test`
-- Build packages: `dotnet pack`
 
 
 ## Packages
@@ -47,14 +46,6 @@ An ephemeral feed of packages from CI is available
 
 
 ## Building the TorchSharp package
-
-The managed package can be built with `dotnet pack`, e.g.
-
-    ./build.cmd pack
-
-or just 
-
-    dotnet pack
 
 Locally built packages have names like this, names update every day.  If repeatedly rebuilding them locally you may have to remove them
 from your local `.nuget` package cache.
@@ -89,25 +80,24 @@ For this reason, we do the following
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
        libtorch-cpu
-       libtorch-cuda-10.2
-       libtorch-cuda-10.2-linux-x64
-       libtorch-cuda-10.2-win-x64
+       libtorch-cuda-11.1
+       libtorch-cuda-11.1-linux-x64
+       libtorch-cuda-11.1-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
-
-3. Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together 
+   Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together 
    to one file on the target machine with a SHA check.  This is a hack but there is no other realistic way to deliver
    these vast files as packages (the alternative is to abandon packaging and require a manual
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
-4. The `libtorch-*` packages are built in Azure DevOps CI
+3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in master
    branch and only when `<BuildLibTorchPackages>true</BuildLibTorchPackages>` is set in that branch.  You must currently
    manually set this, increment `LibTorchPackageVersion`, do a push to master and the packages will build.  This process could be adjusted
    but at least gets us off the ground.
 
-5. After a successful build, the `libtorch-*` packages can be trialled using the package feed from CI (see above).  When
+4. After a successful build, the `libtorch-*` packages can be trialled using the package feed from CI (see above).  When
    they are appropriate they can be  pushed to nuget using
    [this manually invoked release pipeline](https://donsyme.visualstudio.com/TorchSharp/_release?_a=releases&view=mine&definitionId=1) in
    Azure DevOps CI (so they don't have to be manually downloaded and pushed to `nuget.org`)
@@ -134,36 +124,36 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 1.7.0 uses link
+   For example Linux, LibTorch 1.8.0 uses link
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.7.0%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip
 
    The downloads are acquired automatically in the build process. To update the version, update these:
 
-       <LibtorchVersion>1.7.0</LibtorchVersion>
+       <LibtorchVersion>1.8.0</LibtorchVersion>
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
-
-       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       msbuild src\Redist\libtorch-cuda-10.2\libtorch-cuda-10.2.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
        msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done on CI.
 
 3. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
-       git add src\Redist\libtorch-cuda-10.2\*.sha
+       git add src\Redist\libtorch-cuda-11.1\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 
 4. Build the native code without CUDA
 
-       .\build build.cmd /p:SkipCuda=true
+       dotnet build /p:SkipCuda=true
 
    The first stage unzips the archives, then CMAKE is run.
 
@@ -181,32 +171,32 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 5. Similarly build the native code with CUDA
 
-       .\build build.cmd
+       dotnet build
 
 6. You must also **very very carefully** update the "FilesFromArchive= ..." entries under src\Redist projects. Check the contents
   of the unzip of the archive, e.g.
 
-       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.7.0\libtorch\lib
+       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.8.0\libtorch\lib
 
 7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
 `TorchSharp\Directory.Build.targets`.
 
 8. Run tests
 
-       .\build build.cmd test -c Debug
-       .\build build.cmd test -c Release
+       dotnet build test -c Debug
+       dotnet build test -c Release
 
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` this:
 
 
-       <LibTorchPackageVersion>1.7.0</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.8.0</LibTorchPackageVersion>
        <BuildLibTorchPackages>true</BuildLibTorchPackages>
 
-       .\build pack -c Debug /p:SkipCuda=true
-       .\build pack -c Release /p:SkipCuda=true
-       .\build pack -c Debug
-       .\build pack -c Release
+       dotnet pack -c Debug /p:SkipCuda=true
+       dotnet pack -c Release /p:SkipCuda=true
+       dotnet pack -c Debug
+       dotnet pack -c Release
 
 10. Submit to CI and debug problems
 

@@ -731,10 +731,6 @@ Tensor THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scal
     CATCH_TENSOR(torch::elu_(*tensor, *alpha, *scale, *input_scale));
 }
 
-Tensor THSTensor_elu_backward(const Tensor grad_output, const Scalar alpha, const Scalar scale, const Scalar input_scale, const Tensor output)
-{
-    CATCH_TENSOR(torch::elu_backward(*grad_output, *alpha, *scale, *input_scale, *output));
-}
 
 Tensor THSTensor_empty(
     const int64_t* sizes,
@@ -836,27 +832,32 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
     CATCH_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
 
-Tensor THSTensor_fft(const Tensor tensor, const int64_t dim, const bool normalized)
+Tensor THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
-    CATCH_TENSOR(tensor->fft(dim, normalized));
+    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
+    CATCH_TENSOR(torch::fft::fft(*tensor, nArg, dim, normArg));
 }
 
-Tensor THSTensor_ifft(const Tensor tensor, const int64_t signal_ndim, const bool normalized)
+Tensor THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
-    CATCH_TENSOR(tensor->ifft(signal_ndim, normalized));
+    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
+    CATCH_TENSOR(torch::fft::ifft(*tensor, nArg, dim, normArg));
 }
 
-Tensor THSTensor_irfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided, const int64_t* signal_sizes, const int signal_sizes_length)
+Tensor THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
-    CATCH_TENSOR(
-        signal_sizes == NULL
-           ? tensor->irfft(signal_ndim, normalized, onesided)
-           : tensor->irfft(signal_ndim, normalized, onesided, at::ArrayRef<int64_t>(signal_sizes, signal_sizes_length)));
+    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
+    CATCH_TENSOR(torch::fft::irfft(*tensor, nArg, dim, normArg));
 }
 
-Tensor THSTensor_rfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided)
+Tensor THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
-    CATCH_TENSOR(tensor->rfft(signal_ndim, normalized, onesided));
+    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
+    CATCH_TENSOR(torch::fft::rfft(*tensor, nArg, dim, normArg));
 }
 
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)

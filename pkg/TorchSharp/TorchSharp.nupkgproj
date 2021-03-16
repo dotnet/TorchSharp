@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersion), libtorch-cuda-$(CudaVersion)-win-x64 or libtorch-cuda-$(CudaVersion)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
   </PropertyGroup>
 
