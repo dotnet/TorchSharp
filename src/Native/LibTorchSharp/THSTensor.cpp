@@ -1048,14 +1048,14 @@ Tensor THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar m
     CATCH_TENSOR(torch::hardtanh_(*tensor, *min, *max));
 }
 
-Tensor THSTensor_index(Tensor tensor,
-    const int64_t* indexStarts,
+void completeTensorIndices(const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
+    at::indexing::TensorIndex * indicesArray,
     const int indicesLength)
 {
-    at::indexing::TensorIndex *indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength*sizeof(at::indexing::TensorIndex));
+    // The indexStart encodes the kind of slice being performed for each dimension
     for (int i = 0; i++; i < indicesLength)
     {
         auto n = indexStarts[i];
@@ -1069,23 +1069,61 @@ Tensor THSTensor_index(Tensor tensor,
             indicesArray[i] = at::indexing::TensorIndex(at::indexing::Ellipsis);
         else if (n == 0x8000000000000004)
             indicesArray[i] = at::indexing::TensorIndex(at::indexing::None);
-        else 
+        else if (n == 0x8000000000000005)
+            indicesArray[i] = at::indexing::TensorIndex(*indexTensors[i]);
+        else if (n > 0xe000000000000000)
+            indicesArray[i] = at::indexing::TensorIndex(n);
+        else
         {
-            auto start = (n < 0xe000000000000000)n - 0xc000000000000000;
+            // slice
+            auto start = (n == 0x8000000000000006) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - 0xc000000000000000);
             auto end = (indexEnds == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
             auto step = (indexSteps == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
-
-
-            indicesArray[i] = at::indexing::TensorIndex(at::indexing::Slice(n));
+            indicesArray[i] = at::indexing::TensorIndex(at::indexing::Slice(start, end, step));
         }
-        }
-        else if (indexTensors != NULL && indexTensors[i] != NULL)
-            indicesArray[i] = at::indexing::TensorIndex(*indexTensors[i]);
-        else
-            indicesArray[i] = at::indexing::TensorIndex(indexStarts[i]);
     }
-    auto indicesRef = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
-    CATCH_TENSOR(tensor->index(indicesRef));
+}
+
+Tensor THSTensor_index(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength)
+{
+    at::indexing::TensorIndex *indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength*sizeof(at::indexing::TensorIndex));
+    // The indexStart encodes the kind of slice being performed for each dimension
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index(indices));
+}
+
+Tensor THSTensor_index_put_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index_put_(indices, *value));
+}
+
+Tensor THSTensor_index_put_scalar_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Scalar value)
+{
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
+    completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
+    auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
+    CATCH_TENSOR(tensor->index_put_(indices, *value));
 }
 
 Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
