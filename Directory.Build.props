@@ -77,7 +77,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BuildLibTorchPackages>false</BuildLibTorchPackages>
+    <BuildLibTorchPackages>true</BuildLibTorchPackages>
   </PropertyGroup>
 
   <!--
