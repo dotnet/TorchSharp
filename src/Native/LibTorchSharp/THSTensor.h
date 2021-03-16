@@ -281,8 +281,6 @@ EXPORT_API(Tensor) THSTensor_elu(const Tensor tensor, const Scalar alpha, const 
 
 EXPORT_API(Tensor) THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale);
 
-EXPORT_API(Tensor) THSTensor_elu_backward(const Tensor grad_output, const Scalar alpha, const Scalar scale, const Scalar input_scale, const Tensor output);
-
 EXPORT_API(Tensor) THSTensor_empty(
     const int64_t* sizes,
     const int length,
@@ -324,13 +322,13 @@ EXPORT_API(Tensor) THSTensor_erfinv_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
-EXPORT_API(Tensor) THSTensor_fft(const Tensor tensor, const int64_t dim, const bool normalized);
+EXPORT_API(Tensor) THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
 
-EXPORT_API(Tensor) THSTensor_ifft(const Tensor tensor, const int64_t signal_ndim, const bool normalized);
+EXPORT_API(Tensor) THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
 
-EXPORT_API(Tensor) THSTensor_irfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided, const int64_t* signal_sizes, const int signal_sizes_length);
+EXPORT_API(Tensor) THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
 
-EXPORT_API(Tensor) THSTensor_rfft(const Tensor tensor, const int64_t signal_ndim, const bool normalized, const bool onesided);
+EXPORT_API(Tensor) THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
 
 EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
 

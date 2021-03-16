@@ -2268,48 +2268,41 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_fft(IntPtr tensor, long dim, bool normalized);
+        private static extern IntPtr THSTensor_fft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
 
-        public TorchTensor fft(long dim, bool normalized = false)
+        public TorchTensor fft(long? n, long dim = -1, string norm = "backward")
         {
-            var res = THSTensor_fft(handle, dim, normalized);
+            var res = THSTensor_fft(handle, n.GetValueOrDefault(-1), dim, norm);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_ifft(IntPtr tensor, long signal_ndim, bool normalized);
+        private static extern IntPtr THSTensor_ifft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
 
-        public TorchTensor ifft(long signal_ndim, bool normalized = false)
+        public TorchTensor ifft(long? n, long dim = -1, string norm = "backward")
         {
-            var res = THSTensor_ifft(handle, signal_ndim, normalized);
+            var res = THSTensor_ifft(handle, n.GetValueOrDefault(-1), dim, norm);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_irfft(IntPtr tensor, long signal_ndim, bool normalized, bool onesided, IntPtr signal_sizes, int signal_sizes_length);
+        private static extern IntPtr THSTensor_irfft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
 
-        public TorchTensor irfft(long signal_ndim, bool normalized = false, bool onesided = true, long[]? signal_sizes = null)
+        public TorchTensor irfft(long? n, long dim = -1, string norm = "backward")
         {
-            unsafe {
-                fixed (long* psignal_sizes = signal_sizes) {
-                    var res =
-                        signal_sizes == null
-                        ? THSTensor_irfft(handle, signal_ndim, normalized, onesided, IntPtr.Zero, 0)
-                        : THSTensor_irfft(handle, signal_ndim, normalized, onesided, (IntPtr)psignal_sizes, signal_sizes.Length);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new TorchTensor(res);
-                }
-            }
+            var res = THSTensor_irfft(handle, n.GetValueOrDefault(-1), dim, norm);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_rfft(IntPtr tensor, long signal_ndim, bool normalized, bool onesided);
+        private static extern IntPtr THSTensor_rfft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
 
-        public TorchTensor rfft(long signal_ndim, bool normalized = false, bool onesided = true)
+        public TorchTensor rfft(long? n, long dim = -1, string norm = "backward")
         {
-            var res = THSTensor_rfft(handle, signal_ndim, normalized, onesided);
+            var res = THSTensor_rfft(handle, n.GetValueOrDefault(-1), dim, norm);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
