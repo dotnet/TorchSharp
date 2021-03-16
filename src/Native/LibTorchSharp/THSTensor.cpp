@@ -1056,7 +1056,7 @@ void completeTensorIndices(const int64_t* indexStarts,
     const int indicesLength)
 {
     // The indexStart encodes the kind of slice being performed for each dimension
-    for (int i = 0; i++; i < indicesLength)
+    for (int i = 0; i < indicesLength; i++)
     {
         auto n = indexStarts[i];
         if (n == 0x8000000000000000)
