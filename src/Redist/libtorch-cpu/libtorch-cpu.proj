@@ -139,15 +139,12 @@
     <!-- Copy to MainPackageFolder to use in libtorch package build -->
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'$(BuildLibTorchPackages)' == 'true'" />
 
-    <!-- Copy to NativeOutputPath to use in tests and native build (headers, lib etc.) -->
-    <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipCuda)' != 'true'"  />
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true" />
-
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
 
-    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
-    <Delete Files="$(ExtractDirectory)\%(File.Identity)"  Condition="'$(TF_BUILD)' != ''" />
+    <!-- Copy to NativeOutputPath to use in tests (headers, lib etc.) -->
+    <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"   Condition="'$(SkipTests)' != 'true'" />
 
   </Target>
 

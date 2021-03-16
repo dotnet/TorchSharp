@@ -412,6 +412,29 @@ EXPORT_API(Tensor) THSTensor_hardswish_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength);
+
+EXPORT_API(Tensor) THSTensor_index_put_scalar_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Scalar value);
+
+EXPORT_API(Tensor) THSTensor_index_put_(Tensor tensor,
+    const int64_t* indexStarts,
+    const int64_t* indexEnds,
+    const int64_t* indexSteps,
+    const Tensor* indexTensors,
+    const int indicesLength,
+    const Tensor value);
+
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
 
 EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
