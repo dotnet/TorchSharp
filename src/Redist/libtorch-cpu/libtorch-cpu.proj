@@ -136,14 +136,17 @@
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" />
 
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'$(BuildLibTorchPackages)' == 'true'" />
 
     <!-- Copy to NativeOutputPath to use in tests -->
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipCuda)' != 'true'"  />
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"  />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true" Condition="'$(SkipTests)' != 'true'"/>
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
+
+    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="$(ExtractDirectory)\%(File.Identity)"  Condition="'$(TF_BUILD)' != ''" />
 
   </Target>
 

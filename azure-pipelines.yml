@@ -55,7 +55,7 @@ jobs:
     vmImage: 'ubuntu-20.04'
   steps:
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true
     displayName: Build
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -75,7 +75,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true
     displayName: Build Windows
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -151,7 +151,7 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet build -c $(BuildConfig) -v:n /p:SkipNative=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet build -c $(BuildConfig) -v:n /p:SkipNative=true /p:SkipTests=true src/TorchSharp/TorchSharp.csproj
     displayName: Build Managed
 
   - script: rmdir /q /s bin\obj\x64.Release
@@ -170,7 +170,7 @@ jobs:
     displayName: Clean up space (bin\AnyCPU.Release)
     continueOnError: true
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
