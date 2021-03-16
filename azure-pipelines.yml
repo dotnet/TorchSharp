@@ -11,7 +11,7 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64
-    prepScript:  sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+    prepScript:  sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
@@ -54,7 +54,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
-  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libssl1.0.0 libomp-dev
+  - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
   - script: dotnet build -c $(BuildConfig) src\TorchSharp\TorchSharp.csproj
     displayName: Build
 
