@@ -106,7 +106,4 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <CustomAfterMicrosoftCommonTargets>$(RepoRoot)build\AfterCommonTargets.targets</CustomAfterMicrosoftCommonTargets>
-  </PropertyGroup>
 </Project>
