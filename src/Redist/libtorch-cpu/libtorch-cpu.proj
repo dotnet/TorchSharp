@@ -3,82 +3,83 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- see https://pytorch.org/get-started/locally/ for download links -->
+    <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LibTorchArchiveNameSuffix>%252Bcpu</LibTorchArchiveNameSuffix>
     <CopyToPackageSemaphore>$(NativeOutputPath)\.copied</CopyToPackageSemaphore>
+    <LibName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibName>  
+    <LibName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibName> 
+    <FileBaseName>$(LibName)-$(LibtorchVersion)$(LibTorchArchiveNameSuffix)</FileBaseName>
+    <FileExtension>.zip</FileExtension>
+    <ArchiveUrl>https://download.pytorch.org/libtorch/cpu/$(FileBaseName)$(FileExtension)</ArchiveUrl>
+    <Runtime Condition="'$(TargetOS)' == 'windows'">win-x64</Runtime>
+    <Runtime Condition="'$(TargetOS)' == 'linux'">linux-x64</Runtime>
+    <DownloadedArchiveFolder>$(MassiveDownloadRoot)$(MSBuildProjectName)\</DownloadedArchiveFolder>
+    <DownloadedArchiveFileName>$(FileBaseName)$(FileExtension)</DownloadedArchiveFileName>
+    <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
+    <ArchiveShaFile>$(IntermediateOutputPath)$(FileBaseName)$(FileExtension).sha</ArchiveShaFile>
+    <ExtractDirectory>$(IntermediateOutputPath)$(FileBaseName)</ExtractDirectory>
+    <ExtractSemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</ExtractSemaphore>
+    <CopySemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</CopySemaphore>
+    <LocalShaFile>$(MSBuildProjectDirectory)\$(FileBaseName)$(FileExtension).sha</LocalShaFile>
+    <LicenseUrl>https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE</LicenseUrl>
+    <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
+    <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
+    <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
+    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(Runtime)</MainPackageFolder>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
   </PropertyGroup>
   
-  <ItemGroup>
-  <!-- see https://pytorch.org/get-started/locally/ for download links -->
-  <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
-    <LibtorchConfig Include="windows" 
-                    LibName="libtorch-win-shared-with-deps$(LibTorchDebug)" 
-                    LibNameSuffix="$(LibTorchArchiveNameSuffix)" 
-                    FileExtension=".zip" 
-                    FilesFromArchive= 
-                       "libtorch\lib\asmjit.dll;
-                        libtorch\lib\c10.dll;
-                        libtorch\lib\caffe2_detectron_ops.dll;
-                        libtorch\lib\caffe2_module_test_dynamic.dll;
-                        libtorch\lib\fbgemm.dll;
-                        libtorch\lib\fbjni.dll;
-                        libtorch\lib\libiomp5md.dll;
-                        libtorch\lib\libiompstubs5md.dll;
-                        libtorch\lib\pytorch_jni.dll;
-                        libtorch\lib\torch.dll;
-                        libtorch\lib\torch_cpu.dll;
-                        libtorch\lib\torch_global_deps.dll;
-                        libtorch\lib\uv.dll;" 
-      Runtime="win-x64"/>
-
-    <LibtorchConfig Include="darwin" 
-                    LibName="libtorch-macos" 
-                    LibNameSuffix="" 
-                    FileExtension=".zip" 
-                    FilesFromArchive= 
-                       "libtorch\lib\libc10.dylib;
-                        libtorch\lib\libcaffe2_detectron_ops.dylib;
-                        libtorch\lib\libcaffe2_module_test_dynamic.dylib;
-                        libtorch\lib\libcaffe2_observers.dylib;
-                        libtorch\lib\libfbjni.dylib;
-                        libtorch\lib\libiomp5.dylib;
-                        libtorch\lib\libpytorch_jni.dylib;
-                        libtorch\lib\libshm.dylib;
-                        libtorch\lib\libtorch.dylib;
-                        libtorch\lib\libtorch_cpu.dylib;
-                        libtorch\lib\libtorch_global_deps.dylib;
-                        libtorch\lib\libtorch_python.dylib;" 
-      Runtime="osx-x64" />
-
-    <LibtorchConfig Include="linux" LibName="libtorch-shared-with-deps" 
-                    LibNameSuffix="$(LibTorchArchiveNameSuffix)" 
-                    FileExtension=".zip" 
-                    FilesFromArchive= 
-                       "libtorch\lib\libc10.so;
-                        libtorch\lib\libcaffe2_detectron_ops.so;
-                        libtorch\lib\libcaffe2_module_test_dynamic.so;
-                        libtorch\lib\libcaffe2_observers.so;
-                        libtorch\lib\libfbjni.so;
-                        libtorch\lib\libjitbackend_test.so;
-                        libtorch\lib\libprocess_group_agent.so;
-                        libtorch\lib\libpytorch_jni.so;
-                        libtorch\lib\libshm.so;
-                        libtorch\lib\libtensorpipe_agent.so;
-                        libtorch\lib\libtorch.so;
-                        libtorch\lib\libtorch_cpu.so;
-                        libtorch\lib\libtorch_global_deps.so;
-                        libtorch\lib\libtorch_python.so;
-                        libtorch\lib\libtorchbind_test.so;
-                        libtorch\lib\libgomp-a34b3233.so.1;"
-      Runtime="linux-x64" />
-
-    <AdditionalDownloadFile 
-        Include="https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE" 
-        DownloadFile="$(IntermediateOutputPath)LICENSE-LIBTORCH" />
+  <ItemGroup Condition="'$(TargetOS)' == 'windows'">
+    <File Include="libtorch\lib\asmjit.dll" />
+    <File Include="libtorch\lib\c10.dll" />
+    <File Include="libtorch\lib\caffe2_detectron_ops.dll" />
+    <File Include="libtorch\lib\caffe2_module_test_dynamic.dll" />
+    <File Include="libtorch\lib\fbgemm.dll" />
+    <File Include="libtorch\lib\fbjni.dll" />
+    <File Include="libtorch\lib\libiomp5md.dll" />
+    <File Include="libtorch\lib\libiompstubs5md.dll" />
+    <File Include="libtorch\lib\pytorch_jni.dll" />
+    <File Include="libtorch\lib\torch.dll" />
+    <File Include="libtorch\lib\torch_cpu.dll" />
+    <File Include="libtorch\lib\torch_global_deps.dll" />
+    <File Include="libtorch\lib\uv.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetOS)' == 'macos'">
+    <File Include="libtorch\lib\libc10.dylib" />
+    <File Include="libtorch\lib\libcaffe2_detectron_ops.dylib" />
+    <File Include="libtorch\lib\libcaffe2_module_test_dynamic.dylib" />
+    <File Include="libtorch\lib\libcaffe2_observers.dylib" />
+    <File Include="libtorch\lib\libfbjni.dylib" />
+    <File Include="libtorch\lib\libiomp5.dylib" />
+    <File Include="libtorch\lib\libpytorch_jni.dylib" />
+    <File Include="libtorch\lib\libshm.dylib" />
+    <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorch_cpu.dylib" />
+    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
+    <File Include="libtorch\lib\libtorch_python.dylib" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetOS)' == 'linux'">
+    <File Include="libtorch\lib\libc10.so" />
+    <File Include="libtorch\lib\libcaffe2_detectron_ops.so" />
+    <File Include="libtorch\lib\libcaffe2_module_test_dynamic.so" />
+    <File Include="libtorch\lib\libcaffe2_observers.so" />
+    <File Include="libtorch\lib\libfbjni.so" />
+    <File Include="libtorch\lib\libjitbackend_test.so" />
+    <File Include="libtorch\lib\libprocess_group_agent.so" />
+    <File Include="libtorch\lib\libpytorch_jni.so" />
+    <File Include="libtorch\lib\libshm.so" />
+    <File Include="libtorch\lib\libtensorpipe_agent.so" />
+    <File Include="libtorch\lib\libtorch.so" />
+    <File Include="libtorch\lib\libtorch_cpu.so" />
+    <File Include="libtorch\lib\libtorch_global_deps.so" />
+    <File Include="libtorch\lib\libtorch_python.so" />
+    <File Include="libtorch\lib\libtorchbind_test.so" />
+    <File Include="libtorch\lib\libgomp-a34b3233.so.1" />
   </ItemGroup>
 
-
-  <ItemGroup>
+  <!-- <ItemGroup>
     <MklDnnConfig Include="darwin" FileExtension=".tgz" 
       FilesFromArchive= "mklml_mac_$(MklDnnVersion)\lib\libmklml.dylib;
                         mklml_mac_$(MklDnnVersion)\lib\libiomp5.dylib;" 
@@ -87,186 +88,71 @@
     <AdditionalDownloadFile 
         Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" 
         DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
-  </ItemGroup>
+  </ItemGroup> -->
 
 
-  <Target Name="PrepareArchives">
-    <ItemGroup>
-      <!-- although we could extract all archives on all machines, mac requires a fixup which can only be run on mac 
-           so we split these per-rid and join during the official build packaging.  -->
-      <LibtorchArchive Condition="'$(PackageRid)' == '%(Runtime)'"
-                         Include="@(LibtorchConfig->'https://download.pytorch.org/libtorch/cpu/%(LibName)-$(LibtorchVersion)%(LibNameSuffix)%(FileExtension)')"
-                         ExtractDirectory="@(LibtorchConfig->'$(IntermediateOutputPath)%(LibName)-$(LibtorchVersion)\')" />
-      <!-- set up metdata used by all targets -->
-      <LibtorchArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
-                         DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
-                         ExtractSemaphore="%(ExtractDirectory).extracted"
-                         LocalShaFile="$(MSBuildProjectDirectory)\%(FileName)%(Extension).sha"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(PackageRid)' == 'osx-x64'">
-      <MklDnnArchive Include="@(MklDnnConfig->'https://github.com/intel/mkl-dnn/releases/download/v0.19/mklml_mac_$(MklDnnVersion)%(FileExtension)')" />
-      <!-- set up metdata used by all targets -->
-      <MklDnnArchive DownloadFile="$(MassiveDownloadRoot)$(MSBuildProjectName)\%(FileName)%(Extension)"
-                         DownloadShaFile="$(IntermediateOutputPath)%(FileName)%(Extension).sha"
-                         ExtractDirectory="$(IntermediateOutputPath)%(FileName)"
-                         ExtractSemaphore="$(IntermediateOutputPath)%(FileName)\.extracted"
-                         LocalShaFile="$(MSBuildProjectDirectory)\%(FileName)%(Extension).sha"/>
-    </ItemGroup>
+  <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
+    <MakeDir Directories="$(DownloadedArchiveFolder)" />
+    <MakeDir Directories="$(DownloadedLicenseFolder)" />
+    <DownloadFile  SourceUrl="$(ArchiveUrl)" DestinationFolder="$(DownloadedArchiveFolder)" DestinationFileName="$(DownloadedArchiveFileName)" Condition="!Exists('$(DownloadedArchive)')" />
+    <DownloadFile  SourceUrl="$(LicenseUrl)" DestinationFolder="$(DownloadedLicenseFolder)" DestinationFileName="$(DownloadedLicenseFileName)" Condition="!Exists('$(DownloadedLicense)')" />
   </Target>
-
-  <UsingTask TaskName="DownloadFilesFromUrl" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-
-  <!-- Download both libtorch and mkl-dnn -->
-  <Target Name="DownloadArchives" 
-          DependsOnTargets="PrepareArchives"
-          Inputs="$(MSBuildProjectFile)"
-          Outputs="@(LibtorchArchive->'%(DownloadFile)');@(AdditionalDownloadFile->'%(DownloadFile)';@(MklDnnArchive->'%(DownloadFile))">
-    <MakeDir Directories="$(IntermediateOutputPath)" />
-    <MakeDir Directories="$(MassiveDownloadRoot)$(MSBuildProjectName)\" />
-    <ItemGroup>
-      <!-- DownloadFilesFromUrl requires Url metadata is set and ignores the identity of the item -->
-      <_downloadFiles Include="@(LibtorchArchive);@(AdditionalDownloadFile);@(MklDnnArchive)" Url="%(Identity)" DestinationFile="%(DownloadFile)" />
-    </ItemGroup>
-    <Message Importance="High" Text="Downloading '%(_downloadFiles.Url)' to '%(_downloadFiles.DestinationFile)'." Condition="!Exists('%(_downloadFiles.DestinationFile)')" />
-    <Message Importance="High" Text="Skipping download of '%(_downloadFiles.Url)' because  '%(_downloadFiles.DestinationFile)' exists." Condition="Exists('%(_downloadFiles.DestinationFile)')" />
-    <DownloadFilesFromUrl Items="@(_downloadFiles)"  Condition="!Exists('%(_downloadFiles.DestinationFile)')" />
-  </Target>
-  
-  <UsingTask TaskName="GenerateChecksums" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-  <UsingTask TaskName="ZipFileExtractToDirectory" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
 
   <!-- Validate and extract Archive for Libtorch -->
-  <Target Name="ValidateAndExtractArchivesLibtorch" 
-          DependsOnTargets="DownloadArchives"
-          Inputs="@(LibtorchArchive->'%(DownloadFile)')"
-          Outputs="@(LibtorchArchive->'%(ExtractSemaphore)')">
-    <!-- GenerateChecksums writes a sha checksum to the file specified by DestinationPath metadata -->
-    <ItemGroup>
-      <_filesToCheckSum Include="@(LibtorchArchive->'%(DownloadFile)')" DestinationPath="%(DownloadShaFile)" />
-    </ItemGroup>
-    <GenerateChecksums Items="@(_filesToCheckSum)" />
+  <Target Name="ValidateAndExtractArchives" DependsOnTargets="DownloadArchive" Inputs="$(DownloadedArchive)" Outputs="$(ExtractSemaphore)">
+    <Message Importance="High" Text="GetFileHash $(DownloadedArchive)" />
+    <GetFileHash  Files="$(DownloadedArchive)">  <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" /> </GetFileHash>
+    <WriteLinesToFile File="$(ArchiveShaFile)" Lines="$(DownloadedArchiveHash)" Overwrite="true" />
 
     <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
-    <Copy Condition="'$(UpdateSHA)' == 'true'"
-          SourceFiles="@(LibtorchArchive->'%(DownloadShaFile)')"
-          DestinationFiles="@(LibtorchArchive->'%(LocalShaFile)')" />
+    <Copy Condition="'$(UpdateSHA)' == 'true'" SourceFiles="$(ArchiveShaFile)" DestinationFiles="$(LocalShaFile)" />
 
-    <Error Condition="!Exists('%(LibtorchArchive.LocalShaFile)')" Text="SHA file '%(LibtorchArchive.LocalShaFile)' does not exist.  Build with /p:UpdateSHA=true to save it." />
+    <Error Condition="!Exists('$(LocalShaFile)')" Text="SHA file '$(LocalShaFile)' does not exist.  Build with /p:UpdateSHA=true to save it." />
 
     <!-- Read in the SHAs as metadata on the archive items -->
     <ItemGroup>
-      <LibtorchArchive>
-        <LocalSha>$([System.IO.File]::ReadAllText('%(LocalShaFile)'))</LocalSha>
-        <DownloadSha>$([System.IO.File]::ReadAllText('%(DownloadShaFile)'))</DownloadSha>
-      </LibtorchArchive>
+      <Archive>
+        <LocalSha>$([System.IO.File]::ReadAllText('$(LocalShaFile)'))</LocalSha>
+        <DownloadSha>$([System.IO.File]::ReadAllText('$(ArchiveShaFile)'))</DownloadSha>
+      </Archive>
     </ItemGroup>
+
     <!-- Validate that the downloaded SHAs match the expected checked in SHAs -->
-    <Error Condition="'%(LibtorchArchive.LocalSha)' != '%(LibtorchArchive.DownloadSha)'" Text="Downloaded file '%(LibtorchArchive.DownloadFile)' has unexpected SHA.%0A  expected: %(_downloadedLibtorchArchive.LocalSha)%0A  actual: %(_downloadedLibtorchArchive.DownloadSha)%0ABuild with /p:UpdateSHA=true if you intentionally changed the URL and wish to update the SHAs, otherwise this could indicate an incomplete download or intercerpted URL and should be examined." />
+    <Error Condition="'%(Archive.LocalSha)' != '%(Archive.DownloadSha)'" Text="Downloaded file '$(DownloadedArchive)' has unexpected SHA.%0A  expected: %(Archive.LocalSha)%0A  actual: %(Archive.DownloadSha)%0ABuild with /p:UpdateSHA=true if you intentionally changed the URL and wish to update the SHAs, otherwise this could indicate an incomplete download or intercerpted URL and should be examined." />
 
     <!-- The archives are valid, lets extract them, ensuring an empty directory -->
-    <RemoveDir Directories="@(LibtorchArchive->'%(ExtractDirectory)')" />
-    <MakeDir Directories="@(LibtorchArchive->'%(ExtractDirectory)')" />
-    <ZipFileExtractToDirectory Condition="'%(LibtorchArchive.FileExtension)' == '.zip'"
-                               SourceArchive="%(LibtorchArchive.DownloadFile)"
-                               DestinationDirectory="%(LibtorchArchive.ExtractDirectory)"
-                               OverwriteDestination="true" />
+    <RemoveDir Directories="$(ExtractDirectory)" />
+    <MakeDir Directories="$(ExtractDirectory)" />
+    <Unzip Condition="'$(FileExtension)' == '.zip'" SourceFiles="$(DownloadedArchive)" DestinationFolder="$(ExtractDirectory)" OverwriteReadOnlyFiles="true" />
 
-
-    <Message Importance="High" Condition="'%(LibtorchArchive.FileExtension)' == '.tar.gz'" Text="Decompressing '%(LibtorchArchive.DownloadFile)' to '%(LibtorchArchive.ExtractDirectory)'." />
-    <Exec Condition="'%(LibtorchArchive.FileExtension)' == '.tar.gz'"
-          WorkingDirectory="%(LibtorchArchive.ExtractDirectory)"
-          Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(LibtorchArchive.ExtractDirectory)', '%(LibtorchArchive.DownloadFile)'))&quot;" />
-    <WriteLinesToFile File="@(LibtorchArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
+    <Message Importance="High" Condition="'$(FileExtension)' == '.tar.gz'" Text="Decompressing '$(DownloadedArchive)' to '$(ExtractDirectory)'." />
+    <Exec Condition="'$(FileExtension)' == '.tar.gz'"
+          WorkingDirectory="$(ExtractDirectory)"
+          Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
+    <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" Overwrite="true" />
 
     <!-- delete the archive files when running on CI -->
-    <Message Importance="High" Text="Deleting '%(LibtorchArchive.DownloadFile)' to free up space." Condition="'$(TF_BUILD)' != ''" />
-    <Delete Files="%(LibtorchArchive.DownloadFile)"  Condition="'$(TF_BUILD)' != ''" />
+    <Message Importance="High" Text="Deleting '$(DownloadedArchive)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="$(DownloadedArchive)"  Condition="'$(TF_BUILD)' != ''" />
+
   </Target>
 
-  <!-- Validate and extract Archive for MKL - DNN -->
-  <Target Condition="'$(PackageRid)' == 'osx-x64'" 
-          Name="ValidateAndExtractArchivesMklDnn" 
-          DependsOnTargets="ValidateAndExtractArchivesLibtorch"
-          Inputs="@(MklDnnArchive->'%(DownloadFile)')"
-          Outputs="@(MklDnnArchive->'%(ExtractSemaphore)')">
-    <!-- GenerateChecksums writes a sha checksum to the file specified by DestinationPath metadata -->
-    <ItemGroup>
-      <_filesToCheckSum Include="@(MklDnnArchive->'%(DownloadFile)')" DestinationPath="%(DownloadShaFile)" />
-    </ItemGroup>
-    <GenerateChecksums Items="@(_filesToCheckSum)" />
+  <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
+    <Message Importance="High" Text="@(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" />
 
-    <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
-    <Copy Condition="'$(UpdateSHA)' == 'true'"
-          SourceFiles="@(MklDnnArchive->'%(DownloadShaFile)')"
-          DestinationFiles="@(MklDnnArchive->'%(LocalShaFile)')" />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" />
 
-    <Error Condition="!Exists('%(MklDnnArchive.LocalShaFile)')" Text="SHA file '%(MklDnnArchive.LocalShaFile)' does not exist.  Build with /p:UpdateSHA=true to save it." />
+    <!-- Copy to NativeOutputPath to use in tests -->
+    <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipCuda)' != 'true'"  />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"  />
 
-    <!-- Read in the SHAs as metadata on the archive items -->
-    <ItemGroup>
-      <MklDnnArchive>
-        <LocalSha>$([System.IO.File]::ReadAllText('%(LocalShaFile)'))</LocalSha>
-        <DownloadSha>$([System.IO.File]::ReadAllText('%(DownloadShaFile)'))</DownloadSha>
-      </MklDnnArchive>
-    </ItemGroup>
-    <!-- Validate that the downloaded SHAs match the expected checked in SHAs -->
-    <Error Condition="'%(MklDnnArchive.LocalSha)' != '%(MklDnnArchive.DownloadSha)'" Text="Downloaded file '%(MklDnnArchive.DownloadFile)' has unexpected SHA.%0A  expected: %(_downloadedMklDnnArchive.LocalSha)%0A  actual: %(_downloadedMklDnnArchive.DownloadSha)%0ABuild with /p:UpdateSHA=true if you intentionally changed the URL and wish to update the SHAs, otherwise this could indicate an incomplete download or intercerpted URL and should be examined." />
+    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
+    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
 
-    <!-- The archives are valid, lets extract them, ensuring an empty directory -->
-    <RemoveDir Directories="@(MklDnnArchive->'%(ExtractDirectory)')" />
-    <MakeDir Directories="@(MklDnnArchive->'%(ExtractDirectory)')" />
-
-    <Message Importance="High" Condition="'%(MklDnnArchive.FileExtension)' == '.tgz'" Text="Decompressing '%(MklDnnArchive.DownloadFile)' to '%(MklDnnArchive.ExtractDirectory)'." />
-    <Exec Condition="'%(MklDnnArchive.FileExtension)' == '.tgz'"
-          WorkingDirectory="%(MklDnnArchive.ExtractDirectory)"
-          Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('%(MklDnnArchive.ExtractDirectory)', '%(MklDnnArchive.DownloadFile)'))&quot;" />
-    <WriteLinesToFile File="@(MklDnnArchive->'%(ExtractSemaphore)')" Lines="done" WriteOnlyWhenDifferent="true" />
-  </Target>
-
-  <!-- Select the files we want to copy out of each archive. -->
-  <Target Name="GetFilesFromArchive"
-          DependsOnTargets="ValidateAndExtractArchivesLibtorch;ValidateAndExtractArchivesMklDnn" >
-    <ItemGroup>
-      <!-- batch rather than transform so that we can split FilesFromArchive metadata -->
-      <_fileFromArchive Include="%(LibtorchArchive.FilesFromArchive)" ExtractDirectory="%(LibtorchArchive.ExtractDirectory)" Runtime="%(LibtorchArchive.Runtime)" />
-      <_fileFromArchive Include="%(MklDnnArchive.FilesFromArchive)" ExtractDirectory="%(MklDnnArchive.ExtractDirectory)" Runtime="%(MklDnnArchive.Runtime)" />
-      <_fileFromArchive DestinationFile="%(FileName)%(Extension)"/>
-      <_fileFromArchive PackagePath="runtimes\%(_fileFromArchive.Runtime)\native\%(_fileFromArchive.DestinationFile)" />
-
-      <!-- LICENSE from the package is actually THIRD_PARTY_NOTICES-->
-      <_fileFromArchive Condition="'%(DestinationFile)' == 'LICENSE-LIBTORCH'" PackagePath="THIRD_PARTY_NOTICES_LIBTORCH.txt" Runtime="" />
-      <_fileFromArchive Condition="'%(DestinationFile)' == 'LICENSE-MKL-DNN'" PackagePath="THIRD_PARTY_NOTICES_MKL_DNN.txt" Runtime="" />
-
-
-      <!-- copy to packaging location -->
-      <FilesFromArchive Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
-                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\%(PackagePath)" />
-      <!-- include LICENSE that was downloaded from GitHub -->
-      <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-LIBTORCH"
-                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\LICENSE-LIBTORCH.txt" />
-      <FilesFromArchive Include="$(IntermediateOutputPath)\LICENSE-MKL-DNN"
-                        TargetPath="$(PackagePreparationPath)$(MSBuildProjectName)\LICENSE-MKL-DNN.txt" />
-
-      <!-- copy to NativeAssets location, only for current RID, so that they may be used by tests -->
-      <FilesFromArchive Condition="'$(PackageRID)' == '%(_fileFromArchive.Runtime)'"
-                        Include="@(_fileFromArchive->'%(ExtractDirectory)\%(Identity)')" 
-                        TargetPath="$(NativeOutputPath)%(_fileFromArchive.DestinationFile)" />
-
-      <!-- copy mkldnn -->
-    </ItemGroup>
-  </Target>
-
-  <Target Name="CopyFilesFromArchive" DependsOnTargets="GetFilesFromArchive"  Inputs="$(MSBuildProjectFile)" Outputs="$(CopyToPackageSemaphore)">
-    <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetPath)" />
-    <Copy SourceFiles="@(FilesFromArchive)"
-          DestinationFiles="@(FilesFromArchive->'%(TargetPath)')" />
-    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->
-  <Target Name="Build"
-          DependsOnTargets="CopyFilesFromArchive" />
+  <Target Name="Build" DependsOnTargets="CopyFilesFromArchive"  />
 
   <Target Name="Clean">
     <RemoveDir Directories="$(IntermediateOutputPath)" />

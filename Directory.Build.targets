@@ -9,13 +9,15 @@
 
   <!-- Windows CPU libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="asmjit" />
+    <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="fbgemm" />
+    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
+    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
@@ -30,25 +32,33 @@
     <NativeAssemblyReference Include="caffe2_detectron_ops_gpu" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_nvrtc" Variant="cuda\" />
-    <NativeAssemblyReference Include="cublas64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cublasLt64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudart64_102" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudnn64_7" Variant="cuda\" />
+    <NativeAssemblyReference Include="cublas64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cublasLt64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudart64_110" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_adv_infer64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_adv_train64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_cnn_infer64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_cnn_train64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_ops_infer64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn_ops_train64_8" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudnn64_8" Variant="cuda\" />
     <NativeAssemblyReference Include="cufft64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cufftw64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cusolver64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cusolverMg64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cusparse64_10" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusolver64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusparse64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc64_102_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc-builtins64_102" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc64_111_0" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc-builtins64_111" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
+    <NativeAssemblyReference Include="torch_cuda_cpp" Variant="cuda\" />
+    <NativeAssemblyReference Include="torch_cuda_cu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_global_deps" Variant="cuda\" />
     <NativeAssemblyReference Include="uv" Variant="cuda\" />
   </ItemGroup>
@@ -79,19 +89,18 @@
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="jitbackend_test" />
+    <NativeAssemblyReference Include="process_group_agent" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="tensorpipe_agent" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="torch_python" />
-    <NativeAssemblyReference Include="gomp-7c85b1e2" ExtraExtension=".1" />
+    <NativeAssemblyReference Include="torchbind_test" />
+    <NativeAssemblyReference Include="gomp-a34b3233" ExtraExtension=".1" />
   </ItemGroup>
-
-  <Target Name="CheckForBuildTools">
-    <Error Condition="!Exists('$(ToolsDir)')"
-           Text="The tools directory [$(ToolsDir)] does not exist. Please run build in the root of the repo to ensure the tools are installed before attempting to build an individual project." />
-  </Target>
 
   <Target Name="CopyNativeAssemblies"
           BeforeTargets="PrepareForRun">

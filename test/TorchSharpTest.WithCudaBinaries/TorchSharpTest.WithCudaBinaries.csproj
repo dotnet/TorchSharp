@@ -9,7 +9,6 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
-    <AssemblyOriginatorKeyFile>$(ToolsDir)Test.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

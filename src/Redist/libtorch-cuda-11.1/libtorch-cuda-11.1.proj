@@ -132,30 +132,21 @@
 
   </ItemGroup>
 
-  <UsingTask TaskName="DownloadFilesFromUrl" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-
-  <Target Name="DownloadArchive" Inputs="$(MSBuildProjectFile)" Outputs="$(DownloadFile);$(DownloadedLicenseFile)">
+  <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
     <MakeDir Directories="$(DownloadedArchiveFolder)" />
     <MakeDir Directories="$(DownloadedLicenseFolder)" />
     <DownloadFile  SourceUrl="$(ArchiveUrl)" DestinationFolder="$(DownloadedArchiveFolder)" DestinationFileName="$(DownloadedArchiveFileName)" Condition="!Exists('$(DownloadedArchive)')" />
     <DownloadFile  SourceUrl="$(LicenseUrl)" DestinationFolder="$(DownloadedLicenseFolder)" DestinationFileName="$(DownloadedLicenseFileName)" Condition="!Exists('$(DownloadedLicense)')" />
   </Target>
   
-  <UsingTask TaskName="GenerateChecksums" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-  <UsingTask TaskName="ZipFileExtractToDirectory" AssemblyFile="$(ToolsDir)Microsoft.DotNet.Build.Tasks.dll"/>
-
   <!-- Validate and extract Archive for Libtorch -->
   <Target Name="ValidateAndExtractArchives" DependsOnTargets="DownloadArchive" Inputs="$(DownloadedArchive)" Outputs="$(ExtractSemaphore)">
-    <!-- GenerateChecksums writes a sha checksum to the file specified by DestinationPath metadata -->
-    <ItemGroup>
-      <_filesToCheckSum Include="$(DownloadedArchive)" DestinationPath="$(ArchiveShaFile)" />
-    </ItemGroup>
-    <GenerateChecksums Items="@(_filesToCheckSum)" />
+    <Message Importance="High" Text="GetFileHash $(DownloadedArchive)" />
+    <GetFileHash  Files="$(DownloadedArchive)">  <Output TaskParameter="Hash" PropertyName="DownloadedArchiveHash" /> </GetFileHash>
+    <WriteLinesToFile File="$(ArchiveShaFile)" Lines="$(DownloadedArchiveHash)" Overwrite="true" />
 
     <!-- If specified we'll update the checked in SHAs with the downloaded ones. -->
-    <Copy Condition="'$(UpdateSHA)' == 'true'"
-          SourceFiles="$(ArchiveShaFile)"
-          DestinationFiles="$(LocalShaFile)" />
+    <Copy Condition="'$(UpdateSHA)' == 'true'" SourceFiles="$(ArchiveShaFile)" DestinationFiles="$(LocalShaFile)" />
 
     <Error Condition="!Exists('$(LocalShaFile)')" Text="SHA file '$(LocalShaFile)' does not exist.  Build with /p:UpdateSHA=true to save it." />
 
@@ -173,16 +164,13 @@
     <!-- The archives are valid, lets extract them, ensuring an empty directory -->
     <RemoveDir Directories="$(ExtractDirectory)" />
     <MakeDir Directories="$(ExtractDirectory)" />
-    <ZipFileExtractToDirectory Condition="'$(FileExtension)' == '.zip'"
-                               SourceArchive="$(DownloadedArchive)"
-                               DestinationDirectory="$(ExtractDirectory)"
-                               OverwriteDestination="true" />
+    <Unzip Condition="'$(FileExtension)' == '.zip'" SourceFiles="$(DownloadedArchive)" DestinationFolder="$(ExtractDirectory)" OverwriteReadOnlyFiles="true" />
 
     <Message Importance="High" Condition="'$(FileExtension)' == '.tar.gz'" Text="Decompressing '$(DownloadedArchive)' to '$(ExtractDirectory)'." />
     <Exec Condition="'$(FileExtension)' == '.tar.gz'"
           WorkingDirectory="$(ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
-    <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" Overwrite="true" />
 
     <!-- delete the archive files when running on CI -->
     <Message Importance="High" Text="Deleting '$(DownloadedArchive)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
@@ -242,7 +230,7 @@
   </UsingTask>
 
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
-    <Message Importance="High" Text="@(FilesFromArchive) -> %(FilesFromArchive.TargetFolder)" />
+    <Message Importance="High" Text="@(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" />
 
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == ''" />
     <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != ''" />
@@ -252,7 +240,7 @@
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeCudaOutputPath)" SkipUnchangedFiles="true" Condition="'$(SkipCuda)' != 'true' AND ('%(File.FileUnstitchStart)' == '' OR '%(File.FileUnstitchStart)' == '0') " />
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
-    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
 
   </Target>
 

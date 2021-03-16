@@ -69,7 +69,6 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib")
 
-    list(APPEND RESOURCES ${CMAKE_SOURCE_DIR}/../../Tools/NativeVersion.rc)
 else()
     add_definitions(-Werror) # treat warnings as errors
     add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
