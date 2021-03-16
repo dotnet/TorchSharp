@@ -3,23 +3,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LibName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibName>  
-    <LibName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibName> 
-    <LibTorchArchiveNameSuffix>%252Bcu</LibTorchArchiveNameSuffix>
-    <FileBaseName>$(LibName)-$(LibtorchVersion)$(LibTorchArchiveNameSuffix)$(CudaVersion)</FileBaseName>
-    <FileExtension>.zip</FileExtension>
-    <ArchiveUrl>https://download.pytorch.org/libtorch/cu$(CudaVersion)/$(FileBaseName)$(FileExtension)</ArchiveUrl>
+    <ArchiveBaseName>$(LibTorchArchiveBase)$(CudaVersion)</ArchiveBaseName>
+    <ArchiveExtension>.zip</ArchiveExtension>
+    <ArchiveUrl>https://download.pytorch.org/libtorch/cu$(CudaVersion)/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
     <Runtime Condition="'$(TargetOS)' == 'windows'">win-x64</Runtime>
     <Runtime Condition="'$(TargetOS)' == 'linux'">linux-x64</Runtime>
 
     <DownloadedArchiveFolder>$(MassiveDownloadRoot)$(MSBuildProjectName)\</DownloadedArchiveFolder>
-    <DownloadedArchiveFileName>$(FileBaseName)$(FileExtension)</DownloadedArchiveFileName>
+    <DownloadedArchiveFileName>$(ArchiveBaseName)$(ArchiveExtension)</DownloadedArchiveFileName>
     <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
-    <ArchiveShaFile>$(IntermediateOutputPath)$(FileBaseName)$(FileExtension).sha</ArchiveShaFile>
-    <ExtractDirectory>$(IntermediateOutputPath)$(FileBaseName)</ExtractDirectory>
-    <ExtractSemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</ExtractSemaphore>
-    <CopySemaphore>$(IntermediateOutputPath)$(FileBaseName)\.extracted</CopySemaphore>
-    <LocalShaFile>$(MSBuildProjectDirectory)\$(FileBaseName)$(FileExtension).sha</LocalShaFile>
+    <ArchiveShaFile>$(IntermediateOutputPath)$(ArchiveBaseName)$(ArchiveExtension).sha</ArchiveShaFile>
+    <ExtractDirectory>$(IntermediateOutputPath)$(ArchiveBaseName)</ExtractDirectory>
+    <ExtractSemaphore>$(IntermediateOutputPath)$(ArchiveBaseName)\.extracted</ExtractSemaphore>
+    <CopySemaphore>$(IntermediateOutputPath)$(ArchiveBaseName)\.extracted</CopySemaphore>
+    <LocalShaFile>$(MSBuildProjectDirectory)\$(ArchiveBaseName)$(ArchiveExtension).sha</LocalShaFile>
     <LicenseUrl>https://raw.githubusercontent.com/pytorch/pytorch/master/LICENSE</LicenseUrl>
     <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
@@ -164,10 +161,9 @@
     <!-- The archives are valid, lets extract them, ensuring an empty directory -->
     <RemoveDir Directories="$(ExtractDirectory)" />
     <MakeDir Directories="$(ExtractDirectory)" />
-    <Unzip Condition="'$(FileExtension)' == '.zip'" SourceFiles="$(DownloadedArchive)" DestinationFolder="$(ExtractDirectory)" OverwriteReadOnlyFiles="true" />
-
-    <Message Importance="High" Condition="'$(FileExtension)' == '.tar.gz'" Text="Decompressing '$(DownloadedArchive)' to '$(ExtractDirectory)'." />
-    <Exec Condition="'$(FileExtension)' == '.tar.gz'"
+    <Message Importance="High" Text="Unzip $(DownloadedArchive) --> $(ExtractDirectory)" />
+    <Unzip Condition="'$(ArchiveExtension)' == '.zip'" SourceFiles="$(DownloadedArchive)" DestinationFolder="$(ExtractDirectory)" OverwriteReadOnlyFiles="true" />
+    <Exec Condition="'$(ArchiveExtension)' == '.tar.gz'"
           WorkingDirectory="$(ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
     <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" Overwrite="true" />

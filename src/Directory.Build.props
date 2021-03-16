@@ -31,9 +31,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps-$(LibtorchVersion)</LibTorchArchiveBase>
-    <LibTorchArchiveBase Condition="'$(TargetOS)' == 'mac'">libtorch-macos-$(LibtorchVersion)</LibTorchArchiveBase>
+    <LibTorchArchiveNameSuffix>%252Bcpu</LibTorchArchiveNameSuffix>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>  
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName> 
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
+    <LibTorchArchiveBase>$(LibTorchArchiveCoreName)-$(LibtorchVersion)$(LibTorchArchiveNameSuffix)</LibTorchArchiveBase>
     <LibtorchPath Condition="'$(LibtorchPath)'==''">$(IntermediateOutputRootPath)libtorch-cpu\$(LibTorchArchiveBase)\libtorch\share\cmake\Torch</LibtorchPath>
   </PropertyGroup>
 
