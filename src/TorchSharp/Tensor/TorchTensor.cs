@@ -10,6 +10,35 @@ using System.Text;
 #nullable enable
 namespace TorchSharp.Tensor
 {
+    public struct TorchTensorIndex
+    {
+        internal enum Kind
+        {
+            None,
+            Single,
+            Null,
+            Ellipsis,
+            Bool,
+            Tensor,
+            Slice
+        }
+        internal long? startIndexOrBoolOrSingle;
+        internal long? stopIndex;
+        internal long? step;
+        internal Kind kind;
+        internal TorchTensor? tensor;
+        static public TorchTensorIndex Slice(long? start, long? end, long? step)
+        {
+            return new TorchTensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = end, kind = Kind.Slice };
+        }
+        static public TorchTensorIndex Bool(bool value) => new TorchTensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
+        static public TorchTensorIndex Single(long? index) => new TorchTensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
+        static public TorchTensorIndex Tensor(TorchTensor tensor) => new TorchTensorIndex() { tensor = tensor, kind = Kind.Tensor };
+        static public TorchTensorIndex Ellipsis => new TorchTensorIndex() { kind = Kind.Ellipsis };
+        static public TorchTensorIndex None => new TorchTensorIndex() { kind = Kind.None };
+        static public TorchTensorIndex Null => new TorchTensorIndex() { kind = Kind.Null };
+    }
+
     public sealed class TorchTensor : IDisposable
     {
         internal IntPtr handle;
@@ -553,6 +582,109 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index_put_scalar_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+        internal void EncodeIndices(TorchTensorIndex[] indices,
+            out long[] arrKindAndStarts,
+            out long[]? arrStops,
+            out long[]? arrSteps,
+            out IntPtr[]? arrTensors)
+        {
+            bool hasSliceEnd = false;
+            bool hasSliceStep = false;
+            bool hasTensor = false;
+            var n = indices.Length;
+            for (int i = 0; i < indices.Length; i++) {
+                var idx = indices[i];
+                if (idx.kind == TorchTensorIndex.Kind.Slice && idx.stopIndex.HasValue)
+                    hasSliceEnd = true;
+                if (idx.kind == TorchTensorIndex.Kind.Slice && idx.step.HasValue)
+                    hasSliceStep = true;
+                if (idx.kind == TorchTensorIndex.Kind.Tensor && (object?)idx.tensor != null)
+                    hasTensor = true;
+            }
+            arrStops = hasSliceEnd ? new long[n] : null;
+            arrSteps = hasSliceStep ? new long[n] : null;
+            arrTensors = hasTensor ? new IntPtr[n] : null;
+            arrKindAndStarts = new long[n];
+            for (int i = 0; i < indices.Length; i++) {
+                var idx = indices[i];
+                arrKindAndStarts[i] =
+                    (idx.kind == TorchTensorIndex.Kind.Null) ? long.MinValue:
+                    (idx.kind == TorchTensorIndex.Kind.Bool && idx.startIndexOrBoolOrSingle == 0) ? long.MinValue+1 :
+                    (idx.kind == TorchTensorIndex.Kind.Bool && idx.startIndexOrBoolOrSingle != 0) ? long.MinValue+2 :
+                    (idx.kind == TorchTensorIndex.Kind.Ellipsis) ? long.MinValue+3 :
+                    (idx.kind == TorchTensorIndex.Kind.None) ? long.MinValue+4 :
+                    (idx.kind == TorchTensorIndex.Kind.Tensor) ? long.MinValue+5 :
+                    (idx.kind == TorchTensorIndex.Kind.Slice && !idx.startIndexOrBoolOrSingle.HasValue) ? long.MinValue+6 :
+                    (idx.kind == TorchTensorIndex.Kind.Single) ? idx.startIndexOrBoolOrSingle.GetValueOrDefault() :
+                    idx.startIndexOrBoolOrSingle.GetValueOrDefault() + long.MinValue/2;
+                if (arrStops != null && idx.kind == TorchTensorIndex.Kind.Slice)
+                    arrStops[i] = (idx.stopIndex.HasValue ? idx.stopIndex.Value : long.MinValue);
+                if (arrSteps != null && idx.kind == TorchTensorIndex.Kind.Slice)
+                    arrSteps[i] = (idx.step.HasValue ? idx.step.Value : long.MinValue);
+                if (arrTensors != null && idx.kind == TorchTensorIndex.Kind.Tensor)
+                    arrTensors[i] = ((object?)idx.tensor == null ? IntPtr.Zero : idx.tensor.Handle);
+            }
+
+        }
+
+        public TorchTensor Index(TorchTensorIndex[] indices)
+        {
+            EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+            unsafe {
+                fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                    fixed (IntPtr* ptrTensors = arrTensors) {
+                        var res = THSTensor_index(handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length);
+                        if (res == IntPtr.Zero)
+                            Torch.CheckForErrors();
+                        GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+
+        }
+
+        public TorchTensor SetIndex(TorchTensorIndex[] indices, TorchTensor value)
+        {
+            EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+            unsafe {
+                fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                    fixed (IntPtr* ptrTensors = arrTensors) {
+                        var res = THSTensor_index_put_(handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                        if (res == IntPtr.Zero)
+                            Torch.CheckForErrors();
+                        GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                        GC.KeepAlive(value); 
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
+
+        public TorchTensor SetIndex(TorchTensorIndex[] indices, TorchScalar value)
+        {
+            EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
+            unsafe {
+                fixed (long* ptrKindAndStarts = arrKindAndStarts, ptrStops = arrStops, ptrSteps = arrSteps) {
+                    fixed (IntPtr* ptrTensors = arrTensors) {
+                        var res = THSTensor_index_put_scalar_(handle, (IntPtr)ptrKindAndStarts, (IntPtr)ptrStops, (IntPtr)ptrSteps, (IntPtr)ptrTensors, indices.Length, value.Handle);
+                        if (res == IntPtr.Zero)
+                            Torch.CheckForErrors();
+                        GC.KeepAlive(indices); // don't release or finalize Tensor indices whose handles have been put into ptrTensors
+                        GC.KeepAlive(value);
+                        return new TorchTensor(res);
+                    }
+                }
+            }
+        }
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_index_select(IntPtr tensor, long dimension, IntPtr index);
 
@@ -2436,15 +2568,6 @@ namespace TorchSharp.Tensor
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_index(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength);
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_index_put_scalar_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
 
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_lcm_(IntPtr tensor, IntPtr other);

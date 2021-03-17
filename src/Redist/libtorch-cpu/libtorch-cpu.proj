@@ -6,7 +6,6 @@
     <!-- see https://pytorch.org/get-started/locally/ for download links -->
     <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
-    <CopyToPackageSemaphore>$(NativeOutputPath)\.copied</CopyToPackageSemaphore>
     <LocalBaseName>$(LibTorchCpuLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCpuArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
@@ -23,7 +22,7 @@
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
     <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)</MainPackageFolder>
-    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackage.$(IncludeLibTorchCpuPackage)</CopyToPackageSemaphore>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
@@ -134,10 +133,11 @@
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" />
 
-    <!-- Copy to MainPackageFolder to use in libtorch package build -->
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(BuildLibTorchPackages)' == 'true'" />
+    <!-- Copy to MainPackageFolder to use in libtorch-cpu package build -->
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackage)' == 'true' "/>
 
-    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
+    <!-- Copy license to MainPackageFolder to use in libtorch-cpu packages build -->
+    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackage)' == 'true'"  />
 
     <!-- Copy to NativeOutputPath to use in tests (headers, lib etc.) -->
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />

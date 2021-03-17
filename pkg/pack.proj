@@ -1,22 +1,18 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
   <ItemGroup>
-    <PackProject Include="**\libtorch-*.nupkgproj" Condition="'$(BuildLibTorchPackages)' == 'true'" />
-    <PackProject Include="**\TorchSharp.nupkgproj" />
+    <PackProject Include="**\libtorch-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackage)' == 'true'" />
+    <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-linux-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
+    <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-win-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
+    <PackProject Include="**\TorchSharp.nupkgproj" Condition="'$(IncludeTorchSharpPackage)' == 'true'" />
   </ItemGroup>
   <Target Name="Pack">
     <Message Text="Restoring packaging projects..." Importance="high" />
 
     <Warning Text="Packages will be incomplete and unusable on linux platforms. To get a complete package you need the LibTorchSharp.so binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="(!Exists('$(PackagePreparationPath)\libtorch-cpu\runtimes\linux-x64\native\libLibTorchSharp.so')
-                         OR !Exists('$(PackagePreparationPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\linux-x64\native\libLibTorchSharp.so'))
-                     AND '$(BuildLibTorchPackages)' == 'true'
-                     " />
+             Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\linux-x64\native\libLibTorchSharp.so')" />
     <Warning Text="Packages will be incomplete and unusable on win-x64 platform. To get a complete package you need the LibTorchSharp.dll binaries for other platforms and copy them into '$(PackagePreparationPath)' to make complete packages. This is automated by Azure Pipelines." 
-             Condition="(!Exists('$(PackagePreparationPath)\libtorch-cpu\runtimes\win-x64\native\LibTorchSharp.dll')
-                         OR !Exists('$(PackagePreparationPath)\libtorch-cuda-$(CudaVersionDot)\runtimes\win-x64\native\LibTorchSharp.dll')) 
-                     AND '$(BuildLibTorchPackages)' == 'true' 
-                     " />
+             Condition="'$(IncludeTorchSharpPackage)' == 'true' AND !Exists('$(PackagePreparationPath)\TorchSharp\runtimes\win-x64\native\LibTorchSharp.dll')" />
 
     <MSBuild Projects="%(PackProject.Identity)" Targets="Restore" />
     <MSBuild Projects="%(PackProject.Identity)" Targets="Pack" />

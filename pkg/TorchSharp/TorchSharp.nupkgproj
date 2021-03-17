@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersion), libtorch-cuda-$(CudaVersion)-win-x64 or libtorch-cuda-$(CudaVersion)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
+    <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersionDot), libtorch-cuda-$(CudaVersionDot)-win-x64 or libtorch-cuda-$(CudaVersionDot)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>

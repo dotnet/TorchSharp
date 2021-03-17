@@ -1059,26 +1059,28 @@ void completeTensorIndices(const int64_t* indexStarts,
     for (int i = 0; i < indicesLength; i++)
     {
         auto n = indexStarts[i];
-        if (n == 0x8000000000000000)
+        if (n == INT64_MIN)   // long.MinValue
             indicesArray[i] = at::indexing::TensorIndex(c10::nullopt);
-        else if (n == 0x8000000000000001)
+        else if (n == INT64_MIN+1)  // long.MinValue + 1
             indicesArray[i] = at::indexing::TensorIndex(false);
-        else if (n == 0x8000000000000002)
+        else if (n == INT64_MIN+2) // long.MinValue + 2
             indicesArray[i] = at::indexing::TensorIndex(true);
-        else if (n == 0x8000000000000003)
+        else if (n == INT64_MIN+3) // long.MinValue + 3
             indicesArray[i] = at::indexing::TensorIndex(at::indexing::Ellipsis);
-        else if (n == 0x8000000000000004)
+        else if (n == INT64_MIN+4) // long.MinValue + 4
             indicesArray[i] = at::indexing::TensorIndex(at::indexing::None);
-        else if (n == 0x8000000000000005)
+        else if (n == INT64_MIN+5)
             indicesArray[i] = at::indexing::TensorIndex(*indexTensors[i]);
-        else if (n > 0xe000000000000000)
+        // range INT64_MIN+6 is for slice with absent start
+        // range INT64_MIN+7 ... INT64_MIN/4 is for start of slice centered around INT64_MIN/2
+        else if (n > INT64_MIN/4)
             indicesArray[i] = at::indexing::TensorIndex(n);
         else
         {
             // slice
-            auto start = (n == 0x8000000000000006) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - 0xc000000000000000);
-            auto end = (indexEnds == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
-            auto step = (indexSteps == NULL) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
+            auto start = (n == INT64_MIN+6) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - INT64_MIN/2);
+            auto end = (indexEnds == NULL || indexEnds[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
+            auto step = (indexSteps == NULL || indexSteps[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
             indicesArray[i] = at::indexing::TensorIndex(at::indexing::Slice(start, end, step));
         }
     }

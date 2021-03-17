@@ -5,7 +5,6 @@
     dotnet build /p:SkipNative=true
     dotnet test
     dotnet pack
-    dotnet pack /p:BuildLibTorchPackages=true
 
 ## Windows
 
@@ -55,7 +54,7 @@ from your local `.nuget` package cache.
 
 To change the TorchSharp package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
 
-## Making releases of the TorchSharp package
+## Doing releases of the TorchSharp package
 
 The TorchSharp package is pushed to nuget.org either manually or as part of Azure DevOps CI release pipeline, see below.
 

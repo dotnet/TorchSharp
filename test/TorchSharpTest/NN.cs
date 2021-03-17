@@ -768,7 +768,7 @@ namespace TorchSharp
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.Ones(new long[] { 2, 2, 2 });
-            var obj = Functions.AvgPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = AvgPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -832,7 +832,7 @@ namespace TorchSharp
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.Ones(new long[] { 2, 2, 2 });
-            var obj = Functions.MaxPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = MaxPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 

@@ -19,7 +19,7 @@
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
     <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
-    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCudaPackage.$(IncludeLibTorchCudaPackage)</CopyToPackageSemaphore>
 
   </PropertyGroup>
   
@@ -241,11 +241,12 @@
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="@(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" />
 
-    <!-- Copy to MainPackageFolder to use in libtorch packages build -->
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == '' AND '$(BuildLibTorchPackages)' == 'true'" />
-    <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != '' AND '$(BuildLibTorchPackages)' == 'true'" />
+    <!-- Copy to MainPackageFolder to use in libtorch-cuda-* packages build -->
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == '' AND '$(IncludeLibTorchCudaPackages)' == 'true'" />
+    <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != '' AND '$(IncludeLibTorchCudaPackages)' == 'true'" />
 
-    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
+    <!-- Copy license to MainPackageFolder to use in libtorch-cuda-* packages build -->
+    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCudaPackages)' == 'true'" />
 
     <!-- Copy to NativeCudaOutputPath to use in tests -->
     <MakeDir Directories="$(NativeCudaOutputPath)"  Condition="'$(SkipCuda)' != 'true' AND '$(SkipTests)' != 'true' "  />

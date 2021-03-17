@@ -6,6 +6,7 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 
 variables: 
   MyRunNumber:  $[counter('MyRunNumber', 52201)]
+  BuildLibTorchPackages: true
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -30,7 +31,7 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64
-    buildScript: dotnet  build  /p:SkipCuda=true -c 
+    buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
       vmImage: 'windows-2019'
@@ -41,7 +42,7 @@ jobs:
 
 
 ################################################################################
-- job: Linux_Native_Build_For_Package
+- job: Linux_Native_Build_For_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   variables:
@@ -50,19 +51,18 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-    TORCHSHARP_MAKING_PACKAGE: 1
   pool:
     vmImage: 'ubuntu-20.04'
   steps:
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
 
 ################################################################################
-- job: Windows_Native_Build_For_Package
+- job: Windows_Native_Build_For_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   variables:
@@ -71,18 +71,17 @@ jobs:
     DOTNET_CLI_TELEMETRY_OPTOUT: 1
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
-    TORCHSHARP_MAKING_PACKAGE: 1
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build Windows
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: WindowsAssets
 
 # ################################################################################
-# - job: MacOS_Native_Build_For_Package
+# - job: MacOS_Native_Build_For_Packages
 # ################################################################################
 #   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
 #   variables:
@@ -91,7 +90,6 @@ jobs:
 #     DOTNET_CLI_TELEMETRY_OPTOUT: 1
 #     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 #     DOTNET_MULTILEVEL_LOOKUP: 0
-#     TORCHSHARP_MAKING_PACKAGE: 1
 #   pool:
 #     vmImage: 'macos-10.15'
 #   steps:
@@ -109,13 +107,13 @@ jobs:
 
 
 ################################################################################
-- job: Package
+- job: Build_TorchSharp_And_LibTorchCpu_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   dependsOn:
-  - Linux_Native_Build_For_Package
-  - Windows_Native_Build_For_Package
-  # - MacOS_Native_Build_For_Package
+  - Linux_Native_Build_For_Packages
+  - Windows_Native_Build_For_Packages
+  # - MacOS_Native_Build_For_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -126,15 +124,27 @@ jobs:
     vmImage: 'windows-2019'
   steps:
 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # yup we even nuke the .git
+  - script: rmdir /q /s .git
+    displayName: Clean up space (.git)
+    continueOnError: true
+
     # Download all bits contributing to the packages from the Linux and Mac builds
   - download: current
     artifact: LinuxAssets
 
   - task: CopyFiles@2
-    displayName: Copy linux native assets to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy linux native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/LinuxAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchSharp
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+  
+  - task: CopyFiles@2
+    displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (linux assets in workspace)
@@ -143,44 +153,26 @@ jobs:
     artifact: WindowsAssets
 
   - task: CopyFiles@2
-    displayName: Copy windows native assets to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy windows native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/WindowsAssets
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchSharp
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+  
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/libtorch-cpu
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet build -c $(BuildConfig) -v:n /p:SkipNative=true /p:SkipTests=true src/TorchSharp/TorchSharp.csproj
-    displayName: Build Managed
-
-  - script: rmdir /q /s bin\obj\x64.Release
-    displayName: Clean up space (bin\obj\x64.Release)
-    continueOnError: true
-
-  - script: rmdir /q /s bin\obj\AnyCPU.Release
-    displayName: Clean up space (bin\obj\AnyCPU.Release)
-    continueOnError: true
-
-  - script: rmdir /q /s bin\x64.Release
-    displayName: Clean up space (bin\x64.Release)
-    continueOnError: true
-
-  - script: rmdir /q /s bin\x64.Release
-    displayName: Clean up space (bin\AnyCPU.Release)
-    continueOnError: true
-
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true src/TorchSharp/TorchSharp.csproj
+  # Pack TorchSharp (and libtorch-cpu if BuildLibTorchPackages is true)
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:$(IncludeLibCpuTorchPackages)=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
   - script: rmdir /q /s bin\obj
     displayName: Clean up space (bin\obj)
-    continueOnError: true
-
-  # yup we even nuke the .git
-  - script: rmdir /q /s .git
-    displayName: Clean up space (.git)
     continueOnError: true
 
   - task: CopyFiles@2
@@ -194,8 +186,7 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
-  #########################################################
-  # push the TorchSharp feed
+  # Push packages to feed
   #
   # Doing these one by one as we're getting a lot of failures pushing them
   # Also replaying them multiple times for the same reason
@@ -242,25 +233,73 @@ jobs:
       allowPackageConflicts: true
     continueOnError: true
 
-  # push the CPU runtime packages (retry - we get so many failures!)
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (libtorch-cpu - retry)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
+  # Terminate all dotnet build processes.
+  - script: dotnet build-server shutdown
+    displayName: Dotnet Server Shutdown
+
+################################################################################
+# Only run if BuildLibTorchPackages is true
+- job: Build_Windows_LibTorchCuda_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
+  dependsOn:
+  - Windows_Native_Build_For_Packages
+  # - MacOS_Native_Build_For_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # yup we even nuke the .git
+  - script: rmdir /q /s .git
+    displayName: Clean up space (.git)
     continueOnError: true
 
-  # push the CPU runtime packages (retry - we get so many failures!)
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (libtorch-cpu - retry)'
+  - download: current
+    artifact: WindowsAssets
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets to correct folder where the bits contributing to the packages are assembled
     inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+  
+  - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
+    displayName: Free up space (windows assets in workspace)
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+    displayName: Create Packages
+
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  - script: rmdir /q /s bin\obj
+    displayName: Clean up space (bin\obj)
     continueOnError: true
+
+  - task: CopyFiles@2
+    displayName: Copy packaged assets to staging folder
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
+      targetFolder: $(Build.ArtifactStagingDirectory)
+ 
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: packages
+  
+
+  # Push packages to feed
+  #
+  # Doing these one by one as we're getting a lot of failures pushing them
+  # Also replaying them multiple times for the same reason
+  #
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet Authenticate'
 
   # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
   - task: NuGetCommand@2
@@ -317,6 +356,69 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
+################################################################################
+- job: Build_Linux_LibTorchCuda_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
+  dependsOn:
+  - Linux_Native_Build_For_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # yup we even nuke the .git
+  - script: rmdir /q /s .git
+    displayName: Clean up space (.git)
+    continueOnError: true
+
+  - download: current
+    artifact: LinuxAssets
+
+  - task: CopyFiles@2
+    displayName: Copy linux native assets to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+  
+  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
+    displayName: Free up space (windows assets in workspace)
+
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+    displayName: Create Packages
+
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  - script: rmdir /q /s bin\obj
+    displayName: Clean up space (bin\obj)
+    continueOnError: true
+
+  - task: CopyFiles@2
+    displayName: Copy packaged assets to staging folder
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
+      targetFolder: $(Build.ArtifactStagingDirectory)
+ 
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: packages
+  
+
+  # Push packages to feed
+  #
+  # Doing these one by one as we're getting a lot of failures pushing them
+  # Also replaying them multiple times for the same reason
+  #
+  - task: NuGetAuthenticate@0
+    displayName: 'NuGet Authenticate'
+
+
   # push the Linux Cuda packages 
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda linux-x64)'
@@ -360,64 +462,3 @@ jobs:
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
-
-  # push the Linux Cuda packages 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Linux Cuda packages 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Linux Cuda packages 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Linux Cuda packages 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-  # push the Linux Cuda packages 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push (cuda linux-x64)'
-    inputs:
-      command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
-      allowPackageConflicts: true
-      # often fails - try but ignore the error until we sort it out
-    continueOnError: true
-
-
-  # Terminate all dotnet build processes.
-  - script: dotnet build-server shutdown
-    displayName: Dotnet Server Shutdown
-
