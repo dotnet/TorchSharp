@@ -168,7 +168,7 @@ jobs:
     displayName: Free up space (windows assets in workspace)
 
   # Pack TorchSharp (and libtorch-cpu if BuildLibTorchPackages is true)
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:$(IncludeLibCpuTorchPackages)=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   - script: rmdir /q /s bin\obj
@@ -273,7 +273,7 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
@@ -388,7 +388,7 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
   
   - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
-    displayName: Free up space (windows assets in workspace)
+    displayName: Free up space (linux assets in workspace)
 
   - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
