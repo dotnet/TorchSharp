@@ -30,26 +30,71 @@
                     //        some-package-fragment1\fragments\....\a.so 
                     //        some-package-fragment2\fragments\....\a.so 
                     //        some-package-fragment3\fragments\....\a.so 
+                    //        some-package-fragment4\fragments\....\a.so 
+                    //        some-package-fragment5\fragments\....\a.so 
+                    //        some-package-fragment6\fragments\....\a.so 
+                    //        some-package-fragment7\fragments\....\a.so 
+                    //        some-package-fragment8\fragments\....\a.so 
                     var shaFile = primaryFile + ".sha";
                     var fragmentFile1 = primaryFile.Replace("-primary", "-fragment1").Replace("runtimes", "fragments") + ".fragment1";
                     var fragmentFile2 = primaryFile.Replace("-primary", "-fragment2").Replace("runtimes", "fragments") + ".fragment2";
                     var fragmentFile3 = primaryFile.Replace("-primary", "-fragment3").Replace("runtimes", "fragments") + ".fragment3";
+                    var fragmentFile4 = primaryFile.Replace("-primary", "-fragment4").Replace("runtimes", "fragments") + ".fragment4";
+                    var fragmentFile5 = primaryFile.Replace("-primary", "-fragment5").Replace("runtimes", "fragments") + ".fragment5";
+                    var fragmentFile6 = primaryFile.Replace("-primary", "-fragment6").Replace("runtimes", "fragments") + ".fragment6";
+                    var fragmentFile7 = primaryFile.Replace("-primary", "-fragment7").Replace("runtimes", "fragments") + ".fragment7";
+                    var fragmentFile8 = primaryFile.Replace("-primary", "-fragment8").Replace("runtimes", "fragments") + ".fragment8";
+
+                    if (File.Exists(fragmentFile1)) Console.WriteLine("Found fragment file at {0}", fragmentFile1);
+                    if (File.Exists(fragmentFile2)) Console.WriteLine("Found fragment file at {0}", fragmentFile2);
+                    if (File.Exists(fragmentFile3)) Console.WriteLine("Found fragment file at {0}", fragmentFile3);
+                    if (File.Exists(fragmentFile4)) Console.WriteLine("Found fragment file at {0}", fragmentFile4);
+                    if (File.Exists(fragmentFile5)) Console.WriteLine("Found fragment file at {0}", fragmentFile5);
+                    if (File.Exists(fragmentFile6)) Console.WriteLine("Found fragment file at {0}", fragmentFile6);
+                    if (File.Exists(fragmentFile7)) Console.WriteLine("Found fragment file at {0}", fragmentFile7);
+                    if (File.Exists(fragmentFile8)) Console.WriteLine("Found fragment file at {0}", fragmentFile8);
 
                     if (File.Exists(fragmentFile1))
                     {
-                        Console.WriteLine("Found fragment file at {0}", fragmentFile1);
-                        Console.WriteLine("Found fragment file at {0}", fragmentFile2);
-                        Console.WriteLine("Found fragment file at {0}", fragmentFile3);
                         var primaryBytes = File.ReadAllBytes(primaryFile);
                         var fragmentBytes1 = File.ReadAllBytes(fragmentFile1);
                         var fragmentBytes2 = (File.Exists(fragmentFile2) ? File.ReadAllBytes(fragmentFile2) : new byte[0]);
                         var fragmentBytes3 = (File.Exists(fragmentFile3) ? File.ReadAllBytes(fragmentFile3) : new byte[0]);
-                        var outputBytes = new byte[primaryBytes.Length + fragmentBytes1.Length + fragmentBytes2.Length + fragmentBytes3.Length];
+                        var fragmentBytes4 = (File.Exists(fragmentFile4) ? File.ReadAllBytes(fragmentFile4) : new byte[0]);
+                        var fragmentBytes5 = (File.Exists(fragmentFile5) ? File.ReadAllBytes(fragmentFile5) : new byte[0]);
+                        var fragmentBytes6 = (File.Exists(fragmentFile6) ? File.ReadAllBytes(fragmentFile6) : new byte[0]);
+                        var fragmentBytes7 = (File.Exists(fragmentFile7) ? File.ReadAllBytes(fragmentFile7) : new byte[0]);
+                        var fragmentBytes8 = (File.Exists(fragmentFile8) ? File.ReadAllBytes(fragmentFile8) : new byte[0]);
+                        var outputBytes = 
+                            new byte[primaryBytes.Length + 
+                                     fragmentBytes1.Length + 
+                                     fragmentBytes2.Length + 
+                                     fragmentBytes3.Length + 
+                                     fragmentBytes4.Length + 
+                                     fragmentBytes5.Length + 
+                                     fragmentBytes6.Length + 
+                                     fragmentBytes7.Length + 
+                                     fragmentBytes8.Length];
 
-                        Array.Copy(primaryBytes, 0, outputBytes, 0, primaryBytes.Length);
-                        Array.Copy(fragmentBytes1, 0, outputBytes, primaryBytes.Length, fragmentBytes1.Length);
-                        Array.Copy(fragmentBytes2, 0, outputBytes, primaryBytes.Length + fragmentBytes1.Length, fragmentBytes2.Length);
-                        Array.Copy(fragmentBytes3, 0, outputBytes, primaryBytes.Length + fragmentBytes1.Length + fragmentBytes2.Length, fragmentBytes3.Length);
+                        var offset = 0;
+                        Array.Copy(primaryBytes, 0, outputBytes, offset, primaryBytes.Length);
+                        offset += primaryBytes.Length;
+                        Array.Copy(fragmentBytes1, 0, outputBytes, offset, fragmentBytes1.Length);
+                        offset += fragmentBytes1.Length;
+                        Array.Copy(fragmentBytes2, 0, outputBytes, offset, fragmentBytes2.Length);
+                        offset += fragmentBytes2.Length;
+                        Array.Copy(fragmentBytes3, 0, outputBytes, offset, fragmentBytes3.Length);
+                        offset += fragmentBytes3.Length;
+                        Array.Copy(fragmentBytes4, 0, outputBytes, offset, fragmentBytes4.Length);
+                        offset += fragmentBytes4.Length;
+                        Array.Copy(fragmentBytes5, 0, outputBytes, offset, fragmentBytes5.Length);
+                        offset += fragmentBytes5.Length;
+                        Array.Copy(fragmentBytes6, 0, outputBytes, offset, fragmentBytes6.Length);
+                        offset += fragmentBytes6.Length;
+                        Array.Copy(fragmentBytes7, 0, outputBytes, offset, fragmentBytes7.Length);
+                        offset += fragmentBytes7.Length;
+                        Array.Copy(fragmentBytes8, 0, outputBytes, offset, fragmentBytes8.Length);
+                        offset += fragmentBytes8.Length;
 
                         var shaExpected = File.ReadAllText(shaFile);
 
@@ -69,7 +114,12 @@
                                       + $"\n\t{primaryFile} (length ${primaryBytes.Length})"
                                       + (File.Exists(fragmentFile1) ? $"\n\t{fragmentFile1} (length ${fragmentBytes1.Length})" : "")
                                       + (File.Exists(fragmentFile2) ? $"\n\t{fragmentFile2} (length ${fragmentBytes2.Length})" : "")
-                                      + (File.Exists(fragmentFile3) ? $"\n\t{fragmentFile3} (length ${fragmentBytes3.Length})" : "");
+                                      + (File.Exists(fragmentFile3) ? $"\n\t{fragmentFile3} (length ${fragmentBytes3.Length})" : "")
+                                      + (File.Exists(fragmentFile4) ? $"\n\t{fragmentFile3} (length ${fragmentBytes4.Length})" : "")
+                                      + (File.Exists(fragmentFile5) ? $"\n\t{fragmentFile3} (length ${fragmentBytes5.Length})" : "")
+                                      + (File.Exists(fragmentFile6) ? $"\n\t{fragmentFile3} (length ${fragmentBytes6.Length})" : "")
+                                      + (File.Exists(fragmentFile7) ? $"\n\t{fragmentFile3} (length ${fragmentBytes7.Length})" : "")
+                                      + (File.Exists(fragmentFile8) ? $"\n\t{fragmentFile3} (length ${fragmentBytes8.Length})" : "");
                                 Console.Error.WriteLine(msg);
                                 throw new Exception(msg);
                             }
@@ -94,6 +144,26 @@
                         Console.WriteLine("Deleting {0}", fragmentFile3);
                         if (File.Exists(fragmentFile3))
                             File.Delete(fragmentFile3);  // free up space and prevent us doing this again 
+
+                        Console.WriteLine("Deleting {0}", fragmentFile4);
+                        if (File.Exists(fragmentFile4))
+                            File.Delete(fragmentFile4);  // free up space and prevent us doing this again 
+
+                        Console.WriteLine("Deleting {0}", fragmentFile5);
+                        if (File.Exists(fragmentFile5))
+                            File.Delete(fragmentFile5);  // free up space and prevent us doing this again 
+
+                        Console.WriteLine("Deleting {0}", fragmentFile6);
+                        if (File.Exists(fragmentFile6))
+                            File.Delete(fragmentFile6);  // free up space and prevent us doing this again 
+
+                        Console.WriteLine("Deleting {0}", fragmentFile7);
+                        if (File.Exists(fragmentFile7))
+                            File.Delete(fragmentFile7);  // free up space and prevent us doing this again 
+
+                        Console.WriteLine("Deleting {0}", fragmentFile8);
+                        if (File.Exists(fragmentFile8))
+                            File.Delete(fragmentFile8);  // free up space and prevent us doing this again 
                     }
                 }
             }
