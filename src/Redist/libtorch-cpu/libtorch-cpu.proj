@@ -11,8 +11,6 @@
     <ArchiveBaseName>$(LibTorchCpuArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
     <ArchiveUrl>https://download.pytorch.org/libtorch/cpu/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
-    <Runtime Condition="'$(TargetOS)' == 'windows'">win-x64</Runtime>
-    <Runtime Condition="'$(TargetOS)' == 'linux'">linux-x64</Runtime>
     <DownloadedArchiveFolder>$(MassiveDownloadRoot)$(MSBuildProjectName)\</DownloadedArchiveFolder>
     <DownloadedArchiveFileName>$(ArchiveBaseName)$(ArchiveExtension)</DownloadedArchiveFileName>
     <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
@@ -24,7 +22,7 @@
     <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
-    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(Runtime)</MainPackageFolder>
+    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)</MainPackageFolder>
     <CopyToPackageSemaphore>$(MainPackageFolder)\.copied</CopyToPackageSemaphore>
   </PropertyGroup>
   
@@ -134,18 +132,18 @@
   </Target>
 
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
-    <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" />
+    <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" />
 
     <!-- Copy to MainPackageFolder to use in libtorch package build -->
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(Runtime)\native\" SkipUnchangedFiles="true" Condition="'$(BuildLibTorchPackages)' == 'true'" />
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(BuildLibTorchPackages)' == 'true'" />
 
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true"  />
-    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
 
     <!-- Copy to NativeOutputPath to use in tests (headers, lib etc.) -->
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"   Condition="'$(SkipTests)' != 'true'" />
 
+    <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
   </Target>
 
   <!-- Define Build to do the work of downloading and copying assets -->

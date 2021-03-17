@@ -13,30 +13,24 @@ repository extensively and has been a major factor in iterating support.
 Things that you can try:
 
 ```csharp
-using TorchSharp;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.Tensor.Modules;
-
 var lin1 = Linear(1000, 100);
 var lin2 = Linear(100, 10);
-var seq = Sequential(lin1, Relu(), lin2);
+var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
 
-var x = Float32Tensor.RandomN(new long[] { 64, 1000 }, device: "cpu:0");
-var y = Float32Tensor.RandomN(new long[] { 64, 10 }, device: "cpu:0");
+var x = Float32Tensor.RandomN(new long[] { 64, 1000 }, deviceIndex: 0, deviceType: DeviceType.CPU);
+var y = Float32Tensor.RandomN(new long[] { 64, 10 }, deviceIndex: 0, deviceType: DeviceType.CPU);
 
 double learning_rate = 0.00004f;
 float prevLoss = float.MaxValue;
-var optimizer = Optimizer.Adam(seq.Parameters(), learning_rate);
-var loss = Losses.MSE(NN.Reduction.Sum);
+var optimizer = Optimizer.Adam(seq.GetParameters(), learning_rate);
+var loss = Losses.MSE(Reduction.Sum);
 
 for (int i = 0; i < 10; i++)
 {
     var eval = seq.Forward(x);
     var output = loss(eval, y);
     var lossVal = output.ToSingle();
-
-    Assert.True(lossVal < prevLoss);
+    Console.WriteLine($"loss = {lossVal}");
     prevLoss = lossVal;
 
     optimizer.ZeroGrad();

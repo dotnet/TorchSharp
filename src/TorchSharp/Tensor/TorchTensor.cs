@@ -2438,6 +2438,15 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index_put_scalar_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTensor_lcm_(IntPtr tensor, IntPtr other);
 
         public TorchTensor LcmInPlace(TorchTensor other)
