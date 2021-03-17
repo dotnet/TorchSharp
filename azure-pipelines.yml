@@ -107,7 +107,7 @@ jobs:
 
 
 ################################################################################
-- job: Build_TorchSharp_And_LibTorchCpu_Packages
+- job: Build_And_Push_TorchSharp_And_libtorch-cpu_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   dependsOn:
@@ -239,7 +239,7 @@ jobs:
 
 ################################################################################
 # Only run if BuildLibTorchPackages is true
-- job: Build_Windows_LibTorchCuda_Packages
+- job: Build_And_Push_libtorch-cuda-win-*_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
@@ -357,7 +357,7 @@ jobs:
     continueOnError: true
 
 ################################################################################
-- job: Build_Linux_LibTorchCuda_Packages
+- job: Build_And_Push_libtorch-cuda-linux-*_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
@@ -374,7 +374,7 @@ jobs:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
   # yup we even nuke the .git
-  - script: rmdir /q /s .git
+  - script: rm -fr .git
     displayName: Clean up space (.git)
     continueOnError: true
 
@@ -387,15 +387,15 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
   
-  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
+  - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space (windows assets in workspace)
 
   - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
-  - script: rmdir /q /s bin\obj
-    displayName: Clean up space (bin\obj)
+  - script: rm -fr bin/obj
+    displayName: Clean up space (bin/obj)
     continueOnError: true
 
   - task: CopyFiles@2
