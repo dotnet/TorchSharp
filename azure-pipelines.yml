@@ -107,7 +107,7 @@ jobs:
 
 
 ################################################################################
-- job: Build_And_Push_TorchSharp_And_libtorch-cpu_Packages
+- job: Build_And_Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
   dependsOn:
@@ -239,7 +239,7 @@ jobs:
 
 ################################################################################
 # Only run if BuildLibTorchPackages is true
-- job: Build_And_Push_libtorch-cuda-win-*_Packages
+- job: Build_And_Push_libtorch_cuda_win_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
@@ -357,7 +357,7 @@ jobs:
     continueOnError: true
 
 ################################################################################
-- job: Build_And_Push_libtorch-cuda-linux-*_Packages
+- job: Build_And_Push_libtorch_cuda_linux_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
