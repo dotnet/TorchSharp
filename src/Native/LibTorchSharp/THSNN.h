@@ -64,7 +64,7 @@ EXPORT_API(NNModule) THSNN_Sequential_ctor();
 EXPORT_API(void)     THSNN_Sequential_push_back(const NNModule module, const char* name, const NNAnyModule submodule);
 EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tensor tensor);
 
-EXPORT_API(void) THSNN_Optimizer_zeroGrad(const Optimizer optimizer);
+EXPORT_API(void) THSNN_Optimizer_zero_grad(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);

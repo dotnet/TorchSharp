@@ -30,15 +30,15 @@ namespace TorchSharp.Examples
             using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
             using (var model = new Model("model", _numClasses))
-            using (var optimizer = NN.Optimizer.Adam(model.GetParameters(), 0.001))
+            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001))
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
                 for (var epoch = 1; epoch <= _epochs; epoch++)
                 {
-                    Train(model, optimizer, NLL(), train, epoch, _trainBatchSize, train.Size());
-                    Test(model, NLL(), test, test.Size());
+                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size());
+                    Test(model, nll_loss(), test, test.Size());
                 }
 
                 sw.Stop();
@@ -114,14 +114,14 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                optimizer.ZeroGrad();
+                optimizer.zero_grad();
 
                 using (var prediction = model.forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     output.backward();
 
-                    optimizer.Step();
+                    optimizer.step();
 
                     var predicted = prediction.argmax(1);
                     total += target.shape[0];

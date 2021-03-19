@@ -419,7 +419,7 @@ Tensor THSNN_Sequential_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Sequential>()->forward(*tensor));
 }
 
-void THSNN_Optimizer_zeroGrad(const Optimizer optimizer)
+void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
 {
     (*optimizer)->zero_grad();
 }

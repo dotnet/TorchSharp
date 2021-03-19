@@ -105,18 +105,18 @@ namespace TorchSharp.NN
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_Optimizer_zeroGrad (HType module);
+        private static extern void THSNN_Optimizer_zero_grad (HType module);
 
-        public void ZeroGrad ()
+        public void zero_grad ()
         {
-            THSNN_Optimizer_zeroGrad (handle);
+            THSNN_Optimizer_zero_grad (handle);
             Torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Optimizer_step (HType module);
 
-        public void Step ()
+        public void step ()
         {
             THSNN_Optimizer_step (handle);
             Torch.CheckForErrors ();
@@ -125,7 +125,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Optimizer_getParameters (HType module, AllocatePinnedArray allocator);
 
-        public IEnumerable<TorchTensor> GetParameters ()
+        public IEnumerable<TorchTensor> parameters ()
         {
             IntPtr[] ptrArray;
 

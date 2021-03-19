@@ -17,13 +17,13 @@ var lin1 = Linear(1000, 100);
 var lin2 = Linear(100, 10);
 var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
 
-var x = Float32Tensor.RandomN(new long[] { 64, 1000 }, deviceIndex: 0, deviceType: DeviceType.CPU);
-var y = Float32Tensor.RandomN(new long[] { 64, 10 }, deviceIndex: 0, deviceType: DeviceType.CPU);
+var x = Float32Tensor.randn(new long[] { 64, 1000 }, deviceIndex: 0, deviceType: DeviceType.CPU);
+var y = Float32Tensor.randn(new long[] { 64, 10 }, deviceIndex: 0, deviceType: DeviceType.CPU);
 
 double learning_rate = 0.00004f;
 float prevLoss = float.MaxValue;
-var optimizer = Optimizer.Adam(seq.GetParameters(), learning_rate);
-var loss = Losses.MSE(Reduction.Sum);
+var optimizer = Optimizer.Adam(seq.parameters(), learning_rate);
+var loss = Losses.mse_loss(Reduction.Sum);
 
 for (int i = 0; i < 10; i++)
 {
@@ -33,11 +33,11 @@ for (int i = 0; i < 10; i++)
     Console.WriteLine($"loss = {lossVal}");
     prevLoss = lossVal;
 
-    optimizer.ZeroGrad();
+    optimizer.zero_grad();
 
-    output.Backward();
+    output.backward();
 
-    optimizer.Step();
+    optimizer.step();
 }
 ```
 

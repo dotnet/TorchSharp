@@ -168,7 +168,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Module_get_parameters (HType module, AllocatePinnedArray allocator);
 
-        public virtual TorchTensor[] GetParameters ()
+        public virtual TorchTensor[] parameters ()
         {
             IntPtr[] ptrArray;
 
