@@ -49,7 +49,6 @@
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part5" />
 
     <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part6" />
-    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\fbjni.dll" PackageSuffix="part6" />
@@ -80,6 +79,7 @@
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment5" FileUnstitchIndex="5" FileUnstitchStart="1250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part10" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part10" />
 
     <File Include= "libtorch\lib\cudnn_ops_infer64_8.dll" PackageSuffix="part11" />
 
