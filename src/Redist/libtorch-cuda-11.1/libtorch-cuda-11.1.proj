@@ -44,7 +44,6 @@
     <File Include= "libtorch\lib\cudnn_cnn_infer64_8.dll"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\cudnn_cnn_train64_8.dll" PackageSuffix="part4" />
-    <File Include= "libtorch\lib\cudnn_ops_infer64_8.dll" PackageSuffix="part4" />
 
     <File Include= "libtorch\lib\cudnn64_8.dll" PackageSuffix="part5" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part5" />
@@ -81,6 +80,8 @@
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment5" FileUnstitchIndex="5" FileUnstitchStart="1250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part10" />
+
+    <File Include= "libtorch\lib\cudnn_ops_infer64_8.dll" PackageSuffix="part11" />
 
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">

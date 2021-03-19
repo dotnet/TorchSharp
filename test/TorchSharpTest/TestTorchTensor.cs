@@ -533,6 +533,91 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestIndexSingle()
+        {
+            using (var i = Int64Tensor.From(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                Assert.Equal(0, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(0) }).ToInt32());
+                Assert.Equal(1, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(1) }).ToInt32());
+                Assert.Equal(2, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(2) }).ToInt32());
+                Assert.Equal(6, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(0) }).ToInt32());
+                Assert.Equal(5, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(1) }).ToInt32());
+                Assert.Equal(4, i.Index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(2) }).ToInt32());
+            }
+        }
+
+        [Fact]
+        public void TestIndexEllipsis()
+        {
+            using (var i = Int64Tensor.From(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                var t1 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0) });
+                Assert.Equal(0, t1[0].ToInt32());
+                Assert.Equal(6, t1[1].ToInt32());
+            }
+        }
+
+        [Fact]
+        public void TestIndexNull()
+        {
+            using (var i = Int64Tensor.From(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                var t1 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Single(0) });
+                Assert.Equal(0, t1[0, 0].ToInt32());
+                Assert.Equal(1, t1[0, 1].ToInt32());
+                Assert.Equal(2, t1[0, 2].ToInt32());
+            }
+        }
+
+        [Fact]
+        public void TestIndexNone()
+        {
+            using (var i = Int64Tensor.From(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                var t1 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Single(0) });
+                Assert.Equal(0, t1[0, 0].ToInt32());
+                Assert.Equal(1, t1[0, 1].ToInt32());
+                Assert.Equal(2, t1[0, 2].ToInt32());
+            }
+        }
+
+        [Fact]
+        public void TestIndexSlice()
+        {
+            using (var i = Int64Tensor.From(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                var t1 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(0, 2), TorchTensorIndex.Single(0) });
+                Assert.Equal(0, t1[0].ToInt32());
+                Assert.Equal(6, t1[1].ToInt32());
+
+                // one slice
+                var t2 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Single(0) });
+                Assert.Equal(6, t2[0].ToInt32());
+
+                // two slice
+                var t3 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Slice(1, 3) });
+                Assert.Equal(5, t3[0, 0].ToInt32());
+                Assert.Equal(4, t3[0, 1].ToInt32());
+
+                // slice with step
+                var t4 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Slice(0, 3, step: 2) });
+                Assert.Equal(6, t4[0, 0].ToInt32());
+                Assert.Equal(4, t4[0, 1].ToInt32());
+
+                // end absent
+                var t5 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(start: 1) });
+                Assert.Equal(5, t5[0, 0].ToInt32());
+                Assert.Equal(4, t5[0, 1].ToInt32());
+
+                // start absent
+                var t6 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(stop: 2) });
+                Assert.Equal(6, t6[0, 0].ToInt32());
+                Assert.Equal(5, t6[0, 1].ToInt32());
+
+                // start and end absent
+                var t7 = i.Index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(step: 2) });
+                Assert.Equal(6, t7[0, 0].ToInt32());
+                Assert.Equal(4, t7[0, 1].ToInt32());
+            }
+        }
+
+
+        [Fact]
         public void CopyCpuToCuda()
         {
             TorchTensor cpu = Float32Tensor.Ones(new long[] { 2, 2 });

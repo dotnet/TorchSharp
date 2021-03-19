@@ -30,6 +30,7 @@
      <ProjectReference Include="../libtorch-cuda-11.1-win-x64-part9-fragment5/libtorch-cuda-11.1-win-x64-part9-fragment5.nupkgproj" />
 
      <ProjectReference Include="../libtorch-cuda-11.1-win-x64-part10/libtorch-cuda-11.1-win-x64-part10.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.1-win-x64-part11/libtorch-cuda-11.1-win-x64-part11.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

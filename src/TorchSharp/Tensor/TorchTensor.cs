@@ -27,9 +27,9 @@ namespace TorchSharp.Tensor
         internal long? step;
         internal Kind kind;
         internal TorchTensor? tensor;
-        static public TorchTensorIndex Slice(long? start, long? end, long? step)
+        static public TorchTensorIndex Slice(long? start = null, long? stop = null, long? step = null)
         {
-            return new TorchTensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = end, kind = Kind.Slice };
+            return new TorchTensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
         }
         static public TorchTensorIndex Bool(bool value) => new TorchTensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
         static public TorchTensorIndex Single(long? index) => new TorchTensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
