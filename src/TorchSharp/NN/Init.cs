@@ -31,7 +31,7 @@ namespace TorchSharp.NN
                 throw new ArgumentException("Fan in and fan out can not be computed for tensor with fewer than 2 dimensions");
             }
 
-            var shape = tensor.Shape;
+            var shape = tensor.shape;
             // Linear
             if (dimensions == 2)
             {
@@ -39,8 +39,8 @@ namespace TorchSharp.NN
             }
             else
             {
-                var numInputFMaps = tensor.Shape[1];
-                var numOutputFMaps = tensor.Shape[0];
+                var numInputFMaps = tensor.shape[1];
+                var numOutputFMaps = tensor.shape[0];
                 var receptiveFieldSize = tensor[0, 0].NumberOfElements;
 
                 return (numInputFMaps * receptiveFieldSize, numOutputFMaps * receptiveFieldSize);

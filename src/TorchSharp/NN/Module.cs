@@ -168,7 +168,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Module_get_parameters (HType module, AllocatePinnedArray allocator);
 
-        public virtual TorchTensor[] GetParameters ()
+        public virtual TorchTensor[] parameters ()
         {
             IntPtr[] ptrArray;
 
@@ -338,7 +338,7 @@ namespace TorchSharp.NN
             var pparray = paramsPinned.CreateArray (@params);
             var gparray = wGradPinned.CreateArray (withGrads);
 
-            ForwardFunctionC forwardNative = t => (Forward (new TorchTensor (t)).Handle);
+            ForwardFunctionC forwardNative = t => (forward (new TorchTensor (t)).Handle);
             var res = THSNN_custom_module (name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
             Torch.CheckForErrors ();
             this.handle = new HType (res, true);
@@ -349,6 +349,6 @@ namespace TorchSharp.NN
         /// Keeps the callback delegate alive
         private ForwardFunctionC forwardNative;
 
-        abstract public TorchTensor Forward (TorchTensor t);
+        abstract public TorchTensor forward (TorchTensor t);
     }
 }

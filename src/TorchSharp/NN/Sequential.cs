@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Sequential_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Sequential_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

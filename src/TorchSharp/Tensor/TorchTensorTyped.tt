@@ -35,7 +35,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor Arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -55,7 +55,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor RandomPermutation(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randperm(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -75,7 +75,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor Zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -101,7 +101,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -127,7 +127,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor Empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -153,7 +153,7 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor RandomIntegers(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randint(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -181,7 +181,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor Random(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor rand(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -207,7 +207,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor RandomN(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randn(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 
@@ -231,7 +231,7 @@ if (type.IsFloatingPoint) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor From(<#=type.Storage#> scalar, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        public static TorchTensor from(<#=type.Storage#> scalar, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
             var handle = THSTensor_new<#=type.Name#>Scalar(scalar, (int) deviceType, deviceIndex, requiresGrad);
@@ -256,7 +256,7 @@ if (type.IsInt64) {
         extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 <# } #>
 
-        public static TorchTensor From(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
+        public static TorchTensor from(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
 <#
 if (type.IsFloat16 || type.IsBFloat16) {
@@ -319,15 +319,15 @@ if (type.IsInt64) {
             }
         }
         
-        public static TorchTensor From(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
+        public static TorchTensor from(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
         {
-            return From(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+            return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor Sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType (deviceType);
 

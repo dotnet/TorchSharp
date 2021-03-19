@@ -30,15 +30,15 @@ namespace TorchSharp.Examples
             using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
             using (var model = new Model("model", _numClasses))
-            using (var optimizer = NN.Optimizer.Adam(model.GetParameters(), 0.001))
+            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001))
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
                 for (var epoch = 1; epoch <= _epochs; epoch++)
                 {
-                    Train(model, optimizer, NLL(), train, epoch, _trainBatchSize, train.Size());
-                    Test(model, NLL(), test, test.Size());
+                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size());
+                    Test(model, nll_loss(), test, test.Size());
                 }
 
                 sw.Stop();
@@ -87,13 +87,13 @@ namespace TorchSharp.Examples
                 RegisterModule ("classify", classifier);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public override TorchTensor forward(TorchTensor input)
             {
-                using (var f = features.Forward(input))
-                using (var avg = avgPool.Forward(f))
+                using (var f = features.forward(input))
+                using (var avg = avgPool.forward(f))
 
-                using (var x = avg.View(new long[] { avg.Shape[0], 256 * 2 * 2 }))
-                    return classifier.Forward(x);
+                using (var x = avg.view(new long[] { avg.shape[0], 256 * 2 * 2 }))
+                    return classifier.forward(x);
             }
         }
 
@@ -114,18 +114,18 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                optimizer.ZeroGrad();
+                optimizer.zero_grad();
 
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
-                    output.Backward();
+                    output.backward();
 
-                    optimizer.Step();
+                    optimizer.step();
 
-                    var predicted = prediction.Argmax(1);
-                    total += target.Shape[0];
-                    correct += predicted.Eq(target).Sum().ToInt64();
+                    var predicted = prediction.argmax(1);
+                    total += target.shape[0];
+                    correct += predicted.eq(target).sum().ToInt64();
 
                     if (batchId % _logInterval == 0)
                     {
@@ -153,14 +153,14 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     testLoss += output.ToSingle();
 
-                    var pred = prediction.Argmax(1);
+                    var pred = prediction.argmax(1);
 
-                    correct += pred.Eq(target).Sum().ToInt64();
+                    correct += pred.eq(target).sum().ToInt64();
 
                     data.Dispose();
                     target.Dispose();

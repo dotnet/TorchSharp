@@ -55,7 +55,7 @@
 //// Gets the number of device of the input tensor type.
 //EXPORT_API(const char*) THSJIT_getDimensionedTensorDevice(const JITDimensionedTensorType type);
 //
-//// Forward pass over the input module using the input tensor.
+//// forward pass over the input module using the input tensor.
 //EXPORT_API(Tensor) THSJIT_forward(const JITModule module, const Tensor * tensorPtrs, const int length);
 //
 //// Disposes the module.

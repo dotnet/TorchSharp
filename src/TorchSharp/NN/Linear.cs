@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Linear_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Linear_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -77,7 +77,7 @@ namespace TorchSharp.NN
         static public TorchTensor Linear (TorchTensor x, long inputSize, long outputSize, bool hasBias = true)
         {
             using (var d = Modules.Linear (inputSize, outputSize, hasBias)) {
-                return d.Forward (x);
+                return d.forward (x);
             }
         }
     }
