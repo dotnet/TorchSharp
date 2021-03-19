@@ -5063,39 +5063,39 @@ namespace TorchSharp.Tensor
             {
                 case bool _ when typeof(T) == typeof(byte):
                     {
-                        return ByteTensor.From(array as byte[], dimensions, requiresGrad); ;
+                        return ByteTensor.from(array as byte[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(sbyte):
                     {
-                        return Int8Tensor.From(array as sbyte[], dimensions, requiresGrad); ;
+                        return Int8Tensor.from(array as sbyte[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(short):
                     {
-                        return Int16Tensor.From(array as short[], dimensions, requiresGrad); ;
+                        return Int16Tensor.from(array as short[], dimensions, requiresGrad); ;
                     }
                 case bool _ when typeof(T) == typeof(int):
                     {
-                        return Int32Tensor.From(array as int[], dimensions, requiresGrad);
+                        return Int32Tensor.from(array as int[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(long):
                     {
-                        return Int64Tensor.From(array as long[], dimensions, requiresGrad);
+                        return Int64Tensor.from(array as long[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(double):
                     {
-                        return Float64Tensor.From(array as double[], dimensions, requiresGrad);
+                        return Float64Tensor.from(array as double[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(float):
                     {
-                        return Float32Tensor.From(array as float[], dimensions, requiresGrad);
+                        return Float32Tensor.from(array as float[], dimensions, requiresGrad);
                     }
                 case bool _ when typeof(T) == typeof(bool):
                     {
-                        return BoolTensor.From(array as bool[], dimensions, requiresGrad);
+                        return BoolTensor.from(array as bool[], dimensions, requiresGrad);
                     }
                 //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
                 //    {
-                //        return ComplexFloat64Tensor.From(array as System.Numerics.Complex[], dimensions, requiresGrad);
+                //        return ComplexFloat64Tensor.from(array as System.Numerics.Complex[], dimensions, requiresGrad);
                 //    }
                 default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
             }
@@ -5109,19 +5109,19 @@ namespace TorchSharp.Tensor
             }
 
             if (typeof(T) == typeof(byte))
-                return ByteTensor.From((byte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return ByteTensor.from((byte)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(sbyte))
-                return Int8Tensor.From((sbyte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int8Tensor.from((sbyte)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(short))
-                return Int16Tensor.From((short)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int16Tensor.from((short)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(int))
-                return Int32Tensor.From((int)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int32Tensor.from((int)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(long))
-                return Int64Tensor.From((long)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int64Tensor.from((long)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(double))
-                return Float64Tensor.From((double)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Float64Tensor.from((double)(object)scalar, deviceType, deviceIndex, requiresGrad);
             if (typeof(T) == typeof(float))
-                return Float32Tensor.From((float)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Float32Tensor.from((float)(object)scalar, deviceType, deviceIndex, requiresGrad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 

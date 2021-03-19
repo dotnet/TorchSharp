@@ -27,7 +27,7 @@ namespace TorchSharp
                 Assert.False(isCudnnAvailable);
             }
 
-            //TorchTensor t = Float32Tensor.Ones(shape);
+            //TorchTensor t = Float32Tensor.ones(shape);
             //Assert.Equal(shape, t.Shape);
             //Assert.Equal(1.0f, t[0, 0].ToSingle());
             //Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -42,7 +42,7 @@ namespace TorchSharp
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
-                using (var x = Float32Tensor.Empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU)) { }
+                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, deviceType: DeviceType.CPU)) { }
             }
             Console.WriteLine("Hello World!");
         }
