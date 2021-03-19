@@ -15,7 +15,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_ReLU_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
         static public TorchTensor Relu (TorchTensor x, bool inPlace = false)
         {
             using (var m = Modules.Relu (inPlace)) {
-                return m.Forward (x);
+                return m.forward (x);
             }
         }
     }

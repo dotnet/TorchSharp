@@ -12,7 +12,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Conv2d_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Conv2d_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         static public TorchTensor Conv2D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
             using (var d = Modules.Conv2D (inputChannel, outputChannel, kernelSize, stride, padding)) {
-                return d.Forward (x);
+                return d.forward (x);
             }
         }
     }

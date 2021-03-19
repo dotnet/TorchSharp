@@ -15,7 +15,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Dropout_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Dropout_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
         static public TorchTensor Dropout (TorchTensor x, double probability = 0.5)
         {
             using (var d = Modules.Dropout (probability)) {
-                return d.Forward (x);
+                return d.forward (x);
             }
         }
     }

@@ -6,7 +6,10 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 
 variables: 
   MyRunNumber:  $[counter('MyRunNumber', 52201)]
-  BuildLibTorchPackages: true
+  
+  # Set this to 'true' to build the libtorch-* packages as part of master branch CI and
+  # push them to the artifacts feed of the Azure CI project
+  BuildLibTorchPackages: false
 
 jobs:
 - template: /build/ci/job-template.yml

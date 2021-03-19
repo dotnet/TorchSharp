@@ -87,13 +87,13 @@ namespace TorchSharp.Examples
                 RegisterModule ("classify", classifier);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public override TorchTensor forward(TorchTensor input)
             {
-                using (var f = features.Forward(input))
-                using (var avg = avgPool.Forward(f))
+                using (var f = features.forward(input))
+                using (var avg = avgPool.forward(f))
 
-                using (var x = avg.View(new long[] { avg.Shape[0], 256 * 2 * 2 }))
-                    return classifier.Forward(x);
+                using (var x = avg.view(new long[] { avg.shape[0], 256 * 2 * 2 }))
+                    return classifier.forward(x);
             }
         }
 
@@ -116,16 +116,16 @@ namespace TorchSharp.Examples
             {
                 optimizer.ZeroGrad();
 
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
-                    output.Backward();
+                    output.backward();
 
                     optimizer.Step();
 
-                    var predicted = prediction.Argmax(1);
-                    total += target.Shape[0];
-                    correct += predicted.Eq(target).Sum().ToInt64();
+                    var predicted = prediction.argmax(1);
+                    total += target.shape[0];
+                    correct += predicted.eq(target).sum().ToInt64();
 
                     if (batchId % _logInterval == 0)
                     {
@@ -153,14 +153,14 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(LogSoftMax(prediction, 1), target))
                 {
                     testLoss += output.ToSingle();
 
-                    var pred = prediction.Argmax(1);
+                    var pred = prediction.argmax(1);
 
-                    correct += pred.Eq(target).Sum().ToInt64();
+                    correct += pred.eq(target).sum().ToInt64();
 
                     data.Dispose();
                     target.Dispose();

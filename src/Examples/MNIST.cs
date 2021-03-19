@@ -58,24 +58,24 @@ namespace TorchSharp.Examples
                 RegisterModule("lin2", fc2);
             }
 
-            public override TorchTensor Forward(TorchTensor input)
+            public override TorchTensor forward(TorchTensor input)
             {
-                using (var l11 = conv1.Forward(input))
+                using (var l11 = conv1.forward(input))
                 using (var l12 = MaxPool2D (l11, kernelSize: new long[]{ 2 }))
                 using (var l13 = Relu(l12))
 
-                using (var l21 = conv2.Forward(l13))
+                using (var l21 = conv2.forward(l13))
                 using (var l22 = FeatureAlphaDropout(l21))
                 using (var l23 = MaxPool2D (l22, kernelSize: new long[] { 2 }))
                 using (var l24 = Relu(l23))
 
-                using (var x = l24.View(new long[] { -1, 320 }))
+                using (var x = l24.view(new long[] { -1, 320 }))
 
-                using (var l31 = fc1.Forward(x))
+                using (var l31 = fc1.forward(x))
                 using (var l32 = Relu(l31))
                 using (var l33 = Dropout(l32))
 
-                using (var l41 = fc2.Forward(l33))
+                using (var l41 = fc2.forward(l33))
 
                     return LogSoftMax(l41, 1);
             }
@@ -98,10 +98,10 @@ namespace TorchSharp.Examples
             {
                 optimizer.ZeroGrad();
 
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(prediction, target))
                 {
-                    output.Backward();
+                    output.backward();
 
                     optimizer.Step();
 
@@ -131,14 +131,14 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader)
             {
-                using (var prediction = model.Forward(data))
+                using (var prediction = model.forward(data))
                 using (var output = loss(prediction, target))
                 {
                     testLoss += output.ToSingle();
 
-                    var pred = prediction.Argmax(1);
+                    var pred = prediction.argmax(1);
 
-                    correct += pred.Eq(target).Sum().ToInt32(); // Memory leak here
+                    correct += pred.eq(target).sum().ToInt32(); // Memory leak here
 
                     data.Dispose();
                     target.Dispose();

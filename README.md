@@ -27,7 +27,7 @@ var loss = Losses.MSE(Reduction.Sum);
 
 for (int i = 0; i < 10; i++)
 {
-    var eval = seq.Forward(x);
+    var eval = seq.forward(x);
     var output = loss(eval, y);
     var lossVal = output.ToSingle();
     Console.WriteLine($"loss = {lossVal}");

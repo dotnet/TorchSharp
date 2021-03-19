@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_AvgPool2d_forward (IntPtr module, IntPtr tensor);
 
-        public TorchTensor Forward (TorchTensor tensor)
+        public TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_AvgPool2d_forward (handle.DangerousGetHandle (), tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -46,7 +46,7 @@ namespace TorchSharp.NN
         static public TorchTensor AvgPool2D (TorchTensor x, long[] kernelSize, long[] strides = null)
         {
             using (var d = Modules.AvgPool2D (kernelSize, strides)) {
-                return d.Forward (x);
+                return d.forward (x);
             }
         }
     }

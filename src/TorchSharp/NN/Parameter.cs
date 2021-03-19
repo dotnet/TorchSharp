@@ -13,7 +13,7 @@ namespace TorchSharp.NN
         {
             Name = name;
             Tensor = parameter;
-            WithGrad = withGrad ?? parameter.IsGradRequired;
+            WithGrad = withGrad ?? parameter.requires_grad;
         }
     };
 }

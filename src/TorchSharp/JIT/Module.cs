@@ -143,7 +143,7 @@
 //        [DllImport("LibTorchSharp")]
 //        private static extern IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
 
-//        public TorchTensor Forward(params TorchTensor[] tensors)
+//        public TorchTensor forward(params TorchTensor[] tensors)
 //        {
 //            var parray = new PinnedArray<IntPtr>();
 //            IntPtr tensorRefs = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
