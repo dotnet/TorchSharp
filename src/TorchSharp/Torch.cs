@@ -40,12 +40,13 @@ namespace TorchSharp
             (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? "*.dynlib" :
             "*.so";
         static bool nativeBackendLoaded = false;
+        static bool nativeBackendCudaLoaded = false;
 
         public static void LoadNativeBackend(bool useCudaBackend)
         {
             bool ok = false;
 
-            if (!nativeBackendLoaded) {
+            if (!(useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded)) {
                 Debug.WriteLine($"TorchSHarp: Initialising native backend");
 
                 // See https://github.com/pytorch/pytorch/issues/33415
@@ -53,9 +54,9 @@ namespace TorchSharp
                     ok = NativeLibrary.TryLoad("torch_cuda", typeof(Torch).Assembly, null, out var res1);
                 if (ok) {
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                        NativeLibrary.TryLoad("nvrtc-builtins64_102", typeof(Torch).Assembly, null, out var res2);
+                        NativeLibrary.TryLoad("nvrtc-builtins64_111", typeof(Torch).Assembly, null, out var res2);
                         NativeLibrary.TryLoad("caffe2_nvrtc", typeof(Torch).Assembly, null, out var res3);
-                        NativeLibrary.TryLoad("nvrtc64_102_0", typeof(Torch).Assembly, null, out var res4);
+                        NativeLibrary.TryLoad("nvrtc64_111_0", typeof(Torch).Assembly, null, out var res4);
                     }
                 } else {
                     ok = NativeLibrary.TryLoad("torch_cpu", typeof(Torch).Assembly, null, out var res2);
@@ -75,7 +76,6 @@ namespace TorchSharp
                     var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                     var torchsharpLoc = Path.GetDirectoryName(typeof(Torch).Assembly.Location);
                     if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib")) {
-
 
                         var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
                         var torchSharpVersion = Path.GetFileName(Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..")));
@@ -108,7 +108,10 @@ namespace TorchSharp
                     else 
                         throw new NotSupportedException($"This application uses TorchSharp but doesn't contain reference to either {cudaRootPackage} or {cpuRootPackage}, {libtorchPackageVersion}\"");
                 }
-                nativeBackendLoaded = ok;
+                if (useCudaBackend)
+                    nativeBackendCudaLoaded = true;
+                else
+                    nativeBackendLoaded = true;
             }
         }
 
