@@ -13,8 +13,10 @@ typedef torch::Scalar *Scalar;
 typedef std::shared_ptr<torch::nn::Module>* NNModule;
 typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
-//typedef std::shared_ptr<torch::jit::script::Module> * JITModule;
-//typedef std::shared_ptr<c10::Type> * JITType;
+typedef std::shared_ptr<torch::jit::Module> * JITModule;
+typedef std::shared_ptr<torch::jit::Method>* JITMethod;
+typedef std::shared_ptr<torch::jit::Function> * JITFunction;
+typedef std::shared_ptr<c10::Type> * JITType;
 //typedef std::shared_ptr<torch::jit::DimensionedTensorType>* JITDimensionedTensorType;
 
 #define THS_API TH_API
