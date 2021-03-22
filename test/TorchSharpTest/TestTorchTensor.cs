@@ -1646,7 +1646,7 @@ namespace TorchSharp
                     for (int j = 0; j < 2; j++)
                         for (int k = 0; k < 3; k++) {
                             var itemCorrect = t3Correct[i, j, k];
-                            var item = t3t[i,j,k];
+                            var item = t3t[i,j,k].ToDouble();
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
@@ -1705,7 +1705,7 @@ namespace TorchSharp
                     for (int j = 0; j < 2; j++)
                         for (int k = 0; k < 3; k++) {
                             var itemCorrect = t3Correct[i, j, k];
-                            var item = t3t[i, j, k];
+                            var item = t3t[i, j, k].ToDouble();
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
@@ -1777,7 +1777,7 @@ namespace TorchSharp
                         for (int k = 0; k < 3; k++)
                         {
                             var itemCorrect = t3p2d3Correct[i, j, k];
-                            var item = t3p2d3[i, j, k];
+                            var item = t3p2d3[i, j, k].ToDouble();
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
