@@ -1642,12 +1642,11 @@ namespace TorchSharp
                     {{3.4749f, 2.9038f, 2.7131f},
                      {2.7692f, 2.9444f, 3.2554f}}};
             {
-                var data = t3t.Data<float>();
                 for (int i = 0; i < 3; i++)
                     for (int j = 0; j < 2; j++)
                         for (int k = 0; k < 3; k++) {
                             var itemCorrect = t3Correct[i, j, k];
-                            var item = data[i * 2 * 3 + j * 3 + k];
+                            var item = t3t[i,j,k];
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
