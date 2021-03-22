@@ -1119,5 +1119,64 @@ namespace TorchSharp
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
+        [Fact]
+        public void TestMaxPool1D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4 });
+            using (var pool = MaxPool1D(2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool1D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4 });
+            using (var pool = MaxPool1D(2, 1)) {
+                var pooled = pool.forward(ones);
+
+                Assert.Equal(new long[] { 16, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 2].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool2D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = MaxPool2D(new long[] { 2, 2 }))
+            {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] {16, 2, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool2D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = MaxPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+            }
+        }
     }
 }
