@@ -248,13 +248,13 @@ Tensor THSNN_LogSoftMax_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::LogSoftmax>()->forward(*tensor));
 }
 
-NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1));
         if (stride)
-            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
         auto mod = std::make_shared<torch::nn::AvgPool1dImpl>(opts);
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
