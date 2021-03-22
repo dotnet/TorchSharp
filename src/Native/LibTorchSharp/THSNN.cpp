@@ -574,34 +574,52 @@ Tensor THSNN_poisson_loss(const Tensor input, const Tensor target, const bool lo
     )
 }
 
-Optimizer THSNN_Adagrad_ctor(const Tensor* parameters, const int length, const double learning_rate, const double lr_decay, const double weight_decay)
+Optimizer THSNN_Adagrad_ctor(const Tensor* parameters, const int length, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps)
 {
     auto params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
-    auto options = torch::optim::AdagradOptions(learning_rate).lr_decay(lr_decay).weight_decay(weight_decay);
+    auto options = torch::optim::AdagradOptions(learning_rate)
+        .lr_decay(lr_decay)
+        .weight_decay(weight_decay)
+        .initial_accumulator_value(initial_accumulator_value)
+        .eps(eps);
 
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adagrad>(torch::optim::Adagrad(params, options)));
 }
 
-Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const double learning_rate)
+Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad)
 {
     auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto options = torch::optim::AdamOptions(learning_rate)
+        .betas(std::make_tuple(beta1, beta2))
+        .eps(eps)
+        .weight_decay(weight_decay)
+        .amsgrad(amsgrad);
 
-    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adam>(torch::optim::Adam(params, learning_rate)));
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adam>(torch::optim::Adam(params, options)));
 }
 
-Optimizer THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha)
+Optimizer THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered)
 {
     auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
 
-    auto options = torch::optim::RMSpropOptions(learning_rate).alpha(alpha);
+    auto options = torch::optim::RMSpropOptions(learning_rate)
+        .alpha(alpha)
+        .eps(eps)
+        .weight_decay(weight_decay)
+        .momentum(momentum)
+        .centered(centered);
 
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::RMSprop>(torch::optim::RMSprop(params, options)));
 }
 
-Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum)
+Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov)
 {
     auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
-    auto opts = torch::optim::SGDOptions(learning_rate).momentum(momentum);
+    auto opts = torch::optim::SGDOptions(learning_rate)
+        .momentum(momentum)
+        .dampening(dampening)
+        .weight_decay(weight_decay)
+        .nesterov(nesterov);
 
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::SGD>(torch::optim::SGD(params, opts)));
 }
