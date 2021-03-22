@@ -522,6 +522,31 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestConv1D()
+        {
+            var shape = new long[] { 16, 3, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv1D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(26, output.shape[2]);
+        }
+
+        [Fact]
+        public void TestConv2D()
+        {
+            var shape = new long[] { 16, 3, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv2D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(26, output.shape[2]);
+            Assert.Equal(26, output.shape[3]);
+        }
+
+        [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists (".model.ts")) File.Delete (".model.ts");
