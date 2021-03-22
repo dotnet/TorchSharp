@@ -1582,6 +1582,7 @@ namespace TorchSharp
             Assert.Equal(2.0f, res3[0].ToSingle());
             Assert.Equal(4.0f, res3[1].ToSingle());
         }
+
         [Fact]
         public void Conv1DTest()
         {
@@ -1619,7 +1620,15 @@ namespace TorchSharp
             { for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 3; k++) { t2raw[i * 4 * 3 + j * 3 + k] = t2[i, j, k]; } }
             var t1t = Float32Tensor.from(t1raw, new long[] { 3, 4, 5 });
             var t2t = Float32Tensor.from(t2raw, new long[] { 2, 4, 3 });
-            var t3t = t1t.conv1d(t2t);
+
+            if (Torch.IsCudaAvailable()) {
+                t1t = t1t.cuda();
+                t2t = t2t.cuda();
+            }
+            var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
+            if (Torch.IsCudaAvailable()) {
+                t3t = t3t.cpu();
+            }
 
             // Check the answer
             var t3Correct =
@@ -1636,15 +1645,120 @@ namespace TorchSharp
                 var data = t3t.Data<float>();
                 for (int i = 0; i < 3; i++)
                     for (int j = 0; j < 2; j++)
-                        for (int k = 0; k < 3; k++)
-                        {
+                        for (int k = 0; k < 3; k++) {
                             var itemCorrect = t3Correct[i, j, k];
                             var item = data[i * 2 * 3 + j * 3 + k];
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
-            
+
+        }
+
+
+        [Fact]
+        public void Conv1DTest2()
+        {
+            var t1 =
+                new float[2, 3, 4]
+                   {{{0.1264f, 5.3183f, 6.6905f, -10.6416f},
+                     { 13.8060f, 4.5253f, 2.8568f, -3.2037f},
+                     { -0.5796f, -2.7937f, -3.3662f, -1.3017f}},
+
+                    {{ -2.8910f, 3.9349f, -4.3892f, -2.6051f},
+                     {  4.2547f, 2.6049f, -9.8226f, -5.4543f},
+                     { -0.9674f, 1.0070f, -4.6518f, 7.1702f}}};
+            var t2 =
+                new float[2, 3, 2]
+                   {{{4.0332e+00f, 6.3036e+00f},
+                     { 8.4410e+00f, -5.7543e+00f},
+                     {-5.6937e-03f, -6.7241e+00f}},
+
+                    {{-2.2619e+00f, 1.2082e+00f},
+                     {-1.2203e-01f, -4.9373e+00f},
+                     {-4.1881e+00f, -3.4198e+00f}}};
+
+            var t1raw = new float[2 * 3 * 4];
+            var t2raw = new float[2 * 3 * 2];
+            { for (int i = 0; i < 2; i++) for (int j = 0; j < 3; j++) for (int k = 0; k < 4; k++) { t1raw[i * 3 * 4 + j * 4 + k] = t1[i, j, k]; } }
+            { for (int i = 0; i < 2; i++) for (int j = 0; j < 3; j++) for (int k = 0; k < 2; k++) { t2raw[i * 3 * 2 + j * 2 + k] = t2[i, j, k]; } }
+            var t1t = Float32Tensor.from(t1raw, new long[] { 2, 3, 4 });
+            var t2t = Float32Tensor.from(t2raw, new long[] { 2, 3, 2 });
+
+            if (Torch.IsCudaAvailable()) {
+                t1t = t1t.cuda();
+                t2t = t2t.cuda();
+            }
+            var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
+            if (Torch.IsCudaAvailable()) {
+                t3t = t3t.cpu();
+            }
+
+            // Check the answer
+            var t3Correct =
+                new float[2, 2, 3]
+                    {{{143.3192f, 108.0332f, 11.2241f},
+                      {  -5.9062f, 4.6091f, 6.0273f}},
+
+                     {{  27.3032f, 97.9855f, -133.8372f},
+                      {  -1.4792f, 45.6659f, 29.8705f}}};
+            {
+                for (int i = 0; i < 2; i++)
+                    for (int j = 0; j < 2; j++)
+                        for (int k = 0; k < 3; k++) {
+                            var itemCorrect = t3Correct[i, j, k];
+                            var item = t3t[i, j, k];
+                            Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
+                        }
+            }
+
+        }
+
+        [Fact]
+        public void Conv1DTestPadding2Dilation3()
+        {
+            var t1 =
+                new float[3, 4, 5]
+                   {{{0.3460f, 0.4414f, 0.2384f, 0.7905f, 0.2267f},
+                                     {0.5161f, 0.9032f, 0.6741f, 0.6492f, 0.8576f},
+                                     {0.3373f, 0.0863f, 0.8137f, 0.2649f, 0.7125f},
+                                     {0.7144f, 0.1020f, 0.0437f, 0.5316f, 0.7366f}},
+
+                                    {{0.9871f, 0.7569f, 0.4329f, 0.1443f, 0.1515f},
+                                     {0.5950f, 0.7549f, 0.8619f, 0.0196f, 0.8741f},
+                                     {0.4595f, 0.7844f, 0.3580f, 0.6469f, 0.7782f},
+                                     {0.0130f, 0.8869f, 0.8532f, 0.2119f, 0.8120f}},
+
+                                    {{0.5163f, 0.5590f, 0.5155f, 0.1905f, 0.4255f},
+                                     {0.0823f, 0.7887f, 0.8918f, 0.9243f, 0.1068f},
+                                     {0.0337f, 0.2771f, 0.9744f, 0.0459f, 0.4082f},
+                                     {0.9154f, 0.2569f, 0.9235f, 0.9234f, 0.3148f}}};
+            var t2 =
+                new float[2, 4, 3]
+                   {{{0.4941f, 0.8710f, 0.0606f},
+                     {0.2831f, 0.7930f, 0.5602f},
+                     {0.0024f, 0.1236f, 0.4394f},
+                     {0.9086f, 0.1277f, 0.2450f}},
+
+                    {{0.5196f, 0.1349f, 0.0282f},
+                     {0.1749f, 0.6234f, 0.5502f},
+                     {0.7678f, 0.0733f, 0.3396f},
+                     {0.6023f, 0.6546f, 0.3439f}}};
+
+            var t1raw = new float[3 * 4 * 5];
+            var t2raw = new float[2 * 4 * 3];
+            { for (int i = 0; i < 3; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 5; k++) { t1raw[i * 4 * 5 + j * 5 + k] = t1[i, j, k]; } }
+            { for (int i = 0; i < 2; i++) for (int j = 0; j < 4; j++) for (int k = 0; k < 3; k++) { t2raw[i * 4 * 3 + j * 3 + k] = t2[i, j, k]; } }
+            var t1t = Float32Tensor.from(t1raw, new long[] { 3, 4, 5 }); //.cuda();
+            var t2t = Float32Tensor.from(t2raw, new long[] { 2, 4, 3 }); //.cuda();
+
+            if (Torch.IsCudaAvailable()) {
+                t1t = t1t.cuda();
+                t2t = t2t.cuda();
+            }
             var t3p2d3 = t1t.conv1d(t2t, padding: 2, dilation: 3);
+            if (Torch.IsCudaAvailable()) {
+                t3p2d3 = t3p2d3.cpu();
+            }
 
             // Check the answer
             var t3p2d3Correct =
@@ -1664,7 +1778,7 @@ namespace TorchSharp
                         for (int k = 0; k < 3; k++)
                         {
                             var itemCorrect = t3p2d3Correct[i, j, k];
-                            var item = data[i * 2 * 3 + j * 3 + k];
+                            var item = t3p2d3[i, j, k];
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
             }
