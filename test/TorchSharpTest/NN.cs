@@ -685,6 +685,111 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Fully connected Relu net with one hidden layer trained using Adagrad optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdagrad()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.Adagrad(seq.parameters(), learning_rate);
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                Assert.True(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+        }
+
+        /// <summary>
+        /// Fully connected Relu net with one hidden layer trained using RMSprop optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRMSProp()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate);
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                Assert.True(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+        }
+
+        /// <summary>
+        /// Fully connected Relu net with one hidden layer trained using SGD optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingSGD()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate);
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                Assert.True(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+        }
+
         [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoader()
         {

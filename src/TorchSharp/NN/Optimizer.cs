@@ -78,10 +78,40 @@ namespace TorchSharp.NN
 
     public partial class Optimizer
     {
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_RMSprop_ctor(IntPtr parameters, int len, double learningRate, double alpha);
+
+        /// <summary>
+        /// Implements RMSprop algorithm.
+        ///
+        /// Proposed by G.Hinton in his course.
+        /// </summary>
+        /// <param name="parameters">Prameters to optimize</param>
+        /// <param name="learningRate">Learning rate (default: 1e-2)</param>
+        /// <param name="alpha">Smoothing constant (default: 0.99)</param>
+        /// <returns></returns>
+        public static Optimizer RMSProp(IEnumerable<TorchTensor> parameters, double learningRate = 0.01, double alpha = 0.99)
+        {
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+
+            var res = THSNN_RMSprop_ctor(paramsRef, parray.Array.Length, learningRate, alpha);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new Optimizer(res);
+        }
+
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Adam_ctor (IntPtr parameters, int len, double learningRate);
 
-        public static Optimizer Adam (IEnumerable<TorchTensor> parameters, double learningRate)
+        /// <summary>
+        /// Implements Adam algorithm.
+        ///
+        /// It has been proposed in Adam: A Method for Stochastic Optimization.The implementation of the L2 penalty follows changes proposed in Decoupled Weight Decay Regularization.
+        /// </summary>
+        /// <param name="parameters">Prameters to optimize</param>
+        /// <param name="learningRate">learning rate (default: 1e-3)</param>
+        /// <returns></returns>
+        public static Optimizer Adam (IEnumerable<TorchTensor> parameters, double learningRate = 1e-3)
         {
             var parray = new PinnedArray<IntPtr> ();
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
@@ -91,9 +121,39 @@ namespace TorchSharp.NN
             return new Optimizer (res);
         }
 
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_Adagrad_ctor(IntPtr parameters, int len, double learningRate, double lr_decay, double weight_decay);
+
+        /// <summary>
+        /// Implements Adagrad algorithm.
+        ///
+        /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
+        /// </summary>
+        /// <param name="parameters">Prameters to optimize</param>
+        /// <param name="learningRate">learning rate (default: 1e-2)</param>
+        /// <param name="lr_decay">learning rate decay (default: 0)</param>
+        /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
+        /// <returns></returns>
+        public static Optimizer Adagrad(IEnumerable<TorchTensor> parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0)
+        {
+            var parray = new PinnedArray<IntPtr>();
+            IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+
+            var res = THSNN_Adagrad_ctor(paramsRef, parray.Array.Length, learningRate, lr_decay, weight_decay);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new Optimizer(res);
+        }
+
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_SGD_ctor (IntPtr parameters, int len, double learningRate, double momentum);
 
+        /// <summary>
+        /// Implements stochastic gradient descent (optionally with momentum).
+        /// </summary>
+        /// <param name="parameters">Prameters to optimize</param>
+        /// <param name="learningRate">Learning rate</param>
+        /// <param name="momentum">Momentum factor (default: 0)</param>
+        /// <returns></returns>
         public static Optimizer SGD (IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0)
         {
             var parray = new PinnedArray<IntPtr> ();

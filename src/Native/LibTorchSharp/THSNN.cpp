@@ -499,19 +499,34 @@ Tensor THSNN_poisson_loss(const Tensor input, const Tensor target, const bool lo
     )
 }
 
-Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const double learnig_rate)
+Optimizer THSNN_Adagrad_ctor(const Tensor* parameters, const int length, const double learning_rate, const double lr_decay, const double weight_decay)
 {
-    auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto options = torch::optim::AdagradOptions(learning_rate).lr_decay(lr_decay).weight_decay(weight_decay);
 
-    auto optimizer = torch::optim::Adam(params, learnig_rate);
-
-    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adam>(torch::optim::Adam(params, learnig_rate)));
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adagrad>(torch::optim::Adagrad(params, options)));
 }
 
-Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learnig_rate, const double momentum)
+Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const double learning_rate)
 {
     auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
-    auto opts = torch::optim::SGDOptions(learnig_rate).momentum(momentum);
+
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adam>(torch::optim::Adam(params, learning_rate)));
+}
+
+Optimizer THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha)
+{
+    auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+
+    auto options = torch::optim::RMSpropOptions(learning_rate).alpha(alpha);
+
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::RMSprop>(torch::optim::RMSprop(params, options)));
+}
+
+Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum)
+{
+    auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto opts = torch::optim::SGDOptions(learning_rate).momentum(momentum);
 
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::SGD>(torch::optim::SGD(params, opts)));
 }
