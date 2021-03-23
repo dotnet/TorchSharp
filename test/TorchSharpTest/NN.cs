@@ -259,6 +259,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateSELU()
+        {
+            var rel = SELU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.76));
+        }
+
+        [Fact]
         public void EvaluateGELU()
         {
             var rel = GELU();
@@ -267,6 +278,72 @@ namespace TorchSharp
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -0.2));
+        }
+
+        [Fact]
+        public void EvaluateSigmoid()
+        {
+            var rel = Sigmoid();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSiLU()
+        {
+            var rel = SiLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmax2d()
+        {
+            var rel = Softmax2d();
+            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateTanh()
+        {
+            var rel = Tanh();
+            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmax()
+        {
+            var rel = Softmax(1);
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmin()
+        {
+            var rel = Softmax(1);
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
 
         [Fact]
