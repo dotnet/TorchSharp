@@ -455,6 +455,31 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void TestBinaryCrossEntropyLoss()
+        {
+            var m = Sigmoid();
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = binary_cross_entropy_loss()(m.forward(input), target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestBinaryCrossEntropyLossWithLogits()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = binary_cross_entropy_with_logits_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
 #if DEBUG
         [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
         public void TestErrorHandling()
