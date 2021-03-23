@@ -62,17 +62,17 @@ namespace TorchSharp.Examples
             {
                 using (var l11 = conv1.forward(input))
                 using (var l12 = MaxPool2D (l11, kernelSize: new long[]{ 2 }))
-                using (var l13 = Relu(l12))
+                using (var l13 = ReLU(l12))
 
                 using (var l21 = conv2.forward(l13))
                 using (var l22 = FeatureAlphaDropout(l21))
                 using (var l23 = MaxPool2D (l22, kernelSize: new long[] { 2 }))
-                using (var l24 = Relu(l23))
+                using (var l24 = ReLU(l23))
 
                 using (var x = l24.view(new long[] { -1, 320 }))
 
                 using (var l31 = fc1.forward(x))
-                using (var l32 = Relu(l31))
+                using (var l32 = ReLU(l31))
                 using (var l33 = Dropout(l32))
 
                 using (var l41 = fc2.forward(l33))
