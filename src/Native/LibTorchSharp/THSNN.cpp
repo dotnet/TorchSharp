@@ -1438,3 +1438,9 @@ void THSNN_AnyModule_dispose(const NNAnyModule module)
     delete module; // NOTE: this only deletes the shared_ptr
 }
 
+Tensor THSNN_one_hot(const Tensor self, const int64_t num_classes)
+{
+    CATCH_RETURN_Tensor(
+        res = ResultTensor(torch::nn::functional::one_hot(*self, num_classes));
+    )
+}

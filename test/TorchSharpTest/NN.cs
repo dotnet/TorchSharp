@@ -1690,5 +1690,25 @@ namespace TorchSharp
                 Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
             }
         }
+
+        [Fact]
+        public void TestOneHotEncoding1()
+        {
+            var ones = Int64Tensor.from(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
+            var env = OneHot(ones,5);
+            var values = env.Data<long>().ToArray();
+            Assert.Equal(ones.shape[0], env.shape[0]);
+            Assert.Equal(5, env.shape[1]);
+        }
+
+        [Fact]
+        public void TestOneHotEncoding2()
+        {
+            var ones = Int64Tensor.from(new long[] { 1, 2, 0, 5, 3, 4, 2, 2 });
+            var env = OneHot(ones);
+            var values = env.Data<long>().ToArray();
+            Assert.Equal(ones.shape[0], env.shape[0]);
+            Assert.Equal(6, env.shape[1]);
+        }
     }
 }

@@ -164,6 +164,10 @@ EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 
+// Misc.
+
+EXPORT_API(Tensor) THSNN_one_hot(const Tensor self, const int64_t num_classes);
+
 // Initializers
 
 EXPORT_API(void) THSNN_initUniform(Tensor twrapper, double low, double high);
