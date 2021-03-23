@@ -189,9 +189,161 @@ namespace TorchSharp
         [Fact]
         public void CreateRelu()
         {
-            var rel = Relu();
+            var rel = ReLU();
             Assert.NotNull(rel);
             var modules = rel.GetName();
+        }
+
+        [Fact]
+        public void EvaluateRelu()
+        {
+            var rel = ReLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0));
+        }
+
+        [Fact]
+        public void EvaluateRelu6()
+        {
+            var rel = ReLU6();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 6.0));
+        }
+
+        [Fact]
+        public void EvaluateLeakyRelu()
+        {
+            var rel = LeakyReLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateRRelu()
+        {
+            var rel = RReLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateCELU()
+        {
+            var rel = CELU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0));
+        }
+
+        [Fact]
+        public void EvaluateELU()
+        {
+            var rel = ELU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0));
+        }
+
+        [Fact]
+        public void EvaluateSELU()
+        {
+            var rel = SELU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.76));
+        }
+
+        [Fact]
+        public void EvaluateGELU()
+        {
+            var rel = GELU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -0.2));
+        }
+
+        [Fact]
+        public void EvaluateSigmoid()
+        {
+            var rel = Sigmoid();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSiLU()
+        {
+            var rel = SiLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmax2d()
+        {
+            var rel = Softmax2d();
+            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateTanh()
+        {
+            var rel = Tanh();
+            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmax()
+        {
+            var rel = Softmax(1);
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftmin()
+        {
+            var rel = Softmax(1);
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
 
         [Fact]
@@ -201,7 +353,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
@@ -215,7 +367,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
             var parameters = seq.parameters();
             var parametersCount = parameters.Count ();
@@ -233,7 +385,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
@@ -288,7 +440,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
@@ -310,7 +462,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
@@ -336,7 +488,7 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", Relu()),
+                ("relu1", ReLU()),
                 ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
@@ -710,7 +862,7 @@ namespace TorchSharp
 
 
         /// <summary>
-        /// Fully connected Relu net with one hidden layer trained using gradient descent.
+        /// Fully connected ReLU net with one hidden layer trained using gradient descent.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
         /// </summary>
         [Fact]
@@ -718,7 +870,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -757,7 +909,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-                        var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+                        var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00001;
 
@@ -767,7 +919,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Fully connected Relu net with one hidden layer trained using Adam optimizer.
+        /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
@@ -775,7 +927,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -806,7 +958,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -832,7 +984,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Fully connected Relu net with one hidden layer trained using Adagrad optimizer.
+        /// Fully connected ReLU net with one hidden layer trained using Adagrad optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
@@ -840,7 +992,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -867,7 +1019,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Fully connected Relu net with one hidden layer trained using RMSprop optimizer.
+        /// Fully connected ReLU net with one hidden layer trained using RMSprop optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
@@ -875,7 +1027,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -906,7 +1058,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -937,7 +1089,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -964,7 +1116,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Fully connected Relu net with one hidden layer trained using SGD optimizer.
+        /// Fully connected ReLU net with one hidden layer trained using SGD optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
@@ -972,7 +1124,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -1003,7 +1155,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -1034,7 +1186,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", Relu()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });

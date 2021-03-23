@@ -6,56 +6,56 @@ using TorchSharp.Tensor;
 namespace TorchSharp.NN
 {
     /// <summary>
-    /// This class is used to represent a ReLU module.
+    /// This class is used to represent a Softmax module.
     /// </summary>
-    public class ReLU : Module
+    public class Softmax : Module
     {
-        internal ReLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+        internal Softmax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Softmax_forward (Module.HType module, IntPtr tensor);
 
         public TorchTensor forward (TorchTensor tensor)
         {
-            var res = THSNN_ReLU_forward (handle, tensor.Handle);
+            var res = THSNN_Softmax_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
         public override string GetName ()
         {
-            return typeof (ReLU).Name;
+            return typeof (Softmax).Name;
         }
     }
 
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_ReLU_ctor (bool inplace, out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_Softmax_ctor (long dim, out IntPtr pBoxedModule);
 
         /// <summary>
-        /// Rectified Linear Unit
+        /// Softmax
         /// </summary>
-        /// <param name="inPlace">Do the operation in-place. Default: False</param>
+        /// <param name="dim">A dimension along which Softmax will be computed (so every slice along dim will sum to 1)</param>
         /// <returns></returns>
-        static public ReLU ReLU(bool inPlace = false)
+        static public Softmax Softmax(long dim)
         {
-            var handle = THSNN_ReLU_ctor (inPlace, out var boxedHandle);
+            var handle = THSNN_Softmax_ctor(dim, out var boxedHandle);
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new ReLU (handle, boxedHandle);
+            return new Softmax (handle, boxedHandle);
         }
     }
     public static partial class Functions
     {
         /// <summary>
-        /// Rectified Linear Unit
+        /// Softmax
         /// </summary>
         /// <param name="x">The input tensor</param>
-        /// <param name="inPlace">Do the operation in-place. Default: False</param>
+        /// <param name="dim">A dimension along which Softmax will be computed (so every slice along dim will sum to 1)</param>
         /// <returns></returns>
-        static public TorchTensor ReLU(TorchTensor x, bool inPlace = false)
+        static public TorchTensor Softmax (TorchTensor x, long dim)
         {
-            using (var m = Modules.ReLU(inPlace)) {
+            using (var m = Modules.Softmax(dim)) {
                 return m.forward (x);
             }
         }

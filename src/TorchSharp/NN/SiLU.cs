@@ -6,56 +6,55 @@ using TorchSharp.Tensor;
 namespace TorchSharp.NN
 {
     /// <summary>
-    /// This class is used to represent a ReLU module.
+    /// This class is used to represent a SiLU module.
     /// </summary>
-    public class ReLU : Module
+    public class SiLU : Module
     {
-        internal ReLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+        internal SiLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_SiLU_forward (Module.HType module, IntPtr tensor);
 
         public TorchTensor forward (TorchTensor tensor)
         {
-            var res = THSNN_ReLU_forward (handle, tensor.Handle);
+            var res = THSNN_SiLU_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
         public override string GetName ()
         {
-            return typeof (ReLU).Name;
+            return typeof (SiLU).Name;
         }
     }
 
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_ReLU_ctor (bool inplace, out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_SiLU_ctor (out IntPtr pBoxedModule);
 
         /// <summary>
-        /// Rectified Linear Unit
+        /// Sigmoid-Weighted Linear Unit
         /// </summary>
-        /// <param name="inPlace">Do the operation in-place. Default: False</param>
         /// <returns></returns>
-        static public ReLU ReLU(bool inPlace = false)
+        /// <remarks>The native libreary does not take an 'inplace' option, even though the PyTorch documentation mentions the parameter.</remarks>
+        static public SiLU SiLU()
         {
-            var handle = THSNN_ReLU_ctor (inPlace, out var boxedHandle);
+            var handle = THSNN_SiLU_ctor (out var boxedHandle);
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new ReLU (handle, boxedHandle);
+            return new SiLU (handle, boxedHandle);
         }
     }
     public static partial class Functions
     {
         /// <summary>
-        /// Rectified Linear Unit
+        /// Sigmoid-Weighted Linear Unit
         /// </summary>
         /// <param name="x">The input tensor</param>
-        /// <param name="inPlace">Do the operation in-place. Default: False</param>
         /// <returns></returns>
-        static public TorchTensor ReLU(TorchTensor x, bool inPlace = false)
+        static public TorchTensor SiLU(TorchTensor x)
         {
-            using (var m = Modules.ReLU(inPlace)) {
+            using (var m = Modules.SiLU()) {
                 return m.forward (x);
             }
         }
