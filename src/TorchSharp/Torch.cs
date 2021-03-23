@@ -12,7 +12,7 @@ namespace TorchSharp
 
     public static class Torch
     {
-        const string libtorchPackageVersion = "1.5.6";
+        const string libtorchPackageVersion = "1.8.0.7";
         const string cudaVersion = "11.1";
 
         [DllImport("LibTorchSharp")]
@@ -54,9 +54,19 @@ namespace TorchSharp
                     ok = NativeLibrary.TryLoad("torch_cuda", typeof(Torch).Assembly, null, out var res1);
                 if (ok) {
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                        NativeLibrary.TryLoad("nvrtc-builtins64_111", typeof(Torch).Assembly, null, out var res2);
-                        NativeLibrary.TryLoad("caffe2_nvrtc", typeof(Torch).Assembly, null, out var res3);
-                        NativeLibrary.TryLoad("nvrtc64_111_0", typeof(Torch).Assembly, null, out var res4);
+
+                        // Preloading these DLLs on windows seems to iron out problems where one native DLL
+                        // requests a load of another through dynamic linking techniques.  
+                        // 
+                        NativeLibrary.TryLoad("cudnn_adv_infer64_8", typeof(Torch).Assembly, null, out var res2);
+                        NativeLibrary.TryLoad("cudnn_adv_train64_8", typeof(Torch).Assembly, null, out var res3);
+                        NativeLibrary.TryLoad("cudnn_cnn_infer64_8", typeof(Torch).Assembly, null, out var res4);
+                        NativeLibrary.TryLoad("cudnn_cnn_train64_8", typeof(Torch).Assembly, null, out var res5);
+                        NativeLibrary.TryLoad("cudnn_ops_infer64_8", typeof(Torch).Assembly, null, out var res6);
+                        NativeLibrary.TryLoad("cudnn_ops_train64_8", typeof(Torch).Assembly, null, out var res7);
+                        NativeLibrary.TryLoad("nvrtc-builtins64_111", typeof(Torch).Assembly, null, out var res8);
+                        NativeLibrary.TryLoad("caffe2_nvrtc", typeof(Torch).Assembly, null, out var res9);
+                        NativeLibrary.TryLoad("nvrtc64_111_0", typeof(Torch).Assembly, null, out var res10);
                     }
                 } else {
                     ok = NativeLibrary.TryLoad("torch_cpu", typeof(Torch).Assembly, null, out var res2);

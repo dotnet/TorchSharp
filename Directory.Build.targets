@@ -103,7 +103,8 @@
   </ItemGroup>
 
   <Target Name="CopyNativeAssemblies"
-          BeforeTargets="PrepareForRun">
+          BeforeTargets="PrepareForRun"
+					Condition="'$(SkipTests)' != 'true'">
 
     <PropertyGroup>
       <NativeLibPrefix Condition="'$(TargetOS)' == 'linux' OR '$(TargetOS)' == 'mac'">lib</NativeLibPrefix>
