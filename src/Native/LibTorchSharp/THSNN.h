@@ -86,6 +86,8 @@ EXPORT_API(Tensor)   THSNN_FeatureAlphaDropout_forward(const NNModule module, co
 
 // Linear
 
+EXPORT_API(NNModule) THSNN_Identity_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Identity_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool with_bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Linear_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(Tensor)   THSNN_Linear_bias(const NNModule module);

@@ -138,6 +138,19 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestIdentity()
+        {
+            var lin = Identity();
+
+            var input = Float32Tensor.randn(new long[] { 1, 1000 });
+            var output = lin.forward(input);
+
+            for (int i = 0; i < 1000; i++) {
+                Assert.Equal(input.Data<float>()[i], output.Data<float>()[i]);
+            }
+        }
+
+        [Fact]
         public void TestLinearEditBias()
         {
             var lin = Linear(1000, 100, true);

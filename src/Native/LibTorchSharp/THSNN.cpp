@@ -846,27 +846,48 @@ NNModule THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const 
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::BatchNorm3dOptions(features)
-        .eps(eps)
-        .momentum(momentum)
-        .affine(affine)
-        .track_running_stats(track_running_stats);
+            .eps(eps)
+            .momentum(momentum)
+            .affine(affine)
+            .track_running_stats(track_running_stats);
 
-    auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
+        auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     )
 }
 
 Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::BatchNorm3d>()->forward(*tensor));
+}
+
+NNModule THSNN_Identity_ctor(NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto mod = std::make_shared<torch::nn::IdentityImpl>();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::IdentityImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Identity_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Identity>()->forward(*tensor));
 }
 
 NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
