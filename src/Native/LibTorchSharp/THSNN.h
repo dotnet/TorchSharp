@@ -128,6 +128,13 @@ EXPORT_API(Tensor)   THSNN_Softmin_forward(const NNModule module, const Tensor t
 EXPORT_API(NNModule) THSNN_Tanh_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Tanh_forward(const NNModule module, const Tensor tensor);
 
+// Sparse
+
+EXPORT_API(NNModule) THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const bool sparse, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool freeze, const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const bool sparse, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Embedding_forward(const NNModule module, const Tensor weights);
+EXPORT_API(Tensor)   THSNN_Embedding_weight(const NNModule module);
+EXPORT_API(void)     THSNN_Embedding_set_weight(const NNModule module, const Tensor weights);
 
 // Containers
 

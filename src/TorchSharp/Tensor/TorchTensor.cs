@@ -5055,6 +5055,21 @@ namespace TorchSharp.Tensor
 
     public static class TensorExtensionMethods
     {
+        internal static bool IsIntegral(this TorchTensor tensor)
+        {
+            switch(tensor.Type) {
+            case ScalarType.Byte:
+            case ScalarType.Int8:
+            case ScalarType.Int16:
+            case ScalarType.Int32:
+            case ScalarType.Int64:
+            case ScalarType.Bool:
+                return true;
+            default:
+                return false;
+            }
+        }
+
         public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
             var array = doCopy ? (T[])rawArray.Clone() : rawArray;

@@ -984,6 +984,87 @@ Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor ten
     CATCH_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
 }
 
+NNModule THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedding_dims,
+    const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type,
+    const bool scale_grad_by_freq, const bool sparse,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::EmbeddingOptions(num_embeddings, embedding_dims)
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .sparse(sparse);
+
+        if (has_pi)
+            opts.padding_idx(padding_idx);
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+NNModule THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool freeze,
+    const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type,
+    const bool scale_grad_by_freq, const bool sparse,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto rows = embeddings->size(0);
+        auto cols = embeddings->size(1);
+
+        auto opts = torch::nn::EmbeddingOptions(rows, cols)
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .sparse(sparse);
+
+        if (has_pi)
+            opts.padding_idx(padding_idx);
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
+        mod->weight = *embeddings;
+        mod->weight.set_requires_grad(!freeze);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Embedding_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Embedding>()->forward(*tensor));
+}
+
+Tensor THSNN_Embedding_weight(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Embedding>()->weight);
+}
+
+void THSNN_Embedding_set_weight(const NNModule module, const Tensor weights)
+{
+    CATCH(
+        (*module)->as<torch::nn::Embedding>()->weight = *weights;
+    )
+}
+
+
 NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
     const int64_t dilation, const int64_t groups, const int64_t bias,

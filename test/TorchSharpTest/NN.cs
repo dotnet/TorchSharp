@@ -1620,5 +1620,53 @@ namespace TorchSharp
                 Assert.Equal(ones.shape, pooled.shape);
             }
         }
+
+        [Fact]
+        public void TestEmbeddingDefaults()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            using (var emb = Embedding(1000,12)) {
+                var output = emb.forward(ones);
+                Assert.Equal(new long[] { 16, 12 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingWithMaxNorm()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            using (var emb = Embedding(1000, 128, max_norm: 1.5)) {
+                var output = emb.forward(ones);
+                Assert.Equal(new long[] { 16, 128 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingSetWeights()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            using (var emb = Embedding(1000, 12)) {
+                var weights = Float32Tensor.randn(new long[] { 1000,12 });
+
+                emb.Weight = weights;
+
+                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingFromPretrained()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+
+            using (var emb = NN.Embedding.from_pretrained(weights)) {
+                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+            }
+        }
     }
 }
