@@ -144,7 +144,10 @@ EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tenso
 
 // Loss functions
 
+EXPORT_API(Tensor) THSNN_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t ignore_index, const bool has_ii, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_binary_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_binary_cross_entropy_with_logits(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction, const Tensor pos_weights_wrapper);
+EXPORT_API(Tensor) THSNN_l1_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_poisson_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);

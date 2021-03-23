@@ -53,6 +53,7 @@ namespace TorchSharp.NN
         /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
         /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
         /// <returns></returns>
+        /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
         public static Embedding from_pretrained(TorchTensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
         {
             var res = THSNN_Embedding_from_pretrained(embeddings.Handle, freeze,
@@ -82,6 +83,7 @@ namespace TorchSharp.NN
         /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
         /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
         /// <returns></returns>
+        /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
         static public Embedding Embedding (long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
         {
             var res = THSNN_Embedding_ctor (num_embeddings, embedding_dims,
@@ -107,6 +109,7 @@ namespace TorchSharp.NN
         /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
         /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
         /// <returns></returns>
+        /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
         static public TorchTensor Embedding (TorchTensor x, long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
         {
             using (var d = Modules.Embedding(num_embeddings, embedding_dims, padding_idx, max_norm, norm_type, scale_grad_by_freq, sparse)) {

@@ -16,14 +16,39 @@ namespace TorchSharp.NN
     {
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_binary_cross_entropy (IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction);
+        private static extern IntPtr THSNN_cross_entropy(IntPtr srct, IntPtr trgt, IntPtr wgt, long ignore_index, bool hasII, long reduction);
 
-        public static Loss binary_cross_entropy (TorchTensor? weigths = null, Reduction reduction = Reduction.Mean)
+        public static Loss cross_entropy_loss(TorchTensor? weigths = null, long? ignore_index = null, Reduction reduction = Reduction.Mean)
         {
             return (TorchTensor src, TorchTensor target) => {
-                var res = THSNN_binary_cross_entropy (src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, (long)reduction);
+                var ii = ignore_index.HasValue ? ignore_index.Value : -100;
+                var res = THSNN_cross_entropy (src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction);
                 if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor (res);
+            };
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_binary_cross_entropy(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction);
+
+        public static Loss binary_cross_entropy_loss(TorchTensor? weigths = null, Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                var res = THSNN_binary_cross_entropy(src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, (long)reduction);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_binary_cross_entropy_with_logits(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction, IntPtr posWeights);
+
+        public static Loss binary_cross_entropy_with_logits_loss(TorchTensor? weigths = null, Reduction reduction = Reduction.Mean, TorchTensor? posWeights = null)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                var res = THSNN_binary_cross_entropy_with_logits(src.Handle, target.Handle, weigths?.Handle ?? IntPtr.Zero, (long)reduction, posWeights?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
             };
         }
 
@@ -37,6 +62,18 @@ namespace TorchSharp.NN
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (res);
                 };
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_l1_loss(IntPtr srct, IntPtr trgt, long reduction);
+
+        public static Loss l1_loss(Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                var res = THSNN_l1_loss(src.Handle, target.Handle, (long)reduction);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
         }
 
         [DllImport ("LibTorchSharp")]
