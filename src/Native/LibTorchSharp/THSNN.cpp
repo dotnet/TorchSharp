@@ -671,12 +671,18 @@ void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
 
 NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
+    const int64_t dilation, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::Conv1dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
+        auto opts = torch::nn::Conv1dOptions(inputChannel, outputChannel, kernelSize)
+        .stride(stride)
+        .padding(padding)
+        .dilation(dilation)
+        .groups(groups)
+        .bias(bias);
 
-    auto mod = std::make_shared<torch::nn::Conv1dImpl>(opts);
+        auto mod = std::make_shared<torch::nn::Conv1dImpl>(opts);
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
         // a Module can only be boxed to AnyModule at the point its static type is known).
@@ -696,21 +702,27 @@ Tensor THSNN_Conv1d_forward(const NNModule module, const Tensor tensor)
 
 NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
+    const int64_t dilation, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
+        auto opts = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize)
+            .stride(stride)
+            .padding(padding)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias);
 
-    auto mod = std::make_shared<torch::nn::Conv2dImpl>(opts);
+        auto mod = std::make_shared<torch::nn::Conv2dImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv2dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     );
 }
 
@@ -721,6 +733,7 @@ Tensor THSNN_Conv2d_forward(const NNModule module, const Tensor tensor)
 
 NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
+    const int64_t dilation, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

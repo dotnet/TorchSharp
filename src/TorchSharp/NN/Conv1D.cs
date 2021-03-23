@@ -5,6 +5,14 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
+    public enum PaddingModes
+    {
+        Zeros,
+        Reflect,
+        Replicate,
+        Circular
+    }
+
     public class Conv1D : Module
     {
         internal Conv1D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
@@ -22,7 +30,7 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv1d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, out IntPtr pBoxedModule);
+        private static extern IntPtr THSNN_Conv1d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long groups, bool bias, out IntPtr pBoxedModule);
 
         /// <summary>
         /// Applies a 1D convolution over an input signal composed of several input planes.
@@ -32,10 +40,15 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">Size of the convolving kernel</param>
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
+        /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
+        /// <param name="paddingMode"></param>
+        /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
+        /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-        static public Conv1D Conv1D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
+        static public Conv1D Conv1D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            var res = THSNN_Conv1d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, out var boxedHandle);
+            if (paddingMode != PaddingModes.Zeros) throw new NotImplementedException("Convolution padding mode other than 'zeros'");
+            var res = THSNN_Conv1d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, groups, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Conv1D (res, boxedHandle);
         }
@@ -51,10 +64,14 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">Size of the convolving kernel</param>
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
+        /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
+        /// <param name="paddingMode"></param>
+        /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
+        /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-        static public TorchTensor Conv1D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
+        static public TorchTensor Conv1D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.Conv1D (inputChannel, outputChannel, kernelSize, stride, padding)) {
+            using (var d = Modules.Conv1D (inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
                 return d.forward (x);
             }
         }
