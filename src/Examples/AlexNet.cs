@@ -70,7 +70,7 @@ namespace TorchSharp.Examples
                     ("r5", Relu(inPlace: true)),
                     ("mp3", MaxPool2D(kernelSize: new long[] { 2 })));
 
-                avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
+                avgPool = AdaptiveAvgPool2D((2,2));
 
                 classifier = Sequential(
                     ("d1", Dropout()),
