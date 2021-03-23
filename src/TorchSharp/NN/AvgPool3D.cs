@@ -6,20 +6,20 @@ using TorchSharp.Tensor;
 namespace TorchSharp.NN
 {
     /// <summary>
-    /// This class is used to represent a AvgPool2D module.
+    /// This class is used to represent a AvgPool3D module.
     /// </summary>
-    public class AvgPool2D : Module
+    public class AvgPool3D : Module
     {
-        internal AvgPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AvgPool3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_AvgPool2d_forward (IntPtr module, IntPtr tensor);
+        private static extern IntPtr THSNN_AvgPool3d_forward (IntPtr module, IntPtr tensor);
 
         public TorchTensor forward (TorchTensor tensor)
         {
-            var res = THSNN_AvgPool2d_forward (handle.DangerousGetHandle (), tensor.Handle);
+            var res = THSNN_AvgPool3d_forward (handle.DangerousGetHandle (), tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
@@ -27,22 +27,21 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_AvgPool2d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_AvgPool3d_ctor (IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
 
         /// <summary>
-        /// Applies a 2D average pooling over an input signal composed of several input planes.
+        /// Applies a 3D average pooling over an input signal composed of several input planes.
         /// </summary>
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="strides">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-
-        static public AvgPool2D AvgPool2D (long[] kernelSize, long[] strides = null)
+        static public AvgPool3D AvgPool3D (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
-                    var handle = THSNN_AvgPool2d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
+                    var handle = THSNN_AvgPool3d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AvgPool2D (handle, boxedHandle);
+                    return new AvgPool3D (handle, boxedHandle);
                 }
             }
         }
@@ -51,15 +50,15 @@ namespace TorchSharp.NN
     public static partial class Functions
     {
         /// <summary>
-        /// Applies a 2D average pooling over an input signal composed of several input planes.
+        /// Applies a 3D average pooling over an input signal composed of several input planes.
         /// </summary>
         /// <param name="x">The input signal tensor</param>
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="strides">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-        static public TorchTensor AvgPool2D (TorchTensor x, long[] kernelSize, long[] strides = null)
+        static public TorchTensor AvgPool3D (TorchTensor x, long[] kernelSize, long[] strides = null)
         {
-            using (var d = Modules.AvgPool2D (kernelSize, strides)) {
+            using (var d = Modules.AvgPool3D (kernelSize, strides)) {
                 return d.forward (x);
             }
         }

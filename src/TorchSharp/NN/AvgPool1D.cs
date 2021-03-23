@@ -29,6 +29,12 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_AvgPool1d_ctor (IntPtr pkernelSize, IntPtr pstrides,  out IntPtr pBoxedModule);
 
+        /// <summary>
+        /// Applies a 1D average pooling over an input signal composed of several input planes.
+        /// </summary>
+        /// <param name="kernelSize">The size of the window</param>
+        /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+        /// <returns></returns>
         static public AvgPool1D AvgPool1D(long kernelSize, long? stride = null)
         {
             return stride.HasValue ?
@@ -50,6 +56,13 @@ namespace TorchSharp.NN
 
     public static partial class Functions
     {
+        /// <summary>
+        /// Applies a 1D average pooling over an input signal composed of several input planes.
+        /// </summary>
+        /// <param name="x">The input signal tensor</param>
+        /// <param name="kernelSize">The size of the window</param>
+        /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+        /// <returns></returns>
         static public TorchTensor AvgPool1D (TorchTensor x, long kernelSize, long? stride = null)
         {
             using (var d = Modules.AvgPool1D (kernelSize, stride)) {

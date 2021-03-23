@@ -5,16 +5,16 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Conv2D : Module
+    public class Conv3D : Module
     {
-        internal Conv2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+        internal Conv3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv2d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Conv3d_forward (Module.HType module, IntPtr tensor);
 
         public TorchTensor forward (TorchTensor tensor)
         {
-            var res = THSNN_Conv2d_forward (handle, tensor.Handle);
+            var res = THSNN_Conv3d_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
@@ -22,10 +22,10 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, out IntPtr pBoxedModule);
+        private static extern IntPtr THSNN_Conv3d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, out IntPtr pBoxedModule);
 
         /// <summary>
-        /// Applies a 2D convolution over an input signal composed of several input planes
+        /// Applies a 3D convolution over an input signal composed of several input planes
         /// </summary>
         /// <param name="inputChannel">Number of channels in the input image</param>
         /// <param name="outputChannel">Number of channels produced by the convolution</param>
@@ -33,28 +33,28 @@ namespace TorchSharp.NN
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
         /// <returns></returns>
-        static public Conv2D Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
+        static public Conv3D Conv3D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
-            var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, out var boxedHandle);
+            var res = THSNN_Conv3d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Conv2D (res, boxedHandle);
+            return new Conv3D (res, boxedHandle);
         }
     }
     public static partial class Functions
     {
         /// <summary>
-        /// Applies a 2D convolution over an input signal composed of several input planes
+        /// Applies a 3D convolution over an input signal composed of several input planes
         /// </summary>
-        /// <param name="x">Tensor representing an image, (N,C,H,W).</param>
+        /// <param name="x">Tensor representing an image, (N,C,D,H,W).</param>
         /// <param name="inputChannel">Number of channels in the input image</param>
         /// <param name="outputChannel">Number of channels produced by the convolution</param>
         /// <param name="kernelSize">Size of the convolving kernel</param>
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
         /// <returns></returns>
-        static public TorchTensor Conv2D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
+        static public TorchTensor Conv3D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0)
         {
-            using (var d = Modules.Conv2D (inputChannel, outputChannel, kernelSize, stride, padding)) {
+            using (var d = Modules.Conv3D (inputChannel, outputChannel, kernelSize, stride, padding)) {
                 return d.forward (x);
             }
         }

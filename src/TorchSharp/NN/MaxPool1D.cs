@@ -29,6 +29,12 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_MaxPool1d_ctor (IntPtr pkernelSize, IntPtr pstrides, out IntPtr pBoxedModule);
 
+        /// <summary>
+        /// Applies a 1D max pooling over an input signal composed of several input planes.
+        /// </summary>
+        /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
+        /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
+        /// <returns></returns>
         static public MaxPool1D MaxPool1D (long kernelSize, long? stride = null)
         {
             return stride.HasValue ?
@@ -51,6 +57,13 @@ namespace TorchSharp.NN
 
     public static partial class Functions
     {
+        /// <summary>
+        /// Applies a 1D max pooling over an input signal composed of several input planes.
+        /// </summary>
+        /// <param name="x">Input signal</param>
+        /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
+        /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
+        /// <returns></returns>
         static public TorchTensor MaxPool1D (TorchTensor x, long kernelSize, long? stride = null)
         {
             using (var d = Modules.MaxPool1D (kernelSize, stride)) {
