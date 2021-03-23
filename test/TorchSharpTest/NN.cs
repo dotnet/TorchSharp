@@ -227,6 +227,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateRRelu()
+        {
+            var rel = RReLU();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
         public void EvaluateCELU()
         {
             var rel = CELU();
@@ -252,7 +262,7 @@ namespace TorchSharp
         public void EvaluateGELU()
         {
             var rel = GELU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
