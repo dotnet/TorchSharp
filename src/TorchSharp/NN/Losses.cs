@@ -12,7 +12,7 @@ namespace TorchSharp.NN
     /// <summary>
     /// Class maintaing the supported loss functions.
     /// </summary>
-    public class Losses
+    public static partial class Functions
     {
 
         [DllImport ("LibTorchSharp")]

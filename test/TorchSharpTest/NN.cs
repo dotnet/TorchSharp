@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.NN;
 using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Losses;
 using static TorchSharp.NN.Functions;
 using TorchSharp.Tensor;
 using Xunit;

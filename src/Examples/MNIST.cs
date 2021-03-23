@@ -6,7 +6,6 @@ using TorchSharp.Tensor;
 using TorchSharp.NN;
 using static TorchSharp.NN.Modules;
 using static TorchSharp.NN.Functions;
-using static TorchSharp.NN.Losses;
 
 namespace TorchSharp.Examples
 {
