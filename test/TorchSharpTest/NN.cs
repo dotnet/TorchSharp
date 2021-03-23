@@ -522,6 +522,123 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestConv1D()
+        {
+            var shape = new long[] { 16, 3, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv1D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(26, output.shape[2]);
+        }
+
+        [Fact]
+        public void TestConv1DStride()
+        {
+            var shape = new long[] { 16, 3, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv1D(3, 64, 3, stride:2);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(13, output.shape[2]);
+        }
+
+        [Fact]
+        public void TestConv1DPadding()
+        {
+            var shape = new long[] { 16, 3, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv1D(3, 64, 3, padding: 1);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(28, output.shape[2]);
+        }
+
+        [Fact]
+        public void TestConv2D()
+        {
+            var shape = new long[] { 16, 3, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv2D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(26, output.shape[2]);
+            Assert.Equal(26, output.shape[3]);
+        }
+
+        [Fact]
+        public void TestConv2DStride()
+        {
+            var shape = new long[] { 16, 3, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv2D(3, 64, 3, stride: 2);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(13, output.shape[2]);
+            Assert.Equal(13, output.shape[3]);
+        }
+
+        [Fact]
+        public void TestConv2DPadding()
+        {
+            var shape = new long[] { 16, 3, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv2D(3, 64, 3, padding: 1);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(28, output.shape[2]);
+            Assert.Equal(28, output.shape[3]);
+        }
+
+        [Fact]
+        public void TestConv3D()
+        {
+            var shape = new long[] { 16, 3, 28, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv3D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(26, output.shape[2]);
+            Assert.Equal(26, output.shape[3]);
+            Assert.Equal(26, output.shape[4]);
+        }
+
+        [Fact]
+        public void TestConv3DStride()
+        {
+            var shape = new long[] { 16, 3, 28, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv3D(3, 64, 3, stride:2);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(13, output.shape[2]);
+            Assert.Equal(13, output.shape[3]);
+            Assert.Equal(13, output.shape[4]);
+        }
+
+        [Fact]
+        public void TestConv3DPadding()
+        {
+            var shape = new long[] { 16, 3, 28, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = Conv3D(3, 64, 3, padding: 1);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(28, output.shape[2]);
+            Assert.Equal(28, output.shape[3]);
+            Assert.Equal(28, output.shape[4]);
+        }
+
+        [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists (".model.ts")) File.Delete (".model.ts");
@@ -1094,5 +1211,249 @@ namespace TorchSharp
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
+        [Fact]
+        public void TestMaxPool1D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            using (var pool = MaxPool1D(2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool1D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            using (var pool = MaxPool1D(2, 1)) {
+                var pooled = pool.forward(ones);
+
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool2D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = MaxPool2D(new long[] { 2, 2 }))
+            {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] {16, 2, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool2D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = MaxPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool3D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            using (var pool = MaxPool3D(new long[] { 2, 2, 2 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestMaxPool3D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            using (var pool = MaxPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool1D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            using (var pool = AvgPool1D(2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool1D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            using (var pool = AvgPool1D(2, 1)) {
+                var pooled = pool.forward(ones);
+
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool2D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = AvgPool2D(new long[] { 2, 2 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool2D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            using (var pool = AvgPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+            }
+
+            ones = Float32Tensor.ones(new long[] { 16, 4, 4, 4 });
+            using (var pool = AvgPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool3D_1()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            using (var pool = AvgPool3D(new long[] { 2, 2, 2 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestAvgPool3D_2()
+        {
+            TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            using (var pool = AvgPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 2, 2, 0].ToSingle());
+            }
+
+            ones = Float32Tensor.ones(new long[] { 16, 3, 4, 4, 8 });
+            using (var pool = AvgPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3, 3, 7 }, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 0, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 2, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 2, 2, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm1D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            using (var pool = BatchNorm1D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm2D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            using (var pool = BatchNorm2D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm3D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = BatchNorm3D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
     }
 }

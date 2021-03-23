@@ -5,24 +5,24 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.NN
 {
-    public class Conv2D : Module
+    public class Conv3D : Module
     {
-        internal Conv2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+        internal Conv3D(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv2d_forward (Module.HType module, IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_Conv3d_forward(Module.HType module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public TorchTensor forward(TorchTensor tensor)
         {
-            var res = THSNN_Conv2d_forward (handle, tensor.Handle);
+            var res = THSNN_Conv3d_forward(handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor (res);
+            return new TorchTensor(res);
         }
     }
     public static partial class Modules
     {
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long groups, bool bias, out IntPtr pBoxedModule);
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_Conv3d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long groups, bool bias, out IntPtr pBoxedModule);
 
         /// <summary>
         /// Applies a 2D convolution over an input signal composed of several input planes
@@ -37,12 +37,12 @@ namespace TorchSharp.NN
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns></returns>
-        static public Conv2D Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+        static public Conv3D Conv3D(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
             if (paddingMode != PaddingModes.Zeros) throw new NotImplementedException("Convolution padding mode other than 'zeros'");
-            var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, groups, bias, out var boxedHandle);
+            var res = THSNN_Conv3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, groups, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Conv2D (res, boxedHandle);
+            return new Conv3D(res, boxedHandle);
         }
     }
     public static partial class Functions
@@ -61,10 +61,10 @@ namespace TorchSharp.NN
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns></returns>
-        static public TorchTensor Conv2D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+        static public TorchTensor Conv3D(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.Conv2D (inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
-                return d.forward (x);
+            using (var d = Modules.Conv3D(inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
+                return d.forward(x);
             }
         }
     }
