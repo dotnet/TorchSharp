@@ -1252,5 +1252,35 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
             }
         }
+
+        [Fact]
+        public void TestBatchNorm1D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            using (var pool = BatchNorm1D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm2D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            using (var pool = BatchNorm2D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm3D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = BatchNorm3D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
     }
 }

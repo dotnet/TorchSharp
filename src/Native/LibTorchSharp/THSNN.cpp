@@ -373,6 +373,87 @@ Tensor THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::MaxPool2d>()->forward(*tensor));
 }
 
+NNModule THSNN_BatchNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BatchNorm1dOptions(features)
+        .eps(eps)
+        .momentum(momentum)
+        .affine(affine)
+        .track_running_stats(track_running_stats);
+
+    auto mod = std::make_shared<torch::nn::BatchNorm1dImpl>(opts);
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm1dImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+    res = new std::shared_ptr<torch::nn::Module>(mod);
+    )
+}
+
+Tensor THSNN_BatchNorm1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::BatchNorm1d>()->forward(*tensor));
+}
+
+NNModule THSNN_BatchNorm2d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BatchNorm2dOptions(features)
+            .eps(eps)
+            .momentum(momentum)
+            .affine(affine)
+            .track_running_stats(track_running_stats);
+
+        auto mod = std::make_shared<torch::nn::BatchNorm2dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    )
+}
+
+Tensor THSNN_BatchNorm2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::BatchNorm2d>()->forward(*tensor));
+}
+
+NNModule THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BatchNorm3dOptions(features)
+        .eps(eps)
+        .momentum(momentum)
+        .affine(affine)
+        .track_running_stats(track_running_stats);
+
+    auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+    res = new std::shared_ptr<torch::nn::Module>(mod);
+    )
+}
+
+Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::BatchNorm3d>()->forward(*tensor));
+}
+
 NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
