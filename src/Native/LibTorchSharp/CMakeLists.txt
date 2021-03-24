@@ -47,7 +47,7 @@ add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 #   https://github.com/xamarin/TorchSharp/issues/218
 #   https://stackoverflow.com/questions/46809303/how-to-static-linking-to-glibc-in-cmake
 if(NOT WIN32)
-    target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES}  -static-libgcc -static-libstdc++)
+    target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES}  -static-libstdc++)
 else
     target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 endif()
