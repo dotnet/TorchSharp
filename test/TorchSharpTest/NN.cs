@@ -1450,6 +1450,46 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void TestTrainingConv2d()
+        {
+            var conv1 = Conv2D(3, 4, 3, stride:2);
+            var lin1 = Linear(4*13*13, 32);
+            var lin2 = Linear(32, 10);
+
+            var seq = Sequential(
+                ("conv1", conv1),
+                ("r1", ReLU(inPlace: true)),
+                ("drop1", Dropout(0.1)),
+                ("flat1", Flatten()),
+                ("lin1", lin1),
+                ("r2", ReLU(inPlace: true)),
+                ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            float prevLoss = float.MaxValue;
+            var optimizer = NN.Optimizer.Adam(seq.parameters());
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                Assert.True(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+        }
+
+
         [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoader()
         {
