@@ -41,7 +41,7 @@ namespace TorchSharp.NN
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
         /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
-        /// <param name="paddingMode"></param>
+        /// <param name="paddingMode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
@@ -64,7 +64,7 @@ namespace TorchSharp.NN
         /// <param name="stride">Stride of the convolution. Default: 1</param>
         /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
         /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
-        /// <param name="paddingMode"></param>
+        /// <param name="paddingMode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
