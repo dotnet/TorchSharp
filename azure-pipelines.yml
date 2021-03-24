@@ -60,7 +60,8 @@ jobs:
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build
-
+  - script: ldd `find bin -name libLibTorchSharp.so`
+    displayName: Show linux native dependencies
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
 
