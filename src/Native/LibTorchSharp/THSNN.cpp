@@ -1418,6 +1418,175 @@ void THSNN_ConvTranspose3d_set_weight(const NNModule module, const Tensor weight
     set_weight<torch::nn::ConvTranspose3d>(module, weight);
 }
 
+template<typename T>
+void ApplyTransformerActivation(T& opts, const int64_t activation)
+{
+    if (activation == 0)
+        opts = opts.activation(torch::kReLU);
+    if (activation == 1)
+        opts = opts.activation(torch::kGELU);
+}
+
+NNModule THSNN_Transformer_ctor(const int64_t d_model, const int64_t nhead, const int64_t num_encoder_layers, const int64_t num_decoder_layers, const int64_t dim_feedforward, const double dropout, const int64_t activation, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::TransformerOptions(d_model, nhead)
+            .num_encoder_layers(num_encoder_layers)
+            .num_decoder_layers(num_decoder_layers)
+            .dim_feedforward(dim_feedforward)
+            .dropout(dropout);
+        ApplyTransformerActivation(opts, activation);
+
+        auto mod = std::make_shared<torch::nn::TransformerImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor   THSNN_Transformer_forward(const NNModule module, const Tensor src, const Tensor tgt, const Tensor src_mask, const Tensor tgt_mask, const Tensor memory_mask, const Tensor src_key_padding_mask, const Tensor tgt_key_padding_mask, const Tensor memory_key_padding_mask)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Transformer>()->forward(
+        *src,
+        *tgt,
+        (src_mask ? *src_mask : at::Tensor()),
+        (tgt_mask ? *tgt_mask : at::Tensor()),
+        (memory_mask ? *memory_mask : at::Tensor()),
+        (src_key_padding_mask ? *src_key_padding_mask : at::Tensor()),
+        (tgt_key_padding_mask ? *tgt_key_padding_mask : at::Tensor()),
+        (memory_key_padding_mask ? *memory_key_padding_mask : at::Tensor()))
+    );
+}
+
+NNModule THSNN_TransformerEncoderLayer_ctor(const int64_t d_model, const int64_t nhead, const int64_t dim_feedforward, const double dropout, const int64_t activation, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::TransformerEncoderLayerOptions(d_model, nhead)
+        .dim_feedforward(dim_feedforward)
+        .dropout(dropout);
+        ApplyTransformerActivation(opts, activation);
+
+        auto mod = std::make_shared<torch::nn::TransformerEncoderLayerImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerEncoderLayerImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor   THSNN_TransformerEncoderLayer_forward(const NNModule module, const Tensor src, const Tensor src_mask, const Tensor src_key_padding_mask)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerEncoderLayer>()->forward(
+        *src,
+        (src_mask ? *src_mask : at::Tensor()),
+        (src_key_padding_mask ? *src_key_padding_mask : at::Tensor()))
+    );
+}
+
+NNModule THSNN_TransformerDecoderLayer_ctor(const int64_t d_model, const int64_t nhead, const int64_t dim_feedforward, const double dropout, const int64_t activation, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::TransformerDecoderLayerOptions(d_model, nhead)
+        .dim_feedforward(dim_feedforward)
+        .dropout(dropout);
+        ApplyTransformerActivation(opts, activation);
+
+        auto mod = std::make_shared<torch::nn::TransformerDecoderLayerImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerDecoderLayerImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor   THSNN_TransformerDecoderLayer_forward(const NNModule module, const Tensor tgt, const Tensor memory, const Tensor tgt_mask, const Tensor memory_mask, const Tensor tgt_key_padding_mask, const Tensor memory_key_padding_mask)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerDecoderLayer>()->forward(
+        *tgt,
+        *memory,
+        (tgt_mask ? *tgt_mask : at::Tensor()),
+        (memory_mask ? *memory_mask : at::Tensor()),
+        (tgt_key_padding_mask ? *tgt_key_padding_mask : at::Tensor()),
+        (memory_key_padding_mask ? *memory_key_padding_mask : at::Tensor()))
+    );
+}
+
+NNModule THSNN_TransformerEncoder_ctor(const NNModule encoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto enc = (*encoder_layer)->as<torch::nn::TransformerEncoderLayer>();
+        auto opts = torch::nn::TransformerEncoderOptions(torch::nn::TransformerEncoderLayer(*enc), num_layers);
+
+        auto mod = std::make_shared<torch::nn::TransformerEncoderImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerEncoderImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor   THSNN_TransformerEncoder_forward(const NNModule module, const Tensor src, const Tensor src_mask, const Tensor src_key_padding_mask)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerEncoder>()->forward(
+        *src,
+        (src_mask ? *src_mask : at::Tensor()),
+        (src_key_padding_mask ? *src_key_padding_mask : at::Tensor()))
+    );
+}
+
+NNModule THSNN_TransformerDecoder_ctor(const NNModule decoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto dec = (*decoder_layer)->as<torch::nn::TransformerDecoderLayer>();
+        auto opts = torch::nn::TransformerDecoderOptions(torch::nn::TransformerDecoderLayer(*dec), num_layers);
+
+        auto mod = std::make_shared<torch::nn::TransformerDecoderImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerDecoderImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor   THSNN_TransformerDecoder_forward(const NNModule module, const Tensor tgt, const Tensor memory, const Tensor tgt_mask, const Tensor memory_mask, const Tensor tgt_key_padding_mask, const Tensor memory_key_padding_mask)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerDecoder>()->forward(
+        *tgt,
+        *memory,
+        (tgt_mask ? *tgt_mask : at::Tensor()),
+        (memory_mask ? *memory_mask : at::Tensor()),
+        (tgt_key_padding_mask ? *tgt_key_padding_mask : at::Tensor()),
+        (memory_key_padding_mask ? *memory_key_padding_mask : at::Tensor()))
+    );
+}
+
+
 NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int length */ )
 {
     //std::vector<torch::nn::NamedAnyModule> modules;
