@@ -19,7 +19,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-16.04'
 
 # - template: /build/ci/job-template.yml
 #   parameters:
@@ -55,7 +55,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-16.04'
   steps:
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
@@ -373,7 +373,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-16.04'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
