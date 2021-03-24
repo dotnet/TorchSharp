@@ -19,7 +19,7 @@
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
     <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
-    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCudaPackage.$(IncludeLibTorchCudaPackage)</CopyToPackageSemaphore>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.TargetOS.$(TargetOS).SkipTests.$(SkipTests).IncludeLibTorchCudaPackage.$(IncludeLibTorchCudaPackage)</CopyToPackageSemaphore>
 
   </PropertyGroup>
   
