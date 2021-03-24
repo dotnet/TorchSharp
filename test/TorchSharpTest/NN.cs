@@ -733,6 +733,37 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestConv1DGetWeight()
+        {
+            var conv = Conv1D(3, 64, 3);
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
+        }
+
+        [Fact]
+        public void TestConv1DEditWeightAndBias()
+        {
+            var conv = Conv1D(3, 64, 3);
+
+            conv.Bias = Float32Tensor.randn(new long[] { 64 });
+            var weights = Float32Tensor.randn(new long[] { 64, 3, 3 });
+
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
+
+            for (int i = 0; i < 64; i++) {
+                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+            }
+        }
+
+        [Fact]
         public void TestConv1DStride()
         {
             var shape = new long[] { 16, 3, 28 };
@@ -775,6 +806,37 @@ namespace TorchSharp
             Assert.Equal(64, output.shape[1]);
             Assert.Equal(26, output.shape[2]);
             Assert.Equal(26, output.shape[3]);
+        }
+
+        [Fact]
+        public void TestConv2DGetWeight()
+        {
+            var conv = Conv2D(3, 64, 3);
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
+        }
+
+        [Fact]
+        public void TestConv2DEditWeightAndBias()
+        {
+            var conv = Conv2D(3, 64, 3);
+
+            conv.Bias = Float32Tensor.randn(new long[] { 64 });
+            var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
+
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
+
+            for (int i = 0; i < 64; i++) {
+                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+            }
         }
 
         [Fact]
@@ -826,6 +888,37 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestConv3DGetWeight()
+        {
+            var conv = Conv3D(3, 64, 3);
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3, 3, 3 }, weight.shape);
+        }
+
+        [Fact]
+        public void TestConv3DEditWeightAndBias()
+        {
+            var conv = Conv3D(3, 64, 3);
+
+            conv.Bias = Float32Tensor.randn(new long[] { 64 });
+            var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
+
+            var weight = conv.Weight;
+            var bias = conv.Bias;
+
+            Assert.NotNull(weight);
+            Assert.NotNull(bias);
+            Assert.Equal(new long[] { 64, 3, 3, 3, 3 }, weight.shape);
+
+            for (int i = 0; i < 64; i++) {
+                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+            }
+        }
+
+        [Fact]
         public void TestConv3DStride()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
@@ -852,7 +945,7 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[3]);
                 Assert.Equal(28, output.shape[4]);
             }
-            using (var conv = Conv3D(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
+            using (var conv = Conv3D(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -860,6 +953,45 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[3]);
                 Assert.Equal(28, output.shape[4]);
             }
+        }
+
+        [Fact]
+        public void TestConvTranspose1D()
+        {
+            var shape = new long[] { 16, 3, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = ConvTranspose1D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(30, output.shape[2]);
+        }
+
+        [Fact]
+        public void TestConvTranspose2D()
+        {
+            var shape = new long[] { 16, 3, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = ConvTranspose2D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(30, output.shape[2]);
+            Assert.Equal(30, output.shape[3]);
+        }
+
+        [Fact]
+        public void TestConvTranspose3D()
+        {
+            var shape = new long[] { 16, 3, 28, 28, 28 };
+            TorchTensor t = Float32Tensor.rand(shape);
+            var conv = ConvTranspose3D(3, 64, 3);
+            var output = conv.forward(t);
+            Assert.Equal(16, output.shape[0]);
+            Assert.Equal(64, output.shape[1]);
+            Assert.Equal(30, output.shape[2]);
+            Assert.Equal(30, output.shape[3]);
+            Assert.Equal(30, output.shape[4]);
         }
 
         [Fact]

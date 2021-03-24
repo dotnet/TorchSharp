@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
+#nullable enable
 namespace TorchSharp.NN
 {
     public enum PaddingModes
@@ -26,7 +27,41 @@ namespace TorchSharp.NN
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_Conv1d_bias(Module.HType module);
+        [DllImport("LibTorchSharp")]
+        extern static void THSNN_Conv1d_set_bias(Module.HType module, IntPtr tensor);
+
+        public TorchTensor? Bias {
+            get {
+                var res = THSNN_Conv1d_bias(handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return ((res == IntPtr.Zero) ? null : new TorchTensor(res));
+            }
+            set {
+                THSNN_Conv1d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                Torch.CheckForErrors();
+            }
+        }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSNN_Conv1d_weight(Module.HType module);
+        [DllImport("LibTorchSharp")]
+        extern static void THSNN_Conv1d_set_weight(Module.HType module, IntPtr tensor);
+
+        public TorchTensor Weight {
+            get {
+                var res = THSNN_Conv1d_weight(handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+            set {
+                THSNN_Conv1d_set_weight(handle, value.Handle);
+                Torch.CheckForErrors();
+            }
+        }
     }
+
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
