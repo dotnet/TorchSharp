@@ -45,7 +45,7 @@ namespace TorchSharp
         public static void LoadNativeBackend(bool useCudaBackend)
         {
             bool ok = false;
-
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             if (!(useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded)) {
                 Debug.WriteLine($"TorchSHarp: Initialising native backend");
 
@@ -53,7 +53,7 @@ namespace TorchSharp
                 if (useCudaBackend)
                     ok = NativeLibrary.TryLoad("torch_cuda", typeof(Torch).Assembly, null, out var res1);
                 if (ok) {
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    if (isWindows) {
 
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.  
@@ -89,14 +89,15 @@ namespace TorchSharp
 
                         var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
                         var torchSharpVersion = Path.GetFileName(Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..")));
+                        var target = isWindows ? "LibTorchSharp.dll" : "libLibTorchSharp.so";
 
                         if (useCudaBackend) {
-                            var cudaTarget = Path.Combine(torchsharpLoc, $"cuda -{cudaVersion}");
+                            var cudaTarget = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
                             var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, cudaTarget);
                             if (cudaOk) {
                                 ok = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cudaTarget);
                                 if (ok) {
-                                    ok = NativeLibrary.TryLoad(Path.Combine(cudaTarget, "LibTorchSharp.dll"), out var res3);
+                                    ok = NativeLibrary.TryLoad(Path.Combine(cudaTarget, target), out var res3);
                                 }
                             }
                             if (!ok)
@@ -108,7 +109,7 @@ namespace TorchSharp
                             if (cpuOk) {
                                 ok = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cpuTarget);
                                 if (ok) {
-                                    ok = NativeLibrary.TryLoad(Path.Combine(cpuTarget, "LibTorchSharp.dll"), out var res4);
+                                    ok = NativeLibrary.TryLoad(Path.Combine(cpuTarget, target), out var res4);
                                 }
                             }
                             if (!ok)
