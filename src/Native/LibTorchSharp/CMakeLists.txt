@@ -31,6 +31,10 @@ if(NOT WIN32)
         SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
         SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
         SET(CMAKE_INSTALL_RPATH "$ORIGIN/")
+
+		# https://github.com/xamarin/TorchSharp/issues/218
+		# https://cmake.org/pipermail/cmake/2017-January/064913.html
+		SET(CMAKE_CXX_STANDARD_LIBRARIES "-static-libstdc++ ${CMAKE_CSS_STANDARD_LIBRARIES}")
     else()
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
