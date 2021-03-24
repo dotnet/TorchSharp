@@ -22,7 +22,7 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long groups, bool bias, out IntPtr pBoxedModule);
+        private static extern IntPtr THSNN_Conv2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
 
         /// <summary>
         /// Applies a 2D convolution over an input signal composed of several input planes
@@ -39,8 +39,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public Conv2D Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            if (paddingMode != PaddingModes.Zeros) throw new NotImplementedException("Convolution padding mode other than 'zeros'");
-            var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, groups, bias, out var boxedHandle);
+            var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new Conv2D (res, boxedHandle);
         }

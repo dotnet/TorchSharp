@@ -1064,10 +1064,23 @@ void THSNN_Embedding_set_weight(const NNModule module, const Tensor weights)
     )
 }
 
+template<typename T>
+void ApplyPaddingMode(T& opts, const int64_t padding)
+{
+    if (padding == 0)
+        opts = opts.padding_mode(torch::kZeros);
+    if (padding == 1)
+        opts = opts.padding_mode(torch::kReflect);
+    if (padding == 2)
+        opts = opts.padding_mode(torch::kReplicate);
+    if (padding == 3)
+        opts = opts.padding_mode(torch::kCircular);
+}
+
 
 NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -1079,6 +1092,7 @@ NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChann
         .bias(bias);
 
         auto mod = std::make_shared<torch::nn::Conv1dImpl>(opts);
+        ApplyPaddingMode(opts, paddingMode);
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
         // a Module can only be boxed to AnyModule at the point its static type is known).
@@ -1098,7 +1112,7 @@ Tensor THSNN_Conv1d_forward(const NNModule module, const Tensor tensor)
 
 NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -1110,6 +1124,7 @@ NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChann
             .bias(bias);
 
         auto mod = std::make_shared<torch::nn::Conv2dImpl>(opts);
+        ApplyPaddingMode(opts, paddingMode);
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
         // a Module can only be boxed to AnyModule at the point its static type is known).
@@ -1129,13 +1144,14 @@ Tensor THSNN_Conv2d_forward(const NNModule module, const Tensor tensor)
 
 NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const int64_t bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Conv3dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
 
     auto mod = std::make_shared<torch::nn::Conv3dImpl>(opts);
+    ApplyPaddingMode(opts, paddingMode);
 
     // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
     // a Module can only be boxed to AnyModule at the point its static type is known).
