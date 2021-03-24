@@ -34,7 +34,6 @@ if(NOT WIN32)
 
 		# https://github.com/xamarin/TorchSharp/issues/218
 		# https://cmake.org/pipermail/cmake/2017-January/064913.html
-		SET(CMAKE_CXX_STANDARD_LIBRARIES "-static-libstdc++ ${CMAKE_CSS_STANDARD_LIBRARIES}")
     else()
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
@@ -45,7 +44,7 @@ include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
-target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
+target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES} -static-libstdc++)
 
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 
