@@ -116,6 +116,6 @@ cd "$__IntermediatesDir"
 
 echo "Building Machine Learning native components from $DIR to $(pwd)"
 set -x # turn on trace
-cmake "$DIR" -G "Unix Makefiles" $__cmake_defines
+cmake "$DIR" --verbose -G "Unix Makefiles" $__cmake_defines
 set +x # turn off trace
 make install
