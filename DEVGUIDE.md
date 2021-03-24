@@ -131,13 +131,13 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       msbuild src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux
+       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release
+       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug
 
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       msbuild src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux
+       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release
+       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
@@ -199,6 +199,4 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 10. Submit to CI and debug problems
 
-11. Remember to delete all massive artifacts from Azure DevOps and reset this:
-
-         <BuildLibTorchPackages>false</BuildLibTorchPackages>
+11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml) 
