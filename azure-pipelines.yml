@@ -59,6 +59,7 @@ jobs:
   steps:
   - script: ldd --version
     displayName: Show ldd version
+  - script: sudo apt list
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build
