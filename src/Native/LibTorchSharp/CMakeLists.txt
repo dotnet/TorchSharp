@@ -32,8 +32,6 @@ if(NOT WIN32)
         SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
         SET(CMAKE_INSTALL_RPATH "$ORIGIN/")
 
-		# https://github.com/xamarin/TorchSharp/issues/218
-		# https://cmake.org/pipermail/cmake/2017-January/064913.html
     else()
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
@@ -44,7 +42,13 @@ include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
-target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES} -static-libstdc++)
+# Make the libLibTorchSharp.so independent of installed libc++ by static linking
+# see
+#   https://github.com/xamarin/TorchSharp/issues/218
+#   https://stackoverflow.com/questions/46809303/how-to-static-linking-to-glibc-in-cmake
+if(NOT WIN32)
+    target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES} -static-libstdc++)
+endif()
 
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 
