@@ -1997,5 +1997,84 @@ namespace TorchSharp
                 Assert.Equal(tgt.shape, output.shape);
             }
         }
+
+        [Fact]
+        public void TestDropout()
+        {
+            var drop = Dropout(0.75);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.NotEqual(outVal, dataVal);
+        }
+
+        [Fact]
+        public void TestDropoutInPlace()
+        {
+            var drop = Dropout(0.75, inPlace:true);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal  = output.Data<float>().ToArray();
+            Assert.Equal(outVal, dataVal);
+        }
+
+        [Fact]
+        public void TestDropout2d()
+        {
+            var drop = Dropout2d(0.75);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.NotEqual(outVal, dataVal);
+        }
+
+        [Fact]
+        public void TestDropout2dInPlace()
+        {
+            var drop = Dropout2d(0.75, inPlace: true);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.Equal(outVal, dataVal);
+        }
+
+        [Fact]
+        public void TestDropout3d()
+        {
+            var drop = Dropout3d(0.75);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5, 6 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.NotEqual(outVal, dataVal);
+        }
+
+
+        [Fact]
+        public void TestDropout3dInPlace()
+        {
+            var drop = Dropout3d(0.75, inPlace: true);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5, 6 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.Equal(outVal, dataVal);
+        }
     }
 }

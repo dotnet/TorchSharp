@@ -965,21 +965,21 @@ void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::Linear>(module, weight);
 }
 
-NNModule THSNN_Dropout_ctor(double probability, NNAnyModule* outAsAnyModule)
+NNModule THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::DropoutOptions(probability);
-    auto mod = std::make_shared<torch::nn::DropoutImpl>(opts);
+        auto opts = torch::nn::DropoutOptions(probability).inplace(inplace);
+        auto mod = std::make_shared<torch::nn::DropoutImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::DropoutImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::DropoutImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
 
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     );
 }
 
@@ -988,20 +988,66 @@ Tensor THSNN_Dropout_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Dropout>()->forward(*tensor));
 }
 
+NNModule THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::Dropout2dOptions(probability).inplace(inplace);
+        auto mod = std::make_shared<torch::nn::Dropout2dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Dropout2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Dropout2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Dropout2d>()->forward(*tensor));
+}
+
+NNModule THSNN_Dropout3d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::Dropout3dOptions(probability).inplace(inplace);
+        auto mod = std::make_shared<torch::nn::Dropout3dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Dropout3dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Dropout3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Dropout3d>()->forward(*tensor));
+}
+
 NNModule THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::FeatureAlphaDropoutOptions(probability);
-    auto mod = std::make_shared<torch::nn::FeatureAlphaDropoutImpl>(opts);
+        auto mod = std::make_shared<torch::nn::FeatureAlphaDropoutImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::FeatureAlphaDropoutImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::FeatureAlphaDropoutImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     );
 }
 

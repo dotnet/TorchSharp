@@ -25,19 +25,19 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Dropout_ctor (double probability, out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_Dropout_ctor (double probability, bool inPlace, out IntPtr pBoxedModule);
 
-        static public Dropout Dropout (double probability = 0.5)
+        static public Dropout Dropout (double probability = 0.5, bool inPlace = false)
         {
-            var handle = THSNN_Dropout_ctor (probability, out var boxedHandle);
+            var handle = THSNN_Dropout_ctor (probability, inPlace, out var boxedHandle);
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Dropout (handle, boxedHandle);
+            return new Dropout(handle, boxedHandle);
         }
     }
 
     public static partial class Functions
     {
-        static public TorchTensor Dropout (TorchTensor x, double probability = 0.5)
+        static public TorchTensor Dropout (TorchTensor x, double probability = 0.5, bool inPlace = false)
         {
             using (var d = Modules.Dropout (probability)) {
                 return d.forward (x);
