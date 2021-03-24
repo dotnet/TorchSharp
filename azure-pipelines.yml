@@ -15,7 +15,7 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64
-    prepScript:  ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/libstdc++.so.6 | grep LIBCXX) && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5
+    prepScript:  ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) && sudo apt-get -y update && sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
