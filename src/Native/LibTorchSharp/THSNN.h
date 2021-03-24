@@ -217,6 +217,9 @@ EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 
 EXPORT_API(Tensor) THSNN_one_hot(const Tensor self, const int64_t num_classes);
 
+EXPORT_API(NNModule) THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Flatten_forward(const NNModule module, const Tensor tensor);
+
 // Initializers
 
 EXPORT_API(void) THSNN_initUniform(Tensor twrapper, double low, double high);

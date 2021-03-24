@@ -1104,6 +1104,45 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Adding a dropout module to the linear NN.
+        /// </summary>
+        [Fact]
+        public void TestTrainingWithDropout()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            float learning_rate = 0.00004f;
+            float prevLoss = float.MaxValue;
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                Assert.True(lossVal < prevLoss);
+                prevLoss = lossVal;
+
+                seq.ZeroGrad();
+
+                output.backward();
+
+                using (var noGrad = new AutoGradMode(false)) {
+                    foreach (var param in seq.parameters()) {
+                        var grad = param.grad();
+                        var update = grad.mul(learning_rate.ToScalar());
+                        param.sub_(update);
+                    }
+                }
+            }
+        }
+
         [Fact]
         public void TestAdam()
         {
@@ -1127,7 +1166,7 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -2063,7 +2102,6 @@ namespace TorchSharp
             Assert.NotEqual(outVal, dataVal);
         }
 
-
         [Fact]
         public void TestDropout3dInPlace()
         {
@@ -2075,6 +2113,29 @@ namespace TorchSharp
             var dataVal = data.Data<float>().ToArray();
             var outVal = output.Data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
+        }
+
+
+
+        [Fact]
+        public void TestFlatten()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 5, 6 });
+
+            using (var flat = Flatten()) {
+                var output = flat.forward(data);
+                Assert.Equal(new long[] { 32, 360 }, output.shape);
+            }
+
+            using (var flat = Flatten(startDim: 2)) {
+                var output = flat.forward(data);
+                Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
+            }
+
+            using (var flat = Flatten(startDim: 0)) {
+                var output = flat.forward(data);
+                Assert.Equal(new long[] { 32 * 360 }, output.shape);
+            }
         }
     }
 }

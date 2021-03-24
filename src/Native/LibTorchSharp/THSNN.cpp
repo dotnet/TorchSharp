@@ -1514,8 +1514,8 @@ NNModule THSNN_TransformerEncoderLayer_ctor(const int64_t d_model, const int64_t
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::TransformerEncoderLayerOptions(d_model, nhead)
-        .dim_feedforward(dim_feedforward)
-        .dropout(dropout);
+            .dim_feedforward(dim_feedforward)
+            .dropout(dropout);
         ApplyTransformerActivation(opts, activation);
 
         auto mod = std::make_shared<torch::nn::TransformerEncoderLayerImpl>(opts);
@@ -1544,8 +1544,8 @@ NNModule THSNN_TransformerDecoderLayer_ctor(const int64_t d_model, const int64_t
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::TransformerDecoderLayerOptions(d_model, nhead)
-        .dim_feedforward(dim_feedforward)
-        .dropout(dropout);
+            .dim_feedforward(dim_feedforward)
+            .dropout(dropout);
         ApplyTransformerActivation(opts, activation);
 
         auto mod = std::make_shared<torch::nn::TransformerDecoderLayerImpl>(opts);
@@ -1630,6 +1630,31 @@ Tensor   THSNN_TransformerDecoder_forward(const NNModule module, const Tensor tg
         (tgt_key_padding_mask ? *tgt_key_padding_mask : at::Tensor()),
         (memory_key_padding_mask ? *memory_key_padding_mask : at::Tensor()))
     );
+}
+
+NNModule THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::FlattenOptions()
+            .start_dim(start_dim)
+            .end_dim(end_dim);
+
+        auto mod = std::make_shared<torch::nn::FlattenImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::FlattenImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+Tensor   THSNN_Flatten_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Flatten>()->forward(*tensor));
+
 }
 
 
