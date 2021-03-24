@@ -1529,22 +1529,61 @@ Tensor   THSNN_TransformerDecoderLayer_forward(const NNModule module, const Tens
 
 NNModule THSNN_TransformerEncoder_ctor(const NNModule encoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule)
 {
-    return nullptr;
+    CATCH_RETURN_NNModule(
+        auto enc = (*encoder_layer)->as<torch::nn::TransformerEncoderLayer>();
+        auto opts = torch::nn::TransformerEncoderOptions(torch::nn::TransformerEncoderLayer(*enc), num_layers);
+
+        auto mod = std::make_shared<torch::nn::TransformerEncoderImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerEncoderImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
 Tensor   THSNN_TransformerEncoder_forward(const NNModule module, const Tensor src, const Tensor src_mask, const Tensor src_key_padding_mask)
 {
-    return nullptr;
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerEncoder>()->forward(
+        *src,
+        (src_mask ? *src_mask : at::Tensor()),
+        (src_key_padding_mask ? *src_key_padding_mask : at::Tensor()))
+    );
 }
 
 NNModule THSNN_TransformerDecoder_ctor(const NNModule decoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule)
 {
-    return nullptr;
+    CATCH_RETURN_NNModule(
+        auto dec = (*decoder_layer)->as<torch::nn::TransformerDecoderLayer>();
+        auto opts = torch::nn::TransformerDecoderOptions(torch::nn::TransformerDecoderLayer(*dec), num_layers);
+
+        auto mod = std::make_shared<torch::nn::TransformerDecoderImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerDecoderImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
 }
 
 Tensor   THSNN_TransformerDecoder_forward(const NNModule module, const Tensor tgt, const Tensor memory, const Tensor tgt_mask, const Tensor memory_mask, const Tensor tgt_key_padding_mask, const Tensor memory_key_padding_mask)
 {
-    return nullptr;
+    CATCH_TENSOR((*module)->as<torch::nn::TransformerDecoder>()->forward(
+        *tgt,
+        *memory,
+        (tgt_mask ? *tgt_mask : at::Tensor()),
+        (memory_mask ? *memory_mask : at::Tensor()),
+        (tgt_key_padding_mask ? *tgt_key_padding_mask : at::Tensor()),
+        (memory_key_padding_mask ? *memory_key_padding_mask : at::Tensor()))
+    );
 }
 
 

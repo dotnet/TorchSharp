@@ -1897,9 +1897,9 @@ namespace TorchSharp
         public void TestTransformerEncoderLayer()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
-            using (var transformer_model = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
+            using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
                 var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var output = transformer_model.forward(src);
+                var output = encoder_layer.forward(src);
                 Assert.Equal(src.shape, output.shape);
             }
         }
@@ -1908,10 +1908,37 @@ namespace TorchSharp
         public void TestTransformerEncoderLayerWithMasks()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
-            using (var transformer_model = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
+            using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
                 var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
-                var output = transformer_model.forward(src, src_mask: src_mask);
+                var output = encoder_layer.forward(src, src_mask: src_mask);
+                Assert.Equal(src.shape, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestTransformerEncoder()
+        {
+            // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
+            using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
+            using (var encoder = TransformerEncoder(encoder_layer, 1))
+            {
+                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var output = encoder.forward(src);
+                Assert.Equal(src.shape, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestTransformerEncoderWithMasks()
+        {
+            // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
+            using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
+            using (var encoder = TransformerEncoder(encoder_layer, 1))
+            {
+                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
+                var output = encoder.forward(src, src_mask: src_mask);
                 Assert.Equal(src.shape, output.shape);
             }
         }
@@ -1920,10 +1947,11 @@ namespace TorchSharp
         public void TestTransformerDecoderLayer()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
-            using (var transformer_model = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
+            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
+            {
                 var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
                 var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var output = transformer_model.forward(tgt, memory);
+                var output = decoder_layer.forward(tgt, memory);
                 Assert.Equal(tgt.shape, output.shape);
             }
         }
@@ -1932,11 +1960,40 @@ namespace TorchSharp
         public void TestTransformerDecoderLayerWithMasks()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
-            using (var transformer_model = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
+            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
                 var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
                 var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
-                var output = transformer_model.forward(tgt, memory, tgt_mask: tgt_mask);
+                var output = decoder_layer.forward(tgt, memory, tgt_mask: tgt_mask);
+                Assert.Equal(tgt.shape, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestTransformerDecoder()
+        {
+            // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
+            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
+            using (var decoder = TransformerDecoder(decoder_layer, 1))
+            {
+                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
+                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var output = decoder.forward(tgt, memory);
+                Assert.Equal(tgt.shape, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestTransformerDecoderWithMasks()
+        {
+            // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
+            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
+            using (var decoder = TransformerDecoder(decoder_layer, 1))
+            {
+                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
+                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
+                var output = decoder.forward(tgt, memory, tgt_mask: tgt_mask);
                 Assert.Equal(tgt.shape, output.shape);
             }
         }
