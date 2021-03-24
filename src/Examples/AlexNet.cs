@@ -6,7 +6,6 @@ using TorchSharp.Tensor;
 using TorchSharp.NN;
 using static TorchSharp.NN.Modules;
 using static TorchSharp.NN.Functions;
-using static TorchSharp.NN.Losses;
 
 namespace TorchSharp.Examples
 {
@@ -30,13 +29,11 @@ namespace TorchSharp.Examples
             using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
             using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
             using (var model = new Model("model", _numClasses))
-            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001))
-            {
+            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)) {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                for (var epoch = 1; epoch <= _epochs; epoch++)
-                {
+                for (var epoch = 1; epoch <= _epochs; epoch++) {
                     Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size());
                     Test(model, nll_loss(), test, test.Size());
                 }
@@ -82,9 +79,9 @@ namespace TorchSharp.Examples
                     ("l3", Linear(4096, numClasses))
                 );
 
-                RegisterModule ("features", features);
-                RegisterModule ("avg", avgPool);
-                RegisterModule ("classify", classifier);
+                RegisterModule("features", features);
+                RegisterModule("avg", avgPool);
+                RegisterModule("classify", classifier);
             }
 
             public override TorchTensor forward(TorchTensor input)
@@ -112,13 +109,11 @@ namespace TorchSharp.Examples
             long total = 0;
             long correct = 0;
 
-            foreach (var (data, target) in dataLoader)
-            {
+            foreach (var (data, target) in dataLoader) {
                 optimizer.zero_grad();
 
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftMax(prediction, 1), target))
-                {
+                using (var output = loss(LogSoftMax(prediction, 1), target)) {
                     output.backward();
 
                     optimizer.step();
@@ -127,8 +122,7 @@ namespace TorchSharp.Examples
                     total += target.shape[0];
                     correct += predicted.eq(target).sum().ToInt64();
 
-                    if (batchId % _logInterval == 0)
-                    {
+                    if (batchId % _logInterval == 0) {
                         Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()} Acc: { (float)correct / total }");
                     }
 
@@ -151,11 +145,9 @@ namespace TorchSharp.Examples
             double testLoss = 0;
             long correct = 0;
 
-            foreach (var (data, target) in dataLoader)
-            {
+            foreach (var (data, target) in dataLoader) {
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftMax(prediction, 1), target))
-                {
+                using (var output = loss(LogSoftMax(prediction, 1), target)) {
                     testLoss += output.ToSingle();
 
                     var pred = prediction.argmax(1);

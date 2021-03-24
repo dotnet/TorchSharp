@@ -62,12 +62,43 @@ EXPORT_API(Tensor)   THSNN_AvgPool3d_forward(const NNModule module, const Tensor
 
 // Convolution
 
-EXPORT_API(NNModule) THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t groups, const int64_t bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Conv1d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t groups, const int64_t bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Conv1d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_Conv1d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_Conv1d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_Conv1d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(NNModule) THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Conv2d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t groups, const int64_t bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Conv2d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_Conv2d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor)   THSNN_Conv2d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_Conv2d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(NNModule) THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Conv3d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_Conv3d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_Conv3d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor)   THSNN_Conv3d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_Conv3d_set_bias(const NNModule module, const Tensor bias);
+
+EXPORT_API(NNModule) THSNN_ConvTranspose1d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_ConvTranspose1d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_ConvTranspose1d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose1d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_ConvTranspose1d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose1d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(NNModule) THSNN_ConvTranspose2d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_ConvTranspose2d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_ConvTranspose2d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose2d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor)   THSNN_ConvTranspose2d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose2d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(NNModule) THSNN_ConvTranspose3d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_ConvTranspose3d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_ConvTranspose3d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose3d_set_weight(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor)   THSNN_ConvTranspose3d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_ConvTranspose3d_set_bias(const NNModule module, const Tensor bias);
 
 // Batch Normalization
 
@@ -86,6 +117,8 @@ EXPORT_API(Tensor)   THSNN_FeatureAlphaDropout_forward(const NNModule module, co
 
 // Linear
 
+EXPORT_API(NNModule) THSNN_Identity_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Identity_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool with_bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Linear_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(Tensor)   THSNN_Linear_bias(const NNModule module);
@@ -126,6 +159,13 @@ EXPORT_API(Tensor)   THSNN_Softmin_forward(const NNModule module, const Tensor t
 EXPORT_API(NNModule) THSNN_Tanh_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Tanh_forward(const NNModule module, const Tensor tensor);
 
+// Sparse
+
+EXPORT_API(NNModule) THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const bool sparse, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool freeze, const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const bool sparse, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Embedding_forward(const NNModule module, const Tensor weights);
+EXPORT_API(Tensor)   THSNN_Embedding_weight(const NNModule module);
+EXPORT_API(void)     THSNN_Embedding_set_weight(const NNModule module, const Tensor weights);
 
 // Containers
 
@@ -135,7 +175,10 @@ EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tenso
 
 // Loss functions
 
+EXPORT_API(Tensor) THSNN_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t ignore_index, const bool has_ii, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_binary_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_binary_cross_entropy_with_logits(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction, const Tensor pos_weights_wrapper);
+EXPORT_API(Tensor) THSNN_l1_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_poisson_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);
@@ -151,6 +194,10 @@ EXPORT_API(void) THSNN_Optimizer_zero_grad(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
+
+// Misc.
+
+EXPORT_API(Tensor) THSNN_one_hot(const Tensor self, const int64_t num_classes);
 
 // Initializers
 

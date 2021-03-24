@@ -107,6 +107,36 @@ void THSNN_Module_zero_grad(const NNModule module)
     (*module)->zero_grad();
 }
 
+// Utilities
+
+template <typename T>
+Tensor get_weight(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->weight);
+}
+
+template <typename T>
+void set_weight(const NNModule module, const Tensor weights)
+{
+    CATCH(
+        (*module)->as<T>()->weight = *weights;
+    );
+}
+
+template <typename T>
+Tensor get_bias(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->bias);
+}
+
+template <typename T>
+void set_bias(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<T>()->bias = *bias;
+    );
+}
+
 // Wrapper class used to enable .NET definitions ot new modules describing parameters and with delegates to implement forward function
 class CustomModule : public torch::nn::Module
 {
@@ -846,27 +876,48 @@ NNModule THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const 
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::BatchNorm3dOptions(features)
-        .eps(eps)
-        .momentum(momentum)
-        .affine(affine)
-        .track_running_stats(track_running_stats);
+            .eps(eps)
+            .momentum(momentum)
+            .affine(affine)
+            .track_running_stats(track_running_stats);
 
-    auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
+        auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     )
 }
 
 Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::BatchNorm3d>()->forward(*tensor));
+}
+
+NNModule THSNN_Identity_ctor(NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto mod = std::make_shared<torch::nn::IdentityImpl>();
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::IdentityImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Identity_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Identity>()->forward(*tensor));
 }
 
 NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
@@ -896,26 +947,22 @@ Tensor THSNN_Linear_forward(const NNModule module, const Tensor tensor)
 
 Tensor THSNN_Linear_bias(const NNModule module)
 {
-    CATCH_TENSOR((*module)->as<torch::nn::Linear>()->bias);
+    return get_bias<torch::nn::Linear>(module);
 }
 
 void THSNN_Linear_set_bias(const NNModule module, const Tensor bias)
 {
-    CATCH(
-        (*module)->as<torch::nn::Linear>()->bias = *bias;
-    )
+    set_bias<torch::nn::Linear>(module, bias);
 }
 
 Tensor THSNN_Linear_weight(const NNModule module)
 {
-    CATCH_TENSOR((*module)->as<torch::nn::Linear>()->weight);
+    return get_weight<torch::nn::Linear>(module);
 }
 
 void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
 {
-    CATCH(
-        (*module)->as<torch::nn::Linear>()->weight = *weight;
-    )
+    set_weight<torch::nn::Linear>(module, weight);
 }
 
 NNModule THSNN_Dropout_ctor(double probability, NNAnyModule* outAsAnyModule)
@@ -963,9 +1010,101 @@ Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor ten
     CATCH_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
 }
 
+NNModule THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedding_dims,
+    const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type,
+    const bool scale_grad_by_freq, const bool sparse,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::EmbeddingOptions(num_embeddings, embedding_dims)
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .sparse(sparse);
+
+        if (has_pi)
+            opts.padding_idx(padding_idx);
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+NNModule THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool freeze,
+    const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type,
+    const bool scale_grad_by_freq, const bool sparse,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto rows = embeddings->size(0);
+        auto cols = embeddings->size(1);
+
+        auto opts = torch::nn::EmbeddingOptions(rows, cols)
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .sparse(sparse);
+
+        if (has_pi)
+            opts.padding_idx(padding_idx);
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
+        mod->weight = *embeddings;
+        mod->weight.set_requires_grad(!freeze);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_Embedding_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Embedding>()->forward(*tensor));
+}
+
+Tensor THSNN_Embedding_weight(const NNModule module)
+{
+    return get_weight<torch::nn::Embedding>(module);
+}
+
+void THSNN_Embedding_set_weight(const NNModule module, const Tensor weights)
+{
+    set_weight<torch::nn::Embedding>(module, weights);
+}
+
+template<typename T>
+void ApplyPaddingMode(T& opts, const int64_t padding)
+{
+    if (padding == 0)
+        opts = opts.padding_mode(torch::kZeros);
+    if (padding == 1)
+        opts = opts.padding_mode(torch::kReflect);
+    if (padding == 2)
+        opts = opts.padding_mode(torch::kReplicate);
+    if (padding == 3)
+        opts = opts.padding_mode(torch::kCircular);
+}
+
+
 NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -975,6 +1114,7 @@ NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChann
         .dilation(dilation)
         .groups(groups)
         .bias(bias);
+        ApplyPaddingMode(opts, paddingMode);
 
         auto mod = std::make_shared<torch::nn::Conv1dImpl>(opts);
 
@@ -994,9 +1134,29 @@ Tensor THSNN_Conv1d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Conv1d>()->forward(*tensor));
 }
 
+Tensor THSNN_Conv1d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::Conv1d>(module);
+}
+
+void THSNN_Conv1d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::Conv1d>(module, bias);
+}
+
+Tensor THSNN_Conv1d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::Conv1d>(module);
+}
+
+void THSNN_Conv1d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::Conv1d>(module, weight);
+}
+
 NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -1006,6 +1166,7 @@ NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChann
             .dilation(dilation)
             .groups(groups)
             .bias(bias);
+        ApplyPaddingMode(opts, paddingMode);
 
         auto mod = std::make_shared<torch::nn::Conv2dImpl>(opts);
 
@@ -1025,30 +1186,236 @@ Tensor THSNN_Conv2d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Conv2d>()->forward(*tensor));
 }
 
+Tensor THSNN_Conv2d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::Conv2d>(module);
+}
+
+void THSNN_Conv2d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::Conv2d>(module, bias);
+}
+
+Tensor THSNN_Conv2d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::Conv2d>(module);
+}
+
+void THSNN_Conv2d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::Conv2d>(module, weight);
+}
+
 NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
-    const int64_t dilation, const int64_t groups, const int64_t bias,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::Conv3dOptions(inputChannel, outputChannel, kernelSize).stride(stride).padding(padding);
+        auto opts = torch::nn::Conv3dOptions(inputChannel, outputChannel, kernelSize)
+            .stride(stride)
+            .padding(padding)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias);
+        ApplyPaddingMode(opts, paddingMode);
 
-    auto mod = std::make_shared<torch::nn::Conv3dImpl>(opts);
+        auto mod = std::make_shared<torch::nn::Conv3dImpl>(opts);
 
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv3dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
     );
+}
+
+Tensor THSNN_Conv3d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::Conv3d>(module);
+}
+
+void THSNN_Conv3d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::Conv3d>(module, bias);
 }
 
 Tensor THSNN_Conv3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::Conv3d>()->forward(*tensor));
+}
+
+Tensor THSNN_Conv3d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::Conv3d>(module);
+}
+
+void THSNN_Conv3d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::Conv3d>(module, weight);
+}
+
+
+NNModule THSNN_ConvTranspose1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConvTranspose1dOptions(inputChannel, outputChannel, kernelSize)
+        .stride(stride)
+        .padding(padding)
+        .dilation(dilation)
+        .groups(groups)
+        .bias(bias)
+        .output_padding(output_padding);
+        ApplyPaddingMode(opts, paddingMode);
+
+        auto mod = std::make_shared<torch::nn::ConvTranspose1dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose1dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_ConvTranspose1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConvTranspose1d>()->forward(*tensor));
+}
+
+Tensor THSNN_ConvTranspose1d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::ConvTranspose1d>(module);
+}
+
+void THSNN_ConvTranspose1d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::ConvTranspose1d>(module, bias);
+}
+
+Tensor THSNN_ConvTranspose1d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::ConvTranspose1d>(module);
+}
+
+void THSNN_ConvTranspose1d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::ConvTranspose1d>(module, weight);
+}
+
+NNModule THSNN_ConvTranspose2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConvTranspose2dOptions(inputChannel, outputChannel, kernelSize)
+        .stride(stride)
+        .padding(padding)
+        .dilation(dilation)
+        .groups(groups)
+        .bias(bias)
+        .output_padding(output_padding);
+        ApplyPaddingMode(opts, paddingMode);
+
+        auto mod = std::make_shared<torch::nn::ConvTranspose2dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose2dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_ConvTranspose2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConvTranspose2d>()->forward(*tensor));
+}
+
+Tensor THSNN_ConvTranspose2d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::ConvTranspose2d>(module);
+}
+
+void THSNN_ConvTranspose2d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::ConvTranspose2d>(module, bias);
+}
+
+Tensor THSNN_ConvTranspose2d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::ConvTranspose2d>(module);
+}
+
+void THSNN_ConvTranspose2d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::ConvTranspose2d>(module, weight);
+}
+
+NNModule THSNN_ConvTranspose3d_ctor(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t output_padding,
+    const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConvTranspose3dOptions(inputChannel, outputChannel, kernelSize)
+            .stride(stride)
+            .padding(padding)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias)
+            .output_padding(output_padding);
+        ApplyPaddingMode(opts, paddingMode);
+
+        auto mod = std::make_shared<torch::nn::ConvTranspose3dImpl>(opts);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose3dImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_ConvTranspose3d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::ConvTranspose3d>(module);
+}
+
+void THSNN_ConvTranspose3d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::ConvTranspose3d>(module, bias);
+}
+
+Tensor THSNN_ConvTranspose3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConvTranspose3d>()->forward(*tensor));
+}
+
+Tensor THSNN_ConvTranspose3d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::ConvTranspose3d>(module);
+}
+
+void THSNN_ConvTranspose3d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::ConvTranspose3d>(module, weight);
 }
 
 NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int length */ )
@@ -1091,48 +1458,79 @@ void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocato
     }
 }
 
+template<typename T>
+void ApplyReduction(T& opts, const int64_t reduction)
+{
+    if (reduction == 0)
+        opts = opts.reduction(torch::kNone);
+    if (reduction == 1)
+        opts = opts.reduction(torch::kMean);
+    if (reduction == 2)
+        opts = opts.reduction(torch::kSum);
+}
+
+Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::CrossEntropyFuncOptions();
+        ApplyReduction(opts, reduction);
+        if (has_ii)
+            opts = opts.ignore_index(ignore_index);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = ResultTensor(torch::nn::functional::cross_entropy(*input, *target, opts));
+    )
+}
+
 Tensor THSNN_binary_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction)
 {
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::BinaryCrossEntropyFuncOptions();
-        if (reduction == 0)
-            opts = opts.reduction(torch::kNone);
-        if (reduction == 1)
-            opts = opts.reduction(torch::kMean);
-        if (reduction == 2)
-            opts = opts.reduction(torch::kSum);
-        if (weight != NULL)
-            opts = opts.weight(*weight);
-
-        res = ResultTensor(torch::nn::functional::binary_cross_entropy(*input, *target, opts));
+    ApplyReduction(opts, reduction);
+    if (weight != NULL)
+        opts = opts.weight(*weight);
+    res = ResultTensor(torch::nn::functional::binary_cross_entropy(*input, *target, opts));
     )
+}
+
+Tensor THSNN_binary_cross_entropy_with_logits(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction, const Tensor pos_weights_wrapper)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::BCEWithLogitsLossOptions();
+        ApplyReduction(opts, reduction);
+        if (pos_weights_wrapper != nullptr)
+            opts = opts.pos_weight(*pos_weights_wrapper);
+        if (weight != nullptr)
+            opts = opts.weight(*weight);
+        res = ResultTensor(torch::nn::functional::binary_cross_entropy_with_logits(*input, *target, opts));
+    )
+}
+
+Tensor THSNN_l1_loss(const Tensor input, const Tensor target, const int64_t reduction)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::MSELossFuncOptions();
+        ApplyReduction(opts, reduction);
+
+        res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
+     )
 }
 
 Tensor THSNN_mse_loss(const Tensor input, const Tensor target, const int64_t reduction)
 {
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::MSELossFuncOptions();
-        if (reduction == 0)
-            opts = opts.reduction(torch::kNone);
-        if (reduction == 1)
-            opts = opts.reduction(torch::kMean);
-        if (reduction == 2)
-            opts = opts.reduction(torch::kSum);
+        ApplyReduction(opts, reduction);
 
-        res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
-     )
+    res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
+    )
 }
 
 Tensor THSNN_nll_loss(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction)
 {
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::NLLLossFuncOptions();
-        if (reduction == 0)
-            opts = opts.reduction(torch::kNone);
-        if (reduction == 1)
-            opts = opts.reduction(torch::kMean);
-        if (reduction == 2)
-            opts = opts.reduction(torch::kSum);
+        ApplyReduction(opts, reduction);
         if (weight != NULL)
             opts = opts.weight(*weight);
 
@@ -1144,12 +1542,7 @@ Tensor THSNN_poisson_loss(const Tensor input, const Tensor target, const bool lo
 {
    CATCH_RETURN_Tensor(
        auto opts = torch::nn::functional::PoissonNLLLossFuncOptions().log_input(logInput).full(full).eps(eps);
-       if (reduction == 0)
-            opts = opts.reduction(torch::kNone);
-       if (reduction == 1)
-           opts = opts.reduction(torch::kMean);
-       if (reduction == 2)
-           opts = opts.reduction(torch::kSum);
+       ApplyReduction(opts, reduction);
 
        res = ResultTensor(torch::nn::functional::poisson_nll_loss(*input, *target, opts));
     )
@@ -1310,3 +1703,9 @@ void THSNN_AnyModule_dispose(const NNAnyModule module)
     delete module; // NOTE: this only deletes the shared_ptr
 }
 
+Tensor THSNN_one_hot(const Tensor self, const int64_t num_classes)
+{
+    CATCH_RETURN_Tensor(
+        res = ResultTensor(torch::nn::functional::one_hot(*self, num_classes));
+    )
+}
