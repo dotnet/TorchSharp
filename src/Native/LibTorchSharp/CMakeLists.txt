@@ -42,15 +42,7 @@ include_directories(${TORCH_INCLUDE_DIRS})
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
-# Make the libLibTorchSharp.so independent of installed libc++ by static linking
-# see
-#   https://github.com/xamarin/TorchSharp/issues/218
-#   https://stackoverflow.com/questions/46809303/how-to-static-linking-to-glibc-in-cmake
-if(WIN32)
-    target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
-else()
-    target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES}  -static-libstdc++)
-endif()
+target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 
