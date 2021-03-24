@@ -11,6 +11,14 @@ variables:
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
 
+resources:
+  containers:
+#   - container: CentosContainer
+#     image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-mlnet-8bba86b-20190314145033
+
+   - container: UbuntuContainer
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20200515184230-2c829e8
+
 jobs:
 - template: /build/ci/job-template.yml
   parameters:
@@ -20,6 +28,7 @@ jobs:
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
       vmImage: 'ubuntu-16.04'
+    container: UbuntuContainer
 
 # - template: /build/ci/job-template.yml
 #   parameters:
@@ -56,6 +65,7 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
     vmImage: 'ubuntu-16.04'
+  container: UbuntuContainer
   steps:
   - script: sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
