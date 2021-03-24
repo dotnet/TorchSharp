@@ -48,7 +48,7 @@ add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 #   https://stackoverflow.com/questions/46809303/how-to-static-linking-to-glibc-in-cmake
 if(NOT WIN32)
     target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES}  -static-libstdc++)
-else
+else()
     target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 endif()
 
