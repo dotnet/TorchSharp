@@ -91,6 +91,15 @@ namespace TorchSharp.NN
                 handle.SetHandleAsInvalid ();
             }
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSNN_Module_to(HType module, long device);
+
+        public void to(DeviceType deviceType)
+        {
+            THSNN_Module_to(handle, (long)deviceType);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
 
