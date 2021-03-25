@@ -170,7 +170,7 @@ namespace TorchSharp
         {
             LoadNativeBackend(deviceType == DeviceType.CUDA);
             if (deviceType == DeviceType.CUDA) {
-                return CallTorchCudaIsAvailable(deviceType);
+                return CallTorchCudaIsAvailable();
             } else {
                 return true;
             }
