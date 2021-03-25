@@ -15,6 +15,7 @@ namespace TorchSharp
 {
     public class TestNN
     {
+        #region "Linear"
 
         [Fact]
         public void CreateLinear()
@@ -193,7 +194,9 @@ namespace TorchSharp
             Assert.Equal(lin.Weight.shape[0], parameters[0].shape[0]);
             Assert.Equal(lin.Weight.shape[1], parameters[0].shape[1]);
         }
+        #endregion
 
+        #region "Activations"
         [Fact]
         public void CreateRelu()
         {
@@ -353,7 +356,9 @@ namespace TorchSharp
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
+        #endregion
 
+        #region Sequence
         [Fact]
         public void EvalSequence()
         {
@@ -405,7 +410,9 @@ namespace TorchSharp
 
             var result = output.ToSingle();
         }
+        #endregion
 
+        #region Loss Functions
         [Fact]
         public void TestPoissonNLLLoss()
         {
@@ -478,18 +485,9 @@ namespace TorchSharp
                 Assert.Single(values);
             }
         }
+        #endregion
 
-#if DEBUG
-        [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
-        public void TestErrorHandling()
-        {
-            using (TorchTensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f }))
-            using (TorchTensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
-                Assert.Throws<ExternalException>(() => poisson_loss()(input, target));
-            }
-        }
-#endif
-
+        #region Gradients
         [Fact]
         public void TestBackward()
         {
@@ -708,18 +706,9 @@ namespace TorchSharp
                 }
             }
         }
+        #endregion
 
-        [Fact]
-        public void TestSaveLoadLinear()
-        {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Linear(100, 10, true);
-            linear.Save(".model.ts");
-            var loadedLinear = NN.Linear.Load(".model.ts");
-            File.Delete(".model.ts");
-            Assert.NotNull(loadedLinear);
-        }
-
+        #region Convolution
         [Fact]
         public void TestConv1D()
         {
@@ -993,31 +982,9 @@ namespace TorchSharp
             Assert.Equal(30, output.shape[3]);
             Assert.Equal(30, output.shape[4]);
         }
+        #endregion
 
-        [Fact]
-        public void TestSaveLoadConv2D()
-        {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var conv = Conv2D(100, 10, 5);
-            conv.Save(".model.ts");
-            var loaded = NN.Conv2D.Load(".model.ts");
-            File.Delete(".model.ts");
-            Assert.NotNull(loaded);
-        }
-
-        [Fact]
-        public void TestSaveLoadSequence()
-        {
-            if (File.Exists(".model-list.txt")) File.Delete(".model-list.txt");
-            var lin1 = Linear(100, 10, true);
-            var lin2 = Linear(10, 5, true);
-            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
-            seq.Save(".model-list.txt");
-            var loaded = NN.Sequential.Load(".model-list.txt");
-            File.Delete("model-list.txt");
-            Assert.NotNull(loaded);
-        }
-
+        #region Custom Modules
         [Fact]
         public void TestCustomModule()
         {
@@ -1062,554 +1029,9 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
         }
+        #endregion
 
-
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using gradient descent.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
-        /// </summary>
-        [Fact]
-        public void TestTraining()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            float learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                seq.ZeroGrad();
-
-                output.backward();
-
-                using (var noGrad = new AutoGradMode(false)) {
-                    foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
-                        var update = grad.mul(learning_rate.ToScalar());
-                        param.sub_(update);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Adding a dropout module to the linear NN.
-        /// </summary>
-        [Fact]
-        public void TestTrainingWithDropout()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            float learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                seq.ZeroGrad();
-
-                output.backward();
-
-                using (var noGrad = new AutoGradMode(false)) {
-                    foreach (var param in seq.parameters()) {
-                        var grad = param.grad();
-                        var update = grad.mul(learning_rate.ToScalar());
-                        param.sub_(update);
-                    }
-                }
-            }
-        }
-
-        [Fact]
-        public void TestAdam()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            double learning_rate = 0.00001;
-
-            var optimizer = NN.Optimizer.Adam(seq.parameters(), learning_rate);
-
-            Assert.NotNull(optimizer);
-        }
-
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
-        [Fact]
-        public void TestTrainingAdamDefaults()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adam(seq.parameters());
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact]
-        public void TestTrainingAdamAmsGrad()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adam(seq.parameters(), amsgrad: true);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using Adagrad optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
-        [Fact]
-        public void TestTrainingAdagrad()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adagrad(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using RMSprop optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
-        [Fact]
-        public void TestTrainingRMSLR()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact]
-        public void TestTrainingRMSAlpha()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact]
-        public void TestTrainingRMSCentered()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate, centered: true);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using SGD optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
-        [Fact]
-        public void TestTrainingSGDMomentum()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate, momentum: 0.5);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact(Skip = "Fails with an exception in native code.")]
-        public void TestTrainingSGDNesterov()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate, nesterov: true);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact]
-        public void TestTrainingSGDDefaults()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            double learning_rate = 0.00004f;
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-        [Fact]
-        public void TestTrainingConv2d()
-        {
-            var conv1 = Conv2D(3, 4, 3, stride: 2);
-            var lin1 = Linear(4 * 13 * 13, 32);
-            var lin2 = Linear(32, 10);
-
-            var seq = Sequential(
-                ("conv1", conv1),
-                ("r1", ReLU(inPlace: true)),
-                ("drop1", Dropout(0.1)),
-                ("flat1", Flatten()),
-                ("lin1", lin1),
-                ("r2", ReLU(inPlace: true)),
-                ("lin2", lin2));
-
-            var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
-
-            float prevLoss = float.MaxValue;
-            var optimizer = NN.Optimizer.Adam(seq.parameters());
-            var loss = mse_loss(NN.Reduction.Sum);
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                Assert.True(lossVal < prevLoss);
-                prevLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-        }
-
-
-        [Fact]
-        public void TestTrainingConv2dCUDA()
-        {
-            if (Torch.IsCudaAvailable()) {
-                var device = Device.CUDA;
-
-                using (Module conv1 = Conv2D(3, 4, 3, stride: 2),
-                      lin1 = Linear(4 * 13 * 13, 32),
-                      lin2 = Linear(32, 10))
-
-                using (var seq = Sequential(
-                        ("conv1", conv1),
-                        ("r1", ReLU(inPlace: true)),
-                        ("drop1", Dropout(0.1)),
-                        ("flat1", Flatten()),
-                        ("lin1", lin1),
-                        ("r2", ReLU(inPlace: true)),
-                        ("lin2", lin2))) {
-
-                    seq.to(device);
-
-                    float prevLoss = float.MaxValue;
-                    var optimizer = NN.Optimizer.Adam(seq.parameters());
-                    var loss = mse_loss(NN.Reduction.Sum);
-
-                    using (TorchTensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
-                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: device))
-
-                        for (int i = 0; i < 10; i++) {
-                            var eval = seq.forward(x);
-                            var output = loss(eval, y);
-                            var lossVal = output.ToSingle();
-
-                            Assert.True(lossVal < prevLoss);
-                            prevLoss = lossVal;
-
-                            optimizer.zero_grad();
-
-                            output.backward();
-
-                            optimizer.step();
-                        }
-                }
-            } else {
-                Assert.Throws<InvalidOperationException>(() => Float32Tensor.randn(new long[] { 64, 3, 28, 28 }).cuda());
-            }
-        }
-
-        [Fact(Skip = "MNIST data too big to keep in repo")]
-        public void TestMNISTLoader()
-        {
-            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32)) {
-                Assert.NotNull(train);
-
-                var size = train.Size();
-                int i = 0;
-
-                foreach (var (data, target) in train) {
-                    i++;
-
-                    Assert.Equal(data.shape, new long[] { 32, 1, 28, 28 });
-                    Assert.Equal(target.shape, new long[] { 32 });
-
-                    data.Dispose();
-                    target.Dispose();
-                }
-
-                Assert.Equal(size, i * 32);
-            }
-        }
-
-        [Fact(Skip = "CIFAR10 data too big to keep in repo")]
-        public void TestCIFAR10Loader()
-        {
-            using (var train = Data.Loader.CIFAR10("../../../../src/Examples/Data", 16)) {
-                Assert.NotNull(train);
-
-                var size = train.Size();
-                int i = 0;
-
-                foreach (var (data, target) in train) {
-                    i++;
-
-                    Assert.Equal(data.shape, new long[] { 16, 3, 32, 32 });
-                    Assert.Equal(target.shape, new long[] { 16 });
-                    Assert.True(target.Data<int>().ToArray().Where(x => x >= 0 && x < 10).Count() == 16);
-
-                    data.Dispose();
-                    target.Dispose();
-                }
-
-                Assert.Equal(size, i * 16);
-            }
-        }
-
-        [Fact(Skip = "MNIST data too big to keep in repo")]
-        public void TestMNISTLoaderWithEpochs()
-        {
-            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32)) {
-                var size = train.Size();
-                var epochs = 10;
-
-                int i = 0;
-
-                for (int e = 0; e < epochs; e++) {
-                    foreach (var (data, target) in train) {
-                        i++;
-
-                        Assert.Equal(data.shape, new long[] { 32, 1, 28, 28 });
-                        Assert.Equal(target.shape, new long[] { 32 });
-
-                        data.Dispose();
-                        target.Dispose();
-                    }
-                }
-
-                Assert.Equal(size * epochs, i * 32);
-            }
-        }
-
+        #region Pooling
         [Fact]
         public void AvgPool2DObjectInitialized()
         {
@@ -1895,7 +1317,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 2, 2, 0].ToSingle());
             }
         }
+        #endregion
 
+        #region Normalization
         [Fact]
         public void TestBatchNorm1D()
         {
@@ -1925,7 +1349,9 @@ namespace TorchSharp
                 Assert.Equal(ones.shape, pooled.shape);
             }
         }
+        #endregion
 
+        #region Embedding, Encoding, Transformer
         [Fact]
         public void TestEmbeddingDefaults()
         {
@@ -2119,7 +1545,9 @@ namespace TorchSharp
                 Assert.Equal(tgt.shape, output.shape);
             }
         }
+        #endregion
 
+        #region Dropout
         [Fact]
         public void TestDropout()
         {
@@ -2197,8 +1625,18 @@ namespace TorchSharp
             var outVal = output.Data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
+        #endregion
 
-
+#if DEBUG
+        [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
+        public void TestErrorHandling()
+        {
+            using (TorchTensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f }))
+            using (TorchTensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
+                Assert.Throws<ExternalException>(() => poisson_loss()(input, target));
+            }
+        }
+#endif
 
         [Fact]
         public void TestFlatten()
