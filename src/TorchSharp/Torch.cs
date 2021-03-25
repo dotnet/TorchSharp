@@ -206,7 +206,7 @@ namespace TorchSharp
                         Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory: package={package}, natives={natives}, target={target}");
                         if (Directory.Exists(natives)) {
                             var nativeRegExp = new Regex("^"+nativeGlob+"$");
-                            foreach (var file in Directory.GetFiles(natives).Where(path => nativeRegExp.IsMatch(nativeGlob))) {
+                            foreach (var file in Directory.GetFiles(natives).Where(path => nativeRegExp.IsMatch(path))) {
                                 var targetFile = Path.Combine(target, Path.GetFileName(file));
                                 if (!File.Exists(targetFile)) {
                                     Console.WriteLine($"Copy {file} --> {targetFile}");
