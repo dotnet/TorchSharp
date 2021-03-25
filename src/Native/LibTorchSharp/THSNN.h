@@ -24,7 +24,7 @@ EXPORT_API(void)        THSNN_Module_save(const NNModule module, const char* loc
 EXPORT_API(NNModule)    THSNN_Module_load(const char* location, const char* name);
 EXPORT_API(void)        THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule);
 EXPORT_API(void)        THSNN_Module_dispose(const NNModule module);
-EXPORT_API(void)        THSNN_Module_to(NNModule module, int64_t device);
+EXPORT_API(void)        THSNN_Module_to_device(NNModule module, int64_t device, int64_t index);
 
 EXPORT_API(void)        THSNN_AnyModule_dispose(const NNAnyModule module);
 //EXPORT_API(NNModule)    THSNN_AnyModule_get(const NNAnyModule module);

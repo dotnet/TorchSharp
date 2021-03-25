@@ -176,9 +176,18 @@ namespace TorchSharp
 
         }
 
+        public static Device Device(string description)
+        {
+            return new Device(description);
+        }
+
+        public static Device Device(DeviceType type, int index = -1)
+        {
+            return new Device(type, index);
+        }
+
         [DllImport("LibTorchSharp")]
         private static extern bool THSTorchCuda_is_available();
-
 
         public static bool IsCudaAvailable()
         {

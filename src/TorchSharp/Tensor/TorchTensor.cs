@@ -627,18 +627,48 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index);
 
         /// <summary>
-        /// 
+        /// Moves the tensor data.
         /// </summary>
-        /// <param name="deviceType"></param>
-        /// <param name="deviceIndex"></param>
+        /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
+        /// <param name="deviceIndex">The optional device index.</param>
         /// <returns></returns>
-        public TorchTensor to_device(DeviceType deviceType, int deviceIndex = 0)
+        public TorchTensor to(DeviceType deviceType, int deviceIndex = -1)
         {
             Torch.InitializeDeviceType(deviceType);
             var res = THSTensor_to_device(handle, (int)deviceType, deviceIndex);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="device">A string denoting the target device.</param>
+        /// <returns></returns>
+        public TorchTensor to(string device)
+        {
+            return to(new Device(device));
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="device">The target device</param>
+        /// <returns></returns>
+        public TorchTensor to(Device device)
+        {
+            return to(device.Type, device.Index);
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="other">The tensor serving as a template.</param>
+        /// <returns></returns>
+        public TorchTensor to(TorchTensor other)
+        {
+            return to(other.device_type, other.device_index);
         }
 
         [DllImport("LibTorchSharp")]

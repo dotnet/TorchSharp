@@ -93,11 +93,70 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_Module_to(HType module, long device);
+        extern static void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
 
-        public void to(DeviceType deviceType)
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
+        /// <param name="deviceIndex">The optional device index.</param>
+        /// <returns></returns>
+        public Module to(DeviceType deviceType, int deviceIndex = -1)
         {
-            THSNN_Module_to(handle, (long)deviceType);
+            Torch.InitializeDeviceType(deviceType);
+            THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
+            Torch.CheckForErrors();
+            return this;
+        }
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="device">A string denoting the target device.</param>
+        /// <returns></returns>
+        public Module to(string device)
+        {
+            // Rely on the Device constructor to parse the string.
+            return to(new Device(device));
+        }
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="device">The target device</param>
+        /// <returns></returns>
+        public Module to(Device device)
+        {
+            return to(device.Type, device.Index);
+        }
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="other">The tensor serving as a template.</param>
+        /// <returns></returns>
+        public Module to(TorchTensor other)
+        {
+            return to(other.device_type, other.device_index);
+        }
+
+        /// <summary>
+        /// Moves all model parameters and buffers to the CPU.
+        /// </summary>
+        public Module cpu()
+        {
+            return to(DeviceType.CPU);
+        }
+
+        /// <summary>
+        /// Moves all model parameters and buffers to a GPU.
+        ///
+        /// This also makes associated parameters and buffers different objects.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
+        /// </summary>
+        /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
+        public Module cuda(int deviceIndex = -1)
+        {
+            return to(DeviceType.CUDA, deviceIndex);
         }
 
         [DllImport("LibTorchSharp")]

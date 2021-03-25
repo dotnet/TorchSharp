@@ -1251,7 +1251,7 @@ namespace TorchSharp
                 var x1 = Float32Tensor.ones(new long[] { 1, 2 }, deviceType: device);
                 var x2 = Float32Tensor.ones(new long[] { 2, 1 }, deviceType: device);
 
-                var y = x1.mm(x2).to_device(DeviceType.CPU);
+                var y = x1.mm(x2).to(DeviceType.CPU);
 
                 var ydata = y.Data<float>();
 
@@ -1262,7 +1262,7 @@ namespace TorchSharp
                 var x1 = Int64Tensor.ones(new long[] { 1, 2 }, deviceType: device);
                 var x2 = Int64Tensor.ones(new long[] { 2, 1 }, deviceType: device);
 
-                var y = x1.mm(x2).to_device(DeviceType.CPU);
+                var y = x1.mm(x2).to(DeviceType.CPU);
 
                 var ydata = y.Data<long>();
 

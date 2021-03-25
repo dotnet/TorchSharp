@@ -1493,10 +1493,12 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingConv2dCUDA()
         {
-            var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
-
             if (Torch.IsCudaAvailable())
             {
+                var device = Torch.Device("CUDA");
+
+                var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
+
                 var conv1 = Conv2D(3, 4, 3, stride: 2);
                 var lin1 = Linear(4 * 13 * 13, 32);
                 var lin2 = Linear(32, 10);
@@ -1509,7 +1511,7 @@ namespace TorchSharp
                     ("lin1", lin1),
                     ("r2", ReLU(inPlace: true)),
                     ("lin2", lin2));
-                seq.to(DeviceType.CUDA);
+                seq.cuda();
 
                 float prevLoss = float.MaxValue;
                 var optimizer = NN.Optimizer.Adam(seq.parameters());
@@ -1533,7 +1535,7 @@ namespace TorchSharp
                     optimizer.step();
                 }
             } else {
-                Assert.Throws<InvalidOperationException>(() => x.cuda());
+                Assert.Throws<InvalidOperationException>(() => Float32Tensor.randn(new long[] { 64, 3, 28, 28 }).cuda());
             }
         }
 
