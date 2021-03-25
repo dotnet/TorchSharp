@@ -173,7 +173,14 @@ namespace TorchSharp
             if (!TryInitializeDeviceType(deviceType)) {
                 throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine.");
             }
+        }
 
+        public static Device InitializeDevice(Device device)
+        {
+            if (device == null)
+                device = TorchSharp.Device.CPU;
+            InitializeDeviceType(device.Type);
+            return device;
         }
 
         public static Device Device(string description)

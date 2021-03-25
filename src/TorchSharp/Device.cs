@@ -9,6 +9,9 @@ namespace TorchSharp
         public DeviceType Type { get; private set; } = DeviceType.CPU;
         public int Index { get; private set; } = -1;
 
+        public static Device CPU  = new Device(DeviceType.CPU, -1);
+        public static Device CUDA = new Device(DeviceType.CUDA, -1);
+
         public Device(string description)
         {
             var splits = description.Split(':');

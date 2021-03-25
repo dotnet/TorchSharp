@@ -35,15 +35,15 @@ foreach (var type in TorchTypeDef.Types) {
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
-            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (handle);
@@ -55,15 +55,15 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor randperm(long n, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
-            var handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+            var handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (handle);
@@ -75,19 +75,19 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -101,19 +101,19 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -127,19 +127,19 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor empty(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -153,19 +153,19 @@ foreach (var type in TorchTypeDef.Types) {
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor randint(long max, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -181,19 +181,19 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -207,19 +207,19 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
@@ -231,10 +231,10 @@ if (type.IsFloatingPoint) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor from(<#=type.Storage#> scalar, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        public static TorchTensor from(<#=type.Storage#> scalar, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
-            var handle = THSTensor_new<#=type.Name#>Scalar(scalar, (int) deviceType, deviceIndex, requiresGrad);
+            device = Torch.InitializeDevice(device);
+            var handle = THSTensor_new<#=type.Name#>Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
@@ -327,19 +327,19 @@ if (type.IsInt64) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
-        public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false)
+        public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType (deviceType);
+            device = Torch.InitializeDevice(device);
 
             unsafe
             {
                 fixed (long* psizes = size)
                 {
-                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                    var handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) deviceType, deviceIndex, requiresGrad);
+                        handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
