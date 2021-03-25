@@ -109,8 +109,12 @@ EXPORT_API(Tensor)   THSNN_BatchNorm2d_forward(const NNModule module, const Tens
 EXPORT_API(NNModule) THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor);
 
-EXPORT_API(NNModule) THSNN_Dropout_ctor(double probability, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Dropout_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Dropout2d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Dropout3d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Dropout3d_forward(const NNModule module, const Tensor tensor);
 
 EXPORT_API(NNModule) THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor);
@@ -212,6 +216,9 @@ EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 // Misc.
 
 EXPORT_API(Tensor) THSNN_one_hot(const Tensor self, const int64_t num_classes);
+
+EXPORT_API(NNModule) THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Flatten_forward(const NNModule module, const Tensor tensor);
 
 // Initializers
 
