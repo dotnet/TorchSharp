@@ -170,9 +170,8 @@ namespace TorchSharp
         {
             LoadNativeBackend(deviceType == DeviceType.CUDA);
             if (deviceType == DeviceType.CUDA) {
-                return THSTorchCuda_is_available();
-            }
-            else {
+                return CallTorchCudaIsAvailable(deviceType);
+            } else {
                 return true;
             }
         }
@@ -219,11 +218,18 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         private static extern bool THSTorchCuda_is_available();
 
+        /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
+        /// is not raised as early as a DllImportException
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static bool CallTorchCudaIsAvailable()
+        {
+            return THSTorchCuda_is_available();
+        }
 
         public static bool IsCudaAvailable()
         {
             TryInitializeDeviceType(DeviceType.CUDA);
-            return THSTorchCuda_is_available();
+            return CallTorchCudaIsAvailable();
         }
 
         [DllImport("LibTorchSharp")]
