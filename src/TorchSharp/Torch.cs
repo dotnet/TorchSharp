@@ -42,6 +42,28 @@ namespace TorchSharp
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;
 
+        internal static bool TryLoadNativeLibraryFromFile(string path) {
+            bool ok = false;
+            try {
+                ok = NativeLibrary.TryLoad(path, out var res);
+            }
+            catch {
+                ok = false;
+            }
+            return ok;
+        }
+
+        internal static bool TryLoadNativeLibraryByName(string name, System.Reflection.Assembly assembly)
+        {
+            bool ok = false;
+            try {
+                ok = NativeLibrary.TryLoad(name, assembly, null, out var res);
+            } catch {
+                ok = false;
+            }
+            return ok;
+        }
+
         public static void LoadNativeBackend(bool useCudaBackend)
         {
             bool ok = false;
@@ -50,26 +72,27 @@ namespace TorchSharp
                 Debug.WriteLine($"TorchSHarp: Initialising native backend");
 
                 // See https://github.com/pytorch/pytorch/issues/33415
-                if (useCudaBackend)
-                    ok = NativeLibrary.TryLoad("torch_cuda", typeof(Torch).Assembly, null, out var res1);
+                if (useCudaBackend) {
+                    ok = TryLoadNativeLibraryByName("torch_cuda", typeof(Torch).Assembly);
+                }
                 if (ok) {
                     if (isWindows) {
 
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.  
                         // 
-                        NativeLibrary.TryLoad("cudnn_adv_infer64_8", typeof(Torch).Assembly, null, out var res2);
-                        NativeLibrary.TryLoad("cudnn_adv_train64_8", typeof(Torch).Assembly, null, out var res3);
-                        NativeLibrary.TryLoad("cudnn_cnn_infer64_8", typeof(Torch).Assembly, null, out var res4);
-                        NativeLibrary.TryLoad("cudnn_cnn_train64_8", typeof(Torch).Assembly, null, out var res5);
-                        NativeLibrary.TryLoad("cudnn_ops_infer64_8", typeof(Torch).Assembly, null, out var res6);
-                        NativeLibrary.TryLoad("cudnn_ops_train64_8", typeof(Torch).Assembly, null, out var res7);
-                        NativeLibrary.TryLoad("nvrtc-builtins64_111", typeof(Torch).Assembly, null, out var res8);
-                        NativeLibrary.TryLoad("caffe2_nvrtc", typeof(Torch).Assembly, null, out var res9);
-                        NativeLibrary.TryLoad("nvrtc64_111_0", typeof(Torch).Assembly, null, out var res10);
+                        TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("nvrtc-builtins64_111", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(Torch).Assembly);
                     }
                 } else {
-                    ok = NativeLibrary.TryLoad("torch_cpu", typeof(Torch).Assembly, null, out var res2);
+                    ok = TryLoadNativeLibraryByName("torch_cpu", typeof(Torch).Assembly);
                 }
                 if (!ok) {
                     Console.WriteLine($"Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
@@ -82,6 +105,8 @@ namespace TorchSharp
                     // So we shadow copy the DLLs to the TorchSharp package, make a copy of the native DLL and continue
                     //
                     // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net5.0\TorchSharp.dll
+                    //
+                    // TODO: on linux make these copies link not shadow-copy
                     var cpuRootPackage = "libtorch-cpu";
                     var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                     var torchsharpLoc = Path.GetDirectoryName(typeof(Torch).Assembly.Location);
@@ -97,7 +122,7 @@ namespace TorchSharp
                             if (cudaOk) {
                                 ok = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cudaTarget);
                                 if (ok) {
-                                    ok = NativeLibrary.TryLoad(Path.Combine(cudaTarget, target), out var res3);
+                                    ok = TryLoadNativeLibraryFromFile(Path.Combine(cudaTarget, target));
                                 }
                             }
                             if (!ok)
@@ -109,7 +134,7 @@ namespace TorchSharp
                             if (cpuOk) {
                                 ok = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cpuTarget);
                                 if (ok) {
-                                    ok = NativeLibrary.TryLoad(Path.Combine(cpuTarget, target), out var res4);
+                                    ok = TryLoadNativeLibraryFromFile(Path.Combine(cpuTarget, target));
                                 }
                             }
                             if (!ok)
