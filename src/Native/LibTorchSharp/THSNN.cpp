@@ -107,6 +107,15 @@ void THSNN_Module_zero_grad(const NNModule module)
     (*module)->zero_grad();
 }
 
+void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+    (*module)->to(torch::Device(dev, index));
+}
+
+
 // Utilities
 
 template <typename T>
@@ -135,6 +144,38 @@ void set_bias(const NNModule module, const Tensor bias)
     CATCH(
         (*module)->as<T>()->bias = *bias;
     );
+}
+
+template<typename TImpl>
+NNModule create_module(NNAnyModule* outAsAnyModule)
+{
+    auto mod = std::make_shared<TImpl>();
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+
+    return new std::shared_ptr<torch::nn::Module>(mod);
+}
+
+template<typename TImpl, typename TOptions>
+NNModule create_module(const TOptions& opts, NNAnyModule* outAsAnyModule)
+{
+    auto mod = std::make_shared<TImpl>(opts);
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+
+    return new std::shared_ptr<torch::nn::Module>(mod);
 }
 
 // Wrapper class used to enable .NET definitions ot new modules describing parameters and with delegates to implement forward function
@@ -192,17 +233,7 @@ NNModule THSNN_ELU_ctor(const double alpha, const bool inplace, NNAnyModule* out
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::ELUOptions().alpha(alpha).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::ELUImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ELUImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ELUImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -215,17 +246,7 @@ NNModule THSNN_CELU_ctor(const double alpha, const bool inplace, NNAnyModule* ou
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::CELUOptions().alpha(alpha).inplace(inplace);
-    auto mod = std::make_shared<torch::nn::CELUImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::CELUImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::CELUImpl>(opts, outAsAnyModule); 
     );
 }
 
@@ -238,17 +259,7 @@ NNModule THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::ReLUOptions(inplace);
-        auto mod = std::make_shared<torch::nn::ReLUImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ReLUImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ReLUImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -261,17 +272,7 @@ NNModule THSNN_RReLU_ctor(const double lower, const double upper, const bool inp
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::RReLUOptions().lower(lower).upper(upper).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::RReLUImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::RReLUImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::RReLUImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -284,17 +285,7 @@ NNModule THSNN_ReLU6_ctor(bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::ReLU6Options(inplace);
-    auto mod = std::make_shared<torch::nn::ReLU6Impl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ReLU6Impl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ReLU6Impl>(opts, outAsAnyModule);
     );
 }
 
@@ -307,17 +298,7 @@ NNModule THSNN_LeakyReLU_ctor(const double negative_sloope, const bool inplace, 
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::LeakyReLUOptions().negative_slope(negative_sloope).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::LeakyReLUImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::LeakyReLUImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::LeakyReLUImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -330,17 +311,7 @@ NNModule THSNN_SELU_ctor(bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::SELUOptions(inplace);
-        auto mod = std::make_shared<torch::nn::SELUImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::SELUImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::SELUImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -352,17 +323,7 @@ Tensor THSNN_SELU_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_Tanh_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::TanhImpl>();
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TanhImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TanhImpl>(outAsAnyModule);
     );
 }
 
@@ -374,17 +335,7 @@ Tensor THSNN_Tanh_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_Sigmoid_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::SigmoidImpl>();
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::SigmoidImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::SigmoidImpl>(outAsAnyModule);
     );
 }
 
@@ -396,17 +347,7 @@ Tensor THSNN_Sigmoid_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_Softmax2d_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::Softmax2dImpl>();
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Softmax2dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Softmax2dImpl>(outAsAnyModule);
     );
 }
 
@@ -418,17 +359,7 @@ Tensor THSNN_Softmax2d_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_GELU_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::GELUImpl>();
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::GELUImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::GELUImpl>(outAsAnyModule);
     );
 }
 
@@ -440,17 +371,7 @@ Tensor THSNN_GELU_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_SiLU_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::SiLUImpl>();
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::SiLUImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::SiLUImpl>(outAsAnyModule);
     );
 }
 
@@ -463,17 +384,7 @@ NNModule THSNN_Softmax_ctor(const int64_t dim, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::SoftmaxOptions(dim);
-        auto mod = std::make_shared<torch::nn::SoftmaxImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::SoftmaxImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::SoftmaxImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -486,17 +397,7 @@ NNModule THSNN_Softmin_ctor(const int64_t dim, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::SoftminOptions(dim);
-        auto mod = std::make_shared<torch::nn::SoftminImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::SoftminImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::SoftminImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -509,16 +410,7 @@ NNModule THSNN_LogSoftmax_ctor(int64_t dim, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::LogSoftmaxOptions(dim);
-    auto mod = std::make_shared<torch::nn::LogSoftmaxImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::LogSoftmaxImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::LogSoftmaxImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -534,16 +426,7 @@ NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride,
         auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1));
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
-        auto mod = std::make_shared<torch::nn::AvgPool1dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AvgPool1dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AvgPool1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -557,18 +440,9 @@ NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLen
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    if (stride)
-        opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
-    auto mod = std::make_shared<torch::nn::AvgPool2dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AvgPool2dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        res = create_module<torch::nn::AvgPool2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -584,16 +458,7 @@ NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLen
         auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
     if (stride)
         opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
-    auto mod = std::make_shared<torch::nn::AvgPool3dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AvgPool3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AvgPool3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -607,16 +472,7 @@ NNModule THSNN_AdaptiveAvgPool1d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveAvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-        auto mod = std::make_shared<torch::nn::AdaptiveAvgPool1dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveAvgPool1dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveAvgPool1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -630,16 +486,7 @@ NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveAvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    auto mod = std::make_shared<torch::nn::AdaptiveAvgPool2dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveAvgPool2dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveAvgPool2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -653,16 +500,7 @@ NNModule THSNN_AdaptiveAvgPool3d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveAvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    auto mod = std::make_shared<torch::nn::AdaptiveAvgPool3dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveAvgPool3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveAvgPool3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -676,16 +514,7 @@ NNModule THSNN_AdaptiveMaxPool1d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveMaxPool1dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    auto mod = std::make_shared<torch::nn::AdaptiveMaxPool1dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveMaxPool1dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveMaxPool1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -699,16 +528,7 @@ NNModule THSNN_AdaptiveMaxPool2d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveMaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    auto mod = std::make_shared<torch::nn::AdaptiveMaxPool2dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveMaxPool2dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveMaxPool2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -722,16 +542,7 @@ NNModule THSNN_AdaptiveMaxPool3d_ctor(const int64_t* kernelSize, const int kerne
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::AdaptiveMaxPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    auto mod = std::make_shared<torch::nn::AdaptiveMaxPool3dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::AdaptiveMaxPool3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::AdaptiveMaxPool3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -748,17 +559,8 @@ NNModule THSNN_MaxPool1d_ctor(const int64_t* kernelSize, const int64_t* stride,
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
 
-        auto mod = std::make_shared<torch::nn::MaxPool1dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::MaxPool1dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::MaxPool1dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_MaxPool1d_forward(const NNModule module, const Tensor tensor)
@@ -774,17 +576,8 @@ NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLen
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
 
-        auto mod = std::make_shared<torch::nn::MaxPool2dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::MaxPool2dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::MaxPool2dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor)
@@ -797,20 +590,11 @@ NNModule THSNN_MaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLen
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::MaxPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
-    if (stride)
-        opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
 
-    auto mod = std::make_shared<torch::nn::MaxPool3dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::MaxPool3dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::MaxPool3dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_MaxPool3d_forward(const NNModule module, const Tensor tensor)
@@ -822,22 +606,13 @@ NNModule THSNN_BatchNorm1d_ctor(const int64_t features, const double eps, const 
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::BatchNorm1dOptions(features)
-        .eps(eps)
-        .momentum(momentum)
-        .affine(affine)
-        .track_running_stats(track_running_stats);
+            .eps(eps)
+            .momentum(momentum)
+            .affine(affine)
+            .track_running_stats(track_running_stats);
 
-    auto mod = std::make_shared<torch::nn::BatchNorm1dImpl>(opts);
-
-    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-    // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
-    {
-        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm1dImpl>(*mod));
-        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-    }
-    res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::BatchNorm1dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_BatchNorm1d_forward(const NNModule module, const Tensor tensor)
@@ -854,17 +629,8 @@ NNModule THSNN_BatchNorm2d_ctor(const int64_t features, const double eps, const 
             .affine(affine)
             .track_running_stats(track_running_stats);
 
-        auto mod = std::make_shared<torch::nn::BatchNorm2dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm2dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::BatchNorm2dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_BatchNorm2d_forward(const NNModule module, const Tensor tensor)
@@ -881,17 +647,8 @@ NNModule THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const 
             .affine(affine)
             .track_running_stats(track_running_stats);
 
-        auto mod = std::make_shared<torch::nn::BatchNorm3dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::BatchNorm3dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
-    )
+        res = create_module<torch::nn::BatchNorm3dImpl>(opts, outAsAnyModule);
+    );
 }
 
 Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
@@ -902,16 +659,7 @@ Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
 NNModule THSNN_Identity_ctor(NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = std::make_shared<torch::nn::IdentityImpl>();
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::IdentityImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::IdentityImpl>(outAsAnyModule);
     );
 }
 
@@ -924,19 +672,8 @@ NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, 
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::LinearOptions(input_size, output_size);
-        opts = opts.bias(bias);
-
-        auto mod = std::make_shared<torch::nn::LinearImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::LinearImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        auto opts = torch::nn::LinearOptions(input_size, output_size).bias(bias);
+        res = create_module<torch::nn::LinearImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -969,17 +706,7 @@ NNModule THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAs
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::DropoutOptions(probability).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::DropoutImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::DropoutImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::DropoutImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -992,17 +719,7 @@ NNModule THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* out
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Dropout2dOptions(probability).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::Dropout2dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Dropout2dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Dropout2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1015,17 +732,7 @@ NNModule THSNN_Dropout3d_ctor(double probability, bool inplace, NNAnyModule* out
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Dropout3dOptions(probability).inplace(inplace);
-        auto mod = std::make_shared<torch::nn::Dropout3dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Dropout3dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Dropout3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1038,16 +745,7 @@ NNModule THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAn
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::FeatureAlphaDropoutOptions(probability);
-        auto mod = std::make_shared<torch::nn::FeatureAlphaDropoutImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::FeatureAlphaDropoutImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::FeatureAlphaDropoutImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1072,16 +770,7 @@ NNModule THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedd
         if (has_mn)
             opts.max_norm(max_norm);
 
-        auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::EmbeddingImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1104,6 +793,7 @@ NNModule THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool fre
         if (has_mn)
             opts.max_norm(max_norm);
 
+        // Can't use the template function here -- custom logic.
         auto mod = std::make_shared<torch::nn::EmbeddingImpl>(opts);
         mod->weight = *embeddings;
         mod->weight.set_requires_grad(!freeze);
@@ -1162,16 +852,7 @@ NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChann
         .bias(bias);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::Conv1dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv1dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Conv1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1214,16 +895,7 @@ NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChann
             .bias(bias);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::Conv2dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv2dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Conv2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1266,16 +938,7 @@ NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChann
             .bias(bias);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::Conv3dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::Conv3dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::Conv3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1320,16 +983,7 @@ NNModule THSNN_ConvTranspose1d_ctor(const int64_t inputChannel, const int64_t ou
         .output_padding(output_padding);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::ConvTranspose1dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose1dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ConvTranspose1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1373,16 +1027,7 @@ NNModule THSNN_ConvTranspose2d_ctor(const int64_t inputChannel, const int64_t ou
         .output_padding(output_padding);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::ConvTranspose2dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose2dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ConvTranspose2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1426,16 +1071,7 @@ NNModule THSNN_ConvTranspose3d_ctor(const int64_t inputChannel, const int64_t ou
             .output_padding(output_padding);
         ApplyPaddingMode(opts, paddingMode);
 
-        auto mod = std::make_shared<torch::nn::ConvTranspose3dImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::ConvTranspose3dImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::ConvTranspose3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1483,16 +1119,7 @@ NNModule THSNN_Transformer_ctor(const int64_t d_model, const int64_t nhead, cons
             .dropout(dropout);
         ApplyTransformerActivation(opts, activation);
 
-        auto mod = std::make_shared<torch::nn::TransformerImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TransformerImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1518,16 +1145,7 @@ NNModule THSNN_TransformerEncoderLayer_ctor(const int64_t d_model, const int64_t
             .dropout(dropout);
         ApplyTransformerActivation(opts, activation);
 
-        auto mod = std::make_shared<torch::nn::TransformerEncoderLayerImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerEncoderLayerImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TransformerEncoderLayerImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1548,16 +1166,7 @@ NNModule THSNN_TransformerDecoderLayer_ctor(const int64_t d_model, const int64_t
             .dropout(dropout);
         ApplyTransformerActivation(opts, activation);
 
-        auto mod = std::make_shared<torch::nn::TransformerDecoderLayerImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerDecoderLayerImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TransformerDecoderLayerImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1579,16 +1188,7 @@ NNModule THSNN_TransformerEncoder_ctor(const NNModule encoder_layer, const int64
         auto enc = (*encoder_layer)->as<torch::nn::TransformerEncoderLayer>();
         auto opts = torch::nn::TransformerEncoderOptions(torch::nn::TransformerEncoderLayer(*enc), num_layers);
 
-        auto mod = std::make_shared<torch::nn::TransformerEncoderImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerEncoderImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TransformerEncoderImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1607,16 +1207,7 @@ NNModule THSNN_TransformerDecoder_ctor(const NNModule decoder_layer, const int64
         auto dec = (*decoder_layer)->as<torch::nn::TransformerDecoderLayer>();
         auto opts = torch::nn::TransformerDecoderOptions(torch::nn::TransformerDecoderLayer(*dec), num_layers);
 
-        auto mod = std::make_shared<torch::nn::TransformerDecoderImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::TransformerDecoderImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::TransformerDecoderImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -1639,16 +1230,7 @@ NNModule THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAn
             .start_dim(start_dim)
             .end_dim(end_dim);
 
-        auto mod = std::make_shared<torch::nn::FlattenImpl>(opts);
-
-        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
-        // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
-        {
-            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::FlattenImpl>(*mod));
-            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
-        }
-        res = new std::shared_ptr<torch::nn::Module>(mod);
+        res = create_module<torch::nn::FlattenImpl>(opts, outAsAnyModule);
     );
 }
 Tensor   THSNN_Flatten_forward(const NNModule module, const Tensor tensor)
@@ -1726,10 +1308,10 @@ Tensor THSNN_binary_cross_entropy(const Tensor input, const Tensor target, const
 {
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::BinaryCrossEntropyFuncOptions();
-    ApplyReduction(opts, reduction);
-    if (weight != NULL)
-        opts = opts.weight(*weight);
-    res = ResultTensor(torch::nn::functional::binary_cross_entropy(*input, *target, opts));
+        ApplyReduction(opts, reduction);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = ResultTensor(torch::nn::functional::binary_cross_entropy(*input, *target, opts));
     )
 }
 
@@ -1762,7 +1344,7 @@ Tensor THSNN_mse_loss(const Tensor input, const Tensor target, const int64_t red
         auto opts = torch::nn::functional::MSELossFuncOptions();
         ApplyReduction(opts, reduction);
 
-    res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
+        res = ResultTensor(torch::nn::functional::mse_loss(*input, *target, opts));
     )
 }
 

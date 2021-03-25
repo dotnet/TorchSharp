@@ -782,7 +782,7 @@ namespace TorchSharp
             TorchTensor t = Float32Tensor.rand(shape);
 
             using (var conv = Conv1D(3, 64, 3, padding: 1))
-            using (var output = conv.forward(t)){
+            using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
                 Assert.Equal(28, output.shape[2]);
@@ -1453,8 +1453,8 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingConv2d()
         {
-            var conv1 = Conv2D(3, 4, 3, stride:2);
-            var lin1 = Linear(4*13*13, 32);
+            var conv1 = Conv2D(3, 4, 3, stride: 2);
+            var lin1 = Linear(4 * 13 * 13, 32);
             var lin2 = Linear(32, 10);
 
             var seq = Sequential(
@@ -1489,6 +1489,54 @@ namespace TorchSharp
             }
         }
 
+
+        [Fact]
+        public void TestTrainingConv2dCUDA()
+        {
+            if (Torch.IsCudaAvailable()) {
+                var device = Device.CUDA;
+
+                using (Module conv1 = Conv2D(3, 4, 3, stride: 2),
+                      lin1 = Linear(4 * 13 * 13, 32),
+                      lin2 = Linear(32, 10))
+
+                using (var seq = Sequential(
+                        ("conv1", conv1),
+                        ("r1", ReLU(inPlace: true)),
+                        ("drop1", Dropout(0.1)),
+                        ("flat1", Flatten()),
+                        ("lin1", lin1),
+                        ("r2", ReLU(inPlace: true)),
+                        ("lin2", lin2))) {
+
+                    seq.to(device);
+
+                    float prevLoss = float.MaxValue;
+                    var optimizer = NN.Optimizer.Adam(seq.parameters());
+                    var loss = mse_loss(NN.Reduction.Sum);
+
+                    using (TorchTensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
+                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: device))
+
+                        for (int i = 0; i < 10; i++) {
+                            var eval = seq.forward(x);
+                            var output = loss(eval, y);
+                            var lossVal = output.ToSingle();
+
+                            Assert.True(lossVal < prevLoss);
+                            prevLoss = lossVal;
+
+                            optimizer.zero_grad();
+
+                            output.backward();
+
+                            optimizer.step();
+                        }
+                }
+            } else {
+                Assert.Throws<InvalidOperationException>(() => Float32Tensor.randn(new long[] { 64, 3, 28, 28 }).cuda());
+            }
+        }
 
         [Fact(Skip = "MNIST data too big to keep in repo")]
         public void TestMNISTLoader()
@@ -1930,7 +1978,7 @@ namespace TorchSharp
         public void TestOneHotEncoding1()
         {
             var ones = Int64Tensor.from(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
-            var env = OneHot(ones,5);
+            var env = OneHot(ones, 5);
             var values = env.Data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
             Assert.Equal(5, env.shape[1]);
@@ -2000,8 +2048,7 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
-            using (var encoder = TransformerEncoder(encoder_layer, 1))
-            {
+            using (var encoder = TransformerEncoder(encoder_layer, 1)) {
                 var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var output = encoder.forward(src);
                 Assert.Equal(src.shape, output.shape);
@@ -2013,8 +2060,7 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
-            using (var encoder = TransformerEncoder(encoder_layer, 1))
-            {
+            using (var encoder = TransformerEncoder(encoder_layer, 1)) {
                 var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
                 var output = encoder.forward(src, src_mask: src_mask);
@@ -2026,8 +2072,7 @@ namespace TorchSharp
         public void TestTransformerDecoderLayer()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
-            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
-            {
+            using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
                 var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
                 var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var output = decoder_layer.forward(tgt, memory);
@@ -2053,8 +2098,7 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
-            using (var decoder = TransformerDecoder(decoder_layer, 1))
-            {
+            using (var decoder = TransformerDecoder(decoder_layer, 1)) {
                 var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
                 var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var output = decoder.forward(tgt, memory);
@@ -2067,8 +2111,7 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
-            using (var decoder = TransformerDecoder(decoder_layer, 1))
-            {
+            using (var decoder = TransformerDecoder(decoder_layer, 1)) {
                 var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
                 var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
                 var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
@@ -2093,13 +2136,13 @@ namespace TorchSharp
         [Fact]
         public void TestDropoutInPlace()
         {
-            var drop = Dropout(0.75, inPlace:true);
+            var drop = Dropout(0.75, inPlace: true);
             var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
             var dataVal = data.Data<float>().ToArray();
-            var outVal  = output.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
 
