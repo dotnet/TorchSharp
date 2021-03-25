@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace TorchSharp
 {
@@ -34,11 +36,15 @@ namespace TorchSharp
             (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? "osx-x64" :
             "any";
 
-        static string nativeGlob=>
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? "*.dll" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) ? "*.so" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? "*.dynlib" :
-            "*.so";
+        static string nativeGlob =>
+            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? @".*\.dll" :
+            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? @".*\.dynlib\.*" :
+            // must match
+            //   lib.so
+            //   lib.so.1
+            //   lib.so.11.0
+            //   lib.so.11.1
+            @".*\.so(\.\d*)*";
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;
 
@@ -151,6 +157,7 @@ namespace TorchSharp
                                     var consolidated = Path.Combine(cpuTarget, target);
                                     Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
+                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: ok = {ok}...");
                                 }
                             }
                             if (!cpuOk)
@@ -184,7 +191,7 @@ namespace TorchSharp
         {
             // Some loads will fail due to missing dependencies but then
             // these will be resolved in subsequent iterations.
-            Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory, packagesDir = {packagesDir}");
+            Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory: packagesDir = {packagesDir}");
             if (Directory.Exists(packagesDir)) {
                 var packages =
                     Directory.GetDirectories(packagesDir, packagePattern)
@@ -196,12 +203,13 @@ namespace TorchSharp
                         Directory.CreateDirectory(target);
                     foreach (var package in packages) {
                         var natives = Path.Combine(package, packageVersion, "runtimes", nativeRid, "native");
-                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory, package={package}, natives={natives}, target={target}");
+                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory: package={package}, natives={natives}, target={target}");
                         if (Directory.Exists(natives)) {
-                            foreach (var file in Directory.GetFiles(natives, nativeGlob)) {
+                            var nativeRegExp = new Regex("^"+nativeGlob+"$");
+                            foreach (var file in Directory.GetFiles(natives).Where(path => nativeRegExp.IsMatch(path))) {
                                 var targetFile = Path.Combine(target, Path.GetFileName(file));
                                 if (!File.Exists(targetFile)) {
-                                    Console.WriteLine($"Copy {targetFile} --> {file}");
+                                    Console.WriteLine($"Copy {file} --> {targetFile}");
                                     File.Copy(file, targetFile);
                                 }
                             }
