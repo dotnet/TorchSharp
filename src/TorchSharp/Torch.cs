@@ -192,15 +192,18 @@ namespace TorchSharp
                        .ToArray();
 
                 if (packages.Length > 0) {
+                    if (!Directory.Exists(target))
+                        Directory.CreateDirectory(target);
                     foreach (var package in packages) {
-                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory, package {package}");
                         var natives = Path.Combine(package, packageVersion, "runtimes", nativeRid, "native");
-                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory, natives {natives}");
+                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory, package={package}, natives={natives}, target={target}");
                         if (Directory.Exists(natives)) {
                             foreach (var file in Directory.GetFiles(natives, nativeGlob)) {
                                 var targetFile = Path.Combine(target, Path.GetFileName(file));
-                                if (!File.Exists(targetFile))
+                                if (!File.Exists(targetFile)) {
+                                    Console.WriteLine($"Copy {targetFile} --> {file}");
                                     File.Copy(file, targetFile);
+                                }
                             }
                         }
                     }
