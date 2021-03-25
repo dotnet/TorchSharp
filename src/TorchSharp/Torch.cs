@@ -68,17 +68,15 @@ namespace TorchSharp
         {
             bool ok = false;
             var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            var target = isWindows ? "LibTorchSharp.dll" : "libLibTorchSharp.so";
             if (!(useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded)) {
-                Debug.WriteLine($"TorchSHarp: Initialising native backend");
+                Console.WriteLine($"TorchSharp: LoadNativeBackend: Initialising native backend");
 
                 // Workarounds for weird LibTorch native stuff
                 // See https://github.com/pytorch/pytorch/issues/33415
                 if (useCudaBackend) {
-                    ok = TryLoadNativeLibraryByName("torch_cuda", typeof(Torch).Assembly);
-                }
-                if (ok) {
                     if (isWindows) {
-
+                        Console.WriteLine($"Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.  
                         // 
@@ -92,15 +90,21 @@ namespace TorchSharp
                         TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(Torch).Assembly);
                         TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(Torch).Assembly);
                     }
+                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Try loading torch_cuda native component");
+                    TryLoadNativeLibraryByName("torch_cuda", typeof(Torch).Assembly);
                 } else {
-                    ok = TryLoadNativeLibraryByName("torch_cpu", typeof(Torch).Assembly);
+                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Loading torch_cpu");
+                    TryLoadNativeLibraryByName("torch_cpu", typeof(Torch).Assembly);
                 }
+                Console.WriteLine($"TorchSharp: LoadNativeBackend: Loading LibTorchSharp");
+                ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(Torch).Assembly);
 
+                Console.WriteLine($"TorchSharp: LoadNativeBackend: Loaded LibTorchSharp, ok = {ok}");
                 // Try dynamic load from package directories
                 var cpuRootPackage = "libtorch-cpu";
                 var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                 if (!ok) {
-                    Console.WriteLine($"Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
+                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
 
                     // See https://github.com/xamarin/TorchSharp/issues/169
                     //
@@ -119,18 +123,17 @@ namespace TorchSharp
                     if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
                         var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
-                        var target = isWindows ? "LibTorchSharp.dll" : "libLibTorchSharp.so";
 
                         if (useCudaBackend) {
                             var cudaTarget = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
-                            Console.WriteLine($"Consolidating native {cudaRootPackage}-* binaries to {cudaTarget}...");
+                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cudaRootPackage}-* binaries to {cudaTarget}...");
                             var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, cudaTarget);
                             if (cudaOk) {
-                                Console.WriteLine($"Consolidating native LibTorchSharp binaries to {cudaTarget}...");
+                                Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cudaTarget}...");
                                 cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cudaTarget);
                                 if (cudaOk) {
                                     var consolidated = Path.Combine(cudaTarget, target);
-                                    Console.WriteLine($"Trying to load {consolidated}...");
+                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
                                 }
                             }
@@ -139,14 +142,14 @@ namespace TorchSharp
                         }
                         else {
                             var cpuTarget = Path.Combine(torchsharpLoc, $"cpu");
-                            Console.WriteLine($"Consolidating native {cpuRootPackage} binaries to {cpuTarget}...");
+                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cpuRootPackage} binaries to {cpuTarget}...");
                             var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, cpuTarget);
                             if (cpuOk) {
-                                Console.WriteLine($"Consolidating native LibTorchSharp binaries to {cpuTarget}...");
+                                Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cpuTarget}...");
                                 cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cpuTarget);
                                 if (cpuOk) {
                                     var consolidated = Path.Combine(cpuTarget, target);
-                                    Console.WriteLine($"Trying to load {consolidated}...");
+                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
                                 }
                             }
