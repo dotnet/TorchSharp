@@ -2379,13 +2379,21 @@ Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device));
+        res = ResultTensor(tensor->to(device));     
     );
 }
 
 Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type)
 {
     CATCH_TENSOR(tensor->toType(at::ScalarType(scalar_type)));
+}
+
+Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
+    );
 }
 
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)

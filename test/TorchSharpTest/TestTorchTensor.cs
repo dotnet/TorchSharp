@@ -730,6 +730,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMoveAndCast()
+        {
+            var input = Float64Tensor.rand(new long[] { 128 }, Device.CPU);
+
+            if (Torch.IsCudaAvailable()) {
+                var moved = input.to(ScalarType.Float32, Device.CUDA);
+                Assert.Equal(ScalarType.Float32, moved.Type);
+                Assert.Equal(DeviceType.CUDA, moved.device_type);
+            }
+            else {
+                var moved = input.to(ScalarType.Float32);
+                Assert.Equal(ScalarType.Float32, moved.Type);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+        }
+
+        [Fact]
         public void TestStackCpu()
         {
             TestStackGen(Device.CPU);

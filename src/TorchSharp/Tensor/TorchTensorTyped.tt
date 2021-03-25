@@ -231,6 +231,9 @@ if (type.IsFloatingPoint) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new<#=type.Name#>Scalar(<#=type.Storage#> scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
+        /// <summary>
+        /// Create a scalar tensor from a single value
+        /// </summary>
         public static TorchTensor from(<#=type.Storage#> scalar, Device device = null, bool requiresGrad = false)
         {
             device = Torch.InitializeDevice(device);
@@ -256,6 +259,10 @@ if (type.IsInt64) {
         extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, long[] dimensions, int numDimensions, sbyte type, bool requiresGrad);
 <# } #>
 
+        /// <summary>
+        /// Create a tensor from an array of values, shaping it based on the shape passed in.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
 <#
@@ -319,6 +326,10 @@ if (type.IsInt64) {
             }
         }
         
+        /// <summary>
+        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
@@ -327,6 +338,9 @@ if (type.IsInt64) {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
 
+        /// <summary>
+        /// Create a sparse tensor by indexing into an existing dense tensor.
+        /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
             device = Torch.InitializeDevice(device);
