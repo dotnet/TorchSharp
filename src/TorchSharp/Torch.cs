@@ -76,13 +76,13 @@ namespace TorchSharp
             var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             var target = isWindows ? "LibTorchSharp.dll" : "libLibTorchSharp.so";
             if (!(useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded)) {
-                Console.WriteLine($"TorchSharp: LoadNativeBackend: Initialising native backend");
+                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Initialising native backend");
 
                 // Workarounds for weird LibTorch native stuff
                 // See https://github.com/pytorch/pytorch/issues/33415
                 if (useCudaBackend) {
                     if (isWindows) {
-                        Console.WriteLine($"Try loading Windows cuda native components");
+                        Trace.WriteLine($"Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.  
                         // 
@@ -96,21 +96,21 @@ namespace TorchSharp
                         TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(Torch).Assembly);
                         TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(Torch).Assembly);
                     }
-                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Try loading torch_cuda native component");
+                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Try loading torch_cuda native component");
                     TryLoadNativeLibraryByName("torch_cuda", typeof(Torch).Assembly);
                 } else {
-                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Loading torch_cpu");
+                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loading torch_cpu");
                     TryLoadNativeLibraryByName("torch_cpu", typeof(Torch).Assembly);
                 }
-                Console.WriteLine($"TorchSharp: LoadNativeBackend: Loading LibTorchSharp");
+                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loading LibTorchSharp");
                 ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(Torch).Assembly);
 
-                Console.WriteLine($"TorchSharp: LoadNativeBackend: Loaded LibTorchSharp, ok = {ok}");
+                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loaded LibTorchSharp, ok = {ok}");
                 // Try dynamic load from package directories
                 var cpuRootPackage = "libtorch-cpu";
                 var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                 if (!ok) {
-                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
+                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
 
                     // See https://github.com/xamarin/TorchSharp/issues/169
                     //
@@ -132,14 +132,14 @@ namespace TorchSharp
 
                         if (useCudaBackend) {
                             var cudaTarget = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
-                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cudaRootPackage}-* binaries to {cudaTarget}...");
+                            Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cudaRootPackage}-* binaries to {cudaTarget}...");
                             var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, cudaTarget);
                             if (cudaOk) {
-                                Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cudaTarget}...");
+                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cudaTarget}...");
                                 cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cudaTarget);
                                 if (cudaOk) {
                                     var consolidated = Path.Combine(cudaTarget, target);
-                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
+                                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
                                 }
                             }
@@ -148,16 +148,16 @@ namespace TorchSharp
                         }
                         else {
                             var cpuTarget = Path.Combine(torchsharpLoc, $"cpu");
-                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cpuRootPackage} binaries to {cpuTarget}...");
+                            Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cpuRootPackage} binaries to {cpuTarget}...");
                             var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, cpuTarget);
                             if (cpuOk) {
-                                Console.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cpuTarget}...");
+                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cpuTarget}...");
                                 cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cpuTarget);
                                 if (cpuOk) {
                                     var consolidated = Path.Combine(cpuTarget, target);
-                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
+                                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
-                                    Console.WriteLine($"TorchSharp: LoadNativeBackend: ok = {ok}...");
+                                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: ok = {ok}...");
                                 }
                             }
                             if (!cpuOk)
@@ -191,7 +191,7 @@ namespace TorchSharp
         {
             // Some loads will fail due to missing dependencies but then
             // these will be resolved in subsequent iterations.
-            Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory: packagesDir = {packagesDir}");
+            Trace.WriteLine($"CopyNativeComponentsIntoSingleDirectory: packagesDir = {packagesDir}");
             if (Directory.Exists(packagesDir)) {
                 var packages =
                     Directory.GetDirectories(packagesDir, packagePattern)
@@ -203,13 +203,13 @@ namespace TorchSharp
                         Directory.CreateDirectory(target);
                     foreach (var package in packages) {
                         var natives = Path.Combine(package, packageVersion, "runtimes", nativeRid, "native");
-                        Console.WriteLine($"CopyNativeComponentsIntoSingleDirectory: package={package}, natives={natives}, target={target}");
+                        Trace.WriteLine($"CopyNativeComponentsIntoSingleDirectory: package={package}, natives={natives}, target={target}");
                         if (Directory.Exists(natives)) {
                             var nativeRegExp = new Regex("^"+nativeGlob+"$");
                             foreach (var file in Directory.GetFiles(natives).Where(path => nativeRegExp.IsMatch(path))) {
                                 var targetFile = Path.Combine(target, Path.GetFileName(file));
                                 if (!File.Exists(targetFile)) {
-                                    Console.WriteLine($"Copy {file} --> {targetFile}");
+                                    Trace.WriteLine($"Copy {file} --> {targetFile}");
                                     File.Copy(file, targetFile);
                                 }
                             }
