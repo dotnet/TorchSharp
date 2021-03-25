@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <PackageDescription>.NET Bindings for Torch. Requires reference to one of libtorch-cpu, libtorch-cuda-$(CudaVersionDot), libtorch-cuda-$(CudaVersionDot)-win-x64 or libtorch-cuda-$(CudaVersionDot)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).targets" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net5.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net5.0\$(MSBuildProjectName).targets" />
     <Content Include="$(RepoRoot)\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
