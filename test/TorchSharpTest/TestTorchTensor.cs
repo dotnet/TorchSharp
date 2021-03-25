@@ -68,11 +68,11 @@ namespace TorchSharp
         [Fact]
         public void CreateFloat16TensorOnes()
         {
-            foreach (var deviceType in new DeviceType[] { DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = Float16Tensor.ones(shape, deviceType: deviceType);
+                    TorchTensor t = Float16Tensor.ones(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(1.0f, t[0, 0].ToSingle());
                     Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -83,11 +83,11 @@ namespace TorchSharp
         [Fact]
         public void CreateBFloat16TensorOnes()
         {
-            foreach (var deviceType in new DeviceType[] { DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = BFloat16Tensor.ones(shape, deviceType: deviceType);
+                    TorchTensor t = BFloat16Tensor.ones(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(1.0f, t[0, 0].ToSingle());
                     Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -649,7 +649,7 @@ namespace TorchSharp
         {
             if (Torch.IsCudaAvailable())
             {
-                var cuda = Float32Tensor.ones(new long[] { 2, 2 }, DeviceType.CUDA);
+                var cuda = Float32Tensor.ones(new long[] { 2, 2 }, Device.CUDA);
                 Assert.Equal("cuda:0", cuda.device);
 
                 var cpu = cuda.cpu();
@@ -663,7 +663,7 @@ namespace TorchSharp
             }
             else
             {
-                Assert.Throws<InvalidOperationException>(() => { Float32Tensor.ones(new long[] { 2, 2 }, DeviceType.CUDA); });
+                Assert.Throws<InvalidOperationException>(() => { Float32Tensor.ones(new long[] { 2, 2 }, Device.CUDA); });
             }
         }
 
@@ -706,7 +706,7 @@ namespace TorchSharp
             }
         }
 
-        void TestStackGen(DeviceType device)
+        void TestStackGen(Device device)
         {
             {
                 var t1 = Float32Tensor.zeros( new long[] { }, device );
@@ -716,7 +716,7 @@ namespace TorchSharp
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 3 }, shape);
-                Assert.Equal(device, res.device_type);
+                Assert.Equal(device.Type, res.device_type);
             }
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
@@ -725,21 +725,21 @@ namespace TorchSharp
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 2, 9 }, shape);
-                Assert.Equal(device, res.device_type);
+                Assert.Equal(device.Type, res.device_type);
             }
         }
 
         [Fact]
         public void TestStackCpu()
         {
-            TestStackGen(DeviceType.CPU);
+            TestStackGen(Device.CPU);
         }
 
         [Fact]
         public void TestStackCuda()
         {
             if (Torch.IsCudaAvailable()) {
-                TestStackGen(DeviceType.CUDA);
+                TestStackGen(Device.CUDA);
             }
         }
 
@@ -879,11 +879,11 @@ namespace TorchSharp
         {
             // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
             // Float16 arange_cpu not available on cuda in LibTorch 1.8.0
-            foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = Float16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
-                    var c2 = Float16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
-                    var c3 = Float16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
+                    var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
+                    var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i,j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
@@ -927,11 +927,11 @@ namespace TorchSharp
         {
             // BFloat16 arange_cuda not available on cuda in LibTorch 1.8.0
             // BFloat16 arange_cpu not available on cuda in LibTorch 1.8.0
-            foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = BFloat16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
-                    var c2 = BFloat16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
-                    var c3 = BFloat16Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
+                    var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
+                    var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i,j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
@@ -973,11 +973,11 @@ namespace TorchSharp
         [Fact]
         public void TestArithmeticOperatorsFloat32()
         {
-            foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = Float32Tensor.arange(0, 10, 1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c2 = Float32Tensor.arange(10, 0, -1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c3 = Float32Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = Float32Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
+                    var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
+                    var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i,j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
@@ -1019,11 +1019,11 @@ namespace TorchSharp
         [Fact]
         public void TestArithmeticOperatorsFloat64()
         {
-            foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 = Float64Tensor.arange(0, 10, 1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c2 = Float64Tensor.arange(10, 0, -1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c3 = Float64Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = Float64Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
+                    var c2 = Float64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
+                    var c3 = Float64Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble(); 
                     // scalar-tensor operators
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
@@ -1065,11 +1065,11 @@ namespace TorchSharp
         [Fact]
         public void TestComparisonOperatorsFloat32()
         {
-            foreach (var deviceType in new DeviceType[] { DeviceType.CPU, DeviceType.CUDA }) {
-                if (deviceType != DeviceType.CUDA || Torch.IsCudaAvailable()) {
-                    var c1 =Float32Tensor.arange(0, 10, 1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c2 = Float32Tensor.arange(10, 0, -1, deviceType: deviceType).expand(new long[] { 10, 10 });
-                    var c3 = Float32Tensor.ones(new long[] { 10, 10 }, deviceType: deviceType);
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 =Float32Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
+                    var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
+                    var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle(); 
                     Func<TorchTensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean(); 
                     // scalar-tensor operators
@@ -1245,24 +1245,24 @@ namespace TorchSharp
             }
         }
 
-        void TestMmGen(DeviceType device)
+        void TestMmGen(Device device)
         {
             {
-                var x1 = Float32Tensor.ones(new long[] { 1, 2 }, deviceType: device);
-                var x2 = Float32Tensor.ones(new long[] { 2, 1 }, deviceType: device);
+                var x1 = Float32Tensor.ones(new long[] { 1, 2 }, device: device);
+                var x2 = Float32Tensor.ones(new long[] { 2, 1 }, device: device);
 
-                var y = x1.mm(x2).to_device(DeviceType.CPU);
+                var y = x1.mm(x2).to(DeviceType.CPU);
 
                 var ydata = y.Data<float>();
 
                 Assert.Equal(2.0f, ydata[0]);
             }
             //System.Runtime.InteropServices.ExternalException : addmm for CUDA tensors only supports floating - point types.Try converting the tensors with.float() at C:\w\b\windows\pytorch\aten\src\THC / generic / THCTensorMathBlas.cu:453
-            if (device == DeviceType.CPU) {
-                var x1 = Int64Tensor.ones(new long[] { 1, 2 }, deviceType: device);
-                var x2 = Int64Tensor.ones(new long[] { 2, 1 }, deviceType: device);
+            if (device.Type == DeviceType.CPU) {
+                var x1 = Int64Tensor.ones(new long[] { 1, 2 }, device: device);
+                var x2 = Int64Tensor.ones(new long[] { 2, 1 }, device: device);
 
-                var y = x1.mm(x2).to_device(DeviceType.CPU);
+                var y = x1.mm(x2).to(DeviceType.CPU);
 
                 var ydata = y.Data<long>();
 
@@ -1273,14 +1273,14 @@ namespace TorchSharp
         [Fact]
         public void TestMmCpu()
         {
-            TestMmGen(DeviceType.CPU);
+            TestMmGen(Device.CPU);
         }
 
         [Fact]
         public void TestMmCuda()
         {
             if (Torch.IsCudaAvailable()) {
-                TestMmGen(DeviceType.CUDA);
+                TestMmGen(Device.CUDA);
             }
         }
 

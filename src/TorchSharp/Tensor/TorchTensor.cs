@@ -627,18 +627,48 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index);
 
         /// <summary>
-        /// 
+        /// Moves the tensor data.
         /// </summary>
-        /// <param name="deviceType"></param>
-        /// <param name="deviceIndex"></param>
+        /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
+        /// <param name="deviceIndex">The optional device index.</param>
         /// <returns></returns>
-        public TorchTensor to_device(DeviceType deviceType, int deviceIndex = 0)
+        public TorchTensor to(DeviceType deviceType, int deviceIndex = -1)
         {
             Torch.InitializeDeviceType(deviceType);
             var res = THSTensor_to_device(handle, (int)deviceType, deviceIndex);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="device">A string denoting the target device.</param>
+        /// <returns></returns>
+        public TorchTensor to(string device)
+        {
+            return to(new Device(device));
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="device">The target device</param>
+        /// <returns></returns>
+        public TorchTensor to(Device device)
+        {
+            return to(device.Type, device.Index);
+        }
+
+        /// <summary>
+        /// Moves the tensor data.
+        /// </summary>
+        /// <param name="other">The tensor serving as a template.</param>
+        /// <returns></returns>
+        public TorchTensor to(TorchTensor other)
+        {
+            return to(other.device_type, other.device_index);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5116,7 +5146,7 @@ namespace TorchSharp.Tensor
             }
         }
 
-        public static TorchTensor ToTorchTensor<T>(this T scalar, DeviceType deviceType = DeviceType.CPU, int deviceIndex = 0, bool requiresGrad = false) where T : struct
+        public static TorchTensor ToTorchTensor<T>(this T scalar, Device? device = null, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double))
             {
@@ -5124,19 +5154,19 @@ namespace TorchSharp.Tensor
             }
 
             if (typeof(T) == typeof(byte))
-                return ByteTensor.from((byte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return ByteTensor.from((byte)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(sbyte))
-                return Int8Tensor.from((sbyte)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int8Tensor.from((sbyte)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(short))
-                return Int16Tensor.from((short)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int16Tensor.from((short)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(int))
-                return Int32Tensor.from((int)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int32Tensor.from((int)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(long))
-                return Int64Tensor.from((long)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Int64Tensor.from((long)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(double))
-                return Float64Tensor.from((double)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Float64Tensor.from((double)(object)scalar, device, requiresGrad);
             if (typeof(T) == typeof(float))
-                return Float32Tensor.from((float)(object)scalar, deviceType, deviceIndex, requiresGrad);
+                return Float32Tensor.from((float)(object)scalar, device, requiresGrad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
