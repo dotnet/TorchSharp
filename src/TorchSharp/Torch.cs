@@ -110,8 +110,8 @@ namespace TorchSharp
                 var cpuRootPackage = "libtorch-cpu";
                 var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                 if (!ok) {
-                    Trace.WriteLine($"TorchSharp: LoadNativeBackend: Native backend not found in application. Trying dynamic load for .NET/F# Interactive...");
 
+                    Console.WriteLine($"TorchSharp: LoadNativeBackend: Native backend not found in application loading TorchSharp directly from packages directory.");
                     // See https://github.com/xamarin/TorchSharp/issues/169
                     //
                     // If we are loading in .NET Interactive or F# Interactive, these are in packages in separate
@@ -131,14 +131,14 @@ namespace TorchSharp
                         var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
 
                         if (useCudaBackend) {
-                            var cudaTarget = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
-                            Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cudaRootPackage}-* binaries to {cudaTarget}...");
-                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, cudaTarget);
+                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cuda-{cudaVersion}");
+                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying dynamic load for .NET/F# Interactive by consolidating native {cudaRootPackage}-* binaries to {consolidatedDir}...");
+                            var cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, $"{cudaRootPackage}-*", libtorchPackageVersion, consolidatedDir);
                             if (cudaOk) {
-                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cudaTarget}...");
-                                cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cudaTarget);
+                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {consolidatedDir}...");
+                                cudaOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir);
                                 if (cudaOk) {
-                                    var consolidated = Path.Combine(cudaTarget, target);
+                                    var consolidated = Path.Combine(consolidatedDir, target);
                                     Trace.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
                                 }
@@ -147,14 +147,14 @@ namespace TorchSharp
                                 throw new NotSupportedException($"The {cudaRootPackage} package version {libtorchPackageVersion} is not restored on this system. If using F# Interactive or .NET Interactive you may need to add a reference to this package, e.g. \n    #r \"nuget: {cudaRootPackage}, {libtorchPackageVersion}\"");
                         }
                         else {
-                            var cpuTarget = Path.Combine(torchsharpLoc, $"cpu");
-                            Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native {cpuRootPackage} binaries to {cpuTarget}...");
-                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, cpuTarget);
+                            var consolidatedDir = Path.Combine(torchsharpLoc, $"cpu");
+                            Console.WriteLine($"TorchSharp: LoadNativeBackend: Trying dynamic load for .NET/F# Interactive by consolidating native {cpuRootPackage}-* binaries to {consolidatedDir}...");
+                            var cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, cpuRootPackage, libtorchPackageVersion, consolidatedDir);
                             if (cpuOk) {
-                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {cpuTarget}...");
-                                cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, cpuTarget);
+                                Trace.WriteLine($"TorchSharp: LoadNativeBackend: Consolidating native LibTorchSharp binaries to {consolidatedDir}...");
+                                cpuOk = CopyNativeComponentsIntoSingleDirectory(packagesDir, "torchsharp", torchSharpVersion, consolidatedDir);
                                 if (cpuOk) {
-                                    var consolidated = Path.Combine(cpuTarget, target);
+                                    var consolidated = Path.Combine(consolidatedDir, target);
                                     Trace.WriteLine($"TorchSharp: LoadNativeBackend: Trying to load {consolidated}...");
                                     ok = TryLoadNativeLibraryFromFile(consolidated);
                                     Trace.WriteLine($"TorchSharp: LoadNativeBackend: ok = {ok}...");
