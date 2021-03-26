@@ -19,6 +19,7 @@ namespace TorchSharp.NN
 
         public TorchTensor forward(TorchTensor tensor)
         {
+            if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {tensor.Dimensions}");
             var res = THSNN_LocalResponseNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);

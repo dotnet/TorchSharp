@@ -846,6 +846,19 @@ Tensor THSNN_LayerNorm_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::LayerNorm>()->forward(*tensor));
 }
 
+NNModule THSNN_GroupNorm_ctor(const int64_t num_groups, const int64_t num_channels, const double eps, const bool affine, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::GroupNormOptions(num_groups, num_channels).eps(eps).affine(affine);
+        res = create_module<torch::nn::GroupNormImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_GroupNorm_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::GroupNorm>()->forward(*tensor));
+}
+
 NNModule THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, const double beta, const double k, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

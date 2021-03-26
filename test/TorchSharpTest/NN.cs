@@ -1327,6 +1327,8 @@ namespace TorchSharp
             using (var pool = BatchNorm1D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
             }
         }
 
@@ -1337,6 +1339,8 @@ namespace TorchSharp
             using (var pool = BatchNorm2D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
             }
         }
 
@@ -1347,6 +1351,8 @@ namespace TorchSharp
             using (var pool = BatchNorm3D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
             }
         }
 
@@ -1357,6 +1363,8 @@ namespace TorchSharp
             using (var pool = InstanceNorm1D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
             }
         }
 
@@ -1367,6 +1375,8 @@ namespace TorchSharp
             using (var pool = InstanceNorm2D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
             }
         }
 
@@ -1377,6 +1387,8 @@ namespace TorchSharp
             using (var pool = InstanceNorm3D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
             }
         }
 
@@ -1397,6 +1409,18 @@ namespace TorchSharp
             using (var pool = LocalResponseNorm(2)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestGroupNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 20, 6, 10, 10 });
+            using (var pool = GroupNorm(3,6)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
             }
         }
         #endregion
