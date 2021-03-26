@@ -602,6 +602,126 @@ Tensor THSNN_MaxPool3d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::MaxPool3d>()->forward(*tensor));
 }
 
+
+NNModule THSNN_ZeroPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ZeroPad2dOptions(padding);
+        res = create_module<torch::nn::ZeroPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ZeroPad2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ZeroPad2d>()->forward(*tensor));
+}
+
+NNModule THSNN_ConstantPad1d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad1dOptions(padding, value);
+        res = create_module<torch::nn::ConstantPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ConstantPad1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConstantPad1d>()->forward(*tensor));
+}
+
+NNModule THSNN_ConstantPad2d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad2dOptions(padding, value);
+        res = create_module<torch::nn::ConstantPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ConstantPad2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConstantPad2d>()->forward(*tensor));
+}
+
+NNModule THSNN_ConstantPad3d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad3dOptions(padding, value);
+        res = create_module<torch::nn::ConstantPad3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ConstantPad3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ConstantPad3d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReplicationPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad1dOptions(padding);
+        res = create_module<torch::nn::ReplicationPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReplicationPad1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReplicationPad1d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReplicationPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad2dOptions(padding);
+        res = create_module<torch::nn::ReplicationPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReplicationPad2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReplicationPad2d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReplicationPad3d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad3dOptions(padding);
+        res = create_module<torch::nn::ReplicationPad3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReplicationPad3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReplicationPad3d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReflectionPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad1dOptions(padding);
+        res = create_module<torch::nn::ReflectionPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReflectionPad1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad1d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReflectionPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad2dOptions(padding);
+        res = create_module<torch::nn::ReflectionPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReflectionPad2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad2d>()->forward(*tensor));
+}
+
+
+
 NNModule THSNN_BatchNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

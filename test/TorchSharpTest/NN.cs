@@ -1671,5 +1671,134 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 32 * 360 }, output.shape);
             }
         }
+
+        [Fact]
+        public void TestZeroPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ZeroPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestReflectionPad1d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ReflectionPad1d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[6], values[0]);
+                Assert.Equal(values[5], values[1]);
+                Assert.Equal(values[4], values[2]);
+                Assert.Equal(values[5], values[7]);
+                Assert.Equal(values[4], values[8]);
+                Assert.Equal(values[3], values[9]);
+            }
+        }
+
+        [Fact]
+        public void TestReflectionPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ReflectionPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[6], values[0]);
+                Assert.Equal(values[5], values[1]);
+                Assert.Equal(values[4], values[2]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad1d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ReplicationPad1d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+                Assert.Equal(values[6], values[7]);
+                Assert.Equal(values[6], values[8]);
+                Assert.Equal(values[6], values[9]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ReplicationPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad3d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+
+            using (var pad = ReplicationPad3d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad1d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ConstantPad1d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad2d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ConstantPad2d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad3d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+
+            using (var pad = ConstantPad3d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
+            }
+        }
     }
 }
