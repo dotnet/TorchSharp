@@ -842,6 +842,8 @@ EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_typ
 
 EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type);
 
+EXPORT_API(Tensor) THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index);
+
 EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted);
 
 EXPORT_API(int8_t) THSTensor_type(const Tensor tensor);
