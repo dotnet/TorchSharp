@@ -720,8 +720,6 @@ Tensor   THSNN_ReflectionPad2d_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad2d>()->forward(*tensor));
 }
 
-
-
 NNModule THSNN_BatchNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -774,6 +772,94 @@ NNModule THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const 
 Tensor THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::BatchNorm3d>()->forward(*tensor));
+}
+
+NNModule THSNN_InstanceNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::InstanceNorm1dOptions(features)
+        .eps(eps)
+        .momentum(momentum)
+        .affine(affine)
+        .track_running_stats(track_running_stats);
+
+    res = create_module<torch::nn::InstanceNorm1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_InstanceNorm1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::InstanceNorm1d>()->forward(*tensor));
+}
+
+NNModule THSNN_InstanceNorm2d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::InstanceNorm2dOptions(features)
+        .eps(eps)
+        .momentum(momentum)
+        .affine(affine)
+        .track_running_stats(track_running_stats);
+
+    res = create_module<torch::nn::InstanceNorm2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_InstanceNorm2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::InstanceNorm2d>()->forward(*tensor));
+}
+
+NNModule THSNN_InstanceNorm3d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::InstanceNorm3dOptions(features)
+        .eps(eps)
+        .momentum(momentum)
+        .affine(affine)
+        .track_running_stats(track_running_stats);
+
+    res = create_module<torch::nn::InstanceNorm3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_InstanceNorm3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::InstanceNorm3d>()->forward(*tensor));
+}
+
+NNModule THSNN_LayerNorm_ctor(const int64_t* norm_shape, const int64_t norm_shape_len, const double eps, const bool elementwise_affine, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        std::vector<int64_t> normalized_shape;
+        for (int64_t i = 0; i < norm_shape_len; ++i)
+        {
+            normalized_shape.push_back(norm_shape[i]);
+        }
+        auto opts = torch::nn::LayerNormOptions(normalized_shape).eps(eps).elementwise_affine(elementwise_affine);
+        res = create_module<torch::nn::LayerNormImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LayerNorm_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LayerNorm>()->forward(*tensor));
+}
+
+NNModule THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, const double beta, const double k, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LocalResponseNormOptions(size)
+            .alpha(alpha)
+            .beta(beta)
+            .k(k);
+        res = create_module<torch::nn::LocalResponseNormImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LocalResponseNorm_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LocalResponseNorm>()->forward(*tensor));
 }
 
 NNModule THSNN_Identity_ctor(NNAnyModule* outAsAnyModule)

@@ -1349,6 +1349,56 @@ namespace TorchSharp
                 Assert.Equal(ones.shape, pooled.shape);
             }
         }
+
+        [Fact]
+        public void TestInstanceNorm1D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            using (var pool = InstanceNorm1D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm2D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            using (var pool = InstanceNorm2D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm3D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = InstanceNorm3D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLayerNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = LayerNorm(new long[] { 12, 28, 28})) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLocalResponseNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = LocalResponseNorm(2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
         #endregion
 
         #region Embedding, Encoding, Transformer
