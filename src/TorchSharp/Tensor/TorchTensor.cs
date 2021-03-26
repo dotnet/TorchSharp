@@ -3981,8 +3981,9 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_permute(IntPtr tensor, IntPtr psizes, int length);
 
         /// <summary>
-        ///  Mutates the tensor to have the given size with all values set to 1
+        ///  Returns a view of the original tensor with its dimensions permuted.
         /// </summary>
+        /// <param name="permutation">The desired ordering of dimensions</param>
         public TorchTensor permute(long[] permutation)
         {
             unsafe {
