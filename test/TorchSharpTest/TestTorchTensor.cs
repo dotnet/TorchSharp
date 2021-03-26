@@ -1564,11 +1564,19 @@ namespace TorchSharp
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
 
-            var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(0).squeeze(0);
-            Assert.Equal(new long[] { 3 }, res.shape);
-            Assert.Equal(1.1f, res[0].ToSingle());
-            Assert.Equal(2.0f, res[1].ToSingle());
-            Assert.Equal(3.1f, res[2].ToSingle());
+            using (var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(0).squeeze(0)) { 
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
+            // Test negative dims, too.
+            using (var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(-3).squeeze(0)) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
         }
 
         [Fact]

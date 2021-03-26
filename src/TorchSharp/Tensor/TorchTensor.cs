@@ -599,7 +599,8 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_cuda(IntPtr handle);
 
         /// <summary>
-        /// Moves the tensor data to the default CUDA device.
+        /// Returns a copy of this object in CUDA memory.
+        /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.
         /// </summary>
         /// <returns></returns>
         public TorchTensor cuda()
@@ -733,7 +734,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_indices(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Return the indices tensor of a sparse COO tensor.
         /// </summary>
         public TorchTensor SparseIndices {
             get {
@@ -748,7 +749,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_values(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Return the values tensor of a sparse COO tensor.
         /// </summary>
         public TorchTensor SparseValues {
             get {
@@ -776,7 +777,7 @@ namespace TorchSharp.Tensor
         static extern void THSTensor_backward(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Computes the gradient of current tensor w.r.t. graph leaves.
         /// </summary>
         public void backward()
         {
@@ -788,7 +789,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_to_dense(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Creates a strided copy of self.
         /// </summary>
         /// <returns></returns>
         public TorchTensor to_dense()
@@ -803,7 +804,7 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_clone(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Returns a copy of the tensor input.
         /// </summary>
         /// <returns></returns>
         public TorchTensor clone()
@@ -818,7 +819,8 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_contiguous(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// Returns a contiguous in memory tensor containing the same data as the input tensor.
+        /// If tensor is already in the specified memory format, this function returns the original tensor.
         /// </summary>
         /// <returns></returns>
         public TorchTensor contiguous()
@@ -833,7 +835,8 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_grad(IntPtr handle);
 
         /// <summary>
-        /// 
+        /// This attribute is None by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
+        /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
         /// </summary>
         /// <returns></returns>
         public TorchTensor grad()
@@ -898,9 +901,53 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
-        /// 
+        /// Index into the tensor using Python-like indexing expressions.
         /// </summary>
-        /// <param name="indices"></param>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[TorchTensorIndex i1] {
+            get { return index(new TorchTensorIndex[] { i1 }); }
+            set { index_put_(new TorchTensorIndex[] { i1 }, value);  }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2] {
+            get { return index(new TorchTensorIndex[] { i1, i2 }); }
+            set { index_put_(new TorchTensorIndex[] { i1, i2 }, value); }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3] {
+            get { return index(new TorchTensorIndex[] { i1, i2, i3 }); }
+            set { index_put_(new TorchTensorIndex[] { i1, i2, i3 }, value); }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3, TorchTensorIndex i4] {
+            get { return index(new TorchTensorIndex[] { i1, i2, i3, i4 }); }
+            set { index_put_(new TorchTensorIndex[] { i1, i2, i3, i4 }, value); }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3, TorchTensorIndex i4, TorchTensorIndex i5] {
+            get { return index(new TorchTensorIndex[] { i1, i2, i3, i4, i5 }); }
+            set { index_put_(new TorchTensorIndex[] { i1, i2, i3, i4, i5 }, value); }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
         /// <returns></returns>
         public TorchTensor index(TorchTensorIndex[] indices)
         {
@@ -920,10 +967,8 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
-        /// 
+        /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
         /// </summary>
-        /// <param name="indices"></param>
-        /// <param name="value"></param>
         /// <returns></returns>
         public TorchTensor index_put_(TorchTensorIndex[] indices, TorchTensor value)
         {
@@ -943,10 +988,8 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
-        /// 
+        /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
         /// </summary>
-        /// <param name="indices"></param>
-        /// <param name="value"></param>
         /// <returns></returns>
         public TorchTensor index_put_(TorchTensorIndex[] indices, TorchScalar value)
         {
@@ -968,7 +1011,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_index_select(IntPtr tensor, long dimension, IntPtr index);
 
         /// <summary>
-        /// 
+        /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
         /// </summary>
         /// <param name="dimension"></param>
         /// <param name="index"></param>
@@ -985,9 +1028,9 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
 
         /// <summary>
-        /// 
+        /// Returns a tensor with the same data and number of elements as self but with the specified shape.
         /// </summary>
-        /// <param name="shape"></param>
+        /// <param name="shape">The new tensor shape.</param>
         /// <returns></returns>
         public TorchTensor reshape(params long[] shape)
         {
@@ -1007,13 +1050,13 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
         /// <summary>
-        /// 
+        /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
         /// </summary>
-        /// <param name="dimension"></param>
+        /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
         /// <returns></returns>
-        public TorchTensor squeeze(long dimension)
+        public TorchTensor squeeze(long dim)
         {
-            var res = THSTensor_squeeze(handle, dimension);
+            var res = THSTensor_squeeze(handle, dim);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -1023,7 +1066,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_t(IntPtr tensor);
 
         /// <summary>
-        /// 
+        /// Expects input to be 1- or 2-D tensor and transposes dimensions 0 and 1.
         /// </summary>
         /// <returns></returns>
         public TorchTensor t()
@@ -1038,14 +1081,14 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_transpose(IntPtr tensor, long dim1, long dim2);
 
         /// <summary>
-        /// 
+        /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
         /// </summary>
-        /// <param name="dimension1"></param>
-        /// <param name="dimension2"></param>
+        /// <param name="dim0"></param>
+        /// <param name="dim1"></param>
         /// <returns></returns>
-        public TorchTensor transpose(long dimension1, long dimension2)
+        public TorchTensor transpose(long dim0, long dim1)
         {
-            var res = THSTensor_transpose(handle, dimension1, dimension2);
+            var res = THSTensor_transpose(handle, dim0, dim1);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -1055,23 +1098,24 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_transpose_(IntPtr tensor, long dim1, long dim2);
 
         /// <summary>
-        /// 
+        /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
+        /// Inplace version of transpose()
         /// </summary>
-        /// <param name="dimension1"></param>
-        /// <param name="dimension2"></param>
+        /// <param name="dim0"></param>
+        /// <param name="dim1"></param>
         /// <returns></returns>
-        public TorchTensor transpose_(long dimension1, long dimension2)
+        public TorchTensor transpose_(long dim0, long dim1)
         {
-            return new TorchTensor(THSTensor_transpose_(handle, dimension1, dimension2));
+            return new TorchTensor(THSTensor_transpose_(handle, dim0, dim1));
         }
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_view(IntPtr tensor, IntPtr shape, int length);
 
         /// <summary>
-        /// 
+        /// Returns a new tensor with the same data as the input tensor but of a different shape.
         /// </summary>
-        /// <param name="shape"></param>
+        /// <param name="shape">The shape of the view</param>
         /// <returns></returns>
         public TorchTensor view(params long[] shape)
         {
