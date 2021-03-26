@@ -9,6 +9,35 @@ void THSTorch_manual_seed(const int64_t seed)
     torch::manual_seed(seed);
 }
 
+Generator THSGenerator_manual_seed(const int64_t seed)
+{
+    torch::manual_seed(seed);
+    return THSGenerator_default_generator();
+}
+
+Generator THSGenerator_default_generator()
+{
+    auto gen = at::globalContext().defaultGenerator(at::DeviceType::CPU);
+    return new at::Generator(gen.getIntrusivePtr());
+}
+
+int64_t THSGenerator_initial_seed(const Generator gen)
+{
+    return gen->current_seed();
+}
+
+Generator THSGenerator_new(int64_t device, int64_t index)
+{
+    return new torch::Generator(c10::make_intrusive<torch::CPUGeneratorImpl>());
+}
+
+void THSGenerator_dispose(const Generator generator)
+{
+    auto defi = at::globalContext().defaultGenerator(at::DeviceType::CPU).getIntrusivePtr();
+    auto geni = generator->getIntrusivePtr();
+    delete generator;
+}
+
 int THSTorchCuda_is_available()
 {
     return torch::cuda::is_available();

@@ -47,5 +47,25 @@ namespace TorchSharp
             Console.WriteLine("Hello World!");
         }
 
+        [Fact]
+        public void TestDefaultGenerators()
+        {
+            // This tests that the default generator can be disposed, but will keep on going,
+            long a, b, c;
+            using(var gen = Torch.ManualSeed(4711)) {
+                a = gen.InitialSeed;
+            }
+            using (var gen = TorchGenerator.Default) {
+                b = gen.InitialSeed;
+            }
+            Assert.Equal(a, b);
+            using (var gen = Torch.ManualSeed(17)) {
+                c = gen.InitialSeed;
+            }
+            Assert.NotEqual(a, c);
+
+            var x = Float32Tensor.rand(new long[] { 10, 10, 10 });
+            Assert.Equal(new long[] { 10, 10, 10 }, x.shape);
+        }
     }
 }
