@@ -1327,6 +1327,8 @@ namespace TorchSharp
             using (var pool = BatchNorm1D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
             }
         }
 
@@ -1337,6 +1339,8 @@ namespace TorchSharp
             using (var pool = BatchNorm2D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
             }
         }
 
@@ -1347,6 +1351,76 @@ namespace TorchSharp
             using (var pool = BatchNorm3D(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm1D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            using (var pool = InstanceNorm1D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm2D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            using (var pool = InstanceNorm2D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestInstanceNorm3D()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = InstanceNorm3D(3)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestLayerNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = LayerNorm(new long[] { 12, 28, 28})) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLocalResponseNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            using (var pool = LocalResponseNorm(2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestGroupNorm()
+        {
+            var ones = Float32Tensor.ones(new long[] { 20, 6, 10, 10 });
+            using (var pool = GroupNorm(3,6)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
             }
         }
         #endregion
@@ -1625,6 +1699,19 @@ namespace TorchSharp
             var outVal = output.Data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
+
+        [Fact]
+        public void TestAlphaDropout()
+        {
+            var drop = AlphaDropout(0.75);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.NotEqual(outVal, dataVal);
+        }
         #endregion
 
 #if DEBUG
@@ -1656,6 +1743,135 @@ namespace TorchSharp
             using (var flat = Flatten(startDim: 0)) {
                 var output = flat.forward(data);
                 Assert.Equal(new long[] { 32 * 360 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestZeroPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ZeroPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestReflectionPad1d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ReflectionPad1d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[6], values[0]);
+                Assert.Equal(values[5], values[1]);
+                Assert.Equal(values[4], values[2]);
+                Assert.Equal(values[5], values[7]);
+                Assert.Equal(values[4], values[8]);
+                Assert.Equal(values[3], values[9]);
+            }
+        }
+
+        [Fact]
+        public void TestReflectionPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ReflectionPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[6], values[0]);
+                Assert.Equal(values[5], values[1]);
+                Assert.Equal(values[4], values[2]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad1d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ReplicationPad1d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+                Assert.Equal(values[6], values[7]);
+                Assert.Equal(values[6], values[8]);
+                Assert.Equal(values[6], values[9]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad2d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ReplicationPad2d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+            }
+        }
+
+        [Fact]
+        public void TestReplicationPad3d()
+        {
+            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+
+            using (var pad = ReplicationPad3d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                var values = output.Data<float>().ToArray();
+                Assert.Equal(values[3], values[0]);
+                Assert.Equal(values[3], values[1]);
+                Assert.Equal(values[3], values[3]);
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad1d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4 });
+
+            using (var pad = ConstantPad1d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad2d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4 });
+
+            using (var pad = ConstantPad2d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
+            }
+        }
+
+        [Fact]
+        public void TestConstantPad3d()
+        {
+            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+
+            using (var pad = ConstantPad3d(3, Math.PI)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
             }
         }
     }
