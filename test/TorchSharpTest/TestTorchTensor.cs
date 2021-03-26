@@ -730,6 +730,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMoveAndCast()
+        {
+            var input = Float64Tensor.rand(new long[] { 128 }, Device.CPU);
+
+            if (Torch.IsCudaAvailable()) {
+                var moved = input.to(ScalarType.Float32, Device.CUDA);
+                Assert.Equal(ScalarType.Float32, moved.Type);
+                Assert.Equal(DeviceType.CUDA, moved.device_type);
+            }
+            else {
+                var moved = input.to(ScalarType.Float32);
+                Assert.Equal(ScalarType.Float32, moved.Type);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+        }
+
+        [Fact]
         public void TestStackCpu()
         {
             TestStackGen(Device.CPU);
@@ -1547,11 +1564,19 @@ namespace TorchSharp
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
 
-            var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(0).squeeze(0);
-            Assert.Equal(new long[] { 3 }, res.shape);
-            Assert.Equal(1.1f, res[0].ToSingle());
-            Assert.Equal(2.0f, res[1].ToSingle());
-            Assert.Equal(3.1f, res[2].ToSingle());
+            using (var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(0).squeeze(0)) { 
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
+            // Test negative dims, too.
+            using (var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze(-3).squeeze(0)) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
         }
 
         [Fact]
