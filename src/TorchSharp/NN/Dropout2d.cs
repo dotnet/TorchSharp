@@ -28,8 +28,8 @@ namespace TorchSharp.NN
         extern static IntPtr THSNN_Dropout2d_ctor (double probability, bool inPlace, out IntPtr pBoxedModule);
 
         /// <summary>
-        /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
-        /// Each channel will be zeroed out independently on every forward call.
+        /// Randomly zero out entire channels (a channel is a 2D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 2D tensor).
+        /// Each channel will be zeroed out independently on every forward call with probability p using samples from a Bernoulli distribution.
         /// </summary>
         /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
         /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
@@ -45,8 +45,8 @@ namespace TorchSharp.NN
     public static partial class Functions
     {
         /// <summary>
-        /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
-        /// Each channel will be zeroed out independently on every forward call.
+        /// Randomly zero out entire channels (a channel is a 2D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 2D tensor).
+        /// Each channel will be zeroed out independently on every forward call with probability p using samples from a Bernoulli distribution.
         /// </summary>
         /// <param name="x">Input tensor</param>
         /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
