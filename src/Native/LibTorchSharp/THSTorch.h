@@ -8,12 +8,18 @@
 // API.
 
 // Sets manually the seed.
-EXPORT_API(void) THSTorch_manual_seed(const int64_t seed);
+EXPORT_API(void)      THSTorch_manual_seed(const int64_t seed);
+
 EXPORT_API(Generator) THSGenerator_manual_seed(const int64_t seed);
+EXPORT_API(void) THSGenerator_gen_manual_seed(const Generator gen, const int64_t seed);
+
+EXPORT_API(Tensor) THSGenerator_get_rng_state(const Generator gen);
+EXPORT_API(void)  THSGenerator_set_rng_state(const Generator gen, const Tensor tensor);
+
 EXPORT_API(Generator) THSGenerator_default_generator();
-EXPORT_API(Generator) THSGenerator_new(int64_t device, int64_t index);
-EXPORT_API(int64_t) THSGenerator_initial_seed(const Generator gen);
-EXPORT_API(void) THSGenerator_dispose(const Generator generator);
+EXPORT_API(Generator) THSGenerator_new(uint64_t seed, int64_t device, int64_t index);
+EXPORT_API(int64_t)   THSGenerator_initial_seed(const Generator gen);
+EXPORT_API(void)      THSGenerator_dispose(const Generator generator);
 
 EXPORT_API(int) THSTorchCuda_is_available();
 EXPORT_API(int) THSTorchCuda_cudnn_is_available();

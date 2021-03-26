@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using TorchSharp.Tensor;
 
 #nullable enable
 
@@ -15,13 +16,44 @@ namespace TorchSharp
     {
         public IntPtr Handle { get; private set; }
 
+        public Device Device { get; private set; }
+
+        public TorchTensor State {
+            get {
+                var res = THSGenerator_get_rng_state(Handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+            set {
+                THSGenerator_set_rng_state(Handle, value.Handle);
+                Torch.CheckForErrors();
+            } 
+        }
+
+        public TorchGenerator ManualSeed(long seed)
+        {
+            THSGenerator_gen_manual_seed(Handle, seed);
+            return this;
+        }
+
+        public long Seed()
+        {
+            long seed = DateTime.UtcNow.Ticks;
+            THSGenerator_gen_manual_seed(Handle, seed);
+            return seed;
+        }
+
         internal TorchGenerator(IntPtr nativeHandle)
         {
             Handle = nativeHandle;
+            Device = Device.CPU;
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSGenerator_default_generator();
+        public TorchGenerator(ulong seed = 0, Device? device = null) :
+            this(THSGenerator_new(seed, (long)(device?.Type ?? DeviceType.CPU), device?.Index ?? -1))
+        {
+            Device = device ?? Device.CPU;
+        }
 
         public static TorchGenerator Default {
             get {
@@ -39,8 +71,24 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSGenerator_get_rng_state(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSGenerator_set_rng_state(IntPtr handle, IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSGenerator_gen_manual_seed(IntPtr handle, long seed);
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSGenerator_new(ulong seed, long device_type, long device_index);
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSGenerator_default_generator();
+
+        [DllImport("LibTorchSharp")]
         extern static void THSGenerator_dispose(IntPtr handle);
 
+        #region Dispose() support
         protected virtual void Dispose(bool disposing)
         {
             if (Handle != IntPtr.Zero) {
@@ -61,5 +109,6 @@ namespace TorchSharp
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+        #endregion
     }
 }
