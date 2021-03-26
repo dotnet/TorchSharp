@@ -715,6 +715,19 @@ Tensor THSNN_Dropout_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Dropout>()->forward(*tensor));
 }
 
+NNModule THSNN_AlphaDropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AlphaDropoutOptions(probability).inplace(inplace);
+    res = create_module<torch::nn::AlphaDropoutImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AlphaDropout_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AlphaDropout>()->forward(*tensor));
+}
+
 NNModule THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

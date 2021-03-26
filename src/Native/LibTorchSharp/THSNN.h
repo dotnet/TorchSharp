@@ -117,6 +117,9 @@ EXPORT_API(Tensor)   THSNN_Dropout2d_forward(const NNModule module, const Tensor
 EXPORT_API(NNModule) THSNN_Dropout3d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Dropout3d_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(NNModule) THSNN_AlphaDropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_AlphaDropout_forward(const NNModule module, const Tensor tensor);
+
 EXPORT_API(NNModule) THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor);
 

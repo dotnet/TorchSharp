@@ -1625,6 +1625,19 @@ namespace TorchSharp
             var outVal = output.Data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
+
+        [Fact]
+        public void TestAlphaDropout()
+        {
+            var drop = AlphaDropout(0.75);
+            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.Data<float>().ToArray();
+            var outVal = output.Data<float>().ToArray();
+            Assert.NotEqual(outVal, dataVal);
+        }
         #endregion
 
 #if DEBUG
