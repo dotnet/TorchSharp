@@ -1874,5 +1874,87 @@ namespace TorchSharp
                 Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
             }
         }
+
+        [Fact]
+        public void TestRNN1()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using(var rnn = RNN(10, 20)) {
+                var (output, hN) = rnn.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
+        public void TestRNN2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (var rnn = RNN(10, 20, 2)) {
+                var (output, hN) = rnn.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
+        public void TestGRU1()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using (var gru = GRU(10, 20)) {
+                var (output, hN) = gru.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
+        public void TestGRU2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (var gru = GRU(10, 20, 2)) {
+                var (output, hN) = gru.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+
+        [Fact]
+        public void TestLSTM1()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }),
+                   c0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using (var rnn = LSTM(10, 20)) {
+                var (output, hN, cN) = rnn.forward(input, (h0, c0));
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
+        public void TestLSTM2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }),
+                   c0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (var rnn = LSTM(10, 20, 2)) {
+                var (output, hN, cN) = rnn.forward(input, (h0,c0));
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(c0.shape, cN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
     }
 }

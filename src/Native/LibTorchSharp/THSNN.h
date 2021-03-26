@@ -230,6 +230,15 @@ EXPORT_API(Tensor)   THSNN_TransformerEncoder_forward(const NNModule module, con
 EXPORT_API(NNModule) THSNN_TransformerDecoder_ctor(const NNModule decoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_TransformerDecoder_forward(const NNModule module, const Tensor tgt, const Tensor memory, const Tensor tgt_mask, const Tensor memory_mask, const Tensor tgt_key_padding_mask, const Tensor memory_key_padding_mask);
 
+// Recurrent
+
+EXPORT_API(NNModule) THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const int64_t nonlinearity, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n);
+EXPORT_API(NNModule) THSNN_GRU_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_GRU_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n);
+EXPORT_API(NNModule) THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n);
+
 
 // Containers
 
