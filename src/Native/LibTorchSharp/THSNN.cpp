@@ -1341,6 +1341,15 @@ void ApplyTransformerActivation(T& opts, const int64_t activation)
         opts = opts.activation(torch::kGELU);
 }
 
+template<typename T>
+void ApplyRnnActivation(T& opts, const int64_t activation)
+{
+    if (activation == 0)
+        opts = opts.nonlinearity(torch::kReLU);
+    if (activation == 1)
+        opts = opts.nonlinearity(torch::kTanh);
+}
+
 NNModule THSNN_Transformer_ctor(const int64_t d_model, const int64_t nhead, const int64_t num_encoder_layers, const int64_t num_decoder_layers, const int64_t dim_feedforward, const double dropout, const int64_t activation, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -1468,7 +1477,141 @@ NNModule THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAn
 Tensor   THSNN_Flatten_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::Flatten>()->forward(*tensor));
+}
 
+NNModule THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const int64_t nonlinearity, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::RNNOptions(input_size, hidden_size)
+            .num_layers(num_layers)
+            .bias(bias)
+            .batch_first(batchFirst)
+            .dropout(dropout)
+            .bidirectional(bidirectional);
+
+        ApplyRnnActivation(opts, nonlinearity);
+
+        res = create_module<torch::nn::RNNImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n)
+{
+    Tensor output;
+    CATCH(
+        auto result = (*module)->as<torch::nn::RNN>()->forward(*input1, (input2 ? *input2 : at::Tensor()));
+        output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
+}
+
+NNModule THSNN_GRU_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::GRUOptions(input_size, hidden_size)
+            .num_layers(num_layers)
+            .bias(bias)
+            .batch_first(batchFirst)
+            .dropout(dropout)
+            .bidirectional(bidirectional);
+
+        res = create_module<torch::nn::GRUImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_GRU_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n)
+{
+    Tensor output;
+    CATCH(
+        auto result = (*module)->as<torch::nn::GRU>()->forward(*input1, (input2 ? *input2 : at::Tensor()));
+        output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
+}
+
+NNModule THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LSTMOptions(input_size, hidden_size)
+        .num_layers(num_layers)
+        .bias(bias)
+        .batch_first(batchFirst)
+        .dropout(dropout)
+        .bidirectional(bidirectional);
+
+        res = create_module<torch::nn::LSTMImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n)
+{
+    const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+
+    Tensor output;
+    CATCH(
+        auto result = (*module)->as<torch::nn::LSTM>()->forward(*input1, second_arg);
+    output = new torch::Tensor(std::get<0>(result));
+    *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
+    *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
+    );
+    return output;
+}
+
+NNModule THSNN_RNNCell_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t nonlinearity, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::RNNCellOptions(input_size, hidden_size)
+            .bias(bias);
+
+        ApplyRnnActivation(opts, nonlinearity);
+
+        res = create_module<torch::nn::RNNCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_RNNCell_forward(const NNModule module, const Tensor input1, const Tensor h0)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::RNNCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
+}
+
+NNModule THSNN_GRUCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::GRUCellOptions(input_size, hidden_size)
+        .bias(bias);
+
+        res = create_module<torch::nn::GRUCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor  THSNN_GRUCell_forward(const NNModule module, const Tensor input1, const Tensor h0)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::GRUCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
+}
+
+NNModule THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LSTMCellOptions(input_size, hidden_size)
+        .bias(bias);
+
+        res = create_module<torch::nn::LSTMCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* c_n)
+{
+    const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+
+    Tensor output;
+    CATCH(
+        auto result = (*module)->as<torch::nn::LSTMCell>()->forward(*input1, second_arg);
+        output = new torch::Tensor(std::get<0>(result));
+        *c_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
 }
 
 
