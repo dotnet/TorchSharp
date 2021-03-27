@@ -1552,12 +1552,68 @@ Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tens
     Tensor output;
     CATCH(
         auto result = (*module)->as<torch::nn::LSTM>()->forward(*input1, second_arg);
-        output = new torch::Tensor(std::get<0>(result));
-        *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
-        *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
+    output = new torch::Tensor(std::get<0>(result));
+    *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
+    *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
     );
     return output;
 }
+
+NNModule THSNN_RNNCell_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t nonlinearity, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::RNNCellOptions(input_size, hidden_size)
+            .bias(bias);
+
+        ApplyRnnActivation(opts, nonlinearity);
+
+        res = create_module<torch::nn::RNNCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_RNNCell_forward(const NNModule module, const Tensor input1, const Tensor h0)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::RNNCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
+}
+
+NNModule THSNN_GRUCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::GRUCellOptions(input_size, hidden_size)
+        .bias(bias);
+
+        res = create_module<torch::nn::GRUCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor  THSNN_GRUCell_forward(const NNModule module, const Tensor input1, const Tensor h0)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::GRUCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
+}
+
+NNModule THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LSTMCellOptions(input_size, hidden_size)
+        .bias(bias);
+
+        res = create_module<torch::nn::LSTMCellImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* c_n)
+{
+    std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+
+    Tensor output;
+    CATCH(
+        auto result = (*module)->as<torch::nn::LSTMCell>()->forward(*input1, second_arg);
+        output = new torch::Tensor(std::get<0>(result));
+        *c_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
+}
+
 
 NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int length */ )
 {

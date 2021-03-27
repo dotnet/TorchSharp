@@ -1902,6 +1902,33 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestRNNCell1()
+        {
+            var seq = 5;
+            using (TorchTensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = RNNCell(10, 20)) {
+                var hN = rnn.forward(input[0], h0);
+                Assert.Equal(h0.shape, hN.shape);
+                for (int i = 1; i < seq; ++i) {
+                    hN = rnn.forward(input[i], hN);
+                    Assert.Equal(h0.shape, hN.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestRNNCell2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = RNNCell(10, 20, NN.RNN.NonLinearities.ReLU)) {
+                var hN = rnn.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+            }
+        }
+
+        [Fact]
         public void TestGRU1()
         {
             using (TorchTensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
@@ -1927,6 +1954,32 @@ namespace TorchSharp
 
         }
 
+        [Fact]
+        public void TestGRUCell1()
+        {
+            var seq = 5;
+            using (TorchTensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = GRUCell(10, 20)) {
+                var hN = rnn.forward(input[0], h0);
+                Assert.Equal(h0.shape, hN.shape);
+                for (int i = 1; i < seq; ++i) {
+                    hN = rnn.forward(input[i], hN);
+                    Assert.Equal(h0.shape, hN.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestGRUCell2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = GRUCell(10, 20, bias: false)) {
+                var hN = rnn.forward(input, h0);
+                Assert.Equal(h0.shape, hN.shape);
+            }
+        }
 
         [Fact]
         public void TestLSTM1()
@@ -1937,6 +1990,7 @@ namespace TorchSharp
             using (var rnn = LSTM(10, 20)) {
                 var (output, hN, cN) = rnn.forward(input, (h0, c0));
                 Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(c0.shape, cN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
 
@@ -1953,6 +2007,40 @@ namespace TorchSharp
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(c0.shape, cN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
+        public void TestLSTMCell1()
+        {
+            var seq = 5;
+            using (TorchTensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }),
+                   c0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = LSTMCell(10, 20)) {
+                var (hN, cN) = rnn.forward(input[0], (h0, c0));
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(c0.shape, cN.shape);
+                for (int i = 1; i < seq; ++i) {
+                    (hN,cN) = rnn.forward(input[i], (hN,cN));
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                }
+            }
+
+        }
+
+        [Fact]
+        public void TestLSTMCell2()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3, 10 }),
+                   h0 = Float32Tensor.randn(new long[] { 3, 20 }),
+                   c0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (var rnn = LSTMCell(10, 20, bias:false)) {
+                var (hN, cN) = rnn.forward(input, (h0, c0));
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(c0.shape, cN.shape);
             }
 
         }

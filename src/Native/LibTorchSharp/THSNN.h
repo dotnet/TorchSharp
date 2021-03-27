@@ -239,6 +239,13 @@ EXPORT_API(Tensor)   THSNN_GRU_forward(const NNModule module, const Tensor input
 EXPORT_API(NNModule) THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n);
 
+EXPORT_API(NNModule) THSNN_RNNCell_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t nonlinearity, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_RNNCell_forward(const NNModule module, const Tensor input1, const Tensor h0);
+EXPORT_API(NNModule) THSNN_GRUCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_GRUCell_forward(const NNModule module, const Tensor input1, const Tensor h0);
+EXPORT_API(NNModule) THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* c_n);
+
 
 // Containers
 
