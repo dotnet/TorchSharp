@@ -1547,7 +1547,7 @@ NNModule THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, co
 
 Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n)
 {
-    std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+    const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
 
     Tensor output;
     CATCH(
@@ -1603,7 +1603,7 @@ NNModule THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size
 
 Tensor THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* c_n)
 {
-    std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+    const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
 
     Tensor output;
     CATCH(
