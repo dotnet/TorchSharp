@@ -92,8 +92,9 @@ namespace TorchSharp
         protected virtual void Dispose(bool disposing)
         {
             if (Handle != IntPtr.Zero) {
-                THSGenerator_dispose(Handle);
+                var h = Handle;
                 Handle = IntPtr.Zero;
+                THSGenerator_dispose(h);
             }
         }
 

@@ -44,13 +44,13 @@ void  THSGenerator_set_rng_state(const Generator gen, const Tensor tensor)
 
 Generator THSGenerator_new(uint64_t seed, int64_t device, int64_t index)
 {
+    // TODO: Support creation of GPU RNGs. 'device' and 'index' are in the
+    //       function signature in preparation thereof.
     return new at::Generator(at::detail::createCPUGenerator(seed));
 }
 
 void THSGenerator_dispose(const Generator generator)
 {
-    auto defi = at::globalContext().defaultGenerator(at::DeviceType::CPU).getIntrusivePtr();
-    auto geni = generator->getIntrusivePtr();
     delete generator;
 }
 
