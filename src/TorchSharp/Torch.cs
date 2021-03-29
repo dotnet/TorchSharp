@@ -20,9 +20,17 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         private static extern void THSTorch_manual_seed(long seed);
 
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSGenerator_manual_seed(long seed);
+
         public static void SetSeed(long seed)
         {
             THSTorch_manual_seed(seed);
+        }
+
+        public static TorchGenerator ManualSeed(long seed)
+        {
+            return new TorchGenerator(THSGenerator_manual_seed(seed));
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]

@@ -9,6 +9,51 @@ void THSTorch_manual_seed(const int64_t seed)
     torch::manual_seed(seed);
 }
 
+Generator THSGenerator_manual_seed(const int64_t seed)
+{
+    torch::manual_seed(seed);
+    return THSGenerator_default_generator();
+}
+
+void THSGenerator_gen_manual_seed(const Generator generator, const int64_t seed)
+{
+    generator->set_current_seed(seed);
+}
+
+Generator THSGenerator_default_generator()
+{
+    auto gen = at::globalContext().defaultGenerator(at::DeviceType::CPU);
+    return new at::Generator(gen.getIntrusivePtr());
+}
+
+int64_t THSGenerator_initial_seed(const Generator gen)
+{
+    return gen->current_seed();
+}
+
+Tensor THSGenerator_get_rng_state(const Generator gen)
+{
+    CATCH_TENSOR(gen->get_state());
+}
+
+void  THSGenerator_set_rng_state(const Generator gen, const Tensor tensor)
+{
+    gen->set_state(*tensor);
+}
+
+
+Generator THSGenerator_new(uint64_t seed, int64_t device, int64_t index)
+{
+    // TODO: Support creation of GPU RNGs. 'device' and 'index' are in the
+    //       function signature in preparation thereof.
+    return new at::Generator(at::detail::createCPUGenerator(seed));
+}
+
+void THSGenerator_dispose(const Generator generator)
+{
+    delete generator;
+}
+
 int THSTorchCuda_is_available()
 {
     return torch::cuda::is_available();
