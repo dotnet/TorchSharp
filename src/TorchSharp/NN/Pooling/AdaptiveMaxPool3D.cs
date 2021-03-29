@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a AdaptiveMaxPool3D module.
     /// </summary>
-    public class AdaptiveMaxPool3D : Module
+    public class AdaptiveMaxPool3d : Module
     {
-        internal AdaptiveMaxPool3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AdaptiveMaxPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -36,13 +36,13 @@ namespace TorchSharp.NN
         /// <param name="outputSize">The target output size of the image of the form D x H x W.
         /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool3D AdaptiveMaxPool3D (long[] outputSize)
+        static public AdaptiveMaxPool3d AdaptiveMaxPool3D (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
                     var handle = THSNN_AdaptiveMaxPool3d_ctor ((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AdaptiveMaxPool3D (handle, boxedHandle);
+                    return new AdaptiveMaxPool3d (handle, boxedHandle);
                 }
             }
         }

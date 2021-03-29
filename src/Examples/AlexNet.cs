@@ -47,7 +47,7 @@ namespace TorchSharp.Examples
         private class Model : CustomModule
         {
             private readonly Sequential features;
-            private readonly AdaptiveAvgPool2D avgPool;
+            private readonly AdaptiveAvgPool2d avgPool;
             private readonly Sequential classifier;
 
             public Model(string name, int numClasses) : base(name)

@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a BatchNorm1D module.
     /// </summary>
-    public class BatchNorm1D : Module
+    public class BatchNorm1d : Module
     {
-        internal BatchNorm1D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal BatchNorm1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -41,12 +41,12 @@ namespace TorchSharp.NN
         /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
         /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
         /// <returns></returns>
-        static public BatchNorm1D BatchNorm1D (long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+        static public BatchNorm1d BatchNorm1D (long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
             unsafe {
                 var handle = THSNN_BatchNorm1d_ctor (features, eps, momentum, affine, track_running_stats, out var boxedHandle);
                 if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new BatchNorm1D (handle, boxedHandle);
+                return new BatchNorm1d (handle, boxedHandle);
             }
         }
     }

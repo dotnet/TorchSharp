@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a AdaptiveMaxPool1D module.
     /// </summary>
-    public class AdaptiveMaxPool1D : Module
+    public class AdaptiveMaxPool1d : Module
     {
-        internal AdaptiveMaxPool1D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AdaptiveMaxPool1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -35,13 +35,13 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="outputSize">The target output size H.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool1D AdaptiveMaxPool1D (long[] outputSize)
+        static public AdaptiveMaxPool1d AdaptiveMaxPool1D (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
                     var handle = THSNN_AdaptiveMaxPool1d_ctor ((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AdaptiveMaxPool1D (handle, boxedHandle);
+                    return new AdaptiveMaxPool1d (handle, boxedHandle);
                 }
             }
         }

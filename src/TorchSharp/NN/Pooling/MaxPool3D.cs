@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a MaxPool3D module.
     /// </summary>
-    public class MaxPool3D : Module
+    public class MaxPool3d : Module
     {
-        internal MaxPool3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal MaxPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -35,13 +35,13 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
         /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
         /// <returns></returns>
-        static public MaxPool3D MaxPool3D (long[] kernelSize, long[] strides = null)
+        static public MaxPool3d MaxPool3D (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
                     var handle = THSNN_MaxPool3d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new MaxPool3D (handle, boxedHandle);
+                    return new MaxPool3d (handle, boxedHandle);
                 }
             }
         }

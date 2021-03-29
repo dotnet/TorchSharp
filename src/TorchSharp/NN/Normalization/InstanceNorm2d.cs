@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a InstanceNorm2D module.
     /// </summary>
-    public class InstanceNorm2D : Module
+    public class InstanceNorm2d : Module
     {
-        internal InstanceNorm2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal InstanceNorm2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -41,12 +41,12 @@ namespace TorchSharp.NN
         /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
         /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
         /// <returns></returns>
-        static public InstanceNorm2D InstanceNorm2D (long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+        static public InstanceNorm2d InstanceNorm2D (long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
             unsafe {
                 var handle = THSNN_InstanceNorm2d_ctor (features, eps, momentum, affine, track_running_stats, out var boxedHandle);
                 if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new InstanceNorm2D (handle, boxedHandle);
+                return new InstanceNorm2d (handle, boxedHandle);
             }
         }
     }
