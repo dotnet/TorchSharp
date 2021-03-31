@@ -41,7 +41,6 @@ namespace TorchSharp.NN
             {
                 if (disposing) {
                     ReleaseHandle();
-                    GC.SuppressFinalize(this);
                 }
             }
         }
@@ -89,9 +88,9 @@ namespace TorchSharp.NN
         protected void Dispose (bool disposing)
         {
             if (disposing) {
-                if (!handle.IsInvalid) handle.Dispose();
-                boxedModule?.Dispose();
+                handle.Dispose();
                 handle.SetHandleAsInvalid();
+                boxedModule?.Dispose();
             }
         }
 
@@ -350,7 +349,6 @@ namespace TorchSharp.NN
             {
                 if (disposing) {
                     ReleaseHandle();
-                    GC.SuppressFinalize(this);
                 }
             }
         }
@@ -382,7 +380,7 @@ namespace TorchSharp.NN
         protected void Dispose (bool disposing)
         {
             if (disposing) {
-                if (!handle.IsInvalid) handle.Dispose();
+                handle.Dispose();
                 handle.SetHandleAsInvalid ();
             }
         }
