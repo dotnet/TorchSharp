@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="stride">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-        static public AvgPool1d AvgPool1D(long kernelSize, long? stride = null)
+        static public AvgPool1d AvgPool1d(long kernelSize, long? stride = null)
         {
             return stride.HasValue ?
                 AvgPool1D(new long[] { kernelSize }, new long[] { stride.Value }) :
@@ -63,9 +63,9 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="stride">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-        static public TorchTensor AvgPool1D (TorchTensor x, long kernelSize, long? stride = null)
+        static public TorchTensor AvgPool1d (TorchTensor x, long kernelSize, long? stride = null)
         {
-            using (var d = Modules.AvgPool1D (kernelSize, stride)) {
+            using (var d = Modules.AvgPool1d (kernelSize, stride)) {
                 return d.forward (x);
             }
         }

@@ -87,21 +87,21 @@ namespace TorchSharp.Examples
             public Model(string name, int numClasses, Device device = null) : base(name)
             {
                 features = Sequential(
-                    ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),
+                    ("c1", Conv2d(3, 64, kernelSize: 3, stride: 2, padding: 1)),
                     ("r1", ReLU(inPlace: true)),
-                    ("mp1", MaxPool2D(kernelSize: new long[] { 2, 2 })),
-                    ("c2", Conv2D(64, 192, kernelSize: 3, padding: 1)),
+                    ("mp1", MaxPool2d(kernelSize: new long[] { 2, 2 })),
+                    ("c2", Conv2d(64, 192, kernelSize: 3, padding: 1)),
                     ("r2", ReLU(inPlace: true)),
-                    ("mp2", MaxPool2D(kernelSize: new long[] { 2, 2 })),
-                    ("c3", Conv2D(192, 384, kernelSize: 3, padding: 1)),
+                    ("mp2", MaxPool2d(kernelSize: new long[] { 2, 2 })),
+                    ("c3", Conv2d(192, 384, kernelSize: 3, padding: 1)),
                     ("r3", ReLU(inPlace: true)),
-                    ("c4", Conv2D(384, 256, kernelSize: 3, padding: 1)),
+                    ("c4", Conv2d(384, 256, kernelSize: 3, padding: 1)),
                     ("r4", ReLU(inPlace: true)),
-                    ("c5", Conv2D(256, 256, kernelSize: 3, padding: 1)),
+                    ("c5", Conv2d(256, 256, kernelSize: 3, padding: 1)),
                     ("r5", ReLU(inPlace: true)),
-                    ("mp3", MaxPool2D(kernelSize: new long[] { 2, 2 })));
+                    ("mp3", MaxPool2d(kernelSize: new long[] { 2, 2 })));
 
-                avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
+                avgPool = AdaptiveAvgPool2d(new long[] { 2, 2 });
 
                 classifier = Sequential(
                     ("d1", Dropout()),

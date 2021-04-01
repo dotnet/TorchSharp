@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
         /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool2d AdaptiveMaxPool2D (long[] outputSize)
+        static public AdaptiveMaxPool2d AdaptiveMaxPool2d (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
@@ -58,9 +58,9 @@ namespace TorchSharp.NN
         /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
         /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
         /// <returns></returns>
-        static public TorchTensor AdaptiveMaxPool2D (TorchTensor x, long[] outputSize)
+        static public TorchTensor AdaptiveMaxPool2d (TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveMaxPool2D (outputSize)) {
+            using (var d = Modules.AdaptiveMaxPool2d (outputSize)) {
                 return d.forward (x);
             }
         }

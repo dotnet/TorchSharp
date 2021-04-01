@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="outputSize">The target output size H.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool1d AdaptiveMaxPool1D (long[] outputSize)
+        static public AdaptiveMaxPool1d AdaptiveMaxPool1d (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
@@ -56,9 +56,9 @@ namespace TorchSharp.NN
         /// <param name="x"></param>
         /// <param name="outputSize">The target output size H.</param>
         /// <returns></returns>
-        static public TorchTensor AdaptiveMaxPool1D (TorchTensor x, long[] outputSize)
+        static public TorchTensor AdaptiveMaxPool1d (TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveMaxPool1D (outputSize)) {
+            using (var d = Modules.AdaptiveMaxPool1d (outputSize)) {
                 return d.forward (x);
             }
         }

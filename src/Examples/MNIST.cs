@@ -98,12 +98,12 @@ namespace TorchSharp.Examples
         private static Sequential GetModel(Device device)
         {
             var seq = Sequential(
-                ("conv1", Conv2D(1, 10, 5)),
-                ("pool1", MaxPool2D(kernelSize: new long[] { 2, 2 })),
+                ("conv1", Conv2d(1, 10, 5)),
+                ("pool1", MaxPool2d(kernelSize: new long[] { 2, 2 })),
                 ("relu1", ReLU()),
-                ("conv2", Conv2D(10, 20, 5)),
+                ("conv2", Conv2d(10, 20, 5)),
                 ("dropout1", FeatureAlphaDropout()),
-                ("pool2", MaxPool2D(kernelSize: new long[] { 2, 2 })),
+                ("pool2", MaxPool2d(kernelSize: new long[] { 2, 2 })),
                 ("relu2", ReLU()),
                 ("flatten", Flatten()),
                 ("fc1", Linear(320, 64)),
@@ -119,13 +119,13 @@ namespace TorchSharp.Examples
 
         private class Model : CustomModule
         {
-            private Conv2d conv1 = Conv2D(1, 10, 5);
-            private Conv2d conv2 = Conv2D(10, 20, 5);
+            private Conv2d conv1 = Conv2d(1, 10, 5);
+            private Conv2d conv2 = Conv2d(10, 20, 5);
             private Linear fc1 = Linear(320, 50);
             private Linear fc2 = Linear(50, 10);
 
-            private MaxPool2D pool1 = MaxPool2D(kernelSize: new long[] { 2, 2 });
-            private MaxPool2D pool2 = MaxPool2D(kernelSize: new long[] { 2, 2 });
+            private MaxPool2d pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+            private MaxPool2d pool2 = MaxPool2d(kernelSize: new long[] { 2, 2 });
 
             private ReLU relu1 = ReLU();
             private ReLU relu2 = ReLU();
