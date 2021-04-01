@@ -44,8 +44,8 @@ namespace TorchSharp.Examples
 
         private class Model : CustomModule
         {
-            private Conv2D conv1 = Conv2D(1, 10, 5);
-            private Conv2D conv2 = Conv2D(10, 20, 5);
+            private Conv2d conv1 = Conv2D(1, 10, 5);
+            private Conv2d conv2 = Conv2D(10, 20, 5);
             private Linear fc1 = Linear(320, 50);
             private Linear fc2 = Linear(50, 10);
 

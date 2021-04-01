@@ -6,9 +6,9 @@ using TorchSharp.Tensor;
 #nullable enable
 namespace TorchSharp.NN
 {
-    public class ConvTranspose3D : Module
+    public class ConvTranspose3d : Module
     {
-        internal ConvTranspose3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+        internal ConvTranspose3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_ConvTranspose3d_forward (Module.HType module, IntPtr tensor);
@@ -73,11 +73,11 @@ namespace TorchSharp.NN
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-        static public ConvTranspose3D ConvTranspose3D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+        static public ConvTranspose3d ConvTranspose3D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
             var res = THSNN_ConvTranspose3d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new ConvTranspose3D (res, boxedHandle);
+            return new ConvTranspose3d (res, boxedHandle);
         }
     }
     public static partial class Functions

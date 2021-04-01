@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a AvgPool3D module.
     /// </summary>
-    public class AvgPool3D : Module
+    public class AvgPool3d : Module
     {
-        internal AvgPool3D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AvgPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -35,13 +35,13 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="strides">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-        static public AvgPool3D AvgPool3D (long[] kernelSize, long[] strides = null)
+        static public AvgPool3d AvgPool3D (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
                     var handle = THSNN_AvgPool3d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AvgPool3D (handle, boxedHandle);
+                    return new AvgPool3d (handle, boxedHandle);
                 }
             }
         }

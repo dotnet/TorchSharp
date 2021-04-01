@@ -32,7 +32,7 @@ namespace TorchSharp
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var conv = Conv2D(100, 10, 5);
             conv.Save(".model.ts");
-            var loaded = NN.Conv2D.Load(".model.ts");
+            var loaded = NN.Conv2d.Load(".model.ts");
             File.Delete(".model.ts");
             Assert.NotNull(loaded);
         }

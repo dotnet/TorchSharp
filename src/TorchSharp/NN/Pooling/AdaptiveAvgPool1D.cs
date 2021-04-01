@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a AdaptiveAvgPool1D module.
     /// </summary>
-    public class AdaptiveAvgPool1D : Module
+    public class AdaptiveAvgPool1d : Module
     {
-        internal AdaptiveAvgPool1D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AdaptiveAvgPool1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -35,13 +35,13 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="outputSize">the target output size H</param>
         /// <returns></returns>
-        static public AdaptiveAvgPool1D AdaptiveAvgPool1D (long[] outputSize)
+        static public AdaptiveAvgPool1d AdaptiveAvgPool1D (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
                     var handle = THSNN_AdaptiveAvgPool1d_ctor ((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AdaptiveAvgPool1D (handle, boxedHandle);
+                    return new AdaptiveAvgPool1d (handle, boxedHandle);
                 }
             }
         }

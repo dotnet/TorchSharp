@@ -8,9 +8,9 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a AdaptiveMaxPool2D module.
     /// </summary>
-    public class AdaptiveMaxPool2D : Module
+    public class AdaptiveMaxPool2d : Module
     {
-        internal AdaptiveMaxPool2D (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal AdaptiveMaxPool2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
@@ -36,13 +36,13 @@ namespace TorchSharp.NN
         /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
         /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool2D AdaptiveMaxPool2D (long[] outputSize)
+        static public AdaptiveMaxPool2d AdaptiveMaxPool2D (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
                     var handle = THSNN_AdaptiveMaxPool2d_ctor ((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new AdaptiveMaxPool2D (handle, boxedHandle);
+                    return new AdaptiveMaxPool2d (handle, boxedHandle);
                 }
             }
         }
