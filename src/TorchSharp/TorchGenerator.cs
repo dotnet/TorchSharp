@@ -32,6 +32,7 @@ namespace TorchSharp
 
         public TorchGenerator ManualSeed(long seed)
         {
+            Torch.TryInitializeDeviceType(DeviceType.CUDA);
             THSGenerator_gen_manual_seed(Handle, seed);
             return this;
         }
@@ -39,6 +40,7 @@ namespace TorchSharp
         public long Seed()
         {
             long seed = DateTime.UtcNow.Ticks;
+            Torch.TryInitializeDeviceType(DeviceType.CUDA);
             THSGenerator_gen_manual_seed(Handle, seed);
             return seed;
         }

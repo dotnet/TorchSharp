@@ -25,11 +25,13 @@ namespace TorchSharp
 
         public static void SetSeed(long seed)
         {
+            TryInitializeDeviceType(DeviceType.CUDA);
             THSTorch_manual_seed(seed);
         }
 
         public static TorchGenerator ManualSeed(long seed)
         {
+            TryInitializeDeviceType(DeviceType.CUDA);
             return new TorchGenerator(THSGenerator_manual_seed(seed));
         }
 
