@@ -32,14 +32,15 @@ namespace TorchSharp.NN
 
             protected override bool ReleaseHandle ()
             {
-                THSNN_Module_dispose (this);
+                if (!IsInvalid) THSNN_Module_dispose (this);
+                SetHandle(IntPtr.Zero);
                 return true;
             }
 
             protected override void Dispose (bool disposing)
             {
                 if (disposing) {
-                    ReleaseHandle ();
+                    ReleaseHandle();
                 }
             }
         }
@@ -87,8 +88,9 @@ namespace TorchSharp.NN
         protected void Dispose (bool disposing)
         {
             if (disposing) {
-                handle.Dispose ();
-                handle.SetHandleAsInvalid ();
+                handle.Dispose();
+                handle.SetHandleAsInvalid();
+                boxedModule?.Dispose();
             }
         }
 
@@ -338,14 +340,15 @@ namespace TorchSharp.NN
 
             protected override bool ReleaseHandle ()
             {
-                THSNN_AnyModule_dispose (this);
+                if (!IsInvalid) THSNN_AnyModule_dispose(this);
+                handle = IntPtr.Zero;
                 return true;
             }
 
             protected override void Dispose (bool disposing)
             {
                 if (disposing) {
-                    ReleaseHandle ();
+                    ReleaseHandle();
                 }
             }
         }
@@ -377,7 +380,7 @@ namespace TorchSharp.NN
         protected void Dispose (bool disposing)
         {
             if (disposing) {
-                handle.Dispose ();
+                handle.Dispose();
                 handle.SetHandleAsInvalid ();
             }
         }
