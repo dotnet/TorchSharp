@@ -8,18 +8,18 @@ namespace TorchSharp.NN
     /// <summary>
     /// This class is used to represent a log softmax module.
     /// </summary>
-    public class LogSoftMax : Module
+    public class LogSoftmax : Module
     {
-        internal LogSoftMax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        internal LogSoftmax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_LogSoftMax_forward (Module.HType handle, IntPtr tensor);
+        private static extern IntPtr THSNN_LogSoftmax_forward(Module.HType handle, IntPtr tensor);
 
         public TorchTensor forward (TorchTensor tensor)
         {
-            var res = THSNN_LogSoftMax_forward (handle, tensor.Handle);
+            var res = THSNN_LogSoftmax_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
@@ -27,21 +27,21 @@ namespace TorchSharp.NN
     public static partial class Modules
     {
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_LogSoftMax_ctor (long dimension, out IntPtr pBoxedModule);
+        extern static IntPtr THSNN_LogSoftmax_ctor (long dimension, out IntPtr pBoxedModule);
 
-        static public LogSoftMax LogSoftMax (long dimension)
+        static public LogSoftmax LogSoftmax (long dimension)
         {
-            var handle = THSNN_LogSoftMax_ctor (dimension, out var boxedHandle);
+            var handle = THSNN_LogSoftmax_ctor(dimension, out var boxedHandle);
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new LogSoftMax (handle, boxedHandle);
+            return new LogSoftmax (handle, boxedHandle);
         }
     }
 
     public static partial class Functions
     {
-        static public TorchTensor LogSoftMax (TorchTensor x, long dimension)
+        static public TorchTensor LogSoftmax (TorchTensor x, long dimension)
         {
-            using (var l = Modules.LogSoftMax (dimension)) {
+            using (var l = Modules.LogSoftmax (dimension)) {
                 return l.forward (x);
             }
         }
