@@ -7,6 +7,9 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 
+//NOTE: This code was inspired by code found int the SciSharpStack-Examples repository.
+//      https://github.com/SciSharp/SciSharp-Stack-Examples
+
 namespace TorchSharp.Examples.Utils
 {
     public static class Decompress
