@@ -262,6 +262,9 @@ EXPORT_API(Tensor) THSNN_l1_loss(const Tensor inputwrapper, const Tensor targetw
 EXPORT_API(Tensor) THSNN_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_poisson_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target);
+EXPORT_API(Tensor) THSNN_smooth_l1_loss(const Tensor input, const Tensor target, const int64_t reduction, const double beta);
+EXPORT_API(Tensor) THSNN_soft_margin_loss(const Tensor input, const Tensor target, const int64_t reduction);
 
 // Optimizers
 

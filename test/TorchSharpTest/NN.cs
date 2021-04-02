@@ -485,6 +485,42 @@ namespace TorchSharp
                 Assert.Single(values);
             }
         }
+
+        [Fact]
+        public void TestKLDivLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = kl_div_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestSmoothL1Loss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = smooth_l1_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestSoftMarginLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = soft_margin_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
         #endregion
 
         #region Gradients
