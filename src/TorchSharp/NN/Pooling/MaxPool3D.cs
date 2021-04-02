@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
         /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
         /// <returns></returns>
-        static public MaxPool3d MaxPool3D (long[] kernelSize, long[] strides = null)
+        static public MaxPool3d MaxPool3d (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
@@ -57,9 +57,9 @@ namespace TorchSharp.NN
         /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
         /// <returns></returns>
 
-        static public TorchTensor MaxPool3D (TorchTensor x, long[] kernelSize, long[] strides = null)
+        static public TorchTensor MaxPool3d (TorchTensor x, long[] kernelSize, long[] strides = null)
         {
-            using (var d = Modules.MaxPool3D (kernelSize, strides)) {
+            using (var d = Modules.MaxPool3d (kernelSize, strides)) {
                 return d.forward (x);
             }
         }

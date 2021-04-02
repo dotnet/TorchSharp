@@ -485,6 +485,42 @@ namespace TorchSharp
                 Assert.Single(values);
             }
         }
+
+        [Fact]
+        public void TestKLDivLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = kl_div_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestSmoothL1Loss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = smooth_l1_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestSoftMarginLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 3 }))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 3 })) {
+                var outTensor = soft_margin_loss()(input, target);
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
         #endregion
 
         #region Gradients
@@ -710,11 +746,11 @@ namespace TorchSharp
 
         #region Convolution
         [Fact]
-        public void TestConv1D()
+        public void TestConv1d()
         {
             var shape = new long[] { 16, 3, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv1D(3, 64, 3);
+            var conv = Conv1d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -722,9 +758,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv1DGetWeight()
+        public void TestConv1dGetWeight()
         {
-            var conv = Conv1D(3, 64, 3);
+            var conv = Conv1d(3, 64, 3);
             var weight = conv.Weight;
             var bias = conv.Bias;
             Assert.NotNull(weight);
@@ -733,9 +769,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv1DEditWeightAndBias()
+        public void TestConv1dEditWeightAndBias()
         {
-            var conv = Conv1D(3, 64, 3);
+            var conv = Conv1d(3, 64, 3);
 
             conv.Bias = Float32Tensor.randn(new long[] { 64 });
             var weights = Float32Tensor.randn(new long[] { 64, 3, 3 });
@@ -753,11 +789,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv1DStride()
+        public void TestConv1dStride()
         {
             var shape = new long[] { 16, 3, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv1D(3, 64, 3, stride: 2);
+            var conv = Conv1d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -765,18 +801,18 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv1DPadding()
+        public void TestConv1dPadding()
         {
             var shape = new long[] { 16, 3, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
 
-            using (var conv = Conv1D(3, 64, 3, padding: 1))
+            using (var conv = Conv1d(3, 64, 3, padding: 1))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
                 Assert.Equal(28, output.shape[2]);
             }
-            using (var conv = Conv1D(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
+            using (var conv = Conv1d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -785,11 +821,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv2D()
+        public void TestConv2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv2D(3, 64, 3);
+            var conv = Conv2d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -798,9 +834,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv2DGetWeight()
+        public void TestConv2dGetWeight()
         {
-            var conv = Conv2D(3, 64, 3);
+            var conv = Conv2d(3, 64, 3);
             var weight = conv.Weight;
             var bias = conv.Bias;
             Assert.NotNull(weight);
@@ -809,9 +845,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv2DEditWeightAndBias()
+        public void TestConv2dEditWeightAndBias()
         {
-            var conv = Conv2D(3, 64, 3);
+            var conv = Conv2d(3, 64, 3);
 
             conv.Bias = Float32Tensor.randn(new long[] { 64 });
             var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
@@ -829,11 +865,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv2DStride()
+        public void TestConv2dStride()
         {
             var shape = new long[] { 16, 3, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv2D(3, 64, 3, stride: 2);
+            var conv = Conv2d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -842,18 +878,18 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv2DPadding()
+        public void TestConv2dPadding()
         {
             var shape = new long[] { 16, 3, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            using (var conv = Conv2D(3, 64, 3, padding: 1))
+            using (var conv = Conv2d(3, 64, 3, padding: 1))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
                 Assert.Equal(28, output.shape[2]);
                 Assert.Equal(28, output.shape[3]);
             }
-            using (var conv = Conv2D(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
+            using (var conv = Conv2d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -863,11 +899,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv3D()
+        public void TestConv3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv3D(3, 64, 3);
+            var conv = Conv3d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -877,9 +913,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv3DGetWeight()
+        public void TestConv3dGetWeight()
         {
-            var conv = Conv3D(3, 64, 3);
+            var conv = Conv3d(3, 64, 3);
             var weight = conv.Weight;
             var bias = conv.Bias;
             Assert.NotNull(weight);
@@ -888,9 +924,9 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv3DEditWeightAndBias()
+        public void TestConv3dEditWeightAndBias()
         {
-            var conv = Conv3D(3, 64, 3);
+            var conv = Conv3d(3, 64, 3);
 
             conv.Bias = Float32Tensor.randn(new long[] { 64 });
             var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
@@ -908,11 +944,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv3DStride()
+        public void TestConv3dStride()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = Conv3D(3, 64, 3, stride: 2);
+            var conv = Conv3d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -922,11 +958,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConv3DPadding()
+        public void TestConv3dPadding()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            using (var conv = Conv3D(3, 64, 3, padding: 1))
+            using (var conv = Conv3d(3, 64, 3, padding: 1))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -934,7 +970,7 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[3]);
                 Assert.Equal(28, output.shape[4]);
             }
-            using (var conv = Conv3D(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
+            using (var conv = Conv3d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -945,11 +981,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConvTranspose1D()
+        public void TestConvTranspose1d()
         {
             var shape = new long[] { 16, 3, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = ConvTranspose1D(3, 64, 3);
+            var conv = ConvTranspose1d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -957,11 +993,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConvTranspose2D()
+        public void TestConvTranspose2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = ConvTranspose2D(3, 64, 3);
+            var conv = ConvTranspose2d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -970,11 +1006,11 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestConvTranspose3D()
+        public void TestConvTranspose3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             TorchTensor t = Float32Tensor.rand(shape);
-            var conv = ConvTranspose3D(3, 64, 3);
+            var conv = ConvTranspose3d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
             Assert.Equal(64, output.shape[1]);
@@ -1036,7 +1072,7 @@ namespace TorchSharp
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
-            var obj = AvgPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = AvgPool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1100,7 +1136,7 @@ namespace TorchSharp
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
-            var obj = MaxPool2D(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = MaxPool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1134,7 +1170,7 @@ namespace TorchSharp
         public void TestMaxPool2D_1()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
-            using (var pool = MaxPool2D(new long[] { 2, 2 })) {
+            using (var pool = MaxPool2d(new long[] { 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
@@ -1148,7 +1184,7 @@ namespace TorchSharp
         public void TestMaxPool2D_2()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
-            using (var pool = MaxPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+            using (var pool = MaxPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
@@ -1167,7 +1203,7 @@ namespace TorchSharp
         public void TestMaxPool3D_1()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = MaxPool3D(new long[] { 2, 2, 2 })) {
+            using (var pool = MaxPool3d(new long[] { 2, 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
@@ -1181,7 +1217,7 @@ namespace TorchSharp
         public void TestMaxPool3D_2()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = MaxPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+            using (var pool = MaxPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
@@ -1200,7 +1236,7 @@ namespace TorchSharp
         public void TestAvgPool1D_1()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
-            using (var pool = AvgPool1D(2)) {
+            using (var pool = AvgPool1d(2)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
@@ -1212,7 +1248,7 @@ namespace TorchSharp
         public void TestAvgPool1D_2()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
-            using (var pool = AvgPool1D(2, 1)) {
+            using (var pool = AvgPool1d(2, 1)) {
                 var pooled = pool.forward(ones);
 
                 Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
@@ -1226,7 +1262,7 @@ namespace TorchSharp
         public void TestAvgPool2D_1()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
-            using (var pool = AvgPool2D(new long[] { 2, 2 })) {
+            using (var pool = AvgPool2d(new long[] { 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
@@ -1240,7 +1276,7 @@ namespace TorchSharp
         public void TestAvgPool2D_2()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
-            using (var pool = AvgPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+            using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
@@ -1255,7 +1291,7 @@ namespace TorchSharp
             }
 
             ones = Float32Tensor.ones(new long[] { 16, 4, 4, 4 });
-            using (var pool = AvgPool2D(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+            using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
@@ -1274,7 +1310,7 @@ namespace TorchSharp
         public void TestAvgPool3D_1()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = AvgPool3D(new long[] { 2, 2, 2 })) {
+            using (var pool = AvgPool3d(new long[] { 2, 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
@@ -1288,7 +1324,7 @@ namespace TorchSharp
         public void TestAvgPool3D_2()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = AvgPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+            using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
@@ -1303,7 +1339,7 @@ namespace TorchSharp
             }
 
             ones = Float32Tensor.ones(new long[] { 16, 3, 4, 4, 8 });
-            using (var pool = AvgPool3D(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+            using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 3, 7 }, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
@@ -1324,7 +1360,7 @@ namespace TorchSharp
         public void TestBatchNorm1D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
-            using (var pool = BatchNorm1D(3)) {
+            using (var pool = BatchNorm1d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
@@ -1336,7 +1372,7 @@ namespace TorchSharp
         public void TestBatchNorm2D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
-            using (var pool = BatchNorm2D(3)) {
+            using (var pool = BatchNorm2d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
@@ -1348,7 +1384,7 @@ namespace TorchSharp
         public void TestBatchNorm3D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = BatchNorm3D(3)) {
+            using (var pool = BatchNorm3d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
@@ -1360,7 +1396,7 @@ namespace TorchSharp
         public void TestInstanceNorm1D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
-            using (var pool = InstanceNorm1D(3)) {
+            using (var pool = InstanceNorm1d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
@@ -1372,7 +1408,7 @@ namespace TorchSharp
         public void TestInstanceNorm2D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
-            using (var pool = InstanceNorm2D(3)) {
+            using (var pool = InstanceNorm2d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
@@ -1384,7 +1420,7 @@ namespace TorchSharp
         public void TestInstanceNorm3D()
         {
             var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = InstanceNorm3D(3)) {
+            using (var pool = InstanceNorm3d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));

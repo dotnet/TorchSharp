@@ -1745,6 +1745,37 @@ Tensor THSNN_poisson_loss(const Tensor input, const Tensor target, const bool lo
     )
 }
 
+Tensor THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::KLDivFuncOptions().log_target(log_target);
+        ApplyReduction(opts, reduction);
+    
+        res = ResultTensor(torch::nn::functional::kl_div(*input, *target, opts));
+    )
+}
+
+Tensor THSNN_smooth_l1_loss(const Tensor input, const Tensor target, const int64_t reduction, const double beta)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::SmoothL1LossFuncOptions();
+        ApplyReduction(opts, reduction);
+
+        res = ResultTensor(torch::nn::functional::smooth_l1_loss(*input, *target, opts));
+    )
+}
+
+Tensor THSNN_soft_margin_loss(const Tensor input, const Tensor target, const int64_t reduction)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::SoftMarginLossFuncOptions();
+        ApplyReduction(opts, reduction);
+
+        res = ResultTensor(torch::nn::functional::soft_margin_loss(*input, *target, opts));
+    )
+}
+
+
 Optimizer THSNN_Adagrad_ctor(const Tensor* parameters, const int length, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps)
 {
     auto params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);

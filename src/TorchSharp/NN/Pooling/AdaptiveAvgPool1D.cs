@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="outputSize">the target output size H</param>
         /// <returns></returns>
-        static public AdaptiveAvgPool1d AdaptiveAvgPool1D (long[] outputSize)
+        static public AdaptiveAvgPool1d AdaptiveAvgPool1d(long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
@@ -49,9 +49,9 @@ namespace TorchSharp.NN
 
     public static partial class Functions
     {
-        static public TorchTensor AdaptiveAvgPool1D (TorchTensor x, long[] kernelSize)
+        static public TorchTensor AdaptiveAvgPool1d(TorchTensor x, long[] kernelSize)
         {
-            using (var d = Modules.AdaptiveAvgPool1D (kernelSize)) {
+            using (var d = Modules.AdaptiveAvgPool1d(kernelSize)) {
                 return d.forward (x);
             }
         }

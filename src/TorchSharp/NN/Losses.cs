@@ -99,6 +99,43 @@ namespace TorchSharp.NN
                 return new TorchTensor (res);
             };
         }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_kl_div_loss(IntPtr input, IntPtr target, long reduction, bool logTarget);
+
+        public static Loss kl_div_loss(bool logTarget = true, Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                var res = THSNN_kl_div_loss(src.Handle, target.Handle, (long)reduction, logTarget);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_smooth_l1_loss(IntPtr srct, IntPtr trgt, long reduction, double beta);
+
+        public static Loss smooth_l1_loss(bool logInput = true, Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                // Currently, the 'beta' parameter is being ignored by the native layer, so we just pass the default.
+                var res = THSNN_smooth_l1_loss(src.Handle, target.Handle, (long)reduction, 1.0);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_soft_margin_loss(IntPtr srct, IntPtr trgt, long reduction);
+
+        public static Loss soft_margin_loss(Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor src, TorchTensor target) => {
+                var res = THSNN_soft_margin_loss(src.Handle, target.Handle, (long)reduction);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
+        }
     }
     public enum Reduction : long
     {

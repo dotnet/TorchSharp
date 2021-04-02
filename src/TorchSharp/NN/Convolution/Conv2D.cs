@@ -71,7 +71,7 @@ namespace TorchSharp.NN
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns></returns>
-        static public Conv2d Conv2D (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+        static public Conv2d Conv2d (long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
             var res = THSNN_Conv2d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
@@ -94,9 +94,9 @@ namespace TorchSharp.NN
         /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
         /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
         /// <returns></returns>
-        static public TorchTensor Conv2D (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+        static public TorchTensor Conv2d (TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.Conv2D (inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
+            using (var d = Modules.Conv2d (inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
                 return d.forward (x);
             }
         }

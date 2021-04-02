@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         /// <param name="outputSize">The target output size of the image of the form D x H x W.
         /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
         /// <returns></returns>
-        static public AdaptiveMaxPool3d AdaptiveMaxPool3D (long[] outputSize)
+        static public AdaptiveMaxPool3d AdaptiveMaxPool3d (long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
@@ -58,9 +58,9 @@ namespace TorchSharp.NN
         /// <param name="outputSize">The target output size of the image of the form D x H x W.
         /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
         /// <returns></returns>
-        static public TorchTensor AdaptiveMaxPool3D (TorchTensor x, long[] outputSize)
+        static public TorchTensor AdaptiveMaxPool3d (TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveMaxPool3D (outputSize)) {
+            using (var d = Modules.AdaptiveMaxPool3d (outputSize)) {
                 return d.forward (x);
             }
         }

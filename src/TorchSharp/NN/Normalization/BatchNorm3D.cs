@@ -41,7 +41,7 @@ namespace TorchSharp.NN
         /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
         /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
         /// <returns></returns>
-        static public BatchNorm3d BatchNorm3D (long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+        static public BatchNorm3d BatchNorm3d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
             unsafe {
                 var handle = THSNN_BatchNorm3d_ctor (features, eps, momentum, affine, track_running_stats, out var boxedHandle);
@@ -65,9 +65,9 @@ namespace TorchSharp.NN
         /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
         /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
         /// <returns></returns>
-        static public TorchTensor BatchNorm3D (TorchTensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+        static public TorchTensor BatchNorm3d(TorchTensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
-            using (var d = Modules.BatchNorm3D (features, eps, momentum, affine, track_running_stats)) {
+            using (var d = Modules.BatchNorm3d(features, eps, momentum, affine, track_running_stats)) {
                 return d.forward (x);
             }
         }

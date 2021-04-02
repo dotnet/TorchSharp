@@ -429,7 +429,7 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingConv2d()
         {
-            var conv1 = Conv2D(3, 4, 3, stride: 2);
+            var conv1 = Conv2d(3, 4, 3, stride: 2);
             var lin1 = Linear(4 * 13 * 13, 32);
             var lin2 = Linear(32, 10);
 
@@ -474,7 +474,7 @@ namespace TorchSharp
             if (Torch.IsCudaAvailable()) {
                 var device = Device.CUDA;
 
-                using (Module conv1 = Conv2D(3, 4, 3, stride: 2),
+                using (Module conv1 = Conv2d(3, 4, 3, stride: 2),
                       lin1 = Linear(4 * 13 * 13, 32),
                       lin2 = Linear(32, 10))
 

@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         /// <param name="strides">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
 
-        static public AvgPool2d AvgPool2D (long[] kernelSize, long[] strides = null)
+        static public AvgPool2d AvgPool2d (long[] kernelSize, long[] strides = null)
         {
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
@@ -57,9 +57,9 @@ namespace TorchSharp.NN
         /// <param name="kernelSize">The size of the window</param>
         /// <param name="strides">The stride of the window. Default value is kernel_size</param>
         /// <returns></returns>
-        static public TorchTensor AvgPool2D (TorchTensor x, long[] kernelSize, long[] strides = null)
+        static public TorchTensor AvgPool2d (TorchTensor x, long[] kernelSize, long[] strides = null)
         {
-            using (var d = Modules.AvgPool2D (kernelSize, strides)) {
+            using (var d = Modules.AvgPool2d (kernelSize, strides)) {
                 return d.forward (x);
             }
         }

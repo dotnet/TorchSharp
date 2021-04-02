@@ -35,7 +35,7 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="outputSize">The target output size of the image of the form H x W.</param>
         /// <returns></returns>
-        static public AdaptiveAvgPool3d AdaptiveAvgPool3D(long[] outputSize)
+        static public AdaptiveAvgPool3d AdaptiveAvgPool3d(long[] outputSize)
         {
             unsafe {
                 fixed (long* pkernelSize = outputSize) {
@@ -56,9 +56,9 @@ namespace TorchSharp.NN
         /// <param name="x">The input signal tensor.</param>
         /// <param name="outputSize">The target output size of the image of the form H x W.</param>
         /// <returns></returns>
-        static public TorchTensor AdaptiveAvgPool3D(TorchTensor x, long[] outputSize)
+        static public TorchTensor AdaptiveAvgPool3d(TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveAvgPool3D(outputSize)) {
+            using (var d = Modules.AdaptiveAvgPool3d(outputSize)) {
                 return d.forward(x);
             }
         }

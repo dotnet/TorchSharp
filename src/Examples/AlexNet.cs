@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
@@ -12,12 +14,21 @@ namespace TorchSharp.Examples
     /// <summary>
     /// Modified version of original AlexNet to fix CIFAR10 32x32 images.
     /// </summary>
+    /// <remarks>
+    /// The dataset for this example can be found at: http://yann.lecun.com/exdb/mnist/
+    /// Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
+    /// the '_dataLocation' definition below to point at the right folder.
+    ///
+    /// Note: so far, CIFAR10 is supported, but not CIFAR100.
+    /// </remarks>
     class AlexNet
     {
-        private readonly static int _epochs = 5;
-        private readonly static long _trainBatchSize = 100;
-        private readonly static long _testBatchSize = 10000;
-        private readonly static string _dataLocation = @"../../../../src/Examples/Data";
+        private readonly static string _dataset = "CIFAR10";
+        private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", _dataset);
+
+        private static int _epochs = 100;
+        private static int _trainBatchSize = 64;
+        private static int _testBatchSize = 128;
 
         private readonly static int _logInterval = 10;
         private readonly static int _numClasses = 10;
@@ -26,20 +37,43 @@ namespace TorchSharp.Examples
         {
             Torch.SetSeed(1);
 
-            using (var train = Data.Loader.CIFAR10(_dataLocation, _trainBatchSize))
-            using (var test = Data.Loader.CIFAR10(_dataLocation, _testBatchSize, false))
-            using (var model = new Model("model", _numClasses))
+            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            Console.WriteLine();
+            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.Type.ToString()}");
+            Console.WriteLine();
+
+            if (device.Type == DeviceType.CUDA) {
+                _trainBatchSize *= 8;
+                _testBatchSize *= 8;
+                _epochs *= 16;
+            }
+
+            var sourceDir = _dataLocation;
+            var targetDir = Path.Combine(_dataLocation, "test_data");
+
+            if (!Directory.Exists(targetDir)) {
+                Directory.CreateDirectory(targetDir);
+                Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir);
+            }
+
+            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device))
+            using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
+            using (var model = new Model("model", _numClasses, device))
             using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)) {
+
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
                 for (var epoch = 1; epoch <= _epochs; epoch++) {
-                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size());
-                    Test(model, nll_loss(), test, test.Size());
+                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size);
+                    Test(model, nll_loss(), test, test.Size);
+                    GC.Collect();
+
+                    if (sw.Elapsed.TotalSeconds > 3600) break;
                 }
 
                 sw.Stop();
-                Console.WriteLine($"Elapsed time {sw.ElapsedMilliseconds}.");
+                Console.WriteLine($"Elapsed time {sw.Elapsed.TotalSeconds} s.");
                 Console.ReadLine();
             }
         }
@@ -50,24 +84,24 @@ namespace TorchSharp.Examples
             private readonly AdaptiveAvgPool2d avgPool;
             private readonly Sequential classifier;
 
-            public Model(string name, int numClasses) : base(name)
+            public Model(string name, int numClasses, Device device = null) : base(name)
             {
                 features = Sequential(
-                    ("c1", Conv2D(3, 64, kernelSize: 3, stride: 2, padding: 1)),
+                    ("c1", Conv2d(3, 64, kernelSize: 3, stride: 2, padding: 1)),
                     ("r1", ReLU(inPlace: true)),
-                    ("mp1", MaxPool2D(kernelSize: new long[] { 2 })),
-                    ("c2", Conv2D(64, 192, kernelSize: 3, padding: 1)),
+                    ("mp1", MaxPool2d(kernelSize: new long[] { 2, 2 })),
+                    ("c2", Conv2d(64, 192, kernelSize: 3, padding: 1)),
                     ("r2", ReLU(inPlace: true)),
-                    ("mp2", MaxPool2D(kernelSize: new long[] { 2 })),
-                    ("c3", Conv2D(192, 384, kernelSize: 3, padding: 1)),
+                    ("mp2", MaxPool2d(kernelSize: new long[] { 2, 2 })),
+                    ("c3", Conv2d(192, 384, kernelSize: 3, padding: 1)),
                     ("r3", ReLU(inPlace: true)),
-                    ("c4", Conv2D(384, 256, kernelSize: 3, padding: 1)),
+                    ("c4", Conv2d(384, 256, kernelSize: 3, padding: 1)),
                     ("r4", ReLU(inPlace: true)),
-                    ("c5", Conv2D(256, 256, kernelSize: 3, padding: 1)),
+                    ("c5", Conv2d(256, 256, kernelSize: 3, padding: 1)),
                     ("r5", ReLU(inPlace: true)),
-                    ("mp3", MaxPool2D(kernelSize: new long[] { 2 })));
+                    ("mp3", MaxPool2d(kernelSize: new long[] { 2, 2 })));
 
-                avgPool = AdaptiveAvgPool2D(new long[] { 2, 2 });
+                avgPool = AdaptiveAvgPool2d(new long[] { 2, 2 });
 
                 classifier = Sequential(
                     ("d1", Dropout()),
@@ -76,12 +110,16 @@ namespace TorchSharp.Examples
                     ("d2", Dropout()),
                     ("l2", Linear(4096, 4096)),
                     ("r3", ReLU(inPlace: true)),
+                    ("d3", Dropout()),
                     ("l3", Linear(4096, numClasses))
                 );
 
                 RegisterModule("features", features);
                 RegisterModule("avg", avgPool);
                 RegisterModule("classify", classifier);
+
+                if (device != null && device.Type == DeviceType.CUDA)
+                    this.to(device);
             }
 
             public override TorchTensor forward(TorchTensor input)
@@ -109,27 +147,30 @@ namespace TorchSharp.Examples
             long total = 0;
             long correct = 0;
 
+            Console.WriteLine($"Epoch: {epoch}...");
+
             foreach (var (data, target) in dataLoader) {
                 optimizer.zero_grad();
 
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftMax(prediction, 1), target)) {
+                using (var output = loss(LogSoftmax(prediction, 1), target)) {
                     output.backward();
 
                     optimizer.step();
 
-                    var predicted = prediction.argmax(1);
                     total += target.shape[0];
-                    correct += predicted.eq(target).sum().ToInt64();
+
+                    using (var predicted = prediction.argmax(1))
+                    using (var eq = predicted.eq(target))
+                    using (var sum = eq.sum()) {
+                        correct += sum.ToInt64();
+                    }
 
                     if (batchId % _logInterval == 0) {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()} Acc: { (float)correct / total }");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle().ToString("0.0000")} Acc: { ((float)correct / total).ToString("0.0000") }");
                     }
 
                     batchId++;
-
-                    data.Dispose();
-                    target.Dispose();
                 }
             }
         }
@@ -144,24 +185,25 @@ namespace TorchSharp.Examples
 
             double testLoss = 0;
             long correct = 0;
+            int batchCount = 0;
 
             foreach (var (data, target) in dataLoader) {
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftMax(prediction, 1), target)) {
+                using (var output = loss(LogSoftmax(prediction, 1), target)) {
+
                     testLoss += output.ToSingle();
+                    batchCount += 1;
 
-                    var pred = prediction.argmax(1);
-
-                    correct += pred.eq(target).sum().ToInt64();
-
-                    data.Dispose();
-                    target.Dispose();
-                    pred.Dispose();
+                    using (var predicted = prediction.argmax(1))
+                    using (var eq = predicted.eq(target))
+                    using (var sum = eq.sum()) {
+                        correct += sum.ToInt64();
+                    }
                 }
 
             }
 
-            Console.WriteLine($"\rTest set: Average loss {testLoss} | Accuracy {(float)correct / size}");
+            Console.WriteLine($"\rTest set: Average loss {(testLoss/batchCount).ToString("0.0000")} | Accuracy {((float)correct / size).ToString("0.0000")}");
         }
     }
 }
