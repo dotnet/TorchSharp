@@ -52,20 +52,22 @@ namespace TorchSharp
         {
             // This tests that the default generator can be disposed, but will keep on going,
             long a, b, c;
-            using(var gen = Torch.ManualSeed(4711)) {
-                a = gen.InitialSeed;
-            }
-            using (var gen = TorchGenerator.Default) {
-                b = gen.InitialSeed;
-            }
-            Assert.Equal(a, b);
-            using (var gen = Torch.ManualSeed(17)) {
-                c = gen.InitialSeed;
-            }
-            Assert.NotEqual(a, c);
+            lock (_lock) {
+                using (var gen = Torch.ManualSeed(4711)) {
+                    a = gen.InitialSeed;
+                }
+                using (var gen = TorchGenerator.Default) {
+                    b = gen.InitialSeed;
+                }
+                Assert.Equal(a, b);
+                using (var gen = Torch.ManualSeed(17)) {
+                    c = gen.InitialSeed;
+                }
+                Assert.NotEqual(a, c);
 
-            var x = Float32Tensor.rand(new long[] { 10, 10, 10 });
-            Assert.Equal(new long[] { 10, 10, 10 }, x.shape);
+                var x = Float32Tensor.rand(new long[] { 10, 10, 10 });
+                Assert.Equal(new long[] { 10, 10, 10 }, x.shape);
+            }
         }
 
         [Fact]
@@ -91,29 +93,35 @@ namespace TorchSharp
             // After restoring a saved RNG state, the next number should be the
             // same as right after the snapshot.
 
-            using (var gen = Torch.ManualSeed(4711)) {
+            lock (_lock) {
+                using (var gen = Torch.ManualSeed(4711)) {
 
-                // Take a snapshot
-                var state = gen.State;
-                Assert.NotNull(state);
+                    // Take a snapshot
+                    var state = gen.State;
+                    Assert.NotNull(state);
 
-                // Generate a number
-                var val1 = Float32Tensor.randn(new long[] { 1 });
-                var value1 = val1[0].ToSingle();
+                    // Generate a number
+                    var val1 = Float32Tensor.randn(new long[] { 1 });
+                    var value1 = val1[0].ToSingle();
 
-                // Genereate a different number
-                var val2 = Float32Tensor.randn(new long[] { 1 });
-                var value2 = val2[0].ToSingle();
-                Assert.NotEqual(value1, value2);
+                    // Genereate a different number
+                    var val2 = Float32Tensor.randn(new long[] { 1 });
+                    var value2 = val2[0].ToSingle();
+                    Assert.NotEqual(value1, value2);
 
-                // Restore the state
-                gen.State = state;
+                    // Restore the state
+                    gen.State = state;
 
-                // Generate the first number again.
-                var val3 = Float32Tensor.randn(new long[] { 1 });
-                var value3 = val3[0].ToSingle();
-                Assert.Equal(value1, value3);
+                    // Generate the first number again.
+                    var val3 = Float32Tensor.randn(new long[] { 1 });
+                    var value3 = val3[0].ToSingle();
+                    Assert.Equal(value1, value3);
+                }
             }
         }
+
+        // Because some of the tests mess with global state, and are run in parallel, we need to
+        // acquire a lock before testing setting the default RNG see.
+        private object _lock = new object();
     }
 }
