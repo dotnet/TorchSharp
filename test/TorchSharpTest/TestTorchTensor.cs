@@ -1302,6 +1302,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void Deg2RadTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(angl => (angl * MathF.PI) / 180.0f).ToArray();
+            var res = Float32Tensor.from(data).deg2rad();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void Rad2DegTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(angl => (angl * 180.0f) / MathF.PI).ToArray();
+            var res = Float32Tensor.from(data).rad2deg();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
         public void SinTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -1333,7 +1351,7 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Sinh).ToArray();
-            var res = Float32Tensor.from(data).Sinh();
+            var res = Float32Tensor.from(data).sinh();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
@@ -1343,6 +1361,7 @@ namespace TorchSharp
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Cosh).ToArray();
             var res = Float32Tensor.from(data).cosh();
+            var tmp = res.Data<Single>();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
@@ -1352,6 +1371,33 @@ namespace TorchSharp
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Tanh).ToArray();
             var res = Float32Tensor.from(data).tanh();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void ArcSinhTest()
+        {
+            var data = new float[] { -0.1f, 0.0f, 0.1f };
+            var expected = data.Select(MathF.Asinh).ToArray();
+            var res = Float32Tensor.from(data).asinh();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void ArcCoshTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(MathF.Acosh).ToArray();
+            var res = Float32Tensor.from(data).acosh();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void ArcTanhTest()
+        {
+            var data = new float[] { -0.1f, 0.0f, 0.1f };
+            var expected = data.Select(MathF.Atanh).ToArray();
+            var res = Float32Tensor.from(data).atanh();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
@@ -1397,6 +1443,47 @@ namespace TorchSharp
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Log10).ToArray();
             var res = Float32Tensor.from(data).log10();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void LogCumSumExpTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f, 10.0f, 20.0f, 30.0f };
+            var expected = new float[data.Length];
+            for (int i = 0; i < data.Length; i++) {
+                for (int j = 0; j <= i; j++) {
+                    expected[i] += MathF.Exp(data[j]);
+                }
+                expected[i] = MathF.Log(expected[i]);
+            }
+            var res = Float32Tensor.from(data).logcumsumexp(dim: 0);
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void LogAddExpTest()
+        {
+            var x = new float[] { 1.0f, 2.0f, 3.0f };
+            var y = new float[] { 4.0f, 5.0f, 6.0f };
+            var expected = new float[x.Length];
+            for (int i = 0; i < x.Length; i++) {
+                expected[i] = MathF.Log(MathF.Exp(x[i]) + MathF.Exp(y[i]));
+            }
+            var res = Float32Tensor.from(x).logaddexp(Float32Tensor.from(y));
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void LogAddExp2Test()
+        {
+            var x = new float[] { 1.0f, 2.0f, 3.0f };
+            var y = new float[] { 4.0f, 5.0f, 6.0f };
+            var expected = new float[x.Length];
+            for (int i = 0; i < x.Length; i++) {
+                expected[i] = MathF.Log(MathF.Pow(2.0f, x[i]) + MathF.Pow(2.0f, y[i]), 2.0f);
+            }
+            var res = Float32Tensor.from(x).logaddexp2(Float32Tensor.from(y));
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 

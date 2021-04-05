@@ -506,7 +506,6 @@ namespace TorchSharp.Tensor
             }
         }
 
-
         [DllImport("LibTorchSharp")]
         static extern bool THSTensor_is_sparse(IntPtr handle);
 
@@ -1549,6 +1548,36 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_deg2rad(IntPtr tensor);
+
+        /// <summary>
+        /// Convert each element from degrees to radians.
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor deg2rad()
+        {
+            var res = THSTensor_deg2rad(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_rad2deg(IntPtr tensor);
+
+        /// <summary>
+        /// Convert each element from radians to degrees.
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor rad2deg()
+        {
+            var res = THSTensor_rad2deg(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_cos(IntPtr tensor);
 
         /// <summary>
@@ -1758,7 +1787,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_sinh(IntPtr tensor);
 
-        public TorchTensor Sinh()
+        public TorchTensor sinh()
         {
             var res = THSTensor_sinh(handle);
             if (res == IntPtr.Zero)
@@ -1769,7 +1798,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_sinh_(IntPtr tensor);
 
-        public TorchTensor Sinh_()
+        public TorchTensor sinh_()
         {
             var res = THSTensor_sinh_(handle);
             if (res == IntPtr.Zero)
@@ -1820,6 +1849,84 @@ namespace TorchSharp.Tensor
                 Torch.CheckForErrors();
             return new TorchTensor(res);
         }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arcsinh(IntPtr tensor);
+
+        public TorchTensor arcsinh()
+        {
+            var res = THSTensor_arcsinh(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arcsinh_(IntPtr tensor);
+
+        public TorchTensor arcsinh_()
+        {
+            var res = THSTensor_arcsinh_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arccosh(IntPtr tensor);
+
+        public TorchTensor arccosh()
+        {
+            var res = THSTensor_arccosh(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arccosh_(IntPtr tensor);
+
+        public TorchTensor arccosh_()
+        {
+            var res = THSTensor_arccosh_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arctanh(IntPtr tensor);
+
+        public TorchTensor arctanh()
+        {
+            var res = THSTensor_arctanh(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_arctanh_(IntPtr tensor);
+
+        public TorchTensor arctanh_()
+        {
+            var res = THSTensor_arctanh_(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        public TorchTensor asinh() => arcsinh();
+
+        public TorchTensor asinh_() => arctanh_();
+
+        public TorchTensor acosh() => arccosh();
+
+        public TorchTensor acosh_() => arccosh_();
+
+        public TorchTensor atanh() => arctanh();
+
+        public TorchTensor atanh_() => arctanh_();
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_floor(IntPtr tensor);
@@ -2274,11 +2381,44 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_logaddexp(IntPtr tensor, IntPtr other);
+
+        public TorchTensor logaddexp(TorchTensor other)
+        {
+            var res = THSTensor_logaddexp(handle, other.handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_logaddexp2(IntPtr tensor, IntPtr other);
+
+        public TorchTensor logaddexp2(TorchTensor other)
+        {
+            var res = THSTensor_logaddexp2(handle, other.handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_logcumsumexp(IntPtr tensor, long dim);
 
         public TorchTensor logcumsumexp(long dim)
         {
             var res = THSTensor_logcumsumexp(handle, dim);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_logsumexp(IntPtr tensor, long dim, bool keepdim);
+
+        public TorchTensor logsumexp(long dim, Boolean keepdim = false)
+        {
+            var res = THSTensor_logsumexp(handle, dim, keepdim);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
