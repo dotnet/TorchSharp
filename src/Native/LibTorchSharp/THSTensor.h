@@ -100,6 +100,12 @@ EXPORT_API(Tensor) THSTensor_atan2(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_atan2_(const Tensor tensor, const Tensor other);
 
+EXPORT_API(Tensor) THSTensor_atleast_1d (const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_atleast_2d(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_atleast_3d(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_avg_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -420,6 +426,11 @@ EXPORT_API(Tensor) THSTensor_hardtanh(const Tensor tensor, Scalar min, Scalar ma
 
 EXPORT_API(Tensor) THSTensor_hardtanh_(const Tensor tensor, Scalar min, Scalar max);
 
+EXPORT_API(Tensor) THSTensor_isposinf(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_isneginf(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_isneginf(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_hardsigmoid(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_hardsigmoid_(const Tensor tensor);
@@ -524,6 +535,8 @@ EXPORT_API(Tensor) THSTensor_logical_or_(const Tensor tensor, const Tensor other
 EXPORT_API(Tensor) THSTensor_logical_xor(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_logical_xor_(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_logit(const Tensor tensor, const double* eps);
 
 EXPORT_API(Tensor) THSTensor_lt(const Tensor left, const Tensor right);
 
@@ -777,6 +790,8 @@ EXPORT_API(Tensor) THSTensor_sign(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sign_(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_signbit(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_silu(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_silu_(const Tensor tensor);
@@ -845,6 +860,12 @@ EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*alloc
 EXPORT_API(Tensor) THSTensor_squeeze(Tensor tensor, int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_stack(const Tensor* tensor, const int length, const int64_t dim);
+
+EXPORT_API(Tensor) THSTensor_hstack(const Tensor* tensor, const int length);
+
+EXPORT_API(Tensor) THSTensor_vstack(const Tensor* tensor, const int length);
+
+EXPORT_API(Tensor) THSTensor_dstack(const Tensor* tensor, const int length);
 
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 
