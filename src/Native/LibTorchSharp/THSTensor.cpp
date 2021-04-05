@@ -426,6 +426,11 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     CATCH_TENSOR(batch1->bmm(*batch2));
 }
 
+EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
+{
+    CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
+}
+
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
@@ -2572,6 +2577,13 @@ Tensor THSTensor_values(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_values());
 }
+
+Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increasing)
+{
+    CATCH_TENSOR(torch::vander(*tensor, N, increasing));
+}
+
+
 
 Tensor THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out)
 {

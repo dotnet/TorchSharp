@@ -184,6 +184,44 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdamWDefaults()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            var optimizer = NN.Optimizer.AdamW(seq.parameters());
+            var loss = mse_loss(NN.Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+
+
+        /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using Adagrad optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>

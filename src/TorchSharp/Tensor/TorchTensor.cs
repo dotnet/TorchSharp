@@ -760,6 +760,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_vander(IntPtr handle, long N, bool increasing);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public TorchTensor vander (long N = -1, bool increasing = false)
+        {
+            if (this.Dimensions != 1) throw new InvalidOperationException("Input argument for 'vander()' must be 1-D.");
+
+            var res = THSTensor_vander(handle, (N == -1) ? this.size(0) : N, increasing);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern long THSTensor_stride(IntPtr handle, long dimension);
 
         /// <summary>
@@ -2571,6 +2587,28 @@ namespace TorchSharp.Tensor
         public TorchTensor bmm(TorchTensor batch2)
         {
             var res = THSTensor_bmm(handle, batch2.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_bucketize(IntPtr input, IntPtr boundaries, bool out_int32, bool right);
+
+        /// <summary>
+        /// Returns the indices of the buckets to which each value in the input belongs, where the boundaries of the buckets are set by boundaries.
+        /// Return a new tensor with the same size as input. If right is false (default), then the left boundary is closed.
+        /// </summary>
+        /// <param name="boundaries">1-D tensor, must contain a monotonically increasing sequence.</param>
+        /// <param name="outInt32">indicate the output data type. torch.int32 if True, torch.int64 otherwise.
+        /// Default value is False, i.e. default output data type is torch.int64.</param>
+        /// <param name="right">if false, return the first suitable location that is found. If rrue, return the last such index.
+        /// If no suitable index found, return 0 for non-numerical value (eg. nan, inf) or the size of boundaries (one pass the last index).
+        /// In other words, if false, gets the lower bound index for each value in input from boundaries.
+        /// If true, gets the upper bound index instead. Default value is False.</param>
+        /// <returns></returns>
+        public TorchTensor bucketize(TorchTensor boundaries, bool outInt32 = false, bool right = false)
+        {
+            var res = THSTensor_bucketize(handle, boundaries.Handle, outInt32, right );
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

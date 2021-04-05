@@ -270,6 +270,7 @@ EXPORT_API(Tensor) THSNN_soft_margin_loss(const Tensor input, const Tensor targe
 
 EXPORT_API(Optimizer) THSNN_Adagrad_ctor(const Tensor* parameters, const int len, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps);
 EXPORT_API(Optimizer) THSNN_Adam_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
+EXPORT_API(Optimizer) THSNN_AdamW_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
 EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
 EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
 

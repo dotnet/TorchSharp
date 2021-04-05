@@ -168,6 +168,8 @@ EXPORT_API(Tensor) THSTensor_bitwise_xor_(const Tensor tensor, const Tensor othe
 
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
+EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right);
+
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* tensor, const int length, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
@@ -908,6 +910,8 @@ EXPORT_API(Tensor) THSTensor_upsample_nearest3d_backward(
     const double* scaleFactors, const int scaleFactorsLength);
 
 EXPORT_API(Tensor) THSTensor_values(Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_vander(const Tensor tensor, const int64_t N, const bool increasing);
 
 EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, const int length);
 
