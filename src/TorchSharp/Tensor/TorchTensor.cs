@@ -5307,6 +5307,22 @@ namespace TorchSharp.Tensor
         public static explicit operator int (TorchTensor value) => value.ToInt32();
         public static explicit operator long (TorchTensor value) => value.ToInt64();
         public static explicit operator bool (TorchTensor value) => value.ToBoolean();
+
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_block_diag(IntPtr tensor, int len);
+
+        public static TorchTensor block_diag(params TorchTensor[] tensors)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_block_diag(tensorsRef, parray.Array.Length);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+        }
     }
 
     public enum ScalarType : sbyte

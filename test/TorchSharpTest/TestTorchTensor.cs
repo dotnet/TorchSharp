@@ -731,6 +731,31 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBlockDiag()
+        {
+            // Example from PyTorch documentation
+            var A = Int64Tensor.from(new long[] { 0, 1, 1, 0 }).view(2, 2);
+            var B = Int64Tensor.from(new long[] { 3, 4, 5, 6, 7, 8 }).view(2, 3);
+            var C = Int64Tensor.from(7);
+            var D = Int64Tensor.from(new long[] { 1, 2, 3 });
+            var E = Int64Tensor.from(new long[] { 4, 5, 6 }).view(3,1);
+
+            var expected = Int64Tensor.from(new long[] {
+                0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 3, 4, 5, 0, 0, 0, 0, 0,
+                0, 0, 6, 7, 8, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 7, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 1, 2, 3, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 6 }).view(9,10);
+
+            var res = TorchTensor.block_diag(A, B, C, D, E);
+            Assert.Equal(expected, res);
+        }
+
+        [Fact]
         public void TestSetGrad()
         {
             var x = Float32Tensor.rand(new long[] { 10, 10 });

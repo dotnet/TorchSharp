@@ -421,6 +421,11 @@ Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_xor_(*other));
 }
 
+Tensor THSTensor_block_diag(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::block_diag(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
 {
     CATCH_TENSOR(batch1->bmm(*batch2));

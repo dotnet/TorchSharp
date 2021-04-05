@@ -166,6 +166,8 @@ EXPORT_API(Tensor) THSTensor_bitwise_xor(const Tensor tensor, const Tensor other
 
 EXPORT_API(Tensor) THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other);
 
+EXPORT_API(Tensor) THSTensor_block_diag(const Tensor* tensor, const int length);
+
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
 EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right);
