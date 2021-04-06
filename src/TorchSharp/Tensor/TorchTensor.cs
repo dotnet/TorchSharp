@@ -1845,6 +1845,21 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_count_nonzero(IntPtr tensor, IntPtr dim, int dim_len);
+
+        public TorchTensor count_nonzero(long[]? dim = null)
+        {
+            unsafe {
+                fixed (long* pdims = dim) {
+                    var res = THSTensor_count_nonzero(handle, ((pdims == null) ? IntPtr.Zero : (IntPtr)pdims), dim is null ? 0 : dim.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_tanh(IntPtr tensor);
 
         public TorchTensor tanh()
@@ -4225,6 +4240,20 @@ namespace TorchSharp.Tensor
                 fixed (long* psizes = sizes)
                 {
                     var res = THSTensor_expand(handle, (IntPtr)psizes, sizes.Length, isImplicit);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_movedim(IntPtr tensor, IntPtr src, int src_len, IntPtr dst, int dst_len);
+
+        public TorchTensor movedim(long[] source, long[] destination)
+        {
+            unsafe {
+                fixed (long* psource = source, pdest = destination) {
+                    var res = THSTensor_movedim(handle, (IntPtr)psource, source.Length, (IntPtr)pdest, destination.Length);
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }

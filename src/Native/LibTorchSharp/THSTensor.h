@@ -257,6 +257,8 @@ EXPORT_API(Tensor) THSTensor_cosh(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_cosh_(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len);
+
 EXPORT_API(Tensor) THSTensor_cpu(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim);
@@ -639,6 +641,8 @@ EXPORT_API(Tensor) THSTensor_min_elementwise(const Tensor tensor, const Tensor o
 EXPORT_API(void) THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);
 
 EXPORT_API(Tensor) THSTensor_mm(const Tensor left, const Tensor right);
+
+EXPORT_API(Tensor) THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len);
 
 EXPORT_API(Tensor) THSTensor_mul(const Tensor left, const Tensor right);
 

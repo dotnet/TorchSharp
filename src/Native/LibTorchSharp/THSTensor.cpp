@@ -898,6 +898,17 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
     CATCH_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
 
+Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
+{
+    CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
+}
+
+Tensor  THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len)
+{
+    CATCH_TENSOR(tensor->count_nonzero(at::ArrayRef<int64_t>(dim, dim_len)));
+}
+
+
 Tensor THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
     auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));

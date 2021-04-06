@@ -775,7 +775,7 @@ namespace TorchSharp
             var B = Int64Tensor.from(new long[] { 3, 4, 5, 6, 7, 8 }).view(2, 3);
             var C = Int64Tensor.from(7);
             var D = Int64Tensor.from(new long[] { 1, 2, 3 });
-            var E = Int64Tensor.from(new long[] { 4, 5, 6 }).view(3,1);
+            var E = Int64Tensor.from(new long[] { 4, 5, 6 }).view(3, 1);
 
             var expected = Int64Tensor.from(new long[] {
                 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -786,7 +786,7 @@ namespace TorchSharp
                 0, 0, 0, 0, 0, 0, 1, 2, 3, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 6 }).view(9,10);
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 6 }).view(9, 10);
 
             var res = TorchTensor.block_diag(A, B, C, D, E);
             Assert.Equal(expected, res);
@@ -1447,7 +1447,7 @@ namespace TorchSharp
         [Fact]
         public void I0Test()
         {
-            var data = Float32Tensor.arange(0,5,1);
+            var data = Float32Tensor.arange(0, 5, 1);
             var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
             var res = data.i0();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
@@ -1458,7 +1458,7 @@ namespace TorchSharp
         {
             var a = new float[] { 1.0f, 2.0f, 3.0f };
             var b = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = a.Select(x => MathF.Sqrt(2.0f)*x).ToArray();
+            var expected = a.Select(x => MathF.Sqrt(2.0f) * x).ToArray();
             var res = Float32Tensor.from(a).hypot(Float32Tensor.from(b));
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
@@ -1468,7 +1468,7 @@ namespace TorchSharp
         {
             var a = new float[] { 1.0f, 2.0f, 3.0f };
             var b = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = Float32Tensor.from(a.Zip(b).Select(x => x.First*x.Second).Sum());
+            var expected = Float32Tensor.from(a.Zip(b).Select(x => x.First * x.Second).Sum());
             var res = Float32Tensor.from(a).vdot(Float32Tensor.from(b));
             Assert.True(res.allclose(expected));
         }
@@ -1490,7 +1490,7 @@ namespace TorchSharp
             var b = a.neg();
             var expected = a;
             var res = a.maximum(b);
-            Assert.Equal(expected,res);
+            Assert.Equal(expected, res);
         }
 
         [Fact]
@@ -1618,7 +1618,7 @@ namespace TorchSharp
             // From the PyTorch reference docs.
             var data = new float[] { 0.2796f, 0.9331f, 0.6486f, 0.1523f, 0.6516f };
             var expected = new float[] { -0.946446538f, 2.635313f, 0.6128909f, -1.71667457f, 0.6260796f };
-            var res = Float32Tensor.from(data).logit(eps: 1f-6);
+            var res = Float32Tensor.from(data).logit(eps: 1f - 6);
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
@@ -1722,7 +1722,7 @@ namespace TorchSharp
             var x = Int32Tensor.from(new int[] { 1, 2, 3, 5 });
             {
                 var res = x.vander();
-                var expected = Int64Tensor.from(new long[] { 1,1,1,1,8,4,2,1,27,9,3,1,125,25,5,1}).view(4,4);
+                var expected = Int64Tensor.from(new long[] { 1, 1, 1, 1, 8, 4, 2, 1, 27, 9, 3, 1, 125, 25, 5, 1 }).view(4, 4);
                 Assert.Equal(expected, res);
             }
             {
@@ -1751,6 +1751,33 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void MovedimTest()
+        {
+            TorchTensor input = Float32Tensor.randn(new long[] { 3, 2, 1 });
+            {
+                var res = input.movedim(new long[] { 1 }, new long[] { 0 });
+                Assert.Equal(new long[] { 2, 3, 1 }, res.shape);
+            }
+            {
+                var res = input.movedim(new long[] { 1, 2 }, new long[] { 0, 1 });
+                Assert.Equal(new long[] { 2, 1, 3 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void CountNZTest()
+        {
+            TorchTensor input = Float32Tensor.from(new float[] { 0, 1, 1, 0, 0, 0, 0, 0, 1 }).view(3,3);
+            {
+                var res = input.count_nonzero();
+                Assert.Equal(Int64Tensor.from(3), res);
+            }
+            {
+                var res = input.count_nonzero(new long[] { 0 });
+                Assert.Equal(Int64Tensor.from(new long[] { 0, 1, 2 }), res);
+            }
+        }
         [Fact]
         public void TopKTest()
         {
