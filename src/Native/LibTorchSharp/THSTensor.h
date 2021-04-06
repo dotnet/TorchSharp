@@ -964,3 +964,32 @@ EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, con
 EXPORT_API(Tensor) THSTensor_zeros(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out);
+
+// torch.linalg:
+
+EXPORT_API(Tensor) THSLinalg_cholesky(const Tensor tensor);
+
+EXPORT_API(Tensor) THSLinalg_det(const Tensor tensor);
+
+EXPORT_API(Tensor) THSLinalg_slogdet(const Tensor tensor, Tensor *logabsdet);
+
+EXPORT_API(Tensor) THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors);
+
+EXPORT_API(Tensor) THSLinalg_eigvalsh(const Tensor tensor, const char UPLO);
+
+EXPORT_API(Tensor) THSLinalg_inv(const Tensor tensor);
+
+EXPORT_API(Tensor) THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian);
+
+EXPORT_API(Tensor) THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int dim_length, const bool keepdim);
+EXPORT_API(Tensor) THSLinalg_norm_float(const Tensor tensor, const double p, const int64_t* dim, const int dim_length, const bool keepdim);
+EXPORT_API(Tensor) THSLinalg_norm_int(const Tensor tensor, const int p, const int64_t* dim, const int dim_length, const bool keepdim);
+EXPORT_API(Tensor) THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, const int dim_length, const bool keepdim);
+
+EXPORT_API(Tensor) THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermitian);
+
+EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other);
+
+EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
+
+EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);
