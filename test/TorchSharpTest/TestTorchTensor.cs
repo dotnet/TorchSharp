@@ -2264,5 +2264,16 @@ namespace TorchSharp
             Assert.True(c.diff(dim:0).allclose(Float32Tensor.from(new float[] { 2, 2, 2 }).view(1,3)));
             Assert.True(c.diff(dim:1).allclose(Float32Tensor.from(new float[] { 1, 1, 1, 1 }).view(2,2)));
         }
+
+
+
+        [Fact]
+        public void RavelTest()
+        {
+            var expected = Int32Tensor.from(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            var a = expected.view(2, 2, 2);
+            Assert.Equal(new long[] { 2, 2, 2 }, a.shape);
+            Assert.Equal(expected, a.ravel());
+        }
     }
 }
