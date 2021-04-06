@@ -101,7 +101,7 @@ namespace TorchSharp
         static extern IntPtr THSLinalg_norm_opt(IntPtr tensor, IntPtr dim, int dim_length, bool keepdim);
 
 
-        public static TorchTensor norm(TorchTensor input, string ord, long[]? dims, bool keepdim)
+        public static TorchTensor norm(TorchTensor input, string ord, long[]? dims = null, bool keepdim = false)
         {
             unsafe {
                 fixed (long* pdims = dims) {
@@ -112,7 +112,7 @@ namespace TorchSharp
             }
         }
 
-        public static TorchTensor norm(TorchTensor input, double ord, long[]? dims, bool keepdim)
+        public static TorchTensor norm(TorchTensor input, double ord, long[]? dims = null, bool keepdim = false)
         {
             unsafe {
                 fixed (long* pdims = dims) {
@@ -123,7 +123,7 @@ namespace TorchSharp
             }
         }
 
-        public static TorchTensor norm(TorchTensor input, int ord, long[]? dims, bool keepdim)
+        public static TorchTensor norm(TorchTensor input, int ord, long[]? dims = null, bool keepdim = false)
         {
             unsafe {
                 fixed (long* pdims = dims) {
@@ -134,7 +134,7 @@ namespace TorchSharp
             }
         }
 
-        public static TorchTensor norm(TorchTensor input, long[]? dims, bool keepdim)
+        public static TorchTensor norm(TorchTensor input, long[]? dims = null, bool keepdim = false)
         {
             unsafe {
                 fixed (long* pdims = dims) {

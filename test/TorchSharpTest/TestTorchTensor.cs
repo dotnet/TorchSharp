@@ -2197,5 +2197,35 @@ namespace TorchSharp
                 Assert.True(l.allclose(expected));
             }
         }
+
+        [Fact]
+        public void LinalgNormTest()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f });
+                var b = a.reshape(3, 3);
+
+                Assert.True(linalg.norm(a).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b, "fro").allclose(Float32Tensor.from(7.7460f)));
+
+                Assert.True(linalg.norm(a, float.PositiveInfinity).allclose(Float32Tensor.from(4.0f)));
+                Assert.True(linalg.norm(b, float.PositiveInfinity).allclose(Float32Tensor.from(9.0f)));
+                Assert.True(linalg.norm(a, float.NegativeInfinity).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(b, float.NegativeInfinity).allclose(Float32Tensor.from(2.0f)));
+
+                Assert.True(linalg.norm(a, 1).allclose(Float32Tensor.from(20.0f)));
+                Assert.True(linalg.norm(b, 1).allclose(Float32Tensor.from(7.0f)));
+                Assert.True(linalg.norm(a, -1).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(b, -1).allclose(Float32Tensor.from(6.0f)));
+
+                Assert.True(linalg.norm(a, 2).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b, 2).allclose(Float32Tensor.from(7.3485f)));
+                Assert.True(linalg.norm(a, 3).allclose(Float32Tensor.from(5.8480f)));
+                Assert.True(linalg.norm(a, -2).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(a, -3).allclose(Float32Tensor.from(0.0f)));
+            }
+        }
     }
 }
