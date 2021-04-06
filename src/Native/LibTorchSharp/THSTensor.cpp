@@ -838,6 +838,11 @@ Tensor THSTensor_exp(const Tensor tensor)
     CATCH_TENSOR(tensor->exp());
 }
 
+Tensor THSTensor_exp2(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->exp2());
+}
+
 Tensor THSTensor_exp_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->exp_());
@@ -1107,6 +1112,31 @@ Tensor THSTensor_hardtanh(const Tensor tensor, const Scalar min, const Scalar ma
 Tensor THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar max)
 {
     CATCH_TENSOR(torch::hardtanh_(*tensor, *min, *max));
+}
+
+Tensor THSTensor_heaviside(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(torch::heaviside(*left, *right));
+}
+
+Tensor THSTensor_hypot(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(torch::hypot(*left, *right));
+}
+
+Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
+{
+    CATCH_TENSOR(torch::nextafter(*input, *other));
+}
+
+Tensor THSTensor_nansum(const Tensor input)
+{
+    CATCH_TENSOR(torch::nansum(*input));
+}
+
+Tensor THSTensor_i0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::i0(*tensor));
 }
 
 Tensor THSTensor_isneginf(const Tensor tensor)
@@ -1478,6 +1508,11 @@ Tensor THSTensor_max_elementwise(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->max(*other));
 }
 
+Tensor THSTensor_maximum(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->maximum(*other));
+}
+
 void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
 {
     CATCH(
@@ -1660,6 +1695,11 @@ Tensor THSTensor_min(const Tensor tensor)
     CATCH_TENSOR(tensor->min());
 }
 
+Tensor THSTensor_minimmum(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->minimum(*other));
+}
+
 Tensor THSTensor_min_elementwise(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->min(*other));
@@ -1683,6 +1723,11 @@ void THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(siz
 Tensor THSTensor_mm(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->mm(*right));
+}
+
+Tensor THSTensor_vdot(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->vdot(*right));
 }
 
 Tensor THSTensor_mul(const Tensor left, const Tensor right)

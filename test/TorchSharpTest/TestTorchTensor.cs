@@ -1445,6 +1445,65 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void I0Test()
+        {
+            var data = Float32Tensor.arange(0,5,1);
+            var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
+            var res = data.i0();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void HypotTest()
+        {
+            var a = new float[] { 1.0f, 2.0f, 3.0f };
+            var b = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = a.Select(x => MathF.Sqrt(2.0f)*x).ToArray();
+            var res = Float32Tensor.from(a).hypot(Float32Tensor.from(b));
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void VdotTest()
+        {
+            var a = new float[] { 1.0f, 2.0f, 3.0f };
+            var b = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = Float32Tensor.from(a.Zip(b).Select(x => x.First*x.Second).Sum());
+            var res = Float32Tensor.from(a).vdot(Float32Tensor.from(b));
+            Assert.True(res.allclose(expected));
+        }
+
+        [Fact]
+        public void HeavisideTest()
+        {
+            var input = new float[] { -1.0f, 0.0f, 3.0f };
+            var values = new float[] { 1.0f, 2.0f, 1.0f };
+            var expected = new float[] { 0.0f, 2.0f, 1.0f };
+            var res = Float32Tensor.from(input).heaviside(Float32Tensor.from(values));
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void MaximumTest()
+        {
+            var a = Float32Tensor.from(new float[] { 1.0f, 2.0f, 3.0f });
+            var b = a.neg();
+            var expected = a;
+            var res = a.maximum(b);
+            Assert.Equal(expected,res);
+        }
+
+        [Fact]
+        public void MinimumTest()
+        {
+            var a = Float32Tensor.from(new float[] { 1.0f, 2.0f, 3.0f });
+            var b = a.neg();
+            var expected = b;
+            var res = a.minimum(b);
+            Assert.Equal(expected, res);
+        }
+
+        [Fact]
         public void TanTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -1601,6 +1660,15 @@ namespace TorchSharp
                 expected[i] = MathF.Log(MathF.Pow(2.0f, x[i]) + MathF.Pow(2.0f, y[i]), 2.0f);
             }
             var res = Float32Tensor.from(x).logaddexp2(Float32Tensor.from(y));
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void Exp2Test()
+        {
+            var x = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = new float[] { 2.0f, 4.0f, 8.0f };
+            var res = Float32Tensor.from(x).exp2();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
