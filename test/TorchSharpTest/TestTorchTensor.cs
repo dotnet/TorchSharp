@@ -2158,10 +2158,10 @@ namespace TorchSharp
         public void CholeskyTest()
         {
             var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
-            a = a.matmul(a.transpose(-2, -1));
+            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
             var l = linalg.cholesky(a);
 
-            Assert.True(a.allclose(l.matmul(l.transpose(-2, -1))));
+            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1)))); // Worked this in to get it tested. Alias for 'transpose'
         }
 
         [Fact]
@@ -2226,6 +2226,52 @@ namespace TorchSharp
                 Assert.True(linalg.norm(a, -2).allclose(Float32Tensor.from(0.0f)));
                 Assert.True(linalg.norm(a, -3).allclose(Float32Tensor.from(0.0f)));
             }
+        }
+
+        [Fact]
+        public void NanToNumTest()
+        {
+            {
+                var a = Float32Tensor.from(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+
+                {
+                    var expected = Float32Tensor.from(new float[] { 0.0f, Single.MaxValue, Single.MinValue, MathF.PI});
+                    Assert.True(a.nan_to_num().allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, Single.MaxValue, Single.MinValue, MathF.PI });
+                    Assert.True(a.nan_to_num(nan:2.0f).allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, 3.0f, Single.MinValue, MathF.PI });
+                    Assert.True(a.nan_to_num(nan:2.0f, posinf:3.0f).allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                    Assert.True(a.nan_to_num(nan: 2.0f, posinf: 3.0f, neginf: -13.0f).allclose(expected));
+                }
+            }
+        }
+
+        [Fact]
+        public void TensorDiffTest()
+        {
+            var a = Float32Tensor.from(new float[] { 1, 3, 2 });
+            Assert.True(a.diff().allclose(Float32Tensor.from(new float[] { 2, -1 })));
+            var b = Float32Tensor.from(new float[] { 4, 5 });
+            Assert.True(a.diff(append:b).allclose(Float32Tensor.from(new float[] { 2, -1, 2, 1 })));
+            var c = Float32Tensor.from(new float[] { 1, 2, 3, 3, 4, 5 }).view(2,3);
+            Assert.True(c.diff(dim:0).allclose(Float32Tensor.from(new float[] { 2, 2, 2 }).view(1,3)));
+            Assert.True(c.diff(dim:1).allclose(Float32Tensor.from(new float[] { 1, 1, 1, 1 }).view(2,2)));
+        }
+
+        [Fact]
+        public void RavelTest()
+        {
+            var expected = Int32Tensor.from(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            var a = expected.view(2, 2, 2);
+            Assert.Equal(new long[] { 2, 2, 2 }, a.shape);
+            Assert.Equal(expected, a.ravel());
         }
     }
 }

@@ -446,6 +446,11 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     CATCH_TENSOR(batch1->bmm(*batch2));
 }
 
+Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len)
+{
+    CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
+}
+
 EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
 {
     CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
@@ -632,6 +637,11 @@ Tensor THSTensor_conv3d(
         groups));
 }
 
+Tensor THSTensor_copysign(const Tensor input, const Tensor other)
+{
+    CATCH_TENSOR(input->copysign(*other));
+}
+
 Tensor THSTensor_cos(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->cos());
@@ -730,6 +740,13 @@ int THSTensor_device_type(const Tensor tensor)
 {
     auto device = tensor->device();
     return (int)device.type();
+}
+
+Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
+{
+    c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
+    c10::optional<at::Tensor> app  = append != nullptr  ? *append : c10::optional<at::Tensor>(c10::nullopt);
+    CATCH_TENSOR(tensor->diff(n, dim, prep, app));
 }
 
 void THSTensor_dispose(const Tensor tensor)
@@ -947,6 +964,11 @@ Tensor THSTensor_fill_(const Tensor tensor, const Scalar value)
     CATCH_TENSOR(tensor->fill_(*value));
 }
 
+Tensor THSTensor_float_power(const Tensor input, const Tensor exponent)
+{
+    CATCH_TENSOR(input->float_power(*exponent));
+}
+
 Tensor THSTensor_floor(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->floor());
@@ -955,6 +977,16 @@ Tensor THSTensor_floor(const Tensor tensor)
 Tensor THSTensor_floor_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->floor_());
+}
+
+Tensor THSTensor_fmax(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->fmax(*right));
+}
+
+Tensor THSTensor_fmin(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->fmin(*right));
 }
 
 Tensor THSTensor_fmod(const Tensor left, const Tensor right)
@@ -1135,19 +1167,19 @@ Tensor THSTensor_hypot(const Tensor left, const Tensor right)
     CATCH_TENSOR(torch::hypot(*left, *right));
 }
 
-Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
-{
-    CATCH_TENSOR(torch::nextafter(*input, *other));
-}
-
-Tensor THSTensor_nansum(const Tensor input)
-{
-    CATCH_TENSOR(torch::nansum(*input));
-}
-
 Tensor THSTensor_i0(const Tensor tensor)
 {
     CATCH_TENSOR(torch::i0(*tensor));
+}
+
+Tensor THSTensor_igamma(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(torch::igamma(*tensor, *other));
+}
+
+Tensor THSTensor_igammac(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(torch::igammac(*tensor, *other));
 }
 
 Tensor THSTensor_isneginf(const Tensor tensor)
@@ -1284,6 +1316,11 @@ Tensor THSTensor_indices(Tensor tensor)
     CATCH_TENSOR(tensor->_indices());
 }
 
+Tensor THSTensor_inner(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->inner(*right));
+}
+
 int THSTensor_is_sparse(const Tensor tensor)
 {
     CATCH_RETURN(int, 0, tensor->is_sparse());
@@ -1294,6 +1331,11 @@ Scalar THSTensor_item(const Tensor tensor)
     CATCH_RETURN(Scalar, NULL, new torch::Scalar(tensor->item()));
 }
 
+Tensor THSTensor_kron(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->kron(*right));
+}
+
 Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->lcm(*other));
@@ -1302,6 +1344,11 @@ Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
 Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->lcm_(*other));
+}
+
+Tensor THSTensor_ldexp(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->ldexp(*right));
 }
 
 Tensor THSTensor_le(const Tensor left, const Tensor right)
@@ -1337,11 +1384,6 @@ Tensor THSTensor_leaky_relu_(const Tensor tensor, const Scalar negative_slope)
 Tensor THSTensor_lgamma(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->lgamma());
-}
-
-Tensor THSTensor_lgamma_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->lgamma_());
 }
 
 Tensor THSTensor_load(const char* location)
@@ -1741,6 +1783,11 @@ Tensor THSTensor_vdot(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->vdot(*right));
 }
 
+Tensor THSTensor_msort(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->msort());
+}
+
 Tensor THSTensor_mul(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->mul(*right));
@@ -1774,6 +1821,24 @@ Tensor THSTensor_mvlgamma(const Tensor tensor, int64_t p)
 Tensor THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
 {
     CATCH_TENSOR(tensor->mvlgamma_(p));
+}
+
+Tensor THSTensor_nansum(const Tensor input)
+{
+    CATCH_TENSOR(torch::nansum(*input));
+}
+
+Tensor THSTensor_nanmedian(const Tensor input)
+{
+    CATCH_TENSOR(torch::nanmedian(*input));
+}
+
+Tensor THSTensor_nan_to_num(const Tensor input, double* _nan, double* _posinf, double* _neginf)
+{
+    c10::optional<double> nan = (_nan != nullptr) ? *_nan : c10::optional<double>(c10::nullopt);
+    c10::optional<double> posinf = (_posinf != nullptr) ? *_posinf : c10::optional<double>(c10::nullopt);
+    c10::optional<double> neginf = (_neginf != nullptr) ? *_neginf : c10::optional<double>(c10::nullopt);
+    CATCH_TENSOR(torch::nan_to_num(*input, nan, posinf, neginf));
 }
 
 Tensor THSTensor_ne(const Tensor left, const Tensor right)
@@ -1980,6 +2045,11 @@ Tensor THSTensor_newBFloat16Scalar(float data, const int device_type, const int 
     CATCH_TENSOR(torch::tensor((c10::BFloat16)data, options));
 }
 
+Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
+{
+    CATCH_TENSOR(torch::nextafter(*input, *other));
+}
+
 Tensor THSTensor_norm(const Tensor tensor, float p)
 {
     CATCH_TENSOR(tensor->norm(p));
@@ -2168,6 +2238,11 @@ Tensor THSTensor_randperm(const int64_t n,
 Tensor THSTensor_randperm_out(const int64_t n, const Tensor out)
 {
     CATCH_TENSOR(torch::randperm_out(*out, n));
+}
+
+Tensor THSTensor_ravel(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::ravel(*tensor));
 }
 
 Tensor THSTensor_relu(const Tensor tensor)
@@ -2395,6 +2470,16 @@ Tensor THSTensor_sin_(const Tensor tensor)
     CATCH_TENSOR(tensor->sin_());
 }
 
+Tensor THSTensor_sinc(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sinc());
+}
+
+Tensor THSTensor_sinc_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sinc_());
+}
+
 Tensor THSTensor_sinh(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sinh());
@@ -2491,6 +2576,16 @@ Tensor THSTensor_dstack(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::dstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
+Tensor THSTensor_column_stack(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::column_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
 Tensor THSTensor_sub_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->sub_(*right));
@@ -2534,6 +2629,12 @@ Tensor THSTensor_tanh_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->tanh_());
 }
+
+Tensor THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length)
+{
+    CATCH_TENSOR(tensor->tile(at::ArrayRef<int64_t>(rep, rep_length)));
+}
+
 
 void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted)
 {
@@ -2700,6 +2801,10 @@ Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increas
     CATCH_TENSOR(torch::vander(*tensor, N, increasing));
 }
 
+Tensor THSTensor_xlogy(const Tensor x, const Tensor y)
+{
+    CATCH_TENSOR(x->xlogy(*y));
+}
 
 
 Tensor THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out)
