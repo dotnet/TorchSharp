@@ -733,6 +733,8 @@ EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const 
 
 EXPORT_API(Tensor) THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_outer(const Tensor left, const Tensor right);
+
 EXPORT_API(Tensor) THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length);
 
 EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);

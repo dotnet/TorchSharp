@@ -1664,6 +1664,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void OuterTest()
+        {
+            var x = Float32Tensor.arange(1, 5, 1);
+            var y = Float32Tensor.arange(1, 4, 1);
+            var expected = new float[] { 1, 2, 3, 2, 4, 6, 3, 6, 9, 4, 8, 12 };
+
+            var res = x.outer(y);
+            Assert.Equal(Float32Tensor.from(expected).view(4,3), res);
+        }
+
+        [Fact]
         public void Exp2Test()
         {
             var x = new float[] { 1.0f, 2.0f, 3.0f };

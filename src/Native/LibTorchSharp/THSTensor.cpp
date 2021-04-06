@@ -903,7 +903,7 @@ Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_
     CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
 }
 
-Tensor  THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len)
+Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len)
 {
     CATCH_TENSOR(tensor->count_nonzero(at::ArrayRef<int64_t>(dim, dim_len)));
 }
@@ -2020,6 +2020,12 @@ Tensor THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor o
 {
     CATCH_TENSOR(torch::ones_out(*out, at::ArrayRef<int64_t>(sizes, length)));
 }
+
+Tensor THSTensor_outer(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->outer(*right));
+}
+
 
 Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
 {

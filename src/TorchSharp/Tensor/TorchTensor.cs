@@ -3908,6 +3908,16 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_outer(IntPtr input, IntPtr vec2);
+
+        public TorchTensor outer(TorchTensor vec2)
+        {
+            var res = THSTensor_outer(handle, vec2.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_pow(IntPtr tensor, IntPtr exponent);
 
         public TorchTensor pow(TorchTensor exponent)
