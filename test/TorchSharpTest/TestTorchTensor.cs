@@ -2158,10 +2158,10 @@ namespace TorchSharp
         public void CholeskyTest()
         {
             var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
-            a = a.matmul(a.transpose(-2, -1));
+            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
             var l = linalg.cholesky(a);
 
-            Assert.True(a.allclose(l.matmul(l.transpose(-2, -1))));
+            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1)))); // Worked this in to get it tested. Alias for 'transpose'
         }
 
         [Fact]
@@ -2225,6 +2225,31 @@ namespace TorchSharp
                 Assert.True(linalg.norm(a, 3).allclose(Float32Tensor.from(5.8480f)));
                 Assert.True(linalg.norm(a, -2).allclose(Float32Tensor.from(0.0f)));
                 Assert.True(linalg.norm(a, -3).allclose(Float32Tensor.from(0.0f)));
+            }
+        }
+
+        [Fact]
+        public void NanToNumTest()
+        {
+            {
+                var a = Float32Tensor.from(new float[] { Single.NaN, Single.PositiveInfinity, Single.NegativeInfinity, MathF.PI });
+
+                {
+                    var expected = Float32Tensor.from(new float[] { 0.0f, Single.MaxValue, Single.MinValue, MathF.PI});
+                    Assert.True(a.nan_to_num().allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, Single.MaxValue, Single.MinValue, MathF.PI });
+                    Assert.True(a.nan_to_num(nan:2.0f).allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, 3.0f, Single.MinValue, MathF.PI });
+                    Assert.True(a.nan_to_num(nan:2.0f, posinf:3.0f).allclose(expected));
+                }
+                {
+                    var expected = Float32Tensor.from(new float[] { 2.0f, 3.0f, -13.0f, MathF.PI });
+                    Assert.True(a.nan_to_num(nan: 2.0f, posinf: 3.0f, neginf: -13.0f).allclose(expected));
+                }
             }
         }
     }
