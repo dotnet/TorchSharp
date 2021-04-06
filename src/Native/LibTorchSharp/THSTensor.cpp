@@ -446,6 +446,11 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     CATCH_TENSOR(batch1->bmm(*batch2));
 }
 
+Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len)
+{
+    CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
+}
+
 EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
 {
     CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
@@ -1304,6 +1309,11 @@ Tensor THSTensor_indices(Tensor tensor)
     CATCH_TENSOR(tensor->_indices());
 }
 
+Tensor THSTensor_inner(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->inner(*right));
+}
+
 int THSTensor_is_sparse(const Tensor tensor)
 {
     CATCH_RETURN(int, 0, tensor->is_sparse());
@@ -1327,6 +1337,11 @@ Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
 Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->lcm_(*other));
+}
+
+Tensor THSTensor_ldexp(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->ldexp(*right));
 }
 
 Tensor THSTensor_le(const Tensor left, const Tensor right)
@@ -1759,6 +1774,11 @@ Tensor THSTensor_mm(const Tensor left, const Tensor right)
 Tensor THSTensor_vdot(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->vdot(*right));
+}
+
+Tensor THSTensor_msort(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->msort());
 }
 
 Tensor THSTensor_mul(const Tensor left, const Tensor right)
@@ -2602,6 +2622,12 @@ Tensor THSTensor_tanh_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->tanh_());
 }
+
+Tensor THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length)
+{
+    CATCH_TENSOR(tensor->tile(at::ArrayRef<int64_t>(rep, rep_length)));
+}
+
 
 void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted)
 {

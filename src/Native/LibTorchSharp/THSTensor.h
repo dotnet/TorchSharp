@@ -176,6 +176,8 @@ EXPORT_API(Tensor) THSTensor_block_diag(const Tensor* tensor, const int length);
 
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);
 
+EXPORT_API(Tensor) THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len);
+
 EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right);
 
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* tensor, const int length, const int64_t dim);
@@ -487,6 +489,8 @@ EXPORT_API(Tensor) THSTensor_index_put_(Tensor tensor,
 
 EXPORT_API(Tensor) THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index);
 
+EXPORT_API(Tensor) THSTensor_inner(const Tensor left, const Tensor right);
+
 EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
@@ -496,6 +500,8 @@ EXPORT_API(Tensor) THSTensor_kron(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_lcm(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_lcm_(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_ldexp(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_le(const Tensor left, const Tensor right);
 
@@ -657,6 +663,8 @@ EXPORT_API(void) THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*al
 EXPORT_API(Tensor) THSTensor_mm(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len);
+
+EXPORT_API(Tensor) THSTensor_msort(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_mul(const Tensor left, const Tensor right);
 
@@ -927,6 +935,8 @@ EXPORT_API(Tensor) THSTensor_tanh(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
 
