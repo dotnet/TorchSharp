@@ -291,6 +291,8 @@ EXPORT_API(int) THSTensor_device_type(const Tensor tensor);
 
 EXPORT_API(int) THSTensor_device_index(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append);
+
 EXPORT_API(void) THSTensor_dispose(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_dist(const Tensor tensor, const Tensor other, const float p);

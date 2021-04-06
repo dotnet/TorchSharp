@@ -2252,5 +2252,17 @@ namespace TorchSharp
                 }
             }
         }
+
+        [Fact]
+        public void TensorDiffTest()
+        {
+            var a = Float32Tensor.from(new float[] { 1, 3, 2 });
+            Assert.True(a.diff().allclose(Float32Tensor.from(new float[] { 2, -1 })));
+            var b = Float32Tensor.from(new float[] { 4, 5 });
+            Assert.True(a.diff(append:b).allclose(Float32Tensor.from(new float[] { 2, -1, 2, 1 })));
+            var c = Float32Tensor.from(new float[] { 1, 2, 3, 3, 4, 5 }).view(2,3);
+            Assert.True(c.diff(dim:0).allclose(Float32Tensor.from(new float[] { 2, 2, 2 }).view(1,3)));
+            Assert.True(c.diff(dim:1).allclose(Float32Tensor.from(new float[] { 1, 1, 1, 1 }).view(2,2)));
+        }
     }
 }

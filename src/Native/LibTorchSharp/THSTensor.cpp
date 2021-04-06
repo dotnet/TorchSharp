@@ -742,6 +742,13 @@ int THSTensor_device_type(const Tensor tensor)
     return (int)device.type();
 }
 
+Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
+{
+    c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
+    c10::optional<at::Tensor> app  = append != nullptr  ? *append : c10::optional<at::Tensor>(c10::nullopt);
+    CATCH_TENSOR(tensor->diff(n, dim, prep, app));
+}
+
 void THSTensor_dispose(const Tensor tensor)
 {
     delete tensor;

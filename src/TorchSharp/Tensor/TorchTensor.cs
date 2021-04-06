@@ -3143,6 +3143,16 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_diff(IntPtr tensor, long n, long dim, IntPtr prepend, IntPtr append);
+
+        public TorchTensor diff(long n=1, long dim=-1, TorchTensor? prepend = null, TorchTensor? append = null)
+        {
+            if (n != 1) throw new NotImplementedException("Tensor.diff with n != 1");
+            var res = THSTensor_diff(handle, n, dim, (prepend is TorchTensor) ? (IntPtr)prepend.handle : IntPtr.Zero, (append is TorchTensor) ? (IntPtr)append.handle : IntPtr.Zero);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg);
@@ -4666,8 +4676,8 @@ namespace TorchSharp.Tensor
 
         /// <summary>
         /// Replaces NaN, positive infinity, and negative infinity values in input with the values specified by nan, posinf, and neginf, respectively.
-        /// By default, NaN`s are replaced with zero, positive infinity is replaced with the greatest finite value representable by input’s dtype,
-        /// and negative infinity is replaced with the least finite value representable by input’s dtype.
+        /// By default, NaN`s are replaced with zero, positive infinity is replaced with the greatest finite value representable by inputâ€™s dtype,
+        /// and negative infinity is replaced with the least finite value representable by inputâ€™s dtype.
         /// </summary>
         public TorchTensor nan_to_num(double? nan = null, double? posinf = null, double? neginf = null)
         {
