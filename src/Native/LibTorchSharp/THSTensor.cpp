@@ -952,6 +952,11 @@ Tensor THSTensor_fill_(const Tensor tensor, const Scalar value)
     CATCH_TENSOR(tensor->fill_(*value));
 }
 
+Tensor THSTensor_float_power(const Tensor input, const Tensor exponent)
+{
+    CATCH_TENSOR(input->float_power(*exponent));
+}
+
 Tensor THSTensor_floor(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->floor());
@@ -960,6 +965,16 @@ Tensor THSTensor_floor(const Tensor tensor)
 Tensor THSTensor_floor_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->floor_());
+}
+
+Tensor THSTensor_fmax(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->fmax(*right));
+}
+
+Tensor THSTensor_fmin(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->fmin(*right));
 }
 
 Tensor THSTensor_fmod(const Tensor left, const Tensor right)
@@ -2428,6 +2443,16 @@ Tensor THSTensor_sin_(const Tensor tensor)
     CATCH_TENSOR(tensor->sin_());
 }
 
+Tensor THSTensor_sinc(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sinc());
+}
+
+Tensor THSTensor_sinc_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sinc_());
+}
+
 Tensor THSTensor_sinh(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sinh());
@@ -2743,6 +2768,10 @@ Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increas
     CATCH_TENSOR(torch::vander(*tensor, N, increasing));
 }
 
+Tensor THSTensor_xlogy(const Tensor x, const Tensor y)
+{
+    CATCH_TENSOR(x->xlogy(*y));
+}
 
 
 Tensor THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out)

@@ -1196,6 +1196,7 @@ namespace TorchSharp.Tensor
         {
             return add(scalar, 1);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1820,6 +1821,28 @@ namespace TorchSharp.Tensor
         public TorchTensor atan2_(TorchTensor other)
         {
             var res = THSTensor_atan2_(handle, other.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_sinc(IntPtr tensor);
+
+        public TorchTensor sinc()
+        {
+            var res = THSTensor_sinc(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_sinc_(IntPtr tensor);
+
+        public TorchTensor sinc_()
+        {
+            var res = THSTensor_sinc_(handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -4076,6 +4099,35 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_float_power(IntPtr tensor, IntPtr trg);
+
+        public TorchTensor float_power(TorchTensor target)
+        {
+            var res = THSTensor_float_power(handle, target.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_fmax(IntPtr tensor, IntPtr trg);
+
+        public TorchTensor fmax(TorchTensor target)
+        {
+            var res = THSTensor_fmax(handle, target.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_fmin(IntPtr tensor, IntPtr trg);
+
+        public TorchTensor fmin(TorchTensor target)
+        {
+            var res = THSTensor_fmin(handle, target.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_fmod(IntPtr tensor, IntPtr trg);
@@ -4447,6 +4499,22 @@ namespace TorchSharp.Tensor
                     return new TorchTensor(res);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_xlogy(IntPtr tensor, IntPtr trg);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public TorchTensor xlogy(TorchTensor target)
+        {
+            var res = THSTensor_xlogy(handle, target.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
