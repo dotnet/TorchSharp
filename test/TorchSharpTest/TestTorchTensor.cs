@@ -2265,8 +2265,6 @@ namespace TorchSharp
             Assert.True(c.diff(dim:1).allclose(Float32Tensor.from(new float[] { 1, 1, 1, 1 }).view(2,2)));
         }
 
-
-
         [Fact]
         public void RavelTest()
         {
