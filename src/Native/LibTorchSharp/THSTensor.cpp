@@ -256,6 +256,21 @@ Tensor THSTensor_atan2_(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->atan2_(*other));
 }
 
+Tensor THSTensor_atleast_1d(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::atleast_1d(*tensor));
+}
+
+Tensor THSTensor_atleast_2d(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::atleast_2d(*tensor));
+}
+
+Tensor THSTensor_atleast_3d(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::atleast_3d(*tensor));
+}
+
 Tensor THSTensor_avg_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
@@ -823,6 +838,11 @@ Tensor THSTensor_exp(const Tensor tensor)
     CATCH_TENSOR(tensor->exp());
 }
 
+Tensor THSTensor_exp2(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->exp2());
+}
+
 Tensor THSTensor_exp_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->exp_());
@@ -877,6 +897,17 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
 {
     CATCH_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
+
+Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
+{
+    CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
+}
+
+Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len)
+{
+    CATCH_TENSOR(tensor->count_nonzero(at::ArrayRef<int64_t>(dim, dim_len)));
+}
+
 
 Tensor THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
 {
@@ -1092,6 +1123,41 @@ Tensor THSTensor_hardtanh(const Tensor tensor, const Scalar min, const Scalar ma
 Tensor THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar max)
 {
     CATCH_TENSOR(torch::hardtanh_(*tensor, *min, *max));
+}
+
+Tensor THSTensor_heaviside(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(torch::heaviside(*left, *right));
+}
+
+Tensor THSTensor_hypot(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(torch::hypot(*left, *right));
+}
+
+Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
+{
+    CATCH_TENSOR(torch::nextafter(*input, *other));
+}
+
+Tensor THSTensor_nansum(const Tensor input)
+{
+    CATCH_TENSOR(torch::nansum(*input));
+}
+
+Tensor THSTensor_i0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::i0(*tensor));
+}
+
+Tensor THSTensor_isneginf(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isneginf(*tensor));
+}
+
+Tensor THSTensor_isposinf(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isposinf(*tensor));
 }
 
 void completeTensorIndices(const int64_t* indexStarts,
@@ -1413,6 +1479,11 @@ Tensor THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_xor_(*other));
 }
 
+Tensor THSTensor_logit(const Tensor tensor, const double* eps)
+{
+    CATCH_TENSOR((eps == nullptr) ? tensor->logit() : tensor->logit(*eps));
+}
+
 Tensor THSTensor_lt(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->lt(*right));
@@ -1446,6 +1517,11 @@ Tensor THSTensor_max(const Tensor tensor)
 Tensor THSTensor_max_elementwise(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->max(*other));
+}
+
+Tensor THSTensor_maximum(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->maximum(*other));
 }
 
 void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keepdim)
@@ -1630,6 +1706,11 @@ Tensor THSTensor_min(const Tensor tensor)
     CATCH_TENSOR(tensor->min());
 }
 
+Tensor THSTensor_minimmum(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->minimum(*other));
+}
+
 Tensor THSTensor_min_elementwise(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->min(*other));
@@ -1653,6 +1734,11 @@ void THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(siz
 Tensor THSTensor_mm(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->mm(*right));
+}
+
+Tensor THSTensor_vdot(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->vdot(*right));
 }
 
 Tensor THSTensor_mul(const Tensor left, const Tensor right)
@@ -1934,6 +2020,12 @@ Tensor THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor o
 {
     CATCH_TENSOR(torch::ones_out(*out, at::ArrayRef<int64_t>(sizes, length)));
 }
+
+Tensor THSTensor_outer(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->outer(*right));
+}
+
 
 Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
 {
@@ -2232,6 +2324,11 @@ Tensor THSTensor_sign_(const Tensor tensor)
     CATCH_TENSOR(tensor->sign_());
 }
 
+Tensor THSTensor_signbit(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->signbit());
+}
+
 Tensor THSTensor_sqrt(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sqrt());
@@ -2377,6 +2474,21 @@ Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad
 Tensor THSTensor_stack(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
+}
+
+Tensor THSTensor_hstack(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::hstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+Tensor THSTensor_vstack(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::vstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+Tensor THSTensor_dstack(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::dstack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
 Tensor THSTensor_sub_scalar_(const Tensor left, const Scalar right)

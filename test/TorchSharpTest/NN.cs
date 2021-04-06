@@ -1783,6 +1783,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestUnflatten()
+        {
+            var input = Float32Tensor.rand(new long[] { 2, 50 });
+
+            var uf = Unflatten(1, new long[] { 2, 5, 5 });
+            var res = uf.forward(input);
+
+            Assert.Equal(4, res.Dimensions);
+            Assert.Equal(new long[] { 2, 2, 5, 5 }, res.shape);
+        }
+
+        [Fact]
         public void TestZeroPad2d()
         {
             var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });

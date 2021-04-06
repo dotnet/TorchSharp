@@ -1479,6 +1479,26 @@ Tensor   THSNN_Flatten_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Flatten>()->forward(*tensor));
 }
 
+NNModule THSNN_Unflatten_ctor(const int64_t dim, const int64_t* shape, const int64_t shape_len, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        std::vector<int64_t> sizes;
+    for (int64_t i = 0; i < shape_len; ++i)
+    {
+        sizes.push_back(shape[i]);
+    }
+    auto opts = torch::nn::UnflattenOptions(dim, sizes);
+    res = create_module<torch::nn::UnflattenImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Unflatten_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Unflatten>()->forward(*tensor));
+}
+
+
+
 NNModule THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const int64_t nonlinearity, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
