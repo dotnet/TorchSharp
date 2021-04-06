@@ -60,7 +60,7 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_eigvalsh(IntPtr tensor, byte UPLO);
 
-        public static TorchTensor eigvalsh(TorchTensor input, char UPLO)
+        public static TorchTensor eigvalsh(TorchTensor input, char UPLO = 'L')
         {
             var res = THSLinalg_eigvalsh(input.Handle, (byte)UPLO);
             if (res == IntPtr.Zero)

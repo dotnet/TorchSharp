@@ -122,6 +122,6 @@ namespace TorchSharp
 
         // Because some of the tests mess with global state, and are run in parallel, we need to
         // acquire a lock before testing setting the default RNG see.
-        private object _lock = new object();
+        private static object _lock = new object();
     }
 }
