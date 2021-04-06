@@ -4505,7 +4505,7 @@ namespace TorchSharp.Tensor
         static extern IntPtr THSTensor_xlogy(IntPtr tensor, IntPtr trg);
 
         /// <summary>
-        /// 
+        /// Computes x * log(y)
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
