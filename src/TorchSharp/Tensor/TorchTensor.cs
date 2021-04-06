@@ -1847,11 +1847,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_count_nonzero(IntPtr tensor, IntPtr dim, int dim_len);
 
-        public TorchTensor count_nonzero(long[]? dim = null)
+        public TorchTensor count_nonzero(long[]? dims = null)
         {
             unsafe {
-                fixed (long* pdims = dim) {
-                    var res = THSTensor_count_nonzero(handle, ((pdims == null) ? IntPtr.Zero : (IntPtr)pdims), dim is null ? 0 : dim.Length);
+                fixed (long* pdims = dims) {
+                    var res = THSTensor_count_nonzero(handle, (IntPtr)pdims, dims is null ? 0 : dims.Length);
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }

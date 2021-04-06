@@ -2152,5 +2152,80 @@ namespace TorchSharp
                         }
             }
         }
+
+
+        [Fact]
+        public void CholeskyTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            a = a.matmul(a.transpose(-2, -1));
+            var l = linalg.cholesky(a);
+
+            Assert.True(a.allclose(l.matmul(l.transpose(-2, -1))));
+        }
+
+        [Fact]
+        public void DeterminantTest()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] { 0.9478f, 0.9158f, -1.1295f,
+                                  0.9701f, 0.7346f, -1.8044f,
+                                 -0.2337f, 0.0557f, 0.6929f }).view(3,3);
+                var l = linalg.det(a);
+                Assert.True(l.allclose(Float32Tensor.from(0.09335048f)));
+            }
+            {
+                var a = Float32Tensor.from(
+                    new float[] { 0.9254f, -0.6213f, -0.5787f, 1.6843f, 0.3242f, -0.9665f,
+                                  0.4539f, -0.0887f, 1.1336f, -0.4025f, -0.7089f, 0.9032f }).view(3, 2, 2);
+                var l = linalg.det(a);
+                Assert.True(l.allclose(Float32Tensor.from(new float[] { 1.19910491f, 0.4099378f, 0.7385352f })));
+            }
+        }
+
+        [Fact]
+        public void EighvalshTest()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
+                                  -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }).view(3, 2, 2);
+                var expected = Float32Tensor.from(
+                    new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }).view(3, 2);
+                var l = linalg.eigvalsh(a);
+                Assert.True(l.allclose(expected));
+            }
+        }
+
+        [Fact]
+        public void LinalgNormTest()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f });
+                var b = a.reshape(3, 3);
+
+                Assert.True(linalg.norm(a).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b, "fro").allclose(Float32Tensor.from(7.7460f)));
+
+                Assert.True(linalg.norm(a, float.PositiveInfinity).allclose(Float32Tensor.from(4.0f)));
+                Assert.True(linalg.norm(b, float.PositiveInfinity).allclose(Float32Tensor.from(9.0f)));
+                Assert.True(linalg.norm(a, float.NegativeInfinity).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(b, float.NegativeInfinity).allclose(Float32Tensor.from(2.0f)));
+
+                Assert.True(linalg.norm(a, 1).allclose(Float32Tensor.from(20.0f)));
+                Assert.True(linalg.norm(b, 1).allclose(Float32Tensor.from(7.0f)));
+                Assert.True(linalg.norm(a, -1).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(b, -1).allclose(Float32Tensor.from(6.0f)));
+
+                Assert.True(linalg.norm(a, 2).allclose(Float32Tensor.from(7.7460f)));
+                Assert.True(linalg.norm(b, 2).allclose(Float32Tensor.from(7.3485f)));
+                Assert.True(linalg.norm(a, 3).allclose(Float32Tensor.from(5.8480f)));
+                Assert.True(linalg.norm(a, -2).allclose(Float32Tensor.from(0.0f)));
+                Assert.True(linalg.norm(a, -3).allclose(Float32Tensor.from(0.0f)));
+            }
+        }
     }
 }

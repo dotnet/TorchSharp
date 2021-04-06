@@ -73,18 +73,21 @@ namespace TorchSharp
         [Fact]
         public void TestExplicitGenerators()
         {
-            // This tests that the default generator can be disposed, but will keep on going,
-            long a, b, c;
-            using (var gen = Torch.ManualSeed(4711)) {
-                a = gen.InitialSeed;
+            // This tests that the default generator can be disposed, but will keep on going.
+            lock (_lock) {
+
+                long a, b, c;
+                using (var gen = Torch.ManualSeed(4711)) {
+                    a = gen.InitialSeed;
+                }
+                using (TorchGenerator gen = TorchGenerator.Default, genA = new TorchGenerator(4355)) {
+                    b = gen.InitialSeed;
+                    c = genA.InitialSeed;
+                }
+                Assert.Equal(a, b);
+                Assert.NotEqual(a, c);
+                Assert.Equal(4355, c);
             }
-            using (TorchGenerator gen = TorchGenerator.Default, genA = new TorchGenerator(4355)) {
-                b = gen.InitialSeed;
-                c = genA.InitialSeed;
-            }
-            Assert.Equal(a, b);
-            Assert.NotEqual(a, c);
-            Assert.Equal(4355, c);
         }
 
         [Fact]
@@ -122,6 +125,6 @@ namespace TorchSharp
 
         // Because some of the tests mess with global state, and are run in parallel, we need to
         // acquire a lock before testing setting the default RNG see.
-        private object _lock = new object();
+        private static object _lock = new object();
     }
 }
