@@ -1800,6 +1800,18 @@ Optimizer THSNN_Adam_ctor(const Tensor* parameters, const int length, const doub
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::Adam>(torch::optim::Adam(params, options)));
 }
 
+Optimizer THSNN_AdamW_ctor(const Tensor* parameters, const int length, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad)
+{
+    auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto options = torch::optim::AdamWOptions(learning_rate)
+        .betas(std::make_tuple(beta1, beta2))
+        .eps(eps)
+        .weight_decay(weight_decay)
+        .amsgrad(amsgrad);
+
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::AdamW>(torch::optim::AdamW(params, options)));
+}
+
 Optimizer THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered)
 {
     auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);

@@ -175,6 +175,37 @@ Tensor THSTensor_arange_out(const Scalar start, const Scalar end, const Scalar s
     CATCH_TENSOR(torch::arange_out(*out, *start, *end, *step));
 }
 
+
+Tensor THSTensor_arccosh(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arccosh());
+}
+
+Tensor THSTensor_arccosh_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arccosh_());
+}
+
+Tensor THSTensor_arcsinh(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arcsinh());
+}
+
+Tensor THSTensor_arcsinh_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arcsinh_());
+}
+
+Tensor THSTensor_arctanh(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arctanh());
+}
+
+Tensor THSTensor_arctanh_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->arctanh_());
+}
+
 Tensor THSTensor_argmax(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->argmax());
@@ -390,9 +421,19 @@ Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_xor_(*other));
 }
 
+Tensor THSTensor_block_diag(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::block_diag(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
 {
     CATCH_TENSOR(batch1->bmm(*batch2));
+}
+
+EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
+{
+    CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
 }
 
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
@@ -650,6 +691,11 @@ float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
 float THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t i)
 {
     CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
+}
+
+Tensor THSTensor_deg2rad(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::deg2rad(*tensor));
 }
 
 const char* THSTensor_device_str(const Tensor tensor)
@@ -1255,6 +1301,22 @@ Tensor THSTensor_logcumsumexp(const Tensor tensor, const long dimension)
 {
     CATCH_TENSOR(torch::logcumsumexp(*tensor, dimension));
 }
+
+Tensor THSTensor_logaddexp(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(torch::logaddexp(*tensor, *other));
+}
+
+Tensor THSTensor_logaddexp2(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(torch::logaddexp2(*tensor, *other));
+}
+
+Tensor THSTensor_logsumexp(const Tensor tensor, const long dim, const bool keepdim)
+{
+    CATCH_TENSOR(torch::logsumexp(*tensor, dim, keepdim));
+}
+
 
 //Tensor THSTensor_log_sigmoid_backward(const Tensor tensor)
 //{
@@ -1918,6 +1980,12 @@ Tensor THSTensor_prelu(const Tensor left, const Tensor right)
 //    CATCH_TENSOR(torch::prelu_backward(*grad_output, *self, *weight));
 //}
 
+Tensor THSTensor_rad2deg(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::rad2deg(*tensor));
+}
+
+
 Tensor THSTensor_rand(
     const int64_t* sizes,
     const int length,
@@ -2330,6 +2398,11 @@ Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimens
         tensor->sum(at::ArrayRef<int64_t>(dimensions, length), keepdim))
 }
 
+Tensor THSTensor_t(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->t());
+}
+
 Tensor THSTensor_tan(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->tan());
@@ -2350,18 +2423,13 @@ Tensor THSTensor_tanh_(const Tensor tensor)
     CATCH_TENSOR(tensor->tanh_());
 }
 
-Tensor THSTensor_t(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->t());
-}
-
 void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted)
 {
     CATCH(
         auto topk = tensor->topk(k, dim, largest, sorted);
-    Tensor * result = allocator(2);
-    result[0] = new torch::Tensor(std::get<0>(topk));
-    result[1] = new torch::Tensor(std::get<1>(topk));
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(topk));
+        result[1] = new torch::Tensor(std::get<1>(topk));
     )
 }
 
@@ -2514,6 +2582,13 @@ Tensor THSTensor_values(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_values());
 }
+
+Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increasing)
+{
+    CATCH_TENSOR(torch::vander(*tensor, N, increasing));
+}
+
+
 
 Tensor THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out)
 {
