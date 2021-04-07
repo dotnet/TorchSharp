@@ -489,10 +489,144 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCalculateGain()
+        {
+            Assert.Equal(1, NN.Init.calculate_gain(NN.Init.NonlinearityType.Linear));
+            Assert.Equal(1, NN.Init.calculate_gain(NN.Init.NonlinearityType.Conv1D));
+            Assert.Equal(1, NN.Init.calculate_gain(NN.Init.NonlinearityType.Conv2D));
+            Assert.Equal(1, NN.Init.calculate_gain(NN.Init.NonlinearityType.Conv3D));
+            Assert.Equal(1, NN.Init.calculate_gain(NN.Init.NonlinearityType.Sigmoid));
+            Assert.Equal(5.0/3.0, NN.Init.calculate_gain(NN.Init.NonlinearityType.Tanh));
+            Assert.Equal(Math.Sqrt(2.0), NN.Init.calculate_gain(NN.Init.NonlinearityType.ReLU));
+        }
+
+        [Fact]
+        public void InitZeros()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.zeros(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitOnes()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.ones(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitDirac()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.dirac(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitEye()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.eye(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitConstant()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.constant(tensor, Math.PI)) { }
+            }
+        }
+
+        [Fact]
         public void InitUniform()
         {
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
-                NN.Init.Uniform(tensor);
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.uniform(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.normal(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitOrthogonal()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.orthogonal(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitSparse()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.sparse(tensor, 0.25)) { }
+            }
+        }
+
+        [Fact]
+        public void InitKaimingUniform()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.kaiming_uniform(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitKaimingNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.kaiming_normal(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitXavierUniform()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.xavier_uniform(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InitXavierNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = NN.Init.xavier_normal(tensor)) { }
             }
         }
 
