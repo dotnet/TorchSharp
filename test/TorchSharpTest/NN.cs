@@ -116,6 +116,19 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBilinearWithBias()
+        {
+            var lin = Bilinear(20, 30, 40);
+            var input1 = Float32Tensor.randn(new long[] { 128, 20 });
+            var input2 = Float32Tensor.randn(new long[] { 128, 30 });
+            var forward = lin.forward(input1, input2);
+
+            Assert.Equal(2, forward.shape.Length);
+            Assert.Equal(128, forward.shape[0]);
+            Assert.Equal(40, forward.shape[1]);
+        }
+
+        [Fact]
         public void TestLinearNoBias()
         {
             var lin = Linear(1000, 100, false);

@@ -921,6 +921,40 @@ void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::Linear>(module, weight);
 }
 
+NNModule THSNN_Bilinear_ctor(const int64_t input_size_1, const int64_t input_size_2, const int64_t output_size, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BilinearOptions(input_size_1, input_size_2, output_size).bias(bias);
+        res = create_module<torch::nn::BilinearImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Bilinear_forward(const NNModule module, const Tensor x1, const Tensor x2)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Bilinear>()->forward(*x1, *x2));
+}
+
+Tensor THSNN_Bilinear_bias(const NNModule module)
+{
+    return get_bias<torch::nn::Bilinear>(module);
+}
+
+void THSNN_Bilinear_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::Bilinear>(module, bias);
+}
+
+Tensor THSNN_Bilinear_weight(const NNModule module)
+{
+    return get_weight<torch::nn::Bilinear>(module);
+}
+
+void THSNN_Bilinear_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::Bilinear>(module, weight);
+}
+
 NNModule THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
