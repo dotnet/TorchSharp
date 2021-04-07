@@ -1133,7 +1133,7 @@ Tensor THSNN_grid_sample(const Tensor input, const Tensor grid, const int8_t mod
     CATCH_TENSOR(torch::nn::functional::grid_sample(*input, *grid, opts));
 }
 
-Tensor THSNN_affine_grid(const Tensor input, const Tensor theta, const int64_t* size, const int size_len, const bool align_corners)
+Tensor THSNN_affine_grid(const Tensor theta, const int64_t* size, const int size_len, const bool align_corners)
 {
     CATCH_TENSOR(torch::nn::functional::affine_grid(*theta, at::ArrayRef<int64_t>(size, size_len), align_corners));
 }

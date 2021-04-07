@@ -2114,6 +2114,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestPad()
+        {
+            using (TorchTensor p4d = Float32Tensor.randn(new long[] { 3, 3, 4, 2 })) {
+                using (var res = Pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 4, 4 }, res.shape);
+                }
+                using (var res = Pad(p4d, new long[] { 1, 1, 2, 2 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 8, 4 }, res.shape);
+                }
+                using (var res = Pad(p4d, new long[] { 0, 1, 2, 1, 3, 3 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 9, 7, 3 }, res.shape);
+                }
+            }
+        }
+
+
+        [Fact]
         public void TestInterpolateDefaults()
         {
             using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
