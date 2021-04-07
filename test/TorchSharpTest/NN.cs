@@ -116,6 +116,19 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBilinearWithBias()
+        {
+            var lin = Bilinear(20, 30, 40);
+            var input1 = Float32Tensor.randn(new long[] { 128, 20 });
+            var input2 = Float32Tensor.randn(new long[] { 128, 30 });
+            var forward = lin.forward(input1, input2);
+
+            Assert.Equal(2, forward.shape.Length);
+            Assert.Equal(128, forward.shape[0]);
+            Assert.Equal(40, forward.shape[1]);
+        }
+
+        [Fact]
         public void TestLinearNoBias()
         {
             var lin = Linear(1000, 100, false);
@@ -2091,6 +2104,169 @@ namespace TorchSharp
                 Assert.Equal(c0.shape, cN.shape);
             }
 
+        }
+
+        [Fact]
+        public void TestPixelShuffle()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 8,9,4,4 }))
+            using (var layer = PixelShuffle(3)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 8, 1, 12, 12 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestPixelUnshuffle()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 8, 1, 12, 12 }))
+            using (var layer = PixelUnshuffle(3)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 8, 9, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestPad()
+        {
+            using (TorchTensor p4d = Float32Tensor.randn(new long[] { 3, 3, 4, 2 })) {
+                using (var res = Pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 4, 4 }, res.shape);
+                }
+                using (var res = Pad(p4d, new long[] { 1, 1, 2, 2 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 8, 4 }, res.shape);
+                }
+                using (var res = Pad(p4d, new long[] { 0, 1, 2, 1, 3, 3 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 9, 7, 3 }, res.shape);
+                }
+            }
+        }
+
+
+        [Fact]
+        public void TestInterpolateDefaults()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 })) {
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateNearest()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Nearest)) {
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateBilinear2D()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Bilinear)) {
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+
+        [Fact]
+        public void TestInterpolateArea()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Area)) {
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestInterpolateTrilinear()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolateMode.Trilinear)) {
+                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleNearest()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleLinear()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 4 ))
+            using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleBilinear()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleBilinearAC()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners:true)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleBicubic()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleBicubicAC()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleTrilinear()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUpsampleTrilinearAC()
+        {
+            using (TorchTensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
+                var res = layer.forward(input);
+                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            }
         }
     }
 }
