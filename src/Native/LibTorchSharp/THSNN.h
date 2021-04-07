@@ -176,6 +176,22 @@ EXPORT_API(void)     THSNN_Linear_set_bias(const NNModule module, const Tensor t
 EXPORT_API(Tensor)   THSNN_Linear_weight(const NNModule module);
 EXPORT_API(void)     THSNN_Linear_set_weight(const NNModule module, const Tensor tensor);
 
+// Vision -- Modules
+
+EXPORT_API(NNModule) THSNN_PixelShuffle_ctor(const int64_t upscale_factor, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_PixelShuffle_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_PixelUnshuffle_ctor(const int64_t downscale_factor, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_PixelUnshuffle_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Upsample_ctor(const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Upsample_forward(const NNModule module, const Tensor tensor);
+
+// Vision -- Functions
+
+EXPORT_API(Tensor) THSNN_pad(const Tensor input, const int64_t* pad, const int pad_length, const int8_t mode, const double value);
+EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_grid_sample(const Tensor input, const Tensor grid, const int8_t mode, const int8_t padding_mode, const int8_t align_corners);
+EXPORT_API(Tensor) THSNN_affine_grid(const Tensor input, const Tensor theta, const int64_t* size, const int size_len, const bool align_corners);
+
 // Activation functions
 
 EXPORT_API(NNModule) THSNN_CELU_ctor(const double alpha, const bool inplace, NNAnyModule* outAsAnyModule);

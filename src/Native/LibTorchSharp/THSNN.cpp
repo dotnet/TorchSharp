@@ -986,6 +986,185 @@ Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor ten
     CATCH_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
 }
 
+NNModule THSNN_PixelShuffle_ctor(const int64_t upscale_factor, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PixelShuffleOptions(upscale_factor);
+        res = create_module<torch::nn::PixelShuffleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_PixelShuffle_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PixelShuffle>()->forward(*tensor));
+}
+
+NNModule THSNN_PixelUnshuffle_ctor(const int64_t downscale_factor, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PixelUnshuffleOptions(downscale_factor);
+        res = create_module<torch::nn::PixelUnshuffleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_PixelUnshuffle_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PixelUnshuffle>()->forward(*tensor));
+}
+
+template<typename T>
+void ApplyUpsampleMode(T& opts, const int8_t mode)
+{
+    if (mode == 0)
+        opts = opts.mode(torch::kNearest);
+    if (mode == 1)
+        opts = opts.mode(torch::kLinear);
+    if (mode == 2)
+        opts = opts.mode(torch::kBilinear);
+    if (mode == 3)
+        opts = opts.mode(torch::kBicubic);
+    if (mode == 4)
+        opts = opts.mode(torch::kTrilinear);
+}
+
+template<typename T>
+void ApplyInterpolateMode(T& opts, const int8_t mode)
+{
+    if (mode == 0)
+        opts = opts.mode(torch::kNearest);
+    if (mode == 1)
+        opts = opts.mode(torch::kLinear);
+    if (mode == 2)
+        opts = opts.mode(torch::kBilinear);
+    if (mode == 3)
+        opts = opts.mode(torch::kBicubic);
+    if (mode == 4)
+        opts = opts.mode(torch::kTrilinear);
+    if (mode == 5)
+        opts = opts.mode(torch::kArea);
+}
+
+NNModule THSNN_Upsample_ctor(const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, NNAnyModule* outAsAnyModule)
+{
+    auto opts = torch::nn::UpsampleOptions();
+    // align_corners -- 0=None, 1=true, 2=false
+    if (align_corners != 0)
+        opts.align_corners(align_corners == 1);
+    ApplyUpsampleMode(opts, mode);
+
+    CATCH_RETURN_NNModule(
+        if (size_len > 0) {
+            std::vector<int64_t> sizes;
+            for (int i = 0; i < size_len; ++i) {
+                sizes.push_back(size[i]);
+            }
+            opts.size(sizes);
+        }
+        if (scale_factor_len > 0) {
+            std::vector<double> scales;
+            for (int i = 0; i < scale_factor_len; ++i) {
+                scales.push_back(scale_factor[i]);
+            }
+            opts.scale_factor(scales);
+        }
+        res = create_module<torch::nn::UpsampleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_Upsample_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Upsample>()->forward(*tensor));
+}
+
+template<typename T>
+void ApplyPadMode(T& opts, const int64_t padding)
+{
+    if (padding == 1)
+        opts = opts.mode(torch::kReflect);
+    if (padding == 2)
+        opts = opts.mode(torch::kReplicate);
+    if (padding == 3)
+        opts = opts.mode(torch::kCircular);
+    if (padding == 4)
+        opts = opts.mode(torch::kConstant);
+}
+
+template<typename T>
+void ApplyGridMode(T& opts, const int8_t mode)
+{
+    if (mode == 0)
+        opts = opts.mode(torch::kNearest);
+    if (mode == 2)
+        opts = opts.mode(torch::kBilinear);
+    //if (mode == 3)
+    //    opts = opts.mode(torch::kBicubic);
+}
+
+template<typename T>
+void ApplyGridPadMode(T& opts, const int64_t padding)
+{
+    if (padding == 0)
+        opts = opts.padding_mode(torch::kZeros);
+    if (padding == 1)
+        opts = opts.padding_mode(torch::kReflection);
+    if (padding == 2)
+        opts = opts.padding_mode(torch::kBorder);
+}
+
+Tensor THSNN_pad(const Tensor input, const int64_t* pad, const int pad_length, const int8_t mode, const double value)
+{
+    std::vector<int64_t> padding;
+    for (int i = 0; i < pad_length; ++i) {
+        padding.push_back(pad[i]);
+    }
+    auto opts = torch::nn::functional::PadFuncOptions(padding).value(value);
+    ApplyPadMode(opts, mode);
+
+    CATCH_TENSOR(torch::nn::functional::pad(*input, opts));
+}
+
+Tensor THSNN_grid_sample(const Tensor input, const Tensor grid, const int8_t mode, const int8_t padding_mode, const int8_t align_corners)
+{
+    auto opts = torch::nn::functional::GridSampleFuncOptions();
+    if (align_corners != 0)
+        opts.align_corners(align_corners == 1);
+    ApplyGridMode(opts, mode);
+    ApplyGridPadMode(opts, padding_mode);
+    CATCH_TENSOR(torch::nn::functional::grid_sample(*input, *grid, opts));
+}
+
+Tensor THSNN_affine_grid(const Tensor input, const Tensor theta, const int64_t* size, const int size_len, const bool align_corners)
+{
+    CATCH_TENSOR(torch::nn::functional::affine_grid(*theta, at::ArrayRef<int64_t>(size, size_len), align_corners));
+}
+
+
+EXPORT_API(Tensor) THSNN_interpolate(const Tensor input, const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, const bool recompute_scale_factor, NNAnyModule* outAsAnyModule)
+{
+    auto opts = torch::nn::functional::InterpolateFuncOptions().recompute_scale_factor(recompute_scale_factor);
+    // align_corners -- 0=None, 1=true, 2=false
+    if (align_corners != 0)
+        opts.align_corners(align_corners == 1);
+    ApplyInterpolateMode(opts, mode);
+
+    if (size_len > 0) {
+        std::vector<int64_t> sizes;
+        for (int i = 0; i < size_len; ++i) {
+            sizes.push_back(size[i]);
+        }
+        opts.size(sizes);
+    }
+    if (scale_factor_len > 0) {
+        std::vector<double> scales;
+        for (int i = 0; i < scale_factor_len; ++i) {
+            scales.push_back(scale_factor[i]);
+        }
+        opts.scale_factor(scales);
+    }
+
+    CATCH_TENSOR(torch::nn::functional::interpolate(*input, opts));
+}
+
 NNModule THSNN_Embedding_ctor(const int64_t num_embeddings, const int64_t embedding_dims,
     const int64_t padding_idx, bool has_pi, const double max_norm, const bool has_mn, const double norm_type,
     const bool scale_grad_by_freq, const bool sparse,
@@ -1068,7 +1247,6 @@ void ApplyPaddingMode(T& opts, const int64_t padding)
     if (padding == 3)
         opts = opts.padding_mode(torch::kCircular);
 }
-
 
 NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,

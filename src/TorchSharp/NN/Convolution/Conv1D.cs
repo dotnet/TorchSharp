@@ -11,7 +11,8 @@ namespace TorchSharp.NN
         Zeros = 0,
         Reflect = 1,
         Replicate = 2,
-        Circular = 3
+        Circular = 3,
+        Constant = 4
     }
 
     public class Conv1d : Module
