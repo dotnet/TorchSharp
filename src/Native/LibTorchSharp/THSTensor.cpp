@@ -2936,3 +2936,97 @@ Tensor THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* d
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg::tensorsolve(*tensor, *other, dims));
 }
+
+torch::nn::init::NonlinearityType get_nl_type(const int64_t nl)
+{
+    switch (nl)
+    {
+    default:
+    case 0:  return torch::kLinear;
+    case 1:  return torch::kConv1D;
+    case 2:  return torch::kConv2D;
+    case 3:  return torch::kConv3D;
+    case 4:  return torch::kConvTranspose1D;
+    case 5:  return torch::kConvTranspose2D;
+    case 6:  return torch::kConvTranspose3D;
+    case 7:  return torch::kSigmoid;
+    case 8:  return torch::kTanh;
+    case 9:  return torch::kReLU;
+    case 10: return torch::kLeakyReLU;
+    }
+}
+
+double THSInit_calculate_gain(int64_t nonlinearity, double param)
+{
+    CATCH_RETURN(double, 0.0, torch::nn::init::calculate_gain(get_nl_type(nonlinearity), param))
+}
+
+torch::nn::init::FanModeType get_fan_mode(int64_t mode)
+{
+    return mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut);
+}
+
+Tensor THSInit_constant_(Tensor tensor, Scalar value)
+{
+    CATCH_TENSOR(torch::nn::init::constant_(*tensor, *value))
+}
+
+Tensor THSInit_dirac_(Tensor tensor)
+{
+    CATCH_TENSOR(torch::nn::init::dirac_(*tensor))
+}
+
+Tensor THSInit_eye_(Tensor tensor)
+{
+    CATCH_TENSOR(torch::nn::init::eye_(*tensor))
+}
+
+Tensor THSInit_normal_(Tensor tensor, double mean, double std)
+{
+    CATCH_TENSOR(torch::nn::init::normal_(*tensor, mean, std))
+}
+
+Tensor THSInit_ones_(Tensor tensor)
+{
+    CATCH_TENSOR(torch::nn::init::ones_(*tensor))
+}
+
+Tensor THSInit_orthogonal_(Tensor tensor, double gain)
+{
+    CATCH_TENSOR(torch::nn::init::orthogonal_(*tensor, gain))
+}
+
+Tensor THSInit_sparse_(Tensor tensor, double sparsity, double std)
+{
+    CATCH_TENSOR(torch::nn::init::sparse_(*tensor, sparsity, std))
+}
+
+Tensor THSInit_uniform_(Tensor tensor, double low, double high)
+{
+    CATCH_TENSOR(torch::nn::init::uniform_(*tensor, low, high))
+}
+
+Tensor THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity)
+{
+    CATCH_TENSOR(torch::nn::init::kaiming_normal_(*tensor, a, mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut),  get_nl_type(nonlinearity)))
+}
+
+Tensor THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity)
+{
+    CATCH_TENSOR(torch::nn::init::kaiming_uniform_(*tensor, a, mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut), get_nl_type(nonlinearity)))
+}
+
+Tensor THSInit_xavier_normal_(Tensor tensor, double gain)
+{
+    CATCH_TENSOR(torch::nn::init::xavier_normal_(*tensor, gain))
+}
+
+Tensor THSInit_xavier_uniform_(Tensor tensor, double gain)
+{
+    CATCH_TENSOR(torch::nn::init::xavier_uniform_(*tensor, gain))
+}
+
+Tensor THSInit_zeros_(Tensor tensor)
+{
+    CATCH_TENSOR(torch::nn::init::zeros_(*tensor))
+}

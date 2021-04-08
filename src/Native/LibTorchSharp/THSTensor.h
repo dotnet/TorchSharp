@@ -1039,3 +1039,33 @@ EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other);
 EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 
 EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);
+
+// torch.nn.init:
+
+EXPORT_API(double) THSInit_calculate_gain(int64_t nonlinearity, double param);
+
+EXPORT_API(Tensor) THSInit_constant_(Tensor tensor, Scalar value);
+
+EXPORT_API(Tensor) THSInit_dirac_(Tensor tensor);
+
+EXPORT_API(Tensor) THSInit_eye_(Tensor matrix);
+
+EXPORT_API(Tensor) THSInit_normal_(Tensor tensor, double mean, double std);
+
+EXPORT_API(Tensor) THSInit_ones_(Tensor tensor);
+
+EXPORT_API(Tensor) THSInit_orthogonal_(Tensor tensor, double gain);
+
+EXPORT_API(Tensor) THSInit_sparse_(Tensor tensor, double sparsity, double std);
+
+EXPORT_API(Tensor) THSInit_uniform_(Tensor tensor, double low, double high);
+
+EXPORT_API(Tensor) THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
+
+EXPORT_API(Tensor) THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
+
+EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
+
+EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
+
+EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
