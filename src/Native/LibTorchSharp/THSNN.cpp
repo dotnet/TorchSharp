@@ -1130,6 +1130,8 @@ void ApplyGridMode(T& opts, const int8_t mode)
         opts = opts.mode(torch::kNearest);
     if (mode == 2)
         opts = opts.mode(torch::kBilinear);
+    // The PyTorch docs say that bicubic should be supported, but the C++
+    // mode type does not allow for it. I'm leaving this in for future use.
     //if (mode == 3)
     //    opts = opts.mode(torch::kBicubic);
 }
@@ -2073,91 +2075,6 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
 void THSNN_Optimizer_step(const Optimizer optimizer)
 {
     (*optimizer)->step();
-}
-
-void THSNN_initUniform(Tensor tensor, double low, double high)
-{
-    torch::nn::init::uniform_(*tensor, low, high);
-}
-
-// ########## To remove when updating to libtorch > 1.0.1 ############
-enum class Nonlinearity {
-    Linear,
-    Conv1D,
-    Conv2D,
-    Conv3D,
-    ConvTranspose1D,
-    ConvTranspose2D,
-    ConvTranspose3D,
-    Sigmoid,
-    Tanh,
-    ReLU,
-    LeakyReLU
-};
-
-enum class FanMode { FanIn, FanOut };
-
-struct Fan {
-    explicit Fan(torch::Tensor& tensor) {
-        const auto dimensions = tensor.ndimension();
-        TORCH_CHECK(
-            dimensions >= 2,
-            "Fan in and fan out can not be computed for tensor with fewer than 2 dimensions");
-        if (dimensions == 2) {
-            in = tensor.size(1);
-            out = tensor.size(0);
-        }
-        else {
-            in = tensor.size(1) * tensor[0][0].numel();
-            out = tensor.size(0) * tensor[0][0].numel();
-        }
-    }
-    int64_t in;
-    int64_t out;
-};
-
-double calculate_gain(Nonlinearity nonlinearity, double param) {
-    if (nonlinearity == Nonlinearity::Tanh) {
-        return 5.0 / 3.0;
-    }
-    else if (nonlinearity == Nonlinearity::ReLU) {
-        return std::sqrt(2.0);
-    }
-    else if (nonlinearity == Nonlinearity::LeakyReLU) {
-        return std::sqrt(2.0 / (1 + pow(param, 2)));
-    }
-
-    return 1.0;
-}
-
-double calculate_kaiming_std(
-    Tensor tensor,
-    double a,
-    FanMode mode,
-    Nonlinearity nonlinearity) {
-    torch::NoGradGuard guard;
-    Fan fan((*tensor));
-    const auto gain = calculate_gain(nonlinearity, a);
-    double std = 0.0;
-    if (mode == FanMode::FanIn) {
-        std = gain / std::sqrt(fan.in);
-    }
-    else {
-        std = gain / std::sqrt(fan.out);
-    }
-    return std;
-}
-
-// ######################################################
-
-void THSNN_initKaimingUniform(Tensor tensor, double a)
-{
-    //torch::nn::init::kaiming_uniform_(*tensor, a);
-    // Since this is not available in PyTorch 1.0.1 will just used the original code for the moment
-    auto std = calculate_kaiming_std(tensor, a, FanMode::FanIn, Nonlinearity::LeakyReLU);
-    // Calculate uniform bounds from standard deviation
-    const auto bound = std::sqrt(3.0) * std;
-    tensor->uniform_(-bound, bound);
 }
 
 void THSNN_Optimizer_dispose(const Optimizer optimizer)
