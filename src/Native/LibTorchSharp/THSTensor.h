@@ -577,6 +577,8 @@ EXPORT_API(Tensor) THSTensor_lt_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_lt_scalar_(const Tensor left, const Scalar right);
 
+EXPORT_API(Tensor) THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value);
+
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_max(const Tensor tensor);
@@ -939,6 +941,8 @@ EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
+
+EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal);
 
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
 

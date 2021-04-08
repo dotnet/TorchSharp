@@ -8,9 +8,10 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-    <StartupObject>TorchSharp.Examples.AlexNet</StartupObject>
+    <StartupObject>TorchSharp.Examples.TreeBank</StartupObject>
     <IsPackable>false</IsPackable>
     <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>TorchSharp.Examples</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

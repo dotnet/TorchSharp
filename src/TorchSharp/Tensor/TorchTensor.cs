@@ -1109,6 +1109,24 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal);
+
+        /// <summary>
+        /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+        /// </summary>
+        /// <param name="diagonal">The diagonal to consider</param>
+        /// <returns></returns>
+        public TorchTensor triu(long diagonal = 0)
+        {
+            var res = THSTensor_triu(handle, diagonal);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+
         /// <summary>
         /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
         /// </summary>
@@ -3674,6 +3692,17 @@ namespace TorchSharp.Tensor
         public TorchTensor lt_(TorchScalar target)
         {
             var res = THSTensor_lt_scalar_(handle, target.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_masked_fill(IntPtr tensor, IntPtr mask, IntPtr value);
+
+        public TorchTensor masked_fill(TorchTensor mask, TorchScalar value)
+        {
+            var res = THSTensor_masked_fill(handle, mask.Handle, value.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

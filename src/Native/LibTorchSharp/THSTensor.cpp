@@ -1546,6 +1546,11 @@ Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->lt_(*right));
 }
 
+Tensor THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value)
+{
+    CATCH_TENSOR(tensor->masked_fill(*mask, *value));
+}
+
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
     return  new torch::Tensor(left->matmul(*right));
@@ -2675,6 +2680,11 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
         res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
     );
+}
+
+Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal)
+{
+    CATCH_TENSOR(tensor->triu(diagonal));
 }
 
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)
