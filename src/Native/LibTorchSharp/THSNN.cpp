@@ -26,6 +26,13 @@ void THSNN_Module_register_module(const NNModule module, const char* name, const
     );
 }
 
+void THSNN_Module_register_buffer(const NNModule module, const char* name, const Tensor tensor)
+{
+    CATCH(
+        (*module)->register_buffer(name, *tensor);
+    );
+}
+
 NNModule THSNN_Module_load(const char* location, const char* name)
 {
     CATCH_RETURN_NNModule(

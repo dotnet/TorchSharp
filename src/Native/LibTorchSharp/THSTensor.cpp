@@ -456,6 +456,15 @@ EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundar
     CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
 }
 
+double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
+{
+    double res = 0.0;
+    CATCH(
+        res = torch::nn::utils::clip_grad_norm_(toTensors<at::Tensor>((torch::Tensor**)tensors, length), max_norm, norm_type);
+    );
+    return res;
+}
+
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));

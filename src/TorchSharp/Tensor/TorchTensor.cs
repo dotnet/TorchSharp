@@ -6047,6 +6047,19 @@ namespace TorchSharp.Tensor
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
+
+        public static double clip_grad_norm(this TorchTensor[] tensors, double max_norm, double norm_type = 2.0)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+            }
+        }
+
+
         public static float ToSingle(this TorchTensor value) => value.ToScalar().ToSingle();
         public static double ToDouble(this TorchTensor value) => value.ToScalar().ToDouble();
         public static sbyte ToSByte(this TorchTensor value) => value.ToScalar().ToSByte();
