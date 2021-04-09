@@ -1109,6 +1109,41 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_tril(IntPtr tensor, long diagonal);
+
+        /// <summary>
+        /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+        /// </summary>
+        /// <param name="diagonal">The diagonal to consider</param>
+        /// <returns></returns>
+        public TorchTensor tril(long diagonal = 0)
+        {
+            var res = THSTensor_tril(handle, diagonal);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal);
+
+        /// <summary>
+        /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+        /// </summary>
+        /// <param name="diagonal">The diagonal to consider</param>
+        /// <returns></returns>
+        public TorchTensor triu(long diagonal = 0)
+        {
+            var res = THSTensor_triu(handle, diagonal);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+
         /// <summary>
         /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
         /// </summary>
@@ -3678,6 +3713,17 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_masked_fill(IntPtr tensor, IntPtr mask, IntPtr value);
+
+        public TorchTensor masked_fill(TorchTensor mask, TorchScalar value)
+        {
+            var res = THSTensor_masked_fill(handle, mask.Handle, value.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_matmul(IntPtr tensor, IntPtr target);
 
@@ -6017,6 +6063,19 @@ namespace TorchSharp.Tensor
                 return new TorchTensor(res);
             }
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
+
+        public static double clip_grad_norm(this TorchTensor[] tensors, double max_norm, double norm_type = 2.0)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+            }
+        }
+
 
         public static float ToSingle(this TorchTensor value) => value.ToScalar().ToSingle();
         public static double ToDouble(this TorchTensor value) => value.ToScalar().ToDouble();

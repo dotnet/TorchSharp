@@ -275,6 +275,16 @@ namespace TorchSharp.NN
 
             return new TorchTensor (parameter);
         }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_Module_register_buffer(HType module, string name, IntPtr tensor);
+
+        public virtual void RegisterBuffer(string name, TorchTensor tensor)
+        {
+            THSNN_Module_register_buffer(handle, name, tensor.handle);
+            Torch.CheckForErrors();
+        }
+
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Module_register_module (HType module, string name, HType submodule);
 

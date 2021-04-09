@@ -26,6 +26,13 @@ void THSNN_Module_register_module(const NNModule module, const char* name, const
     );
 }
 
+void THSNN_Module_register_buffer(const NNModule module, const char* name, const Tensor tensor)
+{
+    CATCH(
+        (*module)->register_buffer(name, *tensor);
+    );
+}
+
 NNModule THSNN_Module_load(const char* location, const char* name)
 {
     CATCH_RETURN_NNModule(
@@ -1876,6 +1883,7 @@ Tensor THSNN_Sequential_forward(const NNModule module, const Tensor tensor)
 void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
 {
     (*optimizer)->zero_grad();
+    auto defaults = (*optimizer)->defaults();
 }
 
 void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length))
@@ -2075,6 +2083,45 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
 void THSNN_Optimizer_step(const Optimizer optimizer)
 {
     (*optimizer)->step();
+}
+
+template<typename OptionsType>
+void SetLearningRate(const Optimizer optimizer, const double lr)
+{
+    auto options = dynamic_cast<OptionsType*>(&(*optimizer)->defaults());
+    options->lr(lr);
+
+    auto& pgs = (*optimizer)->param_groups();
+    for (auto pg = pgs.begin(); pg < pgs.end(); ++pg)
+    {
+        options = dynamic_cast<OptionsType*>(&(pg->options()));
+        options->lr(lr);
+    }
+}
+
+void THSNN_Adagrad_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::AdagradOptions>(optimizer, lr);
+}
+
+void THSNN_Adam_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::AdamOptions>(optimizer, lr);
+}
+
+void THSNN_AdamW_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::AdamWOptions>(optimizer, lr);
+}
+
+void THSNN_RMSprop_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::RMSpropOptions>(optimizer, lr);
+}
+
+void THSNN_SGD_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::SGDOptions>(optimizer, lr);
 }
 
 void THSNN_Optimizer_dispose(const Optimizer optimizer)

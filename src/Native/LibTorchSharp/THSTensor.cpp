@@ -456,6 +456,15 @@ EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundar
     CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
 }
 
+double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
+{
+    double res = 0.0;
+    CATCH(
+        res = torch::nn::utils::clip_grad_norm_(toTensors<at::Tensor>((torch::Tensor**)tensors, length), max_norm, norm_type);
+    );
+    return res;
+}
+
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
@@ -1544,6 +1553,11 @@ Tensor THSTensor_lt_scalar(const Tensor left, const Scalar right)
 Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->lt_(*right));
+}
+
+Tensor THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value)
+{
+    CATCH_TENSOR(tensor->masked_fill(*mask, *value));
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
@@ -2675,6 +2689,16 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
         res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
     );
+}
+
+Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal)
+{
+    CATCH_TENSOR(tensor->triu(diagonal));
+}
+
+Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
+{
+CATCH_TENSOR(tensor->tril(diagonal));
 }
 
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)

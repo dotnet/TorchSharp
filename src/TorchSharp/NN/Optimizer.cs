@@ -101,7 +101,7 @@ namespace TorchSharp.NN
 
             var res = THSNN_RMSprop_ctor(paramsRef, parray.Array.Length, learningRate, alpha, eps, weight_decay, momentum, centered);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Optimizer(res);
+            return new RMSPropOptimizer(res, learningRate);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -127,7 +127,7 @@ namespace TorchSharp.NN
 
             var res = THSNN_Adam_ctor (paramsRef, parray.Array.Length, learningRate, beta1, beta2, eps, weight_decay, amsgrad);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Optimizer (res);
+            return new AdamOptimizer (res, learningRate);
         }
 
         [DllImport("LibTorchSharp")]
@@ -153,7 +153,7 @@ namespace TorchSharp.NN
 
             var res = THSNN_AdamW_ctor(paramsRef, parray.Array.Length, learningRate, beta1, beta2, eps, weight_decay, amsgrad);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Optimizer(res);
+            return new AdamWOptimizer(res, learningRate);
         }
 
         [DllImport("LibTorchSharp")]
@@ -178,7 +178,7 @@ namespace TorchSharp.NN
 
             var res = THSNN_Adagrad_ctor(paramsRef, parray.Array.Length, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Optimizer(res);
+            return new AdagradOptimizer(res, learningRate);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -194,14 +194,14 @@ namespace TorchSharp.NN
         /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
         /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
         /// <returns></returns>
-        public static Optimizer SGD (IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
+        public static SGDOptimizer SGD (IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
         {
             var parray = new PinnedArray<IntPtr> ();
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
             var res = THSNN_SGD_ctor (paramsRef, parray.Array.Length, learningRate, momentum, dampening, weight_decay, nesterov);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Optimizer (res);
+            return new SGDOptimizer(res, learningRate);
         }
 
         [DllImport ("LibTorchSharp")]
@@ -236,5 +236,100 @@ namespace TorchSharp.NN
             }
             return ptrArray.Select (x => new TorchTensor (x));
         }
+    }
+
+    public interface ILearningRateController
+    {
+        double LearningRate { set; get;  }
+    }
+
+    public class AdagradOptimizer : Optimizer, ILearningRateController
+    {
+        public AdagradOptimizer(IntPtr handle, double lr) : base(handle)
+        {
+            _rate = lr;
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern  void THSNN_Adagrad_set_lr(HType optimizer, double lr);
+
+        public double LearningRate {
+            get { return _rate; }
+            set { THSNN_Adagrad_set_lr(handle, value); Torch.CheckForErrors(); }
+        }
+
+        private double _rate;
+    }
+
+    public class AdamOptimizer : Optimizer, ILearningRateController
+    {
+        public AdamOptimizer(IntPtr handle, double lr) : base(handle)
+        {
+            _rate = lr;
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_Adam_set_lr(HType optimizer, double lr);
+
+        public double LearningRate {
+            get { return _rate; }
+            set { THSNN_Adam_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+        }
+
+        private double _rate;
+    }
+
+    public class AdamWOptimizer : Optimizer, ILearningRateController
+    {
+        public AdamWOptimizer(IntPtr handle, double lr) : base(handle)
+        {
+            _rate = lr;
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_AdamW_set_lr(HType optimizer, double lr);
+
+        public double LearningRate {
+            get { return _rate; }
+            set { THSNN_AdamW_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+        }
+
+        private double _rate;
+    }
+
+    public class RMSPropOptimizer : Optimizer, ILearningRateController
+    {
+        public RMSPropOptimizer(IntPtr handle, double lr) : base(handle)
+        {
+            _rate = lr;
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_RMSprop_set_lr(HType optimizer, double lr);
+
+        public double LearningRate {
+            get { return _rate; }
+            set { THSNN_RMSprop_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+        }
+
+        private double _rate;
+    }
+
+    public class SGDOptimizer : Optimizer, ILearningRateController
+    {
+        public SGDOptimizer(IntPtr handle, double lr) : base(handle)
+        {
+            _rate = lr;
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_SGD_set_lr(HType optimizer, double lr);
+
+        public double LearningRate {
+            get { return _rate; }
+            set { THSNN_SGD_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+        }
+
+        private double _rate;
     }
 }

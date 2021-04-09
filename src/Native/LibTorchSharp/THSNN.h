@@ -22,6 +22,7 @@ EXPORT_API(const char*) THSNN_Module_name(const NNModule module);
 EXPORT_API(void)        THSNN_Module_zero_grad(const NNModule module);
 EXPORT_API(void)        THSNN_Module_save(const NNModule module, const char* location);
 EXPORT_API(NNModule)    THSNN_Module_load(const char* location, const char* name);
+EXPORT_API(void)        THSNN_Module_register_buffer(const NNModule module, const char* name, const Tensor submodule);
 EXPORT_API(void)        THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule);
 EXPORT_API(void)        THSNN_Module_dispose(const NNModule module);
 EXPORT_API(void)        THSNN_Module_to_device(NNModule module, int64_t device, int64_t index);
@@ -301,6 +302,12 @@ EXPORT_API(void) THSNN_Optimizer_zero_grad(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
+
+EXPORT_API(void) THSNN_Adagrad_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_Adam_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_AdamW_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_RMSprop_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_SGD_set_lr(const Optimizer optimizer, const double lr);
 
 // Misc.
 
