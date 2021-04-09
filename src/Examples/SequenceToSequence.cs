@@ -77,7 +77,7 @@ namespace TorchSharp.Examples
             var loss = cross_entropy_loss();
             var lr = 5.0;
             var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
-            var scheduler = new NN.StepLR(optimizer, 1, 0.95, last_epoch: 15);
+            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
             totalTime.Start();

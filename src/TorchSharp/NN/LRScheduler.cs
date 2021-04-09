@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
         /// <returns>A scheduler instance</returns>
-        public LRScheduler ExponentialLR(ILearningRateController optimizer, uint step_size, double gamma = 0.1, int last_epoch = -1, bool verbose = false)
+        public static LRScheduler ExponentialLR(ILearningRateController optimizer, uint step_size, double gamma = 0.1, int last_epoch = -1, bool verbose = false)
         {
             return new ExponentialLR(optimizer, gamma, last_epoch, verbose);
         }
@@ -36,7 +36,7 @@ namespace TorchSharp.NN
         /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
         /// <returns>A scheduler instance</returns>
-        public LRScheduler StepLR(ILearningRateController optimizer, uint step_size, double gamma = 0.1, int last_epoch = -1, bool verbose = false)
+        public static LRScheduler StepLR(ILearningRateController optimizer, uint step_size, double gamma = 0.1, int last_epoch = -1, bool verbose = false)
         {
             return new StepLR(optimizer, step_size, gamma, last_epoch, verbose);
         }
@@ -45,6 +45,9 @@ namespace TorchSharp.NN
     public abstract class LRScheduler
     {
         public abstract void step();
+        public double LearningRate => _optimizer.LearningRate;
+
+        protected ILearningRateController _optimizer;
     }
 
     /// <summary>
@@ -90,9 +93,6 @@ namespace TorchSharp.NN
             }
         }
 
-        public double LearningRate => _optimizer.LearningRate;
-
-        private ILearningRateController _optimizer;
         private double _initial;
         private uint _step;
         private int _epoch;
@@ -141,9 +141,6 @@ namespace TorchSharp.NN
             }
         }
 
-        public double LearningRate => _optimizer.LearningRate;
-
-        private ILearningRateController _optimizer;
         private double _initial;
         private int _epoch;
         private double _gamma;
