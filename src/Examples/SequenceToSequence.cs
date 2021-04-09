@@ -36,7 +36,7 @@ namespace TorchSharp.Examples
         private const long nhead = 2;
         private const double dropout = 0.2;
 
-        private const int batch_size = 3*32;
+        private const int batch_size = 32;
         private const int eval_batch_size = 32;
 
         private const int epochs = 25;
@@ -77,6 +77,7 @@ namespace TorchSharp.Examples
             var loss = cross_entropy_loss();
             var lr = 5.0;
             var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
+            var scheduler = new NN.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
             totalTime.Start();
@@ -91,7 +92,8 @@ namespace TorchSharp.Examples
                 var val_loss = evaluate(valid_data, model, loss, lr, bptt, ntokens, optimizer);
                 sw.Stop();
 
-                Console.WriteLine($"\nEnd of epoch: {epoch} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
+                Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
+                scheduler.step();
             }
 
             var tst_loss = evaluate(test_data, model, loss, lr, bptt, ntokens, optimizer);
@@ -139,7 +141,7 @@ namespace TorchSharp.Examples
 
                 if (batch % log_interval == 0 && batch > 0) {
                     var cur_loss = total_loss / log_interval;
-                    Console.WriteLine($"epoch: {epoch} batch: {batch} / {tdlen/bptt} loss: {cur_loss:0.00}");
+                    Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen/bptt} | loss: {cur_loss:0.00}");
                     total_loss = 0;
                 }
             }

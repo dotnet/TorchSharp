@@ -303,6 +303,10 @@ EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor
 EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 
+EXPORT_API(void) THSNN_Adagrad_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_Adam_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_AdamW_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_RMSprop_set_lr(const Optimizer optimizer, const double lr);
 EXPORT_API(void) THSNN_SGD_set_lr(const Optimizer optimizer, const double lr);
 
 // Misc.
