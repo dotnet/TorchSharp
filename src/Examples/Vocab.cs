@@ -14,6 +14,7 @@ namespace TorchText.Vocab
 {
     /// <summary>
     /// This needs a permanent place.
+    /// The functionality is based on the Python 'Counter' class.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class Counter<T> : IEnumerable<KeyValuePair<T, int>>
@@ -46,6 +47,10 @@ namespace TorchText.Vocab
         }
     }
 
+    /// <summary>
+    /// This belongs in its own package, 'TorchText'.
+    /// For now, it's useful to keep it with the examples that use it.
+    /// </summary>
     public class Vocab 
     {
         public Vocab(Counter<string> counter, int? maxSize = null, int minFreq = 1, string[] specials = null, Func<TorchTensor, TorchTensor> unkInit = null, bool specialsFirst = true)

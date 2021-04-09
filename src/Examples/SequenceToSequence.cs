@@ -14,8 +14,20 @@ using static TorchSharp.NN.Functions;
 
 namespace TorchSharp.Examples
 {
-    public class TreeBank
+
+    /// <summary>
+    /// This example is based on the PyTorch tutorial at:
+    /// 
+    /// https://pytorch.org/tutorials/beginner/transformer_tutorial.html
+    ///
+    /// It relies on the WikiText2 dataset, which can be downloaded at:
+    ///
+    /// https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip
+    ///
+    /// </summary>
+    public class SequenceToSequence
     {
+        // This path assumes that you're running this on Windows.
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
 
         private const long emsize = 200;
@@ -24,10 +36,10 @@ namespace TorchSharp.Examples
         private const long nhead = 2;
         private const double dropout = 0.2;
 
-        private const int batch_size = 64;
+        private const int batch_size = 3*32;
         private const int eval_batch_size = 32;
 
-        private const int epochs = 10;
+        private const int epochs = 25;
 
         static void Main(string[] args)
 
@@ -46,6 +58,7 @@ namespace TorchSharp.Examples
             foreach (var item in vocab_iter) {
                 counter.update(tokenizer(item));
             }
+
             var vocab = new TorchText.Vocab.Vocab(counter);
 
             var (train_iter, valid_iter, test_iter) = TorchText.Datasets.WikiText2(_dataLocation);

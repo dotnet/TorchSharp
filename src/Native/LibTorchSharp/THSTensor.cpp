@@ -2696,6 +2696,11 @@ Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal)
     CATCH_TENSOR(tensor->triu(diagonal));
 }
 
+Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
+{
+CATCH_TENSOR(tensor->tril(diagonal));
+}
+
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)
 {
     CATCH_TENSOR(tensor->transpose(dim1, dim2));

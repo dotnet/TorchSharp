@@ -1110,6 +1110,23 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_tril(IntPtr tensor, long diagonal);
+
+        /// <summary>
+        /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+        /// </summary>
+        /// <param name="diagonal">The diagonal to consider</param>
+        /// <returns></returns>
+        public TorchTensor tril(long diagonal = 0)
+        {
+            var res = THSTensor_tril(handle, diagonal);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal);
 
         /// <summary>

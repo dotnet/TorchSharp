@@ -944,6 +944,8 @@ EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 
+EXPORT_API(Tensor) THSTensor_tril(const Tensor tensor, const int64_t diagonal);
+
 EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal);
 
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
