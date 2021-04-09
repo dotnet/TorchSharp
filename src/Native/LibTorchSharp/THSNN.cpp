@@ -2083,14 +2083,19 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
 void THSNN_Optimizer_step(const Optimizer optimizer)
 {
     (*optimizer)->step();
-    auto def = dynamic_cast<torch::optim::SGDOptions *>(&(*optimizer)->defaults());
-    def->lr(4.5);
 }
 
 void THSNN_SGD_set_lr(const Optimizer optimizer, const double lr)
 {
-    auto def = dynamic_cast<torch::optim::SGDOptions*>(&(*optimizer)->defaults());
-    def->lr(lr);
+    auto options = dynamic_cast<torch::optim::SGDOptions*>(&(*optimizer)->defaults());
+    options->lr(lr);
+
+    auto& pgs = (*optimizer)->param_groups();
+    for (auto pg = pgs.begin(); pg < pgs.end(); ++pg)
+    {
+        options = dynamic_cast<torch::optim::SGDOptions*>(&(pg->options()));
+        options->lr(4.5);
+    }
 }
 
 void THSNN_Optimizer_dispose(const Optimizer optimizer)
