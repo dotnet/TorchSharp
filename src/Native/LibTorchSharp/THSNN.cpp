@@ -1883,6 +1883,7 @@ Tensor THSNN_Sequential_forward(const NNModule module, const Tensor tensor)
 void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
 {
     (*optimizer)->zero_grad();
+    auto defaults = (*optimizer)->defaults();
 }
 
 void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length))
@@ -2082,6 +2083,14 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
 void THSNN_Optimizer_step(const Optimizer optimizer)
 {
     (*optimizer)->step();
+    auto def = dynamic_cast<torch::optim::SGDOptions *>(&(*optimizer)->defaults());
+    def->lr(4.5);
+}
+
+void THSNN_SGD_set_lr(const Optimizer optimizer, const double lr)
+{
+    auto def = dynamic_cast<torch::optim::SGDOptions*>(&(*optimizer)->defaults());
+    def->lr(lr);
 }
 
 void THSNN_Optimizer_dispose(const Optimizer optimizer)
