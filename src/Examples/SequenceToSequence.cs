@@ -36,10 +36,10 @@ namespace TorchSharp.Examples
         private const long nhead = 2;
         private const double dropout = 0.2;
 
-        private const int batch_size = 32;
+        private const int batch_size = 64;
         private const int eval_batch_size = 32;
 
-        private const int epochs = 25;
+        private const int epochs = 50;
 
         static void Main(string[] args)
 
@@ -75,7 +75,7 @@ namespace TorchSharp.Examples
 
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
             var loss = cross_entropy_loss();
-            var lr = 5.0;
+            var lr = 2.50;
             var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
             var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 

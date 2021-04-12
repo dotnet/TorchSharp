@@ -1279,6 +1279,104 @@ void THSNN_Embedding_set_weight(const NNModule module, const Tensor weights)
 }
 
 template<typename T>
+void ApplyEmbeddingBagMode(T& opts, const int64_t mode)
+{
+    if (mode == 0)
+        opts = opts.mode(torch::kSum);
+    if (mode == 1)
+        opts = opts.mode(torch::kMean);
+    if (mode == 2)
+        opts = opts.mode(torch::kMax);
+}
+
+NNModule THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims,
+    const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq,
+    const int64_t mode, const bool sparse, const bool include_last_offset,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::EmbeddingBagOptions(num_embeddings, embedding_dims)
+        .norm_type(norm_type)
+        .scale_grad_by_freq(scale_grad_by_freq)
+        .include_last_offset(include_last_offset)
+        .sparse(sparse);
+
+        ApplyEmbeddingBagMode(opts, mode);
+
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        res = create_module<torch::nn::EmbeddingBagImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze,
+    const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq,
+    const int64_t mode, const bool sparse, const bool include_last_offset,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto rows = embeddings->size(0);
+        auto cols = embeddings->size(1);
+
+        auto opts = torch::nn::EmbeddingBagOptions(rows, cols)
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .include_last_offset(include_last_offset)
+            .sparse(sparse);
+
+        ApplyEmbeddingBagMode(opts, mode);
+
+        if (has_mn)
+            opts.max_norm(max_norm);
+
+        // Can't use the template function here -- custom logic.
+        auto mod = std::make_shared<torch::nn::EmbeddingBagImpl>(opts);
+        mod->weight = *embeddings;
+        mod->weight.set_requires_grad(!freeze);
+
+        // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+        // a Module can only be boxed to AnyModule at the point its static type is known).
+        if (outAsAnyModule != NULL)
+        {
+            auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingBagImpl>(*mod));
+            *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+        }
+        res = new std::shared_ptr<torch::nn::Module>(mod);
+    );
+}
+
+Tensor THSNN_EmbeddingBag_forward(const NNModule module, const Tensor input, const Tensor offsets, const Tensor per_sample_weights)
+{
+    if (offsets != nullptr && per_sample_weights != nullptr)
+    {
+        CATCH_TENSOR((*module)->as<torch::nn::EmbeddingBag>()->forward(*input, *offsets, *per_sample_weights));
+    }
+    else if (offsets == nullptr && per_sample_weights != nullptr)
+    {
+        CATCH_TENSOR((*module)->as<torch::nn::EmbeddingBag>()->forward(*input, {}, *per_sample_weights));
+    }
+    else if (offsets != nullptr && per_sample_weights == nullptr)
+    {
+        CATCH_TENSOR((*module)->as<torch::nn::EmbeddingBag>()->forward(*input, *offsets));
+    }
+    else
+    {
+        CATCH_TENSOR((*module)->as<torch::nn::EmbeddingBag>()->forward(*input));
+    }
+}
+
+Tensor THSNN_EmbeddingBag_weight(const NNModule module)
+{
+    return get_weight<torch::nn::EmbeddingBag>(module);
+}
+
+void THSNN_EmbeddingBag_set_weight(const NNModule module, const Tensor weights)
+{
+    set_weight<torch::nn::EmbeddingBag>(module, weights);
+}
+
+template<typename T>
 void ApplyPaddingMode(T& opts, const int64_t padding)
 {
     if (padding == 0)
