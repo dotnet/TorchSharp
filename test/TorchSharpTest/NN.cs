@@ -1524,6 +1524,64 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestEmbeddingBagDefaults()
+        {
+            var ones = Int64Tensor.ones(new long[] { 16, 12 });
+            using (var emb = EmbeddingBag(1000, 12)) {
+                var output = emb.forward(ones);
+                Assert.Equal(new long[] { 16, 12 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingBagWithMaxNormAndSum()
+        {
+            var ones = Int64Tensor.ones(new long[] { 16, 12 });
+            using (var emb = EmbeddingBag(1000, 128, max_norm: 1.5, mode: EmbeddingBagMode.Sum)) {
+                var output = emb.forward(ones);
+                Assert.Equal(new long[] { 16, 128 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingBagWithOffsets()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            var offsets = Int32Tensor.from(new int[] { 0, 8 });
+            using (var emb = EmbeddingBag(1000, 128, max_norm: 1.5, mode: EmbeddingBagMode.Sum)) {
+                var output = emb.forward(ones, offsets);
+                Assert.Equal(new long[] { offsets.shape[0], 128 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingBagSetWeights()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            using (var emb = EmbeddingBag(1000, 12)) {
+                var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+                emb.Weight = weights;
+
+                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+            }
+        }
+
+        [Fact]
+        public void TestEmbeddingBagFromPretrained()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+
+            using (var emb = NN.EmbeddingBag.from_pretrained(weights)) {
+                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+            }
+        }
+
+        [Fact]
         public void TestOneHotEncoding1()
         {
             var ones = Int64Tensor.from(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });

@@ -36,10 +36,10 @@ namespace TorchSharp.Examples
         private const long nhead = 2;
         private const double dropout = 0.2;
 
-        private const int batch_size = 32;
+        private const int batch_size = 64;
         private const int eval_batch_size = 32;
 
-        private const int epochs = 25;
+        private const int epochs = 50;
 
         static void Main(string[] args)
 
@@ -75,7 +75,7 @@ namespace TorchSharp.Examples
 
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
             var loss = cross_entropy_loss();
-            var lr = 5.0;
+            var lr = 2.50;
             var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
             var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
@@ -125,17 +125,15 @@ namespace TorchSharp.Examples
                     src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                 }
 
-                using (var output = model.forward(data, src_mask))
-                using (var loss = criterion(output.view(-1, ntokens), targets)) {
+                var output = model.forward(data, src_mask);
+                var loss = criterion(output.view(-1, ntokens), targets);
+                {
                     loss.backward();
                     model.parameters().clip_grad_norm(0.5);
                     optimizer.step();
 
                     total_loss += loss.to(Device.CPU).DataItem<float>();
                 }
-
-                data.Dispose();
-                targets.Dispose();
 
                 GC.Collect();
 
@@ -162,10 +160,9 @@ namespace TorchSharp.Examples
                     src_mask.Dispose();
                     src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                 }
-                using (var output = model.forward(data, src_mask))
-                using (var loss = criterion(output.view(-1, ntokens), targets)) {
-                    total_loss += data.shape[0] * loss.to(Device.CPU).DataItem<float>();
-                }
+                var output = model.forward(data, src_mask);
+                var loss = criterion(output.view(-1, ntokens), targets); 
+                total_loss += data.shape[0] * loss.to(Device.CPU).DataItem<float>();
 
                 data.Dispose();
                 targets.Dispose();
@@ -192,9 +189,8 @@ namespace TorchSharp.Examples
         static TorchTensor Batchify(TorchTensor data, int batch_size)
         {
             var nbatch = data.shape[0] / batch_size;
-            using (var d1 = data.narrow(0, 0, nbatch * batch_size))
-            using (var d2 = d1.view(batch_size, -1).t())
-                return d2.contiguous();
+            var d2 = data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t();
+            return d2.contiguous();
         }
 
         static (TorchTensor, TorchTensor) GetBatch(TorchTensor source, int index, int bptt)
@@ -255,10 +251,9 @@ namespace TorchSharp.Examples
 
             public TorchTensor forward(TorchTensor t, TorchTensor mask)
             {
-                using(var fwd = encoder.forward(t))
-                using (var src = pos_encoder.forward(fwd * MathF.Sqrt(ninputs)))
-                using(var enc = transformer_encoder.forward(src, mask))
-                    return decoder.forward(enc);
+                var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
+                var enc = transformer_encoder.forward(src, mask);
+                return decoder.forward(enc);
             }
 
             public new TransformerModel to(Device device)
@@ -290,8 +285,8 @@ namespace TorchSharp.Examples
 
             public override TorchTensor forward(TorchTensor t)
             {
-                using (var x = t + pe[TorchTensorIndex.Slice(null, t.shape[0]), TorchTensorIndex.Slice()])
-                    return dropout.forward(x);
+                var x = t + pe[TorchTensorIndex.Slice(null, t.shape[0]), TorchTensorIndex.Slice()];
+                return dropout.forward(x);
             }
         }
     }
