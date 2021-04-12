@@ -1544,6 +1544,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestEmbeddingBagWithOffsets()
+        {
+            var ones = Int32Tensor.ones(new long[] { 16 });
+            var offsets = Int32Tensor.from(new int[] { 0, 8 });
+            using (var emb = EmbeddingBag(1000, 128, max_norm: 1.5, mode: EmbeddingBagMode.Sum)) {
+                var output = emb.forward(ones, offsets);
+                Assert.Equal(new long[] { offsets.shape[0], 128 }, output.shape);
+            }
+        }
+
+        [Fact]
         public void TestEmbeddingBagSetWeights()
         {
             var ones = Int32Tensor.ones(new long[] { 16 });
