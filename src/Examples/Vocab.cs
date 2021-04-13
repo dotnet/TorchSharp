@@ -35,6 +35,8 @@ namespace TorchText.Vocab
                 update(key);
             }
         }
+        public int this[T key] { get => _dict[key]; }
+
 
         public IEnumerator<KeyValuePair<T, int>> GetEnumerator()
         {
@@ -51,7 +53,7 @@ namespace TorchText.Vocab
     /// This belongs in its own package, 'TorchText'.
     /// For now, it's useful to keep it with the examples that use it.
     /// </summary>
-    public class Vocab 
+    public class Vocab
     {
         public Vocab(Counter<string> counter, int? maxSize = null, int minFreq = 1, string[] specials = null, Func<TorchTensor, TorchTensor> unkInit = null, bool specialsFirst = true)
         {
@@ -62,7 +64,7 @@ namespace TorchText.Vocab
                     _dict.Add(sp, _last++);
                 }
             }
-            foreach (var kv in counter.Where(kv => kv.Value > minFreq)) {
+            foreach (var kv in counter.Where(kv => kv.Value >= minFreq)) {
                 if (!specials.Contains(kv.Key)) {
                     _dict.Add(kv.Key, _last++);
                 }
@@ -76,7 +78,7 @@ namespace TorchText.Vocab
             }
         }
 
-        public int this[string key] { get => _dict[key]; }
+        public int this[string key] { get => _dict.TryGetValue(key, out int value) ? value : _dict["<unk>"]; }
 
         public int Count => _dict.Count;
 

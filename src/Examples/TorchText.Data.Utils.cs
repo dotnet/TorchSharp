@@ -28,6 +28,7 @@ namespace TorchText.Data
              "\\?",
              "\\;",
              "\\:",
+             "\\\\",
              "\\s+",
         };
         private static string[] _replacements = new string[] {
@@ -40,6 +41,7 @@ namespace TorchText.Data
             " ) ",
             " ! ",
             " ? ",
+            " ",
             " ",
             " ",
             " "
