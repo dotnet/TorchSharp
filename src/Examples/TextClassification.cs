@@ -120,14 +120,17 @@ namespace TorchSharp.Examples
                 total_acc += (predicted_labels.argmax(1) == labels).sum().to(Device.CPU).DataItem<long>();
                 total_count += labels.size(0);
 
-                GC.Collect();
-
                 if (batch % log_interval == 0 && batch > 0) {
                     var accuracy = total_acc / total_count;
                     Console.WriteLine($"epoch: {epoch} | batch: {batch} / {batch_count} | accuracy: {accuracy:0.00}");
                 }
                 batch += 1;
             }
+
+            // This data set is small enough that we can get away with
+            // collecting memory only once per epoch.
+
+            GC.Collect();
         }
 
         static double evaluate(IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> test_data, TextClassificationModel model, Loss criterion)
