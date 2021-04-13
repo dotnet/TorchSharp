@@ -87,7 +87,7 @@ namespace TorchSharp.Examples
                 var sw = new Stopwatch();
                 sw.Start();
 
-                train(epoch, train_data, model, loss, lr, bptt, ntokens, optimizer);
+                train(epoch, train_data, model, loss, bptt, ntokens, optimizer);
 
                 var val_loss = evaluate(valid_data, model, loss, lr, bptt, ntokens, optimizer);
                 sw.Stop();
@@ -102,7 +102,7 @@ namespace TorchSharp.Examples
             Console.WriteLine($"\nEnd of training | time: {totalTime.Elapsed.TotalSeconds:0.0}s | loss: {tst_loss:0.00}\n");
         }
 
-        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, double lr, int bptt, int ntokens, Optimizer optimizer)
+        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
         {
             model.Train();
 
