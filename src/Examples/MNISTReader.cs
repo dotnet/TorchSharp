@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Tensor;
+using TorchSharp.TorchVision;
+using static TorchSharp.TorchVision.Transforms;
 
 namespace TorchSharp.Examples
 {
@@ -23,9 +25,12 @@ namespace TorchSharp.Examples
         /// <param name="batch_size">The batch size</param>
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
-        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, Device device = null)
+        /// <param name="transform"></param>
+        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, Device device = null, ITransform transform = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
+
+            BatchSize = batch_size;
 
             var dataPath = Path.Combine(path, prefix + "-images-idx3-ubyte");
             var labelPath = Path.Combine(path, prefix + "-labels-idx1-ubyte");
@@ -93,7 +98,15 @@ namespace TorchSharp.Examples
                     lablTensor[j] = Int64Tensor.from(labelBytes[idx]);
                 }
 
-                data.Add(dataTensor.reshape(take, 1, height, width));
+                var batch = dataTensor.reshape(take, 1, height, width);
+
+                if (transform != null) {
+                    // Carefully dispose the original
+                    using(var batch_copy = batch)
+                    batch = transform.forward(batch);
+                }
+
+                data.Add(batch);
                 dataTensor.Dispose();
                 labels.Add(lablTensor);
             }
@@ -102,6 +115,8 @@ namespace TorchSharp.Examples
         }
 
         public int Size { get; set; }
+
+        public int BatchSize { get; private set; }
 
         private List<TorchTensor> data = new List<TorchTensor>();
         private List<TorchTensor> labels = new List<TorchTensor>();
@@ -132,6 +147,7 @@ namespace TorchSharp.Examples
 
             public (TorchTensor, TorchTensor) Current {
                 get {
+                    if (curIdx == -1) throw new InvalidOperationException("Calling 'Current' before 'MoveNext()'");
                     return (data[curIdx], labels[curIdx]);
                 }
             }
@@ -150,10 +166,10 @@ namespace TorchSharp.Examples
 
             public void Reset()
             {
-                curIdx = 0;
+                curIdx = -1;
             }
 
-            private int curIdx = 0;
+            private int curIdx = -1;
             private List<TorchTensor> data = null;
             private List<TorchTensor> labels = null;
         }

@@ -356,6 +356,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void Float32Mean()
+        {
+            using (var tensor = Float32Tensor.randn(new long[] { 100, 100 })) {
+                var mean = tensor.mean();
+            }
+        }
+
+        [Fact]
         public void GetSetItem2()
         {
             var shape = new long[] { 2, 3 };

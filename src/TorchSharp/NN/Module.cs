@@ -1,10 +1,12 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Reflection;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+
+using static TorchSharp.Utils.LEB128Codec;
 
 namespace TorchSharp.NN
 {
@@ -233,7 +235,90 @@ namespace TorchSharp.NN
             }
             return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new TorchTensor(x))).ToArray();
 
-    }
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+
+        public virtual (string name, TorchTensor parameter)[] NamedBuffers()
+        {
+            IntPtr[] ptrArray;
+            IntPtr[] strArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using (var sa = new PinnedArray<IntPtr>()) {
+                THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+                strArray = sa.Array;
+            }
+            return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new TorchTensor(x))).ToArray();
+
+        }
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_Module_get_named_children(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+        public virtual (string name, Module parameter)[] NamedChildren()
+        {
+            IntPtr[] ptrArray;
+            IntPtr[] strArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using (var sa = new PinnedArray<IntPtr>()) {
+                THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+                strArray = sa.Array;
+            }
+            return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Module(x, IntPtr.Zero))).ToArray();
+
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        private static extern void THSNN_Module_get_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+        public virtual (string name, Module parameter)[] NamedModules()
+        {
+            IntPtr[] ptrArray;
+            IntPtr[] strArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using (var sa = new PinnedArray<IntPtr>()) {
+                THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+                strArray = sa.Array;
+            }
+            return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Module(x, IntPtr.Zero))).ToArray();
+
+        }
+
+
+        public Dictionary<string, TorchTensor> state_dict()
+        {
+            var ptrArray = new List<IntPtr>();
+            var strArray = new List<IntPtr>();            
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using (var sa = new PinnedArray<IntPtr>()) {
+                THSNN_Module_get_named_parameters(handle, pa.CreateArray, sa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray.AddRange(pa.Array);
+                strArray.AddRange(sa.Array);
+
+                THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray.AddRange(pa.Array);
+                strArray.AddRange(sa.Array);
+            }
+
+            var result = new Dictionary<string, TorchTensor>();
+            for (var i = 0; i < ptrArray.Count; ++i) {
+                result[Marshal.PtrToStringAnsi(strArray[i])] = new TorchTensor(ptrArray[i]);
+            }
+            return result;
+        }
+        
 
         [DllImport ("LibTorchSharp")]
         private static extern void THSNN_Module_get_parameters (HType module, AllocatePinnedArray allocator);
@@ -327,6 +412,56 @@ namespace TorchSharp.NN
             Torch.CheckForErrors ();
             return res;
         }
+
+        public void save(string location)
+        {
+            cpu();
+
+            using (var stream = System.IO.File.OpenWrite(location))
+            using (var writer = new System.IO.BinaryWriter(stream))
+                save(writer);
+        }
+
+        public void save(System.IO.BinaryWriter writer)
+        {
+            var sd = state_dict();
+
+            // First, write how many entries.
+
+            writer.Encode(sd.Count); // 4 bytes
+
+            foreach (var (k, v) in sd) {
+                writer.Write(k);
+                v.Save(writer);
+            }
+        }
+
+        public void load(string location)
+        {
+            using (var stream = System.IO.File.OpenRead(location))
+            using (var reader = new System.IO.BinaryReader(stream))
+                load(reader);
+        }
+
+        public void load(System.IO.BinaryReader reader)
+        {
+            var sd = state_dict();
+
+            // First, figure out how many entries.
+            var streamEntries = reader.Decode();
+
+            if (streamEntries != sd.Count) 
+                throw new ArgumentException("Mismatched number of state entries while loading module.");
+
+            for (int i = 0; i < streamEntries; ++i) {
+                var key = reader.ReadString();
+                if (!sd.ContainsKey(key)) {
+                    throw new ArgumentException("Mismatched module state names.");
+                }
+
+                sd[key].Load(reader);
+            }
+        }
     }
 
     internal class BoxedModule : IDisposable
@@ -396,6 +531,7 @@ namespace TorchSharp.NN
         }
     }
 
+#nullable enable
     public abstract class CustomModule : Module
     {
         private delegate IntPtr ForwardFunctionC (IntPtr tensor);
@@ -425,6 +561,22 @@ namespace TorchSharp.NN
             this.handle = new HType (res, true);
             this.forwardNative = forwardNative;
             this.boxedModule = new BoxedModule(boxedHandle);
+        }
+
+        protected void RegisterComponents()
+        {
+            foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                var value = field.GetValue(this);
+
+                var module = field.GetValue(this) as Module;
+                TorchTensor? tensor = value as TorchTensor;
+
+                if (module != null) {
+                    RegisterModule(field.Name, module);
+                } else if (!(tensor is null)) {
+                    RegisterBuffer(field.Name, tensor);
+                }
+            }
         }
 
         /// Keeps the callback delegate alive

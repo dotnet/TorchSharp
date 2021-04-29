@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.IO;
+using System.Runtime.Serialization;
+
 using System.IO.Compression;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.GZip;
@@ -11,7 +13,7 @@ using TorchSharp.Tensor;
 using TorchSharp.NN;
 using static TorchSharp.NN.Modules;
 using static TorchSharp.NN.Functions;
-using static TorchSharp.TorchVision.Transforms;
+using static TorchSharp.Tensor.TensorExtensionMethods;
 
 namespace TorchSharp.Examples
 {
@@ -33,30 +35,36 @@ namespace TorchSharp.Examples
     /// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
     /// constant below at the folder location.
     /// </remarks>
-    public class MNIST
+    public class AdversarialExampleGeneration
     {
+        private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
+
         private static int _epochs = 4;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
-        private readonly static int _logInterval = 100;
-
         static void Main(string[] args)
         {
+            var cwd = Environment.CurrentDirectory;
+
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
             Torch.SetSeed(1);
 
-            var cwd = Environment.CurrentDirectory;
-
             //var device = Device.CPU;
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
+            Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.Type.ToString()}\n");
             Console.WriteLine($"Dataset: {dataset}");
 
-            var sourceDir = datasetPath;
-            var targetDir = Path.Combine(datasetPath, "test_data");
+            if (device.Type == DeviceType.CUDA) {
+                _trainBatchSize *= 4;
+                _testBatchSize *= 4;
+                _epochs *= 4;
+            }
+
+            var sourceDir = _dataLocation;
+            var targetDir = Path.Combine(_dataLocation, "test_data");
 
             if (!Directory.Exists(targetDir)) {
                 Directory.CreateDirectory(targetDir);
@@ -66,44 +74,39 @@ namespace TorchSharp.Examples
                 Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
             }
 
-            if (device.Type == DeviceType.CUDA) {
-                _trainBatchSize *= 4;
-                _testBatchSize *= 4;
-                _epochs *= 4;
-            }
-
             var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
 
-            using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
-                                test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
+            using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage))
+            using (var test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
 
-                TrainingLoop(dataset, device, train, test);
+                var model = new Model("model", Device.CPU);
+
+                var modelFile = dataset + ".model.bin";
+
+                if (!File.Exists(modelFile)) {
+                    // We need the model to be trained first, because we want to start with a trained model.
+                    Console.WriteLine($"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model.");
+                    MNIST.TrainingLoop(dataset, device, train, test);
+                    Console.WriteLine("Moving on to the Adversarial model.\n");
+                }
+
+                model.load(modelFile);
+                model.to(device);
+
+                // Establish a baseline accuracy.
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                var baseline = TestBaseline(model, nll_loss(reduction: NN.Reduction.Sum), test, test.Size);
+
+                Console.WriteLine($"\rBaseline model accuracy: {baseline}");
+
+                sw.Stop();
+                Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds} s.");
+
+                GC.Collect();
             }
-        }
-
-        internal static void TrainingLoop(string dataset, Device device, MNISTReader train, MNISTReader test)
-        {
-            var model = new Model("model", device);
-            var optimizer = NN.Optimizer.Adam(model.parameters());
-
-            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.7, last_epoch: 5);
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            for (var epoch = 1; epoch <= _epochs; epoch++) {
-
-                Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
-                Test(model, nll_loss(reduction: NN.Reduction.Sum), device, test, test.Size);
-
-                Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
-            }
-
-            sw.Stop();
-            Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds} s.");
-
-            Console.WriteLine("Saving model to '{0}'", dataset + ".model.bin");
-            model.save(dataset + ".model.bin");
         }
 
         private class Model : CustomModule
@@ -126,6 +129,7 @@ namespace TorchSharp.Examples
 
             private Flatten flatten = Flatten();
             private LogSoftmax logsm = LogSoftmax(1);
+
 
             public Model(string name, Device device = null) : base(name)
             {
@@ -157,46 +161,9 @@ namespace TorchSharp.Examples
             }
         }
 
-
-        private static void Train(
-            Model model,
-            NN.Optimizer optimizer,
-            Loss loss,
-            Device device,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
-            int epoch,
-            long batchSize,
-            long size)
-        {
-            model.Train();
-
-            int batchId = 1;
-
-            Console.WriteLine($"Epoch: {epoch}...");
-            foreach (var (data, target) in dataLoader) {
-                optimizer.zero_grad();
-
-                var prediction = model.forward(data);
-                var output = loss(prediction, target);
-
-                output.backward();
-
-                optimizer.step();
-
-                if (batchId % _logInterval == 0) {
-                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()}");
-                }
-
-                batchId++;
-
-                GC.Collect();
-            }
-        }
-
-        private static void Test(
+        private static double TestBaseline(
             Model model,
             Loss loss,
-            Device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {
@@ -205,7 +172,8 @@ namespace TorchSharp.Examples
             double testLoss = 0;
             int correct = 0;
 
-            foreach (var (data, target) in dataLoader) {
+            foreach (var (data, target) in dataLoader)
+            {
                 var prediction = model.forward(data);
                 var output = loss(prediction, target);
                 testLoss += output.ToSingle();
@@ -218,9 +186,7 @@ namespace TorchSharp.Examples
                 GC.Collect();
             }
 
-            Console.WriteLine($"Size: {size}, Total: {size}");
-
-            Console.WriteLine($"\rTest set: Average loss {testLoss / size} | Accuracy {(double)correct / size}");
+            return (double)correct / size;
         }
     }
 }

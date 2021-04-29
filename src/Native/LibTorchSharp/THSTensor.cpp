@@ -2600,6 +2600,16 @@ Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
+Tensor THSTensor_std(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->std());
+}
+
+Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
+{
+    CATCH_TENSOR(tensor->std(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim));
+}
+
 Tensor THSTensor_sub_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->sub_(*right));

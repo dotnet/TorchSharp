@@ -15,26 +15,34 @@ namespace TorchSharp
 {
     public class TestLoadSave
     {
-        [Fact]
+        [Fact(Skip = "https://github.com/xamarin/TorchSharp/issues/251")]
         public void TestSaveLoadLinear()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
             linear.Save(".model.ts");
             var loadedLinear = NN.Linear.Load(".model.ts");
+            var params1 = loadedLinear.parameters();
             File.Delete(".model.ts");
+
             Assert.NotNull(loadedLinear);
+            Assert.Equal(params0, params1);
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/xamarin/TorchSharp/issues/251")]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var conv = Conv2d(100, 10, 5);
+            var params0 = conv.parameters();
             conv.Save(".model.ts");
             var loaded = NN.Conv2d.Load(".model.ts");
+            var params1 = loaded.parameters();
             File.Delete(".model.ts");
+
             Assert.NotNull(loaded);
+            Assert.Equal(params0, params1);
         }
 
         [Fact]

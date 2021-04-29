@@ -266,3 +266,4 @@ ASALocalRun/
 packages/
 .fake
 .ionide
+*.bin
