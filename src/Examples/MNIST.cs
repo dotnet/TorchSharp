@@ -50,7 +50,6 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            //var device = Device.CPU;
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
             Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
@@ -69,21 +68,25 @@ namespace TorchSharp.Examples
             if (device.Type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
-                _epochs *= 4;
             }
+
+            var model = new Model("model", device);
 
             var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
 
             using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
                                 test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
 
-                TrainingLoop(dataset, device, train, test);
+                TrainingLoop(dataset, device, model, train, test);
             }
         }
 
-        internal static void TrainingLoop(string dataset, Device device, MNISTReader train, MNISTReader test)
+        internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train, MNISTReader test)
         {
-            var model = new Model("model", device);
+            if (device.Type == DeviceType.CUDA) {
+                _epochs *= 4;
+            }
+
             var optimizer = NN.Optimizer.Adam(model.parameters());
 
             var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.7, last_epoch: 5);
@@ -100,13 +103,13 @@ namespace TorchSharp.Examples
             }
 
             sw.Stop();
-            Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds} s.");
+            Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s.");
 
             Console.WriteLine("Saving model to '{0}'", dataset + ".model.bin");
             model.save(dataset + ".model.bin");
         }
 
-        private class Model : CustomModule
+        internal class Model : CustomModule
         {
             private Conv2d conv1 = Conv2d(1, 32, 3);
             private Conv2d conv2 = Conv2d(32, 64, 3);
@@ -121,8 +124,8 @@ namespace TorchSharp.Examples
             private ReLU relu2 = ReLU();
             private ReLU relu3 = ReLU();
 
-            private FeatureAlphaDropout dropout1 = FeatureAlphaDropout();
-            private Dropout dropout2 = Dropout();
+            private Dropout dropout1 = Dropout(0.25);
+            private Dropout dropout2 = Dropout(0.5);
 
             private Flatten flatten = Flatten();
             private LogSoftmax logsm = LogSoftmax(1);
@@ -141,9 +144,9 @@ namespace TorchSharp.Examples
                 var l12 = relu2.forward(l11);
 
                 var l21 = conv2.forward(l12);
-                var l22 = pool1.forward(l21);
-                var l23 = dropout1.forward(l22);
-                var l24 = relu2.forward(l23);
+                var l22 = relu2.forward(l21);
+                var l23 = pool1.forward(l22);
+                var l24 = dropout1.forward(l23);
 
                 var x = flatten.forward(l24);
 
@@ -184,7 +187,7 @@ namespace TorchSharp.Examples
                 optimizer.step();
 
                 if (batchId % _logInterval == 0) {
-                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()}");
+                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle():F4}");
                 }
 
                 batchId++;
@@ -220,7 +223,7 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"Size: {size}, Total: {size}");
 
-            Console.WriteLine($"\rTest set: Average loss {testLoss / size} | Accuracy {(double)correct / size}");
+            Console.WriteLine($"\rTest set: Average loss {(testLoss / size):F4} | Accuracy {((double)correct / size):P2}");
         }
     }
 }

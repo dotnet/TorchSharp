@@ -8,6 +8,8 @@ Two approaches are available for memory management. Technique 1 is the default a
 
 Note DiffSharp (which uses TorchSharp) relies on techniques 1.
 
+> Most of the examples included will use technique #1, doing frequent explicit calls to GC.Collect() in the training code -- if not after each batch in the training loop, at least after each epoch.
+
 ## Technique 1. Implicit disposal using finalizers
 
 In this technique all tensors (CPU and GPU) are implicitly disposed via .NET finalizers.
@@ -21,19 +23,26 @@ This is not yet done when using general tensor operations.  It is possible a mor
 
 👎 The .NET GC doesn't know of the memory pressure from CPU tensors, so failure may happen if large tensors can't be allocated
 
-👎 The .NET GC doesn't know of GPU resources
+👎 The .NET GC doesn't know of GPU resources.
+
+👎 Native operations that allocate temporaries, whether on CPU or GPU, may fail -- the GC scheme implemented by TorchSharp only works when the allocation is initiated by .NET code.
 
 ## Technique 2. Explicit disposal
 
 In this technique specific tensors (CPU and GPU) are explicitly disposed
 using `using` in C# or explicit calls to `System.IDisposable.Dispose()`.
 
-👍 control
+👍 Specific lifetime management of all resources.
 
-👎 you must know when to dispose
+👎 Cumbersome, requiring lots of using statements in your code.
+
+👎 You must know when to dispose.
+
+👎 Temporaries are not covered by this approach, so to maximize the benefit, you may have to store all temporaries to variables and dispose.
 
 > NOTE: Disposing a tensor only releases the underlying storage if this is the last
-> live TorchTensor which has a view on that tensor.
+> live TorchTensor which has a view on that tensor -- the native runtime does reference counting of tensors.
+
 
 ## Links and resources
 

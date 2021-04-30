@@ -92,7 +92,7 @@ namespace TorchSharp.Examples
                     var idx = indices[i++];
                     var imgStart = idx * imgSize;
 
-                    var floats = dataBytes[imgStart.. (imgStart+imgSize)].Select(b => (float)b).ToArray();
+                    var floats = dataBytes[imgStart.. (imgStart+imgSize)].Select(b => b/256.0f).ToArray();
                     using (var inputTensor = Float32Tensor.from(floats))
                         dataTensor.index_put_(new TorchTensorIndex [] { TorchTensorIndex.Single(j) }, inputTensor);
                     lablTensor[j] = Int64Tensor.from(labelBytes[idx]);

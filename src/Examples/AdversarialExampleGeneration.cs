@@ -18,7 +18,9 @@ using static TorchSharp.Tensor.TensorExtensionMethods;
 namespace TorchSharp.Examples
 {
     /// <summary>
-    /// Simple MNIST Convolutional model.
+    /// FGSM Attack
+    ///
+    /// Based on : https://pytorch.org/tutorials/beginner/fgsm_tutorial.html
     /// </summary>
     /// <remarks>
     /// There are at least two interesting data sets to use with this example:
@@ -34,6 +36,13 @@ namespace TorchSharp.Examples
     ///
     /// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
     /// constant below at the folder location.
+    ///
+    /// The example is based on the PyTorch tutorial, but the results from attacking the model are very different from
+    /// what the tutorial article notes, at least on the machine where it was developed. There is an order-of-magnitude lower
+    /// drop-off in accuracy in this version. That said, when running the PyTorch tutorial on the same machine, the
+    /// accuracy trajectories are the same between .NET and Python. If the base convulutational model is trained
+    /// using Python, and then used for the FGSM attack in both .NET and Python, the drop-off trajectories are extremenly
+    /// close.
     /// </remarks>
     public class AdversarialExampleGeneration
     {
@@ -74,114 +83,78 @@ namespace TorchSharp.Examples
                 Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
             }
 
+            MNIST.Model model = null;
+
             var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
 
-            using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage))
             using (var test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
-
-                var model = new Model("model", Device.CPU);
 
                 var modelFile = dataset + ".model.bin";
 
                 if (!File.Exists(modelFile)) {
                     // We need the model to be trained first, because we want to start with a trained model.
                     Console.WriteLine($"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model.");
-                    MNIST.TrainingLoop(dataset, device, train, test);
+
+                    model = new MNIST.Model("model", device);
+
+                    using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage)) {
+                        MNIST.TrainingLoop(dataset, device, model, train, test);
+                    }
+
                     Console.WriteLine("Moving on to the Adversarial model.\n");
+
+                } else {
+                    model = new MNIST.Model("model", Device.CPU);
+                    model.load(modelFile);
                 }
 
-                model.load(modelFile);
                 model.to(device);
+                model.Eval();
 
-                // Establish a baseline accuracy.
+                var epsilons = new double[] { 0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50 };
 
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-
-                var baseline = TestBaseline(model, nll_loss(reduction: NN.Reduction.Sum), test, test.Size);
-
-                Console.WriteLine($"\rBaseline model accuracy: {baseline}");
-
-                sw.Stop();
-                Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds} s.");
-
-                GC.Collect();
+                foreach (var ε in epsilons) {
+                    var attacked = Test(model, nll_loss(), ε, test, test.Size);
+                    Console.WriteLine($"Epsilon: {ε:F2}, accuracy: {attacked:P2}");
+                }
             }
         }
 
-        private class Model : CustomModule
+        private static TorchTensor Attack(TorchTensor image, double ε, TorchTensor data_grad)
         {
-            private Conv2d conv1 = Conv2d(1, 32, 3);
-            private Conv2d conv2 = Conv2d(32, 64, 3);
-            private Linear fc1 = Linear(9216, 128);
-            private Linear fc2 = Linear(128, 10);
-
-            // These don't have any parameters, so the only reason to instantiate
-            // them is performance, since they will be used over and over.
-            private MaxPool2d pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
-
-            private ReLU relu1 = ReLU();
-            private ReLU relu2 = ReLU();
-            private ReLU relu3 = ReLU();
-
-            private FeatureAlphaDropout dropout1 = FeatureAlphaDropout();
-            private Dropout dropout2 = Dropout();
-
-            private Flatten flatten = Flatten();
-            private LogSoftmax logsm = LogSoftmax(1);
-
-
-            public Model(string name, Device device = null) : base(name)
-            {
-                RegisterComponents();
-
-                if (device != null && device.Type == DeviceType.CUDA)
-                    this.to(device);
-            }
-
-            public override TorchTensor forward(TorchTensor input)
-            {
-                var l11 = conv1.forward(input);
-                var l12 = relu2.forward(l11);
-
-                var l21 = conv2.forward(l12);
-                var l22 = pool1.forward(l21);
-                var l23 = dropout1.forward(l22);
-                var l24 = relu2.forward(l23);
-
-                var x = flatten.forward(l24);
-
-                var l31 = fc1.forward(x);
-                var l32 = relu3.forward(l31);
-                var l33 = dropout2.forward(l32);
-
-                var l41 = fc2.forward(l33);
-
-                return logsm.forward(l41);
+            using (var sign = data_grad.sign()) {
+                var perturbed = (image + ε * sign).clamp(0.0, 1.0);
+                return perturbed;
             }
         }
 
-        private static double TestBaseline(
-            Model model,
-            Loss loss,
+        private static double Test(
+            MNIST.Model model,
+            Loss criterion,
+            double ε,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {
-            model.Eval();
-
-            double testLoss = 0;
             int correct = 0;
 
-            foreach (var (data, target) in dataLoader)
-            {
-                var prediction = model.forward(data);
-                var output = loss(prediction, target);
-                testLoss += output.ToSingle();
+            foreach (var (data, target) in dataLoader) {
 
-                var pred = prediction.argmax(1);
-                correct += pred.eq(target).sum().ToInt32();
+                data.requires_grad = true;
 
-                pred.Dispose();
+                using (var output = model.forward(data))
+                using (var loss = criterion(output, target)) {
+
+                    model.ZeroGrad();
+                    loss.backward();
+
+                    var perturbed = Attack(data, ε, data.grad());
+
+                    using (var final = model.forward(perturbed)) {
+
+                        correct += final.argmax(1).eq(target).sum().ToInt32();
+                    }
+                }
+
 
                 GC.Collect();
             }
