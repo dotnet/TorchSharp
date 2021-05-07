@@ -130,6 +130,16 @@ Tensor THSTensor_addmv_(const Tensor mat, const Tensor mat1, const Tensor vec2, 
     CATCH_TENSOR(mat->addmv_(*mat1, *vec2, beta, alpha));
 }
 
+Tensor THSTensor_addr(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
+{
+    CATCH_TENSOR(mat->addr(*mat1, *vec2, beta, alpha));
+}
+
+Tensor THSTensor_addr_(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
+{
+    CATCH_TENSOR(mat->addr_(*mat1, *vec2, beta, alpha));
+}
+
 int THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan)
 {
     CATCH_RETURN(int, 0, left->allclose(*right, rtol, atol, equal_nan));
@@ -545,6 +555,11 @@ Tensor THSTensor_clone(const Tensor tensor)
     CATCH_TENSOR(tensor->clone());
 }
 
+Tensor THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
+{
+    CATCH_TENSOR(input->copy_(*other, non_blocking));
+}
+
 Tensor THSTensor_contiguous(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->contiguous());
@@ -751,6 +766,21 @@ int THSTensor_device_type(const Tensor tensor)
     return (int)device.type();
 }
 
+Tensor THSTensor_diag(const Tensor tensor, const int64_t diagonal)
+{
+    CATCH_TENSOR(tensor->diag(diagonal));
+}
+
+Tensor THSTensor_diagflat(const Tensor tensor, const int64_t offset)
+{
+    CATCH_TENSOR(tensor->diagflat(offset));
+}
+
+Tensor THSTensor_diagonal(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2)
+{
+    CATCH_TENSOR(tensor->diagonal(offset, dim1, dim2));
+}
+
 Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
 {
     c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
@@ -796,6 +826,11 @@ Tensor THSTensor_div_scalar(const Tensor left, const Scalar right)
 Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->div_(*right));
+}
+
+Tensor THSTensor_dot(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->dot(*right));
 }
 
 Tensor THSTensor_einsum(const char* equation, const Tensor* tensors, const int length)
@@ -924,6 +959,11 @@ Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int len
     CATCH_TENSOR(tensor->expand(at::ArrayRef<int64_t>(sizes, length), implicit));
 }
 
+Tensor THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int length)
+{
+    CATCH_TENSOR(tensor->repeat(at::ArrayRef<int64_t>(sizes, length)));
+}
+
 Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
 {
     CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
@@ -966,6 +1006,16 @@ Tensor THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, c
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
 {
     CATCH_TENSOR(tensor->flip(at::ArrayRef<int64_t>(sizes, length)));
+}
+
+Tensor THSTensor_fliplr(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->fliplr());
+}
+
+Tensor THSTensor_flipud(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->flipud());
 }
 
 Tensor THSTensor_fill_(const Tensor tensor, const Scalar value)
@@ -1191,6 +1241,22 @@ Tensor THSTensor_igammac(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(torch::igammac(*tensor, *other));
 }
 
+Tensor THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan)
+{
+    CATCH_TENSOR(torch::isclose(*tensor, *other, rtol, atol, equal_nan));
+}
+
+
+Tensor THSTensor_isinf(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isinf(*tensor));
+}
+
+Tensor THSTensor_isfinite(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isfinite(*tensor));
+}
+
 Tensor THSTensor_isneginf(const Tensor tensor)
 {
     CATCH_TENSOR(torch::isneginf(*tensor));
@@ -1199,6 +1265,11 @@ Tensor THSTensor_isneginf(const Tensor tensor)
 Tensor THSTensor_isposinf(const Tensor tensor)
 {
     CATCH_TENSOR(torch::isposinf(*tensor));
+}
+
+Tensor THSTensor_isreal(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isreal(*tensor));
 }
 
 void completeTensorIndices(const int64_t* indexStarts,
@@ -1330,6 +1401,11 @@ Tensor THSTensor_inner(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->inner(*right));
 }
 
+Tensor THSTensor_inverse(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->inverse());
+}
+
 int THSTensor_is_sparse(const Tensor tensor)
 {
     CATCH_RETURN(int, 0, tensor->is_sparse());
@@ -1452,12 +1528,12 @@ Tensor THSTensor_log_(const Tensor tensor)
 
 Tensor THSTensor_log2(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log());
+    CATCH_TENSOR(tensor->log2());
 }
 
 Tensor THSTensor_log2_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log_());
+    CATCH_TENSOR(tensor->log2_());
 }
 
 Tensor THSTensor_log10(const Tensor tensor)
@@ -1558,6 +1634,21 @@ Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
 Tensor THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value)
 {
     CATCH_TENSOR(tensor->masked_fill(*mask, *value));
+}
+
+Tensor THSTensor_masked_fill_(const Tensor tensor, const Tensor mask, const Scalar value)
+{
+    CATCH_TENSOR(tensor->masked_fill_(*mask, *value));
+}
+
+Tensor THSTensor_masked_scatter(const Tensor tensor, const Tensor mask, const Tensor value)
+{
+    CATCH_TENSOR(tensor->masked_scatter(*mask, *value));
+}
+
+Tensor THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor value)
+{
+    CATCH_TENSOR(tensor->masked_scatter_(*mask, *value));
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
@@ -1790,6 +1881,11 @@ void THSTensor_min_along_dimension(const Tensor tensor, Tensor* (*allocator)(siz
 Tensor THSTensor_mm(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->mm(*right));
+}
+
+Tensor THSTensor_mv(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->mv(*right));
 }
 
 Tensor THSTensor_vdot(const Tensor left, const Tensor right)
@@ -2269,6 +2365,16 @@ Tensor THSTensor_relu_(const Tensor tensor)
     CATCH_TENSOR(torch::relu_(*tensor));
 }
 
+Tensor THSTensor_reciprocal(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::reciprocal(*tensor));
+}
+
+Tensor THSTensor_reciprocal_(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::reciprocal_(*tensor));
+}
+
 Tensor THSTensor_relu6(const Tensor tensor)
 {
     CATCH_TENSOR(torch::nn::functional::relu6(*tensor));
@@ -2668,6 +2774,16 @@ void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), co
         result[0] = new torch::Tensor(std::get<0>(topk));
         result[1] = new torch::Tensor(std::get<1>(topk));
     )
+}
+
+Tensor THSTensor_trunc(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->trunc());
+}
+
+Tensor THSTensor_trunc_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->trunc_());
 }
 
 int8_t THSTensor_type(const Tensor tensor)
