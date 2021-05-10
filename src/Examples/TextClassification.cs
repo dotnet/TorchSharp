@@ -44,7 +44,7 @@ namespace TorchSharp.Examples
             var cwd = Environment.CurrentDirectory;
 
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running on {device.Type.ToString()}");
+            Console.WriteLine($"Running TextClassification on {device.Type.ToString()}");
 
             using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, _dataLocation)) {
 
@@ -164,8 +164,7 @@ namespace TorchSharp.Examples
             fc = Linear(embed_dim, num_class);
             InitWeights();
 
-            RegisterModule("emb", embedding);
-            RegisterModule("fc", fc);
+            RegisterComponents();
         }
 
         private void InitWeights()

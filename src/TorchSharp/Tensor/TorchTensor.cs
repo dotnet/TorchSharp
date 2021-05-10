@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using static TorchSharp.Utils.LEB128Codec;
+
 #nullable enable
 namespace TorchSharp.Tensor
 {
@@ -143,6 +145,37 @@ namespace TorchSharp.Tensor
                 if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 // NOTE: there is no safety here.
                 return new Span<T>((void*)res, (int)NumberOfElements);
+            }
+        }
+
+        public Span<byte> Bytes()
+        {
+            long totalSize = NumberOfElements * ElementSize;
+
+            if (totalSize > int.MaxValue) {
+                throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+            }
+            unsafe {
+                var res = THSTensor_data(handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                // NOTE: there is no safety here.
+                return new Span<byte>((void*)res, (int)totalSize);
+            }
+        }
+
+        public void SetBytes(Span<byte> value)
+        {
+            long totalSize = NumberOfElements * ElementSize;
+            if (totalSize != value.Length) {
+                throw new ArgumentException("Mismatched data sizes in SetBytes().");
+            }
+
+            unsafe {
+                var res = THSTensor_data(handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                // NOTE: there is no safety here.
+                var data = new Span<byte>((void*)res, value.Length);
+                value.CopyTo(data);
             }
         }
 
@@ -4291,6 +4324,30 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_std(IntPtr tensor);
+
+        public TorchTensor std()
+        {
+            var res = THSTensor_std(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_std_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
+
+        public TorchTensor mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        {
+            unsafe {
+                fixed (long* pdims = dimensions) {
+                    var res = THSTensor_std_along_dimensions(handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_sub(IntPtr tensor, IntPtr trg);
 
         public TorchTensor sub(TorchTensor target)
@@ -5889,6 +5946,47 @@ namespace TorchSharp.Tensor
             default:
                 return false;
             }
+        }
+
+        public static void Save(this TorchTensor tensor, System.IO.BinaryWriter writer)
+        {
+            // First, write the type
+            writer.Encode((int)tensor.Type); // 4 bytes
+            // Then, the shape.
+            writer.Encode(tensor.shape.Length); // 4 bytes
+            foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
+            // Then, the data
+            writer.Write(tensor.Bytes()); // ElementSize * NumberofElements
+        }
+
+        public static void Load(this TorchTensor tensor, System.IO.BinaryReader reader)
+        {
+            // First, read the type
+            var type = (ScalarType)reader.Decode();
+
+            if (type != tensor.Type)
+                throw new ArgumentException("Mismatched tensor data types while loading.");
+
+            // Then, the shape
+            var shLen = reader.Decode();
+            long[] loadedShape = new long[shLen];
+
+            long totalSize = 1;
+            for (int i = 0; i < shLen; ++i) {
+                loadedShape[i] = reader.Decode();
+                totalSize *= loadedShape[i];
+            }
+
+            if (!loadedShape.SequenceEqual(tensor.shape))
+                throw new ArgumentException("Mismatched tensor shape while loading.");
+
+            //
+            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
+            //
+            if (totalSize > int.MaxValue)
+                throw new NotImplementedException("Loading tensors larger than 2GB");
+
+            tensor.SetBytes(reader.ReadBytes((int)(totalSize * tensor.ElementSize)));
         }
 
         public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)

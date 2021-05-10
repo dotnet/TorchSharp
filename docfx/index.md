@@ -11,6 +11,12 @@ This surfaces the C API as a strongly-typed C# API.
 Check the [GitHub project page](https://github.com/xamarin/TorchSharp) for
 TorchSharp.
 
+## Tips and Tricks
+
+[Some thoughts](articles/memory.md) on how to manage memory well in your TorchSharp training code.
+
+An intruction on how to [share model](articles/saveload.md) weights between applications, whether in Python or .NET.
+
 ## API documentation
 
 The [API Documentation](api/TorchSharp.html)

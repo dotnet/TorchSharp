@@ -49,7 +49,7 @@ namespace TorchSharp.Examples
             var cwd = Environment.CurrentDirectory;
 
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running on {device.Type.ToString()}");
+            Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()}");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);
             var tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english");
@@ -222,11 +222,7 @@ namespace TorchSharp.Examples
                 decoder = Linear(ninputs, ntokens);
                 InitWeights();
 
-                RegisterModule("pe", pos_encoder);
-                RegisterModule("te", transformer_encoder);
-                RegisterModule("en", encoder);
-                RegisterModule("lay", encoder_layers);
-                RegisterModule("dec", decoder);
+                RegisterComponents();
             }
 
             public TorchTensor GenerateSquareSubsequentMask(long size)
@@ -279,8 +275,7 @@ namespace TorchSharp.Examples
                 pe[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(1, null, 2)] = (position * divTerm).cos();
                 this.pe = pe.unsqueeze(0).transpose(0, 1);
 
-                RegisterBuffer("pe", this.pe);
-                RegisterModule("drop", this.dropout);
+                RegisterComponents();
             }
 
             public override TorchTensor forward(TorchTensor t)

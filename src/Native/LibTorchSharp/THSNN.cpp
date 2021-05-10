@@ -6,12 +6,12 @@
 
 void THSNN_Module_save(const NNModule module, const char* location)
 {
-    CATCH(
+    //CATCH(
         auto output = torch::serialize::OutputArchive();
 
-        output.save_to(location);
         (*module)->save(output);
-    );
+        output.save_to(location);
+    //);
 }
 
 //NNModule THSNN_AnyModule_get(const NNAnyModule module)
@@ -33,16 +33,17 @@ void THSNN_Module_register_buffer(const NNModule module, const char* name, const
     );
 }
 
-NNModule THSNN_Module_load(const char* location, const char* name)
+NNModule THSNN_Module_load(const char* location)
 {
-    CATCH_RETURN_NNModule(
+    //CATCH_RETURN_NNModule(
         auto module = new torch::nn::Module();
         auto input = torch::serialize::InputArchive();
 
         input.load_from(location);
         module->load(input);
-        res = new std::shared_ptr<torch::nn::Module>(module);
-    );
+        //res = new std::shared_ptr<torch::nn::Module>(module);
+        return new std::shared_ptr<torch::nn::Module>(module);
+    //);
 }
 
 int THSNN_Module_has_parameter(const NNModule module, const char* name)
@@ -76,6 +77,45 @@ void THSNN_Module_get_named_parameters(const NNModule module, Tensor* (*allocato
     {
         result1[i] = ResultTensor(parameters[i].value());
         result2[i] = make_sharable_string(parameters[i].key());
+    }
+}
+
+void THSNN_Module_get_named_buffers(const NNModule module, Tensor* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_buffers();
+    Tensor* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = ResultTensor(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
+    }
+}
+
+void THSNN_Module_get_named_children(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_children();
+    NNModule* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = new std::shared_ptr<torch::nn::Module>(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
+    }
+}
+
+void THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_modules();
+    NNModule* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = new std::shared_ptr<torch::nn::Module>(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
     }
 }
 

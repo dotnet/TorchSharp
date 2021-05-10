@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-    <StartupObject>TorchSharp.Examples.TextClassification</StartupObject>
+    <StartupObject>TorchSharp.Examples.AdversarialExampleGeneration</StartupObject>
     <IsPackable>false</IsPackable>
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>TorchSharp.Examples</RootNamespace>

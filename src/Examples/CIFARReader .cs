@@ -122,6 +122,7 @@ namespace TorchSharp.Examples
 
             public (TorchTensor, TorchTensor) Current {
                 get {
+                    if (curIdx == -1) throw new InvalidOperationException("Calling 'Current' before 'MoveNext()'");
                     return (data[curIdx], labels[curIdx]);
                 }
             }
@@ -140,10 +141,10 @@ namespace TorchSharp.Examples
 
             public void Reset()
             {
-                curIdx = 0;
+                curIdx = -1;
             }
 
-            private int curIdx = 0;
+            private int curIdx = -1;
             private List<TorchTensor> data = null;
             private List<TorchTensor> labels = null;
         }

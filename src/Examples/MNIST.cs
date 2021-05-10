@@ -11,6 +11,7 @@ using TorchSharp.Tensor;
 using TorchSharp.NN;
 using static TorchSharp.NN.Modules;
 using static TorchSharp.NN.Functions;
+using static TorchSharp.TorchVision.Transforms;
 
 namespace TorchSharp.Examples
 {
@@ -34,33 +35,27 @@ namespace TorchSharp.Examples
     /// </remarks>
     public class MNIST
     {
-        private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "fashion-mnist");
-
-        private static int _epochs = 10;
+        private static int _epochs = 4;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
         private readonly static int _logInterval = 100;
 
         static void Main(string[] args)
-
         {
+            var dataset = args.Length > 0 ? args[0] : "mnist";
+            var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
+
             Torch.SetSeed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            //var device = Device.CPU; //Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running on {device.Type.ToString()}");
+            Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
+            Console.WriteLine($"Dataset: {dataset}");
 
-            if (device.Type == DeviceType.CUDA) {
-                _trainBatchSize *= 4;
-                _testBatchSize *= 4;
-                _epochs *= 16;
-            }
-
-            var sourceDir = _dataLocation;
-            var targetDir = Path.Combine(_dataLocation, "test_data");
+            var sourceDir = datasetPath;
+            var targetDir = Path.Combine(datasetPath, "test_data");
 
             if (!Directory.Exists(targetDir)) {
                 Directory.CreateDirectory(targetDir);
@@ -70,88 +65,74 @@ namespace TorchSharp.Examples
                 Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
             }
 
-            using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true))
-            using (var test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device))
-            //using (var model = new Model("model", device))
-            using (var model = GetModel(device))
-            using (var optimizer = NN.Optimizer.SGD(model.parameters(), 0.01, 0.5))
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
+            if (device.Type == DeviceType.CUDA) {
+                _trainBatchSize *= 4;
+                _testBatchSize *= 4;
+            }
 
-                for (var epoch = 1; epoch <= _epochs; epoch++)
-                {
-                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size);
-                    Test(model, nll_loss(reduction: NN.Reduction.Sum), test, test.Size);
+            var model = new Model("model", device);
 
-                    Console.WriteLine($"Pre-GC memory:  {GC.GetTotalMemory(false)}");
-                    GC.Collect();
-                    Console.WriteLine($"Post-GC memory: {GC.GetTotalMemory(false)}");
-                }
+            var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
 
-                sw.Stop();
-                Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds} s.");
-                Console.ReadLine();
+            using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
+                                test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
+
+                TrainingLoop(dataset, device, model, train, test);
             }
         }
 
-        private static Sequential GetModel(Device device)
+        internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train, MNISTReader test)
         {
-            var seq = Sequential(
-                ("conv1", Conv2d(1, 10, 5)),
-                ("pool1", MaxPool2d(kernelSize: new long[] { 2, 2 })),
-                ("relu1", ReLU()),
-                ("conv2", Conv2d(10, 20, 5)),
-                ("dropout1", FeatureAlphaDropout()),
-                ("pool2", MaxPool2d(kernelSize: new long[] { 2, 2 })),
-                ("relu2", ReLU()),
-                ("flatten", Flatten()),
-                ("fc1", Linear(320, 64)),
-                ("relu3", ReLU()),
-                ("dropout2", Dropout()),
-                ("fc2", Linear(64, 10)),
-                ("logsm", LogSoftmax(1)));
+            if (device.Type == DeviceType.CUDA) {
+                _epochs *= 4;
+            }
 
-            return (device != null && device.Type == DeviceType.CUDA) ?
-                seq.to(device) as Sequential :
-                seq;
+            var optimizer = NN.Optimizer.Adam(model.parameters());
+
+            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.7, last_epoch: 5);
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            for (var epoch = 1; epoch <= _epochs; epoch++) {
+
+                Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
+                Test(model, nll_loss(reduction: NN.Reduction.Sum), device, test, test.Size);
+
+                Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
+            }
+
+            sw.Stop();
+            Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s.");
+
+            Console.WriteLine("Saving model to '{0}'", dataset + ".model.bin");
+            model.save(dataset + ".model.bin");
         }
 
-        private class Model : CustomModule
+        internal class Model : CustomModule
         {
-            private Conv2d conv1 = Conv2d(1, 10, 5);
-            private Conv2d conv2 = Conv2d(10, 20, 5);
-            private Linear fc1 = Linear(320, 50);
-            private Linear fc2 = Linear(50, 10);
+            private Conv2d conv1 = Conv2d(1, 32, 3);
+            private Conv2d conv2 = Conv2d(32, 64, 3);
+            private Linear fc1 = Linear(9216, 128);
+            private Linear fc2 = Linear(128, 10);
 
+            // These don't have any parameters, so the only reason to instantiate
+            // them is performance, since they will be used over and over.
             private MaxPool2d pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
-            private MaxPool2d pool2 = MaxPool2d(kernelSize: new long[] { 2, 2 });
 
             private ReLU relu1 = ReLU();
             private ReLU relu2 = ReLU();
             private ReLU relu3 = ReLU();
 
-            private FeatureAlphaDropout dropout1 = FeatureAlphaDropout();
-            private Dropout dropout2 = Dropout();
+            private Dropout dropout1 = Dropout(0.25);
+            private Dropout dropout2 = Dropout(0.5);
 
             private Flatten flatten = Flatten();
             private LogSoftmax logsm = LogSoftmax(1);
 
-
             public Model(string name, Device device = null) : base(name)
             {
-                RegisterModule("conv1", conv1);
-                RegisterModule("conv2", conv2);
-                RegisterModule("lin1", fc1);
-                RegisterModule("lin2", fc2);
-                RegisterModule("pool1", pool1);
-                RegisterModule("pool2", pool2);
-                RegisterModule("relu1", relu1);
-                RegisterModule("relu2", relu2);
-                RegisterModule("relu3", relu3);
-                RegisterModule("drop1", dropout1);
-                RegisterModule("drop2", dropout2);
-                RegisterModule("logsoft", logsm);
+                RegisterComponents();
 
                 if (device != null && device.Type == DeviceType.CUDA)
                     this.to(device);
@@ -159,31 +140,32 @@ namespace TorchSharp.Examples
 
             public override TorchTensor forward(TorchTensor input)
             {
-                using (var l11 = conv1.forward(input))
-                using (var l12 = pool1.forward(l11))
-                using (var l13 = relu1.forward(l12))
+                var l11 = conv1.forward(input);
+                var l12 = relu2.forward(l11);
 
-                using (var l21 = conv2.forward(l13))
-                using (var l22 = pool2.forward(l21))
-                using (var l23 = dropout1.forward(l22))
-                using (var l24 = relu2.forward(l23))
+                var l21 = conv2.forward(l12);
+                var l22 = relu2.forward(l21);
+                var l23 = pool1.forward(l22);
+                var l24 = dropout1.forward(l23);
 
-                using (var x = flatten.forward(l24))
+                var x = flatten.forward(l24);
 
-                using (var l31 = fc1.forward(x))
-                using (var l32 = relu3.forward(l31))
-                using (var l33 = dropout2.forward(l32))
+                var l31 = fc1.forward(x);
+                var l32 = relu3.forward(l31);
+                var l33 = dropout2.forward(l32);
 
-                using (var l41 = fc2.forward(l33))
+                var l41 = fc2.forward(l33);
+
                 return logsm.forward(l41);
             }
         }
 
 
         private static void Train(
-            Sequential model,
+            Model model,
             NN.Optimizer optimizer,
             Loss loss,
+            Device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
             long batchSize,
@@ -194,30 +176,30 @@ namespace TorchSharp.Examples
             int batchId = 1;
 
             Console.WriteLine($"Epoch: {epoch}...");
-            foreach (var (data, target) in dataLoader)
-            {
+            foreach (var (data, target) in dataLoader) {
                 optimizer.zero_grad();
 
-                using (var prediction = model.forward(data))
-                using (var output = loss(prediction, target))
-                {
-                    output.backward();
+                var prediction = model.forward(data);
+                var output = loss(prediction, target);
 
-                    optimizer.step();
+                output.backward();
 
-                    if (batchId % _logInterval == 0)
-                    {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle()}");
-                    }
+                optimizer.step();
 
-                    batchId++;
+                if (batchId % _logInterval == 0) {
+                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle():F4}");
                 }
+
+                batchId++;
+
+                GC.Collect();
             }
         }
 
         private static void Test(
-            Sequential model,
+            Model model,
             Loss loss,
+            Device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {
@@ -226,22 +208,22 @@ namespace TorchSharp.Examples
             double testLoss = 0;
             int correct = 0;
 
-            foreach (var (data, target) in dataLoader)
-            {
-                using (var prediction = model.forward(data))
-                using (var output = loss(prediction, target))
-                    {
-                    testLoss += output.ToSingle();
+            foreach (var (data, target) in dataLoader) {
+                var prediction = model.forward(data);
+                var output = loss(prediction, target);
+                testLoss += output.ToSingle();
 
-                    var pred = prediction.argmax(1);
-                    correct += pred.eq(target).sum().ToInt32();
+                var pred = prediction.argmax(1);
+                correct += pred.eq(target).sum().ToInt32();
 
-                    pred.Dispose();
-                }
+                pred.Dispose();
 
+                GC.Collect();
             }
 
-            Console.WriteLine($"\rTest set: Average loss {testLoss / size} | Accuracy {(double)correct / size}");
+            Console.WriteLine($"Size: {size}, Total: {size}");
+
+            Console.WriteLine($"\rTest set: Average loss {(testLoss / size):F4} | Accuracy {((double)correct / size):P2}");
         }
     }
 }
