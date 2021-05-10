@@ -15,33 +15,33 @@ namespace TorchSharp
 {
     public class TestLoadSave
     {
-        [Fact(Skip = "https://github.com/xamarin/TorchSharp/issues/251")]
+        [Fact]
         public void TestSaveLoadLinear()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var linear = Linear(100, 10, true);
             var params0 = linear.parameters();
-            linear.Save(".model.ts");
-            var loadedLinear = NN.Linear.Load(".model.ts");
+            linear.save(".model.ts");
+            var loadedLinear = Linear(100, 10, true);
+            loadedLinear.load(".model.ts");
             var params1 = loadedLinear.parameters();
             File.Delete(".model.ts");
 
-            Assert.NotNull(loadedLinear);
             Assert.Equal(params0, params1);
         }
 
-        [Fact(Skip = "https://github.com/xamarin/TorchSharp/issues/251")]
+        [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var conv = Conv2d(100, 10, 5);
             var params0 = conv.parameters();
-            conv.Save(".model.ts");
-            var loaded = NN.Conv2d.Load(".model.ts");
+            conv.save(".model.ts");
+            var loaded = Conv2d(100, 10, 5);
+            loaded.load(".model.ts");
             var params1 = loaded.parameters();
             File.Delete(".model.ts");
 
-            Assert.NotNull(loaded);
             Assert.Equal(params0, params1);
         }
 
@@ -52,10 +52,17 @@ namespace TorchSharp
             var lin1 = Linear(100, 10, true);
             var lin2 = Linear(10, 5, true);
             var seq = Sequential(("lin1", lin1), ("lin2", lin2));
-            seq.Save(".model-list.txt");
-            var loaded = NN.Sequential.Load(".model-list.txt");
+            var params0 = seq.parameters();
+            seq.save(".model-list.txt");
+
+            var lin3 = Linear(100, 10, true);
+            var lin4 = Linear(10, 5, true);
+            var seq1 = Sequential(("lin1", lin3), ("lin2", lin4));
+            seq1.load(".model-list.txt");
             File.Delete("model-list.txt");
-            Assert.NotNull(loaded);
+
+            var params1 = seq1.parameters();
+            Assert.Equal(params0, params1);
         }
 
         [Fact(Skip = "CIFAR10 data too big to keep in repo")]

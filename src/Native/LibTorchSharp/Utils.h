@@ -60,6 +60,12 @@ inline Tensor ResultTensor(const at::Tensor & res)
     );  \
     return ResultTensor(res);
 
+#define CATCH_SCALAR(expr) \
+    at::Scalar res = at::Scalar(); \
+    CATCH(  \
+        res = expr;  \
+    );  \
+    return ResultTensor(res);
 
 
 // Utility method used to built sharable strings.

@@ -90,7 +90,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Some non-deterministic race condition causes this test to fail every now and then. The lock help, but not completely.")]
         public void TestGeneratorState()
         {
             // This test fails intermittently with CUDA. Just skip it.

@@ -10,6 +10,7 @@
         public bool IsInt64 => Name == "Int64";
         public bool IsFloat16 => Name == "Float16";
         public bool IsBFloat16 => Name == "BFloat16";
+		public bool IsBool => Name == "Bool";
 
         private TorchTypeDef(string name, string storage) {
             this.Name = name;
