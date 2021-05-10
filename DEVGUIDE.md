@@ -39,6 +39,7 @@ An ephemeral feed of packages from CI is available
 * View link: https://donsyme.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=packages2
 * Nuget feed: https://donsyme.pkgs.visualstudio.com/TorchSharp/_packaging/packages2/nuget/v3/index.json
 
+Some releases are pushed to nuget
 
 ## Building the TorchSharp package
 
@@ -55,7 +56,15 @@ To change the TorchSharp package version update this [file](https://github.com/x
 
 ## Doing releases of the TorchSharp package
 
-The TorchSharp package is pushed to nuget.org maually via Azure DevOps CI release pipeline, see below.
+The TorchSharp package is pushed to nuget.org via Azure DevOps CI release pipeline.  Assuming you're not building or updating the LibTorch packages
+(`BuildLibTorchPackages` is `false` in [azure-pipelines.yml](azure-pipelines.yml)) this is pretty simple once you have the permissions: 
+
+1. Integrate code to master and wait for CI to process
+2. Go to [releases](https://donsyme.visualstudio.com/TorchSharp/_release) and choose "Create Release" (top right)
+3. Under "Artifacts-->Version" choose the pipeline build corresponding to the thing you want to release.  It should be a successful build on master
+4. Press "Create"
+
+The package version is currently taken from the CI build version.
 
 # The libtorch packages
 
