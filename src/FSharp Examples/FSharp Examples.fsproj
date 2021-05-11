@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,23 +6,23 @@
     <TestCuda>true</TestCuda>
     <TargetFramework>net5.0</TargetFramework>
     <TestUsesLibTorch>true</TestUsesLibTorch>
-    <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
-    <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
-    <StartupObject>TorchSharp.Examples.AdversarialExampleGeneration</StartupObject>
-    <IsPackable>false</IsPackable>
-    <PlatformTarget>x64</PlatformTarget>
-    <RootNamespace>TorchSharp.Examples</RootNamespace>
+    <RootNamespace>Examples</RootNamespace>
+    <AssemblyName>FSharp.Examples</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="MNIST.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.3.1" />
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+    <PackageReference Include="System.Memory" Version="4.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Examples.Utils\Examples.Utils.csproj" />
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>
-  
 
 </Project>

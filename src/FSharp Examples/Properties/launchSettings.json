@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FSharp Examples": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
