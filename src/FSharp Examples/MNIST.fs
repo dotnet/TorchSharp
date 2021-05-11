@@ -31,28 +31,21 @@ open TorchSharp.Examples
 /// constant below at the folder location.
 /// </remarks>
 
-let mutable _trainBatchSize = 64
-let mutable _testBatchSize = 128
+let mutable trainBatchSize = 64
+let mutable testBatchSize = 128
 
-let _logInterval = 100
+let logInterval = 100
 
 let cmdArgs = Environment.GetCommandLineArgs()
-let dataset =
-    match cmdArgs.Length with
-    | 2 -> cmdArgs.[1]
-    | _ -> "mnist"
+let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
+let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
 Torch.SetSeed(1L)
 
 let hasCUDA = Torch.IsCudaAvailable()
 
-let device =
-    match hasCUDA with
-    | true -> Device.CUDA
-    | false -> Device.CPU
-
+let device = if hasCUDA then Device.CUDA else Device.CPU
 
 type Model(name) as this =
     inherit CustomModule(name)
@@ -79,28 +72,25 @@ type Model(name) as this =
             this.``to``(device) |> ignore
 
     override _.forward(input) =
-
-        input |>
-        conv1.forward |> relu.forward |>
-        conv2.forward |> relu.forward |>  pool1.forward |>
-        dropout1.forward |>
-        flatten.forward |>
-        fc1.forward |> relu.forward |>
-        dropout2.forward |>
-        fc2.forward |> logsm.forward
+        input
+        |> conv1.forward |> relu.forward
+        |> conv2.forward |> relu.forward |> pool1.forward
+        |> dropout1.forward
+        |> flatten.forward
+        |> fc1.forward |> relu.forward
+        |> dropout2.forward
+        |> fc2.forward |> logsm.forward
 
 let loss x y = Functions.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
-let train (model:Model) (optimizer:NN.Optimizer) (dataLoader:MNISTReader) epoch batchSize size =
-
+let train (model: Model) (optimizer: NN.Optimizer) (dataLoader: MNISTReader) epoch batchSize size =
     model.Train()
 
     let mutable batchID = 1
 
-    Console.WriteLine($"Epoch: {epoch}...")
+    printfn $"Epoch: {epoch}..."
 
     for (X,y) in dataLoader do
-
         optimizer.zero_grad()
 
         use ŷ = model.forward(X)
@@ -109,18 +99,17 @@ let train (model:Model) (optimizer:NN.Optimizer) (dataLoader:MNISTReader) epoch 
         output.backward()
         optimizer.step()
 
-        if batchID % _logInterval = 0 then
-            Console.WriteLine($"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}")
+        if batchID % logInterval = 0 then
+            printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
 
         batchID <- batchID + 1
 
         GC.Collect()
 
 let test (model:Model) (optimizer:NN.Optimizer) (dataLoader:MNISTReader) size =
-
     model.Eval()
 
-    let sz = (float32)size
+    let sz = float32 size
 
     let mutable testLoss = 0.0f
     let mutable correct = 0
@@ -137,18 +126,16 @@ let test (model:Model) (optimizer:NN.Optimizer) (dataLoader:MNISTReader) size =
 
         GC.Collect()
 
-    Console.WriteLine($"Size: {sz}, Total: {sz}")
-    Console.WriteLine($"\rTest set: Average loss {(testLoss / sz):F4} | Accuracy {((float32)correct / sz):P2}")
+    printfn $"Size: {sz}, Total: {sz}"
+    printfn $"\rTest set: Average loss {(testLoss / sz):F4} | Accuracy {(float32 correct / sz):P2}"
 
-let trainingLoop _epochs dataset (model:Model) trainData (testData:MNISTReader) =
-
-    let mutable epochs = _epochs
+let trainingLoop epochs dataset (model:Model) trainData (testData:MNISTReader) =
+    let mutable epochs = epochs
 
     if device.Type = DeviceType.CUDA then
         epochs <- epochs * 4
 
     use optimizer = NN.Optimizer.Adam(model.parameters())
-    let scheduler = NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5)
 
     let sw = Stopwatch()
     sw.Start()
@@ -159,12 +146,12 @@ let trainingLoop _epochs dataset (model:Model) trainData (testData:MNISTReader) 
     
     sw.Stop()
 
-    Console.WriteLine($"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s.")
-    Console.WriteLine("Saving model to '{0}'", dataset + ".model.bin")
+    printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
+    printfn $"Saving model to '{dataset}'.model.bin"
 
 let run epochs =
-    Console.WriteLine($"Running MNIST on {device.Type.ToString()}")
-    Console.WriteLine($"Dataset: {dataset}")
+    printfn $"Running MNIST on {device.Type.ToString()}"
+    printfn $"Dataset: {dataset}"
 
     let sourceDir = datasetPath
     let targetDir = Path.Combine(datasetPath, "test_data")
@@ -177,12 +164,12 @@ let run epochs =
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
     if device.Type = DeviceType.CUDA then
-        _trainBatchSize <- _trainBatchSize * 4
-        _testBatchSize <- _testBatchSize * 4
+        trainBatchSize <- trainBatchSize * 4
+        testBatchSize <- testBatchSize * 4
 
     let normImage = TorchVision.Transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use train = new MNISTReader(targetDir, "train", _trainBatchSize, device=device, shuffle=true, transform=normImage)
-    use test = new MNISTReader(targetDir, "t10k", _testBatchSize, device=device, transform=normImage)
+    use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
+    use test = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
 
     use model = new Model("model")
     
