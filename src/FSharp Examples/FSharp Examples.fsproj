@@ -11,7 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TextClassification.fs" />
+    <Compile Include="SequenceToSequence.fs" />
+    <Compile Include="AlexNet.fs" />
     <Compile Include="MNIST.fs" />
+    <Compile Include="AdversarialExampleGeneration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

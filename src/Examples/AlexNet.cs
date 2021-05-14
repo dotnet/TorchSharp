@@ -26,11 +26,11 @@ namespace TorchSharp.Examples
         private readonly static string _dataset = "CIFAR10";
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", _dataset);
 
-        private static int _epochs = 100;
+        private static int _epochs = 1;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
-        private readonly static int _logInterval = 10;
+        private readonly static int _logInterval = 25;
         private readonly static int _numClasses = 10;
 
         static void Main(string[] args)
@@ -38,15 +38,16 @@ namespace TorchSharp.Examples
             Torch.SetSeed(1);
 
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine();
-            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.Type.ToString()}");
-            Console.WriteLine();
 
             if (device.Type == DeviceType.CUDA) {
                 _trainBatchSize *= 8;
                 _testBatchSize *= 8;
                 _epochs *= 16;
             }
+
+            Console.WriteLine();
+            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.Type.ToString()} for {_epochs} epochs");
+            Console.WriteLine();
 
             var sourceDir = _dataLocation;
             var targetDir = Path.Combine(_dataLocation, "test_data");
@@ -133,13 +134,13 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-        Model model,
-        NN.Optimizer optimizer,
-        Loss loss,
-        IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
-        int epoch,
-        long batchSize,
-        long size)
+            Model model,
+            NN.Optimizer optimizer,
+            Loss loss,
+            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            int epoch,
+            long batchSize,
+            long size)
         {
             model.Train();
 
@@ -167,7 +168,8 @@ namespace TorchSharp.Examples
                     }
 
                     if (batchId % _logInterval == 0) {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle().ToString("0.0000")} Acc: { ((float)correct / total).ToString("0.0000") }");
+                        var count = Math.Min(batchId * batchSize, size);
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{count} / {size}] Loss: {output.ToSingle().ToString("0.0000")} Acc: { ((float)correct / total).ToString("0.0000") }");
                     }
 
                     batchId++;
@@ -203,7 +205,7 @@ namespace TorchSharp.Examples
 
             }
 
-            Console.WriteLine($"\rTest set: Average loss {(testLoss/batchCount).ToString("0.0000")} | Accuracy {((float)correct / size).ToString("0.0000")}");
+            Console.WriteLine($"\rTest set: Average loss {(testLoss / batchCount).ToString("0.0000")} | Accuracy {((float)correct / size).ToString("0.0000")}");
         }
     }
 }

@@ -47,7 +47,16 @@ let hasCUDA = Torch.IsCudaAvailable()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 
-type Model(name) as this =
+let getDataFiles sourceDir targetDir =
+
+    if not (Directory.Exists(targetDir)) then
+        Directory.CreateDirectory(targetDir) |> ignore
+        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-images-idx3-ubyte.gz"), targetDir)
+        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-labels-idx1-ubyte.gz"), targetDir)
+        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
+        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
+
+type Model(name,device:Device) as this =
     inherit CustomModule(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)
@@ -57,7 +66,7 @@ type Model(name) as this =
 
     let pool1 = MaxPool2d(kernelSize=[|2L; 2L|])
 
-    let relu = ReLU();
+    let relu = ReLU()
 
     let dropout1 = Dropout(0.25)
     let dropout2 = Dropout(0.5)
@@ -73,95 +82,93 @@ type Model(name) as this =
 
     override _.forward(input) =
         input
-        |> conv1.forward |> relu.forward
-        |> conv2.forward |> relu.forward |> pool1.forward
-        |> dropout1.forward
-        |> flatten.forward
-        |> fc1.forward |> relu.forward
-        |> dropout2.forward
-        |> fc2.forward |> logsm.forward
+        --> conv1 --> relu --> conv2 --> relu --> pool1 --> dropout1
+        --> flatten
+        --> fc1 --> relu --> dropout2 --> fc2
+        --> logsm
 
 let loss x y = Functions.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
-let train (model: Model) (optimizer: NN.Optimizer) (dataLoader: MNISTReader) epoch batchSize size =
+let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
     model.Train()
+
+    let size = dataLoader.Size
+    let batchSize = dataLoader.BatchSize
 
     let mutable batchID = 1
 
     printfn $"Epoch: {epoch}..."
 
-    for (X,y) in dataLoader do
+    for (input,labels) in dataLoader do
         optimizer.zero_grad()
 
-        use ŷ = model.forward(X)
-        use output = loss ŷ y
+        begin  // This is introduced in order to let a few tensors go out of scope before GC
+            use estimate = input --> model
+            use output = loss estimate labels
 
-        output.backward()
-        optimizer.step()
+            output.backward()
+            optimizer.step()
 
-        if batchID % logInterval = 0 then
-            printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
+            if batchID % logInterval = 0 then
+                printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
 
-        batchID <- batchID + 1
+            batchID <- batchID + 1
+        end
 
         GC.Collect()
 
-let test (model:Model) (optimizer:NN.Optimizer) (dataLoader:MNISTReader) size =
+let test (model:Model) (dataLoader:MNISTReader) =
     model.Eval()
 
-    let sz = float32 size
+    let sz = float32 dataLoader.Size
 
     let mutable testLoss = 0.0f
     let mutable correct = 0
 
-    for (X,y) in dataLoader do
+    for (input,labels) in dataLoader do
 
-        do  // This is introduced in order to let a few tensors go out of scope before GC
-            use ŷ = model.forward(X)
-            use output = loss ŷ y
+        begin  // This is introduced in order to let a few tensors go out of scope before GC
+            use estimate = input --> model
+            use output = loss estimate labels
             testLoss <- testLoss + output.ToSingle()
 
-            let pred = ŷ.argmax(1L)
-            correct <- correct + pred.eq(y).sum().ToInt32()
+            let pred = estimate.argmax(1L)
+            correct <- correct + pred.eq(labels).sum().ToInt32()
+        end
 
         GC.Collect()
 
     printfn $"Size: {sz}, Total: {sz}"
     printfn $"\rTest set: Average loss {(testLoss / sz):F4} | Accuracy {(float32 correct / sz):P2}"
 
-let trainingLoop epochs dataset (model:Model) trainData (testData:MNISTReader) =
-    let mutable epochs = epochs
+let trainingLoop (model:Model) epochs dataset trainData testData =
 
-    if device.Type = DeviceType.CUDA then
-        epochs <- epochs * 4
+    let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
 
-    use optimizer = NN.Optimizer.Adam(model.parameters())
+    let optimizer = NN.Optimizer.Adam(model.parameters())
+    NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
 
     let sw = Stopwatch()
     sw.Start()
 
     for epoch = 1 to epochs do
-        train model optimizer trainData epoch trainData.BatchSize trainData.Size
-        test model optimizer testData testData.Size
+        train model optimizer trainData epoch
+        test model testData
     
     sw.Stop()
 
     printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
     printfn $"Saving model to '{dataset}'.model.bin"
 
+    model.save(dataset + ".model.bin")
+
 let run epochs =
     printfn $"Running MNIST on {device.Type.ToString()}"
     printfn $"Dataset: {dataset}"
 
-    let sourceDir = datasetPath
     let targetDir = Path.Combine(datasetPath, "test_data")
 
-    if not (Directory.Exists(targetDir)) then
-        Directory.CreateDirectory(targetDir) |> ignore
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-labels-idx1-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
+    getDataFiles datasetPath targetDir
 
     if device.Type = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
@@ -171,8 +178,6 @@ let run epochs =
     use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
     use test = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
 
-    use model = new Model("model")
+    let model = new Model("model", device)
     
-    trainingLoop epochs dataset model train test
-
-    model.save(dataset + ".model.bin")
+    trainingLoop model epochs dataset train test
