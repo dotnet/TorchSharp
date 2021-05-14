@@ -12,7 +12,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Embedding_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor input)
+        public override TorchTensor forward (TorchTensor input)
         {
             var res = THSNN_Embedding_forward(handle, input.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

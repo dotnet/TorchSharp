@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_GroupNorm_forward (IntPtr module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
             var res = THSNN_GroupNorm_forward (handle.DangerousGetHandle (), tensor.Handle);

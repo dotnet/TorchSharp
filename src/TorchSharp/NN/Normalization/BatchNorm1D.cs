@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_BatchNorm1d_forward (IntPtr module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             if (tensor.Dimensions < 2 || tensor.Dimensions > 3) throw new ArgumentException($"Invalid number of dimensions for BatchNorm argument: {tensor.Dimensions}");
             var res = THSNN_BatchNorm1d_forward (handle.DangerousGetHandle (), tensor.Handle);

@@ -413,16 +413,19 @@ namespace TorchSharp.NN
             return res;
         }
 
-        public void save(string location)
+        public virtual TorchTensor forward(TorchTensor t) => throw new NotImplementedException("forward");
+
+        public Module save(string location)
         {
             cpu();
 
             using (var stream = System.IO.File.OpenWrite(location))
             using (var writer = new System.IO.BinaryWriter(stream))
                 save(writer);
+            return this;
         }
 
-        public void save(System.IO.BinaryWriter writer)
+        public Module save(System.IO.BinaryWriter writer)
         {
             var sd = state_dict();
 
@@ -434,16 +437,19 @@ namespace TorchSharp.NN
                 writer.Write(k);
                 v.Save(writer);
             }
+
+            return this;
         }
 
-        public void load(string location)
+        public Module load(string location)
         {
             using (var stream = System.IO.File.OpenRead(location))
             using (var reader = new System.IO.BinaryReader(stream))
                 load(reader);
+            return this;
         }
 
-        public void load(System.IO.BinaryReader reader)
+        public Module load(System.IO.BinaryReader reader)
         {
             var sd = state_dict();
 
@@ -461,6 +467,8 @@ namespace TorchSharp.NN
 
                 sd[key].Load(reader);
             }
+
+            return this;
         }
     }
 
@@ -581,7 +589,5 @@ namespace TorchSharp.NN
 
         /// Keeps the callback delegate alive
         private ForwardFunctionC forwardNative;
-
-        abstract public TorchTensor forward (TorchTensor t);
     }
 }

@@ -6159,6 +6159,9 @@ namespace TorchSharp.Tensor
             return right.le(left);
         }
 
+        // Specifically added to make F# look good.
+        public static TorchTensor op_MinusMinusGreater(TorchTensor t, TorchSharp.NN.Module m) => m.forward(t);
+
         /// <summary>
         ///   Get a string representation of the tensor.
         /// </summary>

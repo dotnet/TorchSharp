@@ -22,7 +22,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Conv1d_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Conv1d_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_LogSoftmax_forward(Module.HType handle, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_LogSoftmax_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
