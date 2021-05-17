@@ -15,7 +15,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Identity_forward (Module.HType module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Identity_forward (handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

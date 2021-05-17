@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 using TorchSharp.NN;
+
 using static TorchSharp.NN.Modules;
 using static TorchSharp.NN.Functions;
 using static TorchSharp.Tensor.TensorExtensionMethods;
@@ -97,7 +98,7 @@ namespace TorchSharp.Examples
 
                     model = new MNIST.Model("model", device);
 
-                    using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage)) {
+                    using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage)) {
                         MNIST.TrainingLoop(dataset, device, model, train, test);
                     }
 

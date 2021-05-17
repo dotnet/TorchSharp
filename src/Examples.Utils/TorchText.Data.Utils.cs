@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace TorchText.Data
@@ -14,7 +14,6 @@ namespace TorchText.Data
             if (name == "basic_english") return BasicEnglish;
             throw new NotImplementedException($"The '{name}' text tokenizer is not implemented.");
         }
-
 
         private static string[] _patterns = new string []{
              "\'",
@@ -49,7 +48,7 @@ namespace TorchText.Data
 
         private static IEnumerable<string> BasicEnglish(string input)
         {
-            if (_patterns.Length != _replacements.Length) 
+            if (_patterns.Length != _replacements.Length)
                 throw new InvalidProgramException("internal error: patterns and replacements are not the same length");
 
             input = input.Trim().ToLowerInvariant();

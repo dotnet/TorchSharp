@@ -17,7 +17,7 @@ namespace TorchSharp.NN
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_AvgPool3d_forward (IntPtr module, IntPtr tensor);
 
-        public TorchTensor forward (TorchTensor tensor)
+        public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_AvgPool3d_forward (handle.DangerousGetHandle (), tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

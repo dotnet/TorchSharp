@@ -1,8 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using TorchSharp;
 using TorchSharp.Tensor;
 
@@ -61,7 +60,7 @@ namespace TorchText.Data
         }
 
         private List<(TorchTensor, TorchTensor, TorchTensor)> _data;
-        bool disposedValue;
+        private bool disposedValue;
 
         private (TorchTensor, TorchTensor, TorchTensor) Batchifier(IEnumerable<(int, string)> input, Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab)
         {

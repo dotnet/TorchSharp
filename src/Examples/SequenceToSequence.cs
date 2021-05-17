@@ -49,7 +49,7 @@ namespace TorchSharp.Examples
             var cwd = Environment.CurrentDirectory;
 
             var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()}");
+            Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs.");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);
             var tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english");
@@ -69,8 +69,6 @@ namespace TorchSharp.Examples
 
             var bptt = 32;
 
-            var (data, targets) = GetBatch(train_data, 0, bptt);
-
             var ntokens = vocab.Count;
 
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
@@ -89,14 +87,14 @@ namespace TorchSharp.Examples
 
                 train(epoch, train_data, model, loss, bptt, ntokens, optimizer);
 
-                var val_loss = evaluate(valid_data, model, loss, lr, bptt, ntokens, optimizer);
+                var val_loss = evaluate(valid_data, model, loss, bptt, ntokens, optimizer);
                 sw.Stop();
 
                 Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
                 scheduler.step();
             }
 
-            var tst_loss = evaluate(test_data, model, loss, lr, bptt, ntokens, optimizer);
+            var tst_loss = evaluate(test_data, model, loss, bptt, ntokens, optimizer);
             totalTime.Stop();
 
             Console.WriteLine($"\nEnd of training | time: {totalTime.Elapsed.TotalSeconds:0.0}s | loss: {tst_loss:0.00}\n");
@@ -145,7 +143,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, double lr, int bptt, int ntokens, Optimizer optimizer)
+        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
         {
             model.Eval();
 
@@ -198,7 +196,7 @@ namespace TorchSharp.Examples
             var len = Math.Min(bptt, source.shape[0] - 1 - index);
             var data = source[TorchTensorIndex.Slice(index, index + len)];
             var target = source[TorchTensorIndex.Slice(index + 1, index + 1 + len)].reshape(-1);
-                return (data, target);
+            return (data, target);
         }
 
         class TransformerModel : CustomModule
@@ -228,7 +226,9 @@ namespace TorchSharp.Examples
             public TorchTensor GenerateSquareSubsequentMask(long size)
             {
                 var mask = (Float32Tensor.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
-                return mask.to_type(ScalarType.Float32).masked_fill(mask == 0, float.NegativeInfinity).masked_fill(mask == 1, 0.0f).to(device);
+                return mask.to_type(ScalarType.Float32)
+                    .masked_fill(mask == 0, float.NegativeInfinity)
+                    .masked_fill(mask == 1, 0.0f).to(device);
             }
 
             private void InitWeights()

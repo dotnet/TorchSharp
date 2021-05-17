@@ -1,7 +1,7 @@
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TorchSharp.Tensor;
 using TorchSharp.TorchVision;
@@ -15,7 +15,7 @@ namespace TorchSharp.Examples
     /// A number of single-channel (grayscale) images are laid out in a flat file with four 32-bit integers at the head.
     /// The format is documented at the bottom of the page at: http://yann.lecun.com/exdb/mnist/
     /// </summary>
-    class MNISTReader : IEnumerable<(TorchTensor, TorchTensor)>, IDisposable
+    public sealed class MNISTReader : IEnumerable<(TorchTensor, TorchTensor)>, IDisposable
     {
         /// <summary>
         /// Constructor

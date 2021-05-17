@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="tensor">Input tensor</param>
         /// <returns></returns>
-        public TorchTensor forward(TorchTensor tensor)
+        public override TorchTensor forward(TorchTensor tensor)
         {
             var res = THSNN_Upsample_forward(handle, tensor.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }

@@ -5,10 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TorchSharp.Tensor;
 using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
+using TorchSharp.Tensor;
 using static TorchSharp.NN.Functions;
+using static TorchSharp.NN.Modules;
 
 namespace TorchText.Vocab
 {
@@ -36,7 +36,6 @@ namespace TorchText.Vocab
             }
         }
         public int this[T key] { get => _dict[key]; }
-
 
         public IEnumerator<KeyValuePair<T, int>> GetEnumerator()
         {
