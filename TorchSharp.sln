@@ -53,7 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Release", "Native-Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchSharpTest.WithCudaBinaries", "test\TorchSharpTest.WithCudaBinaries\TorchSharpTest.WithCudaBinaries.csproj", "{DD652544-711E-4029-83FF-DA4A9600E6E7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp Examples", "src\FSharp Examples\FSharp Examples.fsproj", "{05031D1C-D0B2-4BF3-A6AF-3339A78437E3}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Examples", "src\FSharp.Examples\FSharp.Examples.fsproj", "{05031D1C-D0B2-4BF3-A6AF-3339A78437E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples.Utils", "src\Examples.Utils\Examples.Utils.csproj", "{AACEAE55-804D-45BC-BC3D-1AB8E856E0E8}"
 EndProject

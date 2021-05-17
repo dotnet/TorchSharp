@@ -12,24 +12,21 @@ open type TorchSharp.NN.Modules
 
 open TorchSharp.Examples
 
-/// <summary>
-/// Simple MNIST Convolutional model.
-/// </summary>
-/// <remarks>
-/// There are at least two interesting data sets to use with this example:
-/// 
-/// 1. The classic MNIST set of 60000 images of handwritten digits.
-///
-///     It is available at: http://yann.lecun.com/exdb/mnist/
-///     
-/// 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
-///    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
-///    data.
-///    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-///
-/// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-/// constant below at the folder location.
-/// </remarks>
+// Simple MNIST Convolutional model.
+// 
+// There are at least two interesting data sets to use with this example:
+// 
+// 1. The classic MNIST set of 60000 images of handwritten digits.
+//
+//     It is available at: http://yann.lecun.com/exdb/mnist/
+//     
+// 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
+//    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
+//    data.
+//    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
+//
+// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
+// constant below at the folder location.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128

@@ -14,16 +14,13 @@ open type TorchSharp.NN.Modules
 
 open TorchSharp.Examples
 
-/// <summary>
-/// This example is based on the PyTorch tutorial at:
-/// 
-/// https://pytorch.org/tutorials/beginner/text_sentiment_ngrams_tutorial.html
-///
-/// It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
-///
-/// https://github.com/mhjabreel/CharCnn_Keras/tree/master/data/ag_news_csv
-///
-/// </summary>
+// This example is based on the PyTorch tutorial at:
+// 
+// https://pytorch.org/tutorials/beginner/text_sentiment_ngrams_tutorial.html
+//
+// It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
+//
+// https://github.com/mhjabreel/CharCnn_Keras/tree/master/data/ag_news_csv
 
 let emsize = 200L
 

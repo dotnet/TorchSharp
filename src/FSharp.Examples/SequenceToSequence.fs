@@ -14,16 +14,14 @@ open type TorchSharp.NN.Modules
 
 open TorchSharp.Examples
 
-/// <summary>
-/// This example is based on the PyTorch tutorial at:
-/// 
-/// https://pytorch.org/tutorials/beginner/transformer_tutorial.html
-///
-/// It relies on the WikiText2 dataset, which can be downloaded at:
-///
-/// https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip
-///
-/// </summary>
+// This example is based on the PyTorch tutorial at:
+// 
+// https://pytorch.org/tutorials/beginner/transformer_tutorial.html
+//
+// It relies on the WikiText2 dataset, which can be downloaded at:
+//
+// https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip
+//
 
 let emsize = 200L
 let nhidden = 200L

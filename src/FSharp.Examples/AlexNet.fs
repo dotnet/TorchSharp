@@ -11,16 +11,13 @@ open TorchSharp.NN
 open type TorchSharp.NN.Modules
 open type TorchSharp.TorchScalar
 
-/// <summary>
-/// Modified version of original AlexNet to fix CIFAR10 32x32 images.
-/// </summary>
-/// <remarks>
-/// The dataset for this example can be found at: http://yann.lecun.com/exdb/mnist/
-/// Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
-/// the '_dataLocation' definition below to point at the right folder.
-///
-/// Note: so far, CIFAR10 is supported, but not CIFAR100.
-/// </remarks>
+// Modified version of original AlexNet to fix CIFAR10 32x32 images.
+// 
+// The dataset for this example can be found at: http://yann.lecun.com/exdb/mnist/
+// Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
+// the '_dataLocation' definition below to point at the right folder.
+//
+// Note: so far, CIFAR10 is supported, but not CIFAR100.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128

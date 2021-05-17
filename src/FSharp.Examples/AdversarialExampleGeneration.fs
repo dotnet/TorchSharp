@@ -13,33 +13,30 @@ open type TorchSharp.TorchScalar
 
 open TorchSharp.Examples
 
-/// <summary>
-/// FGSM Attack
-///
-/// Based on : https://pytorch.org/tutorials/beginner/fgsm_tutorial.html
-/// </summary>
-/// <remarks>
-/// There are at least two interesting data sets to use with this example:
-/// 
-/// 1. The classic MNIST set of 60000 images of handwritten digits.
-///
-///     It is available at: http://yann.lecun.com/exdb/mnist/
-///     
-/// 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
-///    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
-///    data.
-///    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-///
-/// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-/// constant below at the folder location.
-///
-/// The example is based on the PyTorch tutorial, but the results from attacking the model are very different from
-/// what the tutorial article notes, at least on the machine where it was developed. There is an order-of-magnitude lower
-/// drop-off in accuracy in this version. That said, when running the PyTorch tutorial on the same machine, the
-/// accuracy trajectories are the same between .NET and Python. If the base convulutational model is trained
-/// using Python, and then used for the FGSM attack in both .NET and Python, the drop-off trajectories are extremenly
-/// close.
-/// </remarks>
+// FGSM Attack
+//
+// Based on : https://pytorch.org/tutorials/beginner/fgsm_tutorial.html
+// 
+// There are at least two interesting data sets to use with this example:
+// 
+// 1. The classic MNIST set of 60000 images of handwritten digits.
+//
+//     It is available at: http://yann.lecun.com/exdb/mnist/
+//     
+// 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
+//    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
+//    data.
+//    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
+//
+// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
+// constant below at the folder location.
+//
+// The example is based on the PyTorch tutorial, but the results from attacking the model are very different from
+// what the tutorial article notes, at least on the machine where it was developed. There is an order-of-magnitude lower
+// drop-off in accuracy in this version. That said, when running the PyTorch tutorial on the same machine, the
+// accuracy trajectories are the same between .NET and Python. If the base convulutational model is trained
+// using Python, and then used for the FGSM attack in both .NET and Python, the drop-off trajectories are extremenly
+// close.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128
