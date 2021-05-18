@@ -14,6 +14,180 @@ namespace TorchSharp
     public class TestTorchTensor
     {
         [Fact]
+        public void CreateFloat32TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Float32Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0.0f, t[0, 0].ToSingle());
+            Assert.Equal(0.0f, t[1, 1].ToSingle());
+        }
+
+        [Fact]
+        public void CreateByteTensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ByteTensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal((byte)0, t[0, 0].ToByte());
+            Assert.Equal((byte)0, t[1, 1].ToByte());
+        }
+
+        [Fact]
+        public void CreateInt32TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Int32Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0, t[0, 0].ToInt32());
+            Assert.Equal(0, t[1, 1].ToInt32());
+        }
+
+        [Fact]
+        public void CreateInt64TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = Int64Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0L, t[0, 0].ToInt64());
+            Assert.Equal(0L, t[1, 1].ToInt64());
+        }
+
+        [Fact]
+        public void CreateBoolTensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = BoolTensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal((object)false, t[0, 0].ToBoolean());
+            Assert.Equal((object)false, t[1, 1].ToBoolean());
+        }
+
+        [Fact]
+        public void CreateFloat16TensorZeros()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = Float16Tensor.zeros(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                    Assert.Equal(0.0f, t[0, 0].ToSingle());
+                    Assert.Equal(0.0f, t[1, 1].ToSingle());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateBFloat16TensorZeros()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = BFloat16Tensor.zeros(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                    Assert.Equal(0.0f, t[0, 0].ToSingle());
+                    Assert.Equal(0.0f, t[1, 1].ToSingle());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateFloat32TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Float32Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateByteTensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ByteTensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateInt32TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Int32Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateInt64TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = Int64Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateBoolTensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = BoolTensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateTensorEmptyStrided()
+        {
+            var shape = new long[] { 2, 3 };
+            var strides = new long[] { 1, 2 };
+
+            TorchTensor t = Float32Tensor.empty_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.GetTensorStride(0));
+            Assert.Equal(2, t.GetTensorStride(1));
+        }
+
+        [Fact]
+        public void CreateTensorEmptyAsStrided()
+        {
+            var shape = new long[] { 2, 3 };
+            var strides = new long[] { 1, 2 };
+
+            TorchTensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.GetTensorStride(0));
+            Assert.Equal(2, t.GetTensorStride(1));
+        }
+
+        [Fact]
+        public void CreateFloat16TensorEmpty()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = Float16Tensor.empty(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateBFloat16TensorEmpty()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = BFloat16Tensor.empty(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void CreateFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };

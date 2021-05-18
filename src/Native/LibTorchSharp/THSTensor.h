@@ -336,6 +336,23 @@ EXPORT_API(Tensor) THSTensor_empty(
     const int device_type, const int device_index,
     const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_empty_strided(
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int8_t scalar_type,
+    const int device_type, const int device_index,
+    const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_as_strided(
+    const Tensor input,
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int64_t storage_offset);
+
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_eq_(const Tensor left, const Tensor right);

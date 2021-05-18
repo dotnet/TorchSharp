@@ -833,6 +833,25 @@ namespace TorchSharp.Tensor
             return res;
         }
 
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_as_strided(IntPtr input, IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, long storageOffset);
+
+        /// <summary>
+        ///  Create a view of an existing torch.Tensor input with specified size, stride and storage offset.
+        /// </summary>
+        public TorchTensor as_strided (long[] size, long[] strides, long storageOffset = 0L)
+        {
+            unsafe {
+                fixed (long* psizes = size, pstrides = strides) {
+                    var result = THSTensor_as_strided(handle, (IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, storageOffset);
+                    if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(result);
+                }
+            }
+        }
+
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_backward(IntPtr handle);
 

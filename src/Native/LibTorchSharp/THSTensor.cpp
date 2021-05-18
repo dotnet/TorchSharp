@@ -110,7 +110,7 @@ Tensor THSTensor_addcmul_(const Tensor left, const Tensor tensor1, const Tensor 
     CATCH_TENSOR(left->addcmul_(*tensor1, *tensor2, *value));
 }
 
-Tensor THSTensor_addmm(const Tensor mat, const Tensor mat1, const Tensor mat2, const float beta,const float alpha)
+Tensor THSTensor_addmm(const Tensor mat, const Tensor mat1, const Tensor mat2, const float beta, const float alpha)
 {
     CATCH_TENSOR(mat->addmm(*mat1, *mat2, beta, alpha));
 }
@@ -333,7 +333,7 @@ Tensor THSTensor_avg_pool2d_backward(
         at::ArrayRef<int64_t>(padding, paddingLength),
         ceil_mode,
         count_include_pad,
-        (divisor_override == 0 ? c10::optional<int64_t>(): c10::optional<int64_t>(divisor_override))));
+        (divisor_override == 0 ? c10::optional<int64_t>() : c10::optional<int64_t>(divisor_override))));
 }
 
 Tensor THSTensor_avg_pool3d(
@@ -688,7 +688,7 @@ Tensor THSTensor_cosh_(const Tensor tensor)
 
 Tensor THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim)
 {
-    CATCH_TENSOR(tensor-> cross(*other, dim));
+    CATCH_TENSOR(tensor->cross(*other, dim));
 }
 
 Tensor THSTensor_cpu(const Tensor tensor)
@@ -784,7 +784,7 @@ Tensor THSTensor_diagonal(const Tensor tensor, const int64_t offset, const int64
 Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
 {
     c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
-    c10::optional<at::Tensor> app  = append != nullptr  ? *append : c10::optional<at::Tensor>(c10::nullopt);
+    c10::optional<at::Tensor> app = append != nullptr ? *append : c10::optional<at::Tensor>(c10::nullopt);
     CATCH_TENSOR(tensor->diff(n, dim, prep, app));
 }
 
@@ -867,6 +867,34 @@ Tensor THSTensor_empty(
         .requires_grad(requires_grad);
 
     CATCH_TENSOR(torch::empty(at::ArrayRef<int64_t>(sizes, length), options));
+}
+
+Tensor THSTensor_empty_strided(
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int8_t scalar_type,
+    const int device_type, const int device_index,
+    const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::empty_strided(at::ArrayRef<int64_t>(sizes, sz_length), at::ArrayRef<int64_t>(strides, str_length), options));
+}
+
+Tensor THSTensor_as_strided(
+    const Tensor input,
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int64_t storage_offset)
+{
+    CATCH_TENSOR(input->as_strided(at::ArrayRef<int64_t>(sizes, sz_length), at::ArrayRef<int64_t>(strides, str_length), storage_offset));
 }
 
 Tensor THSTensor_eq(const Tensor left, const Tensor right)
@@ -1276,7 +1304,7 @@ void completeTensorIndices(const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
     const Tensor* indexTensors,
-    at::indexing::TensorIndex * indicesArray,
+    at::indexing::TensorIndex* indicesArray,
     const int indicesLength)
 {
     // The indexStart encodes the kind of slice being performed for each dimension
@@ -1288,7 +1316,7 @@ void completeTensorIndices(const int64_t* indexStarts,
     {
         auto n = indexStarts[i];
         if (n == INT64_MIN) // TensorIndex 'Null'
-        {  
+        {
             at::indexing::TensorIndex idx(c10::nullopt);
             // The '=' copy constructor for TensorIndex doesn't work
             memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
@@ -1332,7 +1360,7 @@ void completeTensorIndices(const int64_t* indexStarts,
         else // TensorIndex by Slice
         {
             // slice
-            auto start = (n == INT64_MIN+6) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - INT64_MIN/2);
+            auto start = (n == INT64_MIN + 6) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - INT64_MIN / 2);
             auto end = (indexEnds == NULL || indexEnds[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
             auto step = (indexSteps == NULL || indexSteps[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
             at::indexing::TensorIndex idx(at::indexing::Slice(start, end, step));
@@ -1348,7 +1376,7 @@ Tensor THSTensor_index(Tensor tensor,
     const Tensor* indexTensors,
     const int indicesLength)
 {
-    at::indexing::TensorIndex *indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength*sizeof(at::indexing::TensorIndex));
+    at::indexing::TensorIndex* indicesArray = (at::indexing::TensorIndex*)alloca(indicesLength * sizeof(at::indexing::TensorIndex));
     memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
     // The indexStart encodes the kind of slice being performed for each dimension
     completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
@@ -1675,9 +1703,9 @@ void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(siz
 {
     CATCH(
         auto max = tensor->max(dim, keepdim);
-        Tensor * result = allocator(2);
-        result[0] = new torch::Tensor(std::get<0>(max));
-        result[1] = new torch::Tensor(std::get<1>(max));
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(max));
+    result[1] = new torch::Tensor(std::get<1>(max));
     )
 }
 
@@ -2297,9 +2325,9 @@ Tensor THSTensor_randint(
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randint(high, at::ArrayRef<int64_t>(sizes, length), options));
+    tensor = new torch::Tensor(torch::randint(high, at::ArrayRef<int64_t>(sizes, length), options));
     )
-    return tensor;
+        return tensor;
 }
 
 Tensor THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out)
@@ -2340,9 +2368,9 @@ Tensor THSTensor_randperm(const int64_t n,
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randperm(n, options));
+    tensor = new torch::Tensor(torch::randperm(n, options));
     )
-    return tensor;
+        return tensor;
 }
 
 Tensor THSTensor_randperm_out(const int64_t n, const Tensor out)
@@ -2618,10 +2646,10 @@ void THSTensor_split_with_size(
 {
     CATCH(
         auto res = tensor->split(split_size, dim);
-        const size_t sz = res.size();
-        Tensor * result = allocator(sz);
-        for (size_t i = 0; i < sz; i++)
-            result[i] = new torch::Tensor(res[i]);
+    const size_t sz = res.size();
+    Tensor * result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -2634,10 +2662,10 @@ void THSTensor_split_with_sizes(
 {
     CATCH(
         auto res = tensor->split_with_sizes(at::ArrayRef<int64_t>(sizes, length), dim);
-        const size_t sz = res.size();
-        Tensor * result = allocator(sz);
-        for (size_t i = 0; i < sz; i++)
-            result[i] = new torch::Tensor(res[i]);
+    const size_t sz = res.size();
+    Tensor * result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -2770,9 +2798,9 @@ void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), co
 {
     CATCH(
         auto topk = tensor->topk(k, dim, largest, sorted);
-        Tensor * result = allocator(2);
-        result[0] = new torch::Tensor(std::get<0>(topk));
-        result[1] = new torch::Tensor(std::get<1>(topk));
+    Tensor * result = allocator(2);
+    result[0] = new torch::Tensor(std::get<0>(topk));
+    result[1] = new torch::Tensor(std::get<1>(topk));
     )
 }
 
@@ -2800,7 +2828,7 @@ Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-        res = ResultTensor(tensor->to(device));     
+    res = ResultTensor(tensor->to(device));
     );
 }
 
@@ -2813,7 +2841,7 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
+    res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
     );
 }
 
@@ -2824,7 +2852,7 @@ Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal)
 
 Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
 {
-CATCH_TENSOR(tensor->tril(diagonal));
+    CATCH_TENSOR(tensor->tril(diagonal));
 }
 
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)
@@ -2846,10 +2874,10 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
 {
     CATCH(
         auto res = tensor->unbind(dim);
-        const size_t sz = res.size();
-        Tensor* result = allocator(sz);
-        for (size_t i = 0; i < sz; i++)
-            result[i] = new torch::Tensor(res[i]);
+    const size_t sz = res.size();
+    Tensor * result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -3148,7 +3176,7 @@ Tensor THSInit_uniform_(Tensor tensor, double low, double high)
 
 Tensor THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity)
 {
-    CATCH_TENSOR(torch::nn::init::kaiming_normal_(*tensor, a, mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut),  get_nl_type(nonlinearity)))
+    CATCH_TENSOR(torch::nn::init::kaiming_normal_(*tensor, a, mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut), get_nl_type(nonlinearity)))
 }
 
 Tensor THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity)

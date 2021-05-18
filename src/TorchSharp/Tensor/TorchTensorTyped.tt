@@ -125,7 +125,7 @@ foreach (var type in TorchTypeDef.Types) {
         extern static IntPtr THSTensor_empty(<#=type.Ptr#> psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
-        ///  Create a new tensor filled with ones
+        ///  Create a new tensor filled with uninitialized data
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
@@ -140,6 +140,32 @@ foreach (var type in TorchTypeDef.Types) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_empty_strided(<#=type.Ptr#> psizes, int sz_length, <#=type.Ptr#> pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
+        /// </summary>
+        static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size, pstrides = strides)
+                {
+                    var handle = THSTensor_empty_strided ((<#=type.Ptr#>)psizes, size.Length, (<#=type.Ptr#>)pstrides, strides.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_empty_strided ((<#=type.Ptr#>)psizes, size.Length, (<#=type.Ptr#>)pstrides, strides.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor (handle);
