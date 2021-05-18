@@ -2599,17 +2599,84 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void SplitWithSizeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).split(2);
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 2 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[1][0].ToSingle());
+            Assert.Equal(4.2f, res[1][1].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
         public void SplitWithSizesTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
 
-            var res = Float32Tensor.from(data).split_with_sizes(new long[] { 2, 1 });
+            var res = Float32Tensor.from(data).split(new long[] { 2, 1 });
             Assert.Equal(2, res.Length);
             Assert.Equal(new long[] { 2 }, res[0].shape);
             Assert.Equal(new long[] { 1 }, res[1].shape);
             Assert.Equal(1.1f, res[0][0].ToSingle());
             Assert.Equal(2.0f, res[0][1].ToSingle());
             Assert.Equal(3.1f, res[1][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithSizeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(2);
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 3 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[0][2].ToSingle());
+            Assert.Equal(4.2f, res[1][0].ToSingle());
+            Assert.Equal(5.3f, res[1][1].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(new long[] { 1, 4 });
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 1 }, res[0].shape);
+            Assert.Equal(new long[] { 3 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[1][0].ToSingle());
+            Assert.Equal(3.1f, res[1][1].ToSingle());
+            Assert.Equal(4.2f, res[1][2].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithTensorSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(Int64Tensor.from(new long[] { 1, 4 }));
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 1 }, res[0].shape);
+            Assert.Equal(new long[] { 3 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[1][0].ToSingle());
+            Assert.Equal(3.1f, res[1][1].ToSingle());
+            Assert.Equal(4.2f, res[1][2].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
         }
 
         [Fact]

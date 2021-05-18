@@ -4076,11 +4076,10 @@ namespace TorchSharp.Tensor
             return ptrArray.Select(x => new TorchTensor(x)).ToArray();
         }
 
-
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
 
-        public TorchTensor[] split_with_size(long size, int dimension = 0)
+        public TorchTensor[] split(long size, int dimension = 0)
         {
             IntPtr[] ptrArray;
 
@@ -4096,7 +4095,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
 
-        public TorchTensor[] split_with_sizes(long[] sizes, int dimension = 0)
+        public TorchTensor[] split(long[] sizes, int dimension = 0)
         {
             IntPtr[] ptrArray;
 
@@ -4115,6 +4114,60 @@ namespace TorchSharp.Tensor
 
             return ptrArray.Select(x => new TorchTensor(x)).ToArray();
         }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_tensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
+
+        public TorchTensor[] tensor_split(long size, int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_tensor_split_with_size(handle, pa.CreateArray, size, dimension);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_tensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
+
+        public TorchTensor[] tensor_split(long[] sizes, int dimension = 0)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* psizes = sizes) {
+                        THSTensor_tensor_split_with_sizes(handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dimension);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_tensor_split_with_tensor_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr indices, long dimension);
+
+        public TorchTensor[] tensor_split(TorchTensor indices, int dimension = 0)
+        {
+            if (indices.Type != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_tensor_split_with_tensor_sizes(handle, pa.CreateArray, indices.Handle, dimension);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_max(IntPtr tensor);

@@ -982,7 +982,6 @@ EXPORT_API(Tensor) THSTensor_sparse(
     const bool requires_grad);
 
 EXPORT_API(void) THSTensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
-
 EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_squeeze(Tensor tensor, int64_t dim);
@@ -1010,6 +1009,10 @@ EXPORT_API(Tensor) THSTensor_tanh(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
+
+EXPORT_API(void) THSTensor_tensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
+EXPORT_API(void) THSTensor_tensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
+EXPORT_API(void) THSTensor_tensor_split_with_tensor_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const Tensor sizes, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 
