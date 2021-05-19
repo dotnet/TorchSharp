@@ -1896,6 +1896,106 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_bartlett_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Bartlett window function.
+        /// </summary>
+        static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_blackman_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Blackman window function.
+        /// </summary>
+        static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hamming_window(long len, bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hamming window function.
+        /// </summary>
+        static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hann_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hann window function.
+        /// </summary>
+        static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_kaiser_window(long len, bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Computes the Kaiser window with window length window_length and shape parameter beta.
+        /// </summary>
+        static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newFloat16Scalar(float scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -2300,6 +2400,106 @@ namespace TorchSharp.Tensor {
                     return new TorchTensor (handle);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_bartlett_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Bartlett window function.
+        /// </summary>
+        static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_blackman_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Blackman window function.
+        /// </summary>
+        static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hamming_window(long len, bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hamming window function.
+        /// </summary>
+        static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hann_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hann window function.
+        /// </summary>
+        static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_kaiser_window(long len, bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Computes the Kaiser window with window length window_length and shape parameter beta.
+        /// </summary>
+        static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2710,6 +2910,106 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_bartlett_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Bartlett window function.
+        /// </summary>
+        static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_blackman_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Blackman window function.
+        /// </summary>
+        static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hamming_window(long len, bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hamming window function.
+        /// </summary>
+        static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hann_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hann window function.
+        /// </summary>
+        static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_kaiser_window(long len, bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Computes the Kaiser window with window length window_length and shape parameter beta.
+        /// </summary>
+        static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newFloat32Scalar(float scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -3111,6 +3411,106 @@ namespace TorchSharp.Tensor {
                     return new TorchTensor (handle);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_bartlett_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Bartlett window function.
+        /// </summary>
+        static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_blackman_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Blackman window function.
+        /// </summary>
+        static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hamming_window(long len, bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hamming window function.
+        /// </summary>
+        static public TorchTensor hamming_window(long len, bool periodic = true, double alpha = 0.54f, double beta = 0.46f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_hann_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Hann window function.
+        /// </summary>
+        static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_kaiser_window(long len, bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
+
+        /// <summary>
+        /// Computes the Kaiser window with window length window_length and shape parameter beta.
+        /// </summary>
+        static public TorchTensor kaiser_window(long len, bool periodic = true, double beta = 12.0f, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
         }
 
         [DllImport("LibTorchSharp")]

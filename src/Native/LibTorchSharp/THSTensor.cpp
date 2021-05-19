@@ -3463,3 +3463,53 @@ Tensor THSInit_zeros_(Tensor tensor)
 {
     CATCH_TENSOR(torch::nn::init::zeros_(*tensor))
 }
+
+Tensor THSTensor_bartlett_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::bartlett_window(len, periodic, options));
+}
+
+Tensor THSTensor_blackman_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::blackman_window(len, periodic, options));
+}
+
+Tensor THSTensor_hamming_window(const int64_t len, bool periodic, double alpha, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::hamming_window(len, periodic, alpha, beta, options));
+}
+
+Tensor THSTensor_hann_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::hann_window(len, periodic, options));
+}
+
+Tensor THSTensor_kaiser_window(const int64_t len, bool periodic, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::kaiser_window(len, periodic, beta, options));
+}

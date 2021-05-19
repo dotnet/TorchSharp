@@ -538,6 +538,40 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void CreateFloat32BartlettWindow()
+        {
+            TorchTensor t = Float32Tensor.bartlett_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32BlackmanWindow()
+        {
+            TorchTensor t = Float32Tensor.blackman_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32HammingWindow()
+        {
+            TorchTensor t = Float32Tensor.hamming_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32HannWindow()
+        {
+            TorchTensor t = Float32Tensor.hann_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32KaiserWindow()
+        {
+            TorchTensor t = Float32Tensor.kaiser_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
 
         [Fact]
         public void CreateFloat32TensorFromScalar()

@@ -1218,3 +1218,15 @@ EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
 EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
 
 EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
+
+// Spectral Ops
+
+EXPORT_API(Tensor) THSTensor_bartlett_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_blackman_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_hamming_window(const int64_t len, bool periodic, double alpha, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_hann_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
