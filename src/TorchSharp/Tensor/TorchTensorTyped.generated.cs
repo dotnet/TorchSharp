@@ -22,7 +22,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -43,7 +43,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -63,7 +63,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -89,7 +89,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -115,7 +115,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -141,7 +141,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -167,7 +167,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -288,7 +335,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -309,7 +356,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -329,7 +376,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -355,7 +402,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -381,7 +428,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -407,7 +454,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -433,7 +480,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -554,7 +648,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -575,7 +669,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -595,7 +689,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -621,7 +715,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -647,7 +741,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -673,7 +767,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -699,7 +793,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -820,7 +961,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -841,7 +982,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -861,7 +1002,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -887,7 +1028,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -913,7 +1054,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -939,7 +1080,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -965,7 +1106,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -1086,7 +1274,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -1107,7 +1295,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -1127,7 +1315,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -1153,7 +1341,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1179,7 +1367,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -1205,7 +1393,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -1231,7 +1419,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -1352,7 +1587,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -1373,7 +1608,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -1393,7 +1628,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -1419,7 +1654,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1445,7 +1680,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -1471,7 +1706,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -1497,7 +1732,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -1522,7 +1804,7 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -1548,7 +1830,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -1672,7 +1954,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -1693,7 +1975,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -1713,7 +1995,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -1739,7 +2021,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -1765,7 +2047,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -1791,7 +2073,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -1817,7 +2099,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -1842,7 +2171,7 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -1868,7 +2197,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -1992,7 +2321,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -2013,7 +2342,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -2033,7 +2362,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -2059,7 +2388,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -2085,7 +2414,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -2111,7 +2440,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -2137,7 +2466,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -2162,7 +2538,7 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -2188,7 +2564,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -2309,7 +2685,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -2330,7 +2706,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -2350,7 +2726,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -2376,7 +2752,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -2402,7 +2778,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -2428,7 +2804,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -2454,7 +2830,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
@@ -2479,7 +2902,7 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
@@ -2505,7 +2928,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -2626,7 +3049,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -2647,7 +3070,7 @@ namespace TorchSharp.Tensor {
         }
 		
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
@@ -2667,7 +3090,7 @@ namespace TorchSharp.Tensor {
         }
 		
 		[DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         ///  Create a new tensor filled with zeros
@@ -2693,7 +3116,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with ones
@@ -2719,7 +3142,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
@@ -2745,7 +3168,7 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
@@ -2771,7 +3194,54 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, int scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a new tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            unsafe
+            {
+                fixed (long* psizes = size)
+                {
+                    var handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
+                    }
+                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor (handle);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+            columns = (columns == -1) ? rows : columns;
+
+            var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).

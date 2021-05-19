@@ -4230,6 +4230,65 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_quantile(IntPtr tensor, IntPtr q, long dim, bool keepdim);
+
+        /// <summary>
+        /// Returns the q-th quantiles of all elements in the input tensor, doing a linear interpolation when the q-th quantile lies between two data points.
+        /// </summary>
+        /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
+        /// <param name="dim">The dimension to reduce.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        TorchTensor quantile(TorchTensor q, long dim = -1, bool keepdim = false)
+        {
+            var res = THSTensor_quantile(handle, q.handle, dim, keepdim);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_nanquantile(IntPtr tensor, IntPtr q, long dim, bool keepdim);
+
+        /// <summary>
+        /// This is a variant of torch.quantile() that “ignores” NaN values, computing the quantiles q as if NaN values in input did not exist.
+        /// If all values in a reduced row are NaN then the quantiles for that reduction will be NaN.
+        /// </summary>
+        /// <seealso cref="TorchTensor.quantile(TorchTensor, long, bool)"/>
+        /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
+        /// <param name="dim">The dimension to reduce.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        TorchTensor nanquantile(TorchTensor q, long dim = -1, bool keepdim = false)
+        {
+            var res = THSTensor_nanquantile(handle, q.handle, dim, keepdim);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_mode(IntPtr tensor, AllocatePinnedArray allocator, long dim, bool keepdim);
+
+        /// <summary>
+        /// Returns a namedtuple (values, indices) where values is the mode value of each row of the input tensor in the given dimension dim,
+        /// i.e. a value which appears most often in that row, and indices is the index location of each mode value found.
+        /// </summary>
+        /// <param name="dim">The dimension to reduce, the last dimension by default.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not</param>
+        /// <returns></returns>
+
+        public (TorchTensor values,TorchTensor indices) mode(long dim = -1L, bool keepdim = false)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_mode(handle, pa.CreateArray, dim, keepdim);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return (values: new TorchTensor(ptrArray[0]), indices: new TorchTensor(ptrArray[1]));
+        }
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
 
         public TorchTensor mean(long[] dimensions, bool keepDimension = false, ScalarType? type = null)
@@ -4980,6 +5039,70 @@ namespace TorchSharp.Tensor
                 }
             }
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rand_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
+        /// </summary>
+        public TorchTensor rand_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
+        /// </summary>
+        public TorchTensor randn_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
+        /// </summary>
+        public TorchTensor randint_like(long low, long high, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randperm_out(long n, IntPtr tensorOut);
 
@@ -5031,7 +5154,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to have the given size with all values set to 1
         /// </summary>
-        public TorchTensor ones_out(long[] sizes)
+        public TorchTensor ones(long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -5064,7 +5187,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to have the given size with all values set to 0
         /// </summary>
-        public TorchTensor zeros_out(long[] sizes)
+        public TorchTensor zeros(long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -5073,6 +5196,137 @@ namespace TorchSharp.Tensor
                     return new TorchTensor(res);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_zeros_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor filled with the scalar value 0, with the same size as input.
+        /// </summary>
+        public TorchTensor zeros_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_ones_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor filled with the scalar value 1, with the same size as input.
+        /// </summary>
+        public TorchTensor ones_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_empty_out(IntPtr psizes, int length, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to have the given size with all values uninitialized
+        /// </summary>
+        public TorchTensor empty(long[] sizes)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_empty_out((IntPtr)psizes, sizes.Length, handle);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_empty_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Returns an uninitialized tensor with the same size as input.
+        /// </summary>
+        public TorchTensor empty_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_full_out(IntPtr psizes, int length, IntPtr value, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor to have the given size with all values uninitialized
+        /// </summary>
+        public TorchTensor full(long[] sizes, TorchScalar value)
+        {
+            unsafe {
+                fixed (long* psizes = sizes) {
+                    var res = THSTensor_full_out((IntPtr)psizes, sizes.Length, value.Handle, handle);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_full_like(IntPtr input, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Returns a tensor with the same size as input filled with 'value.'
+        /// </summary>
+        public TorchTensor full_like(TorchScalar value, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        {
+            dtype = (dtype is null) ? this.Type : dtype;
+            device = (device is null) ? new Device(device_type, device_index) : device;
+
+            var result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            if (result == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+            }
+            if (result == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_eye_out(long rows, long columns, IntPtr tensorOut);
+
+        /// <summary>
+        ///  Mutates the tensor into a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// </summary>
+        public TorchTensor eye(long rows, long columns)
+        {
+            var res = THSTensor_eye_out(rows, columns, handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
