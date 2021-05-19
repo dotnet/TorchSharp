@@ -186,6 +186,27 @@ Tensor THSTensor_arange_out(const Scalar start, const Scalar end, const Scalar s
 }
 
 
+Tensor THSTensor_linspace(const double start, const double end, const int64_t steps, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::linspace(start, end, steps, options));
+}
+
+Tensor THSTensor_logspace(const double start, const double end, const int64_t steps, double base, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    CATCH_TENSOR(torch::logspace(start, end, steps, base, options));
+}
+
+
 Tensor THSTensor_arccosh(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->arccosh());

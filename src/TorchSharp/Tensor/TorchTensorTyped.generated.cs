@@ -1804,6 +1804,46 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
+        /// </summary>
+        static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
+        /// </summary>
+        static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -2170,6 +2210,46 @@ namespace TorchSharp.Tensor {
                 }
             }
         }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
+        /// </summary>
+        static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
+        /// </summary>
+        static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2538,6 +2618,46 @@ namespace TorchSharp.Tensor {
             }
         }
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
+        /// </summary>
+        static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
+        /// </summary>
+        static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -2901,6 +3021,46 @@ namespace TorchSharp.Tensor {
                 }
             }
         }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
+        /// </summary>
+        static public TorchTensor linspace(double start, double end, long steps, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
+        /// </summary>
+        static public TorchTensor logspace(double start, double end, long steps, double @base = 10, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 

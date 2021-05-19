@@ -588,6 +588,10 @@ EXPORT_API(Tensor) THSTensor_lerp(const Tensor tensor, const Tensor end, const T
 
 EXPORT_API(Tensor) THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight);
 
+EXPORT_API(Tensor) THSTensor_linspace(const double start, const double end, const int64_t steps, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_logspace(const double start, const double end, const int64_t steps, double base, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_load(const char* location);
 
 EXPORT_API(Tensor) THSTensor_log(const Tensor tensor);

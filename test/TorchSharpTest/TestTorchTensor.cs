@@ -188,6 +188,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateFloat32Linspace()
+        {
+            TorchTensor t = Float32Tensor.linspace(0.0f, 10.0f, 101);
+            Assert.Equal(101, t.shape[0]);
+            Assert.Equal(0.0f, t[0].ToSingle());
+            Assert.Equal(0.1f, t[1].ToSingle());
+        }
+
+        [Fact]
+        public void CreateFloat32Logspace()
+        {
+            TorchTensor t = Float32Tensor.logspace(0.0f, 10.0f, 101);
+            Assert.Equal(101, t.shape[0]);
+            Assert.Equal(1.0f, t[0].ToSingle());
+            Assert.Equal(10.0f, t[10].ToSingle());
+        }
+
+        [Fact]
         public void CreateFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
