@@ -1704,6 +1704,11 @@ Tensor THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const T
     CATCH_TENSOR(tensor->masked_scatter_(*mask, *value));
 }
 
+Tensor THSTensor_masked_select(const Tensor tensor, const Tensor mask)
+{
+    CATCH_TENSOR(tensor->masked_select(*mask));
+}
+
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
     return  new torch::Tensor(left->matmul(*right));

@@ -4025,6 +4025,17 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_masked_select(IntPtr tensor, IntPtr mask);
+
+        public TorchTensor masked_select(TorchTensor mask)
+        {
+            if (mask.Type != ScalarType.Bool) throw new ArgumentException("The mask tensor must be Boolean.");
+            var res = THSTensor_masked_select(handle, mask.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_matmul(IntPtr tensor, IntPtr target);
 
         public TorchTensor matmul(TorchTensor target)

@@ -1497,6 +1497,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMaskedSelect()
+        {
+            var input = Float32Tensor.zeros(new long[] { 4, 4 });
+            var mask = BoolTensor.eye(4, 4);
+
+            var res = input.masked_select(mask);
+            Assert.Equal(4, res.numel());
+        }
+
+        [Fact]
         public void TestStackCpu()
         {
             TestStackGen(Device.CPU);

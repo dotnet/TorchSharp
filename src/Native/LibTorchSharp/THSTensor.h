@@ -658,6 +658,8 @@ EXPORT_API(Tensor) THSTensor_masked_scatter(const Tensor tensor, const Tensor ma
 
 EXPORT_API(Tensor) THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor source);
 
+EXPORT_API(Tensor) THSTensor_masked_select(const Tensor tensor, const Tensor mask);
+
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_max(const Tensor tensor);
