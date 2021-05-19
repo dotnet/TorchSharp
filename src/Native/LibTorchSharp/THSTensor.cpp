@@ -391,16 +391,6 @@ Tensor THSTensor_baddbmm(
     CATCH_TENSOR(mat->baddbmm(*batch1, *batch2, beta, alpha));
 }
 
-Tensor THSTensor_bernoulli(const Tensor tensor, const double p)
-{
-    CATCH_TENSOR(tensor->bernoulli(p));
-}
-
-Tensor THSTensor_bernoulli_(const Tensor tensor, const double p)
-{
-    CATCH_TENSOR(tensor->bernoulli_(p));
-}
-
 Tensor THSTensor_bincount(const Tensor tensor, const Tensor weights, const int64_t minlength)
 {
     CATCH_TENSOR(tensor->bincount((weights ? *weights : at::Tensor()), minlength));
@@ -478,11 +468,6 @@ double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const 
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)
 {
     CATCH_TENSOR(torch::cat(toTensors<at::Tensor>((torch::Tensor**)tensors, length), dim));
-}
-
-Tensor THSTensor_cauchy_(const Tensor tensor, const double median, const double sigma)
-{
-    CATCH_TENSOR(tensor->cauchy_(median, sigma));
 }
 
 Tensor THSTensor_ceil(const Tensor tensor)
@@ -981,11 +966,6 @@ Tensor THSTensor_expm1_(const Tensor tensor)
     CATCH_TENSOR(tensor->expm1_());
 }
 
-Tensor THSTensor_exponential_(const Tensor tensor, const double lambd)
-{
-    CATCH_TENSOR(tensor->exponential_(lambd));
-}
-
 Tensor THSTensor_erf(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->erf());
@@ -1171,11 +1151,6 @@ Tensor THSTensor_ge_scalar_(const Tensor left, const Scalar right)
 Tensor THSTensor_gelu(const Tensor tensor)
 {
     CATCH_TENSOR(torch::gelu(*tensor));
-}
-
-Tensor THSTensor_geometric_(const Tensor tensor, const double p)
-{
-    CATCH_TENSOR(tensor->geometric_(p));
 }
 
 Tensor THSTensor_get1(const Tensor tensor, int64_t index)
@@ -1540,11 +1515,6 @@ Tensor THSTensor_load(const char* location)
     torch::load(tensor, location);
     res = ResultTensor(tensor);
     );
-}
-
-Tensor THSTensor_log_normal_(const Tensor tensor, const double mean, const double std)
-{
-    CATCH_TENSOR(tensor->log_normal_(mean, std));
 }
 
 Tensor THSTensor_log_sigmoid(const Tensor tensor)
@@ -1921,6 +1891,17 @@ void THSTensor_mode(const Tensor tensor, Tensor* (*allocator)(size_t length), co
     )
 }
 
+void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim)
+{
+    CATCH(
+        auto res = tensor->chunk(chunks, dim);
+        const size_t sz = res.size();
+        Tensor* result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
+        )
+}
+
 Tensor THSTensor_quantile(const Tensor tensor, const Tensor q, const int64_t dim, const bool keep_dim)
 {
     CATCH_TENSOR(dim == -1 ? tensor->quantile(*q, c10::nullopt, keep_dim) : tensor->quantile(*q, dim, keep_dim));
@@ -2001,11 +1982,6 @@ Tensor THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar)
     CATCH_TENSOR(tensor->mul_(*scalar));
 }
 
-Tensor THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement)
-{
-    CATCH_TENSOR(tensor->multinomial(num_samples, replacement));
-}
-
 Tensor THSTensor_mvlgamma(const Tensor tensor, int64_t p)
 {
     CATCH_TENSOR(tensor->mvlgamma(p));
@@ -2042,11 +2018,6 @@ Tensor THSTensor_ne(const Tensor left, const Tensor right)
 Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t length)
 {
     CATCH_TENSOR(tensor->narrow(dim, start, length))
-}
-
-Tensor THSTensor_normal_(const Tensor tensor, const double mean, const double std)
-{
-    CATCH_TENSOR(tensor->normal_(mean, std));
 }
 
 Tensor THSTensor_ne_(const Tensor left, const Tensor right)
@@ -2929,6 +2900,11 @@ Tensor THSTensor_t(const Tensor tensor)
     CATCH_TENSOR(tensor->t());
 }
 
+Tensor THSTensor_take(const Tensor tensor, const Tensor indices)
+{
+    CATCH_TENSOR(tensor->take(*indices));
+}
+
 Tensor THSTensor_tan(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->tan());
@@ -3035,16 +3011,11 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
 {
     CATCH(
         auto res = tensor->unbind(dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
-}
-
-Tensor THSTensor_uniform_(const Tensor tensor, const double from, const double to)
-{
-    CATCH_TENSOR(tensor->uniform_(from, to));
 }
 
 Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dim)
@@ -3360,6 +3331,61 @@ Tensor THSInit_dirac_(Tensor tensor)
 Tensor THSInit_eye_(Tensor tensor)
 {
     CATCH_TENSOR(torch::nn::init::eye_(*tensor))
+}
+
+Tensor THSTensor_bernoulli(const Tensor tensor, const double p, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->bernoulli(p) : tensor->bernoulli(p, *gen));
+}
+
+Tensor THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->bernoulli_(p) : tensor->bernoulli_(p, *gen));
+}
+
+Tensor THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->bernoulli_(*p_tensor) : tensor->bernoulli_(*p_tensor, *gen));
+}
+
+Tensor THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->multinomial(num_samples, replacement) : tensor->multinomial(num_samples, replacement, *gen));
+}
+
+Tensor THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->cauchy_(median, sigma) : tensor->cauchy_(median, sigma, *gen));
+}
+
+Tensor THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->exponential_(lambda) : tensor->exponential_(lambda, *gen));
+}
+
+Tensor THSTensor_geometric_(Tensor tensor, const double p, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->geometric_(p) : tensor->geometric_(p, *gen));
+}
+
+Tensor THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->log_normal_(mean, std) : tensor->log_normal_(mean, std, *gen));
+}
+
+Tensor THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->normal_(mean, std) : tensor->normal_(mean, std, *gen));
+}
+
+Tensor THSTensor_random_(Tensor tensor, double low, double high, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->random_(low, high) : tensor->random_(low, high, *gen));
+}
+
+Tensor THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? tensor->uniform_(low, high) : tensor->uniform_(low, high, *gen));
 }
 
 Tensor THSInit_normal_(Tensor tensor, double mean, double std)

@@ -1084,6 +1084,102 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void InplaceBernoulli()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.bernoulli_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.bernoulli_(generator:gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceCauchy()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.cauchy_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.cauchy_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceExponential()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.exponential_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.exponential_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceGeometric()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.geometric_(0.25)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.geometric_(0.25, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceLogNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.log_normal_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.log_normal_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.normal_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.normal_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceRandom()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.random_(0.0, 1.0)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.random_(0, 1, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceUniform()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.uniform_(0.0, 1.0)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.uniform_(0, 1, generator: gen)) { }
+            }
+        }
+
+        [Fact]
         public void TestSparse()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
@@ -2930,6 +3026,22 @@ namespace TorchSharp
             Assert.Equal(3.1f, res[1][1].ToSingle());
             Assert.Equal(4.2f, res[1][2].ToSingle());
             Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorChunkTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).chunk(2);
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 3 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[0][2].ToSingle());
+            Assert.Equal(4.2f, res[1][0].ToSingle());
+            Assert.Equal(5.3f, res[1][1].ToSingle());
         }
 
         [Fact]

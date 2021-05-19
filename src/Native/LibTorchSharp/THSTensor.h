@@ -206,6 +206,8 @@ EXPORT_API(Tensor) THSTensor_cholesky_inverse(const Tensor tensor, const bool up
 
 EXPORT_API(Tensor) THSTensor_cholesky_solve(const Tensor tensor, const Tensor tensor2, const bool upper);
 
+EXPORT_API(void) THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim);
+
 EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
 
 EXPORT_API(Tensor) THSTensor_clamp_(const Tensor input, const Scalar min, const Scalar max);
@@ -603,8 +605,6 @@ EXPORT_API(Tensor) THSTensor_log1p_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_log2(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_log2_(const Tensor tensor);
-
-EXPORT_API(Tensor) THSTensor_log_normal_(const Tensor tensor, const double mean, const double std);
 
 EXPORT_API(Tensor) THSTensor_log_sigmoid(const Tensor tensor);
 
@@ -1032,6 +1032,8 @@ EXPORT_API(Tensor) THSTensor_row_stack(const Tensor* tensor, const int length);
 
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 
+EXPORT_API(Tensor) THSTensor_take(const Tensor tensor, const Tensor indices);
+
 EXPORT_API(Tensor) THSTensor_tan(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_tan_(const Tensor tensor);
@@ -1124,6 +1126,33 @@ EXPORT_API(Tensor) THSTensor_zeros(const int64_t* sizes, const int length, const
 EXPORT_API(Tensor) THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_zeros_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+// Random numbers:
+
+EXPORT_API(Tensor) THSTensor_bernoulli(const Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement, const Generator gen);
+
+// Random number in-place:
+
+EXPORT_API(Tensor) THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_geometric_(Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_random_(Tensor tensor, double low, double high, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen);
+
 
 // torch.linalg:
 
