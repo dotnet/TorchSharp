@@ -1126,6 +1126,10 @@ EXPORT_API(Tensor) THSTensor_vdot(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, const int length);
 
 EXPORT_API(Tensor) THSTensor_xlogy(const Tensor x, const Tensor y);
+EXPORT_API(Tensor) THSTensor_xlogy_(const Tensor x, const Tensor y);
+
+EXPORT_API(Tensor) THSTensor_xlogy_scalar(const Tensor x, const Scalar y);
+EXPORT_API(Tensor) THSTensor_xlogy_scalar_(const Tensor x, const Scalar y);
 
 EXPORT_API(Tensor) THSTensor_zeros(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 

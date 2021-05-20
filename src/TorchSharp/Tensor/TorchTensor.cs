@@ -1,48 +1,15 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
-using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using static TorchSharp.Utils.LEB128Codec;
-
 #nullable enable
 namespace TorchSharp.Tensor
 {
-    public struct TorchTensorIndex
-    {
-        internal enum Kind
-        {
-            None,
-            Single,
-            Null,
-            Ellipsis,
-            Bool,
-            Tensor,
-            Slice
-        }
-        internal long? startIndexOrBoolOrSingle;
-        internal long? stopIndex;
-        internal long? step;
-        internal Kind kind;
-        internal TorchTensor? tensor;
-        static public TorchTensorIndex Slice(long? start = null, long? stop = null, long? step = null)
-        {
-            return new TorchTensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
-        }
-        static public TorchTensorIndex Bool(bool value) => new TorchTensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
-        static public TorchTensorIndex Single(long? index) => new TorchTensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
-        static public TorchTensorIndex Tensor(TorchTensor tensor) => new TorchTensorIndex() { tensor = tensor, kind = Kind.Tensor };
-        static public TorchTensorIndex Ellipsis => new TorchTensorIndex() { kind = Kind.Ellipsis };
-        static public TorchTensorIndex None => new TorchTensorIndex() { kind = Kind.None };
-        static public TorchTensorIndex Null => new TorchTensorIndex() { kind = Kind.Null };
-    }
-
     /// <summary>
-    /// Represents a Torch tensor.
+    /// Represents a TorchSharp tensor.
     /// </summary>
     public sealed partial class TorchTensor : IDisposable
     {
@@ -4833,6 +4800,42 @@ namespace TorchSharp.Tensor
         }
     }
 
+    /// <summary>
+    /// Type used to represent the variety of indexing capabilities that are
+    /// available in Pyton, and therefore to PyTorch.
+    /// </summary>
+    public struct TorchTensorIndex
+    {
+        internal enum Kind
+        {
+            None,
+            Single,
+            Null,
+            Ellipsis,
+            Bool,
+            Tensor,
+            Slice
+        }
+        internal long? startIndexOrBoolOrSingle;
+        internal long? stopIndex;
+        internal long? step;
+        internal Kind kind;
+        internal TorchTensor? tensor;
+        static public TorchTensorIndex Slice(long? start = null, long? stop = null, long? step = null)
+        {
+            return new TorchTensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
+        }
+        static public TorchTensorIndex Bool(bool value) => new TorchTensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
+        static public TorchTensorIndex Single(long? index) => new TorchTensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
+        static public TorchTensorIndex Tensor(TorchTensor tensor) => new TorchTensorIndex() { tensor = tensor, kind = Kind.Tensor };
+        static public TorchTensorIndex Ellipsis => new TorchTensorIndex() { kind = Kind.Ellipsis };
+        static public TorchTensorIndex None => new TorchTensorIndex() { kind = Kind.None };
+        static public TorchTensorIndex Null => new TorchTensorIndex() { kind = Kind.Null };
+    }
+
+    /// <summary>
+    /// The element types of tensors.
+    /// </summary>
     public enum ScalarType : sbyte
     {
         Byte = 0,
@@ -4851,259 +4854,5 @@ namespace TorchSharp.Tensor
         //QUInt8 = 13,
         //QUInt32 = 14,
         BFloat16 = 15
-    }
-
-    public static class TensorExtensionMethods
-    {
-        internal static bool IsIntegral(this TorchTensor tensor)
-        {
-            switch(tensor.Type) {
-            case ScalarType.Byte:
-            case ScalarType.Int8:
-            case ScalarType.Int16:
-            case ScalarType.Int32:
-            case ScalarType.Int64:
-            case ScalarType.Bool:
-                return true;
-            default:
-                return false;
-            }
-        }
-
-        public static void Save(this TorchTensor tensor, System.IO.BinaryWriter writer)
-        {
-            // First, write the type
-            writer.Encode((int)tensor.Type); // 4 bytes
-            // Then, the shape.
-            writer.Encode(tensor.shape.Length); // 4 bytes
-            foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
-            // Then, the data
-            writer.Write(tensor.Bytes()); // ElementSize * NumberofElements
-        }
-
-        public static void Load(this TorchTensor tensor, System.IO.BinaryReader reader)
-        {
-            // First, read the type
-            var type = (ScalarType)reader.Decode();
-
-            if (type != tensor.Type)
-                throw new ArgumentException("Mismatched tensor data types while loading.");
-
-            // Then, the shape
-            var shLen = reader.Decode();
-            long[] loadedShape = new long[shLen];
-
-            long totalSize = 1;
-            for (int i = 0; i < shLen; ++i) {
-                loadedShape[i] = reader.Decode();
-                totalSize *= loadedShape[i];
-            }
-
-            if (!loadedShape.SequenceEqual(tensor.shape))
-                throw new ArgumentException("Mismatched tensor shape while loading.");
-
-            //
-            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
-            //
-            if (totalSize > int.MaxValue)
-                throw new NotImplementedException("Loading tensors larger than 2GB");
-
-            tensor.SetBytes(reader.ReadBytes((int)(totalSize * tensor.ElementSize)));
-        }
-
-        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
-        {
-            var array = doCopy ? (T[])rawArray.Clone() : rawArray;
-
-            switch (true)
-            {
-                case bool _ when typeof(T) == typeof(byte):
-                    {
-                        return ByteTensor.from(array as byte[], dimensions, requiresGrad); ;
-                    }
-                case bool _ when typeof(T) == typeof(sbyte):
-                    {
-                        return Int8Tensor.from(array as sbyte[], dimensions, requiresGrad); ;
-                    }
-                case bool _ when typeof(T) == typeof(short):
-                    {
-                        return Int16Tensor.from(array as short[], dimensions, requiresGrad); ;
-                    }
-                case bool _ when typeof(T) == typeof(int):
-                    {
-                        return Int32Tensor.from(array as int[], dimensions, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(long):
-                    {
-                        return Int64Tensor.from(array as long[], dimensions, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(double):
-                    {
-                        return Float64Tensor.from(array as double[], dimensions, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(float):
-                    {
-                        return Float32Tensor.from(array as float[], dimensions, requiresGrad);
-                    }
-                case bool _ when typeof(T) == typeof(bool):
-                    {
-                        return BoolTensor.from(array as bool[], dimensions, requiresGrad);
-                    }
-                //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
-                //    {
-                //        return ComplexFloat64Tensor.from(array as System.Numerics.Complex[], dimensions, requiresGrad);
-                //    }
-                default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
-            }
-        }
-
-        public static TorchTensor ToTorchTensor<T>(this T scalar, Device? device = null, bool requiresGrad = false) where T : struct
-        {
-            if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double))
-            {
-                throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");
-            }
-
-            if (typeof(T) == typeof(byte))
-                return ByteTensor.from((byte)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(sbyte))
-                return Int8Tensor.from((sbyte)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(short))
-                return Int16Tensor.from((short)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(int))
-                return Int32Tensor.from((int)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(long))
-                return Int64Tensor.from((long)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(double))
-                return Float64Tensor.from((double)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(float))
-                return Float32Tensor.from((float)(object)scalar, device, requiresGrad);
-            throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
-        }
-
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
-        public static TorchTensor cat(this TorchTensor[] tensors, long dimension)
-        {
-            if (tensors.Length == 0) {
-                throw new ArgumentException(nameof(tensors));
-            }
-            if (tensors.Length == 1) {
-                return tensors[0];
-            }
-
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                return new TorchTensor(THSTensor_cat(tensorsRef, parray.Array.Length, dimension));
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);
-
-        public static TorchTensor stack(this TorchTensor[] tensors, long dimension)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_hstack(IntPtr tensor, int len);
-
-        public static TorchTensor hstack(this TorchTensor[] tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_vstack(IntPtr tensor, int len);
-
-        public static TorchTensor vstack(this TorchTensor[] tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_vstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_column_stack(IntPtr tensor, int len);
-
-        public static TorchTensor column_stack(this TorchTensor[] tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_column_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_row_stack(IntPtr tensor, int len);
-
-        public static TorchTensor row_stack(this TorchTensor[] tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_row_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_dstack(IntPtr tensor, int len);
-
-        public static TorchTensor dstack(this TorchTensor[] tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
-
-        public static double clip_grad_norm(this TorchTensor[] tensors, double max_norm, double norm_type = 2.0)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
-            }
-        }
-
-
-        public static float ToSingle(this TorchTensor value) => value.ToScalar().ToSingle();
-        public static double ToDouble(this TorchTensor value) => value.ToScalar().ToDouble();
-        public static sbyte ToSByte(this TorchTensor value) => value.ToScalar().ToSByte();
-        public static byte ToByte(this TorchTensor value) => value.ToScalar().ToByte();
-        public static short ToInt16(this TorchTensor value) => value.ToScalar().ToInt16();
-        public static int ToInt32(this TorchTensor value) => value.ToScalar().ToInt32();
-        public static long ToInt64(this TorchTensor value) => value.ToScalar().ToInt64();
-        public static bool ToBoolean(this TorchTensor value) => value.ToScalar().ToBoolean();
     }
 }
