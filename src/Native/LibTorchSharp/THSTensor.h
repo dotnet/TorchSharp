@@ -206,6 +206,8 @@ EXPORT_API(Tensor) THSTensor_cholesky_inverse(const Tensor tensor, const bool up
 
 EXPORT_API(Tensor) THSTensor_cholesky_solve(const Tensor tensor, const Tensor tensor2, const bool upper);
 
+EXPORT_API(void) THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim);
+
 EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
 
 EXPORT_API(Tensor) THSTensor_clamp_(const Tensor input, const Scalar min, const Scalar max);
@@ -336,6 +338,31 @@ EXPORT_API(Tensor) THSTensor_empty(
     const int device_type, const int device_index,
     const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_empty_out(const int64_t* sizes, const int length, const Tensor out);
+
+EXPORT_API(Tensor) THSTensor_empty_like(
+    const Tensor input,
+    const int8_t scalar_type,
+    const int device_type, const int device_index,
+    const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_empty_strided(
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int8_t scalar_type,
+    const int device_type, const int device_index,
+    const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_as_strided(
+    const Tensor input,
+    const int64_t* sizes,
+    const int sz_length,
+    const int64_t* strides,
+    const int str_length,
+    const int64_t storage_offset);
+
 EXPORT_API(Tensor) THSTensor_eq(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_eq_(const Tensor left, const Tensor right);
@@ -369,6 +396,10 @@ EXPORT_API(Tensor) THSTensor_erfc_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_erfinv(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_erfinv_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_eye(const int64_t n, const int64_t m, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_eye_out(const int64_t n, const int64_t m, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
@@ -407,6 +438,12 @@ EXPORT_API(Tensor) THSTensor_fmod_(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_fmod_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_fmod_scalar_(const Tensor left, const Scalar right);
+
+EXPORT_API(Tensor) THSTensor_full(const int64_t* sizes, const int length, Scalar value, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_full_out(const int64_t* sizes, const int length, Scalar value, const Tensor out);
+
+EXPORT_API(Tensor) THSTensor_full_like(const Tensor input, Scalar value, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_digamma(const Tensor tensor);
 
@@ -551,6 +588,10 @@ EXPORT_API(Tensor) THSTensor_lerp(const Tensor tensor, const Tensor end, const T
 
 EXPORT_API(Tensor) THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight);
 
+EXPORT_API(Tensor) THSTensor_linspace(const double start, const double end, const int64_t steps, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_logspace(const double start, const double end, const int64_t steps, double base, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_load(const char* location);
 
 EXPORT_API(Tensor) THSTensor_log(const Tensor tensor);
@@ -568,8 +609,6 @@ EXPORT_API(Tensor) THSTensor_log1p_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_log2(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_log2_(const Tensor tensor);
-
-EXPORT_API(Tensor) THSTensor_log_normal_(const Tensor tensor, const double mean, const double std);
 
 EXPORT_API(Tensor) THSTensor_log_sigmoid(const Tensor tensor);
 
@@ -618,6 +657,8 @@ EXPORT_API(Tensor) THSTensor_masked_fill_(const Tensor tensor, const Tensor mask
 EXPORT_API(Tensor) THSTensor_masked_scatter(const Tensor tensor, const Tensor mask, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor source);
+
+EXPORT_API(Tensor) THSTensor_masked_select(const Tensor tensor, const Tensor mask);
 
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
@@ -698,6 +739,8 @@ EXPORT_API(Tensor) THSTensor_mean_along_dimensions(const Tensor tensor, const in
 
 EXPORT_API(Tensor) THSTensor_median(const Tensor tensor);
 
+EXPORT_API(void) THSTensor_mode(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);
+
 EXPORT_API(Tensor) THSTensor_min(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_minimum(const Tensor tensor, const Tensor other);
@@ -723,6 +766,8 @@ EXPORT_API(Tensor) THSTensor_mul_scalar(const Tensor tensor, const Scalar scalar
 EXPORT_API(Tensor) THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar);
 
 EXPORT_API(Tensor) THSTensor_nanmedian(const Tensor input);
+
+EXPORT_API(Tensor) THSTensor_nanquantile(const Tensor tensor, const Tensor q, const int64_t dim, const bool keep_dim);
 
 EXPORT_API(Tensor) THSTensor_nansum(const Tensor input);
 
@@ -807,6 +852,8 @@ EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const 
 
 EXPORT_API(Tensor) THSTensor_ones_out(const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_ones_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_outer(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length);
@@ -825,19 +872,27 @@ EXPORT_API(Tensor) THSTensor_pow_scalar_(const Tensor tensor, const Scalar scala
 
 EXPORT_API(Tensor) THSTensor_prelu(const Tensor left, const Tensor right);
 
+EXPORT_API(Tensor) THSTensor_quantile(const Tensor tensor, const Tensor q, const int64_t dim, const bool keep_dim);
+
 EXPORT_API(Tensor) THSTensor_rad2deg(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_rand(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_rand_out(const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_rand_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_randint(const int64_t high, const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_randint_like(const Tensor input, const int64_t low, const int64_t high, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_randn(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_randn_out(const int64_t* sizes, const int length, const Tensor out);
+
+EXPORT_API(Tensor) THSTensor_randn_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_randperm(const int64_t n, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
@@ -965,7 +1020,6 @@ EXPORT_API(Tensor) THSTensor_sparse(
     const bool requires_grad);
 
 EXPORT_API(void) THSTensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
-
 EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_squeeze(Tensor tensor, int64_t dim);
@@ -984,6 +1038,8 @@ EXPORT_API(Tensor) THSTensor_row_stack(const Tensor* tensor, const int length);
 
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 
+EXPORT_API(Tensor) THSTensor_take(const Tensor tensor, const Tensor indices);
+
 EXPORT_API(Tensor) THSTensor_tan(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_tan_(const Tensor tensor);
@@ -993,6 +1049,10 @@ EXPORT_API(Tensor) THSTensor_tanh(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_tanh_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
+
+EXPORT_API(void) THSTensor_tensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
+EXPORT_API(void) THSTensor_tensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
+EXPORT_API(void) THSTensor_tensor_split_with_tensor_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const Tensor sizes, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 
@@ -1071,6 +1131,35 @@ EXPORT_API(Tensor) THSTensor_zeros(const int64_t* sizes, const int length, const
 
 EXPORT_API(Tensor) THSTensor_zeros_out(const int64_t* sizes, const int length, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_zeros_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+// Random numbers:
+
+EXPORT_API(Tensor) THSTensor_bernoulli(const Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement, const Generator gen);
+
+// Random number in-place:
+
+EXPORT_API(Tensor) THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_geometric_(Tensor tensor, const double p, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_random_(Tensor tensor, double low, double high, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen);
+
+
 // torch.linalg:
 
 EXPORT_API(Tensor) THSLinalg_cholesky(const Tensor tensor);
@@ -1129,3 +1218,15 @@ EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
 EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
 
 EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
+
+// Spectral Ops
+
+EXPORT_API(Tensor) THSTensor_bartlett_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_blackman_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_hamming_window(const int64_t len, bool periodic, double alpha, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_hann_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);

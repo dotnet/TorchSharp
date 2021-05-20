@@ -14,6 +14,198 @@ namespace TorchSharp
     public class TestTorchTensor
     {
         [Fact]
+        public void CreateFloat32TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Float32Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0.0f, t[0, 0].ToSingle());
+            Assert.Equal(0.0f, t[1, 1].ToSingle());
+        }
+
+        [Fact]
+        public void CreateByteTensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ByteTensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal((byte)0, t[0, 0].ToByte());
+            Assert.Equal((byte)0, t[1, 1].ToByte());
+        }
+
+        [Fact]
+        public void CreateInt32TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Int32Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0, t[0, 0].ToInt32());
+            Assert.Equal(0, t[1, 1].ToInt32());
+        }
+
+        [Fact]
+        public void CreateInt64TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = Int64Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0L, t[0, 0].ToInt64());
+            Assert.Equal(0L, t[1, 1].ToInt64());
+        }
+
+        [Fact]
+        public void CreateBoolTensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = BoolTensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal((object)false, t[0, 0].ToBoolean());
+            Assert.Equal((object)false, t[1, 1].ToBoolean());
+        }
+
+        [Fact]
+        public void CreateFloat16TensorZeros()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = Float16Tensor.zeros(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                    Assert.Equal(0.0f, t[0, 0].ToSingle());
+                    Assert.Equal(0.0f, t[1, 1].ToSingle());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateBFloat16TensorZeros()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = BFloat16Tensor.zeros(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                    Assert.Equal(0.0f, t[0, 0].ToSingle());
+                    Assert.Equal(0.0f, t[1, 1].ToSingle());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateFloat32TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Float32Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateByteTensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ByteTensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateInt32TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = Int32Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateInt64TensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = Int64Tensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateBoolTensorEmpty()
+        {
+            var shape = new long[] { 2, 2 };
+
+            TorchTensor t = BoolTensor.empty(shape);
+            Assert.Equal(shape, t.shape);
+        }
+
+        [Fact]
+        public void CreateTensorEmptyStrided()
+        {
+            var shape = new long[] { 2, 3 };
+            var strides = new long[] { 1, 2 };
+
+            TorchTensor t = Float32Tensor.empty_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.GetTensorStride(0));
+            Assert.Equal(2, t.GetTensorStride(1));
+        }
+
+        [Fact]
+        public void CreateTensorEmptyAsStrided()
+        {
+            var shape = new long[] { 2, 3 };
+            var strides = new long[] { 1, 2 };
+
+            TorchTensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.GetTensorStride(0));
+            Assert.Equal(2, t.GetTensorStride(1));
+        }
+
+        [Fact]
+        public void CreateFloat16TensorEmpty()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = Float16Tensor.empty(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateBFloat16TensorEmpty()
+        {
+            foreach (var device in new Device[] { Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var shape = new long[] { 2, 2 };
+
+                    TorchTensor t = BFloat16Tensor.empty(shape, device: device);
+                    Assert.Equal(shape, t.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateFloat32Linspace()
+        {
+            TorchTensor t = Float32Tensor.linspace(0.0f, 10.0f, 101);
+            Assert.Equal(101, t.shape[0]);
+            Assert.Equal(0.0f, t[0].ToSingle());
+            Assert.Equal(0.1f, t[1].ToSingle());
+        }
+
+        [Fact]
+        public void CreateFloat32Logspace()
+        {
+            TorchTensor t = Float32Tensor.logspace(0.0f, 10.0f, 101);
+            Assert.Equal(101, t.shape[0]);
+            Assert.Equal(1.0f, t[0].ToSingle());
+            Assert.Equal(10.0f, t[10].ToSingle());
+        }
+
+        [Fact]
         public void CreateFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -202,6 +394,38 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateInt32TensorEyeCheckData1()
+        {
+            var ones = Int32Tensor.eye(4, 4);
+            Assert.Equal(ones.shape[0], ones.shape[1]);
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (i == j)
+                        Assert.Equal(1, ones[i,j].ToInt32());
+                    else
+                        Assert.Equal(0, ones[i,j].ToInt32());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateInt32TensorEyeCheckData2()
+        {
+            var ones = Int32Tensor.eye(4);
+            Assert.Equal(ones.shape[0], ones.shape[1]);
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (i == j)
+                        Assert.Equal(1, ones[i,j].ToInt32());
+                    else
+                        Assert.Equal(0, ones[i,j].ToInt32());
+                }
+            }
+        }
+
+        [Fact]
         public void CreateFloat32TensorCheckDevice()
         {
             var ones = Float32Tensor.ones(new long[] { 2, 2 });
@@ -314,6 +538,40 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void CreateFloat32BartlettWindow()
+        {
+            TorchTensor t = Float32Tensor.bartlett_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32BlackmanWindow()
+        {
+            TorchTensor t = Float32Tensor.blackman_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32HammingWindow()
+        {
+            TorchTensor t = Float32Tensor.hamming_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32HannWindow()
+        {
+            TorchTensor t = Float32Tensor.hann_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
+
+        [Fact]
+        public void CreateFloat32KaiserWindow()
+        {
+            TorchTensor t = Float32Tensor.kaiser_window(100);
+            Assert.Equal(100, t.shape[0]);
+        }
 
         [Fact]
         public void CreateFloat32TensorFromScalar()
@@ -356,10 +614,231 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateFloat32TensorOnesLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.ones_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 1.0f));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorOnesLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.ones_like(dtype:ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 1.0));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorZerosLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.zeros_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 0.0f));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorZerosLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.zeros_like(dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 0.0));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorEmptyLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.empty_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+        }
+
+        [Fact]
+        public void CreateFloat32TensorEmptyLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.empty_like(dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+        }
+
+        [Fact]
+        public void CreateFloat32TensorFullLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+            TorchScalar value = 3.14f;
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.full_like(value);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 3.14f));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorFullLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+            TorchScalar value = 3.14;
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.full_like(value, dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 3.14));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorRandLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.rand_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t >= 0.0f && t < 1.0f));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorRandLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.rand_like(dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t >= 0.0 && t < 1.0));
+        }
+
+
+        [Fact]
+        public void CreateFloat32TensorRandnLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.randn_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+        }
+
+        [Fact]
+        public void CreateFloat32TensorRandnLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.randn_like(dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+        }
+
+        [Fact]
+        public void CreateFloat32TensorRandintLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.randint_like(5, 15);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float32, t2.Type);
+            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t >= 5.0f && t < 15.0f));
+        }
+
+        [Fact]
+        public void CreateFloat32TensorRandintLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.randint_like(5, 15, dtype: ScalarType.Float64);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.Float64, t2.Type);
+            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t >= 5.0 && t < 15.0));
+        }
+
+        [Fact]
         public void Float32Mean()
         {
-            using (var tensor = Float32Tensor.randn(new long[] { 100, 100 })) {
-                var mean = tensor.mean();
+            using (var tensor = Float32Tensor.arange(1,100, 1)) {
+                var mean = tensor.mean().DataItem<float>();
+                Assert.Equal(50.0f, mean);
+            }
+        }
+
+
+        [Fact]
+        public void Int32Mode()
+        {
+            using (var tensor = Int32Tensor.from(new int[] { 1, 5, 4, 5, 3, 3, 5, 5})) {
+                var mode = tensor.mode();
+                Assert.Equal(new int[] { 5 }, mode.values.Data<int>().ToArray());
+                Assert.Equal(new long[] { 7 }, mode.indices.Data<long>().ToArray());
             }
         }
 
@@ -653,6 +1132,102 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = NN.Init.xavier_normal(tensor)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceBernoulli()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.bernoulli_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.bernoulli_(generator:gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceCauchy()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.cauchy_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.cauchy_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceExponential()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.exponential_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.exponential_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceGeometric()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.geometric_(0.25)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.geometric_(0.25, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceLogNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.log_normal_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.log_normal_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceNormal()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.normal_()) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.normal_(generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceRandom()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.random_(0.0, 1.0)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.random_(0, 1, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InplaceUniform()
+        {
+            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = tensor.uniform_(0.0, 1.0)) { }
+                using (var gen = new TorchGenerator(4711L))
+                using (var res = tensor.uniform_(0, 1, generator: gen)) { }
             }
         }
 
@@ -953,6 +1528,16 @@ namespace TorchSharp
             input.masked_scatter_(mask, Float32Tensor.from(new float[] { 3.14f, 2 * 3.14f }));
             Assert.Equal(3.14f, input[0, 1].DataItem<float>());
             Assert.Equal(2 * 3.14f, input[2, 3].DataItem<float>());
+        }
+
+        [Fact]
+        public void TestMaskedSelect()
+        {
+            var input = Float32Tensor.zeros(new long[] { 4, 4 });
+            var mask = BoolTensor.eye(4, 4);
+
+            var res = input.masked_select(mask);
+            Assert.Equal(4, res.numel());
         }
 
         [Fact]
@@ -2425,17 +3010,100 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void SplitWithSizeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).split(2);
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 2 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[1][0].ToSingle());
+            Assert.Equal(4.2f, res[1][1].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
         public void SplitWithSizesTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
 
-            var res = Float32Tensor.from(data).split_with_sizes(new long[] { 2, 1 });
+            var res = Float32Tensor.from(data).split(new long[] { 2, 1 });
             Assert.Equal(2, res.Length);
             Assert.Equal(new long[] { 2 }, res[0].shape);
             Assert.Equal(new long[] { 1 }, res[1].shape);
             Assert.Equal(1.1f, res[0][0].ToSingle());
             Assert.Equal(2.0f, res[0][1].ToSingle());
             Assert.Equal(3.1f, res[1][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithSizeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(2);
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 3 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[0][2].ToSingle());
+            Assert.Equal(4.2f, res[1][0].ToSingle());
+            Assert.Equal(5.3f, res[1][1].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(new long[] { 1, 4 });
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 1 }, res[0].shape);
+            Assert.Equal(new long[] { 3 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[1][0].ToSingle());
+            Assert.Equal(3.1f, res[1][1].ToSingle());
+            Assert.Equal(4.2f, res[1][2].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorSplitWithTensorSizesTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).tensor_split(Int64Tensor.from(new long[] { 1, 4 }));
+            Assert.Equal(3, res.Length);
+            Assert.Equal(new long[] { 1 }, res[0].shape);
+            Assert.Equal(new long[] { 3 }, res[1].shape);
+            Assert.Equal(new long[] { 1 }, res[2].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[1][0].ToSingle());
+            Assert.Equal(3.1f, res[1][1].ToSingle());
+            Assert.Equal(4.2f, res[1][2].ToSingle());
+            Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
+        public void TensorChunkTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
+
+            var res = Float32Tensor.from(data).chunk(2);
+            Assert.Equal(2, res.Length);
+            Assert.Equal(new long[] { 3 }, res[0].shape);
+            Assert.Equal(new long[] { 2 }, res[1].shape);
+            Assert.Equal(1.1f, res[0][0].ToSingle());
+            Assert.Equal(2.0f, res[0][1].ToSingle());
+            Assert.Equal(3.1f, res[0][2].ToSingle());
+            Assert.Equal(4.2f, res[1][0].ToSingle());
+            Assert.Equal(5.3f, res[1][1].ToSingle());
         }
 
         [Fact]
