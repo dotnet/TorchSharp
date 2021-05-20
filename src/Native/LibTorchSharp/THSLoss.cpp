@@ -15,19 +15,6 @@ void ApplyReduction(T& opts, const int64_t reduction)
         opts = opts.reduction(torch::kSum);
 }
 
-Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction)
-{
-    CATCH_RETURN_Tensor(
-        auto opts = torch::nn::functional::CrossEntropyFuncOptions();
-    ApplyReduction(opts, reduction);
-    if (has_ii)
-        opts = opts.ignore_index(ignore_index);
-    if (weight != NULL)
-        opts = opts.weight(*weight);
-    res = ResultTensor(torch::nn::functional::cross_entropy(*input, *target, opts));
-    )
-}
-
 Tensor THSNN_binary_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction)
 {
     CATCH_RETURN_Tensor(
@@ -49,6 +36,29 @@ Tensor THSNN_binary_cross_entropy_with_logits(const Tensor input, const Tensor t
     if (weight != nullptr)
         opts = opts.weight(*weight);
     res = ResultTensor(torch::nn::functional::binary_cross_entropy_with_logits(*input, *target, opts));
+    )
+}
+
+Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::CrossEntropyFuncOptions();
+    ApplyReduction(opts, reduction);
+    if (has_ii)
+        opts = opts.ignore_index(ignore_index);
+    if (weight != NULL)
+        opts = opts.weight(*weight);
+    res = ResultTensor(torch::nn::functional::cross_entropy(*input, *target, opts));
+    )
+}
+
+Tensor THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::KLDivFuncOptions().log_target(log_target);
+    ApplyReduction(opts, reduction);
+
+    res = ResultTensor(torch::nn::functional::kl_div(*input, *target, opts));
     )
 }
 
@@ -91,16 +101,6 @@ Tensor THSNN_poisson_loss(const Tensor input, const Tensor target, const bool lo
     ApplyReduction(opts, reduction);
 
     res = ResultTensor(torch::nn::functional::poisson_nll_loss(*input, *target, opts));
-    )
-}
-
-Tensor THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target)
-{
-    CATCH_RETURN_Tensor(
-        auto opts = torch::nn::functional::KLDivFuncOptions().log_target(log_target);
-    ApplyReduction(opts, reduction);
-
-    res = ResultTensor(torch::nn::functional::kl_div(*input, *target, opts));
     )
 }
 

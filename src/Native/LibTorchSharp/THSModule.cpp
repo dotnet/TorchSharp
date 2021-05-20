@@ -3,21 +3,57 @@
 
 #include <torch/nn/init.h>
 
+// General Module functions
 
-void THSNN_Module_save(const NNModule module, const char* location)
+int THSNN_Module_is_training(NNModule module)
 {
-    //CATCH(
-    auto output = torch::serialize::OutputArchive();
+    return (*module)->is_training();
+}
 
-    (*module)->save(output);
-    output.save_to(location);
-    //);
+void THSNN_Module_train(NNModule module)
+{
+    (*module)->train();
+}
+
+void THSNN_Module_eval(NNModule module)
+{
+    (*module)->eval();
+}
+
+const char* THSNN_Module_name(const NNModule module)
+{
+    return make_sharable_string((*module)->name());
+}
+
+void THSNN_Module_zero_grad(const NNModule module)
+{
+    (*module)->zero_grad();
+}
+
+void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+    (*module)->to(torch::Device(dev, index));
+}
+
+void THSNN_Module_dispose(const NNModule module)
+{
+    delete module; // NOTE: this only deletes the shared_ptr
+}
+
+void THSNN_AnyModule_dispose(const NNAnyModule module)
+{
+    delete module; // NOTE: this only deletes the shared_ptr
 }
 
 //NNModule THSNN_AnyModule_get(const NNAnyModule module)
 //{
 //	return new std::shared_ptr< torch::nn::Module>(&( (*module)->get<torch::nn::Module>()));
 //}
+
+// Sub-module handling, parameters, etc.
 
 void THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule)
 {
@@ -31,19 +67,6 @@ void THSNN_Module_register_buffer(const NNModule module, const char* name, const
     CATCH(
         (*module)->register_buffer(name, *tensor);
     );
-}
-
-NNModule THSNN_Module_load(const char* location)
-{
-    //CATCH_RETURN_NNModule(
-    auto module = new torch::nn::Module();
-    auto input = torch::serialize::InputArchive();
-
-    input.load_from(location);
-    module->load(input);
-    //res = new std::shared_ptr<torch::nn::Module>(module);
-    return new std::shared_ptr<torch::nn::Module>(module);
-    //);
 }
 
 int THSNN_Module_has_parameter(const NNModule module, const char* name)
@@ -119,21 +142,6 @@ void THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator
     }
 }
 
-int THSNN_Module_is_training(NNModule module)
-{
-    return (*module)->is_training();
-}
-
-void THSNN_Module_train(NNModule module)
-{
-    (*module)->train();
-}
-
-void THSNN_Module_eval(NNModule module)
-{
-    (*module)->eval();
-}
-
 long THSNN_Module_children_size(const NNModule module)
 {
     return (*module)->children().size();
@@ -144,23 +152,31 @@ NNModule THSNN_Module_child(const NNModule module, const int index)
     return new std::shared_ptr<torch::nn::Module>((*module)->children()[index]);
 }
 
-const char* THSNN_Module_name(const NNModule module)
+
+// Save and restore
+
+NNModule THSNN_Module_load(const char* location)
 {
-    return make_sharable_string((*module)->name());
+    CATCH_RETURN_NNModule(
+        auto module = new torch::nn::Module();
+    auto input = torch::serialize::InputArchive();
+
+    input.load_from(location);
+    module->load(input);
+    return new std::shared_ptr<torch::nn::Module>(module);
+    );
 }
 
-void THSNN_Module_zero_grad(const NNModule module)
+void THSNN_Module_save(const NNModule module, const char* location)
 {
-    (*module)->zero_grad();
+    CATCH(
+        auto output = torch::serialize::OutputArchive();
+
+    (*module)->save(output);
+    output.save_to(location);
+    );
 }
 
-void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
-{
-    c10::DeviceType dev = c10::kCPU;
-    if (device == 1)
-        dev = c10::kCUDA;
-    (*module)->to(torch::Device(dev, index));
-}
 
 // Wrapper class used to enable .NET definitions ot new modules describing parameters and with delegates to implement forward function
 class CustomModule : public torch::nn::Module
@@ -213,12 +229,3 @@ NNModule THSNN_custom_module(const char* name,
     );
 }
 
-void THSNN_Module_dispose(const NNModule module)
-{
-    delete module; // NOTE: this only deletes the shared_ptr
-}
-
-void THSNN_AnyModule_dispose(const NNAnyModule module)
-{
-    delete module; // NOTE: this only deletes the shared_ptr
-}

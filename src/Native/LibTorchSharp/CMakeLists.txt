@@ -21,6 +21,7 @@ set(SOURCES
 	THSConvolution.cpp
     THSData.cpp
     THSJIT.cpp
+	THSLinearAlgebra.cpp
 	THSLoss.cpp
 	THSModule.cpp
     THSNN.cpp

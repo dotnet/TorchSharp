@@ -3,12 +3,6 @@
 
 #include <torch/nn/init.h>
 
-void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
-{
-    (*optimizer)->zero_grad();
-    auto defaults = (*optimizer)->defaults();
-}
-
 void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length))
 {
     auto parameters = (*optimizer)->parameters();
@@ -18,6 +12,17 @@ void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocato
     {
         result[i] = ResultTensor(parameters[i]);
     }
+}
+
+void THSNN_Optimizer_step(const Optimizer optimizer)
+{
+    (*optimizer)->step();
+}
+
+void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
+{
+    (*optimizer)->zero_grad();
+    auto defaults = (*optimizer)->defaults();
 }
 
 Optimizer THSNN_Adagrad_ctor(const Tensor* parameters, const int length, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps)
@@ -82,10 +87,7 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::SGD>(torch::optim::SGD(params, opts)));
 }
 
-void THSNN_Optimizer_step(const Optimizer optimizer)
-{
-    (*optimizer)->step();
-}
+// Scheduler integration
 
 template<typename OptionsType>
 void SetLearningRate(const Optimizer optimizer, const double lr)

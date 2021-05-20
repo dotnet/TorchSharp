@@ -119,21 +119,6 @@ Tensor THSTensor_celu_(const Tensor tensor)
     CATCH_TENSOR(torch::celu_(*tensor));
 }
 
-Tensor THSTensor_cholesky(const Tensor tensor, const bool upper)
-{
-    CATCH_TENSOR(tensor->cholesky(upper));
-}
-
-Tensor THSTensor_cholesky_inverse(const Tensor tensor, const bool upper)
-{
-    CATCH_TENSOR(tensor->cholesky_inverse(upper));
-}
-
-Tensor THSTensor_cholesky_solve(const Tensor tensor, const Tensor tensor2, const bool upper)
-{
-    CATCH_TENSOR(tensor->cholesky_solve(*tensor2, upper));
-}
-
 void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim)
 {
     CATCH(
@@ -263,21 +248,6 @@ int THSTensor_device_type(const Tensor tensor)
 {
     auto device = tensor->device();
     return (int)device.type();
-}
-
-Tensor THSTensor_diag(const Tensor tensor, const int64_t diagonal)
-{
-    CATCH_TENSOR(tensor->diag(diagonal));
-}
-
-Tensor THSTensor_diagflat(const Tensor tensor, const int64_t offset)
-{
-    CATCH_TENSOR(tensor->diagflat(offset));
-}
-
-Tensor THSTensor_diagonal(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2)
-{
-    CATCH_TENSOR(tensor->diagonal(offset, dim1, dim2));
 }
 
 Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
@@ -684,21 +654,6 @@ Scalar THSTensor_item(const Tensor tensor)
     CATCH_RETURN(Scalar, NULL, new torch::Scalar(tensor->item()));
 }
 
-Tensor THSTensor_kron(const Tensor left, const Tensor right)
-{
-    CATCH_TENSOR(left->kron(*right));
-}
-
-Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->lcm(*other));
-}
-
-Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
-{
-    CATCH_TENSOR(tensor->lcm_(*other));
-}
-
 Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negative_slope)
 {
     CATCH_TENSOR(torch::leaky_relu(*tensor, *negative_slope));
@@ -707,11 +662,6 @@ Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negative_slope)
 Tensor THSTensor_leaky_relu_(const Tensor tensor, const Scalar negative_slope)
 {
     CATCH_TENSOR(torch::leaky_relu_(*tensor, *negative_slope));
-}
-
-Tensor THSTensor_lgamma(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->lgamma());
 }
 
 Tensor THSTensor_load(const char* location)
@@ -894,16 +844,6 @@ Tensor THSTensor_narrow(const Tensor tensor, int64_t dim, int64_t start, int64_t
 Tensor THSTensor_nextafter(const Tensor input, const Tensor other)
 {
     CATCH_TENSOR(torch::nextafter(*input, *other));
-}
-
-Tensor THSTensor_norm(const Tensor tensor, float p)
-{
-    CATCH_TENSOR(tensor->norm(p));
-}
-
-Tensor THSTensor_norm_along_dimension(const Tensor tensor, const int64_t dim, const bool keepdim, float p)
-{
-    CATCH_TENSOR(tensor->norm(p, dim, keepdim));
 }
 
 int64_t THSTensor_ndimension(const Tensor tensor)
@@ -1259,11 +1199,6 @@ Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimens
         tensor->sum(at::ArrayRef<int64_t>(dimensions, length), keepdim))
 }
 
-Tensor THSTensor_t(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->t());
-}
-
 Tensor THSTensor_take(const Tensor tensor, const Tensor indices)
 {
     CATCH_TENSOR(tensor->take(*indices));
@@ -1372,146 +1307,3 @@ Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increas
     CATCH_TENSOR(torch::vander(*tensor, N, increasing));
 }
 
-// torch.lingalg:
-
-Tensor THSLinalg_cholesky(const Tensor tensor)
-{
-    CATCH_TENSOR(torch::linalg::cholesky(*tensor));
-}
-
-Tensor THSLinalg_det(const Tensor tensor)
-{
-    CATCH_TENSOR(torch::linalg::linalg_det(*tensor));
-}
-
-Tensor THSLinalg_slogdet(const Tensor tensor, Tensor* logabsdet)
-{
-    std::tuple<at::Tensor, at::Tensor> res;
-    CATCH(res = torch::linalg::slogdet(*tensor););
-    *logabsdet = ResultTensor(std::get<1>(res));
-    return ResultTensor(std::get<0>(res));
-}
-
-Tensor THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors)
-{
-    std::string _uplo;
-    _uplo.push_back(UPLO);
-    std::tuple<at::Tensor, at::Tensor> res;
-    CATCH(res = torch::linalg::eigh(*tensor, _uplo););
-    *eigenvectors = ResultTensor(std::get<1>(res));
-    return ResultTensor(std::get<0>(res));
-}
-
-Tensor THSLinalg_eigvalsh(const Tensor tensor, const char UPLO)
-{
-    std::string _uplo;
-    _uplo.push_back(UPLO);
-    CATCH_TENSOR(torch::linalg::eigvalsh(*tensor, _uplo));
-}
-
-Tensor THSLinalg_inv(const Tensor tensor)
-{
-    CATCH_TENSOR(torch::linalg::inv(*tensor));
-}
-
-Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian)
-{
-    if (has_tol)
-    {
-        CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, tol, hermitian));
-    }
-    else
-    {
-        CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, c10::nullopt, hermitian));
-    }
-}
-
-Tensor THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int dim_length, const bool keepdim)
-{
-    c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
-    CATCH_TENSOR(torch::linalg::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt));
-}
-
-Tensor THSLinalg_norm_float(const Tensor tensor, const double p, const int64_t* dim, const int dim_length, const bool keepdim)
-{
-    c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
-    CATCH_TENSOR(torch::linalg::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt));
-}
-
-Tensor THSLinalg_norm_int(const Tensor tensor, const int p, const int64_t* dim, const int dim_length, const bool keepdim)
-{
-    c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
-    CATCH_TENSOR(torch::linalg::linalg_norm(*tensor, p, dims, keepdim, c10::nullopt));
-}
-
-Tensor THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, const int dim_length, const bool keepdim)
-{
-    c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
-    CATCH_TENSOR(torch::linalg::linalg_norm(*tensor, c10::nullopt, dims, keepdim, c10::nullopt));
-}
-
-Tensor THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermitian)
-{
-    CATCH_TENSOR(torch::linalg::pinv(*tensor, rcond, hermitian));
-}
-
-Tensor THSLinalg_solve(const Tensor tensor, Tensor other)
-{
-    CATCH_TENSOR(torch::linalg::solve(*tensor, *other));
-}
-
-Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)
-{
-    CATCH_TENSOR(torch::linalg::tensorinv(*tensor, ind));
-}
-
-Tensor THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length)
-{
-    c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
-    CATCH_TENSOR(torch::linalg::tensorsolve(*tensor, *other, dims));
-}
-
-double THSInit_calculate_gain(int64_t nonlinearity, double param)
-{
-    CATCH_RETURN(double, 0.0, torch::nn::init::calculate_gain(get_nl_type(nonlinearity), param))
-}
-
-torch::nn::init::FanModeType get_fan_mode(int64_t mode)
-{
-    return mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut);
-}
-
-Tensor THSInit_constant_(Tensor tensor, Scalar value)
-{
-    CATCH_TENSOR(torch::nn::init::constant_(*tensor, *value))
-}
-
-Tensor THSInit_dirac_(Tensor tensor)
-{
-    CATCH_TENSOR(torch::nn::init::dirac_(*tensor))
-}
-
-Tensor THSInit_eye_(Tensor tensor)
-{
-    CATCH_TENSOR(torch::nn::init::eye_(*tensor))
-}
-
-Tensor THSInit_ones_(Tensor tensor)
-{
-    CATCH_TENSOR(torch::nn::init::ones_(*tensor))
-}
-
-Tensor THSInit_orthogonal_(Tensor tensor, double gain)
-{
-    CATCH_TENSOR(torch::nn::init::orthogonal_(*tensor, gain))
-}
-
-Tensor THSInit_sparse_(Tensor tensor, double sparsity, double std)
-{
-    CATCH_TENSOR(torch::nn::init::sparse_(*tensor, sparsity, std))
-}
-
-Tensor THSInit_zeros_(Tensor tensor)
-{
-    CATCH_TENSOR(torch::nn::init::zeros_(*tensor))
-}
