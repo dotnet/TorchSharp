@@ -16,11 +16,22 @@ set(SOURCES
     THSTorch.h
     Utils.h
     cifar10.cpp
+	THSActivation.cpp
     THSAutograd.cpp
+	THSConvolution.cpp
     THSData.cpp
     THSJIT.cpp
+	THSLinearAlgebra.cpp
+	THSLoss.cpp
+	THSModule.cpp
     THSNN.cpp
+	THSNormalization.cpp
+	THSOptimizers.cpp
+	THSRandom.cpp
     THSTensor.cpp
+	THSTensorConv.cpp
+	THSTensorFactories.cpp
+	THSTensorMath.cpp
     THSTorch.cpp
     Utils.cpp)
 

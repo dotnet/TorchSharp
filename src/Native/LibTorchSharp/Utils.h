@@ -84,3 +84,85 @@ std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const int length)
 
     return tensors;
 }
+
+// Utilities for NN namespace.
+
+template <typename T>
+Tensor get_weight(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->weight);
+}
+
+template <typename T>
+void set_weight(const NNModule module, const Tensor weights)
+{
+    CATCH(
+        (*module)->as<T>()->weight = *weights;
+    );
+}
+
+template <typename T>
+Tensor get_bias(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->bias);
+}
+
+template <typename T>
+void set_bias(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<T>()->bias = *bias;
+    );
+}
+
+template<typename TImpl>
+NNModule create_module(NNAnyModule* outAsAnyModule)
+{
+    auto mod = std::make_shared<TImpl>();
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+
+    return new std::shared_ptr<torch::nn::Module>(mod);
+}
+
+template<typename TImpl, typename TOptions>
+NNModule create_module(const TOptions& opts, NNAnyModule* outAsAnyModule)
+{
+    auto mod = std::make_shared<TImpl>(opts);
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+
+    return new std::shared_ptr<torch::nn::Module>(mod);
+}
+
+inline
+torch::nn::init::NonlinearityType get_nl_type(const int64_t nl)
+{
+    switch (nl)
+    {
+    default:
+    case 0:  return torch::kLinear;
+    case 1:  return torch::kConv1D;
+    case 2:  return torch::kConv2D;
+    case 3:  return torch::kConv3D;
+    case 4:  return torch::kConvTranspose1D;
+    case 5:  return torch::kConvTranspose2D;
+    case 6:  return torch::kConvTranspose3D;
+    case 7:  return torch::kSigmoid;
+    case 8:  return torch::kTanh;
+    case 9:  return torch::kReLU;
+    case 10: return torch::kLeakyReLU;
+    }
+}
