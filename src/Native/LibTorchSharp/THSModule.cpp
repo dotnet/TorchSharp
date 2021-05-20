@@ -1,0 +1,224 @@
+// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+#include "THSNN.h"
+
+#include <torch/nn/init.h>
+
+
+void THSNN_Module_save(const NNModule module, const char* location)
+{
+    //CATCH(
+    auto output = torch::serialize::OutputArchive();
+
+    (*module)->save(output);
+    output.save_to(location);
+    //);
+}
+
+//NNModule THSNN_AnyModule_get(const NNAnyModule module)
+//{
+//	return new std::shared_ptr< torch::nn::Module>(&( (*module)->get<torch::nn::Module>()));
+//}
+
+void THSNN_Module_register_module(const NNModule module, const char* name, const NNModule submodule)
+{
+    CATCH(
+        (*module)->register_module(name, *submodule);
+    );
+}
+
+void THSNN_Module_register_buffer(const NNModule module, const char* name, const Tensor tensor)
+{
+    CATCH(
+        (*module)->register_buffer(name, *tensor);
+    );
+}
+
+NNModule THSNN_Module_load(const char* location)
+{
+    //CATCH_RETURN_NNModule(
+    auto module = new torch::nn::Module();
+    auto input = torch::serialize::InputArchive();
+
+    input.load_from(location);
+    module->load(input);
+    //res = new std::shared_ptr<torch::nn::Module>(module);
+    return new std::shared_ptr<torch::nn::Module>(module);
+    //);
+}
+
+int THSNN_Module_has_parameter(const NNModule module, const char* name)
+{
+    CATCH_RETURN(int, 0, (*module)->named_parameters().contains(name));
+}
+
+Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
+{
+    CATCH_TENSOR(*(*module)->named_parameters().find(name));
+}
+
+void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length))
+{
+    auto parameters = (*module)->parameters();
+    Tensor* result1 = allocator1(parameters.size());
+
+    for (size_t i = 0; i < parameters.size(); i++)
+    {
+        result1[i] = ResultTensor(parameters[i]);
+    }
+}
+
+void THSNN_Module_get_named_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto parameters = (*module)->named_parameters();
+    Tensor* result1 = allocator1(parameters.size());
+    const char** result2 = allocator2(parameters.size());
+
+    for (size_t i = 0; i < parameters.size(); i++)
+    {
+        result1[i] = ResultTensor(parameters[i].value());
+        result2[i] = make_sharable_string(parameters[i].key());
+    }
+}
+
+void THSNN_Module_get_named_buffers(const NNModule module, Tensor* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_buffers();
+    Tensor* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = ResultTensor(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
+    }
+}
+
+void THSNN_Module_get_named_children(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_children();
+    NNModule* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = new std::shared_ptr<torch::nn::Module>(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
+    }
+}
+
+void THSNN_Module_get_named_modules(const NNModule module, NNModule* (*allocator1)(size_t length), const char** (*allocator2)(size_t length))
+{
+    auto buffers = (*module)->named_modules();
+    NNModule* result1 = allocator1(buffers.size());
+    const char** result2 = allocator2(buffers.size());
+
+    for (size_t i = 0; i < buffers.size(); i++)
+    {
+        result1[i] = new std::shared_ptr<torch::nn::Module>(buffers[i].value());
+        result2[i] = make_sharable_string(buffers[i].key());
+    }
+}
+
+int THSNN_Module_is_training(NNModule module)
+{
+    return (*module)->is_training();
+}
+
+void THSNN_Module_train(NNModule module)
+{
+    (*module)->train();
+}
+
+void THSNN_Module_eval(NNModule module)
+{
+    (*module)->eval();
+}
+
+long THSNN_Module_children_size(const NNModule module)
+{
+    return (*module)->children().size();
+}
+
+NNModule THSNN_Module_child(const NNModule module, const int index)
+{
+    return new std::shared_ptr<torch::nn::Module>((*module)->children()[index]);
+}
+
+const char* THSNN_Module_name(const NNModule module)
+{
+    return make_sharable_string((*module)->name());
+}
+
+void THSNN_Module_zero_grad(const NNModule module)
+{
+    (*module)->zero_grad();
+}
+
+void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+    (*module)->to(torch::Device(dev, index));
+}
+
+// Wrapper class used to enable .NET definitions ot new modules describing parameters and with delegates to implement forward function
+class CustomModule : public torch::nn::Module
+{
+public:
+    CustomModule(
+        const char* name,
+        const char** names,
+        at::Tensor** parameters,
+        const bool* require_grad,
+        const int length,
+        Tensor(*forward)(Tensor))
+        : torch::nn::Module(name), _forward(forward)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            register_parameter(names[i], *parameters[i], require_grad[i]);
+        }
+
+    }
+
+    Tensor(*_forward)(Tensor);
+
+    at::Tensor forward(at::Tensor input) {
+        return *(*_forward)(&input);
+    }
+
+};
+
+NNModule THSNN_custom_module(const char* name,
+    const char** names,
+    at::Tensor** parameters,
+    const bool* require_grad,
+    const int length,
+    Tensor(*forward)(Tensor),
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto mod = new CustomModule(name, names, parameters, require_grad, length, forward);
+
+    // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
+    // a Module can only be boxed to AnyModule at the point its static type is known).
+    if (outAsAnyModule != NULL)
+    {
+        auto modShared = new std::shared_ptr<CustomModule>(mod);
+        auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<CustomModule>(*modShared));
+        *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
+    }
+    res = new std::shared_ptr<torch::nn::Module>((torch::nn::Module*)mod);
+    );
+}
+
+void THSNN_Module_dispose(const NNModule module)
+{
+    delete module; // NOTE: this only deletes the shared_ptr
+}
+
+void THSNN_AnyModule_dispose(const NNAnyModule module)
+{
+    delete module; // NOTE: this only deletes the shared_ptr
+}
