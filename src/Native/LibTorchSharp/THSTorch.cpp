@@ -126,6 +126,16 @@ Scalar THSTorch_bool_to_scalar(bool value)
     return new torch::Scalar(value);
 }
 
+Scalar THSTorch_complex32_to_scalar(float real, float imaginary)
+{
+    return new torch::Scalar(c10::complex<float>(real, imaginary));
+}
+
+Scalar THSTorch_complex64_to_scalar(double real, double imaginary)
+{
+    return new torch::Scalar(c10::complex<double>(real, imaginary));
+}
+
 int8_t THSTorch_scalar_to_int8(Scalar value)
 {
     return value->toChar();
@@ -159,6 +169,22 @@ float THSTorch_scalar_to_float32(Scalar value)
 double THSTorch_scalar_to_float64(Scalar value)
 {
     return value->toDouble();
+}
+
+void THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length))
+{
+    auto result = value->toComplexFloat();
+    auto space = allocator(2);
+    space[0] = result.real();
+    space[1] = result.imag();
+}
+
+void THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length))
+{
+    auto result = value->toComplexDouble();
+    auto space = allocator(2);
+    space[0] = result.real();
+    space[1] = result.imag();
 }
 
 bool THSTorch_scalar_to_bool(Scalar value)

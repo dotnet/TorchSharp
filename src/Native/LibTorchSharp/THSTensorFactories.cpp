@@ -299,6 +299,29 @@ Tensor THSTensor_newFloat32Scalar(float data, const int device_type, const int d
     CATCH_TENSOR(torch::tensor(data, options));
 }
 
+Tensor THSTensor_newComplexFloat32Scalar(float real, float imaginary, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::ComplexFloat))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    c10::complex<float> data(real, imaginary);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+Tensor THSTensor_newComplexFloat64Scalar(double real, double imaginary, const int device_type, const int device_index, bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(c10::ScalarType::ComplexDouble))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    c10::complex<double> data(real, imaginary);
+    CATCH_TENSOR(torch::tensor(data, options));
+}
+
+
 Tensor THSTensor_newFloat16Scalar(float data, const int device_type, const int device_index, bool requires_grad)
 {
     auto options = at::TensorOptions()

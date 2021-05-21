@@ -287,65 +287,80 @@ namespace TorchSharp
             }
         }
 
-        //[Fact]
-        //public void CreateComplexFloat32TensorZeros()
-        //{
-        //    var shape = new long[] { 2, 2 };
+        [Fact]
+        public void CreateComplexFloat32TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
 
-        //    TorchTensor t = ComplexFloat32Tensor.zeros(shape);
-        //    Assert.Equal(shape, t.Shape);
-        //    t.ReadComplexFloat(0, out var r3, out var i3);
-        //    Assert.Equal(0.0f, r3);
-        //    Assert.Equal(0.0f, i3);
-        //    t.ReadComplexFloat(3, out var r4, out var i4);
-        //    Assert.Equal(0.0f, r4);
-        //    Assert.Equal(0.0f, i4);
+            TorchTensor t = ComplexFloat32Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            for (var i = 0; i < v3.Length; i++) {
+                Assert.Equal(0.0f, v3[i].Real);
+                Assert.Equal(0.0f, v3[i].Imaginary);
+            }
+        }
 
-        //}
+        [Fact]
+        public void CreateComplexFloat32TensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
 
-        //[Fact]
-        //public void CreateComplexFloat32TensorOnes()
-        //{
-        //    var shape = new long[] { 2, 2 };
+            TorchTensor t = ComplexFloat32Tensor.ones(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            for (var i = 0; i < v3.Length; i++) {
+                Assert.Equal(1.0f, v3[i].Real);
+                Assert.Equal(0.0f, v3[i].Imaginary);
+            }
+        }
 
-        //    TorchTensor t = ComplexFloat32Tensor.ones(shape);
-        //    Assert.Equal(shape, t.Shape);
-        //    t.ReadComplexFloat(0, out var r3, out var i3);
-        //    Assert.Equal(1.0f, r3);
-        //    Assert.Equal(0.0f, i3);
-        //    t.ReadComplexFloat(3, out var r4, out var i4);
-        //    Assert.Equal(1.0f, r4);
-        //    Assert.Equal(0.0f, i4);
+        [Fact]
+        public void CreateComplexFloat32TensorRand()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ComplexFloat32Tensor.rand(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            Assert.All(v3, t => Assert.True(t.Real >= 0.0f && t.Real < 1.0f && t.Imaginary >= 0.0f && t.Imaginary < 1.0f));
+        }
 
-        //}
+        [Fact]
+        public void CreateComplexFloat32TensorRandn()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor t = ComplexFloat32Tensor.randn(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+        }
 
-        //[Fact]
-        //public void CreateComplexFloat64TensorZeros()
-        //{
-        //    var shape = new long[] { 2, 2 };
+        [Fact]
+        public void CreateComplexFloat64TensorZeros()
+        {
+            var shape = new long[] { 2, 2 };
 
-        //    TorchTensor t = ComplexFloat64Tensor.zeros(shape);
-        //    Assert.Equal(shape, t.Shape);
-        //    var v3 = t.ReadComplexFloat64(0);
-        //    Assert.Equal(0.0, v3.Real);
-        //    Assert.Equal(0.0, v3.Imaginary);
-        //    var v4 = t.ReadComplexFloat64(3);
-        //    Assert.Equal(0.0, v4.Real);
-        //    Assert.Equal(0.0, v4.Imaginary);
+            TorchTensor t = ComplexFloat64Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<System.Numerics.Complex>().ToArray();
+            for (var i = 0; i < v3.Length; i++) {
+                Assert.Equal(0.0, v3[i].Real);
+                Assert.Equal(0.0, v3[i].Imaginary);
+            }
+        }
 
-        //}
+        [Fact]
+        public void CreateComplexFloat64TensorOnes()
+        {
+            var shape = new long[] { 2, 2 };
 
-        //[Fact]
-        //public void CreateComplexFloat64TensorOnes()
-        //{
-        //    var shape = new long[] { 2, 2 };
-        //    TorchTensor t = ComplexFloat64Tensor.ones(shape);
-        //    Assert.Equal(shape, t.Shape);
-        //    var v5 = t.ReadComplexFloat64(0);
-        //    Assert.Equal(new Complex(1.0, 0.0), v5);
-        //    var v6 = t.ReadComplexFloat64(3);
-        //    Assert.Equal(new Complex(1.0, 0.0), v6);
-        //}
+            TorchTensor t = ComplexFloat64Tensor.ones(shape);
+            Assert.Equal(shape, t.shape);
+            var v3 = t.Data<System.Numerics.Complex>().ToArray();
+            for (var i = 0; i < v3.Length; i++) {
+                Assert.Equal(1.0, v3[i].Real);
+                Assert.Equal(0.0, v3[i].Imaginary);
+            }
+        }
 
         [Fact]
         public void CreateFloat32TensorCheckMemory()
@@ -421,6 +436,48 @@ namespace TorchSharp
                         Assert.Equal(1, ones[i,j].ToInt32());
                     else
                         Assert.Equal(0, ones[i,j].ToInt32());
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateComplexFloat32TensorEyeCheckData()
+        {
+            var ones = ComplexFloat32Tensor.eye(4, 4);
+            Assert.Equal(ones.shape[0], ones.shape[1]);
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (i == j) {
+                        var scalar = ones[i, j].ToComplex32();
+                        Assert.Equal(1.0f, scalar.Real);
+                        Assert.Equal(0.0f, scalar.Imaginary);
+                    } else {
+                        var scalar = ones[i, j].ToComplex32();
+                        Assert.Equal(0.0f, scalar.Real);
+                        Assert.Equal(0.0f, scalar.Imaginary);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void CreateComplexFloat64TensorEyeCheckData()
+        {
+            var ones = ComplexFloat64Tensor.eye(4, 4);
+            Assert.Equal(ones.shape[0], ones.shape[1]);
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if (i == j) {
+                        var scalar = ones[i, j].ToComplex64();
+                        Assert.Equal(1.0, scalar.Real);
+                        Assert.Equal(0.0, scalar.Imaginary);
+                    } else {
+                        var scalar = ones[i, j].ToComplex64();
+                        Assert.Equal(0.0, scalar.Real);
+                        Assert.Equal(0.0, scalar.Imaginary);
+                    }
                 }
             }
         }
@@ -763,6 +820,33 @@ namespace TorchSharp
             Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t >= 0.0 && t < 1.0));
         }
 
+        [Fact]
+        public void CreateComplexFloat32TensorRandLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = ComplexFloat32Tensor.empty(shape);
+            TorchTensor t2 = t1.rand_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t2.Type);
+        }
+
+        [Fact]
+        public void CreateComplexFloat32TensorRandLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.rand_like(dtype: ScalarType.ComplexFloat32);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t2.Type);
+        }
 
         [Fact]
         public void CreateFloat32TensorRandnLike()
@@ -790,6 +874,34 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.Type);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.Type);
+        }
+
+        [Fact]
+        public void CreateComplexFloat32TensorRandnLike()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = ComplexFloat32Tensor.empty(shape);
+            TorchTensor t2 = t1.randn_like();
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t2.Type);
+        }
+
+        [Fact]
+        public void CreateComplexFloat32TensorRandnLikeWithType()
+        {
+            var shape = new long[] { 10, 20, 30 };
+
+            TorchTensor t1 = Float32Tensor.empty(shape);
+            TorchTensor t2 = t1.randn_like(dtype: ScalarType.ComplexFloat32);
+
+            Assert.Equal(shape, t1.shape);
+            Assert.Equal(ScalarType.Float32, t1.Type);
+            Assert.Equal(t1.shape, t2.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, t2.Type);
         }
 
         [Fact]
@@ -852,6 +964,44 @@ namespace TorchSharp
             Assert.Equal(1.0f, t[1, 2].ToSingle());
             t[1, 2] = Float32Tensor.from(2.0f);
             Assert.Equal(2.0f, t[1, 2].ToSingle());
+        }
+
+        [Fact]
+        public void GetSetItemComplexFloat2()
+        {
+            var shape = new long[] { 2, 3 };
+            TorchTensor t = ComplexFloat32Tensor.ones(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1.0f, t[0, 0].ToComplex32().Real);
+            Assert.Equal(1.0f, t[1, 1].ToComplex32().Real);
+            Assert.Equal(1.0f, t[1, 2].ToComplex32().Real);
+
+            t[1, 1] = ComplexFloat32Tensor.from(0.5f, 1.0f);
+            Assert.Equal(0.5f, t[1, 1].ToComplex32().Real);
+            Assert.Equal(1.0f, t[1, 1].ToComplex32().Imaginary);
+
+            t[1, 2] = ComplexFloat32Tensor.from((2.0f, 3.0f));
+            Assert.Equal(2.0f, t[1, 2].ToComplex32().Real);
+            Assert.Equal(3.0f, t[1, 2].ToComplex32().Imaginary);
+        }
+
+        [Fact]
+        public void GetSetItemComplexDouble2()
+        {
+            var shape = new long[] { 2, 3 };
+            TorchTensor t = ComplexFloat64Tensor.ones(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1.0f, t[0, 0].ToComplex64().Real);
+            Assert.Equal(1.0f, t[1, 1].ToComplex64().Real);
+            Assert.Equal(1.0f, t[1, 2].ToComplex64().Real);
+
+            t[1, 1] = ComplexFloat64Tensor.from(0.5, 1.0);
+            Assert.Equal(0.5f, t[1, 1].ToComplex64().Real);
+            Assert.Equal(1.0f, t[1, 1].ToComplex64().Imaginary);
+
+            t[1, 2] = ComplexFloat64Tensor.from(new System.Numerics.Complex(2.0, 3.0f));
+            Assert.Equal(2.0f, t[1, 2].ToComplex64().Real);
+            Assert.Equal(3.0f, t[1, 2].ToComplex64().Imaginary);
         }
 
         [Fact]

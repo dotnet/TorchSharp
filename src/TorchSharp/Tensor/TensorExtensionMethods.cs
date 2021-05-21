@@ -332,5 +332,8 @@ namespace TorchSharp.Tensor
         public static int ToInt32(this TorchTensor value) => value.ToScalar().ToInt32();
         public static long ToInt64(this TorchTensor value) => value.ToScalar().ToInt64();
         public static bool ToBoolean(this TorchTensor value) => value.ToScalar().ToBoolean();
+
+        public static (float Real, float Imaginary) ToComplex32(this TorchTensor value) => value.ToScalar().ToComplexFloat32();
+        public static System.Numerics.Complex ToComplex64(this TorchTensor value) => value.ToScalar().ToComplexFloat64();
     }
 }

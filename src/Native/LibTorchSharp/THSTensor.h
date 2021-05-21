@@ -836,9 +836,13 @@ EXPORT_API(Tensor) THSTensor_newInt32Scalar(int data, const int device_type, con
 
 EXPORT_API(Tensor) THSTensor_newInt64Scalar(int64_t data, const int device_type, const int device_index, bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_newFloat32Scalar(float data, const int device_type, const int device_index, bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_newFloat64Scalar(double data, const int device_type, const int device_index, bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_newFloat32Scalar(float data, const int device_type, const int device_index, bool requires_grad);
+EXPORT_API(Tensor) THSTensor_newComplexFloat32Scalar(float real, float imaginary, const int device_type, const int device_index, bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_newComplexFloat64Scalar(double real, double imaginary, const int device_type, const int device_index, bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_nextafter(const Tensor input, const Tensor other);
 
