@@ -866,3 +866,17 @@ Tensor THSTensor_xlogy(const Tensor x, const Tensor y)
     CATCH_TENSOR(x->xlogy(*y));
 }
 
+Tensor THSTensor_xlogy_(const Tensor x, const Tensor y)
+{
+    CATCH_TENSOR(x->xlogy_(*y));
+}
+
+Tensor THSTensor_xlogy_scalar(const Tensor x, const Scalar y)
+{
+    CATCH_TENSOR(x->xlogy(*y));
+}
+
+Tensor THSTensor_xlogy_scalar_(const Tensor x, const Scalar y)
+{
+    CATCH_TENSOR(x->xlogy_(*y));
+}
