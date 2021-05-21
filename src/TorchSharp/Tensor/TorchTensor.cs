@@ -114,12 +114,13 @@ namespace TorchSharp.Tensor
         /// </summary>
         public Span<T> Data<T>()
         {
-            if (NumberOfElements > int.MaxValue)
-            {
+            if (NumberOfElements > int.MaxValue) {
                 throw new ArgumentException("Span only supports up to int.MaxValue elements.");
             }
-            unsafe
-            {
+            if (device_type != DeviceType.CPU) {
+                throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
+            }
+            unsafe {
                 var res = THSTensor_data(handle);
                 if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 // NOTE: there is no safety here.
@@ -133,6 +134,9 @@ namespace TorchSharp.Tensor
 
             if (totalSize > int.MaxValue) {
                 throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+            }
+            if (device_type != DeviceType.CPU) {
+                throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
             }
             unsafe {
                 var res = THSTensor_data(handle);

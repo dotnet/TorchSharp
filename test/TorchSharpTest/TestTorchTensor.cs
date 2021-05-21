@@ -2271,12 +2271,15 @@ namespace TorchSharp
 
             var z = tensorFunc(x, y);
 
-            var xData = x.Data<Tin>();
-            var xCloneData = xClone.Data<Tin>();
-            var yData = y.Data<Tin>();
-            var zData = z.Data<Tin>();
+            if (x.device_type == DeviceType.CPU) {
+                var xData = x.Data<Tin>();
+                var xCloneData = xClone.Data<Tin>();
+                var yData = y.Data<Tin>();
+                var zData = z.Data<Tin>();
 
-            Assert.True(xData == zData);
+                Assert.True(xData == zData);
+            }
+
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     var xClonev = getFuncIn(xClone, i, j);
