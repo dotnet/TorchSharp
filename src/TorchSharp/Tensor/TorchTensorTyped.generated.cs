@@ -1820,6 +1820,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2010,7 +2011,6 @@ namespace TorchSharp.Tensor {
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
-
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newFloat16Scalar(float scalar, int deviceType, int deviceIndex, bool requiresGrad);
@@ -2328,6 +2328,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2518,7 +2519,6 @@ namespace TorchSharp.Tensor {
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
-
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newBFloat16Scalar(float scalar, int deviceType, int deviceIndex, bool requiresGrad);
@@ -2836,6 +2836,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3026,7 +3027,6 @@ namespace TorchSharp.Tensor {
             if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
-
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newFloat32Scalar(float scalar, int deviceType, int deviceIndex, bool requiresGrad);
@@ -3341,6 +3341,7 @@ namespace TorchSharp.Tensor {
             }
         }
 
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_rand(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3532,7 +3533,6 @@ namespace TorchSharp.Tensor {
             return new TorchTensor (handle);
         }
 
-
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newFloat64Scalar(double scalar, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3628,26 +3628,6 @@ namespace TorchSharp.Tensor {
             deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
-
-        /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
-		/// common difference step, starting from start
-        /// </summary>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
-        {
-            device = Torch.InitializeDevice(device);
-
-            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
-            }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor (handle);
-        }
 		
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
@@ -3956,26 +3936,6 @@ namespace TorchSharp.Tensor {
             deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
-
-        /// <summary>
-        /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
-		/// common difference step, starting from start
-        /// </summary>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
-        {
-            device = Torch.InitializeDevice(device);
-
-            var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
-            }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor (handle);
-        }
 		
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);

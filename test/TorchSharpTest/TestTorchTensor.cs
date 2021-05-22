@@ -145,8 +145,8 @@ namespace TorchSharp
 
             TorchTensor t = Float32Tensor.empty_strided(shape, strides);
             Assert.Equal(shape, t.shape);
-            Assert.Equal(1, t.GetTensorStride(0));
-            Assert.Equal(2, t.GetTensorStride(1));
+            Assert.Equal(1, t.stride(0));
+            Assert.Equal(2, t.stride(1));
         }
 
         [Fact]
@@ -157,8 +157,8 @@ namespace TorchSharp
 
             TorchTensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
             Assert.Equal(shape, t.shape);
-            Assert.Equal(1, t.GetTensorStride(0));
-            Assert.Equal(2, t.GetTensorStride(1));
+            Assert.Equal(1, t.stride(0));
+            Assert.Equal(2, t.stride(1));
         }
 
         [Fact]
@@ -2238,6 +2238,52 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestArithmeticOperatorsComplexFloat32()
+        {
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = Float32Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
+                    var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
+                    var c3 = ComplexFloat32Tensor.ones(new long[] { 10, 10 }, device: device);
+                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    // scalar-tensor operators
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a - 0.5f, a => a - 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a * 0.5f, a => a * 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f * a, a => 0.5f * a);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a / 0.5f, a => a / 0.5f);
+
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.add(0.5f), a => a + 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.sub(0.5f), a => a - 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.mul(0.5f), a => a * 0.5f);
+                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.div(0.5f), a => a / 0.5f);
+
+                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.add_(0.5f), a => a + 0.5f);
+                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.sub_(0.5f), a => a - 0.5f);
+                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.mul_(0.5f), a => a * 0.5f);
+                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.div_(0.5f), a => a / 0.5f);
+
+                    // tensor-tensor operators
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
+
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
+                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
+
+                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
+                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
+                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
+                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
+                }
+            }
+        }
+
+        [Fact]
         public void TestArithmeticOperatorsFloat64()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
@@ -2245,6 +2291,52 @@ namespace TorchSharp
                     var c1 = Float64Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float64Tensor.ones(new long[] { 10, 10 }, device: device);
+                    Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
+                    // scalar-tensor operators
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
+
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
+                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
+
+                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
+                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
+                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
+                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
+
+                    // tensor-tensor operators
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
+
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
+                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
+
+                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
+                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
+                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
+                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestArithmeticOperatorsComplexFloat64()
+        {
+            foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
+                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                    var c1 = ComplexFloat64Tensor.arange(0, 10, 1, device: device).expand(new long[] { 10, 10 });
+                    var c2 = ComplexFloat64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
+                    var c3 = ComplexFloat64Tensor.ones(new long[] { 10, 10 }, device: device);
                     Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
                     // scalar-tensor operators
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
@@ -3286,14 +3378,20 @@ namespace TorchSharp
             var res7 = BFloat16Tensor.randint(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res7.shape);
 
+            var res8 = Float32Tensor.randint(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res8.shape);
+
+            var res9 = Float64Tensor.randint(10, new long[] { 200 });
+            Assert.Equal(new long[] { 200 }, res9.shape);
+
             //var res7 = ComplexFloat16Tensor.randint(10, new long[] { 200 });
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
-            //var res8 = ComplexFloat32Tensor.randint(10, new long[] { 200 });
-            //Assert.Equal(new long[] { 200 }, res8.Shape);
+            var res10 = ComplexFloat32Tensor.randint(100, new long[] { 20, 10 });
+            Assert.Equal(new long[] { 20, 10 }, res10.shape);
 
-            //var res9 = ComplexFloat64Tensor.randint(10, new long[] { 200 });
-            //Assert.Equal(new long[] { 200 }, res9.Shape);
+            var res11 = ComplexFloat64Tensor.randint(10, new long[] { 20, 10 });
+            Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 
         [Fact]
@@ -3663,6 +3761,114 @@ namespace TorchSharp
             var a = expected.view(2, 2, 2);
             Assert.Equal(new long[] { 2, 2, 2 }, a.shape);
             Assert.Equal(expected, a.ravel());
+        }
+
+        [Fact]
+        public void StrideTest_1()
+        {
+            var x = Int32Tensor.zeros(new long[] { 2, 2, 2 });
+            Assert.Equal(4, x.stride(0));
+            Assert.Equal(2, x.stride(1));
+            Assert.Equal(1, x.stride(2));
+
+            Assert.Equal(new long[] { 4, 2, 1 }, x.stride());
+        }
+
+        [Fact]
+        public void StrideTest_2()
+        {
+            var x = Int32Tensor.zeros(new long[] { 2, 2, 2 });
+            Assert.Equal(new long[] { 4, 2, 1 }, x.stride());
+        }
+
+        [Fact]
+        public void Complex32PartsTest()
+        {
+            var x = ComplexFloat32Tensor.zeros(new long[] { 20 });
+            var r1 = x.Real;
+            var i1 = x.Imag;
+
+            Assert.Equal(x.shape, r1.shape);
+            Assert.Equal(x.shape, i1.shape);
+            Assert.Equal(ScalarType.Float32, r1.Type);
+            Assert.Equal(ScalarType.Float32, i1.Type);
+
+            var vasr = x.view_as_real();
+
+            Assert.Equal(new long[] { 20, 2 }, vasr.shape);
+            Assert.Equal(ScalarType.Float32, vasr.Type);
+
+            var r2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0)];
+            var i2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(1)];
+
+            Assert.Equal(x.shape, r2.shape);
+            Assert.Equal(x.shape, i2.shape);
+            Assert.Equal(ScalarType.Float32, r2.Type);
+            Assert.Equal(ScalarType.Float32, i2.Type);
+
+            Assert.Equal(r1, r2);
+            Assert.Equal(i1, i2);
+        }
+
+        [Fact]
+        public void Complex64PartsTest()
+        {
+            var x = ComplexFloat64Tensor.zeros(new long[] { 20 });
+            var r1 = x.Real;
+            var i1 = x.Imag;
+
+            Assert.Equal(x.shape, r1.shape);
+            Assert.Equal(x.shape, i1.shape);
+            Assert.Equal(ScalarType.Float64, r1.Type);
+            Assert.Equal(ScalarType.Float64, i1.Type);
+
+            var vasr = x.view_as_real();
+
+            Assert.Equal(new long[] { 20, 2 }, vasr.shape);
+            Assert.Equal(ScalarType.Float64, vasr.Type);
+
+            var r2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0)];
+            var i2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(1)];
+
+            Assert.Equal(x.shape, r2.shape);
+            Assert.Equal(x.shape, i2.shape);
+            Assert.Equal(ScalarType.Float64, r2.Type);
+            Assert.Equal(ScalarType.Float64, i2.Type);
+
+            Assert.Equal(r1, r2);
+            Assert.Equal(i1, i2);
+        }
+
+        [Fact]
+        public void Complex32TensorView()
+        {
+            var x = ComplexFloat32Tensor.zeros(new long[] { 20, 20, 20 });
+            var y = Float32Tensor.zeros(new long[] { 20, 20, 20, 2 });
+
+            var vasr = x.view_as_real();
+            Assert.Equal(new long[] { 20, 20, 20, 2 }, vasr.shape);
+            Assert.Equal(ScalarType.Float32, vasr.Type);
+
+            var vasc = y.view_as_complex();
+            Assert.Equal(ScalarType.ComplexFloat32, vasc.Type);
+            Assert.Equal(x.shape, vasc.shape);
+
+        }
+
+        [Fact]
+        public void Complex64TensorView()
+        {
+            var x = ComplexFloat64Tensor.zeros(new long[] { 20, 20, 20 });
+            var y = Float64Tensor.zeros(new long[] { 20, 20, 20, 2 });
+
+            var vasr = x.view_as_real();
+            Assert.Equal(new long[] { 20, 20, 20, 2 }, vasr.shape);
+            Assert.Equal(ScalarType.Float64, vasr.Type);
+
+            var vasc = y.view_as_complex();
+            Assert.Equal(ScalarType.ComplexFloat64, vasc.Type);
+            Assert.Equal(x.shape, vasc.shape);
+
         }
     }
 }

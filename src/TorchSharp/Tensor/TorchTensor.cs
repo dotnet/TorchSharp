@@ -162,6 +162,28 @@ namespace TorchSharp.Tensor
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_real(IntPtr handle);
+
+        public TorchTensor Real { get {
+                var res = THSTensor_real(Handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_imag(IntPtr handle);
+
+        public TorchTensor Imag {
+            get {
+                var res = THSTensor_imag(Handle);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+        }
+
         /// <summary>
         /// Returns the singleton value of a scalar tensor.
         /// </summary>
@@ -794,10 +816,29 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern long THSTensor_stride(IntPtr handle, long dimension);
 
+        [DllImport("LibTorchSharp")]
+        static extern long THSTensor_strides(IntPtr handle, AllocatePinnedArray allocator);
+
+        /// <summary>
+        ///  Retrieves the stride of all dimensions of the tensor.
+        /// </summary>
+        public long[] stride()
+        {
+            long[] ptrArray;
+
+            using (var pa = new PinnedArray<long>()) {
+                THSTensor_strides(handle, pa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray;
+        }
+
         /// <summary>
         ///  Retrieves the stride of the specified dimension in the tensor.
         /// </summary>
-        public long GetTensorStride(int dim)
+        public long stride(int dim)
         {
             var res = THSTensor_stride(handle, dim);
             Torch.CheckForErrors();
@@ -1260,6 +1301,33 @@ namespace TorchSharp.Tensor
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_view_as_complex(IntPtr tensor);
+
+        /// <summary>
+        /// Returns a view of input as a complex tensor. 
+        /// </summary>
+        public TorchTensor view_as_complex()
+        {
+            var result = THSTensor_view_as_complex(handle);
+            if (result == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(result);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_view_as_real(IntPtr tensor);
+
+        /// <summary>
+        /// Returns a view of input as a real tensor. 
+        /// </summary>
+        public TorchTensor view_as_real()
+        {
+            var result = THSTensor_view_as_real(handle);
+            if (result == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(result);
+        }
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_all(IntPtr tensor);

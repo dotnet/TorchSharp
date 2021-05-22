@@ -111,7 +111,7 @@ Tensor THSTensor_randint(
 
         tensor = new torch::Tensor(torch::randint(high, at::ArrayRef<int64_t>(sizes, length), options));
     )
-        return tensor;
+    return tensor;
 }
 
 Tensor THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out)
