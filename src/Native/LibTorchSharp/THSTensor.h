@@ -403,14 +403,6 @@ EXPORT_API(Tensor) THSTensor_eye_out(const int64_t n, const int64_t m, const Ten
 
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
-EXPORT_API(Tensor) THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
-
-EXPORT_API(Tensor) THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
-
-EXPORT_API(Tensor) THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
-
-EXPORT_API(Tensor) THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm);
-
 EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
 
 EXPORT_API(Tensor) THSTensor_fliplr(const Tensor tensor);
@@ -1235,6 +1227,44 @@ EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
 EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
 
 EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
+
+// torch::fft:
+
+EXPORT_API(Tensor) THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_hfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_ihfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_fft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_ifft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_fftn(const Tensor tensor, const int64_t *s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_ifftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_rfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_irfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_rfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_irfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_fftfreq(const int64_t n, const double d, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_rfftfreq(const int64_t n, const double d, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_fftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
+
+EXPORT_API(Tensor) THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
 
 // Spectral Ops
 

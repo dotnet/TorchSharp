@@ -20,6 +20,7 @@ set(SOURCES
     THSAutograd.cpp
 	THSConvolution.cpp
     THSData.cpp
+	THSFFT.cpp
     THSJIT.cpp
 	THSLinearAlgebra.cpp
 	THSLoss.cpp

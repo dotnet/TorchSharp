@@ -669,46 +669,6 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_fft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
-
-        public TorchTensor fft(long? n, long dim = -1, string norm = "backward")
-        {
-            var res = THSTensor_fft(handle, n.GetValueOrDefault(-1), dim, norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_ifft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
-
-        public TorchTensor ifft(long? n, long dim = -1, string norm = "backward")
-        {
-            var res = THSTensor_ifft(handle, n.GetValueOrDefault(-1), dim, norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_irfft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
-
-        public TorchTensor irfft(long? n, long dim = -1, string norm = "backward")
-        {
-            var res = THSTensor_irfft(handle, n.GetValueOrDefault(-1), dim, norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_rfft(IntPtr tensor, long n, long dim, [MarshalAs(UnmanagedType.LPStr)] string norm);
-
-        public TorchTensor rfft(long? n, long dim = -1, string norm = "backward")
-        {
-            var res = THSTensor_rfft(handle, n.GetValueOrDefault(-1), dim, norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-
-        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_float_power(IntPtr tensor, IntPtr trg);
 
         /// <summary>

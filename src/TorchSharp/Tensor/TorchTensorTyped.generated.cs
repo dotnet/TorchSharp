@@ -1874,6 +1874,46 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
+        /// </summary>
+        static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the sample frequencies for rfft() with a signal of size n.
+        /// </summary>
+        static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -2379,6 +2419,46 @@ namespace TorchSharp.Tensor {
                     return new TorchTensor (handle);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
+        /// </summary>
+        static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the sample frequencies for rfft() with a signal of size n.
+        /// </summary>
+        static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2890,6 +2970,46 @@ namespace TorchSharp.Tensor {
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
+        /// </summary>
+        static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the sample frequencies for rfft() with a signal of size n.
+        /// </summary>
+        static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
@@ -3392,6 +3512,46 @@ namespace TorchSharp.Tensor {
                     return new TorchTensor (handle);
                 }
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
+        /// </summary>
+        static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+        /// <summary>
+        /// Computes the sample frequencies for rfft() with a signal of size n.
+        /// </summary>
+        static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
+        {
+            device = Torch.InitializeDevice(device);
+
+            var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            if (handle == IntPtr.Zero) {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
+            }
+            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
