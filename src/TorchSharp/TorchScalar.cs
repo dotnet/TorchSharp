@@ -53,6 +53,16 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
+        public static implicit operator TorchScalar((float,float) value)
+        {
+            return value.ToScalar();
+        }
+
+        public static implicit operator TorchScalar(System.Numerics.Complex value)
+        {
+            return value.ToScalar();
+        }
+
         /// <summary>
         ///   Finalize the tensor. Releases the tensor and its associated data.
         /// </summary>
@@ -137,6 +147,23 @@ namespace TorchSharp
         {
             return new TorchScalar(THSTorch_float64_to_scalar(value));
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_complex32_to_scalar(float real, float imaginary);
+
+        public static TorchScalar ToScalar(this (float, float) value)
+        {
+            return new TorchScalar(THSTorch_complex32_to_scalar(value.Item1, value.Item2));
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_complex64_to_scalar(double real, double imaginary);
+
+        public static TorchScalar ToScalar(this System.Numerics.Complex value)
+        {
+            return new TorchScalar(THSTorch_complex64_to_scalar(value.Real, value.Imaginary));
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_bool_to_scalar(bool value);
 
@@ -225,5 +252,36 @@ namespace TorchSharp
             return THSTorch_scalar_to_bool(value.Handle);
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static void THSTorch_scalar_to_complex32(IntPtr handle, AllocatePinnedArray allocator);
+
+        public static (float Real, float Imaginary) ToComplexFloat32(this TorchScalar value)
+        {
+            float[] floatArray;
+
+            using (var pa = new PinnedArray<float>()) {
+                THSTorch_scalar_to_complex32(value.Handle, pa.CreateArray);
+                Torch.CheckForErrors();
+                floatArray = pa.Array;
+            }
+
+            return (floatArray[0], floatArray[1]);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static void THSTorch_scalar_to_complex64(IntPtr handle, AllocatePinnedArray allocator);
+
+        public static System.Numerics.Complex ToComplexFloat64(this TorchScalar value)
+        {
+            double[] floatArray;
+
+            using (var pa = new PinnedArray<double>()) {
+                THSTorch_scalar_to_complex64(value.Handle, pa.CreateArray);
+                Torch.CheckForErrors();
+                floatArray = pa.Array;
+            }
+
+            return new System.Numerics.Complex(floatArray[0], floatArray[1]);
+        }
     }
 }

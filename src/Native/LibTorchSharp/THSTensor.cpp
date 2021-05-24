@@ -1130,6 +1130,17 @@ int64_t THSTensor_stride(const Tensor tensor, const int64_t dim)
     CATCH_RETURN(int64_t, 0, tensor->stride(dim));
 }
 
+void THSTensor_strides(const Tensor tensor, int64_t* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = tensor->strides();
+        const size_t sz = res.size();
+        int64_t* result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = res[i];
+    );
+}
+
 int64_t THSTensor_size(const Tensor tensor, const int64_t dim)
 {
     CATCH_RETURN(int64_t, 0, tensor->size(dim));
@@ -1284,6 +1295,26 @@ Tensor THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64
 Tensor THSTensor_view(const Tensor tensor, const int64_t* shape, const int length)
 {
     CATCH_TENSOR(tensor->view(at::ArrayRef<int64_t>(shape, length)));
+}
+
+Tensor THSTensor_real(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::real(*tensor));
+}
+
+Tensor THSTensor_imag(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::imag(*tensor));
+}
+
+Tensor THSTensor_view_as_real(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::view_as_real(*tensor));
+}
+
+Tensor THSTensor_view_as_complex(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::view_as_complex(*tensor));
 }
 
 void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim)

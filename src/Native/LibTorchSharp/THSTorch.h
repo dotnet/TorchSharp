@@ -39,6 +39,9 @@ EXPORT_API(Scalar) THSTorch_bool_to_scalar(bool value);
 EXPORT_API(Scalar) THSTorch_float16_to_scalar(float value);
 EXPORT_API(Scalar) THSTorch_bfloat16_to_scalar(float value);
 
+EXPORT_API(Scalar) THSTorch_complex32_to_scalar(float real, float imaginary);
+EXPORT_API(Scalar) THSTorch_complex64_to_scalar(double real, double imaginary);
+
 EXPORT_API(int8_t) THSTorch_scalar_to_int8(Scalar value);
 EXPORT_API(uint8_t) THSTorch_scalar_to_uint8(Scalar value);
 EXPORT_API(int16_t) THSTorch_scalar_to_int16(Scalar value);
@@ -47,6 +50,9 @@ EXPORT_API(int64_t) THSTorch_scalar_to_int64(Scalar value);
 EXPORT_API(float) THSTorch_scalar_to_float32(Scalar value);
 EXPORT_API(double) THSTorch_scalar_to_float64(Scalar value);
 EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
+
+EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length));
+EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length));
 
 // Dispose the scalar.
 EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);
