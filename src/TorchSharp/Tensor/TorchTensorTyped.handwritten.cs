@@ -92,6 +92,11 @@ namespace TorchSharp.Tensor
 
             unsafe {
                 fixed (long* psizes = size2) {
+                    //
+                    // This is a little roundabout -- the native library doesn't support 'randint' for complex types,
+                    // but we can get around that by adding another dimension, creating a float tensor, and then
+                    // converting it to a complex tensor in the end.
+                    //
                     var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
@@ -104,6 +109,9 @@ namespace TorchSharp.Tensor
                     if (cmplx == IntPtr.Zero)
                         Torch.CheckForErrors();
 
+                    //
+                    // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
+                    //
                     var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.Type, device.Index, requiresGrad);
                     if (res == IntPtr.Zero)
                         Torch.CheckForErrors();
@@ -205,6 +213,11 @@ namespace TorchSharp.Tensor
 
             unsafe {
                 fixed (long* psizes = size2) {
+                    //
+                    // This is a little roundabout -- the native library doesn't support 'randint' for complex types,
+                    // but we can get around that by adding another dimension, creating a float tensor, and then
+                    // converting it to a complex tensor in the end.
+                    //
                     var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.Type, device.Index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
@@ -217,6 +230,9 @@ namespace TorchSharp.Tensor
                     if (cmplx == IntPtr.Zero)
                         Torch.CheckForErrors();
 
+                    //
+                    // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
+                    //
                     var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.Type, device.Index, requiresGrad);
                     if (res == IntPtr.Zero)
                         Torch.CheckForErrors();
