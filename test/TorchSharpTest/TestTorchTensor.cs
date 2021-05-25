@@ -2689,6 +2689,68 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AbsTest()
+        {
+            var data = Float32Tensor.arange(-10.0f, 10.0f, 1.0f);
+            var expected = data.Data<float>().ToArray().Select(MathF.Abs).ToArray();
+            var res = data.abs();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AbsTestC32()
+        {
+            var data = ComplexFloat32Tensor.rand(new long[] { 25 });
+            var expected = data.Data<(float R,float I)>().ToArray().Select(c => MathF.Sqrt(c.R* c.R + c.I*c.I)).ToArray();
+            var res = data.abs();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AbsTestC64()
+        {
+            var data = ComplexFloat64Tensor.rand(new long[] { 25 });
+            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => Math.Sqrt(c.Real * c.Real + c.Imaginary * c.Imaginary)).ToArray<double>();
+            var res = data.abs();
+            Assert.True(res.allclose(Float64Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AngleTestC32()
+        {
+            var data = ComplexFloat32Tensor.randn(new long[] { 25 });
+            var expected = data.Data<(float R, float I)>().ToArray().Select(c => {
+                var x = c.R;
+                var y = c.I;
+                return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x*x + y*y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
+            }).ToArray();
+            var res = data.angle();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AngleTestC64()
+        {
+            var data = ComplexFloat64Tensor.randn(new long[] { 25 });
+            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => {
+                var x = c.Real;
+                var y = c.Imaginary;
+                return (x > 0 || y != 0) ? 2 * Math.Atan(y / (Math.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? Math.PI : 0;
+            }).ToArray<double>();
+            var res = data.angle();
+            Assert.True(res.allclose(Float64Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void SqrtTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(MathF.Sqrt).ToArray();
+            var res = Float32Tensor.from(data).sqrt();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
         public void SinTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
