@@ -1642,7 +1642,7 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_complex(IntPtr real, IntPtr imag);
 
         /// <summary>
-        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value abs and angle angle.
+        /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
         /// </summary>
         static public TorchTensor complex(TorchTensor real, TorchTensor imag)
         {
@@ -1656,7 +1656,7 @@ namespace TorchSharp.Tensor
         extern static IntPtr THSTensor_polar(IntPtr abs, IntPtr angle);
 
         /// <summary>
-        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value abs and angle angle.
+        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value 'abs' and angle 'angle'.
         /// </summary>
         static public TorchTensor polar(TorchTensor abs, TorchTensor angle)
         {
