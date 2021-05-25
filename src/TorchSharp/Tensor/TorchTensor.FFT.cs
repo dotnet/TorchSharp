@@ -45,9 +45,26 @@ namespace TorchSharp.Tensor
         public TorchTensor fft2(long [] s = null, long [] dim = null, FFTNormType norm = FFTNormType.Backward)
         {
             if (this.Dimensions < 2) throw new ArgumentException("fft2() input should be at least 2D");
+            if (dim == null) dim = new long[] { -2, -1 };
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_fft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_ifft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
+
+        public TorchTensor ifft2(long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
+        {
+            if (this.Dimensions < 2) throw new ArgumentException("ifft2() input should be at least 2D");
+            if (dim == null) dim = new long[] { -2, -1 };
+            unsafe {
+                fixed (long* ps = s, pDim = dim) {
+                    var res = THSTensor_ifft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
@@ -87,21 +104,6 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_ifft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
-
-        public TorchTensor ifft2(long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
-        {
-            if (this.Dimensions < 2) throw new ArgumentException("ifft2() input should be at least 2D");
-            unsafe {
-                fixed (long* ps = s, pDim = dim) {
-                    var res = THSTensor_ifft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                    return new TorchTensor(res);
-                }
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_irfft(IntPtr tensor, long n, long dim, sbyte norm);
 
         public TorchTensor irfft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
@@ -127,6 +129,7 @@ namespace TorchSharp.Tensor
         public TorchTensor rfft2(long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
         {
             if (this.Dimensions < 2) throw new ArgumentException("rfft2() input should be at least 2D");
+            if (dim == null) dim = new long[] { -2, -1 };
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_rfft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
@@ -142,6 +145,7 @@ namespace TorchSharp.Tensor
         public TorchTensor irfft2(long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
         {
             if (this.Dimensions < 2) throw new ArgumentException("irfft2() input should be at least 2D");
+            if (dim == null) dim = new long[] { -2, -1 };
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_irfft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
