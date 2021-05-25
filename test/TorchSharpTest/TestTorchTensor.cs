@@ -2689,6 +2689,68 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AbsTest()
+        {
+            var data = Float32Tensor.arange(-10.0f, 10.0f, 1.0f);
+            var expected = data.Data<float>().ToArray().Select(MathF.Abs).ToArray();
+            var res = data.abs();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AbsTestC32()
+        {
+            var data = ComplexFloat32Tensor.rand(new long[] { 25 });
+            var expected = data.Data<(float R,float I)>().ToArray().Select(c => MathF.Sqrt(c.R* c.R + c.I*c.I)).ToArray();
+            var res = data.abs();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AbsTestC64()
+        {
+            var data = ComplexFloat64Tensor.rand(new long[] { 25 });
+            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => Math.Sqrt(c.Real * c.Real + c.Imaginary * c.Imaginary)).ToArray<double>();
+            var res = data.abs();
+            Assert.True(res.allclose(Float64Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AngleTestC32()
+        {
+            var data = ComplexFloat32Tensor.randn(new long[] { 25 });
+            var expected = data.Data<(float R, float I)>().ToArray().Select(c => {
+                var x = c.R;
+                var y = c.I;
+                return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x*x + y*y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
+            }).ToArray();
+            var res = data.angle();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void AngleTestC64()
+        {
+            var data = ComplexFloat64Tensor.randn(new long[] { 25 });
+            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => {
+                var x = c.Real;
+                var y = c.Imaginary;
+                return (x > 0 || y != 0) ? 2 * Math.Atan(y / (Math.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? Math.PI : 0;
+            }).ToArray<double>();
+            var res = data.angle();
+            Assert.True(res.allclose(Float64Tensor.from(expected)));
+        }
+
+        [Fact]
+        public void SqrtTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = data.Select(MathF.Sqrt).ToArray();
+            var res = Float32Tensor.from(data).sqrt();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+        }
+
+        [Fact]
         public void SinTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -3869,6 +3931,318 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, vasc.Type);
             Assert.Equal(x.shape, vasc.shape);
 
+        }
+
+        [Fact]
+        public void Float32FFT()
+        {
+            var input = Float32Tensor.arange(0, 4, 1);
+            var output = input.fft();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifft();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64FFT()
+        {
+            var input = Float64Tensor.arange(0, 4, 1);
+            var output = input.fft();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifft();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32HFFT()
+        {
+            var input = Float32Tensor.arange(0, 4, 1);
+            var output = input.hfft();
+            Assert.Equal(6, output.shape[0]);
+            Assert.Equal(ScalarType.Float32, output.Type);
+
+            var inverted = output.ihfft();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64HFFT()
+        {
+            var input = Float64Tensor.arange(0, 4, 1);
+            var output = input.hfft();
+            Assert.Equal(6, output.shape[0]);
+            Assert.Equal(ScalarType.Float64, output.Type);
+
+            var inverted = output.ihfft();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32RFFT()
+        {
+            var input = Float32Tensor.arange(0, 4, 1);
+            var output = input.rfft();
+            Assert.Equal(3, output.shape[0]);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.irfft();
+            Assert.Equal(ScalarType.Float32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64RFFT()
+        {
+            var input = Float64Tensor.arange(0, 4, 1);
+            var output = input.rfft();
+            Assert.Equal(3, output.shape[0]);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.irfft();
+            Assert.Equal(ScalarType.Float64, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat32FFT()
+        {
+            var input = ComplexFloat32Tensor.arange(0, 4, 1);
+            var output = input.fft();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifft();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+
+        [Fact]
+        public void ComplexFloat64FFT()
+        {
+            var input = ComplexFloat64Tensor.arange(0, 4, 1);
+            var output = input.fft();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifft();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat32HFFT()
+        {
+            var input = ComplexFloat32Tensor.arange(0, 4, 1);
+            var output = input.hfft();
+            Assert.Equal(6, output.shape[0]);
+            Assert.Equal(ScalarType.Float32, output.Type);
+
+            var inverted = output.ihfft();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+
+        [Fact]
+        public void ComplexFloat64HFFT()
+        {
+            var input = ComplexFloat64Tensor.arange(0, 4, 1);
+            var output = input.hfft();
+            Assert.Equal(6, output.shape[0]);
+            Assert.Equal(ScalarType.Float64, output.Type);
+
+            var inverted = output.ihfft();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32FFT2()
+        {
+            var input = Float32Tensor.rand(new long[] { 5, 5 });
+            var output = input.fft2();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifft2();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64FFT2()
+        {
+            var input = Float64Tensor.rand(new long[] { 5, 5 });
+            var output = input.fft2();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifft2();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32RFFT2()
+        {
+            var input = Float32Tensor.rand(new long[] { 5, 5 });
+            var output = input.rfft2();
+            Assert.Equal(new long[] { 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.irfft2();
+            Assert.Equal(ScalarType.Float32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64RFFT2()
+        {
+            var input = Float64Tensor.rand(new long[] { 5, 5 });
+            var output = input.rfft2();
+            Assert.Equal(new long[] { 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.irfft2();
+            Assert.Equal(ScalarType.Float64, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat32FFT2()
+        {
+            var input = ComplexFloat32Tensor.rand(new long[] { 5, 5 });
+            var output = input.fft2();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifft2();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat64FFT2()
+        {
+            var input = ComplexFloat64Tensor.rand(new long[] { 5, 5 });
+            var output = input.fft2();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifft2();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32FFTN()
+        {
+            var input = Float32Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.fftn();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifftn();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64FFTN()
+        {
+            var input = Float64Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.fftn();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifftn();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32RFFTN()
+        {
+            var input = Float32Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.rfftn();
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.irfftn();
+            Assert.Equal(ScalarType.Float32, inverted.Type);
+        }
+
+        [Fact]
+        public void Float64RFFTN()
+        {
+            var input = Float64Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.rfftn();
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.irfftn();
+            Assert.Equal(ScalarType.Float64, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat32FFTN()
+        {
+            var input = ComplexFloat32Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.fftn();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.Type);
+
+            var inverted = output.ifftn();
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.Type);
+        }
+
+        [Fact]
+        public void ComplexFloat64FFTN()
+        {
+            var input = ComplexFloat64Tensor.rand(new long[] { 5, 5, 5, 5 });
+            var output = input.fftn();
+            Assert.Equal(input.shape, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.Type);
+
+            var inverted = output.ifftn();
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.Type);
+        }
+
+        [Fact]
+        public void Float32FFTFrequency()
+        {
+            var x = Float32Tensor.fftfreq(5);
+            Assert.Equal(ScalarType.Float32, x.Type);
+            Assert.Equal(1, x.dim());
+            Assert.Equal(5, x.shape[0]);
+        }
+
+        [Fact]
+        public void Float64FFTFrequency()
+        {
+            var x = Float64Tensor.fftfreq(5);
+            Assert.Equal(ScalarType.Float64, x.Type);
+            Assert.Equal(1, x.dim());
+            Assert.Equal(5, x.shape[0]);
+        }
+
+        [Fact]
+        public void Float32FFTShift()
+        {
+            var x = Float32Tensor.fftfreq(4);
+            var shifted = x.fftshift();
+            Assert.Equal(ScalarType.Float32, shifted.Type);
+            Assert.Equal(1, shifted.dim());
+            Assert.Equal(4, shifted.shape[0]);
+            var y = x.ifftshift();
+            Assert.Equal(ScalarType.Float32, y.Type);
+            Assert.Equal(1, y.dim());
+            Assert.Equal(4, y.shape[0]);
+        }
+
+        [Fact]
+        public void Float64FFTShift()
+        {
+            var x = Float64Tensor.fftfreq(4);
+            var shifted = x.fftshift();
+            Assert.Equal(ScalarType.Float64, shifted.Type);
+            Assert.Equal(1, shifted.dim());
+            Assert.Equal(4, shifted.shape[0]);
+            var y = x.ifftshift();
+            Assert.Equal(ScalarType.Float64, y.Type);
+            Assert.Equal(1, y.dim());
+            Assert.Equal(4, y.shape[0]);
         }
     }
 }

@@ -25,7 +25,10 @@ namespace TorchSharp.Tensor
         /// </remarks>
         public TorchTensor angle()
         {
-            return new TorchTensor(THSTensor_angle(handle));
+            var res = THSTensor_angle(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]

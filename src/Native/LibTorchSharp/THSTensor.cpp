@@ -313,34 +313,6 @@ Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const in
 }
 
 
-Tensor THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
-{
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
-    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
-    CATCH_TENSOR(torch::fft::fft(*tensor, nArg, dim, normArg));
-}
-
-Tensor THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
-{
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
-    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
-    CATCH_TENSOR(torch::fft::ifft(*tensor, nArg, dim, normArg));
-}
-
-Tensor THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
-{
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
-    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
-    CATCH_TENSOR(torch::fft::irfft(*tensor, nArg, dim, normArg));
-}
-
-Tensor THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, const char* norm)
-{
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
-    auto normArg = (norm == NULL ? c10::optional<std::string>() : c10::optional<std::string>(norm));
-    CATCH_TENSOR(torch::fft::rfft(*tensor, nArg, dim, normArg));
-}
-
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
 {
     CATCH_TENSOR(tensor->flip(at::ArrayRef<int64_t>(sizes, length)));
