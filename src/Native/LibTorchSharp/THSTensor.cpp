@@ -19,6 +19,16 @@ Tensor THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, boo
     CATCH_TENSOR(tensor->all(dim, keepdim));
 }
 
+Tensor THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim)
+{
+    CATCH_TENSOR(tensor->amax(c10::IntArrayRef(dimensions, length), keepdim));
+}
+
+Tensor THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim)
+{
+    CATCH_TENSOR(tensor->amin(c10::IntArrayRef(dimensions, length), keepdim));
+}
+
 Tensor THSTensor_angle(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->angle());
@@ -168,6 +178,16 @@ Tensor THSTensor_clone(const Tensor tensor)
 Tensor THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
 {
     CATCH_TENSOR(input->copy_(*other, non_blocking));
+}
+
+Tensor THSTensor_complex(const Tensor real, const Tensor imag)
+{
+    CATCH_TENSOR(torch::complex(*real, *imag));
+}
+
+Tensor THSTensor_polar(const Tensor abs, const Tensor angle)
+{
+    CATCH_TENSOR(torch::polar(*abs, *angle));
 }
 
 Tensor THSTensor_contiguous(const Tensor tensor)

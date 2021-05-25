@@ -62,6 +62,10 @@ EXPORT_API(Tensor) THSTensor_all(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
 
+EXPORT_API(Tensor) THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+
+EXPORT_API(Tensor) THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+
 EXPORT_API(Tensor) THSTensor_any(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_any_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
@@ -219,6 +223,10 @@ EXPORT_API(Tensor) THSTensor_clamp_max_(const Tensor input, const Scalar max);
 EXPORT_API(Tensor) THSTensor_clamp_min(const Tensor input, const Scalar min);
 
 EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
+
+EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
+
+EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,
     const int64_t* strides, const int strides_length,
@@ -855,6 +863,8 @@ EXPORT_API(Tensor) THSTensor_ones_like(const Tensor input, const int8_t scalar_t
 EXPORT_API(Tensor) THSTensor_outer(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length);
+
+EXPORT_API(Tensor) THSTensor_polar(const Tensor abs, const Tensor angle);
 
 EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);
 

@@ -316,6 +316,70 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateComplex32()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor r = Float32Tensor.randn(shape);
+            TorchTensor i = Float32Tensor.randn(shape);
+
+            TorchTensor x = TorchTensor.complex(r, i);
+
+            Assert.Equal(shape, x.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, x.Type);
+            Assert.True(r.allclose(x.Real));
+            Assert.True(i.allclose(x.Imag));
+        }
+
+        [Fact]
+        public void CreateComplex64()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor r = Float64Tensor.randn(shape);
+            TorchTensor i = Float64Tensor.randn(shape);
+
+            TorchTensor x = TorchTensor.complex(r, i);
+
+            Assert.Equal(shape, x.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, x.Type);
+            Assert.True(r.allclose(x.Real));
+            Assert.True(i.allclose(x.Imag));
+        }
+
+        [Fact]
+        public void CreatePolar32()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor r = Float32Tensor.randn(shape);
+            TorchTensor i = Float32Tensor.randn(shape);
+
+            TorchTensor x = TorchTensor.complex(r, i);
+
+            TorchTensor p = TorchTensor.polar(x.abs(), x.angle());
+
+            Assert.Equal(x.shape, p.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, p.Type);
+            Assert.True(r.allclose(p.Real));
+            Assert.True(i.allclose(p.Imag));
+        }
+
+        [Fact]
+        public void CreatePolar64()
+        {
+            var shape = new long[] { 2, 2 };
+            TorchTensor r = Float64Tensor.randn(shape);
+            TorchTensor i = Float64Tensor.randn(shape);
+
+            TorchTensor x = TorchTensor.complex(r, i);
+
+            TorchTensor p = TorchTensor.polar(x.abs(), x.angle());
+
+            Assert.Equal(x.shape, p.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, p.Type);
+            Assert.True(r.allclose(p.Real));
+            Assert.True(i.allclose(p.Imag));
+        }
+
+        [Fact]
         public void CreateComplexFloat32TensorRand()
         {
             var shape = new long[] { 2, 2 };

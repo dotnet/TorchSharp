@@ -1362,6 +1362,46 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_amax(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+
+        /// <summary>
+        /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        public TorchTensor amax(long[] dims, bool keepDim = false)
+        {
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSTensor_amax(handle, (IntPtr)pdims, dims.Length, keepDim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_amin(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+
+        /// <summary>
+        /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        public TorchTensor main(long[] dims, bool keepDim = false)
+        {
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSTensor_amin(handle, (IntPtr)pdims, dims.Length, keepDim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_any(IntPtr tensor);
 
         /// <summary>
@@ -1592,6 +1632,35 @@ namespace TorchSharp.Tensor
         public TorchTensor mvlgamma_(long p)
         {
             var res = THSTensor_mvlgamma_(handle, p);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_complex(IntPtr real, IntPtr imag);
+
+        /// <summary>
+        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value abs and angle angle.
+        /// </summary>
+        static public TorchTensor complex(TorchTensor real, TorchTensor imag)
+        {
+            var res = THSTensor_complex(real.Handle, imag.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_polar(IntPtr abs, IntPtr angle);
+
+        /// <summary>
+        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value abs and angle angle.
+        /// </summary>
+        static public TorchTensor polar(TorchTensor abs, TorchTensor angle)
+        {
+            var res = THSTensor_polar(abs.Handle, angle.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
