@@ -224,8 +224,6 @@ EXPORT_API(Tensor) THSTensor_clamp_min(const Tensor input, const Scalar min);
 
 EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
 
-EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
-
 EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,

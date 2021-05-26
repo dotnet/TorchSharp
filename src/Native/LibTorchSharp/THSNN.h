@@ -288,16 +288,25 @@ EXPORT_API(Tensor)   THSNN_Sequential_forward(const NNModule module, const Tenso
 
 // Loss functions
 
-EXPORT_API(Tensor) THSNN_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t ignore_index, const bool has_ii, const int64_t reduction);
-EXPORT_API(Tensor) THSNN_binary_cross_entropy(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSNN_binary_cross_entropy_with_logits(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction, const Tensor pos_weights_wrapper);
-EXPORT_API(Tensor) THSNN_l1_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSNN_mse_loss(const Tensor inputwrapper, const Tensor targetwrapper, const int64_t reduction);
-EXPORT_API(Tensor) THSNN_nll_loss(const Tensor inputwrapper, const Tensor targetwrapper, const Tensor weightwrapper, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_binary_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_binary_cross_entropy_with_logits(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction, const Tensor pos_weights_);
+EXPORT_API(Tensor) THSNN_cosine_embedding_loss(const Tensor input1, const Tensor input2, const Tensor target, const double margin, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_ctc_loss(const Tensor log_probs, const Tensor targets, const Tensor input_lengths, const Tensor target_lengths, int64_t blank, bool zero_infinity, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_hinge_embedding_loss(const Tensor input, const Tensor target, const double margin, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_l1_loss(const Tensor input, const Tensor target, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_margin_ranking_loss(const Tensor input1, const Tensor input2, const Tensor target, const double margin, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_mse_loss(const Tensor input, const Tensor target, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_multilabel_margin_loss(const Tensor input, const Tensor target, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_multilabel_soft_margin_loss(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_multi_margin_loss(const Tensor input, const Tensor target, const int64_t p, const double margin, const Tensor weight, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_nll_loss(const Tensor input, const Tensor target, const Tensor weight, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_poisson_loss(const Tensor input, const Tensor target, const bool logInput, const bool full, const double eps, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target);
 EXPORT_API(Tensor) THSNN_smooth_l1_loss(const Tensor input, const Tensor target, const int64_t reduction, const double beta);
 EXPORT_API(Tensor) THSNN_soft_margin_loss(const Tensor input, const Tensor target, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_triplet_margin_loss(const Tensor anchor, const Tensor positive, const Tensor negative, double margin, int64_t p, double eps, bool swap, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_triplet_margin_with_distance_loss(const Tensor anchor, const Tensor positive, const Tensor negative, Tensor (*distance_function)(const Tensor x, const Tensor y), double margin, bool swap, const int64_t reduction);
 
 // Optimizers
 
@@ -328,7 +337,11 @@ EXPORT_API(Tensor)   THSNN_Flatten_forward(const NNModule module, const Tensor t
 EXPORT_API(NNModule) THSNN_Unflatten_ctor(const int64_t dim, const int64_t* shape, const int64_t shape_len, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Unflatten_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(NNModule) THSNN_CosineSimilarity_ctor(const int64_t dim, double eps, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_CosineSimilarity_forward(const NNModule module, const Tensor input1, const Tensor input2);
 
+EXPORT_API(NNModule) THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_PairwiseDistance_forward(const NNModule module, const Tensor input1, const Tensor input2);
 
 // Initializers
 

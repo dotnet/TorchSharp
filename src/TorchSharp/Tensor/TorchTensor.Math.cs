@@ -1487,6 +1487,12 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        /// <summary>
+        /// Computes the element-wise square
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor square() => this.pow(2);
+
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_sqrt(IntPtr tensor);
 

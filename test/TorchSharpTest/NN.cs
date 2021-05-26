@@ -534,6 +534,190 @@ namespace TorchSharp
                 Assert.Single(values);
             }
         }
+
+        [Fact]
+        public void TestGaussianNLLLoss32()
+        {
+            using (TorchTensor variance = Float32Tensor.rand(new long[] { 15, 1 }, requiresGrad:true))
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad:true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5, 5 })) {
+                var outTensor = gaussian_nll_loss()(input, target, variance);
+                outTensor.backward();
+
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+            using (TorchTensor variance = Float32Tensor.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5, 5 })) {
+                var outTensor = gaussian_nll_loss()(input, target, variance);
+                outTensor.backward();
+
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestGaussianNLLLoss64()
+        {
+            using (TorchTensor variance = Float64Tensor.rand(new long[] { 15, 1 }, requiresGrad: true))
+            using (TorchTensor input = Float64Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float64Tensor.randn(new long[] { 15, 5, 5 })) {
+                var outTensor = gaussian_nll_loss()(input, target, variance);
+                outTensor.backward();
+
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+            using (TorchTensor variance = Float64Tensor.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (TorchTensor input = Float64Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float64Tensor.randn(new long[] { 15, 5, 5 })) {
+                var outTensor = gaussian_nll_loss()(input, target, variance);
+                outTensor.backward();
+
+                var values = outTensor.Data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestGaussianNLLLossWithError()
+        {
+            using (TorchTensor variance = Float32Tensor.rand(new long[] { 15, 1 }, requiresGrad: true).neg())
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5 })) {
+
+                Assert.Throws<ArgumentException>(() => {
+                    var outTensor = gaussian_nll_loss()(input, target, variance);
+                    outTensor.backward();
+                });
+
+            }
+        }
+
+        [Fact]
+        public void TestCosineEmbeddingLoss()
+        {
+            using (TorchTensor input1 = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (TorchTensor input2 = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15 }).sign()) {
+
+                var outTensor = cosine_embedding_loss()(input1, input2, target);
+                outTensor.backward();
+
+            }
+        }
+
+        [Fact]
+        public void TestCTCLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+                var outTensor = hinge_embedding_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestHingeEmbeddingLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+                var outTensor = hinge_embedding_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMarginRankingLoss()
+        {
+            using (TorchTensor input1 = Float32Tensor.randn(new long[] { 15 }, requiresGrad: true))
+            using (TorchTensor input2 = Float32Tensor.randn(new long[] { 15 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15 }).sign()) {
+                var outTensor = margin_ranking_loss()(input1, input2, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMultilabelMarginLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Int64Tensor.ones(new long[] { 15, 5 })) {
+                var outTensor = multilabel_margin_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMultilabelSoftMarginLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.ones(new long[] { 15, 5 })) {
+                var outTensor = multilabel_soft_margin_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMultiMarginLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Int64Tensor.ones(new long[] { 15 })) {
+                var outTensor = multi_margin_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestTripleMarginLoss()
+        {
+            using (TorchTensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (TorchTensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+
+                var output = triplet_margin_loss();
+                var result = output(anchor, positive, negative);
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void TestTripleMarginWithDistanceLoss()
+        {
+            Func<TorchTensor, TorchTensor, TorchTensor> distance =
+                (x,y) => {
+                    return (x - y).abs();
+                };
+
+            using (TorchTensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (TorchTensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+
+                var output = triplet_margin_with_distance_loss(distance);
+                var result = output(anchor, positive, negative);
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void TestTripleMarginWithDistanceLossNoDistance()
+        {
+            using (TorchTensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (TorchTensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+
+                var output = triplet_margin_with_distance_loss();
+                var result = output(anchor, positive, negative);
+                Assert.True(true);
+            }
+        }
+
         #endregion
 
         #region Gradients
@@ -1863,6 +2047,31 @@ namespace TorchSharp
 
             Assert.Equal(4, res.Dimensions);
             Assert.Equal(new long[] { 2, 2, 5, 5 }, res.shape);
+        }
+
+        [Fact]
+        public void TestCosineSimilarity()
+        {
+            using (TorchTensor input1 = Float32Tensor.rand(new long[] { 5, 12 }))
+            using (TorchTensor input2 = Int64Tensor.randint(12, new long[] { 5, 12 }))
+
+            using (var module = CosineSimilarity()) {
+                var output = module.forward(input1, input2);
+                Assert.Equal(input1.shape[0], output.shape[0]);
+            }
+        }
+
+        [Fact]
+        public void TestPairwiseDistance()
+        {
+            using (TorchTensor input1 = Float32Tensor.rand(new long[] { 5, 12 }))
+            using (TorchTensor input2 = Int64Tensor.randint(12, new long[] { 5, 12 }))
+
+            using (var module = PairwiseDistance(keep_dim:true)) {
+                var output = module.forward(input1, input2);
+                Assert.Equal(input1.shape[0], output.shape[0]);
+                Assert.Equal(1, output.shape[1]);
+            }
         }
 
         [Fact]
