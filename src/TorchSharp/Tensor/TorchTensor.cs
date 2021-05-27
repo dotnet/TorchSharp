@@ -1362,6 +1362,46 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_amax(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+
+        /// <summary>
+        /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        public TorchTensor amax(long[] dims, bool keepDim = false)
+        {
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSTensor_amax(handle, (IntPtr)pdims, dims.Length, keepDim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_amin(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+
+        /// <summary>
+        /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <returns></returns>
+        public TorchTensor amin(long[] dims, bool keepDim = false)
+        {
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSTensor_amin(handle, (IntPtr)pdims, dims.Length, keepDim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_any(IntPtr tensor);
 
         /// <summary>
@@ -1520,6 +1560,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_tile(IntPtr tensor, IntPtr reps, int reps_len);
 
+        /// <summary>
+        /// Constructs a tensor by repeating the elements of input. The reps argument specifies the number of repetitions in each dimension.
+        /// </summary>
+        /// <param name="reps">The number of repetitions per dimension.</param>
+        /// <returns></returns>
         public TorchTensor tile(long[] reps)
         {
             unsafe {
@@ -1534,6 +1579,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_digamma(IntPtr tensor);
 
+        /// <summary>
+        /// Computes the logarithmic derivative of the gamma function on input.
+        /// </summary>
+        /// <returns></returns>
         public TorchTensor digamma()
         {
             var res = THSTensor_digamma(handle);
@@ -1545,6 +1594,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_digamma_(IntPtr tensor);
 
+        /// <summary>
+        /// Computes the logarithmic derivative of the gamma function on input, in place.
+        /// </summary>
+        /// <returns></returns>
         public TorchTensor digamma_()
         {
             var res = THSTensor_digamma_(handle);
@@ -1556,6 +1609,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_lgamma(IntPtr tensor);
 
+        /// <summary>
+        /// Computes the logarithm of the gamma function on input.
+        /// </summary>
+        /// <returns></returns>
         public TorchTensor lgamma()
         {
             var res = THSTensor_lgamma(handle);
@@ -1567,6 +1624,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_lgamma_(IntPtr tensor);
 
+        /// <summary>
+        /// Computes the logarithm of the gamma function on input, in place.
+        /// </summary>
+        /// <returns></returns>
         public TorchTensor lgamma_()
         {
             var res = THSTensor_lgamma_(handle);
@@ -1578,6 +1639,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_mvlgamma(IntPtr tensor, long p);
 
+        /// <summary>
+        /// Computes the multivariate log-gamma function) with dimension pp element-wise
+        /// </summary>
+        /// <param name="p">The number of dimensions</param>
+        /// <returns></returns>
         public TorchTensor mvlgamma(long p)
         {
             var res = THSTensor_mvlgamma(handle, p);
@@ -1589,9 +1655,43 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_mvlgamma_(IntPtr tensor, long p);
 
+        /// <summary>
+        /// Computes the multivariate log-gamma function) with dimension pp element-wise, in place.
+        /// </summary>
+        /// <param name="p">The number of dimensions</param>
+        /// <returns></returns>
         public TorchTensor mvlgamma_(long p)
         {
             var res = THSTensor_mvlgamma_(handle, p);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_complex(IntPtr real, IntPtr imag);
+
+        /// <summary>
+        /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
+        /// </summary>
+        static public TorchTensor complex(TorchTensor real, TorchTensor imag)
+        {
+            var res = THSTensor_complex(real.Handle, imag.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_polar(IntPtr abs, IntPtr angle);
+
+        /// <summary>
+        /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value 'abs' and angle 'angle'.
+        /// </summary>
+        static public TorchTensor polar(TorchTensor abs, TorchTensor angle)
+        {
+            var res = THSTensor_polar(abs.Handle, angle.Handle);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
@@ -1820,6 +1920,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_igamma(IntPtr tensor, IntPtr other);
 
+        /// <summary>
+        /// Computes the regularized lower incomplete gamma function
+        /// </summary>
+        /// <param name="other">The second non-negative input tensor</param>
+        /// <returns></returns>
         public TorchTensor igamma(TorchTensor other)
         {
             var res = THSTensor_igamma(handle, other.handle);
@@ -1831,6 +1936,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_igammac(IntPtr tensor, IntPtr other);
 
+        /// <summary>
+        /// Computes the regularized upper incomplete gamma function.
+        /// </summary>
+        /// <param name="other">The second non-negative input tensor</param>
+        /// <returns></returns>
         public TorchTensor igammac(TorchTensor other)
         {
             var res = THSTensor_igammac(handle, other.handle);
@@ -1842,6 +1952,10 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_i0(IntPtr tensor);
 
+        /// <summary>
+        /// Computes the zeroth order modified Bessel function of the first kind for each element of input.
+        /// </summary>
+        /// <returns></returns>
         public TorchTensor i0()
         {
             var res = THSTensor_i0(handle);
@@ -1853,6 +1967,14 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_isclose(IntPtr tensor, IntPtr other, double rtol, double atol, bool nanEqual);
 
+        /// <summary>
+        /// Returns a new tensor with boolean elements representing if each element of input is “close” to the corresponding element of other.
+        /// </summary>
+        /// <param name="other">Second tensor to compare</param>
+        /// <param name="rtol">Relative tolerance</param>
+        /// <param name="atol">Absolute tolerance</param>
+        /// <param name="nanEqual">If true, then two NaN s will be considered equal</param>
+        /// <returns></returns>
         public TorchTensor isclose(TorchTensor other, double rtol = 1e-05, double atol = 1e-08, bool nanEqual = false)
         {
             var res = THSTensor_isclose(handle, other.Handle, rtol, atol, nanEqual);
@@ -2360,6 +2482,14 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern bool THSTensor_allclose(IntPtr tensor, IntPtr trg, double rtol, double atol, bool equal_nan);
 
+        /// <summary>
+        /// This function checks if all input and other lie within a certain distance from each other
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="rtol">Relative tolerance</param>
+        /// <param name="atol">Absolute tolerance</param>
+        /// <param name="equal_nan">If true, then two NaN s will be considered equal</param>
+        /// <returns></returns>
         public bool allclose(TorchTensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false)
         {
             var res = THSTensor_allclose(handle, target.Handle, rtol, atol, equal_nan);
