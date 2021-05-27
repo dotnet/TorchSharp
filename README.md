@@ -45,6 +45,12 @@ for (int i = 0; i < 10; i++)
 
 See [docfx/articles/memory.md](docfx/articles/memory.md).
 
+# Download
+
+TorchSharp is distributed via the NuGet gallery: https://www.nuget.org/packages/TorchSharp/
+
+To use TorchSharp, you also need one of the LibTorch backend packages: https://www.nuget.org/packages?q=libtorch.
+
 # Developing
 
 See [DEVGUIDE.md](DEVGUIDE.md).
