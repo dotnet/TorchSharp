@@ -544,6 +544,7 @@ if (type.IsInt64) {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
 <#
 if (type.IsFloat16 || type.IsBFloat16) {
 #>

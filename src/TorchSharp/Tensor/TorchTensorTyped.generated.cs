@@ -266,6 +266,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -582,6 +583,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(sbyte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -898,6 +900,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(short[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -1214,6 +1217,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(int[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -1530,6 +1534,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(long[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -2075,6 +2080,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new Int16[rawArray.Length];
             unsafe
             {
@@ -2623,6 +2629,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new Int16[rawArray.Length];
             unsafe
             {
@@ -3171,6 +3178,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -3716,6 +3724,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(double[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -4024,6 +4033,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from((float Real, float Imaginary)[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -4332,6 +4342,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(System.Numerics.Complex[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -4648,6 +4659,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(bool[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
+            Torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
