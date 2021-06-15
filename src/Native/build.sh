@@ -102,8 +102,8 @@ case $OSName in
         # PyTorch is specifyin options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
         # See    https://github.com/oneapi-src/oneDNN/issues/591 for this potential workaround, though it may be better
         # to switch to brew clang.
-        LIBOMP=/usr/local/opt/libomp
-        __cmake_defines='${__cmake_defines} -DCMAKE_CXX_FLAGS="-I$LIBOMP/include" -DCMAKE_C_FLAGS="-I$LIBOMP/include"  -DCMAKE_SHARED_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib" -DCMAKE_EXE_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib'
+        #LIBOMP=/usr/local/opt/libomp
+        #__cmake_defines=${__cmake_defines} -DCMAKE_CXX_FLAGS="-I$LIBOMP/include" -DCMAKE_C_FLAGS="-I$LIBOMP/include"  -DCMAKE_SHARED_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib" -DCMAKE_EXE_LINKER_FLAGS="$LIBOMP/lib/libomp.dylib"
         ;;
     *)
     echo "Unsupported OS '$OSName' detected. Downloading linux-$__PKG_ARCH tools."

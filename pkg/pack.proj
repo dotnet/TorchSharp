@@ -4,6 +4,7 @@
     <PackProject Include="**\libtorch-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackage)' == 'true'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-linux-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-win-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
+    <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-mac-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'mac'" />
     <PackProject Include="**\TorchSharp.nupkgproj" Condition="'$(IncludeTorchSharpPackage)' == 'true'" />
   </ItemGroup>
   <Target Name="Pack">

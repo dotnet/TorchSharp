@@ -63,26 +63,28 @@
     <NativeAssemblyReference Include="uv" Variant="cuda\" />
   </ItemGroup>
 
-  <!-- Linux libtorch binary list used for examples and testing -->
-  <!-- NOTE: On Linux, examples and testing do not currently use Linux CUDA binaries -->
+  <!-- Mac libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="iomp5" />
+    <NativeAssemblyReference Include="jitbackend_test" />
+    <NativeAssemblyReference Include="process_group_agent" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="tensorpipe_agent" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="torch_python" />
-    <NativeAssemblyReference Include="mklml" />
-    <NativeAssemblyReference Include="iomp5" />
+    <NativeAssemblyReference Include="torchbind_test" />
+<!--    <NativeAssemblyReference Include="mklml" /> -->
   </ItemGroup>
 
-  <!-- OSX CPU libtorch binary list used for examples and testing -->
-  <!-- NOTE: On OSX, examples and testing do not currently use Linux CUDA binaries -->
+  <!-- Linux CPU libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
