@@ -60,6 +60,15 @@ jobs:
     pool:
       vmImage: 'windows-2019'
 
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: MacOS_x64
+    buildScript: dotnet build /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
+    pool:
+      vmImage: 'macos-10.15'
+
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
 ################################################################################
@@ -116,29 +125,23 @@ jobs:
     artifact: WindowsAssets
 
 # ################################################################################
-# - job: MacOS_Native_Build_For_Packages
+- job: MacOS_Native_Build_For_Packages
 # ################################################################################
-#   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
-#   variables:
-#     BuildConfig: Release
-#     OfficialBuildId: $(BUILD.BUILDNUMBER)
-#     DOTNET_CLI_TELEMETRY_OPTOUT: 1
-#     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-#     DOTNET_MULTILEVEL_LOOKUP: 0
-#   pool:
-#     vmImage: 'macos-10.15'
-#   steps:
-#   - script: brew update && brew install libomp && brew install llvm && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force && brew link llvm --force
-#     displayName: Install build dependencies (macOS)
-#   - script: ls -Flas /usr/local/opt/llvm/bin/
-#     displayName: Debug Stuff
-#   - script: dotnet build -c $(BuildConfig)
-#     displayName: Build
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'macos-10.15'
+  steps:
+  - script: dotnet build -c $(BuildConfig) /p:SkipCuda=true
+    displayName: Build
 
-#   - task: PublishBuildArtifacts@1
-#     displayName: Publish macOS package assets
-#   - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
-#     artifact: MacAssets
+  - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
+    artifact: MacAssets
 
 
 ################################################################################
@@ -148,7 +151,7 @@ jobs:
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
-  # - MacOS_Native_Build_For_Packages
+  - MacOS_Native_Build_For_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -165,7 +168,7 @@ jobs:
     displayName: Clean up space (.git)
     continueOnError: true
 
-    # Download all bits contributing to the packages from the Linux and Mac builds
+    # Download all bits contributing to the packages from the Linux build
   - download: current
     artifact: LinuxAssets
 
@@ -179,6 +182,22 @@ jobs:
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
+  
+    # Download all bits contributing to the packages from the Mac build
+  - download: current
+    artifact: MacAssets
+
+  - task: CopyFiles@2
+    displayName: Copy mac native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+  
+  - task: CopyFiles@2
+    displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
@@ -279,7 +298,6 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Windows_Native_Build_For_Packages
-  # - MacOS_Native_Build_For_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -508,3 +526,4 @@ jobs:
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
+
