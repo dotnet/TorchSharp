@@ -60,6 +60,15 @@ jobs:
     pool:
       vmImage: 'windows-2019'
 
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: MacOS_x64
+    buildScript: dotnet build /p:SkipCuda=true -c 
+    testScript: dotnet test /p:SkipCuda=true -c 
+    pool:
+      vmImage: 'macos-10.15'
+
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
 ################################################################################
