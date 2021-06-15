@@ -137,7 +137,7 @@ jobs:
   pool:
     vmImage: 'macos-10.15'
   steps:
-  - script: dotnet build -c $(BuildConfig)
+  - script: dotnet build -c $(BuildConfig) /p:SkipCuda=true
     displayName: Build
 
   - publish: $(Build.SourcesDirectory)/bin/obj/$(BuildConfig)/packages
