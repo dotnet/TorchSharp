@@ -820,11 +820,11 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_adaptive_avg_pool3d_backward(IntPtr gradOutput, IntPtr originalInput);
+        static extern IntPtr THSTensor_adaptive_avg_pool3d_backward_out(IntPtr gradInput, IntPtr gradOutput, IntPtr originalInput);
 
-        public TorchTensor adaptive_avg_pool3d_backward(TorchTensor originalInput)
+        public static TorchTensor adaptive_avg_pool3d_backward(TorchTensor gradInput, TorchTensor gradOutput, TorchTensor originalInput)
         {
-            var res = THSTensor_adaptive_avg_pool3d_backward(handle, originalInput.Handle);
+            var res = THSTensor_adaptive_avg_pool3d_backward_out(gradInput.Handle, gradOutput.Handle, originalInput.Handle);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

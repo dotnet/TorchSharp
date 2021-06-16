@@ -2,7 +2,7 @@
   <!-- Directory.Build.props contains the common build settings for all projects in the repo. -->
 
   <Import Project="build/BranchInfo.props" />
-  <Import Project="build/Dependencies.props" />
+  <Import Project="build/Dependencies.props" /> 
 
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>

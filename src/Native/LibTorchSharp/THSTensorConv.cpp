@@ -33,11 +33,13 @@ Tensor THSTensor_adaptive_avg_pool3d(
         at::ArrayRef<int64_t>(outputSize, outputSizeLength)));
 }
 
-Tensor THSTensor_adaptive_avg_pool3d_backward(
+Tensor THSTensor_adaptive_avg_pool3d_backward_out(
+    const Tensor grad_input,
     const Tensor grad_output,
     const Tensor tensor)
 {
-    CATCH_TENSOR(torch::adaptive_avg_pool3d_backward(
+    CATCH_TENSOR(torch::adaptive_avg_pool3d_backward_out(
+        *grad_input,
         *grad_output,
         *tensor));
 }
