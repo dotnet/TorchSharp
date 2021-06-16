@@ -9,7 +9,7 @@ variables:
   
   # Set this to 'true' to build the libtorch-* packages as part of master branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
+  BuildLibTorchPackages: true
 
 resources:
   containers:
@@ -137,8 +137,8 @@ jobs:
   pool:
     vmImage: 'macos-10.15'
   steps:
-  - script: dotnet build -c $(BuildConfig) /p:SkipCuda=true
-    displayName: Build
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+    displayName: Build mac
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: MacAssets
