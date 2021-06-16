@@ -1,8 +1,8 @@
 
 # Building
 
-    dotnet build
     dotnet build /p:SkipNative=true
+    dotnet build  # for cuda support on Windows and Linux
     dotnet test
     dotnet pack
 
@@ -31,6 +31,17 @@ sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev
 
 Commands:
 
+## Mac
+
+Requirements:
+- Clang/LLVM 12.0.0
+- git
+- .NET SDK 5.0.300
+- Cmake 3.20.3
+
+Build with 
+
+    dotnet build /p:SkipNative=true
 
 ## Packages
 
