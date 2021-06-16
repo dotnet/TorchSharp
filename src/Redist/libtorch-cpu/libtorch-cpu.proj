@@ -4,7 +4,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- see https://pytorch.org/get-started/locally/ for download links -->
-    <!-- For example Linux, LibTorch 1.8.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.8.0%2Bcpu.zip -->
+    <!-- For example Linux, LibTorch 1.9.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip -->
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LocalBaseName>$(LibTorchCpuLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCpuArchiveBase)</ArchiveBaseName>
@@ -41,6 +41,7 @@
     <File Include="libtorch\lib\uv.dll" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'mac'">
+    <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
     <File Include="libtorch\lib\libc10.dylib" />
     <File Include="libtorch\lib\libcaffe2_detectron_ops.dylib" />
     <File Include="libtorch\lib\libcaffe2_module_test_dynamic.dylib" />
@@ -59,6 +60,7 @@
     <File Include="libtorch\lib\libtorchbind_test.dylib" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
+    <File Include="libtorch\lib\libbackend_with_compiler.so" />
     <File Include="libtorch\lib\libc10.so" />
     <File Include="libtorch\lib\libcaffe2_detectron_ops.so" />
     <File Include="libtorch\lib\libcaffe2_module_test_dynamic.so" />
