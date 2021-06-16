@@ -4,12 +4,18 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+     <ProjectReference Include="../libtorch-cpu-linux-x64/libtorch-cpu-linux-x64.nupkgproj" />
+     <ProjectReference Include="../libtorch-cpu-macos-x64/libtorch-cpu-macos-x64.nupkgproj" />
+     <ProjectReference Include="../libtorch-cpu-win-x64/libtorch-cpu-win-x64.nupkgproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\common\CpuHeadPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\CpuHeadPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\common\CudaHeadPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\CudaHeadPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
     <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
   </ItemGroup>

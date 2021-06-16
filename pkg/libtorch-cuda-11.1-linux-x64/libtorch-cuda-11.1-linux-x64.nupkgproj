@@ -14,10 +14,14 @@
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment5/libtorch-cuda-11.1-linux-x64-part2-fragment5.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment6/libtorch-cuda-11.1-linux-x64-part2-fragment6.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment7/libtorch-cuda-11.1-linux-x64-part2-fragment7.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment8/libtorch-cuda-11.1-linux-x64-part2-fragment8.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment9/libtorch-cuda-11.1-linux-x64-part2-fragment9.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part2-fragment10/libtorch-cuda-11.1-linux-x64-part2-fragment10.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part3-primary/libtorch-cuda-11.1-linux-x64-part3-primary.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part3-fragment1/libtorch-cuda-11.1-linux-x64-part3-fragment1.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part3-fragment2/libtorch-cuda-11.1-linux-x64-part3-fragment2.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part3-fragment3/libtorch-cuda-11.1-linux-x64-part3-fragment3.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part3-fragment4/libtorch-cuda-11.1-linux-x64-part3-fragment4.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.1-linux-x64-part4/libtorch-cuda-11.1-linux-x64-part4.nupkgproj" />
   </ItemGroup>
 

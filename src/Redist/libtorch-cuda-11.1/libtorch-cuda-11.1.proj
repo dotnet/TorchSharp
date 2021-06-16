@@ -106,6 +106,7 @@
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudart-6d56b25a.so.11.0" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-3a20f2b6.so.11.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-builtins-07fb3db5.so.11.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libgomp-7c85b1e2.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvToolsExt-24de1d56.so.1" PackageSuffix="part1"  />
     

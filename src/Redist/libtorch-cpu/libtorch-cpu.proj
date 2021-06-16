@@ -21,7 +21,7 @@
     <DownloadedLicenseFolder>$(IntermediateOutputPath)</DownloadedLicenseFolder>
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
-    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)</MainPackageFolder>
+    <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
     <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackage.$(IncludeLibTorchCpuPackage)</CopyToPackageSemaphore>
   </PropertyGroup>
   
