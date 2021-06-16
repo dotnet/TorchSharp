@@ -75,14 +75,15 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.8.0.7</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.8.0.8</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- turned on/off manually in separate CI jobs -->
-    <SkipCuda>false</SkipCuda>
+    <SkipCuda Condition="'$(TargetOS)' == 'mac'">true</SkipCuda>
+    <SkipCuda Condition="'$(TargetOS)' != 'mac'">false</SkipCuda>
     <SkipTests>false</SkipTests>
     
     <!-- By default only TorchSharp and no libtorch-cpu or libtorch-cuda packages are built.  The CI file controls these via 'BuildLibTorchPackages' -->

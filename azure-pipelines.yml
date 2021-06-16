@@ -9,7 +9,7 @@ variables:
   
   # Set this to 'true' to build the libtorch-* packages as part of master branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
+  BuildLibTorchPackages: true
 
 resources:
   containers:
@@ -41,15 +41,6 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
-
-# - template: /build/ci/job-template.yml
-#   parameters:
-#     prepScript: brew update && brew install libomp && brew install mono-libgdiplus gettext && brew link gettext --force && brew link libomp --force
-#     name: MacOS_x64
-#     buildScript: ./dotnet build /p:SkipCuda=true -c 
-#     testScript: ./dotnet test /p:SkipCuda=true -c 
-#     pool:
-#       vmImage: 'macos-10.15'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -137,8 +128,8 @@ jobs:
   pool:
     vmImage: 'macos-10.15'
   steps:
-  - script: dotnet build -c $(BuildConfig) /p:SkipCuda=true
-    displayName: Build
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+    displayName: Build mac
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: MacAssets
@@ -184,6 +175,9 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
   
+  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
+    displayName: Free up space (LinuxAssets in workspace)
+
     # Download all bits contributing to the packages from the Mac build
   - download: current
     artifact: MacAssets
@@ -200,8 +194,8 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
   
-  - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
-    displayName: Free up space (linux assets in workspace)
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
+    displayName: Free up space (MacAssets in workspace)
 
   - download: current
     artifact: WindowsAssets
