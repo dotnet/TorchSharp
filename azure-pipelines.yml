@@ -39,7 +39,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
@@ -76,7 +76,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
@@ -416,7 +416,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
