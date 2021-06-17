@@ -2,7 +2,7 @@
   <!-- Directory.Build.props contains the common build settings for all projects in the repo. -->
 
   <Import Project="build/BranchInfo.props" />
-  <Import Project="build/Dependencies.props" />
+  <Import Project="build/Dependencies.props" /> 
 
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
@@ -36,7 +36,7 @@
 
     <OutputPath Condition="'$(OutputPath)'==''">$(BaseOutputPath)$(PlatformConfig)\$(MSBuildProjectName)\</OutputPath>
 
-    <PackagePreparationPath>$(ObjDir)/packprep/$(Configuration)/</PackagePreparationPath>
+    <PackagePreparationPath>$(ObjDir)packprep/$(Configuration)/</PackagePreparationPath>
     
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
@@ -75,7 +75,7 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.8.0.8</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.9.0.1</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>

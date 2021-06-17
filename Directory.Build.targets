@@ -81,11 +81,11 @@
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="torchbind_test" />
-<!--    <NativeAssemblyReference Include="mklml" /> -->
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="caffe2_detectron_ops" />
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
