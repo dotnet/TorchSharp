@@ -73,42 +73,42 @@
                         var fragmentBytes8 = (File.Exists(fragmentFile8) ? File.ReadAllBytes(fragmentFile8) : new byte[0]);
                         var fragmentBytes9 = (File.Exists(fragmentFile9) ? File.ReadAllBytes(fragmentFile9) : new byte[0]);
                         var fragmentBytes10 = (File.Exists(fragmentFile10) ? File.ReadAllBytes(fragmentFile10) : new byte[0]);
-                        var outputBytes = 
-                            new byte[primaryBytes.Length + 
-                                     fragmentBytes1.Length + 
-                                     fragmentBytes2.Length + 
-                                     fragmentBytes3.Length + 
-                                     fragmentBytes4.Length + 
-                                     fragmentBytes5.Length + 
-                                     fragmentBytes6.Length + 
-                                     fragmentBytes7.Length + 
-                                     fragmentBytes8.Length + 
-                                     fragmentBytes9.Length + 
-                                     fragmentBytes10.Length];
+                        var outputBytes =
+                            new byte[primaryBytes.LongLength +
+                                     fragmentBytes1.LongLength +
+                                     fragmentBytes2.LongLength +
+                                     fragmentBytes3.LongLength +
+                                     fragmentBytes4.LongLength +
+                                     fragmentBytes5.LongLength +
+                                     fragmentBytes6.LongLength +
+                                     fragmentBytes7.LongLength +
+                                     fragmentBytes8.LongLength +
+                                     fragmentBytes9.LongLength +
+                                     fragmentBytes10.LongLength];
 
-                        var offset = 0;
-                        Array.Copy(primaryBytes, 0, outputBytes, offset, primaryBytes.Length);
-                        offset += primaryBytes.Length;
-                        Array.Copy(fragmentBytes1, 0, outputBytes, offset, fragmentBytes1.Length);
-                        offset += fragmentBytes1.Length;
-                        Array.Copy(fragmentBytes2, 0, outputBytes, offset, fragmentBytes2.Length);
-                        offset += fragmentBytes2.Length;
-                        Array.Copy(fragmentBytes3, 0, outputBytes, offset, fragmentBytes3.Length);
-                        offset += fragmentBytes3.Length;
-                        Array.Copy(fragmentBytes4, 0, outputBytes, offset, fragmentBytes4.Length);
-                        offset += fragmentBytes4.Length;
-                        Array.Copy(fragmentBytes5, 0, outputBytes, offset, fragmentBytes5.Length);
-                        offset += fragmentBytes5.Length;
-                        Array.Copy(fragmentBytes6, 0, outputBytes, offset, fragmentBytes6.Length);
-                        offset += fragmentBytes6.Length;
-                        Array.Copy(fragmentBytes7, 0, outputBytes, offset, fragmentBytes7.Length);
-                        offset += fragmentBytes7.Length;
-                        Array.Copy(fragmentBytes8, 0, outputBytes, offset, fragmentBytes8.Length);
-                        offset += fragmentBytes8.Length;
-                        Array.Copy(fragmentBytes9, 0, outputBytes, offset, fragmentBytes9.Length);
-                        offset += fragmentBytes9.Length;
-                        Array.Copy(fragmentBytes10, 0, outputBytes, offset, fragmentBytes10.Length);
-                        offset += fragmentBytes10.Length;
+                        long offset = 0;
+                        Array.Copy(primaryBytes, 0, outputBytes, offset, primaryBytes.LongLength);
+                        offset += primaryBytes.LongLength;
+                        Array.Copy(fragmentBytes1, 0, outputBytes, offset, fragmentBytes1.LongLength);
+                        offset += fragmentBytes1.LongLength;
+                        Array.Copy(fragmentBytes2, 0, outputBytes, offset, fragmentBytes2.LongLength);
+                        offset += fragmentBytes2.LongLength;
+                        Array.Copy(fragmentBytes3, 0, outputBytes, offset, fragmentBytes3.LongLength);
+                        offset += fragmentBytes3.LongLength;
+                        Array.Copy(fragmentBytes4, 0, outputBytes, offset, fragmentBytes4.LongLength);
+                        offset += fragmentBytes4.LongLength;
+                        Array.Copy(fragmentBytes5, 0, outputBytes, offset, fragmentBytes5.LongLength);
+                        offset += fragmentBytes5.LongLength;
+                        Array.Copy(fragmentBytes6, 0, outputBytes, offset, fragmentBytes6.LongLength);
+                        offset += fragmentBytes6.LongLength;
+                        Array.Copy(fragmentBytes7, 0, outputBytes, offset, fragmentBytes7.LongLength);
+                        offset += fragmentBytes7.LongLength;
+                        Array.Copy(fragmentBytes8, 0, outputBytes, offset, fragmentBytes8.LongLength);
+                        offset += fragmentBytes8.LongLength;
+                        Array.Copy(fragmentBytes9, 0, outputBytes, offset, fragmentBytes9.LongLength);
+                        offset += fragmentBytes9.LongLength;
+                        Array.Copy(fragmentBytes10, 0, outputBytes, offset, fragmentBytes10.LongLength);
+                        offset += fragmentBytes10.LongLength;
 
                         var shaExpected = File.ReadAllText(shaFile);
 
@@ -125,17 +125,17 @@
                             {
                                 string msg =
                                         $"Error downloading and reviving packages. Reconsituted file contents have incorrect SHA\n\tExpected SHA: ${shaExpected}\n\tActual SHA: ${shaReconstituted}\n\tFile was reconstituted from:"
-                                      + $"\n\t{primaryFile} (length ${primaryBytes.Length})"
-                                      + (File.Exists(fragmentFile1) ? $"\n\t{fragmentFile1} (length ${fragmentBytes1.Length})" : "")
-                                      + (File.Exists(fragmentFile2) ? $"\n\t{fragmentFile2} (length ${fragmentBytes2.Length})" : "")
-                                      + (File.Exists(fragmentFile3) ? $"\n\t{fragmentFile3} (length ${fragmentBytes3.Length})" : "")
-                                      + (File.Exists(fragmentFile4) ? $"\n\t{fragmentFile4} (length ${fragmentBytes4.Length})" : "")
-                                      + (File.Exists(fragmentFile5) ? $"\n\t{fragmentFile5} (length ${fragmentBytes5.Length})" : "")
-                                      + (File.Exists(fragmentFile6) ? $"\n\t{fragmentFile6} (length ${fragmentBytes6.Length})" : "")
-                                      + (File.Exists(fragmentFile7) ? $"\n\t{fragmentFile7} (length ${fragmentBytes7.Length})" : "")
-                                      + (File.Exists(fragmentFile8) ? $"\n\t{fragmentFile8} (length ${fragmentBytes8.Length})" : "")
-                                      + (File.Exists(fragmentFile9) ? $"\n\t{fragmentFile9} (length ${fragmentBytes9.Length})" : "")
-                                      + (File.Exists(fragmentFile10) ? $"\n\t{fragmentFile10} (length ${fragmentBytes10.Length})" : "");
+                                      + $"\n\t{primaryFile} (length ${primaryBytes.LongLength})"
+                                      + (File.Exists(fragmentFile1) ? $"\n\t{fragmentFile1} (length ${fragmentBytes1.LongLength})" : "")
+                                      + (File.Exists(fragmentFile2) ? $"\n\t{fragmentFile2} (length ${fragmentBytes2.LongLength})" : "")
+                                      + (File.Exists(fragmentFile3) ? $"\n\t{fragmentFile3} (length ${fragmentBytes3.LongLength})" : "")
+                                      + (File.Exists(fragmentFile4) ? $"\n\t{fragmentFile4} (length ${fragmentBytes4.LongLength})" : "")
+                                      + (File.Exists(fragmentFile5) ? $"\n\t{fragmentFile5} (length ${fragmentBytes5.LongLength})" : "")
+                                      + (File.Exists(fragmentFile6) ? $"\n\t{fragmentFile6} (length ${fragmentBytes6.LongLength})" : "")
+                                      + (File.Exists(fragmentFile7) ? $"\n\t{fragmentFile7} (length ${fragmentBytes7.LongLength})" : "")
+                                      + (File.Exists(fragmentFile8) ? $"\n\t{fragmentFile8} (length ${fragmentBytes8.LongLength})" : "")
+                                      + (File.Exists(fragmentFile9) ? $"\n\t{fragmentFile9} (length ${fragmentBytes9.LongLength})" : "")
+                                      + (File.Exists(fragmentFile10) ? $"\n\t{fragmentFile10} (length ${fragmentBytes10.LongLength})" : "");
                                 Console.Error.WriteLine(msg);
                                 throw new Exception(msg);
                             }

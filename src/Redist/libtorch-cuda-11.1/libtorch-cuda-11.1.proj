@@ -189,8 +189,8 @@
     <ParameterGroup>
       <SourceFile ParameterType="System.String" Required="true" />
       <DestinationFolder ParameterType="System.String" Required="true" />
-      <Start ParameterType="System.Int32" Required="true" />
-      <Size ParameterType="System.Int32" Required="true" />
+      <Start ParameterType="System.Int64" Required="true" />
+      <Size ParameterType="System.Int64" Required="true" />
       <Index ParameterType="System.String" Required="true" />
     </ParameterGroup>
     <Task>
@@ -207,7 +207,7 @@
                 Console.WriteLine($"Opening source {SourceFile} for fragment {Index}...");
                 using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile))
                 {
-                    var totSize = (int)fi.Length;
+                    long totSize = fi.Length;
                     if (Start != 0)
                         DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
                     Directory.CreateDirectory(DestinationFolder);
@@ -217,7 +217,7 @@
                     var outBytes = new byte[Size];
                     using (var accessor = mmf.CreateViewAccessor(Start, Size))
                     {
-                        accessor.ReadArray<byte>(0, outBytes, 0, Size);
+                        accessor.ReadArray<byte>(0, outBytes, 0, (int)Size);
                     }
                     Console.WriteLine($"Writing fragment to {outfile}...");
                     File.WriteAllBytes(outfile, outBytes);
