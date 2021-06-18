@@ -3888,6 +3888,91 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSpecialEntropy()
+        {
+            var a = Float32Tensor.from(new float[] { -0.5f, 1.0f, 0.5f });
+            var expected = Float32Tensor.from(
+                    new float[] { Single.NegativeInfinity, 0.0f, 0.3465736f });
+            var b = TorchSharp.special.entr(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialErrorFunction()
+        {
+            var a = Float32Tensor.from(new float[] { 0.0f, -1.0f, 10.0f });
+            var expected = Float32Tensor.from(
+                    new float[] { 0.0f, -0.8427f, 1.0f });
+            var b = TorchSharp.special.erf(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialComplementaryErrorFunction()
+        {
+            var a = Float32Tensor.from(new float[] { 0.0f, -1.0f, 10.0f });
+            var expected = Float32Tensor.from(
+                    new float[] { 1.0f, 1.8427f, 0.0f });
+            var b = TorchSharp.special.erfc(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialInverseErrorFunction()
+        {
+            var a = Float32Tensor.from(new float[] { 0.0f, 0.5f, -1.0f });
+            var expected = Float32Tensor.from(
+                    new float[] { 0.0f, 0.476936281f, Single.NegativeInfinity});
+            var b = TorchSharp.special.erfinv(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialExpit()
+        {
+            var a = Float32Tensor.randn(new long[] { 10 });
+            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => 1.0f / (1.0f + MathF.Exp(-x))).ToArray());
+            var b = TorchSharp.special.expit(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialExpm1()
+        {
+            var a = Float32Tensor.randn(new long[] { 10 });
+            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Exp(x)-1.0f).ToArray());
+            var b = TorchSharp.special.expm1(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialExp2()
+        {
+            var a = Float32Tensor.randn(new long[] { 10 });
+            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Pow(2.0f,x)).ToArray());
+            var b = TorchSharp.special.exp2(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpecialGammaLN()
+        {
+            var a = Float32Tensor.arange(0.5f, 2f, 0.5f);
+            var expected = Float32Tensor.from(new float[] { 0.5723649f, 0.0f, -0.120782226f });
+            var b = TorchSharp.special.gammaln(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpeciali0e()
+        {
+            var a = Float32Tensor.arange(0.0f, 5.0f, 1.0f);
+            var expected = Float32Tensor.from(new float[] { 1.0f, 0.465759635f, 0.3085083f, 0.243000358f, 0.20700191f });
+            var b = TorchSharp.special.i0e(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
         public void NanToNumTest()
         {
             {

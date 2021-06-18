@@ -1206,6 +1206,32 @@ EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 
 EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);
 
+
+// torch.special:
+
+EXPORT_API(Tensor) THSSpecial_entr(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_erf(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_erfc(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_erfinv(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_expit(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_expm1(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_exp2(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_gammaln(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_i0e(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_logit(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_xlog1py(const Tensor input, const Tensor other);
+
+
 // torch.nn.init:
 
 EXPORT_API(double) THSInit_calculate_gain(int64_t nonlinearity, double param);
@@ -1235,6 +1261,7 @@ EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
 EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
 
 EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
+
 
 // torch::fft:
 
@@ -1273,6 +1300,7 @@ EXPORT_API(Tensor) THSTensor_rfftfreq(const int64_t n, const double d, const int
 EXPORT_API(Tensor) THSTensor_fftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
 
 EXPORT_API(Tensor) THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int dim_length);
+
 
 // Spectral Ops
 
