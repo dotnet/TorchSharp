@@ -22,6 +22,14 @@ Tensor THSLinalg_slogdet(const Tensor tensor, Tensor* logabsdet)
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::eig(*tensor););
+    *eigenvectors = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors)
 {
     std::string _uplo;
@@ -30,6 +38,11 @@ Tensor THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors
     CATCH(res = torch::linalg::eigh(*tensor, _uplo););
     *eigenvectors = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_eigvals(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::linalg::eigvals(*tensor));
 }
 
 Tensor THSLinalg_eigvalsh(const Tensor tensor, const char UPLO)
@@ -54,6 +67,16 @@ Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool h
     {
         CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, c10::nullopt, hermitian));
     }
+}
+
+Tensor THSLinalg_matrix_power(const Tensor tensor, const int64_t n)
+{
+    CATCH_TENSOR(torch::linalg::matrix_power(*tensor, n));
+}
+
+Tensor THSLinalg_multi_dot(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::linalg::multi_dot(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
 Tensor THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int dim_length, const bool keepdim)

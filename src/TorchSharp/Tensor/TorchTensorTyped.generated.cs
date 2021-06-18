@@ -4034,7 +4034,11 @@ namespace TorchSharp.Tensor {
         public static TorchTensor from((float Real, float Imaginary)[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType(DeviceType.CPU);
-            var dataArray = rawArray;
+            var dataArray = new float[rawArray.Length * 2];
+            for (var i = 0; i < rawArray.Length; i++) {
+                dataArray[i*2] = rawArray[i].Real;
+                dataArray[i*2 + 1] = rawArray[i].Imaginary;
+            }
             unsafe
             {
                 var dataHandle = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
@@ -4343,7 +4347,11 @@ namespace TorchSharp.Tensor {
         public static TorchTensor from(System.Numerics.Complex[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
             Torch.InitializeDeviceType(DeviceType.CPU);
-            var dataArray = rawArray;
+            var dataArray = new double[rawArray.Length * 2];
+            for (var i = 0; i < rawArray.Length; i++) {
+                dataArray[i*2] = rawArray[i].Real;
+                dataArray[i*2 + 1] = rawArray[i].Imaginary;
+            }
             unsafe
             {
                 var dataHandle = GCHandle.Alloc(dataArray, GCHandleType.Pinned);

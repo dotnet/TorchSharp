@@ -1185,13 +1185,19 @@ EXPORT_API(Tensor) THSLinalg_det(const Tensor tensor);
 
 EXPORT_API(Tensor) THSLinalg_slogdet(const Tensor tensor, Tensor *logabsdet);
 
+EXPORT_API(Tensor) THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors);
 EXPORT_API(Tensor) THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors);
 
+EXPORT_API(Tensor) THSLinalg_eigvals(const Tensor tensor);
 EXPORT_API(Tensor) THSLinalg_eigvalsh(const Tensor tensor, const char UPLO);
 
 EXPORT_API(Tensor) THSLinalg_inv(const Tensor tensor);
 
+EXPORT_API(Tensor) THSLinalg_matrix_power(const Tensor target, const int64_t n);
+
 EXPORT_API(Tensor) THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian);
+
+EXPORT_API(Tensor) THSLinalg_multi_dot(const Tensor* tensors, const int length);
 
 EXPORT_API(Tensor) THSLinalg_norm_str(const Tensor tensor, const char* p, const int64_t* dim, const int dim_length, const bool keepdim);
 EXPORT_API(Tensor) THSLinalg_norm_float(const Tensor tensor, const double p, const int64_t* dim, const int dim_length, const bool keepdim);

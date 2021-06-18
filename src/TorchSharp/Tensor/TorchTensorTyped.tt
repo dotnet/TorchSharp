@@ -550,6 +550,22 @@ if (type.IsFloat16 || type.IsBFloat16) {
 #>
             var dataArray = new Int16[rawArray.Length];
 <#
+} else if (type.IsComplex32) {
+#>
+            var dataArray = new float[rawArray.Length * 2];
+            for (var i = 0; i < rawArray.Length; i++) {
+                dataArray[i*2] = rawArray[i].Real;
+                dataArray[i*2 + 1] = rawArray[i].Imaginary;
+            }
+<#
+} else if (type.IsComplex64) {
+#>
+            var dataArray = new double[rawArray.Length * 2];
+            for (var i = 0; i < rawArray.Length; i++) {
+                dataArray[i*2] = rawArray[i].Real;
+                dataArray[i*2 + 1] = rawArray[i].Imaginary;
+            }
+<#
 } else {
 #>
             var dataArray = rawArray;

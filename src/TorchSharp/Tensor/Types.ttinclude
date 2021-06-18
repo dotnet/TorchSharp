@@ -8,6 +8,8 @@
         public bool IsSignedInt => (Name == "Int8" || Name == "Int16" || Name == "Int32" || Name == "Unt64");
         public bool IsFloatingPoint => (Name == "Float16" || Name == "BFloat16" || Name == "Float32" || Name == "Float64");
         public bool IsComplex => (Name == "ComplexFloat32" || Name == "ComplexFloat64");
+        public bool IsComplex32 => (Name == "ComplexFloat32");
+        public bool IsComplex64 => (Name == "ComplexFloat64");
         public bool IsInt64 => Name == "Int64";
         public bool IsFloat16 => Name == "Float16";
         public bool IsBFloat16 => Name == "BFloat16";

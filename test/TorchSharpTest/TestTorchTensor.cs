@@ -3824,6 +3824,25 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void MatrixPowerTest()
+        {
+            var a = Float32Tensor.randn(new long[] { 25, 25 });
+            var b = a.matrix_power(3);
+            Assert.Equal(new long[] { 25, 25 }, b.shape);
+        }
+
+
+        [Fact]
+        public void MultiDotTest()
+        {
+            var a = Float32Tensor.randn(new long[] { 25, 25 });
+            var b = Float32Tensor.randn(new long[] { 25, 25 });
+            var c = Float32Tensor.randn(new long[] { 25, 25 });
+            var d = TorchSharp.linalg.multi_dot(new TorchTensor[] { a, b, c });
+            Assert.Equal(new long[] { 25, 25}, d.shape);
+        }
+
+        [Fact]
         public void DeterminantTest()
         {
             {
@@ -3844,7 +3863,33 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void EighvalshTest()
+        public void EighvalsTest32()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }).view(3, 3);
+                var expected = ComplexFloat32Tensor.from(
+                    new (float,float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
+                var l = linalg.eigvals(a);
+                Assert.True(l.allclose(expected));
+            }
+        }
+
+        [Fact]
+        public void EighvalsTest64()
+        {
+            {
+                var a = Float64Tensor.from(
+                    new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }).view(3, 3);
+                var expected = ComplexFloat64Tensor.from(
+                    new System.Numerics.Complex[] { new System.Numerics.Complex(3.44288778f, 0.0f), new System.Numerics.Complex(2.17609453f, 0.0f), new System.Numerics.Complex(-2.128083f, 0.0f) });
+                var l = linalg.eigvals(a);
+                Assert.True(l.allclose(expected));
+            }
+        }
+
+        [Fact]
+        public void EighvalshTest32()
         {
             {
                 var a = Float32Tensor.from(
@@ -3852,6 +3897,20 @@ namespace TorchSharp
                                   -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }).view(3, 2, 2);
                 var expected = Float32Tensor.from(
                     new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }).view(3, 2);
+                var l = linalg.eigvalsh(a);
+                Assert.True(l.allclose(expected));
+            }
+        }
+
+        [Fact]
+        public void EighvalshTest64()
+        {
+            {
+                var a = Float64Tensor.from(
+                    new double[] {  2.8050, -0.3850, -0.3850, 3.2376, -1.0307, -2.7457,
+                                  -2.7457, -1.7517, 1.7166,  2.2207, 2.2207, -2.0898 }).view(3, 2, 2);
+                var expected = Float64Tensor.from(
+                    new double[] { 2.5797, 3.46290016, -4.16046524, 1.37806475, -3.11126733, 2.73806715 }).view(3, 2);
                 var l = linalg.eigvalsh(a);
                 Assert.True(l.allclose(expected));
             }
