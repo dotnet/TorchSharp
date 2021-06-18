@@ -22,7 +22,7 @@
     <DownloadedLicenseFileName>LICENSE-LIBTORCH</DownloadedLicenseFileName>
     <DownloadedLicenseFile>$(DownloadedLicenseFolder)$(DownloadedLicenseFileName)</DownloadedLicenseFile>
     <MainPackageFolder>$(PackagePreparationPath)$(MSBuildProjectName)-$(TargetRuntimeID)</MainPackageFolder>
-    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackage.$(IncludeLibTorchCpuPackage)</CopyToPackageSemaphore>
+    <CopyToPackageSemaphore>$(MainPackageFolder)\.copied.SkipTests.$(SkipTests).IncludeLibTorchCpuPackages.$(IncludeLibTorchCpuPackages)</CopyToPackageSemaphore>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
@@ -140,10 +140,10 @@
     <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" />
 
     <!-- Copy to MainPackageFolder to use in libtorch-cpu package build -->
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackage)' == 'true' "/>
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackages)' == 'true' "/>
 
     <!-- Copy license to MainPackageFolder to use in libtorch-cpu packages build -->
-    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackage)' == 'true'"  />
+    <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'"  />
 
     <!-- Copy to NativeOutputPath to use in tests (headers, lib etc.) -->
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />

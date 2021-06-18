@@ -90,7 +90,7 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build linux
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -109,7 +109,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build Windows
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -128,7 +128,7 @@ jobs:
   pool:
     vmImage: 'macos-10.15'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
     displayName: Build mac
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -172,8 +172,8 @@ jobs:
   - task: CopyFiles@2
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu-linux-x64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-linux-x64
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (LinuxAssets in workspace)
@@ -191,9 +191,9 @@ jobs:
   - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
-  
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-macos-x64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-macos-x64
+
   - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
     displayName: Free up space (MacAssets in workspace)
 
@@ -209,14 +209,14 @@ jobs:
   - task: CopyFiles@2
     displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/libtorch-cpu
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/libtorch-cpu-win-x64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-win-x64
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
   # Pack TorchSharp (and libtorch-cpu if BuildLibTorchPackages is true)
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackage=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   - script: rmdir /q /s bin\obj
@@ -320,7 +320,7 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
@@ -448,7 +448,7 @@ jobs:
   - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space (linux assets in workspace)
 
-  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackage=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
+  - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
