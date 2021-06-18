@@ -29,6 +29,7 @@ set(SOURCES
 	THSNormalization.cpp
 	THSOptimizers.cpp
 	THSRandom.cpp
+	THSSpecial.cpp
     THSTensor.cpp
 	THSTensorConv.cpp
 	THSTensorFactories.cpp

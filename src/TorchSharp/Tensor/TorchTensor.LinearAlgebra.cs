@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -119,6 +119,22 @@ namespace TorchSharp.Tensor
         public TorchTensor mv(TorchTensor target)
         {
             var res = THSTensor_mv(handle, target.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSLinalg_matrix_power(IntPtr tensor, long n);
+
+        /// <summary>
+        /// Computes the n-th power of a square matrix for an integer n.
+        /// </summary>
+        /// <param name="n">The exponent</param>
+        /// <returns></returns>
+        /// <remarks>Input tensor must be of shape (*, m, m) where * is zero or more batch dimensions.</remarks>
+        public TorchTensor matrix_power(int n)
+        {
+            var res = THSLinalg_matrix_power(handle, n);
             if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
             return new TorchTensor(res);
         }

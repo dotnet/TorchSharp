@@ -1,10 +1,7 @@
 using System;
-using System.Globalization;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 using TorchSharp.Tensor;
 
@@ -47,6 +44,17 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_eig(IntPtr tensor, out IntPtr pEigenvectors);
+
+        public static (TorchTensor, TorchTensor) eig(TorchTensor input)
+        {
+            var res = THSLinalg_eig(input.Handle, out var vectors);
+            if (res == IntPtr.Zero || vectors == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(res), new TorchTensor(vectors));
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_eigh(IntPtr tensor, byte UPLO, out IntPtr pEigenvectors);
 
         public static (TorchTensor,TorchTensor) eigh(TorchTensor input, char UPLO)
@@ -55,6 +63,17 @@ namespace TorchSharp
             if (res == IntPtr.Zero || vectors == IntPtr.Zero)
                 Torch.CheckForErrors();
             return (new TorchTensor(res), new TorchTensor(vectors));
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_eigvals(IntPtr tensor);
+
+        public static TorchTensor eigvals(TorchTensor input)
+        {
+            var res = THSLinalg_eigvals(input.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
         }
 
         [DllImport("LibTorchSharp")]
@@ -88,6 +107,30 @@ namespace TorchSharp
                 var res = THSLinalg_matrix_rank(input.Handle, tol ?? double.NegativeInfinity, tol.HasValue, hermitian);
                 if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                 return new TorchTensor(res);
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSLinalg_multi_dot(IntPtr tensor, int len);
+
+        /// <summary>
+        /// Efficiently multiplies two or more matrices by reordering the multiplications so that the fewest arithmetic operations are performed.
+        /// </summary>
+        /// <param name="tensors">Two or more tensors to multiply. The first and last tensors may be 1D or 2D. Every other tensor must be 2D.</param>
+        /// <returns></returns>
+        public static TorchTensor multi_dot(IList<TorchTensor> tensors)
+        {
+            if (tensors.Count == 0) {
+                throw new ArgumentException(nameof(tensors));
+            }
+            if (tensors.Count == 1) {
+                return tensors[0];
+            }
+
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                return new TorchTensor(THSLinalg_multi_dot(tensorsRef, parray.Array.Length));
             }
         }
 

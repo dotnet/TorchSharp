@@ -2413,7 +2413,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateDefaults()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 })) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2422,7 +2422,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateNearest()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Nearest)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2431,7 +2431,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateBilinear2D()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Bilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2441,7 +2441,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateArea()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Area)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2459,7 +2459,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleNearest()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2469,7 +2469,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleLinear()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 4 ))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 4 ))
             using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
@@ -2479,7 +2479,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBilinear()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2489,7 +2489,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBilinearAC()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners:true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2499,7 +2499,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBicubic()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2509,7 +2509,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBicubicAC()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 5, 1).view(1, 1, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2519,7 +2519,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleTrilinear()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 9).view(1, 1, 2, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
@@ -2529,7 +2529,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleTrilinearAC()
         {
-            using (TorchTensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (TorchTensor input = Float32Tensor.arange(1, 9).view(1, 1, 2, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
