@@ -916,26 +916,29 @@ namespace TorchSharp
             Assert.Equal(3, gradCounts);
         }
 
-        [Fact(Skip = "Not working on MacOS (note: may now be working, we need to recheck)")]
+        [Fact]
         public void TestAutoGradMode()
         {
-            var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
-            using (var mode = new AutoGradMode(false)) {
-                Assert.False(AutoGradMode.IsAutogradEnabled());
-                var sum = x.sum();
-                Assert.Throws<ExternalException>(() => sum.backward());
-                //var grad = x.Grad();
-                //Assert.True(grad.Handle == IntPtr.Zero);
-            }
-            using (var mode = new AutoGradMode(true)) {
-                Assert.True(AutoGradMode.IsAutogradEnabled());
-                var sum = x.sum();
-                sum.backward();
-                var grad = x.grad();
-                Assert.False(grad.Handle == IntPtr.Zero);
-                var data = grad.Data<float>();
-                for (int i = 0; i < 2 * 3; i++) {
-                    Assert.Equal(1.0, data[i]);
+            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
+                using (var mode = new AutoGradMode(false)) {
+                    Assert.False(AutoGradMode.IsAutogradEnabled());
+                    var sum = x.sum();
+                    Assert.Throws<ExternalException>(() => sum.backward());
+                    //var grad = x.Grad();
+                    //Assert.True(grad.Handle == IntPtr.Zero);
+                }
+                using (var mode = new AutoGradMode(true)) {
+                    Assert.True(AutoGradMode.IsAutogradEnabled());
+                    var sum = x.sum();
+                    sum.backward();
+                    var grad = x.grad();
+                    Assert.False(grad.Handle == IntPtr.Zero);
+                    var data = grad.Data<float>();
+                    for (int i = 0; i < 2 * 3; i++) {
+                        Assert.Equal(1.0, data[i]);
+                    }
                 }
             }
         }
@@ -1157,23 +1160,26 @@ namespace TorchSharp
         [Fact]
         public void TestConv3dPadding()
         {
-            var shape = new long[] { 16, 3, 28, 28, 28 };
-            TorchTensor t = Float32Tensor.rand(shape);
-            using (var conv = Conv3d(3, 64, 3, padding: 1))
-            using (var output = conv.forward(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
-                Assert.Equal(28, output.shape[4]);
-            }
-            using (var conv = Conv3d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
-            using (var output = conv.forward(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
-                Assert.Equal(28, output.shape[4]);
+            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                var shape = new long[] { 16, 3, 28, 28, 28 };
+                TorchTensor t = Float32Tensor.rand(shape);
+                using (var conv = Conv3d(3, 64, 3, padding: 1))
+                using (var output = conv.forward(t)) {
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                    Assert.Equal(28, output.shape[4]);
+                }
+                using (var conv = Conv3d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
+                using (var output = conv.forward(t)) {
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                    Assert.Equal(28, output.shape[4]);
+                }
             }
         }
 
