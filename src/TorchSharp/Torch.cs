@@ -14,7 +14,7 @@ namespace TorchSharp
 
     public static class Torch
     {
-        const string libtorchPackageVersion = "1.9.0.4";
+        const string libtorchPackageVersion = "1.9.0.5";
         const string cudaVersion = "11.1";
 
         [DllImport("LibTorchSharp")]
@@ -48,7 +48,7 @@ namespace TorchSharp
 
         static string nativeGlob =>
             (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? @".*\.dll" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? @".*\.dynlib\.*" :
+            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? @".*\.dylib\.*" :
             // must match
             //   lib.so
             //   lib.so.1
@@ -83,14 +83,17 @@ namespace TorchSharp
         public static void LoadNativeBackend(bool useCudaBackend)
         {
             bool ok = false;
-            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            var target = isWindows ? "LibTorchSharp.dll" : "libLibTorchSharp.so";
+            var target = 
+                (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? "LibTorchSharp.dll":
+                (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? "libLibTorchSharp.dylib" :
+                "libLibTorchSharp.so";
             if (!(useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded)) {
                 Trace.WriteLine($"TorchSharp: LoadNativeBackend: Initialising native backend");
 
                 // Workarounds for weird LibTorch native stuff
                 // See https://github.com/pytorch/pytorch/issues/33415
                 if (useCudaBackend) {
+                    var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                     if (isWindows) {
                         Trace.WriteLine($"Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL

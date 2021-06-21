@@ -50,7 +50,7 @@
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">macos-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-x64</TargetRuntimeID>
 
     <!-- on windows separate debug binaries of LibTorch are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
@@ -75,7 +75,7 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.9.0.4</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.9.0.5</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
