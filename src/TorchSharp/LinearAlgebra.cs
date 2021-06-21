@@ -120,6 +120,54 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_matrix_norm_fronuc(IntPtr tensor, byte fronuc, IntPtr dim, int dim_length, bool keepdim);
+
+        /// <summary>
+        /// Computes a matrix norm.
+        /// </summary>
+        /// <param name="input">tensor with two or more dimensions.
+        /// By default its shape is interpreted as (*, m, n) where * is zero or more batch dimensions, but this behavior can be controlled using dims.</param>
+        /// <param name="ord">Order of norm. Default: "fro"</param>
+        /// <param name="dims">Dimensions over which to compute the norm.</param>
+        /// <param name="keepdim">If set to true, the reduced dimensions are retained in the result as dimensions with size one. </param>
+        /// <returns></returns>
+        public static TorchTensor matrix_norm(TorchTensor input, string ord = "fro", long[]? dims = null, bool keepdim = false)
+        {
+            if (dims == null) dims = new long[] { -2, -1 };
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSLinalg_matrix_norm_fronuc(input.Handle, ord == "fro" ? (byte) 0 : (byte) 1, (IntPtr)pdims, dims.Length, keepdim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_matrix_norm(IntPtr tensor, IntPtr ord, IntPtr dim, int dim_length, bool keepdim);
+
+        /// <summary>
+        /// Computes a matrix norm.
+        /// </summary>
+        /// <param name="input">tensor with two or more dimensions.
+        /// By default its shape is interpreted as (*, m, n) where * is zero or more batch dimensions, but this behavior can be controlled using dims.</param>
+        /// <param name="ord">Order of norm.</param>
+        /// <param name="dims">Dimensions over which to compute the norm.</param>
+        /// <param name="keepdim">If set to true, the reduced dimensions are retained in the result as dimensions with size one. </param>
+        /// <returns></returns>
+        public static TorchTensor matrix_norm(TorchTensor input, double ord, long[]? dims = null, bool keepdim = false)
+        {
+            if (dims == null) dims = new long[] { -2, -1 };
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSLinalg_matrix_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims.Length, keepdim);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_matrix_rank(IntPtr tensor, double tol, bool has_tol, bool hermitian);
 
         public static TorchTensor matrix_rank(TorchTensor input, double? tol = null, bool hermitian = false)
@@ -279,6 +327,28 @@ namespace TorchSharp
             unsafe {
                 fixed (long* pdims = dims) {
                     var res = THSLinalg_tensorsolve(input.Handle, other.Handle, (IntPtr)pdims, dims.Length);
+                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    return new TorchTensor(res);
+                }
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_vector_norm(IntPtr tensor, IntPtr ord, IntPtr dim, int dim_length, bool keepdim);
+
+        /// <summary>
+        /// Computes a vector norm.
+        /// </summary>
+        /// <param name="input">Tensor, flattened by default, but this behavior can be controlled using dims.</param>
+        /// <param name="ord">Order of norm. Default: 2</param>
+        /// <param name="dims">Dimensions over which to compute the norm.</param>
+        /// <param name="keepdim">If set to true, the reduced dimensions are retained in the result as dimensions with size one. </param>
+        /// <returns></returns>
+        public static TorchTensor vector_norm(TorchTensor input, double ord, long[]? dims = null, bool keepdim = false)
+        {
+            unsafe {
+                fixed (long* pdims = dims) {
+                    var res = THSLinalg_vector_norm(input.Handle, ord.ToScalar().Handle, (IntPtr)pdims, dims is null ? 0 : dims.Length, keepdim);
                     if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }

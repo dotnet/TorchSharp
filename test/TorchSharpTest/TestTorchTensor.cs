@@ -3897,7 +3897,6 @@ namespace TorchSharp
             Assert.Equal(new long[] { 25, 25 }, b.shape);
         }
 
-
         [Fact]
         public void MultiDotTest()
         {
@@ -3925,6 +3924,37 @@ namespace TorchSharp
                                   0.4539f, -0.0887f, 1.1336f, -0.4025f, -0.7089f, 0.9032f }).view(3, 2, 2);
                 var l = linalg.det(a);
                 Assert.True(l.allclose(Float32Tensor.from(new float[] { 1.19910491f, 0.4099378f, 0.7385352f })));
+            }
+        }
+
+
+        [Fact]
+        public void MatrixNormTest()
+        {
+            {
+                var a = Float32Tensor.arange(9).view(3,3);
+
+                var b = linalg.matrix_norm(a);
+                var c = linalg.matrix_norm(a, ord: -1);
+
+                Assert.Equal(14.282857f, b.DataItem<float>());
+                Assert.Equal(9.0f, c.DataItem<float>());
+            }
+        }
+
+
+        [Fact]
+        public void VectorNormTest()
+        {
+            {
+                var a = Float32Tensor.from(
+                    new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0, 1.0f, 2.0f, 3.0f, 4.0f });
+
+                var b = linalg.vector_norm(a, ord: 3.5);
+                var c = linalg.vector_norm(a.view(3, 3), ord: 3.5);
+
+                Assert.Equal(5.4344883f, b.DataItem<float>());
+                Assert.Equal(5.4344883f, c.DataItem<float>());
             }
         }
 

@@ -1198,6 +1198,9 @@ EXPORT_API(Tensor) THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const d
 
 EXPORT_API(Tensor) THSLinalg_matrix_power(const Tensor target, const int64_t n);
 
+EXPORT_API(Tensor) THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim);
+EXPORT_API(Tensor) THSLinalg_matrix_norm_fronuc(const Tensor tensor, const int8_t fronuc, const int64_t* dim, const int dim_length, const bool keepdim);
+
 EXPORT_API(Tensor) THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian);
 
 EXPORT_API(Tensor) THSLinalg_multi_dot(const Tensor* tensors, const int length);
@@ -1218,6 +1221,8 @@ EXPORT_API(Tensor) THSLinalg_svd(const Tensor tensor, const bool full_matrices, 
 EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 
 EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);
+
+EXPORT_API(Tensor) THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim);
 
 
 // torch.special:

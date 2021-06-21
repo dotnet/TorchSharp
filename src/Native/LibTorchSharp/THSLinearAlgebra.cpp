@@ -77,6 +77,24 @@ Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond,
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::matrix_norm(*tensor, *ord, dims, keepdim, c10::nullopt));
+}
+
+Tensor THSLinalg_matrix_norm_fronuc(const Tensor tensor, const int8_t fronuc, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::matrix_norm(*tensor, (fronuc == 0) ? "fro" : "nuc", dims, keepdim, c10::nullopt));
+}
+
+Tensor THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::vector_norm(*tensor, *ord, dims, keepdim, c10::nullopt));
+}
+
 Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian)
 {
     if (has_tol)
