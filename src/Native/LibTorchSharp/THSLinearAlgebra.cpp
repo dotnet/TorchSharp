@@ -171,10 +171,15 @@ Tensor THSLinalg_solve(const Tensor tensor, Tensor other)
 Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
 {
     std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
-    CATCH(res = torch::linalg_svd(*tensor, full_matrices););
+    CATCH(res = torch::linalg::svd(*tensor, full_matrices););
     *S = ResultTensor(std::get<1>(res));
     *Vh = ResultTensor(std::get<2>(res));
     return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_svdvals(const Tensor tensor)
+{
+    CATCH_TENSOR(res = torch::linalg::svdvals(*tensor));
 }
 
 Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)

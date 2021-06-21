@@ -309,6 +309,22 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_svdvals(IntPtr tensor);
+
+        /// <summary>
+        /// Computes the singular values of a matrix.
+        /// </summary>
+        /// <param name="input">The input matrix</param>
+        /// <returns></returns>
+        public static TorchTensor svdvals(TorchTensor input)
+        {
+            var res = THSLinalg_svdvals(input.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_tensorinv(IntPtr tensor, long ind);
 
         public static TorchTensor tensorinv(TorchTensor input, long ind)

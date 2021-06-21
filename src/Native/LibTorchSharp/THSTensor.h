@@ -1218,6 +1218,8 @@ EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other);
 
 EXPORT_API(Tensor) THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh);
 
+EXPORT_API(Tensor) THSLinalg_svdvals(const Tensor tensor);
+
 EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 
 EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);

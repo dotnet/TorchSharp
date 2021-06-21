@@ -3874,6 +3874,20 @@ namespace TorchSharp
             Assert.Equal(new long[] { 4, 15, 15 }, l.Vh.shape);
         }
 
+
+        [Fact]
+        public void SVDValsTest()
+        {
+            var a = Float64Tensor.from(new double[] { -1.3490, -0.1723, 0.7730,
+                -1.6118, -0.3385, -0.6490,
+                 0.0908, 2.0704, 0.5647,
+                -0.6451, 0.1911, 0.7353,
+                 0.5247, 0.5160, 0.5110}).view(5,3);
+
+            var l = linalg.svdvals(a);
+            Assert.Equal(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }, l.Data<double>().ToArray());
+        }
+
         [Fact]
         public void LSTSQTest()
         {
