@@ -3865,13 +3865,28 @@ namespace TorchSharp
 
             Assert.Equal(new long[] { 4, 25, 25 }, l.U.shape);
             Assert.Equal(new long[] { 4, 15 }, l.S.shape);
-            Assert.Equal(new long[] { 4, 15 }, l.Vh.shape);
+            Assert.Equal(new long[] { 4, 15, 15 }, l.Vh.shape);
 
             l = linalg.svd(a, fullMatrices: false);
 
             Assert.Equal(a.shape, l.U.shape);
             Assert.Equal(new long[] { 4, 15 }, l.S.shape);
-            Assert.Equal(new long[] { 4, 15 }, l.Vh.shape);
+            Assert.Equal(new long[] { 4, 15, 15 }, l.Vh.shape);
+        }
+
+        [Fact]
+        public void LSTSQTest()
+        {
+            var a = Float32Tensor.randn(new long[] { 4, 25, 15 });
+            var b = Float32Tensor.randn(new long[] { 4, 25, 10 });
+
+            var l = linalg.lstsq(a, b);
+
+            Assert.Equal(new long[] { 4, 15, 10 }, l.Solution.shape);
+            Assert.Equal(0, l.Residuals.shape[0]);
+            Assert.Equal(new long[] { 4 }, l.Rank.shape);
+            Assert.Equal(new long[] { 4, 15, 10 }, l.Solution.shape);
+            Assert.Equal(0, l.SingularValues.shape[0]);
         }
 
         [Fact]

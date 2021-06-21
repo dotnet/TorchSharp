@@ -99,6 +99,27 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_lstsq_none(IntPtr tensor, IntPtr other, out IntPtr pResiduals, out IntPtr pRank, out IntPtr pSingularValues);
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_lstsq_rcond(IntPtr tensor, IntPtr other, double rcond, out IntPtr pResiduals, out IntPtr pRank, out IntPtr pSingularValues);
+
+        public static (TorchTensor Solution, TorchTensor Residuals, TorchTensor Rank, TorchTensor SingularValues) lstsq(TorchTensor input, TorchTensor other)
+        {
+            var solution = THSLinalg_lstsq_none(input.Handle, other.Handle, out var residuals, out var rank, out var singularValues);
+            if (solution == IntPtr.Zero || residuals == IntPtr.Zero || rank == IntPtr.Zero || singularValues == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(solution), new TorchTensor(residuals), new TorchTensor(rank), new TorchTensor(singularValues));
+        }
+
+        public static (TorchTensor Solution, TorchTensor Residuals, TorchTensor Rank, TorchTensor SingularValues) lstsq(TorchTensor input, TorchTensor other, double rcond)
+        {
+            var solution = THSLinalg_lstsq_rcond(input.Handle, other.Handle, rcond, out var residuals, out var rank, out var singularValues);
+            if (solution == IntPtr.Zero || residuals == IntPtr.Zero || rank == IntPtr.Zero || singularValues == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(solution), new TorchTensor(residuals), new TorchTensor(rank), new TorchTensor(singularValues));
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_matrix_rank(IntPtr tensor, double tol, bool has_tol, bool hermitian);
 
         public static TorchTensor matrix_rank(TorchTensor input, double? tol = null, bool hermitian = false)

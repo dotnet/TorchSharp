@@ -57,6 +57,26 @@ Tensor THSLinalg_inv(const Tensor tensor)
     CATCH_TENSOR(torch::linalg::inv(*tensor));
 }
 
+Tensor THSLinalg_lstsq_none(const Tensor A, const Tensor B, Tensor* residuals, Tensor* rank, Tensor* singular_values)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lstsq(*A, *B, c10::nullopt, c10::nullopt););
+    *residuals = ResultTensor(std::get<1>(res));
+    *rank = ResultTensor(std::get<2>(res));
+    *singular_values = ResultTensor(std::get<3>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond, Tensor* residuals, Tensor* rank, Tensor* singular_values)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lstsq(*A, *B, rcond, c10::nullopt););
+    *residuals = ResultTensor(std::get<1>(res));
+    *rank = ResultTensor(std::get<2>(res));
+    *singular_values = ResultTensor(std::get<3>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian)
 {
     if (has_tol)
@@ -135,7 +155,7 @@ Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, T
     std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
     CATCH(res = torch::linalg_svd(*tensor, full_matrices););
     *S = ResultTensor(std::get<1>(res));
-    *Vh = ResultTensor(std::get<1>(res));
+    *Vh = ResultTensor(std::get<2>(res));
     return ResultTensor(std::get<0>(res));
 }
 
