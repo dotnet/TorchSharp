@@ -2743,6 +2743,29 @@ namespace TorchSharp
             }
         }
 
+
+        [Fact]
+        public void TestPositive()
+        {
+            var a = Float32Tensor.randn(25,25);
+            var b = a.positive();
+
+            Assert.Equal(a.Data<float>().ToArray(), b.Data<float>().ToArray());
+
+            var c = BoolTensor.ones(25,25);
+            Assert.Throws<ArgumentException>(() => c.positive());
+        }
+
+        [Fact]
+        public void TestFrexp()
+        {
+            var x = Float32Tensor.arange(9);
+            var r = x.frexp();
+
+            Assert.Equal(new float[] { 0.0000f, 0.5000f, 0.5000f, 0.7500f, 0.5000f, 0.6250f, 0.7500f, 0.8750f, 0.5000f }, r.Mantissa.Data<float>().ToArray());
+            Assert.Equal(new int[] { 0, 1, 2, 2, 3, 3, 3, 3, 4 }, r.Exponent.Data<int>().ToArray());
+        }
+
         [Fact]
         public void TestAddRCpu()
         {
@@ -3509,6 +3532,75 @@ namespace TorchSharp
             Assert.Equal(3.1f, res[1][1].ToSingle());
             Assert.Equal(4.2f, res[1][2].ToSingle());
             Assert.Equal(5.3f, res[2][0].ToSingle());
+        }
+
+        [Fact]
+        public void VSplitWithSizeTest()
+        {
+            var a = Int32Tensor.arange(64).reshape(4,4,4);
+
+            var b = a.vsplit(2);
+            Assert.Equal(new long[] { 2, 4, 4 }, b[0].shape);
+            Assert.Equal(new long[] { 2, 4, 4 }, b[1].shape);
+
+            Assert.Throws<ArgumentException>(() => a.vsplit(3));
+        }
+
+        [Fact]
+        public void VSplitWithSizesTest()
+        {
+            var a = Int32Tensor.arange(80).reshape(5, 4, 4);
+
+            var b = a.vsplit(new long[] { 2, 3});
+            Assert.Equal(new long[] { 2, 4, 4 }, b[0].shape);
+            Assert.Equal(new long[] { 1, 4, 4 }, b[1].shape);
+            Assert.Equal(new long[] { 2, 4, 4 }, b[2].shape);
+        }
+
+        [Fact]
+        public void HSplitWithSizeTest()
+        {
+            var a = Int32Tensor.arange(64).reshape(4, 4, 4);
+
+            var b = a.hsplit(2);
+            Assert.Equal(new long[] { 4, 2, 4 }, b[0].shape);
+            Assert.Equal(new long[] { 4, 2, 4 }, b[1].shape);
+
+            Assert.Throws<ArgumentException>(() => a.hsplit(3));
+        }
+
+        [Fact]
+        public void HSplitWithSizesTest()
+        {
+            var a = Int32Tensor.arange(80).reshape(4, 5, 4);
+
+            var b = a.hsplit(new long[] { 2, 3 });
+            Assert.Equal(new long[] { 4, 2, 4 }, b[0].shape);
+            Assert.Equal(new long[] { 4, 1, 4 }, b[1].shape);
+            Assert.Equal(new long[] { 4, 2, 4 }, b[2].shape);
+        }
+
+        [Fact]
+        public void DSplitWithSizeTest()
+        {
+            var a = Int32Tensor.arange(64).reshape(4, 4, 4);
+
+            var b = a.dsplit(2);
+            Assert.Equal(new long[] { 4, 4, 2 }, b[0].shape);
+            Assert.Equal(new long[] { 4, 4, 2 }, b[1].shape);
+
+            Assert.Throws<ArgumentException>(() => a.hsplit(3));
+        }
+
+        [Fact]
+        public void DSplitWithSizesTest()
+        {
+            var a = Int32Tensor.arange(80).reshape(4, 4, 5);
+
+            var b = a.dsplit(new long[] { 2, 3 });
+            Assert.Equal(new long[] { 4, 4, 2 }, b[0].shape);
+            Assert.Equal(new long[] { 4, 4, 1 }, b[1].shape);
+            Assert.Equal(new long[] { 4, 4, 2 }, b[2].shape);
         }
 
         [Fact]

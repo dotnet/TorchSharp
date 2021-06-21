@@ -437,6 +437,8 @@ EXPORT_API(Tensor) THSTensor_fmod_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_fmod_scalar_(const Tensor left, const Scalar right);
 
+EXPORT_API(Tensor) THSTensor_frexp(const Tensor tensor, Tensor* exponent);
+
 EXPORT_API(Tensor) THSTensor_full(const int64_t* sizes, const int length, Scalar value, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_full_out(const int64_t* sizes, const int length, Scalar value, const Tensor out);
@@ -868,6 +870,8 @@ EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);
 
 EXPORT_API(Tensor) THSTensor_polygamma_(const Tensor tensor, int64_t n);
 
+EXPORT_API(Tensor) THSTensor_positive(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_pow(const Tensor tensor, const Tensor exponent);
 
 EXPORT_API(Tensor) THSTensor_pow_(const Tensor tensor, const Tensor exponent);
@@ -1063,6 +1067,15 @@ EXPORT_API(Tensor) THSTensor_t(const Tensor tensor);
 EXPORT_API(void) THSTensor_tensor_split_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size, const int64_t dim);
 EXPORT_API(void) THSTensor_tensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
 EXPORT_API(void) THSTensor_tensor_split_with_tensor_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const Tensor sizes, const int64_t dim);
+
+EXPORT_API(void) THSTensor_vsplit_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size);
+EXPORT_API(void) THSTensor_vsplit_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length);
+
+EXPORT_API(void) THSTensor_hsplit_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size);
+EXPORT_API(void) THSTensor_hsplit_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length);
+
+EXPORT_API(void) THSTensor_dsplit_with_size(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t split_size);
+EXPORT_API(void) THSTensor_dsplit_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length);
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 

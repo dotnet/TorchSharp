@@ -1720,6 +1720,22 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_positive(IntPtr tensor);
+
+        /// <summary>
+        /// Returns input. Throws a runtime error if input is a bool tensor. 
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor positive()
+        {
+            if (this.Type == ScalarType.Bool) throw new ArgumentException("Boolean tensor");
+            var res = THSTensor_positive(handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_softplus(IntPtr tensor);
 
         public TorchTensor softplus()
@@ -2858,6 +2874,185 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern void THSTensor_tensor_split_with_tensor_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr indices, long dimension);
+
+        public TorchTensor[] tensor_split(TorchTensor indices, int dimension = 0)
+        {
+            if (indices.Type != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_tensor_split_with_tensor_sizes(handle, pa.CreateArray, indices.Handle, dimension);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_vsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
+        /// </summary>
+        /// <param name="size">The size of each chunk</param>
+        /// <returns></returns>
+        public TorchTensor[] vsplit(long size)
+        {
+            if (this.shape[0] % size != 0) throw new ArgumentException("The first dimension must be evenly divisible by the size");
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_vsplit_with_size(handle, pa.CreateArray, size);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_vsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
+        /// </summary>
+        /// <param name="sizes">A list of split points</param>
+        /// <returns></returns>
+        public TorchTensor[] vsplit(long[] sizes)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* psizes = sizes) {
+                        THSTensor_vsplit_with_sizes(handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to indices.
+        /// </summary>
+        /// <param name="indices">A list of split points</param>
+        /// <returns></returns>
+        public TorchTensor[] vsplit(TorchTensor indices) => tensor_split(indices, 0);
+
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_hsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
+        /// </summary>
+        /// <param name="size">The size of each chunk</param>
+        /// <returns></returns>
+        public TorchTensor[] hsplit(long size)
+        {
+            if (this.shape[1] % size != 0) throw new ArgumentException("The second dimension must be evenly divisible by the size");
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_hsplit_with_size(handle, pa.CreateArray, size);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_hsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
+        /// </summary>
+        /// <param name="sizes">A list of split points</param>
+        /// <returns></returns>
+        public TorchTensor[] hsplit(long[] sizes)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* psizes = sizes) {
+                        THSTensor_hsplit_with_sizes(handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        /// <summary>
+        /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to indices.
+        /// </summary>
+        /// <param name="indices">A list of split points</param>
+        /// <returns></returns>
+        public TorchTensor[] hsplit(TorchTensor indices) => tensor_split(indices, 1);
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_dsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
+
+        /// <summary>
+        /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
+        /// </summary>
+        /// <param name="size">The size of each chunk</param>
+        /// <returns></returns>
+        public TorchTensor[] dsplit(long size)
+        {
+            if (this.shape[2] % size != 0) throw new ArgumentException("The third dimension must be evenly divisible by the size");
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_dsplit_with_size(handle, pa.CreateArray, size);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_dsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
+
+        /// <summary>
+        /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
+        /// </summary>
+        /// <param name="sizes">A list of split points</param>
+        public TorchTensor[] dsplit(long[] sizes)
+        {
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                unsafe {
+                    fixed (long* psizes = sizes) {
+                        THSTensor_dsplit_with_sizes(handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                        Torch.CheckForErrors();
+                    }
+                }
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
+        }
+
+        /// <summary>
+        /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
+        /// </summary>
+        /// <param name="indices">A list of split points</param>
+        public TorchTensor[] dsplit(TorchTensor indices) => tensor_split(indices, 2);
+
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_chunk(IntPtr tensor, AllocatePinnedArray allocator, long chunks, long dim);
 
         /// <summary>
@@ -2873,23 +3068,6 @@ namespace TorchSharp.Tensor
 
             using (var pa = new PinnedArray<IntPtr>()) {
                 THSTensor_chunk(handle, pa.CreateArray, chunks, dim);
-                Torch.CheckForErrors();
-                ptrArray = pa.Array;
-            }
-
-            return ptrArray.Select(x => new TorchTensor(x)).ToArray();
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern void THSTensor_tensor_split_with_tensor_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr indices, long dimension);
-
-        public TorchTensor[] tensor_split(TorchTensor indices, int dimension = 0)
-        {
-            if (indices.Type != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
-            IntPtr[] ptrArray;
-
-            using (var pa = new PinnedArray<IntPtr>()) {
-                THSTensor_tensor_split_with_tensor_sizes(handle, pa.CreateArray, indices.Handle, dimension);
                 Torch.CheckForErrors();
                 ptrArray = pa.Array;
             }
