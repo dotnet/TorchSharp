@@ -199,6 +199,24 @@ namespace TorchSharp
             return new TorchTensor(res);
         }
 
+        public enum QRMode
+        {
+            Reduced = 0,
+            Complete = 1,
+            R = 2
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_qr(IntPtr tensor, byte mode, out IntPtr pR);
+
+        public static (TorchTensor Q, TorchTensor R) qr(TorchTensor input, QRMode mode = QRMode.Reduced)
+        {
+            var Q = THSLinalg_qr(input.Handle, (byte)mode, out var R);
+            if (Q == IntPtr.Zero || R == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(Q), new TorchTensor(R));
+        }
+
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSLinalg_solve(IntPtr tensor, IntPtr other);
 
@@ -208,6 +226,17 @@ namespace TorchSharp
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSLinalg_svd(IntPtr tensor, bool fullMatrices, out IntPtr pS, out IntPtr pVh);
+
+        public static (TorchTensor U, TorchTensor S, TorchTensor Vh) svd(TorchTensor input, bool fullMatrices = true)
+        {
+            var U = THSLinalg_svd(input.Handle, fullMatrices, out var S, out var Vh);
+            if (U == IntPtr.Zero || S == IntPtr.Zero || Vh == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(U), new TorchTensor(S), new TorchTensor(Vh));
         }
 
         [DllImport("LibTorchSharp")]

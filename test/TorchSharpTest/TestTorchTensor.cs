@@ -3835,7 +3835,6 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
         public void CholeskyTest()
         {
@@ -3844,6 +3843,35 @@ namespace TorchSharp
             var l = linalg.cholesky(a);
 
             Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1)))); // Worked this in to get it tested. Alias for 'transpose'
+        }
+
+        [Fact]
+        public void QRTest()
+        {
+            var a = Float32Tensor.randn(new long[] { 4, 25, 25 });
+
+            var l = linalg.qr(a);
+
+            Assert.Equal(a.shape, l.Q.shape);
+            Assert.Equal(a.shape, l.R.shape);
+        }
+
+        [Fact]
+        public void SVDTest()
+        {
+            var a = Float32Tensor.randn(new long[] { 4, 25, 15 });
+
+            var l = linalg.svd(a);
+
+            Assert.Equal(new long[] { 4, 25, 25 }, l.U.shape);
+            Assert.Equal(new long[] { 4, 15 }, l.S.shape);
+            Assert.Equal(new long[] { 4, 15 }, l.Vh.shape);
+
+            l = linalg.svd(a, fullMatrices: false);
+
+            Assert.Equal(a.shape, l.U.shape);
+            Assert.Equal(new long[] { 4, 15 }, l.S.shape);
+            Assert.Equal(new long[] { 4, 15 }, l.Vh.shape);
         }
 
         [Fact]

@@ -108,9 +108,35 @@ Tensor THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermit
     CATCH_TENSOR(torch::linalg::pinv(*tensor, rcond, hermitian));
 }
 
+Tensor THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    if (mode == 0) {
+        CATCH(res = torch::linalg_qr(*tensor, "reduced"););
+    }
+    else if (mode == 1) {
+        CATCH(res = torch::linalg_qr(*tensor, "complete"););
+    }
+    else {
+        CATCH(res = torch::linalg_qr(*tensor, "r"););
+    }
+    *R = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+
+}
+
 Tensor THSLinalg_solve(const Tensor tensor, Tensor other)
 {
     CATCH_TENSOR(torch::linalg::solve(*tensor, *other));
+}
+
+Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_svd(*tensor, full_matrices););
+    *S = ResultTensor(std::get<1>(res));
+    *Vh = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)

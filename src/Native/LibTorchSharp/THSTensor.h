@@ -1206,7 +1206,11 @@ EXPORT_API(Tensor) THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, c
 
 EXPORT_API(Tensor) THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermitian);
 
+EXPORT_API(Tensor) THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R);
+
 EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other);
+
+EXPORT_API(Tensor) THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh);
 
 EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 
