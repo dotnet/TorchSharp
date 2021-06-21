@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -1150,6 +1151,58 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_take_along_dim_dflt(IntPtr tensor, IntPtr indices);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_take_along_dim(IntPtr tensor, IntPtr indices, long dim);
+
+        /// <summary>
+        /// Selects values from input at the 1-dimensional indices from indices along the given dim.
+        /// </summary>
+        /// <param name="indices">The indices into input. Must have long dtype.</param>
+        /// <returns></returns>
+        /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
+        public TorchTensor take_along_dim(TorchTensor indices)
+        {
+            var res = THSTensor_take_along_dim_dflt(handle, indices.Handle);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        /// <summary>
+        /// Selects values from input at the 1-dimensional indices from indices along the given dim.
+        /// </summary>
+        /// <param name="indices">The indices into input. Must have long dtype.</param>
+        /// <returns></returns>
+        /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
+        public TorchTensor take_along_dim(IEnumerable<long> indices) => take_along_dim(Int64Tensor.from(indices.ToArray()));
+
+        /// <summary>
+        /// Selects values from input at the 1-dimensional indices from indices along the given dim.
+        /// </summary>
+        /// <param name="indices">The indices into input. Must have long dtype.</param>
+        /// <param name="dimension">Dimension to select along.</param>
+        /// <returns></returns>
+        /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
+        public TorchTensor take_along_dim(TorchTensor indices, long dimension)
+        {
+            var res = THSTensor_take_along_dim(handle, indices.Handle, dimension);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        /// <summary>
+        /// Selects values from input at the 1-dimensional indices from indices along the given dim.
+        /// </summary>
+        /// <param name="indices">The indices into input. Must have long dtype.</param>
+        /// <param name="dim">Dimension to select along.</param>
+        /// <returns></returns>
+        /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
+        public TorchTensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(Int64Tensor.from(indices.ToArray()), dim);
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
 
         /// <summary>
@@ -1492,6 +1545,23 @@ namespace TorchSharp.Tensor
         public TorchTensor argmin(long dimension, bool keepDim = false)
         {
             var res = THSTensor_argmin_along_dimension(handle, dimension, keepDim);
+            if (res == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_argsort(IntPtr tensor, long dimension, bool descending);
+
+        /// <summary>
+        /// Returns the indices that sort a tensor along a given dimension in ascending order by value.
+        /// </summary>
+        /// <param name="dimension">The dimension to sort along</param>
+        /// <param name="descending">Controls the sorting order (ascending or descending)</param>
+        /// <returns></returns>
+        public TorchTensor argsort(long dimension = -1, bool descending = false)
+        {
+            var res = THSTensor_argsort(handle, dimension, descending);
             if (res == IntPtr.Zero)
                 Torch.CheckForErrors();
             return new TorchTensor(res);

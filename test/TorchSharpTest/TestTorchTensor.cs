@@ -3637,6 +3637,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TakeAlongTest()
+        {
+            var t = Int32Tensor.from(new int[] { 10, 30, 20, 60, 40, 50 }).reshape(2, 3);
+            var max_idx = t.argmax();
+            var sort_idx = t.argsort(dimension: 1);
+
+            var x = t.take_along_dim(max_idx);
+            var y = t.take_along_dim(sort_idx, dimension: 1);
+
+            Assert.Equal(60, x.DataItem<int>());
+            Assert.Equal(new int[] { 10, 20, 30, 40, 50, 60 }, y.Data<int>().ToArray());
+        }
+
+        [Fact]
         public void RandomTest()
         {
             var res = Float32Tensor.rand(new long[] { 2 });

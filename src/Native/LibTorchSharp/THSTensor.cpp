@@ -68,6 +68,11 @@ Tensor THSTensor_atleast_1d(const Tensor tensor)
     CATCH_TENSOR(torch::atleast_1d(*tensor));
 }
 
+Tensor THSTensor_argsort(const Tensor tensor, const int64_t dim, bool descending)
+{
+    CATCH_TENSOR(tensor->argsort(dim, descending));
+}
+
 Tensor THSTensor_atleast_2d(const Tensor tensor)
 {
     CATCH_TENSOR(torch::atleast_2d(*tensor));
@@ -1305,6 +1310,16 @@ Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimens
 Tensor THSTensor_take(const Tensor tensor, const Tensor indices)
 {
     CATCH_TENSOR(tensor->take(*indices));
+}
+
+Tensor THSTensor_take_along_dim_dflt(const Tensor tensor, const Tensor indices)
+{
+    CATCH_TENSOR(tensor->take_along_dim(*indices));
+}
+
+Tensor THSTensor_take_along_dim(const Tensor tensor, const Tensor indices, const int64_t dim)
+{
+    CATCH_TENSOR(tensor->take_along_dim(*indices, dim));
 }
 
 Tensor THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length)

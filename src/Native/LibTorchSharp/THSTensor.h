@@ -96,6 +96,8 @@ EXPORT_API(Tensor) THSTensor_argmin(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_argmin_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
 
+EXPORT_API(Tensor) THSTensor_argsort(const Tensor tensor, const int64_t dim, bool descending);
+
 EXPORT_API(Tensor) THSTensor_asin(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_asin_(const Tensor tensor);
@@ -1053,6 +1055,9 @@ EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 EXPORT_API(void) THSTensor_strides(const Tensor tensor, int64_t* (*allocator)(size_t length));
 
 EXPORT_API(Tensor) THSTensor_take(const Tensor tensor, const Tensor indices);
+
+EXPORT_API(Tensor) THSTensor_take_along_dim_dflt(const Tensor tensor, const Tensor indices);
+EXPORT_API(Tensor) THSTensor_take_along_dim(const Tensor tensor, const Tensor indices, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_tan(const Tensor tensor);
 
