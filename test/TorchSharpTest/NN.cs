@@ -1018,6 +1018,12 @@ namespace TorchSharp
                 Assert.Equal(64, output.shape[1]);
                 Assert.Equal(28, output.shape[2]);
             }
+            using (var conv = Conv1d(3, 64, 3, padding: Padding.Same))
+            using (var output = conv.forward(t)) {
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(28, output.shape[2]);
+            }
         }
 
         [Fact]
@@ -1090,6 +1096,13 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[3]);
             }
             using (var conv = Conv2d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
+            using (var output = conv.forward(t)) {
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(28, output.shape[2]);
+                Assert.Equal(28, output.shape[3]);
+            }
+            using (var conv = Conv2d(3, 64, 3, padding: Padding.Same))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -1173,6 +1186,14 @@ namespace TorchSharp
                     Assert.Equal(28, output.shape[4]);
                 }
                 using (var conv = Conv3d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
+                using (var output = conv.forward(t)) {
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                    Assert.Equal(28, output.shape[4]);
+                }
+                using (var conv = Conv3d(3, 64, 3, padding: Padding.Same))
                 using (var output = conv.forward(t)) {
                     Assert.Equal(16, output.shape[0]);
                     Assert.Equal(64, output.shape[1]);

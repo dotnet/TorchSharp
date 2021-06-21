@@ -244,8 +244,8 @@ EXPORT_API(Tensor)   THSNN_Embedding_forward(const NNModule module, const Tensor
 EXPORT_API(Tensor)   THSNN_Embedding_weight(const NNModule module);
 EXPORT_API(void)     THSNN_Embedding_set_weight(const NNModule module, const Tensor weights);
 
-EXPORT_API(NNModule) THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_EmbeddingBag_forward(const NNModule module, const Tensor input, const Tensor offsets, const Tensor per_sample_weights);
 EXPORT_API(Tensor)   THSNN_EmbeddingBag_weight(const NNModule module);
 EXPORT_API(void)     THSNN_EmbeddingBag_set_weight(const NNModule module, const Tensor weights);

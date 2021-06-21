@@ -326,16 +326,23 @@ NNModule THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChann
     const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
+    torch::nn::Conv1dOptions::padding_t padd(padding);
+    if (padding == -1)
+    {
+        padd = torch::kSame;
+    }
+
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Conv1dOptions(inputChannel, outputChannel, kernelSize)
-        .stride(stride)
-        .padding(padding)
-        .dilation(dilation)
-        .groups(groups)
-        .bias(bias);
-    ApplyPaddingMode(opts, paddingMode);
+            .stride(stride)
+            .padding(padd)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias);
 
-    res = create_module<torch::nn::Conv1dImpl>(opts, outAsAnyModule);
+        ApplyPaddingMode(opts, paddingMode);
+
+        res = create_module<torch::nn::Conv1dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -369,16 +376,22 @@ NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChann
     const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
+    torch::nn::Conv2dOptions::padding_t padd(padding);
+    if (padding == -1)
+    {
+        padd = torch::kSame;
+    }
+
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Conv2dOptions(inputChannel, outputChannel, kernelSize)
-        .stride(stride)
-        .padding(padding)
-        .dilation(dilation)
-        .groups(groups)
-        .bias(bias);
-    ApplyPaddingMode(opts, paddingMode);
+            .stride(stride)
+            .padding(padd)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias);
+        ApplyPaddingMode(opts, paddingMode);
 
-    res = create_module<torch::nn::Conv2dImpl>(opts, outAsAnyModule);
+        res = create_module<torch::nn::Conv2dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -412,16 +425,22 @@ NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChann
     const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
     NNAnyModule* outAsAnyModule)
 {
+    torch::nn::Conv3dOptions::padding_t padd(padding);
+    if (padding == -1)
+    {
+        padd = torch::kSame;
+    }
+
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::Conv3dOptions(inputChannel, outputChannel, kernelSize)
-        .stride(stride)
-        .padding(padding)
-        .dilation(dilation)
-        .groups(groups)
-        .bias(bias);
-    ApplyPaddingMode(opts, paddingMode);
+            .stride(stride)
+            .padding(padd)
+            .dilation(dilation)
+            .groups(groups)
+            .bias(bias);
+        ApplyPaddingMode(opts, paddingMode);
 
-    res = create_module<torch::nn::Conv3dImpl>(opts, outAsAnyModule);
+        res = create_module<torch::nn::Conv3dImpl>(opts, outAsAnyModule);
     );
 }
 

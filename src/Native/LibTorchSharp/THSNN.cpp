@@ -413,20 +413,22 @@ void ApplyEmbeddingBagMode(T& opts, const int64_t mode)
 
 NNModule THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims,
     const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq,
-    const int64_t mode, const bool sparse, const bool include_last_offset,
+    const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
         auto opts = torch::nn::EmbeddingBagOptions(num_embeddings, embedding_dims)
-        .norm_type(norm_type)
-        .scale_grad_by_freq(scale_grad_by_freq)
-        .include_last_offset(include_last_offset)
-        .sparse(sparse);
+            .norm_type(norm_type)
+            .scale_grad_by_freq(scale_grad_by_freq)
+            .include_last_offset(include_last_offset)
+            .sparse(sparse);
 
         ApplyEmbeddingBagMode(opts, mode);
 
         if (has_mn)
-            opts.max_norm(max_norm);
+            opts = opts.max_norm(max_norm);
+        if (padding_idx >= 0)
+            opts = opts.padding_idx(padding_idx);
 
         res = create_module<torch::nn::EmbeddingBagImpl>(opts, outAsAnyModule);
     );
@@ -434,7 +436,7 @@ NNModule THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t emb
 
 NNModule THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze,
     const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq,
-    const int64_t mode, const bool sparse, const bool include_last_offset,
+    const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -451,6 +453,8 @@ NNModule THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool 
 
         if (has_mn)
             opts.max_norm(max_norm);
+        if (padding_idx >= 0)
+            opts = opts.padding_idx(padding_idx);
 
         // Can't use the template function here -- custom logic.
         auto mod = std::make_shared<torch::nn::EmbeddingBagImpl>(opts);
