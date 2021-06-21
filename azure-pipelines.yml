@@ -191,8 +191,8 @@ jobs:
   - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-macos-x64
-      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-macos-x64
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-osx-x64
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
     displayName: Free up space (MacAssets in workspace)
