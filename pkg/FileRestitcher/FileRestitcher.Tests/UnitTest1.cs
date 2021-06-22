@@ -2,12 +2,12 @@ using System;
 using System.IO;
 using Xunit;
 
-namespace TestProject1
+namespace FileRestitcherTests
 {
-    public class UnitTest1
+    public class Tests
     {
         [Fact]
-        public void Test1()
+        public void TestRestitchingSmallFiles()
         {
             long size = 1024; // * 1024 * 1024;   // enable this to test massive files, takes a long time
             var oneChunk = new byte[size];
