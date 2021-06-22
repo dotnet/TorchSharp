@@ -3991,7 +3991,7 @@ namespace TorchSharp
                  0.5247, 0.5160, 0.5110}).view(5,3);
 
             var l = linalg.svdvals(a);
-            Assert.True(l.allclose(Float64Tensor.from(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 })));
+            Assert.True(l.allclose(Float64Tensor.from(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }), rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
