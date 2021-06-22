@@ -5,6 +5,11 @@ namespace ConsoleApp2
 {
     public class Program
     {
+
+        // !!!!!!!------------------------------NOTE------------------------------------!!!!!!
+        // !!!!!!! This code is manually copied into pkg\common\RestitchPackage.targets !!!!!!
+        // !!!!!!!------------------------------NOTE------------------------------------!!!!!!
+        // 
         public static void Restitch(string RestitcherPackage)
         {
             if (Directory.Exists(RestitcherPackage))
