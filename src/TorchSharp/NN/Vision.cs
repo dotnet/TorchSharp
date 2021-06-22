@@ -107,7 +107,7 @@ namespace TorchSharp.NN
         /// </summary>
         /// <param name="theta">Input batch of affine matrices with shape (N, 2, 3 ) for 2D or (N, 3, 4 ) for 3D</param>
         /// <param name="size">The target output image size</param>
-        /// <param name="align_corners">If True, consider -1 and 1 to refer to the centers of the corner pixels rather than the image corners.
+        /// <param name="align_corners">if true, consider -1 and 1 to refer to the centers of the corner pixels rather than the image corners.
         /// Refer to grid_sample() for a more complete description.</param>
         /// <returns></returns>
         static public TorchTensor AffineGrid(TorchTensor theta, long[]? size = null, bool align_corners = false)

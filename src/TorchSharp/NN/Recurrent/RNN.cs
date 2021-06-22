@@ -48,9 +48,9 @@ namespace TorchSharp.NN
         /// <param name="numLayers">Number of recurrent layers. Default: 1</param>
         /// <param name="nonLinearity">The non-linearity to use. Can be either 'tanh' or 'relu'. Default: 'tanh'</param>
         /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
-        /// <param name="batchFirst">If True, then the input and output tensors are provided as (batch, seq, feature). Default: False</param>
+        /// <param name="batchFirst">if true, then the input and output tensors are provided as (batch, seq, feature). Default: False</param>
         /// <param name="dropout">If non-zero, introduces a Dropout layer on the outputs of each RNN layer except the last layer, with dropout probability equal to dropout. Default: 0</param>
-        /// <param name="bidirectional">If True, becomes a bidirectional RNN. Default: False</param>
+        /// <param name="bidirectional">if true, becomes a bidirectional RNN. Default: False</param>
         /// <returns></returns>
         static public RNN RNN (long inputSize, long hiddenSize, long numLayers = 1, RNN.NonLinearities nonLinearity = NN.RNN.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
         {
