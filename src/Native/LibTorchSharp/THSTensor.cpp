@@ -1026,6 +1026,14 @@ Tensor THSTensor_softplus(const Tensor tensor)
     CATCH_TENSOR(torch::softplus(*tensor));
 }
 
+Tensor THSTensor_sort(const Tensor tensor, const int64_t dim, const bool descending, const bool stable, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = tensor->sort(stable, dim, descending););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSTensor_sparse(
     Tensor indices,
     Tensor values,

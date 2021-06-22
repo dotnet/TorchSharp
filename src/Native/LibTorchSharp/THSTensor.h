@@ -982,6 +982,8 @@ EXPORT_API(Tensor) THSTensor_sinh_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_sort(const Tensor tensor, const int64_t dim, const bool descending, const bool stable, Tensor* indices);
+
 EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);

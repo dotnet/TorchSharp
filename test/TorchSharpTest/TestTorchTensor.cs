@@ -3334,19 +3334,123 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void SortTest1()
+        {
+            var input = Float64Tensor.from(new double[] {
+                -0.1321, 0.4370, -1.2631, -1.1289,
+                -2.0527, -1.1250,  0.2275,  0.3077,
+                -0.0881, -0.1259, -0.5495,  1.0284
+            }, 3, 4);
+
+            var expectedValues = Float64Tensor.from(new double[] {
+                -1.2631, -1.1289, -0.1321, 0.4370, 
+                -2.0527, -1.1250,  0.2275, 0.3077,
+                -0.5495, -0.1259, -0.0881, 1.0284
+            }, 3, 4);
+
+            var expectedIndices = Int64Tensor.from(new long[] {
+                2, 3, 0, 1,
+                0, 1, 2, 3,
+                2, 1, 0, 3
+            }, 3, 4);
+
+            var res = input.sort();
+            Assert.True(res.Values.allclose(expectedValues));
+            Assert.Equal(expectedIndices, res.Indices);
+        }
+
+        [Fact]
+        public void SortTest2()
+        {
+            var input = Float64Tensor.from(new double[] {
+                -0.1321, 0.4370, -1.2631, -1.1289,
+                -2.0527, -1.1250,  0.2275,  0.3077,
+                -0.0881, -0.1259, -0.5495,  1.0284
+            }, 3, 4);
+
+            var expectedValues = Float64Tensor.from(new double[] {
+                -2.0527, -1.1250, -1.2631, -1.1289,
+                -0.1321, -0.1259, -0.5495,  0.3077,
+                -0.0881,  0.4370,  0.2275,  1.0284
+            }, 3, 4);
+
+            var expectedIndices = Int64Tensor.from(new long[] {
+                1, 1, 0, 0,
+                0, 2, 2, 1,
+                2, 0, 1, 2
+            }, 3, 4);
+
+            var res = input.sort(dim:0);
+            Assert.True(res.Values.allclose(expectedValues));
+            Assert.Equal(expectedIndices, res.Indices);
+        }
+
+        [Fact]
+        public void SortTest3()
+        {
+            var input = Float64Tensor.from(new double[] {
+                -0.1321, 0.4370, -1.2631, -1.1289,
+                -2.0527, -1.1250,  0.2275,  0.3077,
+                -0.0881, -0.1259, -0.5495,  1.0284,
+            }, 3, 4);
+
+            var expectedValues = Float64Tensor.from(new double[] {
+                0.4370, -0.1321, -1.1289, -1.2631,
+                0.3077,  0.2275, -1.1250, -2.0527,
+                1.0284, -0.0881, -0.1259, -0.5495,
+            }, 3, 4);
+
+            var expectedIndices = Int64Tensor.from(new long[] {
+                1, 0, 3, 2,
+                3, 2, 1, 0,
+                3, 0, 1, 2,
+            }, 3, 4);
+
+            var res = input.sort(descending: true);
+            Assert.True(res.Values.allclose(expectedValues));
+            Assert.Equal(expectedIndices, res.Indices);
+        }
+
+        [Fact]
+        public void SortTest4()
+        {
+            var input = Float64Tensor.from(new double[] {
+                -0.1321, 0.4370, -1.2631, -1.1289,
+                -2.0527, -1.1250,  0.2275,  0.3077,
+                -0.0881, -0.1259, -0.5495,  1.0284
+            }, 3, 4);
+
+            var expectedValues = Float64Tensor.from(new double[] {
+                -0.0881,  0.4370,  0.2275,  1.0284,
+                -0.1321, -0.1259, -0.5495,  0.3077,
+                -2.0527, -1.1250, -1.2631, -1.1289,
+            }, 3, 4);
+
+            var expectedIndices = Int64Tensor.from(new long[] {
+                2, 0, 1, 2,
+                0, 2, 2, 1,
+                1, 1, 0, 0,
+            }, 3, 4);
+
+            var res = input.sort(dim: 0, descending: true);
+            Assert.True(res.Values.allclose(expectedValues));
+            Assert.Equal(expectedIndices, res.Indices);
+        }
+
+        [Fact]
         public void MSortTest()
         {
             var input = Float64Tensor.from(new double[] {
                 -0.1321, 0.4370, -1.2631, -1.1289,
                 -2.0527, -1.1250,  0.2275,  0.3077,
                 -0.0881, -0.1259, -0.5495,  1.0284
-            }).reshape(3, 4);
+            }, 3, 4);
 
             var expected = Float64Tensor.from(new double[] {
                 -2.0527, -1.1250, -1.2631, -1.1289,
                 -0.1321, -0.1259, -0.5495,  0.3077,
                 -0.0881,  0.4370,  0.2275,  1.0284
-            }).reshape(3, 4);
+            }, 3, 4);
 
             var res = input.msort();
             Assert.True(res.allclose(expected));

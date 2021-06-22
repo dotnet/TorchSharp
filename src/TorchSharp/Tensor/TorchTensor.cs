@@ -3347,6 +3347,15 @@ namespace TorchSharp.Tensor
             return new TorchTensor(res);
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_sort(IntPtr tensor, long dim, bool descending, bool stable, out IntPtr indices);
+
+        public (TorchTensor Values, TorchTensor Indices) sort(long dim = -1, bool descending = false, bool stable = false)
+        {
+            var res = THSTensor_sort(handle, dim, descending, stable, out var indices);
+            if (res == IntPtr.Zero || indices == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return (new TorchTensor(res), new TorchTensor(indices));
+        }
 
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_ne(IntPtr tensor, IntPtr trg);
