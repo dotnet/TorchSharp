@@ -216,7 +216,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.9.0.5</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.9.0.6</LibTorchPackageVersion>
 
        dotnet pack -c Debug /p:SkipCuda=true
        dotnet pack -c Release /p:SkipCuda=true

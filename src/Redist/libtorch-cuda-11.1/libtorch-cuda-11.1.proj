@@ -129,8 +129,8 @@
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="2" FileUnstitchStart="750000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="3" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part4"  />
 
