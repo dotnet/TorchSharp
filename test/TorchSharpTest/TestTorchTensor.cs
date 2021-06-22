@@ -2835,7 +2835,7 @@ namespace TorchSharp
                 return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
             }).ToArray();
             var res = data.angle();
-            Assert.True(res.allclose(Float32Tensor.from(expected)));
+            Assert.True(res.allclose(Float32Tensor.from(expected), rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -3991,7 +3991,7 @@ namespace TorchSharp
                  0.5247, 0.5160, 0.5110}).view(5,3);
 
             var l = linalg.svdvals(a);
-            Assert.Equal(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }, l.Data<double>().ToArray());
+            Assert.True(l.allclose(Float64Tensor.from(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 })));
         }
 
         [Fact]
