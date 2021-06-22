@@ -14,8 +14,10 @@ namespace FileRestitcherTests
             var rnd = new System.Random();
             for (int i = 0; i < 10; i++)
                 oneChunk[i] = (byte)rnd.Next(0,255);
-            var tmpDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location + @"\tmp");
+            var tmpDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\tmp";
             System.Console.WriteLine("tmpDir = {0}", tmpDir);
+            if (Directory.Exists(tmpDir))
+                Directory.Delete(tmpDir, true);
             Directory.CreateDirectory(tmpDir);
             Directory.CreateDirectory(tmpDir + @"\some-package-primary\runtimes");
             Directory.CreateDirectory(tmpDir + @"\some-package-fragment1\fragments");
@@ -27,15 +29,15 @@ namespace FileRestitcherTests
             File.WriteAllBytes(tmpDir + @"\some-package-fragment3\fragments\a.so.fragment3", oneChunk);
             System.Threading.Thread.Sleep(1000);
             using (var sha256Hash = System.Security.Cryptography.SHA256.Create()) {
-                var expexctedFile = tmpDir + @"\a.so";
-                Console.WriteLine("Writing restored primary file at {0}", expexctedFile);
-                var os = File.OpenWrite(expexctedFile);
+                var expectedFile = tmpDir + @"\a.so";
+                Console.WriteLine("Writing restored primary file at {0}", expectedFile);
+                var os = File.OpenWrite(expectedFile);
                 os.Write(oneChunk);
                 os.Write(oneChunk);
                 os.Write(oneChunk);
                 os.Write(oneChunk);
                 os.Close();
-                var os2 = File.OpenRead(expexctedFile);
+                var os2 = File.OpenRead(expectedFile);
                 byte[] bytes = sha256Hash.ComputeHash(os2);
                 var builder = new System.Text.StringBuilder();
                 for (int i = 0; i < bytes.Length; i++) {
