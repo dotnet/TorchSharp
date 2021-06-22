@@ -140,6 +140,27 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_huber_loss(IntPtr input, IntPtr trgt, double delta, long reduction);
+
+        /// <summary>
+        /// Creates a criterion that uses a squared term if the absolute element-wise error falls below delta and a delta-scaled L1 term otherwise.
+        ///
+        /// See: https://pytorch.org/docs/stable/generated/torch.nn.HuberLoss.html#torch.nn.HuberLoss
+        /// </summary>
+        /// <param name="delta">Specifies the threshold at which to change between delta-scaled L1 and L2 loss. The value must be positive. Default: 1.0</param>
+        /// <param name="reduction">Specifies the reduction to apply to the output</param>
+        /// <returns></returns>
+        public static Loss huber_loss(double delta = 1.0, Reduction reduction = Reduction.Mean)
+        {
+            return (TorchTensor input, TorchTensor target) => {
+                var res = THSNN_huber_loss(input.Handle, target.Handle, delta, (long)reduction);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            };
+        }
+
+
+        [DllImport("LibTorchSharp")]
         private static extern IntPtr THSNN_margin_ranking_loss(IntPtr input1, IntPtr input2, IntPtr target, double margin, long reduction);
 
         public static TwoInputLoss margin_ranking_loss(double margin = 0, Reduction reduction = Reduction.Mean)

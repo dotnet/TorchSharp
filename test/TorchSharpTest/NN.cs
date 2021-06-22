@@ -251,6 +251,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateMish()
+        {
+            var rel = Mish();
+            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var output = rel.forward(input);
+            var values = output.Data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
         public void EvaluateRRelu()
         {
             var rel = RReLU();
@@ -629,6 +639,18 @@ namespace TorchSharp
             using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
             using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
                 var outTensor = hinge_embedding_loss()(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestHuberLoss()
+        {
+            using (TorchTensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (TorchTensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+                var outTensor = huber_loss()(input, target);
+                outTensor.backward();
+                outTensor = huber_loss(1.5)(input, target);
                 outTensor.backward();
             }
         }
