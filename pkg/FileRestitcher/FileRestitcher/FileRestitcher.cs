@@ -1,20 +1,17 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+using System;
+using System.IO;
 
+namespace ConsoleApp2
+{
+    public class Program
+    {
 
-<!-- Some massive files > 1GB are delivered in fragments across multiple nuget packages. -->
-<!-- Here we hack them back together on first build using the package install -->
-  <UsingTask
-    TaskName="FileRestitch"
-    TaskFactory="RoslynCodeTaskFactory"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
-    <ParameterGroup>
-      <RestitcherPackage ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System"/>
-      <Using Namespace="System.IO"/>
-      <Code Type="Fragment" Language="cs">
-<![CDATA[
+        // !!!!!!!------------------------------NOTE------------------------------------!!!!!!
+        // !!!!!!! This code is manually copied into pkg\common\RestitchPackage.targets !!!!!!
+        // !!!!!!!------------------------------NOTE------------------------------------!!!!!!
+        // 
+        public static void Restitch(string RestitcherPackage)
+        {
             if (Directory.Exists(RestitcherPackage))
             {
                 //System.Console.WriteLine("Searching for primary files in {0}", RestitcherPackage);
@@ -208,18 +205,6 @@
                     }
                 }
             }
-]]>
-      </Code>
-    </Task>
-  </UsingTask>
-
-  <Target Name="FileRestitch"
-    Outputs="%(RestitcherPackage.Identity)\.restiched"
-    AfterTargets="ResolveReferences"
-    BeforeTargets="PrepareForBuild">
-   <!-- <Message Text="Checking for restitch files under %(RestitcherPackage.Identity)" /> -->
-    <FileRestitch RestitcherPackage="%(RestitcherPackage.Identity)" />
-  </Target>
-
-
-</Project>
+        }
+    }
+}
