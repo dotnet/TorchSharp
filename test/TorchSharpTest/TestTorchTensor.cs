@@ -4314,7 +4314,7 @@ namespace TorchSharp
             var a = Float32Tensor.randn(new long[] { 10 });
             var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => 1.0f / (1.0f + MathF.Exp(-x))).ToArray());
             var b = TorchSharp.special.expit(a);
-            Assert.True(b.allclose(expected));
+            Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -4323,7 +4323,7 @@ namespace TorchSharp
             var a = Float32Tensor.randn(new long[] { 10 });
             var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Exp(x)-1.0f).ToArray());
             var b = TorchSharp.special.expm1(a);
-            Assert.True(b.allclose(expected));
+            Assert.True(b.allclose(expected, rtol:1e-04, atol:1e-07));
         }
 
         [Fact]
@@ -4332,7 +4332,7 @@ namespace TorchSharp
             var a = Float32Tensor.randn(new long[] { 10 });
             var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Pow(2.0f,x)).ToArray());
             var b = TorchSharp.special.exp2(a);
-            Assert.True(b.allclose(expected));
+            Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
