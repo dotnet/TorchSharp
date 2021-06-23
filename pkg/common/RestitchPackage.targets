@@ -15,6 +15,7 @@
       <Using Namespace="System.IO"/>
       <Code Type="Fragment" Language="cs">
 <![CDATA[
+            // vvvvvvvvvvvvvvvvvvvvvvvvvvvvv START HERE vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
             if (Directory.Exists(RestitcherPackage))
             {
                 //System.Console.WriteLine("Searching for primary files in {0}", RestitcherPackage);
@@ -72,56 +73,56 @@
                                 Console.WriteLine("Writing bytes from {0} to {1}", primaryFile, tmpFile);
                                 var primaryBytes = File.ReadAllBytes(primaryFile);
 
-                                os.Write(primaryBytes);
+                                os.Write(primaryBytes, 0, primaryBytes.Length);
                                 if (File.Exists(fragmentFile1)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile1, tmpFile);
                                     var fragmentBytes1 = File.ReadAllBytes(fragmentFile1);
-                                    os.Write(fragmentBytes1);
+                                    os.Write(fragmentBytes1, 0, fragmentBytes1.Length);
                                 }
                                 if (File.Exists(fragmentFile2)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile2, tmpFile);
                                     var fragmentBytes2 = File.ReadAllBytes(fragmentFile2);
-                                    os.Write(fragmentBytes2);
+                                    os.Write(fragmentBytes2, 0, fragmentBytes2.Length);
                                 }
                                 if (File.Exists(fragmentFile3)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile3, tmpFile);
                                     var fragmentBytes3 = File.ReadAllBytes(fragmentFile3);
-                                    os.Write(fragmentBytes3);
+                                    os.Write(fragmentBytes3, 0, fragmentBytes3.Length);
                                 }
                                 if (File.Exists(fragmentFile4)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile4, tmpFile);
                                     var fragmentBytes4 = File.ReadAllBytes(fragmentFile4);
-                                    os.Write(fragmentBytes4);
+                                    os.Write(fragmentBytes4, 0, fragmentBytes4.Length);
                                 }
                                 if (File.Exists(fragmentFile5)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile5, tmpFile);
                                     var fragmentBytes5 = File.ReadAllBytes(fragmentFile5);
-                                    os.Write(fragmentBytes5);
+                                    os.Write(fragmentBytes5, 0, fragmentBytes5.Length);
                                 }
                                 if (File.Exists(fragmentFile6)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile6, tmpFile);
                                     var fragmentBytes6 = File.ReadAllBytes(fragmentFile6);
-                                    os.Write(fragmentBytes6);
+                                    os.Write(fragmentBytes6, 0, fragmentBytes6.Length);
                                 }
                                 if (File.Exists(fragmentFile7)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile7, tmpFile);
                                     var fragmentBytes7 = File.ReadAllBytes(fragmentFile7);
-                                    os.Write(fragmentBytes7);
+                                    os.Write(fragmentBytes7, 0, fragmentBytes7.Length);
                                 }
                                 if (File.Exists(fragmentFile8)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile8, tmpFile);
                                     var fragmentBytes8 = File.ReadAllBytes(fragmentFile8);
-                                    os.Write(fragmentBytes8);
+                                    os.Write(fragmentBytes8, 0, fragmentBytes8.Length);
                                 }
                                 if (File.Exists(fragmentFile9)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile9, tmpFile);
                                     var fragmentBytes9 = File.ReadAllBytes(fragmentFile9);
-                                    os.Write(fragmentBytes9);
+                                    os.Write(fragmentBytes9, 0, fragmentBytes9.Length);
                                 }
                                 if (File.Exists(fragmentFile10)) {
                                     Console.WriteLine("Writing fragment bytes from {0} to {1}", fragmentFile10, tmpFile);
                                     var fragmentBytes10 = File.ReadAllBytes(fragmentFile10);
-                                    os.Write(fragmentBytes10);
+                                    os.Write(fragmentBytes10, 0, fragmentBytes10.Length);
                                 }
                             }
                         }
@@ -208,6 +209,7 @@
                     }
                 }
             }
+            // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END HERE^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ]]>
       </Code>
     </Task>
