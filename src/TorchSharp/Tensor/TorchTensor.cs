@@ -4423,46 +4423,53 @@ namespace TorchSharp.Tensor
                 builder.AppendLine().AppendLine();
                 PrintTwoDimensions(fltFormat, width, builder, this);
 
-            } else if (Dimensions == 3) {
-
-                builder.AppendLine();
-
-                for (var i = 0; i < shape[0]; i++) {
-                    builder.AppendLine().AppendLine($"[{i},:,:] =");
-                    var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
-                    PrintTwoDimensions(fltFormat, width, builder, slice);
-                }
-            } else if (Dimensions == 4) {
-
-                builder.AppendLine();
-
-                for (var i = 0; i < shape[0]; i++) {
-                    for (var j = 0; j < shape[1]; j++) {
-                        builder.AppendLine().AppendLine($"[{i},{j},:,:] =");
-                        var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Single(j), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
-                        PrintTwoDimensions(fltFormat, width, builder, slice);
-                    }
-                }
-            } else if (Dimensions == 5) {
-
-                builder.AppendLine();
-
-                for (var i = 0; i < shape[0]; i++) {
-                    for (var j = 0; j < shape[1]; j++) {
-                        for (var k = 0; k < shape[2]; k++) {
-                            builder.AppendLine().AppendLine($"[{i},{j},{k}:,:] =");
-                            var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Single(j), TorchTensorIndex.Single(k), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
-                            PrintTwoDimensions(fltFormat, width, builder, slice);
-                        }
-                    }
-                }
             } else {
                 builder.AppendLine();
+                var indices = new List<TorchTensorIndex>();
+                RecursivePrintDimensions(0, indices, fltFormat, width, builder);
             }
 
-            // TODO: Generalize the logic to N dimensions.
-
             return builder.ToString();
+        }
+
+        private void RecursivePrintDimensions(int dim, IEnumerable<TorchTensorIndex> indices, string fltFormat, int width, StringBuilder builder)
+        {
+            if (dim == Dimensions-3) {
+                // We're at the third-last dimension. This is where we can print out the last two dimensions.
+
+                for (int i = 0; i < shape[dim]; i++) {
+
+                    var idxs = indices.Append(TorchTensorIndex.Single(i)).Append(TorchTensorIndex.Ellipsis).Append(TorchTensorIndex.Ellipsis).ToArray();
+                    var str = IndicesToString(idxs);
+                    builder.AppendLine().AppendLine($"{str} =");
+                    var slice = this.index(idxs);
+                    PrintTwoDimensions(fltFormat, width, builder, slice);
+                }
+            }
+            else {
+
+                for (int i = 0; i < shape[dim]; i++) {
+
+                    RecursivePrintDimensions(dim+1, indices.Append(TorchTensorIndex.Single(i)), fltFormat, width, builder);
+                }
+            }
+        }
+
+        private string IndicesToString(IList<TorchTensorIndex> indices)
+        {
+            var builder = new StringBuilder("[");
+            for (int i = 0; i < indices.Count(); i++) {
+
+                if (i > 0) builder.Append(',');
+
+                if (indices[i].kind == TorchTensorIndex.Kind.Ellipsis) {
+                    builder.Append(':');
+                }
+                else if (indices[i].kind == TorchTensorIndex.Kind.Single) {
+                    builder.Append(indices[i].startIndexOrBoolOrSingle);
+                }
+            }
+            return builder.Append(']').ToString();
         }
 
         private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, TorchTensor t)
