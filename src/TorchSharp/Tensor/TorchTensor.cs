@@ -4378,21 +4378,223 @@ namespace TorchSharp.Tensor
         {
             if (Handle == IntPtr.Zero) return "";
 
-            var n = Dimensions;
-            if (n == 0)
-                return "[]";
-
             var sb = new StringBuilder("[");
-            for (var i = 0; i < n; i++)
-            {
-                sb.Append(size(i));
-                if (i + 1 < n)
-                    sb.Append("x");
+
+            var n = Dimensions;
+            if (n == 0) {
+                sb.Append(']');
+            } else {
+                for (var i = 0; i < n; i++) {
+                    sb.Append(size(i));
+                    if (i + 1 < n)
+                        sb.Append("x");
+                }
+
+                sb.Append("]");
+            }
+            sb.Append($", type = {Type}, device = {device}");
+
+            return sb.ToString();
+        }
+
+        public string ToString(bool withData, string fltFormat = "g5", int width = 100)
+        {
+            if (!withData) return this.ToString();
+
+            var builder = new StringBuilder(this.ToString());
+
+            if (Dimensions == 0) {
+
+                builder.Append(", value = ");
+                PrintValue(builder, Type, this.ToScalar(), fltFormat);
+
+            } else if (Dimensions == 1) {
+
+                var row = new List<string>();
+                BuildRow(row, this, width, fltFormat);
+
+                var appendEllipsis = row.Count < shape[0];
+
+                builder.AppendLine();
+                PrintOneRow(row, row.Select(str => str.Length).ToArray(), new bool[shape[0]], fltFormat, builder, this, appendEllipsis);
+
+            } else if (Dimensions == 2) {
+
+                builder.AppendLine().AppendLine();
+                PrintTwoDimensions(fltFormat, width, builder, this);
+
+            } else if (Dimensions == 3) {
+
+                builder.AppendLine();
+
+                for (var i = 0; i < shape[0]; i++) {
+                    builder.AppendLine().AppendLine($"[{i},:,:] =");
+                    var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
+                    PrintTwoDimensions(fltFormat, width, builder, slice);
+                }
+            } else if (Dimensions == 4) {
+
+                builder.AppendLine();
+
+                for (var i = 0; i < shape[0]; i++) {
+                    for (var j = 0; j < shape[1]; j++) {
+                        builder.AppendLine().AppendLine($"[{i},{j},:,:] =");
+                        var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Single(j), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
+                        PrintTwoDimensions(fltFormat, width, builder, slice);
+                    }
+                }
+            } else if (Dimensions == 5) {
+
+                builder.AppendLine();
+
+                for (var i = 0; i < shape[0]; i++) {
+                    for (var j = 0; j < shape[1]; j++) {
+                        for (var k = 0; k < shape[2]; k++) {
+                            builder.AppendLine().AppendLine($"[{i},{j},{k}:,:] =");
+                            var slice = this.index(new TorchTensorIndex[] { TorchTensorIndex.Single(i), TorchTensorIndex.Single(j), TorchTensorIndex.Single(k), TorchTensorIndex.Ellipsis, TorchTensorIndex.Ellipsis });
+                            PrintTwoDimensions(fltFormat, width, builder, slice);
+                        }
+                    }
+                }
+            } else {
+                builder.AppendLine();
             }
 
-            sb.Append("]");
-            sb.Append($", device = {device}");
-            return sb.ToString();
+            // TODO: Generalize the logic to N dimensions.
+
+            return builder.ToString();
+        }
+
+        private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, TorchTensor t)
+        {
+            // TODO: This code will align the first digits of each column, taking a leading '-' into account.
+            //       An alternative would be to align periods, or to align the last character of each column.
+            var rows = new List<List<string>>();
+            var rowCount = t.shape[0];
+            var colCount = t.shape[1];
+
+            var columnSpace = new int[colCount];
+            var hasMinus = new bool[colCount];
+
+
+
+            for (int i = 0; i < rowCount; i++) {
+                var row = new List<string>();
+                BuildRow(row, t[i], width, fltFormat);
+                rows.Add(row);
+            }
+
+            var shortestRow = rows.Select(r => r.Count).Min();
+
+            var appendEllipsis = shortestRow < t.shape[1];
+
+            for (int i = 0; i < rowCount; i++) {
+
+                var row = rows[i];
+
+                for (int j = 0; j < shortestRow; j++) {
+                    hasMinus[j] = hasMinus[j] || row[j].StartsWith('-');
+                    if (row[j].Length > columnSpace[j])
+                        columnSpace[j] = row[j].Length;
+                }
+            }
+
+            for (int i = 0; i < rowCount; i++) {
+                PrintOneRow(rows[i].Take(shortestRow).ToList(), columnSpace, hasMinus, fltFormat, builder, t[i], appendEllipsis);
+            }
+        }
+
+        private const string ellipsis = "...";
+
+        private static void PrintOneRow(IList<string> row, int[] space, bool[] hasMinus, string fltFormat, StringBuilder builder, TorchTensor rowTensor, bool appendEllipsis)
+        {
+            for (var i = 0; i < row.Count; i++) {
+                var pad = space[i] - row[i].Length;
+                builder.Append(' ');
+                //if (hasMinus[i] && !row[i].StartsWith('-')) { pad--; builder.Append(' '); }
+
+                for (int j = 0; j < pad; j++)
+                    builder.Append(' ');
+
+                builder.Append(row[i]);
+            }
+
+            if (appendEllipsis) {
+                builder.Append(' ').Append(ellipsis);
+            }
+            builder.AppendLine();
+        }
+
+        private static void BuildRow(List<string> row, TorchTensor t, int width, string fltFormat)
+        {
+            var type = t.Type;
+            var endingWidth = ellipsis.Length+1;
+            
+            for (int i = 0; i < t.shape[0]; i++) {
+
+                var builder = new StringBuilder();
+                PrintValue(builder, type, t[i].ToScalar(), fltFormat);
+
+                var str = builder.ToString();
+
+                if (width - str.Length - endingWidth < 0) {
+                    break;
+                }
+
+                row.Add(str);
+                width -= str.Length+1;
+            }
+        }
+
+        private static void PrintValue(StringBuilder builder, ScalarType type, TorchScalar value, string fltFormat)
+        {
+            switch (type) {
+            case ScalarType.Byte:
+                builder.Append(value.ToByte());
+                break;
+            case ScalarType.Int8:
+                builder.Append(value.ToSByte());
+                break;
+            case ScalarType.Int16:
+                builder.Append(value.ToInt16());
+                break;
+            case ScalarType.Int32:
+                builder.Append(value.ToInt32());
+                break;
+            case ScalarType.Int64:
+                builder.Append(value.ToInt64());
+                break;
+            case ScalarType.Bool:
+                builder.Append(value.ToBoolean());
+                break;
+            case ScalarType.Float16:
+                builder.Append(value.ToSingle().ToString(fltFormat));
+                break;
+            case ScalarType.Float32:
+                builder.Append(value.ToSingle().ToString(fltFormat));
+                break;
+            case ScalarType.Float64:
+                builder.Append(value.ToDouble().ToString(fltFormat));
+                break;
+            case ScalarType.ComplexFloat32:
+                var val1 = value.ToComplexFloat32();
+                if (val1.Real != 0.0f || val1.Imaginary == 0.0f)
+                    builder.Append(val1.Real.ToString(fltFormat));
+                if (val1.Real != 0.0f || val1.Imaginary != 0.0f)
+                    builder.Append('+');
+                if (val1.Imaginary != 0.0f)
+                    builder.Append(val1.Imaginary.ToString(fltFormat)).Append('i');
+                break;
+            case ScalarType.ComplexFloat64:
+                var val2 = value.ToComplexFloat64();
+                if (val2.Real != 0.0f || val2.Imaginary == 0.0f)
+                    builder.Append(val2.Real.ToString(fltFormat)).Append('+');
+                if (val2.Real != 0.0f || val2.Imaginary != 0.0f)
+                    builder.Append('+');
+                if (val2.Imaginary != 0.0f)
+                    builder.Append(val2.Imaginary.ToString(fltFormat)).Append('i');
+                break;
+            }
         }
 
         public static explicit operator float (TorchTensor value) => value.ToSingle();
