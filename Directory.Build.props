@@ -88,7 +88,7 @@
     
     <!-- By default only TorchSharp and no libtorch-cpu or libtorch-cuda packages are built.  The CI file controls these via 'BuildLibTorchPackages' -->
     <!-- This then selectively turns these on over several CI jobs since different pacakges are done in different jobs -->
-    <IncludeTorchSharpPackage>true</IncludeTorchSharpPackage>
+    <IncludeTorchSharpPackage>false</IncludeTorchSharpPackage>
     <IncludeLibTorchCpuPackages>false</IncludeLibTorchCpuPackages>
     <IncludeLibTorchCudaPackages>false</IncludeLibTorchCudaPackages>
   </PropertyGroup>
