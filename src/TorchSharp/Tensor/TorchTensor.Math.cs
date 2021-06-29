@@ -803,6 +803,21 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_frexp(IntPtr tensor, out IntPtr exponent);
+
+        /// <summary>
+        /// Decomposes input into mantissa and exponent tensors 
+        /// </summary>
+        /// <returns></returns>
+        public (TorchTensor Mantissa, TorchTensor Exponent) frexp()
+        {
+            var mantissa = THSTensor_frexp(handle, out var exponent);
+            if (mantissa == IntPtr.Zero || exponent == IntPtr.Zero)
+                Torch.CheckForErrors();
+            return (new TorchTensor(mantissa), new TorchTensor(exponent));
+        }
+
+        [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_gcd(IntPtr tensor, IntPtr other);
 
         public TorchTensor gcd(TorchTensor other)

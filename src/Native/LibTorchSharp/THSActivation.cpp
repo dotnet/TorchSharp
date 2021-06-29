@@ -67,6 +67,18 @@ Tensor THSNN_LogSoftmax_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::LogSoftmax>()->forward(*tensor));
 }
 
+NNModule THSNN_Mish_ctor(NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        res = create_module<torch::nn::MishImpl>(outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Mish_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Mish>()->forward(*tensor));
+}
+
 NNModule THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

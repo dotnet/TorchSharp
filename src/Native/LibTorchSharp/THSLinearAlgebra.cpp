@@ -57,6 +57,44 @@ Tensor THSLinalg_inv(const Tensor tensor)
     CATCH_TENSOR(torch::linalg::inv(*tensor));
 }
 
+Tensor THSLinalg_lstsq_none(const Tensor A, const Tensor B, Tensor* residuals, Tensor* rank, Tensor* singular_values)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lstsq(*A, *B, c10::nullopt, c10::nullopt););
+    *residuals = ResultTensor(std::get<1>(res));
+    *rank = ResultTensor(std::get<2>(res));
+    *singular_values = ResultTensor(std::get<3>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond, Tensor* residuals, Tensor* rank, Tensor* singular_values)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lstsq(*A, *B, rcond, c10::nullopt););
+    *residuals = ResultTensor(std::get<1>(res));
+    *rank = ResultTensor(std::get<2>(res));
+    *singular_values = ResultTensor(std::get<3>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::matrix_norm(*tensor, *ord, dims, keepdim, c10::nullopt));
+}
+
+Tensor THSLinalg_matrix_norm_fronuc(const Tensor tensor, const int8_t fronuc, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::matrix_norm(*tensor, (fronuc == 0) ? "fro" : "nuc", dims, keepdim, c10::nullopt));
+}
+
+Tensor THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
+{
+    auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
+    CATCH_TENSOR(torch::linalg::vector_norm(*tensor, *ord, dims, keepdim, c10::nullopt));
+}
+
 Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian)
 {
     if (has_tol)
@@ -108,9 +146,40 @@ Tensor THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermit
     CATCH_TENSOR(torch::linalg::pinv(*tensor, rcond, hermitian));
 }
 
+Tensor THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    if (mode == 0) {
+        CATCH(res = torch::linalg_qr(*tensor, "reduced"););
+    }
+    else if (mode == 1) {
+        CATCH(res = torch::linalg_qr(*tensor, "complete"););
+    }
+    else {
+        CATCH(res = torch::linalg_qr(*tensor, "r"););
+    }
+    *R = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+
+}
+
 Tensor THSLinalg_solve(const Tensor tensor, Tensor other)
 {
     CATCH_TENSOR(torch::linalg::solve(*tensor, *other));
+}
+
+Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::svd(*tensor, full_matrices););
+    *S = ResultTensor(std::get<1>(res));
+    *Vh = ResultTensor(std::get<2>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_svdvals(const Tensor tensor)
+{
+    CATCH_TENSOR(res = torch::linalg::svdvals(*tensor));
 }
 
 Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)

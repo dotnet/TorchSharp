@@ -435,14 +435,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(byte[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(byte[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(byte[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(byte[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -897,14 +930,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(sbyte[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(sbyte[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(sbyte[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(sbyte[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1359,14 +1425,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(short[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(short[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(short[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(short[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1821,14 +1920,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(int[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(int[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(int[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(int[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2283,14 +2415,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(long[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(long[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(long[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(long[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3041,14 +3206,47 @@ namespace TorchSharp.Tensor {
                 }
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3799,14 +3997,47 @@ namespace TorchSharp.Tensor {
                 }
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -4554,14 +4785,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(float[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5309,14 +5573,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(double[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(double[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(double[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(double[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5831,14 +6128,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from((float Real, float Imaginary)[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from((float Real, float Imaginary)[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from((float Real, float Imaginary)[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from((float Real, float Imaginary)[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -6353,14 +6683,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(System.Numerics.Complex[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(System.Numerics.Complex[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(System.Numerics.Complex[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(System.Numerics.Complex[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -6815,14 +7178,47 @@ namespace TorchSharp.Tensor {
                 return new TorchTensor(handle);
             }
         }
-        
+
         /// <summary>
-        /// Create a 1-D tensor from an array of values, shaping it based on the shape passed in.
+        /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(bool[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have rows * columns elements.
+        /// </remarks>
+        public static TorchTensor from(bool[] rawArray, long rows, long columns, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { rows, columns }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2 elements.
+        /// </remarks>
+        public static TorchTensor from(bool[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
+        }
+
+        /// <summary>
+        /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
+        /// </summary>
+        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
+        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// </remarks>
+        public static TorchTensor from(bool[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        {
+            return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]

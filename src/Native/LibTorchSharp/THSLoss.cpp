@@ -70,6 +70,16 @@ Tensor THSNN_hinge_embedding_loss(const Tensor input, const Tensor target, const
     )
 }
 
+Tensor THSNN_huber_loss(const Tensor input, const Tensor target, const double delta, const int64_t reduction)
+{
+    CATCH_RETURN_Tensor(
+        auto opts = torch::nn::functional::HuberLossFuncOptions().delta(delta);
+        ApplyReduction(opts, reduction);
+        res = ResultTensor(torch::nn::functional::huber_loss(*input, *target, opts));
+    )
+}
+
+
 Tensor THSNN_kl_div_loss(const Tensor input, const Tensor target, const int64_t reduction, const bool log_target)
 {
     CATCH_RETURN_Tensor(
