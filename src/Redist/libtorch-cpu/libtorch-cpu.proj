@@ -79,18 +79,6 @@
     <File Include="libtorch\lib\libgomp-a34b3233.so.1" />
   </ItemGroup>
 
-  <!-- <ItemGroup>
-    <MklDnnConfig Include="darwin" ArchiveExtension=".tgz" 
-      FilesFromArchive= "mklml_mac_$(MklDnnVersion)\lib\libmklml.dylib;
-                        mklml_mac_$(MklDnnVersion)\lib\libiomp5.dylib;" 
-      Runtime="osx-x64" />
-
-    <AdditionalDownloadFile 
-        Include="https://raw.githubusercontent.com/intel/mkl-dnn/master/LICENSE" 
-        DownloadFile="$(IntermediateOutputPath)LICENSE-MKL-DNN" />
-  </ItemGroup> -->
-
-
   <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
     <MakeDir Directories="$(DownloadedArchiveFolder)" />
     <MakeDir Directories="$(DownloadedLicenseFolder)" />

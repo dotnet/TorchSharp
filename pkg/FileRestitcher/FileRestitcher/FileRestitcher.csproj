@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    
+  <PropertyGroup>
+    <NoBuild>false</NoBuild>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+    
+</Project>
