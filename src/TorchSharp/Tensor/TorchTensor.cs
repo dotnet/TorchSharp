@@ -2768,6 +2768,11 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_unbind(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
 
+        /// <summary>
+        /// Removes a tensor dimension.
+        /// </summary>
+        /// <param name="dimension">The dimension to remove.</param>
+        /// <returns>An array of all slices along a given dimension, already without it.</returns>
         public TorchTensor[] unbind(int dimension = 0)
         {
             IntPtr[] ptrArray;
@@ -2785,6 +2790,12 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
 
+        /// <summary>
+        /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+        /// </summary>
+        /// <param name="size">The size of a single chunk</param>
+        /// <param name="dimension">The dimension along which to split the tensor.</param>
+        /// <returns></returns>
         public TorchTensor[] split(long size, int dimension = 0)
         {
             IntPtr[] ptrArray;
@@ -2801,6 +2812,12 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dimension);
 
+        /// <summary>
+        /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+        /// </summary>
+        /// <param name="sizes">A list of sizes for each chunk</param>
+        /// <param name="dimension">The dimension along which to split the tensor.</param>
+        /// <returns></returns>
         public TorchTensor[] split(long[] sizes, int dimension = 0)
         {
             IntPtr[] ptrArray;
@@ -4004,6 +4021,18 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_where(IntPtr condition, IntPtr x, IntPtr y);
+
+        public TorchTensor where(TorchTensor condition, TorchTensor other)
+        {
+            if (condition.Type != ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
+
+            var res = THSTensor_where(condition.Handle, this.Handle, other.Handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
 
         public static TorchTensor einsum(string equation, params TorchTensor[] tensors)
@@ -4016,7 +4045,6 @@ namespace TorchSharp.Tensor
                 return new TorchTensor(res);
             }
         }
-
 
 
         // Operators overloading
@@ -4146,8 +4174,6 @@ namespace TorchSharp.Tensor
         public static explicit operator int (TorchTensor value) => value.ToInt32();
         public static explicit operator long (TorchTensor value) => value.ToInt64();
         public static explicit operator bool (TorchTensor value) => value.ToBoolean();
-
-
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_block_diag(IntPtr tensor, int len);

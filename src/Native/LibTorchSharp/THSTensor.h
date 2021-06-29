@@ -1138,6 +1138,8 @@ EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, con
 EXPORT_API(Tensor) THSTensor_view_as_complex(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_view_as_real(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_where(const Tensor condition, const Tensor x, const Tensor y);
+
 EXPORT_API(Tensor) THSTensor_xlogy(const Tensor x, const Tensor y);
 EXPORT_API(Tensor) THSTensor_xlogy_(const Tensor x, const Tensor y);
 

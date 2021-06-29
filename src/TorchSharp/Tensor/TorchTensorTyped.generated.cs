@@ -130,6 +130,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -180,6 +188,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -228,6 +244,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -306,6 +330,14 @@ namespace TorchSharp.Tensor {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -352,6 +384,8 @@ namespace TorchSharp.Tensor {
                 }
             }
         }
+
+
 
 
         [DllImport("LibTorchSharp")]
@@ -558,6 +592,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -608,6 +650,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -656,6 +706,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -732,6 +790,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -988,6 +1054,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1038,6 +1112,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1086,6 +1168,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1162,6 +1252,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1418,6 +1516,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1468,6 +1574,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1516,6 +1630,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1592,6 +1714,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -1848,6 +1978,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1898,6 +2036,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -1946,6 +2092,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2022,6 +2176,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2278,6 +2440,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2328,6 +2498,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2376,6 +2554,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2452,6 +2638,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2552,6 +2746,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -2600,6 +2802,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -2988,6 +3198,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3038,6 +3256,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3086,6 +3312,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3162,6 +3396,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3262,6 +3504,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3310,6 +3560,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3698,6 +3956,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3748,6 +4014,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -3796,6 +4070,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3872,6 +4154,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3972,6 +4262,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -4020,6 +4318,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -4405,6 +4711,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -4455,6 +4769,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -4503,6 +4825,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -4579,6 +4909,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -4679,6 +5017,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -4727,6 +5073,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5092,6 +5446,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5142,6 +5504,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5190,6 +5560,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5268,6 +5646,14 @@ namespace TorchSharp.Tensor {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5340,6 +5726,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5388,6 +5782,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
 
@@ -5566,6 +5968,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5616,6 +6026,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5664,6 +6082,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5742,6 +6168,14 @@ namespace TorchSharp.Tensor {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5814,6 +6248,14 @@ namespace TorchSharp.Tensor {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_randn(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -5862,6 +6304,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor randn(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
 
@@ -6060,6 +6510,14 @@ namespace TorchSharp.Tensor {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -6110,6 +6568,14 @@ namespace TorchSharp.Tensor {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
@@ -6158,6 +6624,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor empty(long dim0, long dim1, long dim2, Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with uninitialized data
+        /// </summary>
+        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -6234,6 +6708,14 @@ namespace TorchSharp.Tensor {
         static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]

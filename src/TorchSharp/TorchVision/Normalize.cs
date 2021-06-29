@@ -62,10 +62,6 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
-        /// <summary>
-        /// A placeholder identity operator.
-        /// </summary>
-        /// <returns>The same tensor as is input.</returns>
         static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);

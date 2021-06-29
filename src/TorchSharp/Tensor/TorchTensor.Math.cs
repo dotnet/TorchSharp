@@ -1794,5 +1794,25 @@ namespace TorchSharp.Tensor
             return left.remainder(right);
         }
 
+        public static TorchTensor operator &(TorchTensor left, TorchTensor right)
+        {
+            return left.bitwise_and(right);
+        }
+
+        public static TorchTensor operator |(TorchTensor left, TorchTensor right)
+        {
+            return left.bitwise_or(right);
+        }
+
+        public static TorchTensor operator ^(TorchTensor left, TorchTensor right)
+        {
+            return left.bitwise_xor(right);
+        }
+
+        public static TorchTensor operator ~(TorchTensor left)
+        {
+            return left.bitwise_not();
+        }
+
     }
 }

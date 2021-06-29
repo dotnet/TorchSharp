@@ -335,5 +335,28 @@ namespace TorchSharp.Tensor
 
         public static (float Real, float Imaginary) ToComplex32(this TorchTensor value) => value.ToScalar().ToComplexFloat32();
         public static System.Numerics.Complex ToComplex64(this TorchTensor value) => value.ToScalar().ToComplexFloat64();
+
+        // Vision-related operations
+
+        public static TorchTensor crop(this TorchTensor image, int top, int left, int height, int width)
+        {
+            var dims = image.Dimensions;
+            var hoffset = dims - 2;
+            long h = image.shape[hoffset], w = image.shape[hoffset + 1];
+
+            var right = left + width;
+            var bottom = top + height;
+
+            if (left < 0 || top < 0 || right > w || bottom > h) {
+
+                //var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
+                //var indices = new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(Math.Max(top, 0), bottom), TorchTensorIndex.Slice(Math.Max(left, 0), right) };
+                //var img = image.index(indices);
+                throw new NotImplementedException("Cropping outside the image boundaries.");
+            }
+
+            var indices = new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right) };
+            return image.index(indices);
+        }
     }
 }

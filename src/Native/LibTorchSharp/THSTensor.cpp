@@ -1330,3 +1330,7 @@ Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increas
     CATCH_TENSOR(torch::vander(*tensor, N, increasing));
 }
 
+Tensor THSTensor_where(const Tensor condition, const Tensor x, const Tensor y)
+{
+    CATCH_TENSOR(x->where(*condition, *y))
+}
