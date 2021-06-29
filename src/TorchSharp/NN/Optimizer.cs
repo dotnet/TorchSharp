@@ -92,7 +92,7 @@ namespace TorchSharp.NN
         /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
         /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
         /// <param name="momentum">Momentum factor (default: 0)</param>
-        /// <param name="centered">If True, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
+        /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
         /// <returns></returns>
         public static RMSPropOptimizer RMSProp(IEnumerable<TorchTensor> parameters, double learningRate = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
         {

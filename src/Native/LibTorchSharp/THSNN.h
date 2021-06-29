@@ -37,12 +37,15 @@ EXPORT_API(NNModule) THSNN_custom_module(const char* name, const char** names, a
 
 // Pooling
 
-EXPORT_API(NNModule) THSNN_MaxPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_MaxPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding, const int64_t* dilation, bool ceil_mode, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_MaxPool1d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_MaxPool1d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor *indices);
+EXPORT_API(NNModule) THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength, const int64_t* dilation, const int dilationLength, bool ceil_mode, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_MaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_MaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices);
+EXPORT_API(NNModule) THSNN_MaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength, const int64_t* dilation, const int dilationLength, bool ceil_mode, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_MaxPool3d_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_MaxPool3d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices);
 
 EXPORT_API(NNModule) THSNN_AdaptiveAvgPool1d_ctor(const int64_t* sizes, const int length, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_AdaptiveAvgPool1d_forward(const NNModule module, const Tensor tensor);
@@ -213,6 +216,8 @@ EXPORT_API(NNModule) THSNN_GELU_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GELU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_LeakyReLU_ctor(const double negative_sloope, const bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LeakyReLU_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Mish_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Mish_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_ReLU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_ReLU6_ctor(bool inplace, NNAnyModule* outAsAnyModule);
@@ -244,8 +249,8 @@ EXPORT_API(Tensor)   THSNN_Embedding_forward(const NNModule module, const Tensor
 EXPORT_API(Tensor)   THSNN_Embedding_weight(const NNModule module);
 EXPORT_API(void)     THSNN_Embedding_set_weight(const NNModule module, const Tensor weights);
 
-EXPORT_API(NNModule) THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_EmbeddingBag_ctor(const int64_t num_embeddings, const int64_t embedding_dims, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx, NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool freeze, const double max_norm, const bool has_mn, const double norm_type, const bool scale_grad_by_freq, const int64_t mode, const bool sparse, const bool include_last_offset, const int64_t padding_idx, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_EmbeddingBag_forward(const NNModule module, const Tensor input, const Tensor offsets, const Tensor per_sample_weights);
 EXPORT_API(Tensor)   THSNN_EmbeddingBag_weight(const NNModule module);
 EXPORT_API(void)     THSNN_EmbeddingBag_set_weight(const NNModule module, const Tensor weights);
@@ -294,6 +299,7 @@ EXPORT_API(Tensor) THSNN_cosine_embedding_loss(const Tensor input1, const Tensor
 EXPORT_API(Tensor) THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_ctc_loss(const Tensor log_probs, const Tensor targets, const Tensor input_lengths, const Tensor target_lengths, int64_t blank, bool zero_infinity, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_hinge_embedding_loss(const Tensor input, const Tensor target, const double margin, const int64_t reduction);
+EXPORT_API(Tensor) THSNN_huber_loss(const Tensor input, const Tensor target, const double delta, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_l1_loss(const Tensor input, const Tensor target, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_margin_ranking_loss(const Tensor input1, const Tensor input2, const Tensor target, const double margin, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_mse_loss(const Tensor input, const Tensor target, const int64_t reduction);
