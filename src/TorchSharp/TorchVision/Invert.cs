@@ -27,6 +27,10 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Invert the image colors.
+        /// </summary>
+        /// <remarks>The code assumes that integer color values lie in the range [0,255], and floating point colors in [0,1[.</remarks>
         static public ITransform Invert()
         {
             return new Invert();

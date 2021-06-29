@@ -14,6 +14,32 @@ namespace TorchSharp
     public class TestTorchTensor
     {
         [Fact]
+        public void TestScalarCreation()
+        {
+            using (var scalar = false.ToScalar()) {
+                Assert.Equal(ScalarType.Bool, scalar.Type);
+            }
+            using (var scalar = ((byte)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((short)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((int)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((long)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((float)0).ToScalar()) {
+                Assert.Equal(ScalarType.Float64, scalar.Type);
+            }
+            using (var scalar = ((double)0).ToScalar()) {
+                Assert.Equal(ScalarType.Float64, scalar.Type);
+            }
+        }
+
+        [Fact]
         public void CreateFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -3755,6 +3781,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TensorNonZeroTest()
+        {
+            var data = new double[] { 0.6, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 1.2, 0.5 };
+            using (var t = Float64Tensor.from(data, 3, 4)) {
+
+                {
+                    var res = t.nonzero();
+                    Assert.Equal(new long[] { 4, 2 }, res.shape);
+                }
+                {
+                    var res = t.nonzero_as_list();
+                    Assert.Equal(2, res.Count);
+                    Assert.Equal(4, res[0].shape[0]);
+                }
+            }
+        }
+
+        [Fact]
         public void TakeAlongTest()
         {
             var t = Int32Tensor.from(new int[] { 10, 30, 20, 60, 40, 50 }).reshape(2, 3);
@@ -4872,6 +4916,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void RandomResizeCropTensor()
+        {
+            {
+                var input = Float32Tensor.rand(4, 3, 100, 100);
+                var cropped = TorchVision.Transforms.RandomResizedCrop(100, 0.1, 0.5).forward(input);
+
+                Assert.Equal(new long[] { 4, 3, 100, 100 }, cropped.shape);
+            }
+        }
+
+        [Fact]
         public void CenterCropTensor()
         {
             {
@@ -5001,6 +5056,81 @@ namespace TorchSharp
 
                     Assert.Equal(new long[] { 25 }, poster.shape);
                     Assert.All(poster.Data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
+                }
+            }
+        }
+
+        [Fact]
+        public void AdjustSharpnessTensor()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AdjustSharpness(1.5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AdjustSharpness(0.5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void AutocontrastTensor()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AutoContrast().forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AutoContrast().forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void GaussianBlurTest()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.GaussianBlur(4).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    // Test even-number kernel size.
+                    var poster = TorchVision.Transforms.GaussianBlur(4).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    // Test odd-number kernel size.
+                    var poster = TorchVision.Transforms.GaussianBlur(5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    var random = TorchVision.Transforms.Randomize(TorchVision.Transforms.GaussianBlur(4), 0.5);
+                    var poster = random.forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
                 }
             }
         }

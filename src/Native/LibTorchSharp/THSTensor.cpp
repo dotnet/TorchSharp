@@ -337,6 +337,11 @@ Tensor THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const in
     CATCH_TENSOR(tensor->count_nonzero(at::ArrayRef<int64_t>(dim, dim_len)));
 }
 
+Tensor THSTensor_nonzero(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->nonzero());
+}
+
 
 Tensor THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length)
 {
@@ -1249,6 +1254,17 @@ void THSTensor_strides(const Tensor tensor, int64_t* (*allocator)(size_t length)
 int64_t THSTensor_size(const Tensor tensor, const int64_t dim)
 {
     CATCH_RETURN(int64_t, 0, tensor->size(dim));
+}
+
+void THSTensor_sizes(const Tensor tensor, int64_t* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = tensor->sizes();
+        const size_t sz = res.size();
+        int64_t * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = res[i];
+    );
 }
 
 Tensor THSTensor_sub_scalar(const Tensor left, const Scalar right)

@@ -33,10 +33,17 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Crop the center of the image.
+        /// </summary>
         static public ITransform CenterCrop(int height, int width)
         {
             return new CenterCrop(height, width);
         }
+
+        /// <summary>
+        /// Crop the center of the image.
+        /// </summary>
         static public ITransform CenterCrop(int size)
         {
             return new CenterCrop(size, size);

@@ -27,6 +27,12 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Posterize the image by reducing the number of bits for each color channel. 
+        /// </summary>
+        /// <param name="bits">Number of high-order bits to keep for each channel.</param>
+        /// <returns></returns>
+        /// <remarks>The tensor must be an integer tensor.</remarks>
         static public ITransform Posterize(int bits)
         {
             return new Posterize(bits);

@@ -60,8 +60,8 @@ type PositionalEncoding(dmodel, maxLen) as this =
         let divTerm = (Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
 
         let NULL = System.Nullable<int64>()
-        pe.[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(0L, NULL, 2L)] <- (position * divTerm).sin()
-        pe.[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(1L, NULL, 2L)] <- (position * divTerm).cos()
+        pe.index_put_((position * divTerm).sin(), TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(0L, NULL, 2L)) |> ignore
+        pe.index_put_((position * divTerm).cos(), TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(1L, NULL, 2L)) |> ignore
 
         pe <- pe.unsqueeze(0L).transpose(0L,1L)
 

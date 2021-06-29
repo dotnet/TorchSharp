@@ -104,11 +104,27 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Resize the input image to the given size.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <param name="mode"></param>
+        /// <param name="antialias"></param>
+        /// <returns></returns>
         static public ITransform Resize(int height, int width, InterpolateMode mode = InterpolateMode.Nearest, bool antialias = false)
         {
             return new Resize(height, width, mode, null, antialias);
         }
 
+        /// <summary>
+        /// Resize the input image to the given size.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="mode"></param>
+        /// <param name="maxSize"></param>
+        /// <param name="antialias"></param>
+        /// <returns></returns>
         static public ITransform Resize(int size, InterpolateMode mode = InterpolateMode.Nearest, int? maxSize = null, bool antialias = false)
         {
             return new Resize(size, -1, mode, maxSize, antialias);

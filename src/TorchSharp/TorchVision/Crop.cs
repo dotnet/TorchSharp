@@ -28,6 +28,11 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Crop the image.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>The image will not be cropped outside its boundaries.</remarks>
         static public ITransform Crop(int top, int left, int height, int width)
         {
             return new Crop(top, left, height, width);

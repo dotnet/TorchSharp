@@ -22,6 +22,10 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
+        /// <summary>
+        /// Flip the image horizontally.
+        /// </summary>
+        /// <returns></returns>
         static public ITransform HorizontalFlip()
         {
             return new HorizontalFlip();

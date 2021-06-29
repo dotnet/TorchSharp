@@ -315,181 +315,6 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set1(IntPtr handle, long i1, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1]
-        {
-            get
-            {
-                var res = THSTensor_get1(handle, i1);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-            set
-            {
-                THSTensor_set1(handle, i1, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <param name="i2">The second-dimension index.</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1, long i2]
-        {
-            get
-            {
-                var res = THSTensor_get2(handle, i1, i2);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-            set
-            {
-                THSTensor_set2(handle, i1, i2, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <param name="i2">The second-dimension index.</param>
-        /// <param name="i3">The third-dimension index</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1, long i2, long i3]
-        {
-            get
-            {
-                var res = THSTensor_get3(handle, i1, i2, i3);
-                if (res == IntPtr.Zero)
-                    Torch.CheckForErrors();
-                return new TorchTensor(res);
-            }
-            set
-            {
-                THSTensor_set3(handle, i1, i2, i3, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get4(IntPtr handle, long i1, long i2, long i3, long i4);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set4(IntPtr handle, long i1, long i2, long i3, long i4, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <param name="i2">The second-dimension index.</param>
-        /// <param name="i3">The third-dimension index</param>
-        /// <param name="i4">The fourth-dimension index</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1, long i2, long i3, long i4]
-        {
-            get
-            {
-                var res = THSTensor_get4(handle, i1, i2, i3, i4);
-                if (res == IntPtr.Zero)
-                    Torch.CheckForErrors();
-                return new TorchTensor(res);
-            }
-            set
-            {
-                THSTensor_set4(handle, i1, i2, i3, i4, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get5(IntPtr handle, long i1, long i2, long i3, long i4, long i5);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <param name="i2">The second-dimension index.</param>
-        /// <param name="i3">The third-dimension index</param>
-        /// <param name="i4">The fourth-dimension index</param>
-        /// <param name="i5">The fifth-dimension index</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1, long i2, long i3, long i4, long i5] {
-            get {
-                var res = THSTensor_get5(handle, i1, i2, i3, i4, i5);
-                if (res == IntPtr.Zero)
-                    Torch.CheckForErrors();
-                return new TorchTensor(res);
-            }
-            set {
-                THSTensor_set5(handle, i1, i2, i3, i4, i5, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_get6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
-
-        /// <summary>
-        /// Tensor indexer.
-        /// </summary>
-        /// <param name="i1">The first-dimension index.</param>
-        /// <param name="i2">The second-dimension index.</param>
-        /// <param name="i3">The third-dimension index</param>
-        /// <param name="i4">The fourth-dimension index</param>
-        /// <param name="i5">The fifth-dimension index</param>
-        /// <param name="i6">The sixth-dimension index</param>
-        /// <returns></returns>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[long i1, long i2, long i3, long i4, long i5, long i6] {
-            get {
-                var res = THSTensor_get6(handle, i1, i2, i3, i4, i5, i6);
-                if (res == IntPtr.Zero)
-                    Torch.CheckForErrors();
-                return new TorchTensor(res);
-            }
-            set {
-                THSTensor_set6(handle, i1, i2, i3, i4, i5, i6, value.ToScalar().Handle);
-                Torch.CheckForErrors();
-            }
-        }
-        [DllImport("LibTorchSharp")]
         static extern sbyte THSTensor_type(IntPtr handle);
 
         /// <summary>
@@ -733,6 +558,7 @@ namespace TorchSharp.Tensor
         /// <returns></returns>
         public TorchTensor to(TorchTensor other) => to(other.device_type, other.device_index);
 
+        
         [DllImport("LibTorchSharp")]
         static extern long THSTensor_size(IntPtr handle, long dimension);
 
@@ -748,8 +574,29 @@ namespace TorchSharp.Tensor
             return res;
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern long THSTensor_sizes(IntPtr handle, AllocatePinnedArray allocator);
+
         /// <summary>
-        /// Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor, and each element is the size of the dimension
+        ///  Retrieves the sizes of all dimensions of the tensor.
+        /// </summary>
+        public long[] size()
+        {
+            long[] ptrArray;
+
+            using (var pa = new PinnedArray<long>()) {
+                THSTensor_sizes(handle, pa.CreateArray);
+                Torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray;
+        }
+
+
+        /// <summary>
+        /// Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor,
+        /// and each element is the size of the dimension
         /// </summary>
         /// <remarks>
         ///     An array of size 0 is used for constants, an array of size 1 is used
@@ -760,11 +607,7 @@ namespace TorchSharp.Tensor
         {
             get
             {
-                var dims = new long[Dimensions];
-                for (var i = 0; i < dims.Length; i++)
-                    dims[i] = size(i);
-
-                return dims;
+                return size();
             }
         }
 
@@ -1012,52 +855,186 @@ namespace TorchSharp.Tensor
         /// Index into the tensor using Python-like indexing expressions.
         /// </summary>
         [IndexerName("TensorItems")]
-        public TorchTensor this[TorchTensorIndex i1] {
-            get { return index(new TorchTensorIndex[] { i1 }); }
-            set { index_put_(new TorchTensorIndex[] { i1 }, value);  }
+        public TorchTensor this[params TorchTensorIndex[] indices] {
+            get { return index(indices); }
+            set { index_put_(value, indices);  }
         }
 
-        /// <summary>
-        /// Index into the tensor using Python-like indexing expressions.
-        /// </summary>
         [IndexerName("TensorItems")]
-        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2] {
-            get { return index(new TorchTensorIndex[] { i1, i2 }); }
-            set { index_put_(new TorchTensorIndex[] { i1, i2 }, value); }
+        public TorchTensor this[params TorchTensor[] indices] {
+            get { return index(indices); }
+            set { index_put_(value, indices); }
         }
 
-        /// <summary>
-        /// Index into the tensor using Python-like indexing expressions.
-        /// </summary>
-        [IndexerName("TensorItems")]
-        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3] {
-            get { return index(new TorchTensorIndex[] { i1, i2, i3 }); }
-            set { index_put_(new TorchTensorIndex[] { i1, i2, i3 }, value); }
-        }
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set1(IntPtr handle, long i1, IntPtr value);
 
         /// <summary>
-        /// Index into the tensor using Python-like indexing expressions.
+        /// Tensor indexer.
         /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <returns></returns>
         [IndexerName("TensorItems")]
-        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3, TorchTensorIndex i4] {
-            get { return index(new TorchTensorIndex[] { i1, i2, i3, i4 }); }
-            set { index_put_(new TorchTensorIndex[] { i1, i2, i3, i4 }, value); }
+        public TorchTensor this[long i1] {
+            get {
+                var res = THSTensor_get1(handle, i1);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set1(handle, i1, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
         }
 
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
+
         /// <summary>
-        /// Index into the tensor using Python-like indexing expressions.
+        /// Tensor indexer.
         /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <param name="i2">The second-dimension index.</param>
+        /// <returns></returns>
         [IndexerName("TensorItems")]
-        public TorchTensor this[TorchTensorIndex i1, TorchTensorIndex i2, TorchTensorIndex i3, TorchTensorIndex i4, TorchTensorIndex i5] {
-            get { return index(new TorchTensorIndex[] { i1, i2, i3, i4, i5 }); }
-            set { index_put_(new TorchTensorIndex[] { i1, i2, i3, i4, i5 }, value); }
+        public TorchTensor this[long i1, long i2] {
+            get {
+                var res = THSTensor_get2(handle, i1, i2);
+                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set2(handle, i1, i2, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
+
+        /// <summary>
+        /// Tensor indexer.
+        /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <param name="i2">The second-dimension index.</param>
+        /// <param name="i3">The third-dimension index</param>
+        /// <returns></returns>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3] {
+            get {
+                var res = THSTensor_get3(handle, i1, i2, i3);
+                if (res == IntPtr.Zero)
+                    Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set3(handle, i1, i2, i3, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get4(IntPtr handle, long i1, long i2, long i3, long i4);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set4(IntPtr handle, long i1, long i2, long i3, long i4, IntPtr value);
+
+        /// <summary>
+        /// Tensor indexer.
+        /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <param name="i2">The second-dimension index.</param>
+        /// <param name="i3">The third-dimension index</param>
+        /// <param name="i4">The fourth-dimension index</param>
+        /// <returns></returns>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3, long i4] {
+            get {
+                var res = THSTensor_get4(handle, i1, i2, i3, i4);
+                if (res == IntPtr.Zero)
+                    Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set4(handle, i1, i2, i3, i4, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
+        }
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get5(IntPtr handle, long i1, long i2, long i3, long i4, long i5);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
+
+        /// <summary>
+        /// Tensor indexer.
+        /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <param name="i2">The second-dimension index.</param>
+        /// <param name="i3">The third-dimension index</param>
+        /// <param name="i4">The fourth-dimension index</param>
+        /// <param name="i5">The fifth-dimension index</param>
+        /// <returns></returns>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3, long i4, long i5] {
+            get {
+                var res = THSTensor_get5(handle, i1, i2, i3, i4, i5);
+                if (res == IntPtr.Zero)
+                    Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set5(handle, i1, i2, i3, i4, i5, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
+        }
+
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_get6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
+
+        /// <summary>
+        /// Tensor indexer.
+        /// </summary>
+        /// <param name="i1">The first-dimension index.</param>
+        /// <param name="i2">The second-dimension index.</param>
+        /// <param name="i3">The third-dimension index</param>
+        /// <param name="i4">The fourth-dimension index</param>
+        /// <param name="i5">The fifth-dimension index</param>
+        /// <param name="i6">The sixth-dimension index</param>
+        /// <returns></returns>
+        [IndexerName("TensorItems")]
+        public TorchTensor this[long i1, long i2, long i3, long i4, long i5, long i6] {
+            get {
+                var res = THSTensor_get6(handle, i1, i2, i3, i4, i5, i6);
+                if (res == IntPtr.Zero)
+                    Torch.CheckForErrors();
+                return new TorchTensor(res);
+            }
+            set {
+                THSTensor_set6(handle, i1, i2, i3, i4, i5, i6, value.ToScalar().Handle);
+                Torch.CheckForErrors();
+            }
         }
 
         /// <summary>
         /// Index into the tensor using Python-like indexing expressions.
         /// </summary>
         /// <returns></returns>
-        public TorchTensor index(TorchTensorIndex[] indices)
+        public TorchTensor index(params TorchTensorIndex[] indices)
         {
             EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
             unsafe {
@@ -1075,10 +1052,19 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
+        /// Index into the tensor using Python-like indexing expressions.
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor index(params TorchTensor[] indices)
+        {
+            return index(indices.Select(t => TorchTensorIndex.Tensor(t)).ToArray());
+        }
+
+        /// <summary>
         /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
         /// </summary>
         /// <returns></returns>
-        public TorchTensor index_put_(TorchTensorIndex[] indices, TorchTensor value)
+        public TorchTensor index_put_(TorchTensor value, params TorchTensorIndex[] indices)
         {
             EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
             unsafe {
@@ -1096,10 +1082,20 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
+        /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor index_put_(TorchTensor value, params TorchTensor[] indices)
+        {
+            return index_put_(value, indices.Select(t => TorchTensorIndex.Tensor(t)).ToArray());
+        }
+        
+
+        /// <summary>
         /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
         /// </summary>
         /// <returns></returns>
-        public TorchTensor index_put_(TorchTensorIndex[] indices, TorchScalar value)
+        public TorchTensor index_put_(TorchScalar value, params TorchTensorIndex[] indices)
         {
             EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
             unsafe {
@@ -1114,6 +1110,15 @@ namespace TorchSharp.Tensor
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor index_put_(TorchScalar value, params TorchTensor[] indices)
+        {
+            return index_put_(value, indices.Select(t => TorchTensorIndex.Tensor(t)).ToArray());
         }
 
         [DllImport("LibTorchSharp")]
@@ -3007,7 +3012,7 @@ namespace TorchSharp.Tensor
         /// </summary>
         /// <param name="sizes">A list of split points</param>
         /// <returns></returns>
-        public TorchTensor[] vsplit(long[] sizes)
+        public TorchTensor[] vsplit(params long[] sizes)
         {
             IntPtr[] ptrArray;
 
@@ -3062,7 +3067,7 @@ namespace TorchSharp.Tensor
         /// </summary>
         /// <param name="sizes">A list of split points</param>
         /// <returns></returns>
-        public TorchTensor[] hsplit(long[] sizes)
+        public TorchTensor[] hsplit(params long[] sizes)
         {
             IntPtr[] ptrArray;
 
@@ -3115,7 +3120,7 @@ namespace TorchSharp.Tensor
         /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
         /// </summary>
         /// <param name="sizes">A list of split points</param>
-        public TorchTensor[] dsplit(long[] sizes)
+        public TorchTensor[] dsplit(params long[] sizes)
         {
             IntPtr[] ptrArray;
 
@@ -3613,13 +3618,21 @@ namespace TorchSharp.Tensor
             }
         }
 
+        /// <summary>
+        ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+        /// </summary>
+        public TorchTensor expand(params long[] sizes)
+        {
+            return expand(sizes, false);
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_repeat(IntPtr tensor, IntPtr psizes, int length);
 
         /// <summary>
         /// Repeats this tensor along the specified dimensions.
         /// </summary>
-        public TorchTensor repeat(long[] sizes)
+        public TorchTensor repeat(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -3636,7 +3649,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape). 
         /// </summary>
-        public TorchTensor broadcast_to(long[] shape)
+        public TorchTensor broadcast_to(params long[] shape)
         {
             unsafe {
                 fixed (long* psizes = shape) {
@@ -3669,7 +3682,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public TorchTensor randn_out(long[] sizes)
+        public TorchTensor randn_out(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -3686,7 +3699,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to be filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public TorchTensor rand_out(long[] sizes)
+        public TorchTensor rand_out(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -3938,7 +3951,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to have the given size with all values set to 1
         /// </summary>
-        public TorchTensor ones(long[] sizes)
+        public TorchTensor ones(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -3955,7 +3968,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to have the given size with all values set to 0
         /// </summary>
-        public TorchTensor zeros(long[] sizes)
+        public TorchTensor zeros(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -4014,7 +4027,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Mutates the tensor to have the given size with all values uninitialized
         /// </summary>
-        public TorchTensor empty(long[] sizes)
+        public TorchTensor empty(params long[] sizes)
         {
             unsafe {
                 fixed (long* psizes = sizes) {
@@ -4131,7 +4144,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Reverse the order of a n-D tensor along given axis in dims.
         /// </summary>
-        public TorchTensor flip(long[] sizes)
+        public TorchTensor flip(params long[] sizes)
         {
             unsafe
             {
@@ -4248,10 +4261,33 @@ namespace TorchSharp.Tensor
         }
 
         [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_nonzero(IntPtr tensor);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TorchTensor nonzero()
+        {
+            var res = THSTensor_nonzero(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            return new TorchTensor(res);
+        }
+
+        public IList<TorchTensor> nonzero_as_list()
+        {
+            var res = THSTensor_nonzero(handle);
+            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+
+            var t = new TorchTensor(res);
+            return t.chunk(t.shape[1], dim: 1);
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_slice(IntPtr tensor, long dimension, long start, long length, long step);
 
         /// <summary>
-        ///  Returns a new tensor that is a sliced version of the input along one dimension. The
+        /// Returns a new tensor that is a sliced version of the input along one dimension. The
         /// dimension is input from start to finish-1. The
         /// returned tensor and the input tensor share the same underlying storage.
         /// </summary>

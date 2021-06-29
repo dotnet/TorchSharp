@@ -40,27 +40,28 @@ namespace TorchSharp.TorchVision
         /// <param name="p">The probablity of applying the transform</param>
         /// <returns></returns>
         /// <remarks>This uses the default TorchSharp RNG.</remarks>
-        static internal ITransform Randomizer(ITransform transform, double p = 0.1)
+        static public ITransform Randomize(ITransform transform, double p = 0.1)
         {
             return new Randomizer(transform, p);
         }
 
         /// <summary>
-        /// 
+        /// Posterize the image randomly with a given probability by reducing the number of bits for each color channel. 
         /// </summary>
-        /// <param name="bits"></param>
-        /// <param name="p"></param>
+        /// <param name="bits">Number of bits to keep for each channel (0-8)</param>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
+        /// <remarks>The tensor must be an integer tensor</remarks>
         static public ITransform RandomPosterize(int bits, double p = 0.5)
         {
             return new Randomizer(Posterize(bits), p);
         }
 
         /// <summary>
-        /// 
+        /// Solarize the image randomly with a given probability by inverting all pixel values above a threshold.
         /// </summary>
-        /// <param name="threshold"></param>
-        /// <param name="p"></param>
+        /// <param name="threshold">All pixels equal or above this value are inverted.</param>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
         static public ITransform RandomSolarize(double threshold, double p = 0.5)
         {
@@ -70,7 +71,7 @@ namespace TorchSharp.TorchVision
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
         static public ITransform RandomVerticalFlip(double p = 0.5)
         {
@@ -80,7 +81,7 @@ namespace TorchSharp.TorchVision
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
         static public ITransform RandomHorizontalFlip(double p = 0.5)
         {
@@ -90,7 +91,7 @@ namespace TorchSharp.TorchVision
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
         static public ITransform RandomGrayscale(double p = 0.1)
         {
@@ -98,9 +99,30 @@ namespace TorchSharp.TorchVision
         }
 
         /// <summary>
+        /// Adjust the sharpness of the image randomly with a given probability. 
+        /// </summary>
+        /// <param name="sharpness">The sharpness factor</param>
+        /// <param name="p">Probability of the transform being applied.</param>
+        /// <returns></returns>
+        static public ITransform RandomAdjustSharpness(double sharpness, double p = 0.5)
+        {
+            return new Randomizer(AdjustSharpness(sharpness), p);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="p">Probability of the transform being applied.</param>
+        /// <returns></returns>
+        static public ITransform RandomAutoContrast(double p = 0.5)
+        {
+            return new Randomizer(AutoContrast(), p);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p">Probability of the transform being applied.</param>
         /// <returns></returns>
         static public ITransform RandomInvert(double p = 0.5)
         {
@@ -111,7 +133,7 @@ namespace TorchSharp.TorchVision
         /// Apply randomly a list of transformations with a given probability.
         /// </summary>
         /// <param name="transforms"></param>
-        /// <param name="p"></param>
+        /// <param name="p">Probability of the transforms being applied.</param>
         /// <returns></returns>
         static public ITransform RandomApply(ITransform[] transforms, double p = 0.5)
         {
