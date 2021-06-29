@@ -17,7 +17,12 @@ namespace TorchSharp.Tensor
     {
         internal static bool IsIntegral(this TorchTensor tensor)
         {
-            switch (tensor.Type) {
+            return IsIntegral(tensor.Type);
+        }
+
+        internal static bool IsIntegral(ScalarType type)
+        {
+            switch (type) {
             case ScalarType.Byte:
             case ScalarType.Int8:
             case ScalarType.Int16:

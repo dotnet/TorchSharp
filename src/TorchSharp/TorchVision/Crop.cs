@@ -23,7 +23,7 @@ namespace TorchSharp.TorchVision
             return input.crop(top, left, height, width);
         }
 
-        protected int top, left, height, width;
+        private int top, left, height, width;
     }
 
     public static partial class Transforms

@@ -4910,6 +4910,40 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void ResizeTensorDown()
+        {
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var resized = TorchVision.Transforms.Resize(15).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
+            }
+            {
+                var input = Int32Tensor.randint(255, new long[] { 16, 3, 25, 25 });
+                var resized = TorchVision.Transforms.Resize(15).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
+            }
+        }
+
+        [Fact]
+        public void ResizeTensorUp()
+        {
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var resized = TorchVision.Transforms.Resize(50).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
+            }
+            {
+                var input = Int32Tensor.randint(255, new long[] { 16, 3, 25, 25 });
+                var resized = TorchVision.Transforms.Resize(50).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
+            }
+        }
+
+        [Fact]
         public void GrayscaleTensor()
         {
             {

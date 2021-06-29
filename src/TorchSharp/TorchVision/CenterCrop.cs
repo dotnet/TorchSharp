@@ -16,12 +16,6 @@ namespace TorchSharp.TorchVision
             this.width = width;
         }
 
-        internal CenterCrop(int size)
-        {
-            this.height = size;
-            this.width = size;
-        }
-
         public TorchTensor forward(TorchTensor input)
         {
             var hoffset = input.Dimensions - 2;
@@ -42,6 +36,10 @@ namespace TorchSharp.TorchVision
         static public ITransform CenterCrop(int height, int width)
         {
             return new CenterCrop(height, width);
+        }
+        static public ITransform CenterCrop(int size)
+        {
+            return new CenterCrop(size, size);
         }
     }
 }
