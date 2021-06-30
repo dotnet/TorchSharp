@@ -354,14 +354,15 @@ namespace TorchSharp.Tensor
 
             if (left < 0 || top < 0 || right > w || bottom > h) {
 
-                //var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
-                //var indices = new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(Math.Max(top, 0), bottom), TorchTensorIndex.Slice(Math.Max(left, 0), right) };
-                //var img = image.index(indices);
-                throw new NotImplementedException("Cropping outside the image boundaries.");
+                var slice = image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(Math.Max(top, 0), bottom), TorchTensorIndex.Slice(Math.Max(left, 0), right));
+
+                // Note: according to the documentation, it should be LTRB, but that generates the wrong result. Here, we use LRTB.
+                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(right - w, 0), Math.Max(-top, 0), Math.Max(bottom - h, 0) };
+
+                return NN.Functions.Pad(slice, padding_ltrb);
             }
 
-            var indices = new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right) };
-            return image.index(indices);
+            return image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right));
         }
     }
 }
