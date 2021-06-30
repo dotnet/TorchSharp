@@ -850,6 +850,8 @@ EXPORT_API(Tensor) THSTensor_newComplexFloat64Scalar(double real, double imagina
 
 EXPORT_API(Tensor) THSTensor_nextafter(const Tensor input, const Tensor other);
 
+EXPORT_API(Tensor) THSTensor_nonzero(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, float p);
 
 EXPORT_API(Tensor) THSTensor_norm_along_dimension(const Tensor tensor, const int64_t dim, const bool keepdim, float p);
@@ -1024,6 +1026,8 @@ EXPORT_API(void) THSTensor_set6(const Tensor tensor, int64_t index1, int64_t ind
 
 EXPORT_API(int64_t) THSTensor_size(const Tensor tensor, const int64_t dim);
 
+EXPORT_API(void) THSTensor_sizes(const Tensor tensor, int64_t* (*allocator)(size_t length));
+
 EXPORT_API(Tensor) THSTensor_slice(const Tensor tensor, int64_t dim, int64_t start, int64_t finish, int64_t step);
 
 EXPORT_API(Tensor) THSTensor_sparse(
@@ -1157,6 +1161,8 @@ EXPORT_API(Tensor) THSTensor_view(const Tensor tensor, const int64_t* shape, con
 
 EXPORT_API(Tensor) THSTensor_view_as_complex(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_view_as_real(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_where(const Tensor condition, const Tensor x, const Tensor y);
 
 EXPORT_API(Tensor) THSTensor_xlogy(const Tensor x, const Tensor y);
 EXPORT_API(Tensor) THSTensor_xlogy_(const Tensor x, const Tensor y);

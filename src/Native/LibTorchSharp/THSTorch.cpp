@@ -192,6 +192,11 @@ bool THSTorch_scalar_to_bool(Scalar value)
     return value->toBool();
 }
 
+int8_t THSTorch_scalar_type(Scalar value)
+{
+    return (int8_t)value->type();
+}
+
 void THSTorch_dispose_scalar(Scalar scalar)
 {
     delete scalar;

@@ -80,7 +80,7 @@ namespace TorchSharp.Examples
 
                     var floats = dataBytes[imgStart..(imgStart + imgSize)].Select(b => (float)b).ToArray();
                     using (var inputTensor = Float32Tensor.from(floats))
-                        dataTensor.index_put_(new TorchTensorIndex[] { TorchTensorIndex.Single(j) }, inputTensor);
+                        dataTensor.index_put_(inputTensor, TorchTensorIndex.Single(j));
                 }
 
                 data.Add(dataTensor.reshape(take, channels, height, width));

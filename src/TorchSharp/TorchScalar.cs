@@ -63,6 +63,15 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static byte THSTorch_scalar_type(IntPtr value);
+
+        public Tensor.ScalarType Type {
+            get {
+                return (Tensor.ScalarType)THSTorch_scalar_type(Handle);
+            }
+        }
+
         /// <summary>
         ///   Finalize the tensor. Releases the tensor and its associated data.
         /// </summary>

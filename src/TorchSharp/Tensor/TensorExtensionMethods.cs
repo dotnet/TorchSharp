@@ -17,7 +17,12 @@ namespace TorchSharp.Tensor
     {
         internal static bool IsIntegral(this TorchTensor tensor)
         {
-            switch (tensor.Type) {
+            return IsIntegral(tensor.Type);
+        }
+
+        internal static bool IsIntegral(ScalarType type)
+        {
+            switch (type) {
             case ScalarType.Byte:
             case ScalarType.Int8:
             case ScalarType.Int16:
@@ -335,5 +340,29 @@ namespace TorchSharp.Tensor
 
         public static (float Real, float Imaginary) ToComplex32(this TorchTensor value) => value.ToScalar().ToComplexFloat32();
         public static System.Numerics.Complex ToComplex64(this TorchTensor value) => value.ToScalar().ToComplexFloat64();
+
+        // Vision-related operations
+
+        public static TorchTensor crop(this TorchTensor image, int top, int left, int height, int width)
+        {
+            var dims = image.Dimensions;
+            var hoffset = dims - 2;
+            long h = image.shape[hoffset], w = image.shape[hoffset + 1];
+
+            var right = left + width;
+            var bottom = top + height;
+
+            if (left < 0 || top < 0 || right > w || bottom > h) {
+
+                var slice = image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(Math.Max(top, 0), bottom), TorchTensorIndex.Slice(Math.Max(left, 0), right));
+
+                // Note: according to the documentation, it should be LTRB, but that generates the wrong result. Here, we use LRTB.
+                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(right - w, 0), Math.Max(-top, 0), Math.Max(bottom - h, 0) };
+
+                return NN.Functions.Pad(slice, padding_ltrb);
+            }
+
+            return image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right));
+        }
     }
 }

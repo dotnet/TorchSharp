@@ -5,9 +5,9 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp.TorchVision
 {
-    internal class ComposedTransforms : IDisposable, ITransform
+    internal class RandomChoice : IDisposable, ITransform
     {
-        public ComposedTransforms(ITransform[] transforms)
+        public RandomChoice(ITransform[] transforms)
         {
             this.transforms = transforms;
         }
@@ -23,10 +23,8 @@ namespace TorchSharp.TorchVision
 
         public TorchTensor forward(TorchTensor input)
         {
-            foreach (var t in transforms) {
-                input = t.forward(input);
-            }
-            return input;
+            using (var chance = Int32Tensor.randint(transforms.Length, new long[] { 1 }))
+                return transforms[chance.DataItem<int>()].forward(input);
         }
 
         private ITransform[] transforms;
@@ -34,9 +32,13 @@ namespace TorchSharp.TorchVision
 
     public static partial class Transforms
     {
-        static public ITransform Compose(params ITransform[] transforms)
+        /// <summary>
+        /// Apply a single transformation randomly picked from a list. 
+        /// </summary>
+        /// <param name="transforms">A list of transforms to apply.</param>
+        static public ITransform RandomChoice(params ITransform[] transforms)
         {
-            return new ComposedTransforms(transforms);
+            return new RandomChoice(transforms);
         }
     }
 }
