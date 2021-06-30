@@ -67,24 +67,26 @@ namespace TorchSharp
             }
         }
 
+        private string _sep = OperatingSystem.IsWindows() ? "\r\n" : "\n";
+
         [Fact]
         public void Test1DToString()
         {
             {
                 TorchTensor t = Float32Tensor.zeros(4);
                 var str = t.ToString(true);
-                Assert.Equal("[4], type = Float32, device = cpu\r\n 0 0 0 0\r\n", str);
+                Assert.Equal($"[4], type = Float32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
                 TorchTensor t = ComplexFloat32Tensor.zeros(4);
                 var str = t.ToString(true);
-                Assert.Equal("[4], type = ComplexFloat32, device = cpu\r\n 0 0 0 0\r\n", str);
+                Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
                 TorchTensor t = ComplexFloat32Tensor.ones(4);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = ComplexFloat32Tensor.from((1.0f*i, 2.43f*i*2));
                 var str = t.ToString(true);
-                Assert.Equal("[4], type = ComplexFloat32, device = cpu\r\n 0 1+4.86i 2+9.72i 3+14.58i\r\n", str);
+                Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 1+4.86i 2+9.72i 3+14.58i{_sep}", str);
             }
         }
 
@@ -94,12 +96,12 @@ namespace TorchSharp
             {
                 TorchTensor t = Float32Tensor.from(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f}, 2, 4);
                 var str = t.ToString(true);
-                Assert.Equal("[2x4], type = Float32, device = cpu\r\n\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n", str);
+                Assert.Equal($"[2x4], type = Float32, device = cpu{_sep}{_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}", str);
             }
             {
                 TorchTensor t = ComplexFloat32Tensor.zeros(2, 4);
                 var str = t.ToString(true);
-                Assert.Equal("[2x4], type = ComplexFloat32, device = cpu\r\n\r\n 0 0 0 0\r\n 0 0 0 0\r\n", str);
+                Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 0 0 0 0{_sep} 0 0 0 0{_sep}", str);
             }
         }
 
@@ -112,9 +114,9 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
                 var str = t.ToString(true, "0.0000000");
-                Assert.Equal("[2x2x4], type = Float32, device = cpu\r\n\r\n[0,:,:] =\r\n 0.0000000   3.1410000 6.2834000    3.1415200\r\n"+
-                             " 0.0000063 -13.1415300 0.0100000 4713.1400000\r\n\r\n[1,:,:] =\r\n 0.0100000 0.0000000 0.0000000 0.0000000\r\n" +
-                             " 0.0000000 0.0000000 0.0000000 0.0000000\r\n", str);
+                Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,:,:] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}"+
+                             $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,:,:] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
+                             $" 0.0000000 0.0000000 0.0000000 0.0000000{_sep}", str);
             }
         }
 
@@ -129,10 +131,10 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 2, 4);
                 var str = t.ToString(true);
-                Assert.Equal("[2x2x2x4], type = Float32, device = cpu\r\n\r\n[0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                             " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n" +
-                             "[1,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n" +
-                             "[1,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n", str);
+                Assert.Equal($"[2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
+                             $"[1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
@@ -151,12 +153,12 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 4 });
                 var str = t.ToString(true);
-                Assert.Equal("[2x2x2x2x4], type = Float32, device = cpu\r\n\r\n[0,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                             " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[0,1,0,:,:] =\r\n" +
-                             "        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,1,1,:,:] =\r\n 0.01 0 0 0\r\n   " +
-                             " 0 0 0 0\r\n\r\n[1,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n" +
-                             "[1,0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[1,1,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                             " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[1,1,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n", str);
+                Assert.Equal($"[2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,1,0,:,:] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}   " +
+                             $" 0 0 0 0{_sep}{_sep}[1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
@@ -183,17 +185,17 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 2, 4 });
                 var str = t.ToString(true);
-                Assert.Equal("[2x2x2x2x2x4], type = Float32, device = cpu\r\n\r\n[0,0,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                    " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,0,0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[0,0,1,0,:,:] =\r\n" +
-                    "        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,0,1,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n" +
-                    "[0,1,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[0,1,0,1,:,:] =\r\n 0.01 0 0 0\r\n" +
-                    "    0 0 0 0\r\n\r\n[0,1,1,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n" +
-                    "[0,1,1,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[1,0,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                    " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[1,0,0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[1,0,1,0,:,:] =\r\n" +
-                    "        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[1,0,1,1,:,:] =\r\n 0.01 0 0 0\r\n" +
-                    "    0 0 0 0\r\n\r\n[1,1,0,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n 6.28e-06 -13.142   0.01 4713.1\r\n\r\n" +
-                    "[1,1,0,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n\r\n[1,1,1,0,:,:] =\r\n        0   3.141 6.2834 3.1415\r\n" +
-                    " 6.28e-06 -13.142   0.01 4713.1\r\n\r\n[1,1,1,1,:,:] =\r\n 0.01 0 0 0\r\n    0 0 0 0\r\n", str);
+                Assert.Equal($"[2x2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,0,1,0,:,:] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
+                             $"[0,1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}" +
+                             $"    0 0 0 0{_sep}{_sep}[0,1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[0,1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,1,0,:,:] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}" +
+                             $"    0 0 0 0{_sep}{_sep}[1,1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
