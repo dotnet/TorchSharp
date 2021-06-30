@@ -60,8 +60,11 @@ type PositionalEncoding(dmodel, maxLen) as this =
         let divTerm = (Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
 
         let NULL = System.Nullable<int64>()
-        pe.[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(0L, NULL, 2L)] <- (position * divTerm).sin()
-        pe.[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(1L, NULL, 2L)] <- (position * divTerm).cos()
+
+        // See: https://github.com/dotnet/fsharp/issues/9369 -- for now we have to use an explicit array within the index
+        //
+        pe.[ [| TorchTensorIndex.Ellipsis; TorchTensorIndex.Slice(0L, NULL, 2L) |] ] <- (position * divTerm).sin()
+        pe.[ [| TorchTensorIndex.Ellipsis; TorchTensorIndex.Slice(1L, NULL, 2L) |] ] <- (position * divTerm).cos()
 
         pe <- pe.unsqueeze(0L).transpose(0L,1L)
 

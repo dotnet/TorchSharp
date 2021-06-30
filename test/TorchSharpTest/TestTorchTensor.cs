@@ -14,6 +14,32 @@ namespace TorchSharp
     public class TestTorchTensor
     {
         [Fact]
+        public void TestScalarCreation()
+        {
+            using (var scalar = false.ToScalar()) {
+                Assert.Equal(ScalarType.Bool, scalar.Type);
+            }
+            using (var scalar = ((byte)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((short)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((int)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((long)0).ToScalar()) {
+                Assert.Equal(ScalarType.Int64, scalar.Type);
+            }
+            using (var scalar = ((float)0).ToScalar()) {
+                Assert.Equal(ScalarType.Float64, scalar.Type);
+            }
+            using (var scalar = ((double)0).ToScalar()) {
+                Assert.Equal(ScalarType.Float64, scalar.Type);
+            }
+        }
+
+        [Fact]
         public void CreateFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -2747,12 +2773,12 @@ namespace TorchSharp
         [Fact]
         public void TestPositive()
         {
-            var a = Float32Tensor.randn(25,25);
+            var a = Float32Tensor.randn(25, 25);
             var b = a.positive();
 
             Assert.Equal(a.Data<float>().ToArray(), b.Data<float>().ToArray());
 
-            var c = BoolTensor.ones(25,25);
+            var c = BoolTensor.ones(25, 25);
             Assert.Throws<ArgumentException>(() => c.positive());
         }
 
@@ -2905,6 +2931,20 @@ namespace TorchSharp
             var expected = Float32Tensor.from(a.Zip(b).Select(x => x.First * x.Second).Sum());
             var res = Float32Tensor.from(a).vdot(Float32Tensor.from(b));
             Assert.True(res.allclose(expected));
+        }
+
+        [Fact]
+        public void WhereTest()
+        {
+            var bits = 3;
+            var mask = -(1 << (8 - bits));
+            var condition = Float32Tensor.rand(25) > 0.5;
+            var ones = Int32Tensor.ones(25);
+            var zeros = Int32Tensor.zeros(25);
+
+            var cond1 = ones.where(condition, zeros);
+            var cond2 = condition.to_type(ScalarType.Int32);
+            Assert.Equal(cond1, cond2);
         }
 
         [Fact]
@@ -3343,7 +3383,7 @@ namespace TorchSharp
             }, 3, 4);
 
             var expectedValues = Float64Tensor.from(new double[] {
-                -1.2631, -1.1289, -0.1321, 0.4370, 
+                -1.2631, -1.1289, -0.1321, 0.4370,
                 -2.0527, -1.1250,  0.2275, 0.3077,
                 -0.5495, -0.1259, -0.0881, 1.0284
             }, 3, 4);
@@ -3380,7 +3420,7 @@ namespace TorchSharp
                 2, 0, 1, 2
             }, 3, 4);
 
-            var res = input.sort(dim:0);
+            var res = input.sort(dim: 0);
             Assert.True(res.Values.allclose(expectedValues));
             Assert.Equal(expectedIndices, res.Indices);
         }
@@ -3641,7 +3681,7 @@ namespace TorchSharp
         [Fact]
         public void VSplitWithSizeTest()
         {
-            var a = Int32Tensor.arange(64).reshape(4,4,4);
+            var a = Int32Tensor.arange(64).reshape(4, 4, 4);
 
             var b = a.vsplit(2);
             Assert.Equal(new long[] { 2, 4, 4 }, b[0].shape);
@@ -3655,7 +3695,7 @@ namespace TorchSharp
         {
             var a = Int32Tensor.arange(80).reshape(5, 4, 4);
 
-            var b = a.vsplit(new long[] { 2, 3});
+            var b = a.vsplit(new long[] { 2, 3 });
             Assert.Equal(new long[] { 2, 4, 4 }, b[0].shape);
             Assert.Equal(new long[] { 1, 4, 4 }, b[1].shape);
             Assert.Equal(new long[] { 2, 4, 4 }, b[2].shape);
@@ -3738,6 +3778,24 @@ namespace TorchSharp
             Assert.Equal(3.1f, res[0][2].ToSingle());
             Assert.Equal(4.2f, res[1][0].ToSingle());
             Assert.Equal(5.3f, res[1][1].ToSingle());
+        }
+
+        [Fact]
+        public void TensorNonZeroTest()
+        {
+            var data = new double[] { 0.6, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 1.2, 0.5 };
+            using (var t = Float64Tensor.from(data, 3, 4)) {
+
+                {
+                    var res = t.nonzero();
+                    Assert.Equal(new long[] { 4, 2 }, res.shape);
+                }
+                {
+                    var res = t.nonzero_as_list();
+                    Assert.Equal(2, res.Count);
+                    Assert.Equal(4, res[0].shape[0]);
+                }
+            }
         }
 
         [Fact]
@@ -4092,7 +4150,7 @@ namespace TorchSharp
                 -1.6118, -0.3385, -0.6490,
                  0.0908, 2.0704, 0.5647,
                 -0.6451, 0.1911, 0.7353,
-                 0.5247, 0.5160, 0.5110}, 5,3);
+                 0.5247, 0.5160, 0.5110}, 5, 3);
 
             var l = linalg.svdvals(a);
             Assert.True(l.allclose(Float64Tensor.from(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }), rtol: 1e-04, atol: 1e-07));
@@ -4128,7 +4186,7 @@ namespace TorchSharp
             var b = Float32Tensor.randn(new long[] { 25, 25 });
             var c = Float32Tensor.randn(new long[] { 25, 25 });
             var d = TorchSharp.linalg.multi_dot(new TorchTensor[] { a, b, c });
-            Assert.Equal(new long[] { 25, 25}, d.shape);
+            Assert.Equal(new long[] { 25, 25 }, d.shape);
         }
 
         [Fact]
@@ -4156,7 +4214,7 @@ namespace TorchSharp
         public void MatrixNormTest()
         {
             {
-                var a = Float32Tensor.arange(9).view(3,3);
+                var a = Float32Tensor.arange(9).view(3, 3);
 
                 var b = linalg.matrix_norm(a);
                 var c = linalg.matrix_norm(a, ord: -1);
@@ -4187,9 +4245,9 @@ namespace TorchSharp
         {
             {
                 var a = Float32Tensor.from(
-                    new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
+                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
                 var expected = ComplexFloat32Tensor.from(
-                    new (float,float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
+                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
                 var l = linalg.eigvals(a);
                 Assert.True(l.allclose(expected));
             }
@@ -4303,7 +4361,7 @@ namespace TorchSharp
         {
             var a = Float32Tensor.from(new float[] { 0.0f, 0.5f, -1.0f });
             var expected = Float32Tensor.from(
-                    new float[] { 0.0f, 0.476936281f, Single.NegativeInfinity});
+                    new float[] { 0.0f, 0.476936281f, Single.NegativeInfinity });
             var b = TorchSharp.special.erfinv(a);
             Assert.True(b.allclose(expected));
         }
@@ -4321,16 +4379,16 @@ namespace TorchSharp
         public void TestSpecialExpm1()
         {
             var a = Float32Tensor.randn(new long[] { 10 });
-            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Exp(x)-1.0f).ToArray());
+            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Exp(x) - 1.0f).ToArray());
             var b = TorchSharp.special.expm1(a);
-            Assert.True(b.allclose(expected, rtol:1e-04, atol:1e-07));
+            Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
         public void TestSpecialExp2()
         {
             var a = Float32Tensor.randn(new long[] { 10 });
-            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Pow(2.0f,x)).ToArray());
+            var expected = Float32Tensor.from(a.Data<float>().ToArray().Select(x => MathF.Pow(2.0f, x)).ToArray());
             var b = TorchSharp.special.exp2(a);
             Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
@@ -4817,6 +4875,342 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float64, y.Type);
             Assert.Equal(1, y.dim());
             Assert.Equal(4, y.shape[0]);
+        }
+
+        [Fact]
+        public void CropTensor()
+        {
+            {
+                var input = Float32Tensor.rand(25, 25);
+                var cropped = input.crop(5, 5, 15, 13);
+
+                Assert.Equal(new long[] { 15, 13 }, cropped.shape);
+                for (int i = 0; i < 13; i++) {
+                    // Test the diagonal only.
+                    Assert.Equal(input[5 + i, 5 + i], cropped[i, i]);
+                }
+            }
+            {
+                var input = Float32Tensor.rand(3, 25, 25);
+                var cropped = input.crop(5, 5, 15, 13);
+
+                Assert.Equal(new long[] { 3, 15, 13 }, cropped.shape);
+                for (int c = 0; c < 3; c++)
+                    for (int i = 0; i < 13; i++) {
+                        // Test the diagonal only.
+                        Assert.Equal(input[c, 5 + i, 5 + i], cropped[c, i, i]);
+                    }
+            }
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var cropped = input.crop(5, 5, 15, 13);
+
+                Assert.Equal(new long[] { 16, 3, 15, 13 }, cropped.shape);
+                for (int n = 0; n < 16; n++)
+                    for (int c = 0; c < 3; c++)
+                        for (int i = 0; i < 13; i++) {
+                            // Test the diagonal only.
+                            Assert.Equal(input[n, c, 5 + i, 5 + i], cropped[n, c, i, i]);
+                        }
+            }
+        }
+
+        [Fact]
+        public void CroppedTensorWithPadding()
+        {
+            {
+                var input = Float32Tensor.rand(25, 25);
+                var cropped = input.crop(-1, -1, 15, 13);
+
+                Assert.Equal(new long[] { 15, 13 }, cropped.shape);
+                for (int i = 0; i < 12; i++) {
+                    // Test the diagonal only, and skip the padded corner.
+                    Assert.Equal(input[i, i], cropped[i + 1, i + 1]);
+                }
+            }
+            {
+                var input = Float32Tensor.rand(25, 25);
+                var cropped = input.crop(11, 13, 15, 13);
+
+                Assert.Equal(new long[] { 15, 13 }, cropped.shape);
+                for (int i = 0; i < 12; i++) {
+                    // Test the diagonal only, and skip the padded corner.
+                    Assert.Equal(input[11 + i, 13 + i], cropped[i, i]);
+                }
+            }
+        }
+
+        [Fact]
+        public void RandomResizeCropTensor()
+        {
+            {
+                var input = Float32Tensor.rand(4, 3, 100, 100);
+                var cropped = TorchVision.Transforms.RandomResizedCrop(100, 0.1, 0.5).forward(input);
+
+                Assert.Equal(new long[] { 4, 3, 100, 100 }, cropped.shape);
+            }
+        }
+
+        [Fact]
+        public void CenterCropTensor()
+        {
+            {
+                var input = Float32Tensor.rand(25, 25);
+                var cropped = TorchVision.Transforms.CenterCrop(15, 13).forward(input);
+
+                Assert.Equal(new long[] { 15, 13 }, cropped.shape);
+                for (int i = 0; i < 13; i++) {
+                    // Test the diagonal only.
+                    Assert.Equal(input[5 + i, 6 + i], cropped[i, i]);
+                }
+            }
+            {
+                var input = Float32Tensor.rand(3, 25, 25);
+                var cropped = TorchVision.Transforms.CenterCrop(15, 13).forward(input);
+
+                Assert.Equal(new long[] { 3, 15, 13 }, cropped.shape);
+                for (int c = 0; c < 3; c++)
+                    for (int i = 0; i < 13; i++) {
+                        // Test the diagonal only.
+                        Assert.Equal(input[c, 5 + i, 6 + i], cropped[c, i, i]);
+                    }
+            }
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var cropped = TorchVision.Transforms.CenterCrop(15, 13).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 15, 13 }, cropped.shape);
+                for (int n = 0; n < 16; n++)
+                    for (int c = 0; c < 3; c++)
+                        for (int i = 0; i < 13; i++) {
+                            // Test the diagonal only.
+                            Assert.Equal(input[n, c, 5 + i, 6 + i], cropped[n, c, i, i]);
+                        }
+            }
+        }
+
+        [Fact]
+        public void ResizeTensorDown()
+        {
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var resized = TorchVision.Transforms.Resize(15).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
+            }
+            {
+                var input = Int32Tensor.randint(255, new long[] { 16, 3, 25, 25 });
+                var resized = TorchVision.Transforms.Resize(15).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
+            }
+        }
+
+        [Fact]
+        public void ResizeTensorUp()
+        {
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var resized = TorchVision.Transforms.Resize(50).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
+            }
+            {
+                var input = Int32Tensor.randint(255, new long[] { 16, 3, 25, 25 });
+                var resized = TorchVision.Transforms.Resize(50).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
+            }
+        }
+
+        [Fact]
+        public void GrayscaleTensor()
+        {
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var gray = TorchVision.Transforms.Grayscale().forward(input);
+
+                Assert.Equal(new long[] { 16, 1, 25, 25 }, gray.shape);
+            }
+            {
+                var input = Float32Tensor.rand(16, 3, 25, 25);
+                var gray = TorchVision.Transforms.Grayscale(3).forward(input);
+
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, gray.shape);
+                for (int n = 0; n < 16; n++)
+                    for (int i = 0; i < 15; i++) {
+                        // Test the diagonal only.
+                        Assert.Equal(gray[n, 0, i, i], gray[n, 1, i, i]);
+                        Assert.Equal(gray[n, 0, i, i], gray[n, 2, i, i]);
+                    }
+            }
+        }
+
+        [Fact]
+        public void InvertTensor()
+        {
+            {
+                using (var input = Float32Tensor.rand(25)) {
+                    var iData = input.Data<float>().ToArray();
+
+                    var poster = TorchVision.Transforms.Invert().forward(input);
+                    var pData = poster.Data<float>().ToArray();
+
+                    Assert.Equal(new long[] { 25 }, poster.shape);
+                    for (int i = 0; i < poster.shape[0]; i++) {
+                        Assert.Equal(1.0f - iData[i], pData[i]);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void PosterizeTensor()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.Posterize(4).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+
+                }
+            }
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 25 })) {
+                    var poster = TorchVision.Transforms.Posterize(4).forward(input);
+
+                    Assert.Equal(new long[] { 25 }, poster.shape);
+                    Assert.All(poster.Data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
+                }
+            }
+        }
+
+        [Fact]
+        public void AdjustSharpnessTensor()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AdjustSharpness(1.5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AdjustSharpness(0.5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void AutocontrastTensor()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AutoContrast().forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.AutoContrast().forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void GaussianBlurTest()
+        {
+            {
+                using (var input = ByteTensor.randint(255, new long[] { 16, 3, 25, 25 })) {
+                    var poster = TorchVision.Transforms.GaussianBlur(4).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    // Test even-number kernel size.
+                    var poster = TorchVision.Transforms.GaussianBlur(4).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    // Test odd-number kernel size.
+                    var poster = TorchVision.Transforms.GaussianBlur(5).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+            {
+                using (var input = Float32Tensor.rand(16, 3, 25, 25)) {
+                    var random = TorchVision.Transforms.Randomize(TorchVision.Transforms.GaussianBlur(4), 0.5);
+                    var poster = random.forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void SolarizeTensor()
+        {
+            {
+                using (var input = Float32Tensor.rand(25)) {
+                    var poster = TorchVision.Transforms.Solarize(0.55).forward(input);
+
+                    Assert.Equal(new long[] { 25 }, poster.shape);
+                    Assert.All(poster.Data<float>().ToArray(), f => Assert.True(f < 0.55f));
+                }
+            }
+        }
+
+
+
+        [Fact]
+        public void HorizontalFlipTest()
+        {
+            var input = Int32Tensor.from(new int[] {
+                1,  2,  3,
+                1,  2,  3,
+                1,  2,  3,
+            }).reshape(3, 3);
+
+            var expected = Int32Tensor.from(new int[] {
+                3,  2,  1,
+                3,  2,  1,
+                3,  2,  1,
+            }).reshape(3, 3);
+
+            var res = TorchVision.Transforms.HorizontalFlip().forward(input);
+            Assert.Equal(res, expected);
+        }
+
+        [Fact]
+        public void VerticalFlipTest()
+        {
+            var input = Int32Tensor.from(new int[] {
+                1,  1,  1,
+                2,  2,  2,
+                3,  3,  3,
+            }).reshape(3, 3);
+
+            var expected = Int32Tensor.from(new int[] {
+                3,  3,  3,
+                2,  2,  2,
+                1,  1,  1,
+            }).reshape(3, 3);
+
+            var res = TorchVision.Transforms.VerticalFlip().forward(input);
+            Assert.Equal(res, expected);
         }
     }
 }

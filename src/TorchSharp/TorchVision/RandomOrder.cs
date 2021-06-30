@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TorchSharp.Tensor;
+
+namespace TorchSharp.TorchVision
+{
+    internal class RandomOrder : IDisposable, ITransform
+    {
+        public RandomOrder(ITransform[] transforms)
+        {
+            this.transforms = transforms;
+        }
+
+        public void Dispose()
+        {
+            foreach (var t in transforms) {
+                if (t is IDisposable) {
+                    ((IDisposable)t).Dispose();
+                }
+            }
+        }
+
+        public TorchTensor forward(TorchTensor input)
+        {
+            var rng = new Random();
+            foreach (var t in transforms.OrderBy(t => rng.NextDouble())) {
+                input = t.forward(input);
+            }
+            return input;
+        }
+
+        private IList<ITransform> transforms;
+    }
+
+    public static partial class Transforms
+    {
+        /// <summary>
+        /// Apply a list of transformations in a random order.
+        /// </summary>
+        /// <param name="transforms">A list of transforms to apply.</param>
+        /// <remarks>
+        /// This transform uses the .NET Random API, not the Torch RNG.
+        /// Each invocation of 'forward()' will randomize the order in which transforms
+        /// are applied.
+        /// </remarks>
+        static public ITransform RandomOrder(params ITransform[] transforms)
+        {
+            return new RandomOrder(transforms);
+        }
+    }
+}
