@@ -1,17 +1,9 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.IO;
-using System.Runtime.Serialization;
-
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
-using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 using static TorchSharp.Tensor.TensorExtensionMethods;
 
 namespace TorchSharp.Examples

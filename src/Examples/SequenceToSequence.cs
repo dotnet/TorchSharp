@@ -1,16 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+
 using static TorchSharp.torch.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -201,10 +197,10 @@ namespace TorchSharp.Examples
 
         class TransformerModel : CustomModule
         {
-            private TransformerEncoder transformer_encoder;
+            private impl.TransformerEncoder transformer_encoder;
             private PositionalEncoding pos_encoder;
-            private Embedding encoder;
-            private Linear decoder;
+            private impl.Embedding encoder;
+            private impl.Linear decoder;
 
             private long ninputs;
             private Device device;
@@ -262,7 +258,7 @@ namespace TorchSharp.Examples
 
         class PositionalEncoding : CustomModule
         {
-            private Dropout dropout;
+            private Module dropout;
             private TorchTensor pe;
 
             public PositionalEncoding(long dmodel, double dropout, int maxLen = 5000) : base("PositionalEncoding")

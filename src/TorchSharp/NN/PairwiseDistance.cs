@@ -5,26 +5,34 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp
 {
-    /// <summary>
-    /// This class is used to represent a dropout module for 2d/3d convolutational layers.
-    /// </summary>
-    public class PairwiseDistance : torch.nn.Module
+    using impl;
+
+    namespace impl
     {
-        internal PairwiseDistance (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        /// <summary>
+        /// This class is used to represent a dropout module for 2d/3d convolutational layers.
+        /// </summary>
+        public class PairwiseDistance : torch.nn.Module
         {
-        }
+            internal PairwiseDistance(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_PairwiseDistance_forward (torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-        public TorchTensor forward (TorchTensor input1, TorchTensor input2)
-        {
-            var res = THSNN_PairwiseDistance_forward (handle, input1.Handle, input2.Handle);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (res);
+            public TorchTensor forward(TorchTensor input1, TorchTensor input2)
+            {
+                var res = THSNN_PairwiseDistance_forward(handle, input1.Handle, input2.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
         }
     }
-    public static partial class nn
+
+    public static partial class torch
+    {
+        public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_PairwiseDistance_ctor (double p, double eps, bool keep_dim, out IntPtr pBoxedModule);
@@ -37,12 +45,13 @@ namespace TorchSharp
         }
     }
 
-    public static partial class functional
-    {
-        static public TorchTensor PairwiseDistance (TorchTensor input1, TorchTensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
+        public static partial class functional
         {
-            using (var f =nn.PairwiseDistance (p, eps, keep_dim)) {
-                return f.forward (input1, input2);
+            static public TorchTensor PairwiseDistance(TorchTensor input1, TorchTensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
+            {
+                using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
+                    return f.forward(input1, input2);
+                }
             }
         }
     }

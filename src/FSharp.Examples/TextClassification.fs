@@ -8,7 +8,6 @@ open System.Collections.Generic
 
 open TorchSharp
 open TorchSharp.Tensor
-open type TorchSharp.nn
 open type TorchSharp.torch.nn
 
 open TorchSharp.Examples

@@ -1,16 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+
 using static TorchSharp.torch.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -155,8 +151,8 @@ namespace TorchSharp.Examples
 
     class TextClassificationModel : CustomModule
     {
-        private EmbeddingBag embedding;
-        private Linear fc;
+        private impl.EmbeddingBag embedding;
+        private impl.Linear fc;
 
         public TextClassificationModel(long vocab_size, long embed_dim, long num_class) : base("TextClassification")
         {

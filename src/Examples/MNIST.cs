@@ -4,9 +4,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+
 using static TorchSharp.torch.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -92,7 +92,7 @@ namespace TorchSharp.Examples
             for (var epoch = 1; epoch <= _epochs; epoch++) {
 
                 Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
-                Test(model, nll_loss(reduction: nn.Reduction.Sum), device, test, test.Size);
+                Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test.Size);
 
                 Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
             }
@@ -106,24 +106,24 @@ namespace TorchSharp.Examples
 
         internal class Model : CustomModule
         {
-            private Conv2d conv1 = Conv2d(1, 32, 3);
-            private Conv2d conv2 = Conv2d(32, 64, 3);
-            private Linear fc1 = Linear(9216, 128);
-            private Linear fc2 = Linear(128, 10);
+            private Module conv1 = Conv2d(1, 32, 3);
+            private Module conv2 = Conv2d(32, 64, 3);
+            private Module fc1 = Linear(9216, 128);
+            private Module fc2 = Linear(128, 10);
 
             // These don't have any parameters, so the only reason to instantiate
             // them is performance, since they will be used over and over.
-            private MaxPool2d pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+            private Module pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
 
-            private ReLU relu1 = ReLU();
-            private ReLU relu2 = ReLU();
-            private ReLU relu3 = ReLU();
+            private Module relu1 = ReLU();
+            private Module relu2 = ReLU();
+            private Module relu3 = ReLU();
 
-            private Dropout dropout1 = Dropout(0.25);
-            private Dropout dropout2 = Dropout(0.5);
+            private Module dropout1 = Dropout(0.25);
+            private Module dropout2 = Dropout(0.5);
 
-            private Flatten flatten = Flatten();
-            private LogSoftmax logsm = LogSoftmax(1);
+            private Module flatten = Flatten();
+            private Module logsm = LogSoftmax(1);
 
             public Model(string name, Device device = null) : base(name)
             {

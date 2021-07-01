@@ -5,9 +5,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+
 using static TorchSharp.torch.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -81,9 +81,9 @@ namespace TorchSharp.Examples
 
         private class Model : CustomModule
         {
-            private readonly Sequential features;
-            private readonly AdaptiveAvgPool2d avgPool;
-            private readonly Sequential classifier;
+            private readonly Module features;
+            private readonly Module avgPool;
+            private readonly Module classifier;
 
             public Model(string name, int numClasses, Device device = null) : base(name)
             {

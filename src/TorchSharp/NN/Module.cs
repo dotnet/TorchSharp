@@ -551,7 +551,7 @@ namespace TorchSharp
                     IntPtr names, IntPtr parameters, IntPtr require_grad,
                     int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
 
-                protected CustomModule(string name, params Parameter[] parameters) : base(IntPtr.Zero, IntPtr.Zero)
+                protected CustomModule(string name, params parameter.Parameter[] parameters) : base(IntPtr.Zero, IntPtr.Zero)
                 {
                     var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
                     var @params = parameters.Select(p => p.Tensor.Handle).ToArray();

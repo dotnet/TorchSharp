@@ -21,7 +21,7 @@ namespace TorchSharp
                     protected ILearningRateController _optimizer;
                 }
 
-                static partial class impl
+                public static partial class impl
                 {
                     /// <summary>
                     /// Decays the learning rate of each parameter group by gamma every step_size epochs.

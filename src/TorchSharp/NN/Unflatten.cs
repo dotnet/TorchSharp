@@ -5,48 +5,57 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp
 {
-    /// <summary>
-    /// This class is used to represent an unflattening operation.
-    /// </summary>
-    public class Unflatten : torch.nn.Module
+    using impl;
+
+    namespace impl
     {
-        internal Unflatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+        /// <summary>
+        /// This class is used to represent an unflattening operation.
+        /// </summary>
+        public class Unflatten : torch.nn.Module
         {
-        }
+            internal Unflatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_Unflatten_forward(torch.nn.Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_Unflatten_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-        public override TorchTensor forward(TorchTensor tensor)
-        {
-            var res = THSNN_Unflatten_forward(handle, tensor.Handle);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor(res);
-        }
-    }
-    public static partial class nn
-    {
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
-
-        static public Unflatten Unflatten(long dim, long[] unflattenedSize)
-        {
-            unsafe {
-                fixed (long* pUnflattenedSize = unflattenedSize) {
-                    var handle = THSNN_Unflatten_ctor(dim, (IntPtr)pUnflattenedSize, unflattenedSize.Length, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Unflatten(handle, boxedHandle);
-                }
+            public override TorchTensor forward(TorchTensor tensor)
+            {
+                var res = THSNN_Unflatten_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new TorchTensor(res);
             }
         }
     }
 
-    public static partial class functional
+    public static partial class torch
     {
-        static public TorchTensor Unflatten(TorchTensor x, long dim, long[] unflattenedSize)
+        public static partial class nn
         {
-            using (var f = nn.Unflatten(dim, unflattenedSize)) {
-                return f.forward(x);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
+
+            static public Unflatten Unflatten(long dim, long[] unflattenedSize)
+            {
+                unsafe {
+                    fixed (long* pUnflattenedSize = unflattenedSize) {
+                        var handle = THSNN_Unflatten_ctor(dim, (IntPtr)pUnflattenedSize, unflattenedSize.Length, out var boxedHandle);
+                        if (handle == IntPtr.Zero) { CheckForErrors(); }
+                        return new Unflatten(handle, boxedHandle);
+                    }
+                }
+            }
+        }
+
+        public static partial class functional
+        {
+            static public TorchTensor Unflatten(TorchTensor x, long dim, long[] unflattenedSize)
+            {
+                using (var f = nn.Unflatten(dim, unflattenedSize)) {
+                    return f.forward(x);
+                }
             }
         }
     }

@@ -5,59 +5,65 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp
 {
-    /// <summary>
-    /// This class is used to represent a SiLU module.
-    /// </summary>
-    public class SiLU : torch.nn.Module
-    {
-        internal SiLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
+    using impl;
 
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_SiLU_forward (torch.nn.Module.HType module, IntPtr tensor);
-
-        public override TorchTensor forward (TorchTensor tensor)
-        {
-            var res = THSNN_SiLU_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (res);
-        }
-
-        public override string GetName ()
-        {
-            return typeof (SiLU).Name;
-        }
-    }
-
-    public static partial class nn
-    {
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_SiLU_ctor (out IntPtr pBoxedModule);
-
-        /// <summary>
-        /// Sigmoid-Weighted Linear Unit
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>The native libreary does not take an 'inplace' option, even though the PyTorch documentation mentions the parameter.</remarks>
-        static public SiLU SiLU()
-        {
-            var handle = THSNN_SiLU_ctor (out var boxedHandle);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new SiLU (handle, boxedHandle);
-        }
-    }
-    public static partial class functional
+    namespace impl
     {
         /// <summary>
-        /// Sigmoid-Weighted Linear Unit
+        /// This class is used to represent a SiLU module.
         /// </summary>
-        /// <param name="x">The input tensor</param>
-        /// <returns></returns>
-        static public TorchTensor SiLU(TorchTensor x)
+        public class SiLU : torch.nn.Module
         {
-            using (var m =nn.SiLU()) {
-                return m.forward (x);
+            internal SiLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_SiLU_forward(torch.nn.Module.HType module, IntPtr tensor);
+
+            public override TorchTensor forward(TorchTensor tensor)
+            {
+                var res = THSNN_SiLU_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
+
+            public override string GetName()
+            {
+                return typeof(SiLU).Name;
             }
         }
     }
+    public static partial class torch
+    {
+        public static partial class nn
+        {
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_SiLU_ctor(out IntPtr pBoxedModule);
 
+            /// <summary>
+            /// Sigmoid-Weighted Linear Unit
+            /// </summary>
+            /// <returns></returns>
+            /// <remarks>The native libreary does not take an 'inplace' option, even though the PyTorch documentation mentions the parameter.</remarks>
+            static public SiLU SiLU()
+            {
+                var handle = THSNN_SiLU_ctor(out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new SiLU(handle, boxedHandle);
+            }
+        }
+        public static partial class functional
+        {
+            /// <summary>
+            /// Sigmoid-Weighted Linear Unit
+            /// </summary>
+            /// <param name="x">The input tensor</param>
+            /// <returns></returns>
+            static public TorchTensor SiLU(TorchTensor x)
+            {
+                using (var m = nn.SiLU()) {
+                    return m.forward(x);
+                }
+            }
+        }
+    }
 }

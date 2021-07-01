@@ -3,10 +3,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using static TorchSharp.nn;
+
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.nn.functional;
 using static TorchSharp.torch.nn.functional;
 using TorchSharp.Tensor;
 using Xunit;
@@ -430,7 +429,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             var eval = seq.forward(x);
-            var loss = mse_loss(nn.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
             var result = output.ToSingle();
@@ -444,9 +443,9 @@ namespace TorchSharp
             using (TorchTensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f, 2.5f }))
             using (TorchTensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
                 var componentWiseLoss = ((TorchTensor)input.exp()) - target * input;
-                Assert.True(componentWiseLoss.Equals(poisson_loss(reduction: nn.Reduction.None)(input, target)));
-                Assert.True(componentWiseLoss.sum().Equals(poisson_loss(reduction: nn.Reduction.Sum)(input, target)));
-                Assert.True(componentWiseLoss.mean().Equals(poisson_loss(reduction: nn.Reduction.Mean)(input, target)));
+                Assert.True(componentWiseLoss.Equals(poisson_loss(reduction: Reduction.None)(input, target)));
+                Assert.True(componentWiseLoss.sum().Equals(poisson_loss(reduction: Reduction.Sum)(input, target)));
+                Assert.True(componentWiseLoss.mean().Equals(poisson_loss(reduction: Reduction.Mean)(input, target)));
             }
         }
 
@@ -759,7 +758,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(nn.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -781,7 +780,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(nn.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -806,7 +805,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(nn.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -862,10 +861,10 @@ namespace TorchSharp
 
         private class CondModel : CustomModule
         {
-            private Linear fb = Linear(1000, 100, false);
-            private Linear fbT1 = Linear(100, 10, false);
-            private Linear fbF1 = Linear(100, 50, false);
-            private Linear fbF2 = Linear(50, 10, false);
+            private Module fb = Linear(1000, 100, false);
+            private Module fbT1 = Linear(100, 10, false);
+            private Module fbF1 = Linear(100, 50, false);
+            private Module fbF2 = Linear(50, 10, false);
             private bool _isTrue = false;
 
             public CondModel(string name, bool isTrue) : base(name)
@@ -906,7 +905,7 @@ namespace TorchSharp
             modT.Train();
 
             var eval = modT.forward(x);
-            var loss = mse_loss(nn.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
             modT.ZeroGrad();
@@ -1304,7 +1303,7 @@ namespace TorchSharp
         private class TestModule : CustomModule
         {
             public TestModule(string name, TorchTensor tensor, bool withGrad)
-                : base(name, new Parameter(name, tensor, withGrad))
+                : base(name, new parameter.Parameter(name, tensor, withGrad))
             {
             }
 
@@ -1832,7 +1831,7 @@ namespace TorchSharp
             var ones = Int32Tensor.ones(new long[] { 16 });
             var weights = Float32Tensor.randn(new long[] { 1000, 12 });
 
-            using (var emb = nn.Embedding_from_pretrained(weights)) {
+            using (var emb = Embedding_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
                 Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
@@ -1890,7 +1889,7 @@ namespace TorchSharp
             var ones = Int32Tensor.ones(new long[] { 16 });
             var weights = Float32Tensor.randn(new long[] { 1000, 12 });
 
-            using (var emb = nn.EmbeddingBag_from_pretrained(weights)) {
+            using (var emb = EmbeddingBag_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
                 Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
@@ -2382,7 +2381,7 @@ namespace TorchSharp
         {
             using (TorchTensor input = Float32Tensor.randn(new long[] { 3, 10 }),
                    h0 = Float32Tensor.randn(new long[] { 3, 20 }))
-            using (var rnn = RNNCell(10, 20, nn.NonLinearities.ReLU)) {
+            using (var rnn = RNNCell(10, 20, NonLinearities.ReLU)) {
                 var hN = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
             }

@@ -5,43 +5,52 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp
 {
-    /// <summary>
-    /// This class is used to represent a log softmax module.
-    /// </summary>
-    public class LogSoftmax : torch.nn.Module
+    using impl;
+
+    namespace impl
     {
-        internal LogSoftmax(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+        /// <summary>
+        /// This class is used to represent a log softmax module.
+        /// </summary>
+        public class LogSoftmax : torch.nn.Module
         {
-        }
+            internal LogSoftmax(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module.HType handle, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module.HType handle, IntPtr tensor);
 
-        public override TorchTensor forward(TorchTensor tensor)
-        {
-            var res = THSNN_LogSoftmax_forward(handle, tensor.Handle);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor(res);
+            public override TorchTensor forward(TorchTensor tensor)
+            {
+                var res = THSNN_LogSoftmax_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
         }
     }
-    public static partial class nn
+
+    public static partial class torch
     {
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_LogSoftmax_ctor(long dimension, out IntPtr pBoxedModule);
-
-        static public LogSoftmax LogSoftmax(long dimension)
+        public static partial class nn
         {
-            var handle = THSNN_LogSoftmax_ctor(dimension, out var boxedHandle);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new LogSoftmax(handle, boxedHandle);
-        }
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_LogSoftmax_ctor(long dimension, out IntPtr pBoxedModule);
 
-        public static partial class functional
-        {
-            static public TorchTensor log_softmax(TorchTensor x, long dimension)
+            static public LogSoftmax LogSoftmax(long dimension)
             {
-                using (var l = nn.LogSoftmax(dimension)) {
-                    return l.forward(x);
+                var handle = THSNN_LogSoftmax_ctor(dimension, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new LogSoftmax(handle, boxedHandle);
+            }
+
+            public static partial class functional
+            {
+                static public TorchTensor log_softmax(TorchTensor x, long dimension)
+                {
+                    using (var l = nn.LogSoftmax(dimension)) {
+                        return l.forward(x);
+                    }
                 }
             }
         }

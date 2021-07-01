@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
-using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn;
 
 namespace TorchText.Vocab
 {

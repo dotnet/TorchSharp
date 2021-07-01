@@ -7,6 +7,8 @@ using TorchSharp;
 using TorchSharp.Tensor;
 using Xunit;
 
+using static TorchSharp.torch;
+
 #nullable enable
 
 namespace TorchSharp
@@ -1238,13 +1240,13 @@ namespace TorchSharp
         [Fact]
         public void TestCalculateGain()
         {
-            Assert.Equal(1, nn.init.calculate_gain(nn.init.NonlinearityType.Linear));
-            Assert.Equal(1, nn.init.calculate_gain(nn.init.NonlinearityType.Conv1D));
-            Assert.Equal(1, nn.init.calculate_gain(nn.init.NonlinearityType.Conv2D));
-            Assert.Equal(1, nn.init.calculate_gain(nn.init.NonlinearityType.Conv3D));
-            Assert.Equal(1, nn.init.calculate_gain(nn.init.NonlinearityType.Sigmoid));
-            Assert.Equal(5.0 / 3.0, nn.init.calculate_gain(nn.init.NonlinearityType.Tanh));
-            Assert.Equal(Math.Sqrt(2.0), nn.init.calculate_gain(nn.init.NonlinearityType.ReLU));
+            Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Linear));
+            Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Conv1D));
+            Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Conv2D));
+            Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Conv3D));
+            Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Sigmoid));
+            Assert.Equal(5.0 / 3.0, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Tanh));
+            Assert.Equal(Math.Sqrt(2.0), torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.ReLU));
         }
 
         [Fact]
@@ -1271,7 +1273,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.zeros(tensor)) { }
+                using (var res = torch.nn.init.zeros(tensor)) { }
             }
         }
 
@@ -1281,7 +1283,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.ones(tensor)) { }
+                using (var res = torch.nn.init.ones(tensor)) { }
             }
         }
 
@@ -1291,7 +1293,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.dirac(tensor)) { }
+                using (var res = torch.nn.init.dirac(tensor)) { }
             }
         }
 
@@ -1301,7 +1303,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.eye(tensor)) { }
+                using (var res = torch.nn.init.eye(tensor)) { }
             }
         }
 
@@ -1311,7 +1313,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.constant(tensor, Math.PI)) { }
+                using (var res = torch.nn.init.constant(tensor, Math.PI)) { }
             }
         }
 
@@ -1321,7 +1323,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.uniform(tensor)) { }
+                using (var res = torch.nn.init.uniform(tensor)) { }
             }
         }
 
@@ -1331,7 +1333,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.normal(tensor)) { }
+                using (var res = torch.nn.init.normal(tensor)) { }
             }
         }
 
@@ -1341,7 +1343,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.orthogonal(tensor)) { }
+                using (var res = torch.nn.init.orthogonal(tensor)) { }
             }
         }
 
@@ -1351,7 +1353,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.sparse(tensor, 0.25)) { }
+                using (var res = torch.nn.init.sparse(tensor, 0.25)) { }
             }
         }
 
@@ -1361,7 +1363,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.kaiming_uniform(tensor)) { }
+                using (var res = torch.nn.init.kaiming_uniform(tensor)) { }
             }
         }
 
@@ -1371,7 +1373,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.kaiming_normal(tensor)) { }
+                using (var res = torch.nn.init.kaiming_normal(tensor)) { }
             }
         }
 
@@ -1381,7 +1383,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.xavier_uniform(tensor)) { }
+                using (var res = torch.nn.init.xavier_uniform(tensor)) { }
             }
         }
 
@@ -1391,7 +1393,7 @@ namespace TorchSharp
             using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = nn.init.xavier_normal(tensor)) { }
+                using (var res = torch.nn.init.xavier_normal(tensor)) { }
             }
         }
 
