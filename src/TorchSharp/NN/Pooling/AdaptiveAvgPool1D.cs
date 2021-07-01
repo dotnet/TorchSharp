@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AdaptiveAvgPool1d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveAvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -57,7 +57,7 @@ namespace TorchSharp
 
         public static partial class functional
         {
-            static public TorchTensor AdaptiveAvgPool1d(TorchTensor x, long outputSize)
+            static public Tensor AdaptiveAvgPool1d(Tensor x, long outputSize)
             {
                 using (var d = nn.AdaptiveAvgPool1d(outputSize)) {
                     return d.forward(x);

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -27,14 +27,14 @@ namespace TorchSharp.torchvision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             if (means.size(1) != input.size(1)) throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
             return (input - means) / stdevs;
         }
 
-        private TorchTensor means;
-        private TorchTensor stdevs;
+        private Tensor means;
+        private Tensor stdevs;
         bool disposedValue;
 
         protected virtual void Dispose(bool disposing)

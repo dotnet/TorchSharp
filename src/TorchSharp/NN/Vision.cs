@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -73,13 +73,13 @@ namespace TorchSharp
                 /// <param name="mode">'constant', 'reflect', 'replicate' or 'circular'. Default: 'constant'</param>
                 /// <param name="value">Fill value for 'constant' padding. Default: 0</param>
                 /// <returns></returns>
-                static public TorchTensor Pad(TorchTensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
+                static public Tensor Pad(Tensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
                 {
                     unsafe {
                         fixed (long* psize = pad) {
                             var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new TorchTensor(res);
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -100,12 +100,12 @@ namespace TorchSharp
                 /// Currently, only spatial (4-D) and volumetric (5-D) input are supported.
                 /// Note: mode='bicubic' supports only 4-D input.
                 /// </remarks>
-                static public TorchTensor GridSample(TorchTensor input, TorchTensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode paddingMode = GridSamplePaddingMode.Zeros, bool? alignCorners = null)
+                static public Tensor GridSample(Tensor input, Tensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode paddingMode = GridSamplePaddingMode.Zeros, bool? alignCorners = null)
                 {
                     byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
                     var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)paddingMode, ac);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -116,13 +116,13 @@ namespace TorchSharp
                 /// <param name="align_corners">if true, consider -1 and 1 to refer to the centers of the corner pixels rather than the image corners.
                 /// Refer to grid_sample() for a more complete description.</param>
                 /// <returns></returns>
-                static public TorchTensor AffineGrid(TorchTensor theta, long[]? size = null, bool align_corners = false)
+                static public Tensor AffineGrid(Tensor theta, long[]? size = null, bool align_corners = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
                             var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new TorchTensor(res);
+                            return new Tensor(res);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ namespace TorchSharp
                 /// (i.e. the computation will be identical to if the computed output_size were passed-in explicitly).
                 /// </param>
                 /// <returns></returns>
-                static public TorchTensor Interpolate(TorchTensor x, long[]? size = null, double[]? scale_factor = null, InterpolateMode mode = InterpolateMode.Nearest, bool? alignCorners = null, bool recompute_scale_factor = false)
+                static public Tensor Interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolateMode mode = InterpolateMode.Nearest, bool? alignCorners = null, bool recompute_scale_factor = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
@@ -153,7 +153,7 @@ namespace TorchSharp
                                 byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
                                 var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor);
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                                return new TorchTensor(res);
+                                return new Tensor(res);
                             }
                         }
                     }
@@ -170,7 +170,7 @@ namespace TorchSharp
                 /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public TorchTensor UpsampleBilinear(TorchTensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
+                static public Tensor UpsampleBilinear(Tensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
                 {
                     using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Bilinear, alignCorners)) {
                         return d.forward(x);
@@ -188,7 +188,7 @@ namespace TorchSharp
                 /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public TorchTensor UpsampleNearest(TorchTensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
+                static public Tensor UpsampleNearest(Tensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
                 {
                     using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Nearest, alignCorners)) {
                         return d.forward(x);

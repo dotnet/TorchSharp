@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -24,11 +24,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_ReflectionPad1d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -61,7 +61,7 @@ namespace TorchSharp
             /// <param name="x">Input tensor</param>
             /// <param name="padding">The size of the padding: (padding_left , padding_right)</param>
             /// <returns></returns>
-            static public TorchTensor ReflectionPad1d(TorchTensor x, long padding)
+            static public Tensor ReflectionPad1d(Tensor x, long padding)
             {
                 using (var d = nn.ReflectionPad1d(padding)) {
                     return d.forward(x);

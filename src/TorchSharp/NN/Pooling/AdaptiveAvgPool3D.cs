@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AdaptiveAvgPool3d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveAvgPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -64,7 +64,7 @@ namespace TorchSharp
             /// <param name="x">The input signal tensor.</param>
             /// <param name="outputSize">The target output size of the image of the form H x W.</param>
             /// <returns></returns>
-            static public TorchTensor AdaptiveAvgPool3d(TorchTensor x, long[] outputSize)
+            static public Tensor AdaptiveAvgPool3d(Tensor x, long[] outputSize)
             {
                 using (var d = nn.AdaptiveAvgPool3d(outputSize)) {
                     return d.forward(x);

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
     public interface ITransform
     {
-        TorchTensor forward(TorchTensor input);
+        Tensor forward(Tensor input);
     }
 }

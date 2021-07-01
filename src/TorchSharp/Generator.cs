@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using TorchSharp;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -21,14 +21,14 @@ namespace TorchSharp
 
             public torch.device device { get; private set; }
 
-            public TorchTensor get_state()
+            public Tensor get_state()
             {
                 var res = THSGenerator_get_rng_state(Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
-            public void set_state(TorchTensor value)
+            public void set_state(Tensor value)
             {
                 THSGenerator_set_rng_state(Handle, value.Handle);
                 torch.CheckForErrors();

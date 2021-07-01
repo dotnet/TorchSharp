@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -23,12 +23,12 @@ namespace TorchSharp
                 /// <param name="num_classes">Total number of classes.
                 /// If set to -1, the number of classes will be inferred as one greater than the largest class value in the input tensor</param>
                 /// <returns></returns>
-                static public TorchTensor one_hot(TorchTensor x, long num_classes = -1)
+                static public Tensor one_hot(Tensor x, long num_classes = -1)
                 {
                     if (x.Type != ScalarType.Int64) throw new ArgumentException("OneHot input tensor must have elements of type Int64");
                     var res = THSNN_one_hot(x.Handle, num_classes);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
             }
         }

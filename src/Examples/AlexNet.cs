@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
 
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 
@@ -123,7 +123,7 @@ namespace TorchSharp.Examples
                     this.to(device);
             }
 
-            public override TorchTensor forward(TorchTensor input)
+            public override Tensor forward(Tensor input)
             {
                 using (var f = features.forward(input))
                 using (var avg = avgPool.forward(f))
@@ -137,7 +137,7 @@ namespace TorchSharp.Examples
             Model model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -180,7 +180,7 @@ namespace TorchSharp.Examples
         private static void Test(
             Model model,
             Loss loss,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             model.Eval();

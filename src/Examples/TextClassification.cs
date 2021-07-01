@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
 
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -92,7 +91,7 @@ namespace TorchSharp.Examples
 
         }
 
-        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -130,7 +129,7 @@ namespace TorchSharp.Examples
             GC.Collect();
         }
 
-        static double evaluate(IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> test_data, TextClassificationModel model, Loss criterion)
+        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
         {
             model.Eval();
 
@@ -173,12 +172,12 @@ namespace TorchSharp.Examples
             init.zeros(fc.Bias);
         }
 
-        public override TorchTensor forward(TorchTensor t)
+        public override Tensor forward(Tensor t)
         {
             throw new NotImplementedException();
         }
 
-        public TorchTensor forward(TorchTensor input, TorchTensor offsets)
+        public Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));
         }

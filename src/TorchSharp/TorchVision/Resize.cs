@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
 using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
@@ -22,7 +21,7 @@ namespace TorchSharp.torchvision
             this.max = maxSize; 
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var hoffset = input.Dimensions - 2;
             var iHeight = input.shape[hoffset];
@@ -60,7 +59,7 @@ namespace TorchSharp.torchvision
             return SqueezeOut(img, needCast, needSqueeze, dtype);
         }
 
-        private TorchTensor SqueezeIn(TorchTensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
+        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
         {
             needSqueeze = false;
 
@@ -80,7 +79,7 @@ namespace TorchSharp.torchvision
             return img;
         }
 
-        private TorchTensor SqueezeOut(TorchTensor img, bool needCast, bool needSqueeze, ScalarType dtype)
+        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
         {
             if (needSqueeze) {
                 img = img.squeeze(0);

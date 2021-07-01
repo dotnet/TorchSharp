@@ -2,8 +2,9 @@
 using System;
 using System.Runtime.InteropServices;
 using TorchSharp;
-using TorchSharp.Tensor;
 using Xunit;
+
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -27,7 +28,7 @@ namespace TorchSharp
                 Assert.False(isCudnnAvailable);
             }
 
-            //TorchTensor t = Float32Tensor.ones(shape);
+            //Tensor t = Float32Tensor.ones(shape);
             //Assert.Equal(shape, t.Shape);
             //Assert.Equal(1.0f, t[0, 0].ToSingle());
             //Assert.Equal(1.0f, t[1, 1].ToSingle());

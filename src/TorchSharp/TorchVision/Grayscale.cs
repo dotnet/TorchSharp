@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -16,7 +16,7 @@ namespace TorchSharp.torchvision
             this.outputChannels = outputChannels;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             int cDim = (int)input.Dimensions - 3;
             var rgb = input.unbind(cDim);

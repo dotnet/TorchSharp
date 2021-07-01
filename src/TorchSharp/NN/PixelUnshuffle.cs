@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -24,11 +24,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_PixelUnshuffle_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -63,7 +63,7 @@ namespace TorchSharp
             /// <param name="downscaleFactor">Factor to increase spatial resolution by</param>
             /// <returns></returns>
             /// <returns></returns>
-            static public TorchTensor PixelUnshuffle(TorchTensor x, long downscaleFactor)
+            static public Tensor PixelUnshuffle(Tensor x, long downscaleFactor)
             {
                 using (var d = nn.PixelUnshuffle(downscaleFactor)) {
                     return d.forward(x);

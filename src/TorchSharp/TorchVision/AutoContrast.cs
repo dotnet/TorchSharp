@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
-using static TorchSharp.Tensor.TensorExtensionMethods;
+using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
@@ -15,7 +15,7 @@ namespace TorchSharp.torchvision
         {
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var bound = input.IsIntegral() ? 255.0f : 1.0f;
             var dtype = input.IsIntegral() ? ScalarType.Float32 : input.Type;

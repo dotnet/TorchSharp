@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -100,7 +100,7 @@ namespace TorchSharp
                 /// <param name="momentum">Momentum factor (default: 0)</param>
                 /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
                 /// <returns></returns>
-                public static RMSPropOptimizer RMSProp(IEnumerable<TorchTensor> parameters, double learningRate = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+                public static RMSPropOptimizer RMSProp(IEnumerable<Tensor> parameters, double learningRate = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
                 {
                     var parray = new PinnedArray<IntPtr>();
                     IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -126,7 +126,7 @@ namespace TorchSharp
                 /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
                 /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
                 /// <returns></returns>
-                public static AdamOptimizer Adam(IEnumerable<TorchTensor> parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false)
+                public static AdamOptimizer Adam(IEnumerable<Tensor> parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false)
                 {
                     var parray = new PinnedArray<IntPtr>();
                     IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -152,7 +152,7 @@ namespace TorchSharp
                 /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
                 /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
                 /// <returns></returns>
-                public static AdamWOptimizer AdamW(IEnumerable<TorchTensor> parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false)
+                public static AdamWOptimizer AdamW(IEnumerable<Tensor> parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false)
                 {
                     var parray = new PinnedArray<IntPtr>();
                     IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -177,7 +177,7 @@ namespace TorchSharp
                 /// <param name="initial_accumulator_value"></param>
                 /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
                 /// <returns></returns>
-                public static AdagradOptimizer Adagrad(IEnumerable<TorchTensor> parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+                public static AdagradOptimizer Adagrad(IEnumerable<Tensor> parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
                 {
                     var parray = new PinnedArray<IntPtr>();
                     IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -200,7 +200,7 @@ namespace TorchSharp
                 /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
                 /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
                 /// <returns></returns>
-                public static SGDOptimizer SGD(IEnumerable<TorchTensor> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
+                public static SGDOptimizer SGD(IEnumerable<Tensor> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
                 {
                     var parray = new PinnedArray<IntPtr>();
                     IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
@@ -231,7 +231,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Optimizer_getParameters(HType module, AllocatePinnedArray allocator);
 
-                public IEnumerable<TorchTensor> parameters()
+                public IEnumerable<Tensor> parameters()
                 {
                     IntPtr[] ptrArray;
 
@@ -240,7 +240,7 @@ namespace TorchSharp
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                     }
-                    return ptrArray.Select(x => new TorchTensor(x));
+                    return ptrArray.Select(x => new Tensor(x));
                 }
             }
 

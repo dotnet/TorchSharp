@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -16,11 +16,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Embedding_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor input)
+            public override Tensor forward(Tensor input)
             {
                 var res = THSNN_Embedding_forward(handle, input.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -29,11 +29,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor Weight {
+            public Tensor Weight {
                 get {
                     var res = THSNN_Embedding_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_Embedding_set_weight(handle, value.Handle);
@@ -91,7 +91,7 @@ namespace TorchSharp
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            public static Embedding Embedding_from_pretrained(TorchTensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
+            public static Embedding Embedding_from_pretrained(Tensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
             {
                 var res = THSNN_Embedding_from_pretrained(embeddings.Handle, freeze,
                     padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
@@ -119,7 +119,7 @@ namespace TorchSharp
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public TorchTensor Embedding(TorchTensor x, long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
+            static public Tensor Embedding(Tensor x, long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
             {
                 using (var d = nn.Embedding(num_embeddings, embedding_dims, padding_idx, max_norm, norm_type, scale_grad_by_freq, sparse)) {
                     return d.forward(x);

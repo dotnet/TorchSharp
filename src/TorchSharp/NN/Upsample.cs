@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -55,7 +55,7 @@ namespace TorchSharp
                 /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public TorchTensor upsample(TorchTensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
+                static public Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
                 {
                     using (var d = nn.Upsample(size, scale_factor, mode, alignCorners)) {
                         return d.forward(x);
@@ -82,11 +82,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Upsample_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }

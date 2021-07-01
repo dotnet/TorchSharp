@@ -5,11 +5,11 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open TorchSharp.Tensor
+open type TorchSharp.torch
 
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
-open type TorchSharp.TorchScalar
+open type TorchSharp.Scalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
 // 

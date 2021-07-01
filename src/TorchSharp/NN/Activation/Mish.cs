@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -19,11 +19,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Mish_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Mish_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             public override string GetName()
@@ -58,7 +58,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="x">The input tensor</param>
             /// <returns></returns>
-            static public TorchTensor Mish(TorchTensor x)
+            static public Tensor Mish(Tensor x)
             {
                 using (var m = nn.Mish()) {
                     return m.forward(x);

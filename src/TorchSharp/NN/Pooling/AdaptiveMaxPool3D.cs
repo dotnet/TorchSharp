@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AdaptiveMaxPool3d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool3d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -66,7 +66,7 @@ namespace TorchSharp
             /// <param name="outputSize">The target output size of the image of the form D x H x W.
             /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
             /// <returns></returns>
-            static public TorchTensor AdaptiveMaxPool3d(TorchTensor x, long[] outputSize)
+            static public Tensor AdaptiveMaxPool3d(Tensor x, long[] outputSize)
             {
                 using (var d = nn.AdaptiveMaxPool3d(outputSize)) {
                     return d.forward(x);

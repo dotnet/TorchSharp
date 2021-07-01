@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 #nullable enable
@@ -26,22 +26,22 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-            public TorchTensor forward(TorchTensor input1, TorchTensor input2)
+            public Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor? Bias {
+            public Tensor? Bias {
                 get {
                     var res = THSNN_Bilinear_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new TorchTensor(res));
+                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
                 }
                 set {
                     THSNN_Bilinear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -53,11 +53,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor Weight {
+            public Tensor Weight {
                 get {
                     var res = THSNN_Bilinear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_Bilinear_set_weight(handle, value.Handle);
@@ -83,7 +83,7 @@ namespace TorchSharp
         }
         public static partial class functional
         {
-            static public TorchTensor Bilinear(TorchTensor x1, TorchTensor x2, long in1Features, long in2Features, long outputSize, bool hasBias = true)
+            static public Tensor Bilinear(Tensor x1, Tensor x2, long in1Features, long in2Features, long outputSize, bool hasBias = true)
             {
                 using (var d = nn.Bilinear(in1Features, in2Features, outputSize, hasBias)) {
                     return d.forward(x1, x2);

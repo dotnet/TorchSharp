@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp;
-using TorchSharp.Tensor;
 using Xunit;
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -19,7 +19,7 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue145()
         {
-            // TorchTensor.DataItem gives a hard crash on GPU tensor
+            // Tensor.DataItem gives a hard crash on GPU tensor
 
             if (torch.cuda.is_available()) {
                 var scalar = Float32Tensor.from(3.14f, torch.device.CUDA);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -23,7 +23,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
-            public TorchTensor forward(TorchTensor input, TorchTensor offsets = null, TorchTensor perSampleWeights = null)
+            public Tensor forward(Tensor input, Tensor offsets = null, Tensor perSampleWeights = null)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
                 if (!(offsets is null) && input.Type != offsets.Type) throw new ArgumentException("input and offsets must have the same element type.");
@@ -34,7 +34,7 @@ namespace TorchSharp
 
                 var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -43,11 +43,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_EmbeddingBag_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor Weight {
+            public Tensor Weight {
                 get {
                     var res = THSNN_EmbeddingBag_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_EmbeddingBag_set_weight(handle, value.Handle);
@@ -109,7 +109,7 @@ namespace TorchSharp
             /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            public static EmbeddingBag EmbeddingBag_from_pretrained(TorchTensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
+            public static EmbeddingBag EmbeddingBag_from_pretrained(Tensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
             {
                 var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
@@ -140,7 +140,7 @@ namespace TorchSharp
             /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public TorchTensor EmbeddingBag(TorchTensor x, long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
+            static public Tensor EmbeddingBag(Tensor x, long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
             {
                 using (var d = nn.EmbeddingBag(num_embeddings, embedding_dims, max_norm, norm_type, scale_grad_by_freq, mode, sparse, include_last_offset, padding_index)) {
                     return d.forward(x);

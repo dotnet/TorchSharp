@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AdaptiveMaxPool2d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -66,7 +66,7 @@ namespace TorchSharp
             /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
             /// <returns></returns>
-            static public TorchTensor AdaptiveMaxPool2d(TorchTensor x, long[] outputSize)
+            static public Tensor AdaptiveMaxPool2d(Tensor x, long[] outputSize)
             {
                 using (var d = nn.AdaptiveMaxPool2d(outputSize)) {
                     return d.forward(x);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AvgPool2d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AvgPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -64,7 +64,7 @@ namespace TorchSharp
                 /// <param name="kernelSize">The size of the window</param>
                 /// <param name="strides">The stride of the window. Default value is kernel_size</param>
                 /// <returns></returns>
-                static public TorchTensor avg_pool2d(TorchTensor x, long[] kernelSize, long[] strides = null)
+                static public Tensor avg_pool2d(Tensor x, long[] kernelSize, long[] strides = null)
                 {
                     using (var d = nn.AvgPool2d(kernelSize, strides)) {
                         return d.forward(x);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -18,7 +18,7 @@ namespace TorchSharp
                 GELU = 1
             }
 
-            private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
+            private Tensor NullTensor = new Tensor(IntPtr.Zero);
 
             internal TransformerEncoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -32,14 +32,14 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public TorchTensor forward(TorchTensor src, TorchTensor? src_mask = null, TorchTensor? src_key_padding_mask = null)
+            public Tensor forward(Tensor src, Tensor? src_mask = null, Tensor? src_key_padding_mask = null)
             {
                 var res = THSNN_TransformerEncoder_forward(handle,
                     src.Handle,
                     src_mask?.Handle ?? IntPtr.Zero,
                     src_key_padding_mask?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }

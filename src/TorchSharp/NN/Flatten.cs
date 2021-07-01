@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Flatten_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Flatten_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -47,7 +47,7 @@ namespace TorchSharp
 
         public static partial class functional
         {
-            static public TorchTensor Flatten(TorchTensor x, long startDim = 1, long endDim = -1)
+            static public Tensor Flatten(Tensor x, long startDim = 1, long endDim = -1)
             {
                 using (var f = nn.Flatten(startDim, endDim)) {
                     return f.forward(x);

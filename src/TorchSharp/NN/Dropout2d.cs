@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -19,11 +19,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Dropout2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Dropout2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -60,7 +60,7 @@ namespace TorchSharp
             /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
             /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
             /// <returns></returns>
-            static public TorchTensor Dropout2d(TorchTensor x, double probability = 0.5, bool inPlace = false)
+            static public Tensor Dropout2d(Tensor x, double probability = 0.5, bool inPlace = false)
             {
                 using (var d = nn.Dropout2d(probability, inPlace)) {
                     return d.forward(x);

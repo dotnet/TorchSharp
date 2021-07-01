@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
 using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
@@ -16,7 +15,7 @@ namespace TorchSharp.torchvision
             resizer = transforms.Resize(newHeight, newWidth, mode);
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             return resizer.forward(cropper.forward(input));
         }

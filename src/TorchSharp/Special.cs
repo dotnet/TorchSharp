@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -22,12 +22,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor entr(TorchTensor input)
+            public static Tensor entr(Tensor input)
             {
                 var res = THSSpecial_entr(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -38,12 +38,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor erf(TorchTensor input)
+            public static Tensor erf(Tensor input)
             {
                 var res = THSSpecial_erf(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -54,12 +54,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor erfc(TorchTensor input)
+            public static Tensor erfc(Tensor input)
             {
                 var res = THSSpecial_erfc(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -70,12 +70,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor erfinv(TorchTensor input)
+            public static Tensor erfinv(Tensor input)
             {
                 var res = THSSpecial_erfinv(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -86,12 +86,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor expit(TorchTensor input)
+            public static Tensor expit(Tensor input)
             {
                 var res = THSSpecial_expit(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -102,12 +102,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor expm1(TorchTensor input)
+            public static Tensor expm1(Tensor input)
             {
                 var res = THSSpecial_expm1(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -118,12 +118,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor exp2(TorchTensor input)
+            public static Tensor exp2(Tensor input)
             {
                 var res = THSSpecial_exp2(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -134,12 +134,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor gammaln(TorchTensor input)
+            public static Tensor gammaln(Tensor input)
             {
                 var res = THSSpecial_gammaln(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -150,12 +150,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor i0e(TorchTensor input)
+            public static Tensor i0e(Tensor input)
             {
                 var res = THSSpecial_i0e(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -166,12 +166,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">The input tensor</param>
             /// <returns></returns>
-            public static TorchTensor logit(TorchTensor input)
+            public static Tensor logit(Tensor input)
             {
                 var res = THSSpecial_logit(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -183,12 +183,12 @@ namespace TorchSharp
             /// <param name="input">The input tensor</param>
             /// <param name="other"></param>
             /// <returns></returns>
-            public static TorchTensor xlog1py(TorchTensor input, TorchTensor other)
+            public static Tensor xlog1py(Tensor input, Tensor other)
             {
                 var res = THSSpecial_xlog1py(input.Handle, other.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }

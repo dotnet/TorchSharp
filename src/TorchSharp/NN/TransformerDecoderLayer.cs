@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -12,7 +12,7 @@ namespace TorchSharp
     {
         public class TransformerDecoderLayer : torch.nn.Module
         {
-            private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
+            private Tensor NullTensor = new Tensor(IntPtr.Zero);
 
             internal TransformerDecoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -29,7 +29,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The mask for the tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The mask for the memory keys per batch (optional).</param>
             /// <returns></returns>
-            public TorchTensor forward(TorchTensor tgt, TorchTensor memory, TorchTensor? tgt_mask = null, TorchTensor? memory_mask = null, TorchTensor? tgt_key_padding_mask = null, TorchTensor? memory_key_padding_mask = null)
+            public Tensor forward(Tensor tgt, Tensor memory, Tensor? tgt_mask = null, Tensor? memory_mask = null, Tensor? tgt_key_padding_mask = null, Tensor? memory_key_padding_mask = null)
             {
                 var res = THSNN_TransformerDecoderLayer_forward(handle,
                     tgt.Handle,
@@ -39,7 +39,7 @@ namespace TorchSharp
                     tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                     memory_key_padding_mask?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }

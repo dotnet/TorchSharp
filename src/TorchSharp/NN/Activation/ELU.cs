@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -19,11 +19,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_ELU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_ELU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             public override string GetName()
@@ -62,7 +62,7 @@ namespace TorchSharp
             /// <param name="alpha">The α value for the ELU formulation. Default: 1.0</param>
             /// <param name="inPlace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public TorchTensor ELU(TorchTensor x, double alpha, bool inPlace = false)
+            static public Tensor ELU(Tensor x, double alpha, bool inPlace = false)
             {
                 using (var m = nn.ELU(alpha, inPlace)) {
                     return m.forward(x);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -17,11 +17,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Conv2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Conv2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -29,11 +29,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Conv2d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor? Bias {
+            public Tensor? Bias {
                 get {
                     var res = THSNN_Conv2d_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new TorchTensor(res));
+                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
                 }
                 set {
                     THSNN_Conv2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -45,11 +45,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Conv2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public TorchTensor Weight {
+            public Tensor Weight {
                 get {
                     var res = THSNN_Conv2d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_Conv2d_set_weight(handle, value.Handle);
@@ -122,7 +122,7 @@ namespace TorchSharp
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <returns></returns>
-            static public TorchTensor Conv2d(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+            static public Tensor Conv2d(Tensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
             {
                 using (var d = nn.Conv2d(inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
                     return d.forward(x);
@@ -143,7 +143,7 @@ namespace TorchSharp
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <returns></returns>
-            static public TorchTensor Conv2d(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+            static public Tensor Conv2d(Tensor x, long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
             {
                 using (var d = nn.Conv2d(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, paddingMode, groups, bias)) {
                     return d.forward(x);

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 #nullable enable
@@ -27,11 +27,11 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public (TorchTensor, TorchTensor) forward(TorchTensor input, TorchTensor? h0 = null)
+            public (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
             {
                 var res = THSNN_RNN_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new TorchTensor(res), new TorchTensor(hN));
+                return (new Tensor(res), new Tensor(hN));
             }
         }
     }

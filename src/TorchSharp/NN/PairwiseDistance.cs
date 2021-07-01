@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-            public TorchTensor forward(TorchTensor input1, TorchTensor input2)
+            public Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_PairwiseDistance_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -47,7 +47,7 @@ namespace TorchSharp
 
         public static partial class functional
         {
-            static public TorchTensor PairwiseDistance(TorchTensor input1, TorchTensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
+            static public Tensor PairwiseDistance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
             {
                 using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
                     return f.forward(input1, input2);

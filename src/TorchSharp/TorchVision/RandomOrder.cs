@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
@@ -21,7 +21,7 @@ namespace TorchSharp.torchvision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var rng = new Random();
             foreach (var t in transforms.OrderBy(t => rng.NextDouble())) {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
@@ -19,11 +19,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Identity_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Identity_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -53,7 +53,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="x">The input tensor.</param>
             /// <returns>The same tensor as is input.</returns>
-            static public TorchTensor Identity(TorchTensor x)
+            static public Tensor Identity(Tensor x)
             {
                 using (var d = nn.Identity()) {
                     return d.forward(x);

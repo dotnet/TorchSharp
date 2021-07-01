@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
@@ -21,7 +21,7 @@ namespace TorchSharp.torchvision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             using (var chance = Int32Tensor.randint(transforms.Length, new long[] { 1 }))
                 return transforms[chance.DataItem<int>()].forward(input);

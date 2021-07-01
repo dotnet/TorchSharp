@@ -7,11 +7,14 @@ using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
-namespace TorchSharp.Tensor {
+namespace TorchSharp {
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void GCHandleDeleter(IntPtr memory);
 
+
+    public static partial class torch
+    {
 
 <#
 foreach (var type in TorchTypeDef.Types) {
@@ -47,7 +50,7 @@ if (!type.IsComplex) {
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, torch.device device = null, bool requiresGrad = false)
+        static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -58,7 +61,7 @@ if (!type.IsComplex) {
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 <# } #>
 
@@ -66,7 +69,7 @@ if (!type.IsComplex) {
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
 		/// common difference step, starting from start
         /// </summary>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, torch.device device = null, bool requiresGrad = false)
+        static public Tensor arange(Scalar start, Scalar stop, torch.device device = null, bool requiresGrad = false)
         {
             return arange(start, stop, 1, device, requiresGrad);
         }
@@ -74,7 +77,7 @@ if (!type.IsComplex) {
         /// <summary>
         /// Creates 1-D tensor of size [(stop - 0)] with values from interval [0, stop), starting from 0
         /// </summary>
-        static public TorchTensor arange(TorchScalar stop, torch.device device = null, bool requiresGrad = false)
+        static public Tensor arange(Scalar stop, torch.device device = null, bool requiresGrad = false)
         {
             return arange(0, stop, 1, device, requiresGrad);
         }
@@ -85,7 +88,7 @@ if (!type.IsComplex) {
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public TorchTensor randperm(long n, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randperm(long n, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -96,7 +99,7 @@ if (!type.IsComplex) {
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 		
 		[DllImport("LibTorchSharp")]
@@ -105,7 +108,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor zeros(long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -120,7 +123,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_zeros ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -128,7 +131,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor zeros(long size, torch.device device = null, bool requiresGrad = false)
         {
             return zeros(new long[] { size }, device, requiresGrad);
         }
@@ -136,7 +139,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long rows, long columns, torch.device device = null, bool requiresGrad = false)
+        static public Tensor zeros(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
             return zeros(new long[] { rows, columns }, device, requiresGrad);
         }
@@ -144,7 +147,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
+        static public Tensor zeros(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
             return zeros(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
@@ -152,7 +155,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with zeros
         /// </summary>
-        static public TorchTensor zeros(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
+        static public Tensor zeros(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
             return zeros(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
@@ -163,7 +166,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor ones(long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -178,7 +181,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_ones ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -186,7 +189,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor ones(long size, torch.device device = null, bool requiresGrad = false)
         {
             return ones(new long[] { size }, device, requiresGrad);
         }
@@ -194,7 +197,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long rows, long columns, torch.device device = null, bool requiresGrad = false)
+        static public Tensor ones(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
             return ones(new long[] { rows, columns }, device, requiresGrad);
         }
@@ -202,7 +205,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
+        static public Tensor ones(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
             return ones(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
@@ -210,7 +213,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with ones
         /// </summary>
-        static public TorchTensor ones(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
+        static public Tensor ones(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
             return ones(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
@@ -221,7 +224,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with uninitialized data
         /// </summary>
-        static public TorchTensor empty(long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty(long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -236,7 +239,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_empty ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -244,7 +247,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with uninitialized data
         /// </summary>
-        static public TorchTensor empty(long size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty(long size, torch.device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { size }, device, requiresGrad);
         }
@@ -252,7 +255,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with uninitialized data
         /// </summary>
-        static public TorchTensor empty(long rows, long columns, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { rows, columns }, device, requiresGrad);
         }
@@ -260,7 +263,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with uninitialized data
         /// </summary>
-        static public TorchTensor empty(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
@@ -268,7 +271,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with uninitialized data
         /// </summary>
-        static public TorchTensor empty(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
@@ -279,7 +282,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
         /// </summary>
-        static public TorchTensor empty_strided(long[] size, long[] strides, torch.device device = null, bool requiresGrad = false)
+        static public Tensor empty_strided(long[] size, long[] strides, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -294,7 +297,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_empty_strided ((<#=type.Ptr#>)psizes, size.Length, (<#=type.Ptr#>)pstrides, strides.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -305,7 +308,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with a given value
         /// </summary>
-        static public TorchTensor full(long[] size, TorchScalar value, torch.device device = null, bool requiresGrad = false)
+        static public Tensor full(long[] size, Scalar value, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -320,7 +323,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_full ((<#=type.Ptr#>)psizes, size.Length, value.Handle, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -328,7 +331,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with given value
         /// </summary>
-        static public TorchTensor full(long size, TorchScalar value, torch.device device = null, bool requiresGrad = false)
+        static public Tensor full(long size, Scalar value, torch.device device = null, bool requiresGrad = false)
         {
             return full(new long[] { size }, value, device, requiresGrad);
         }
@@ -336,7 +339,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with given value
         /// </summary>
-        static public TorchTensor full(long rows, long columns, TorchScalar value, torch.device device = null, bool requiresGrad = false)
+        static public Tensor full(long rows, long columns, Scalar value, torch.device device = null, bool requiresGrad = false)
         {
             return full(new long[] { rows, columns }, value, device, requiresGrad);
         }
@@ -344,7 +347,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with given value
         /// </summary>
-        static public TorchTensor full(long dim0, long dim1, long dim2, TorchScalar value, torch.device device = null, bool requiresGrad = false)
+        static public Tensor full(long dim0, long dim1, long dim2, Scalar value, torch.device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, device, requiresGrad);
         }
@@ -352,7 +355,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with given value
         /// </summary>
-        static public TorchTensor full(long dim0, long dim1, long dim2, long dim3, TorchScalar value, torch.device device = null, bool requiresGrad = false)
+        static public Tensor full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2, dim3 }, value, device, requiresGrad);
         }
@@ -363,7 +366,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
         /// </summary>
-        static public TorchTensor eye(long rows, long columns = -1L, torch.device device = null, bool requiresGrad = false)
+        static public Tensor eye(long rows, long columns = -1L, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
@@ -375,7 +378,7 @@ if (!type.IsComplex) {
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
 <#
@@ -387,7 +390,7 @@ if (!type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public TorchTensor randint(long max, long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randint(long max, long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -402,7 +405,7 @@ if (!type.IsComplex) {
                         handle = THSTensor_randint (max, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -418,7 +421,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rand(long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -433,7 +436,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
                         handle = THSTensor_rand ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -441,7 +444,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rand(long size, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { size }, device, requiresGrad);
         }
@@ -449,7 +452,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long rows, long columns, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rand(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { rows, columns }, device, requiresGrad);
         }
@@ -457,7 +460,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rand(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
@@ -465,7 +468,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public TorchTensor rand(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rand(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
@@ -476,7 +479,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long[] size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randn(long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -491,7 +494,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
                         handle = THSTensor_randn ((<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
@@ -499,7 +502,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long size, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { size }, device, requiresGrad);
         }
@@ -507,7 +510,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { rows, columns }, device, requiresGrad);
         }
@@ -515,7 +518,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
@@ -523,7 +526,7 @@ if (type.IsFloatingPoint || type.IsComplex) {
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public TorchTensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
+        static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
             return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
@@ -538,7 +541,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
         /// </summary>
-        static public TorchTensor fftfreq(long n, double d = 1.0, torch.device device = null, bool requiresGrad = false)
+        static public Tensor fftfreq(long n, double d = 1.0, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -549,7 +552,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -558,7 +561,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Computes the sample frequencies for rfft() with a signal of size n.
         /// </summary>
-        static public TorchTensor rfftfreq(long n, double d = 1.0, torch.device device = null, bool requiresGrad = false)
+        static public Tensor rfftfreq(long n, double d = 1.0, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -569,7 +572,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -578,7 +581,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
         /// </summary>
-        static public TorchTensor linspace(<#=type.Storage#> start, <#=type.Storage#> end, long steps, torch.device device = null, bool requiresGrad = false)
+        static public Tensor linspace(<#=type.Storage#> start, <#=type.Storage#> end, long steps, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -589,7 +592,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -598,7 +601,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
         /// </summary>
-        static public TorchTensor logspace(<#=type.Storage#> start, <#=type.Storage#> end, long steps, <#=type.Storage#> @base = 10, torch.device device = null, bool requiresGrad = false)
+        static public Tensor logspace(<#=type.Storage#> start, <#=type.Storage#> end, long steps, <#=type.Storage#> @base = 10, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -609,7 +612,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_bartlett_window(long len, bool periodic, sbyte scalar_type, int device_type, int device_index, bool requires_grad);
@@ -617,7 +620,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Bartlett window function.
         /// </summary>
-        static public TorchTensor bartlett_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
+        static public Tensor bartlett_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -628,7 +631,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -637,7 +640,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Blackman window function.
         /// </summary>
-        static public TorchTensor blackman_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
+        static public Tensor blackman_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -648,7 +651,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -657,7 +660,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Hamming window function.
         /// </summary>
-        static public TorchTensor hamming_window(long len, bool periodic = true, <#=type.Storage#> alpha = 0.54f, <#=type.Storage#> beta = 0.46f, torch.device device = null, bool requiresGrad = false)
+        static public Tensor hamming_window(long len, bool periodic = true, <#=type.Storage#> alpha = 0.54f, <#=type.Storage#> beta = 0.46f, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -668,7 +671,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -677,7 +680,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Hann window function.
         /// </summary>
-        static public TorchTensor hann_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
+        static public Tensor hann_window(long len, bool periodic = true, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -688,7 +691,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 
         [DllImport("LibTorchSharp")]
@@ -697,7 +700,7 @@ if (type.IsFloatingPoint) {
         /// <summary>
         /// Computes the Kaiser window with window length window_length and shape parameter beta.
         /// </summary>
-        static public TorchTensor kaiser_window(long len, bool periodic = true, <#=type.Storage#> beta = 12.0f, torch.device device = null, bool requiresGrad = false)
+        static public Tensor kaiser_window(long len, bool periodic = true, <#=type.Storage#> beta = 12.0f, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -708,7 +711,7 @@ if (type.IsFloatingPoint) {
                 handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor (handle);
+            return new Tensor (handle);
         }
 <# } #>
 
@@ -721,12 +724,12 @@ if (!type.IsComplex) {
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static TorchTensor from(<#=type.Storage#> scalar, torch.device device = null, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#> scalar, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_new<#=type.Name#>Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor(handle);
+            return new Tensor(handle);
         }
 <# } #>
 
@@ -751,7 +754,7 @@ if (type.IsInt64) {
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        public static TorchTensor from(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#>[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
 <#
@@ -801,7 +804,7 @@ if (type.IsInt64) {
                     handle = THSTensor_new<#=type.Name#>(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(handle);
+                return new Tensor(handle);
 <#
 } else if (type.IsFloat16 || type.IsBFloat16) {
 #>
@@ -814,7 +817,7 @@ if (type.IsInt64) {
                         handle = THSTensor_new<#=type.Name#>((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor(handle);
+                    return new Tensor(handle);
                 }
 <#
 } else {
@@ -826,7 +829,7 @@ if (type.IsInt64) {
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.<#=type.Name#>, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(handle);
+                return new Tensor(handle);
 <# } #>
             }
         }
@@ -835,7 +838,7 @@ if (type.IsInt64) {
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        public static TorchTensor from(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#>[] rawArray, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { (long)rawArray.Length }, requiresGrad);
         }
@@ -846,7 +849,7 @@ if (type.IsInt64) {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
         ///          The input array must have rows * columns elements.
         /// </remarks>
-        public static TorchTensor from(<#=type.Storage#>[] rawArray, long rows, long columns, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#>[] rawArray, long rows, long columns, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { rows, columns }, requiresGrad);
         }
@@ -857,7 +860,7 @@ if (type.IsInt64) {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
         ///          The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        public static TorchTensor from(<#=type.Storage#>[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#>[] rawArray, long dim0, long dim1, long dim2, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { dim0, dim1, dim2 }, requiresGrad);
         }
@@ -868,7 +871,7 @@ if (type.IsInt64) {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
         ///          The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        public static TorchTensor from(<#=type.Storage#>[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
+        public static Tensor from(<#=type.Storage#>[] rawArray, long dim0, long dim1, long dim2, long dim3, bool requiresGrad = false)
         {
             return from(rawArray, new long[] { dim0, dim1, dim2, dim3 }, requiresGrad);
         }
@@ -879,7 +882,7 @@ if (type.IsInt64) {
         /// <summary>
         /// Create a sparse tensor by indexing into an existing dense tensor.
         /// </summary>
-        public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, torch.device device = null, bool requiresGrad = false)
+        public static Tensor sparse(Tensor indices, Tensor values, long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -894,10 +897,11 @@ if (type.IsInt64) {
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (<#=type.Ptr#>)psizes, size.Length, (sbyte)ScalarType.<#=type.Name#>, (int) device.Type, device.Index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new TorchTensor (handle);
+                    return new Tensor (handle);
                 }
             }
         }
     }
 <# } #>
+}
 }

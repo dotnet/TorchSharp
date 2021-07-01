@@ -3,8 +3,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp;
-using TorchSharp.Tensor;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -45,7 +43,7 @@ namespace TorchSharp
         public void CreateFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Float32Tensor.zeros(shape);
+            Tensor t = Float32Tensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(0.0f, t[0, 0].ToSingle());
             Assert.Equal(0.0f, t[1, 1].ToSingle());
@@ -55,7 +53,7 @@ namespace TorchSharp
         public void CreateByteTensorZeros()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = ByteTensor.zeros(shape);
+            Tensor t = ByteTensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal((byte)0, t[0, 0].ToByte());
             Assert.Equal((byte)0, t[1, 1].ToByte());
@@ -65,7 +63,7 @@ namespace TorchSharp
         public void CreateInt32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Int32Tensor.zeros(shape);
+            Tensor t = Int32Tensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(0, t[0, 0].ToInt32());
             Assert.Equal(0, t[1, 1].ToInt32());
@@ -76,7 +74,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = Int64Tensor.zeros(shape);
+            Tensor t = Int64Tensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(0L, t[0, 0].ToInt64());
             Assert.Equal(0L, t[1, 1].ToInt64());
@@ -87,7 +85,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = BoolTensor.zeros(shape);
+            Tensor t = BoolTensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal((object)false, t[0, 0].ToBoolean());
             Assert.Equal((object)false, t[1, 1].ToBoolean());
@@ -100,7 +98,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = Float16Tensor.zeros(shape, device: device);
+                    Tensor t = Float16Tensor.zeros(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(0.0f, t[0, 0].ToSingle());
                     Assert.Equal(0.0f, t[1, 1].ToSingle());
@@ -115,7 +113,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = BFloat16Tensor.zeros(shape, device: device);
+                    Tensor t = BFloat16Tensor.zeros(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(0.0f, t[0, 0].ToSingle());
                     Assert.Equal(0.0f, t[1, 1].ToSingle());
@@ -127,7 +125,7 @@ namespace TorchSharp
         public void CreateFloat32TensorEmpty()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Float32Tensor.empty(shape);
+            Tensor t = Float32Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
         }
 
@@ -135,7 +133,7 @@ namespace TorchSharp
         public void CreateFloat32TensorFull()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Float32Tensor.full(2, 2, 3.14f);
+            Tensor t = Float32Tensor.full(2, 2, 3.14f);
             Assert.Equal(shape, t.shape);
             Assert.Equal(3.14f, t[0, 0].ToSingle());
             Assert.Equal(3.14f, t[1, 1].ToSingle());
@@ -145,7 +143,7 @@ namespace TorchSharp
         public void CreateByteTensorEmpty()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = ByteTensor.empty(shape);
+            Tensor t = ByteTensor.empty(shape);
             Assert.Equal(shape, t.shape);
         }
 
@@ -153,7 +151,7 @@ namespace TorchSharp
         public void CreateInt32TensorEmpty()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Int32Tensor.empty(shape);
+            Tensor t = Int32Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
         }
 
@@ -161,7 +159,7 @@ namespace TorchSharp
         public void CreateInt32TensorFull()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Int32Tensor.full(2, 2, 17);
+            Tensor t = Int32Tensor.full(2, 2, 17);
             Assert.Equal(shape, t.shape);
             Assert.Equal(17, t[0, 0].ToInt32());
             Assert.Equal(17, t[1, 1].ToInt32());
@@ -172,7 +170,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = Int64Tensor.empty(shape);
+            Tensor t = Int64Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
         }
 
@@ -181,7 +179,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = BoolTensor.empty(shape);
+            Tensor t = BoolTensor.empty(shape);
             Assert.Equal(shape, t.shape);
         }
 
@@ -191,7 +189,7 @@ namespace TorchSharp
             var shape = new long[] { 2, 3 };
             var strides = new long[] { 1, 2 };
 
-            TorchTensor t = Float32Tensor.empty_strided(shape, strides);
+            Tensor t = Float32Tensor.empty_strided(shape, strides);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1, t.stride(0));
             Assert.Equal(2, t.stride(1));
@@ -203,7 +201,7 @@ namespace TorchSharp
             var shape = new long[] { 2, 3 };
             var strides = new long[] { 1, 2 };
 
-            TorchTensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
+            Tensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1, t.stride(0));
             Assert.Equal(2, t.stride(1));
@@ -216,7 +214,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = Float16Tensor.empty(shape, device: device);
+                    Tensor t = Float16Tensor.empty(shape, device: device);
                     Assert.Equal(shape, t.shape);
                 }
             }
@@ -229,7 +227,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = BFloat16Tensor.empty(shape, device: device);
+                    Tensor t = BFloat16Tensor.empty(shape, device: device);
                     Assert.Equal(shape, t.shape);
                 }
             }
@@ -238,7 +236,7 @@ namespace TorchSharp
         [Fact]
         public void CreateFloat32Linspace()
         {
-            TorchTensor t = Float32Tensor.linspace(0.0f, 10.0f, 101);
+            Tensor t = Float32Tensor.linspace(0.0f, 10.0f, 101);
             Assert.Equal(101, t.shape[0]);
             Assert.Equal(0.0f, t[0].ToSingle());
             Assert.Equal(0.1f, t[1].ToSingle());
@@ -247,7 +245,7 @@ namespace TorchSharp
         [Fact]
         public void CreateFloat32Logspace()
         {
-            TorchTensor t = Float32Tensor.logspace(0.0f, 10.0f, 101);
+            Tensor t = Float32Tensor.logspace(0.0f, 10.0f, 101);
             Assert.Equal(101, t.shape[0]);
             Assert.Equal(1.0f, t[0].ToSingle());
             Assert.Equal(10.0f, t[10].ToSingle());
@@ -257,7 +255,7 @@ namespace TorchSharp
         public void CreateFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -267,7 +265,7 @@ namespace TorchSharp
         public void CreateByteTensorOnes()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = ByteTensor.ones(shape);
+            Tensor t = ByteTensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal((byte)1, t[0, 0].ToByte());
             Assert.Equal((byte)1, t[1, 1].ToByte());
@@ -277,7 +275,7 @@ namespace TorchSharp
         public void CreateInt32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = Int32Tensor.ones(shape);
+            Tensor t = Int32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1, t[0, 0].ToInt32());
             Assert.Equal(1, t[1, 1].ToInt32());
@@ -288,7 +286,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = Int64Tensor.ones(shape);
+            Tensor t = Int64Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1L, t[0, 0].ToInt64());
             Assert.Equal(1L, t[1, 1].ToInt64());
@@ -299,7 +297,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = BoolTensor.ones(shape);
+            Tensor t = BoolTensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal((object)true, t[0, 0].ToBoolean());
             Assert.Equal((object)true, t[1, 1].ToBoolean());
@@ -312,7 +310,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = Float16Tensor.ones(shape, device: device);
+                    Tensor t = Float16Tensor.ones(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(1.0f, t[0, 0].ToSingle());
                     Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -327,7 +325,7 @@ namespace TorchSharp
                 if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
-                    TorchTensor t = BFloat16Tensor.ones(shape, device: device);
+                    Tensor t = BFloat16Tensor.ones(shape, device: device);
                     Assert.Equal(shape, t.shape);
                     Assert.Equal(1.0f, t[0, 0].ToSingle());
                     Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -340,7 +338,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = ComplexFloat32Tensor.zeros(shape);
+            Tensor t = ComplexFloat32Tensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
@@ -354,7 +352,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = ComplexFloat32Tensor.ones(shape);
+            Tensor t = ComplexFloat32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
@@ -367,10 +365,10 @@ namespace TorchSharp
         public void CreateComplex32()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor r = Float32Tensor.randn(shape);
-            TorchTensor i = Float32Tensor.randn(shape);
+            Tensor r = Float32Tensor.randn(shape);
+            Tensor i = Float32Tensor.randn(shape);
 
-            TorchTensor x = TorchTensor.complex(r, i);
+            Tensor x = Tensor.complex(r, i);
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat32, x.Type);
@@ -382,10 +380,10 @@ namespace TorchSharp
         public void CreateComplex64()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor r = Float64Tensor.randn(shape);
-            TorchTensor i = Float64Tensor.randn(shape);
+            Tensor r = Float64Tensor.randn(shape);
+            Tensor i = Float64Tensor.randn(shape);
 
-            TorchTensor x = TorchTensor.complex(r, i);
+            Tensor x = Tensor.complex(r, i);
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat64, x.Type);
@@ -397,12 +395,12 @@ namespace TorchSharp
         public void CreatePolar32()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor r = Float32Tensor.randn(shape);
-            TorchTensor i = Float32Tensor.randn(shape);
+            Tensor r = Float32Tensor.randn(shape);
+            Tensor i = Float32Tensor.randn(shape);
 
-            TorchTensor x = TorchTensor.complex(r, i);
+            Tensor x = Tensor.complex(r, i);
 
-            TorchTensor p = TorchTensor.polar(x.abs(), x.angle());
+            Tensor p = Tensor.polar(x.abs(), x.angle());
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.Type);
@@ -414,12 +412,12 @@ namespace TorchSharp
         public void CreatePolar64()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor r = Float64Tensor.randn(shape);
-            TorchTensor i = Float64Tensor.randn(shape);
+            Tensor r = Float64Tensor.randn(shape);
+            Tensor i = Float64Tensor.randn(shape);
 
-            TorchTensor x = TorchTensor.complex(r, i);
+            Tensor x = Tensor.complex(r, i);
 
-            TorchTensor p = TorchTensor.polar(x.abs(), x.angle());
+            Tensor p = Tensor.polar(x.abs(), x.angle());
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.Type);
@@ -431,7 +429,7 @@ namespace TorchSharp
         public void CreateComplexFloat32TensorRand()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = ComplexFloat32Tensor.rand(shape);
+            Tensor t = ComplexFloat32Tensor.rand(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
             Assert.All(v3, t => Assert.True(t.Real >= 0.0f && t.Real < 1.0f && t.Imaginary >= 0.0f && t.Imaginary < 1.0f));
@@ -441,7 +439,7 @@ namespace TorchSharp
         public void CreateComplexFloat32TensorRandn()
         {
             var shape = new long[] { 2, 2 };
-            TorchTensor t = ComplexFloat32Tensor.randn(shape);
+            Tensor t = ComplexFloat32Tensor.randn(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
         }
@@ -451,7 +449,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = ComplexFloat64Tensor.zeros(shape);
+            Tensor t = ComplexFloat64Tensor.zeros(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<System.Numerics.Complex>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
@@ -465,7 +463,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
 
-            TorchTensor t = ComplexFloat64Tensor.ones(shape);
+            Tensor t = ComplexFloat64Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             var v3 = t.Data<System.Numerics.Complex>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
@@ -477,7 +475,7 @@ namespace TorchSharp
         [Fact]
         public void CreateFloat32TensorCheckMemory()
         {
-            TorchTensor? ones = null;
+            Tensor? ones = null;
 
             for (int i = 0; i < 10; i++) {
                 using (var tmp = Float32Tensor.ones(new long[] { 100, 100, 100 })) {
@@ -710,35 +708,35 @@ namespace TorchSharp
         [Fact]
         public void CreateFloat32BartlettWindow()
         {
-            TorchTensor t = Float32Tensor.bartlett_window(100);
+            Tensor t = Float32Tensor.bartlett_window(100);
             Assert.Equal(100, t.shape[0]);
         }
 
         [Fact]
         public void CreateFloat32BlackmanWindow()
         {
-            TorchTensor t = Float32Tensor.blackman_window(100);
+            Tensor t = Float32Tensor.blackman_window(100);
             Assert.Equal(100, t.shape[0]);
         }
 
         [Fact]
         public void CreateFloat32HammingWindow()
         {
-            TorchTensor t = Float32Tensor.hamming_window(100);
+            Tensor t = Float32Tensor.hamming_window(100);
             Assert.Equal(100, t.shape[0]);
         }
 
         [Fact]
         public void CreateFloat32HannWindow()
         {
-            TorchTensor t = Float32Tensor.hann_window(100);
+            Tensor t = Float32Tensor.hann_window(100);
             Assert.Equal(100, t.shape[0]);
         }
 
         [Fact]
         public void CreateFloat32KaiserWindow()
         {
-            TorchTensor t = Float32Tensor.kaiser_window(100);
+            Tensor t = Float32Tensor.kaiser_window(100);
             Assert.Equal(100, t.shape[0]);
         }
 
@@ -787,8 +785,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.ones_like();
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.ones_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -802,8 +800,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.ones_like(dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.ones_like(dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -817,8 +815,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.zeros_like();
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.zeros_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -832,8 +830,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.zeros_like(dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.zeros_like(dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -847,8 +845,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.empty_like();
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.empty_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -861,8 +859,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.empty_like(dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.empty_like(dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -874,10 +872,10 @@ namespace TorchSharp
         public void CreateFloat32TensorFullLike()
         {
             var shape = new long[] { 10, 20, 30 };
-            TorchScalar value = 3.14f;
+            Scalar value = 3.14f;
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.full_like(value);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.full_like(value);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -890,10 +888,10 @@ namespace TorchSharp
         public void CreateFloat32TensorFullLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
-            TorchScalar value = 3.14;
+            Scalar value = 3.14;
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.full_like(value, dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.full_like(value, dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -907,8 +905,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.rand_like();
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.rand_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -922,8 +920,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.rand_like(dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.rand_like(dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -937,8 +935,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = ComplexFloat32Tensor.empty(shape);
-            TorchTensor t2 = t1.rand_like();
+            Tensor t1 = ComplexFloat32Tensor.empty(shape);
+            Tensor t2 = t1.rand_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.ComplexFloat32, t1.Type);
@@ -951,8 +949,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.rand_like(dtype: ScalarType.ComplexFloat32);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.rand_like(dtype: ScalarType.ComplexFloat32);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -965,8 +963,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.randn_like();
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.randn_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -979,8 +977,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.randn_like(dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.randn_like(dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -993,8 +991,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = ComplexFloat32Tensor.empty(shape);
-            TorchTensor t2 = t1.randn_like();
+            Tensor t1 = ComplexFloat32Tensor.empty(shape);
+            Tensor t2 = t1.randn_like();
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.ComplexFloat32, t1.Type);
@@ -1007,8 +1005,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.randn_like(dtype: ScalarType.ComplexFloat32);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.randn_like(dtype: ScalarType.ComplexFloat32);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -1021,8 +1019,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.randint_like(5, 15);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.randint_like(5, 15);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -1036,8 +1034,8 @@ namespace TorchSharp
         {
             var shape = new long[] { 10, 20, 30 };
 
-            TorchTensor t1 = Float32Tensor.empty(shape);
-            TorchTensor t2 = t1.randint_like(5, 15, dtype: ScalarType.Float64);
+            Tensor t1 = Float32Tensor.empty(shape);
+            Tensor t2 = t1.randint_like(5, 15, dtype: ScalarType.Float64);
 
             Assert.Equal(shape, t1.shape);
             Assert.Equal(ScalarType.Float32, t1.Type);
@@ -1070,7 +1068,7 @@ namespace TorchSharp
         public void GetSetItem2()
         {
             var shape = new long[] { 2, 3 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 2].ToSingle());
@@ -1082,7 +1080,7 @@ namespace TorchSharp
         public void GetSetItemComplexFloat2()
         {
             var shape = new long[] { 2, 3 };
-            TorchTensor t = ComplexFloat32Tensor.ones(shape);
+            Tensor t = ComplexFloat32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0].ToComplex32().Real);
             Assert.Equal(1.0f, t[1, 1].ToComplex32().Real);
@@ -1101,7 +1099,7 @@ namespace TorchSharp
         public void GetSetItemComplexDouble2()
         {
             var shape = new long[] { 2, 3 };
-            TorchTensor t = ComplexFloat64Tensor.ones(shape);
+            Tensor t = ComplexFloat64Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0].ToComplex64().Real);
             Assert.Equal(1.0f, t[1, 1].ToComplex64().Real);
@@ -1120,7 +1118,7 @@ namespace TorchSharp
         public void GetSetItem3()
         {
             var shape = new long[] { 2, 3, 4 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 2, 3].ToSingle());
@@ -1132,7 +1130,7 @@ namespace TorchSharp
         public void GetSetItem4()
         {
             var shape = new long[] { 2, 3, 4, 5 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0, 0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 2, 3, 4].ToSingle());
@@ -1144,7 +1142,7 @@ namespace TorchSharp
         public void GetSetItem5()
         {
             var shape = new long[] { 2, 3, 4, 5, 6 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0, 0, 0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 2, 3, 4, 5].ToSingle());
@@ -1157,7 +1155,7 @@ namespace TorchSharp
         public void GetSetItem6()
         {
             var shape = new long[] { 2, 3, 4, 5, 6, 7 };
-            TorchTensor t = Float32Tensor.ones(shape);
+            Tensor t = Float32Tensor.ones(shape);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1.0f, t[0, 0, 0, 0, 0, 0].ToSingle());
             Assert.Equal(1.0f, t[1, 2, 3, 4, 5, 6].ToSingle());
@@ -1252,7 +1250,7 @@ namespace TorchSharp
         [Fact]
         public void InfinityTest()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 tensor.fill_(Single.PositiveInfinity);
                 Assert.True(tensor.isposinf().Data<bool>().ToArray().All(b => b));
                 Assert.True(tensor.isinf().Data<bool>().ToArray().All(b => b));
@@ -1270,7 +1268,7 @@ namespace TorchSharp
         [Fact]
         public void InitZeros()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.zeros(tensor)) { }
@@ -1280,7 +1278,7 @@ namespace TorchSharp
         [Fact]
         public void InitOnes()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.ones(tensor)) { }
@@ -1290,7 +1288,7 @@ namespace TorchSharp
         [Fact]
         public void InitDirac()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.dirac(tensor)) { }
@@ -1300,7 +1298,7 @@ namespace TorchSharp
         [Fact]
         public void InitEye()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.eye(tensor)) { }
@@ -1310,7 +1308,7 @@ namespace TorchSharp
         [Fact]
         public void InitConstant()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.constant(tensor, Math.PI)) { }
@@ -1320,7 +1318,7 @@ namespace TorchSharp
         [Fact]
         public void InitUniform()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.uniform(tensor)) { }
@@ -1330,7 +1328,7 @@ namespace TorchSharp
         [Fact]
         public void InitNormal()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.normal(tensor)) { }
@@ -1340,7 +1338,7 @@ namespace TorchSharp
         [Fact]
         public void InitOrthogonal()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.orthogonal(tensor)) { }
@@ -1350,7 +1348,7 @@ namespace TorchSharp
         [Fact]
         public void InitSparse()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.sparse(tensor, 0.25)) { }
@@ -1360,7 +1358,7 @@ namespace TorchSharp
         [Fact]
         public void InitKaimingUniform()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.kaiming_uniform(tensor)) { }
@@ -1370,7 +1368,7 @@ namespace TorchSharp
         [Fact]
         public void InitKaimingNormal()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.kaiming_normal(tensor)) { }
@@ -1380,7 +1378,7 @@ namespace TorchSharp
         [Fact]
         public void InitXavierUniform()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.xavier_uniform(tensor)) { }
@@ -1390,7 +1388,7 @@ namespace TorchSharp
         [Fact]
         public void InitXavierNormal()
         {
-            using (TorchTensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.xavier_normal(tensor)) { }
@@ -1400,7 +1398,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceBernoulli()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.bernoulli_()) { }
@@ -1412,7 +1410,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceCauchy()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.cauchy_()) { }
@@ -1424,7 +1422,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceExponential()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.exponential_()) { }
@@ -1436,7 +1434,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceGeometric()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.geometric_(0.25)) { }
@@ -1448,7 +1446,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceLogNormal()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.log_normal_()) { }
@@ -1460,7 +1458,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceNormal()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.normal_()) { }
@@ -1472,7 +1470,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceRandom()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.random_(0.0, 1.0)) { }
@@ -1484,7 +1482,7 @@ namespace TorchSharp
         [Fact]
         public void InplaceUniform()
         {
-            using (TorchTensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
+            using (Tensor tensor = Float32Tensor.empty(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = tensor.uniform_(0.0, 1.0)) { }
@@ -1512,12 +1510,12 @@ namespace TorchSharp
         public void TestIndexSingle()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                Assert.Equal(0, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(0) }).ToInt32());
-                Assert.Equal(1, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(1) }).ToInt32());
-                Assert.Equal(2, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(0), TorchTensorIndex.Single(2) }).ToInt32());
-                Assert.Equal(6, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(0) }).ToInt32());
-                Assert.Equal(5, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(1) }).ToInt32());
-                Assert.Equal(4, i.index(new TorchTensorIndex[] { TorchTensorIndex.Single(1), TorchTensorIndex.Single(2) }).ToInt32());
+                Assert.Equal(0, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(0) }).ToInt32());
+                Assert.Equal(1, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(1) }).ToInt32());
+                Assert.Equal(2, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(2) }).ToInt32());
+                Assert.Equal(6, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(0) }).ToInt32());
+                Assert.Equal(5, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(1) }).ToInt32());
+                Assert.Equal(4, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(2) }).ToInt32());
             }
         }
 
@@ -1525,7 +1523,7 @@ namespace TorchSharp
         public void TestIndexEllipsis()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0) });
+                var t1 = i.index(new TensorIndex[] { TensorIndex.Ellipsis, TensorIndex.Single(0) });
                 Assert.Equal(0, t1[0].ToInt32());
                 Assert.Equal(6, t1[1].ToInt32());
             }
@@ -1535,7 +1533,7 @@ namespace TorchSharp
         public void TestIndexNull()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Single(0) });
+                var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
                 Assert.Equal(0, t1[0, 0].ToInt32());
                 Assert.Equal(1, t1[0, 1].ToInt32());
                 Assert.Equal(2, t1[0, 2].ToInt32());
@@ -1546,7 +1544,7 @@ namespace TorchSharp
         public void TestIndexNone()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Single(0) });
+                var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
                 Assert.Equal(0, t1[0, 0].ToInt32());
                 Assert.Equal(1, t1[0, 1].ToInt32());
                 Assert.Equal(2, t1[0, 2].ToInt32());
@@ -1557,36 +1555,36 @@ namespace TorchSharp
         public void TestIndexSlice()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(0, 2), TorchTensorIndex.Single(0) });
+                var t1 = i.index(new TensorIndex[] { TensorIndex.Slice(0, 2), TensorIndex.Single(0) });
                 Assert.Equal(0, t1[0].ToInt32());
                 Assert.Equal(6, t1[1].ToInt32());
 
                 // one slice
-                var t2 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Single(0) });
+                var t2 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Single(0) });
                 Assert.Equal(6, t2[0].ToInt32());
 
                 // two slice
-                var t3 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Slice(1, 3) });
+                var t3 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(1, 3) });
                 Assert.Equal(5, t3[0, 0].ToInt32());
                 Assert.Equal(4, t3[0, 1].ToInt32());
 
                 // slice with step
-                var t4 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(1, 2), TorchTensorIndex.Slice(0, 3, step: 2) });
+                var t4 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(0, 3, step: 2) });
                 Assert.Equal(6, t4[0, 0].ToInt32());
                 Assert.Equal(4, t4[0, 1].ToInt32());
 
                 // end absent
-                var t5 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(start: 1) });
+                var t5 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(start: 1) });
                 Assert.Equal(5, t5[0, 0].ToInt32());
                 Assert.Equal(4, t5[0, 1].ToInt32());
 
                 // start absent
-                var t6 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(stop: 2) });
+                var t6 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(stop: 2) });
                 Assert.Equal(6, t6[0, 0].ToInt32());
                 Assert.Equal(5, t6[0, 1].ToInt32());
 
                 // start and end absent
-                var t7 = i.index(new TorchTensorIndex[] { TorchTensorIndex.Slice(start: 1), TorchTensorIndex.Slice(step: 2) });
+                var t7 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(step: 2) });
                 Assert.Equal(6, t7[0, 0].ToInt32());
                 Assert.Equal(4, t7[0, 1].ToInt32());
             }
@@ -1596,7 +1594,7 @@ namespace TorchSharp
         [Fact]
         public void CopyCpuToCuda()
         {
-            TorchTensor cpu = Float32Tensor.ones(new long[] { 2, 2 });
+            Tensor cpu = Float32Tensor.ones(new long[] { 2, 2 });
             Assert.Equal("cpu", cpu.device.ToString());
 
             if (torch.cuda.is_available()) {
@@ -1641,7 +1639,7 @@ namespace TorchSharp
             var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTorchTensor(new long[] { 9 }).to_type(ScalarType.Float32);
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = new TorchTensor[] { zeros, ones }.cat(0);
+            var centroids = new Tensor[] { zeros, ones }.cat(0);
 
             var distanceFromZero = input.reshape(new long[] { -1, 1, 9 }).sub(zeros).pow(2.ToScalar()).sum(new long[] { 2 });
             var distanceFromOne = input.reshape(new long[] { -1, 1, 9 }).sub(ones).pow(2.ToScalar()).sum(new long[] { 2 });
@@ -1655,7 +1653,7 @@ namespace TorchSharp
         {
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = new TorchTensor[] { zeros, ones }.cat(0);
+            var centroids = new Tensor[] { zeros, ones }.cat(0);
 
             var shape = centroids.shape;
             Assert.Equal(new long[] { 2, 9 }, shape);
@@ -1667,7 +1665,7 @@ namespace TorchSharp
             if (torch.cuda.is_available()) {
                 var zeros = Float32Tensor.zeros(new long[] { 1, 9 }).cuda();
                 var ones = Float32Tensor.ones(new long[] { 1, 9 }).cuda();
-                var centroids = new TorchTensor[] { zeros, ones }.cat(0);
+                var centroids = new Tensor[] { zeros, ones }.cat(0);
                 var shape = centroids.shape;
                 Assert.Equal(new long[] { 2, 9 }, shape);
                 Assert.Equal(DeviceType.CUDA, centroids.device_type);
@@ -1704,7 +1702,7 @@ namespace TorchSharp
                 var t1 = Float32Tensor.zeros(new long[] { }, device);
                 var t2 = Float32Tensor.ones(new long[] { }, device);
                 var t3 = Float32Tensor.ones(new long[] { }, device);
-                var res = new TorchTensor[] { t1, t2, t3 }.stack(0);
+                var res = new Tensor[] { t1, t2, t3 }.stack(0);
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 3 }, shape);
@@ -1714,7 +1712,7 @@ namespace TorchSharp
                 var t1 = Float32Tensor.zeros(new long[] { }, device);
                 var t2 = Float32Tensor.ones(new long[] { }, device);
                 var t3 = Float32Tensor.ones(new long[] { }, device);
-                var res = new TorchTensor[] { t1, t2, t3 }.hstack();
+                var res = new Tensor[] { t1, t2, t3 }.hstack();
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 3 }, shape);
@@ -1723,7 +1721,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new TorchTensor[] { t1, t2 }.stack(0);
+                var res = new Tensor[] { t1, t2 }.stack(0);
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 2, 9 }, shape);
@@ -1732,7 +1730,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new TorchTensor[] { t1, t2 }.hstack();
+                var res = new Tensor[] { t1, t2 }.hstack();
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 18 }, shape);
@@ -1741,7 +1739,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new TorchTensor[] { t1, t2 }.vstack();
+                var res = new Tensor[] { t1, t2 }.vstack();
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 4, 9 }, shape);
@@ -1750,7 +1748,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new TorchTensor[] { t1, t2 }.dstack();
+                var res = new Tensor[] { t1, t2 }.dstack();
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 9, 2 }, shape);
@@ -1837,7 +1835,7 @@ namespace TorchSharp
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 6 }, 9, 10);
 
-            var res = TorchTensor.block_diag(A, B, C, D, E);
+            var res = Tensor.block_diag(A, B, C, D, E);
             Assert.Equal(expected, res);
         }
 
@@ -2188,7 +2186,7 @@ namespace TorchSharp
             if (File.Exists(file)) File.Delete(file);
             var tensor = Float64Tensor.ones(new long[] { 5, 6 });
             tensor.save(file);
-            var tensorLoaded = TorchTensor.load(file);
+            var tensorLoaded = Tensor.load(file);
             File.Delete(file);
             Assert.NotNull(tensorLoaded);
             Assert.Equal(tensorLoaded.Type, tensor.Type);
@@ -2202,7 +2200,7 @@ namespace TorchSharp
             if (File.Exists(file)) File.Delete(file);
             var tensor = Float32Tensor.ones(new long[] { 5, 6 });
             tensor.save(file);
-            var tensorLoaded = TorchTensor.load(file);
+            var tensorLoaded = Tensor.load(file);
             File.Delete(file);
             Assert.NotNull(tensorLoaded);
             Assert.Equal(tensorLoaded.Type, tensor.Type);
@@ -2220,7 +2218,7 @@ namespace TorchSharp
                     var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
@@ -2268,7 +2266,7 @@ namespace TorchSharp
                     var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
@@ -2314,7 +2312,7 @@ namespace TorchSharp
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
@@ -2360,7 +2358,7 @@ namespace TorchSharp
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = ComplexFloat32Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
                     // scalar-tensor operators
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
                     TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
@@ -2406,7 +2404,7 @@ namespace TorchSharp
                     var c1 = Float64Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float64Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
+                    Func<Tensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
                     // scalar-tensor operators
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
@@ -2452,7 +2450,7 @@ namespace TorchSharp
                     var c1 = ComplexFloat64Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = ComplexFloat64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = ComplexFloat64Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
+                    Func<Tensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
                     // scalar-tensor operators
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
                     TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
@@ -2498,8 +2496,8 @@ namespace TorchSharp
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
-                    Func<TorchTensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    Func<TorchTensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean();
+                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                    Func<Tensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean();
                     // scalar-tensor operators
                     TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a == 5.0f, a => a == 5.0f);
                     TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a != 5.0f, a => a != 5.0f);
@@ -2546,11 +2544,11 @@ namespace TorchSharp
         }
 
         private void TestOneTensor<Tin, Tout>(
-            TorchTensor c1,
-            TorchTensor c2,
-            Func<TorchTensor, long, long, Tin> getFuncIn,
-            Func<TorchTensor, long, long, Tout> getFuncOut,
-            Func<TorchTensor, TorchTensor> tensorFunc,
+            Tensor c1,
+            Tensor c2,
+            Func<Tensor, long, long, Tin> getFuncIn,
+            Func<Tensor, long, long, Tout> getFuncOut,
+            Func<Tensor, Tensor> tensorFunc,
             Func<Tin, Tout> scalarFunc)
         {
             var x = c1 * c2;
@@ -2566,10 +2564,10 @@ namespace TorchSharp
         }
 
         private void TestOneTensorInPlace<Tin>(
-            TorchTensor c1,
-            TorchTensor c2,
-            Func<TorchTensor, long, long, Tin> getFuncIn,
-            Func<TorchTensor, TorchTensor> tensorFunc,
+            Tensor c1,
+            Tensor c2,
+            Func<Tensor, long, long, Tin> getFuncIn,
+            Func<Tensor, Tensor> tensorFunc,
             Func<Tin, Tin> scalarFunc)
         {
 
@@ -2589,12 +2587,12 @@ namespace TorchSharp
         }
 
         private void TestTwoTensor<Tin, Tout>(
-            TorchTensor c1,
-            TorchTensor c2,
-            TorchTensor c3,
-            Func<TorchTensor, long, long, Tin> getFuncIn,
-            Func<TorchTensor, long, long, Tout> getFuncOut,
-            Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Tensor c1,
+            Tensor c2,
+            Tensor c3,
+            Func<Tensor, long, long, Tin> getFuncIn,
+            Func<Tensor, long, long, Tout> getFuncOut,
+            Func<Tensor, Tensor, Tensor> tensorFunc,
             Func<Tin, Tin, Tout> scalarFunc)
         {
 
@@ -2614,11 +2612,11 @@ namespace TorchSharp
         }
 
         private void TestTwoTensorInPlace<Tin>(
-            TorchTensor c1,
-            TorchTensor c2,
-            TorchTensor c3,
-            Func<TorchTensor, long, long, Tin> getFuncIn,
-            Func<TorchTensor, TorchTensor, TorchTensor> tensorFunc,
+            Tensor c1,
+            Tensor c2,
+            Tensor c3,
+            Func<Tensor, long, long, Tin> getFuncIn,
+            Func<Tensor, Tensor, Tensor> tensorFunc,
             Func<Tin, Tin, Tin> scalarFunc)
         {
 
@@ -3336,8 +3334,8 @@ namespace TorchSharp
         [Fact]
         public void ExpandTest()
         {
-            TorchTensor ones = Float32Tensor.ones(new long[] { 2 });
-            TorchTensor onesExpanded = ones.expand(new long[] { 3, 2 });
+            Tensor ones = Float32Tensor.ones(new long[] { 2 });
+            Tensor onesExpanded = ones.expand(new long[] { 3, 2 });
 
             Assert.Equal(onesExpanded.shape, new long[] { 3, 2 });
             for (int i = 0; i < 3; i++) {
@@ -3350,7 +3348,7 @@ namespace TorchSharp
         [Fact]
         public void MovedimTest()
         {
-            TorchTensor input = Float32Tensor.randn(new long[] { 3, 2, 1 });
+            Tensor input = Float32Tensor.randn(new long[] { 3, 2, 1 });
             {
                 var res = input.movedim(new long[] { 1 }, new long[] { 0 });
                 Assert.Equal(new long[] { 2, 3, 1 }, res.shape);
@@ -3364,7 +3362,7 @@ namespace TorchSharp
         [Fact]
         public void CountNZTest()
         {
-            TorchTensor input = Float32Tensor.from(new float[] { 0, 1, 1, 0, 0, 0, 0, 0, 1 }, 3, 3);
+            Tensor input = Float32Tensor.from(new float[] { 0, 1, 1, 0, 0, 0, 0, 0, 1 }, 3, 3);
             {
                 var res = input.count_nonzero();
                 Assert.Equal(Int64Tensor.from(3), res);
@@ -4187,7 +4185,7 @@ namespace TorchSharp
             var a = Float32Tensor.randn(new long[] { 25, 25 });
             var b = Float32Tensor.randn(new long[] { 25, 25 });
             var c = Float32Tensor.randn(new long[] { 25, 25 });
-            var d = torch.linalg.multi_dot(new TorchTensor[] { a, b, c });
+            var d = torch.linalg.multi_dot(new Tensor[] { a, b, c });
             Assert.Equal(new long[] { 25, 25 }, d.shape);
         }
 
@@ -4494,8 +4492,8 @@ namespace TorchSharp
             Assert.Equal(new long[] { 20, 2 }, vasr.shape);
             Assert.Equal(ScalarType.Float32, vasr.Type);
 
-            var r2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0)];
-            var i2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(1)];
+            var r2 = vasr[TensorIndex.Ellipsis, TensorIndex.Single(0)];
+            var i2 = vasr[TensorIndex.Ellipsis, TensorIndex.Single(1)];
 
             Assert.Equal(x.shape, r2.shape);
             Assert.Equal(x.shape, i2.shape);
@@ -4523,8 +4521,8 @@ namespace TorchSharp
             Assert.Equal(new long[] { 20, 2 }, vasr.shape);
             Assert.Equal(ScalarType.Float64, vasr.Type);
 
-            var r2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(0)];
-            var i2 = vasr[TorchTensorIndex.Ellipsis, TorchTensorIndex.Single(1)];
+            var r2 = vasr[TensorIndex.Ellipsis, TensorIndex.Single(0)];
+            var i2 = vasr[TensorIndex.Ellipsis, TensorIndex.Single(1)];
 
             Assert.Equal(x.shape, r2.shape);
             Assert.Equal(x.shape, i2.shape);

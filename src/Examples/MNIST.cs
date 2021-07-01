@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
 using static TorchSharp.torch;
 
 using static TorchSharp.torch.nn;
@@ -134,7 +133,7 @@ namespace TorchSharp.Examples
                     this.to(device);
             }
 
-            public override TorchTensor forward(TorchTensor input)
+            public override Tensor forward(Tensor input)
             {
                 var l11 = conv1.forward(input);
                 var l12 = relu2.forward(l11);
@@ -162,7 +161,7 @@ namespace TorchSharp.Examples
             torch.optim.Optimizer optimizer,
             Loss loss,
             device device,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -196,7 +195,7 @@ namespace TorchSharp.Examples
             Model model,
             Loss loss,
             device device,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             model.Eval();

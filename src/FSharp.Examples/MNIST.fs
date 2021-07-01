@@ -5,10 +5,10 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open TorchSharp.Tensor
+open type TorchSharp.torch
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
-open type TorchSharp.TorchScalar
+open type TorchSharp.Scalar
 
 open TorchSharp.Examples
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -22,11 +22,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_LayerNorm_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LayerNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -59,7 +59,7 @@ namespace TorchSharp
             /// <summary>
             /// Applies Layer Normalization over a mini-batch of inputs as described in the paper Layer Normalization
             /// </summary>
-            static public TorchTensor LayerNorm(TorchTensor x, long[] normalizedShape, double eps = 1e-05, bool elementwiseAffine = true)
+            static public Tensor LayerNorm(Tensor x, long[] normalizedShape, double eps = 1e-05, bool elementwiseAffine = true)
             {
                 using (var d = nn.LayerNorm(normalizedShape, eps, elementwiseAffine)) {
                     return d.forward(x);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TorchSharp;
-using TorchSharp.Tensor;
 using static TorchSharp.torch;
 
 namespace TorchText.Data
@@ -30,7 +29,7 @@ namespace TorchText.Data
             return File.ReadLines(_path).Select(line => ParseLine(line));
         }
 
-        public IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> GetBatches(Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab, long batch_size)
+        public IEnumerable<(Tensor, Tensor, Tensor)> GetBatches(Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab, long batch_size)
         {
             // This data set fits in memory, so we will simply load it all and cache it between epochs.
 
@@ -38,7 +37,7 @@ namespace TorchText.Data
 
             if (_data == null) {
 
-                _data = new List<(TorchTensor, TorchTensor, TorchTensor)>();
+                _data = new List<(Tensor, Tensor, Tensor)>();
 
                 var counter = 0;
                 var lines = Enumerate().ToList();
@@ -60,13 +59,13 @@ namespace TorchText.Data
             return _data;
         }
 
-        private List<(TorchTensor, TorchTensor, TorchTensor)> _data;
+        private List<(Tensor, Tensor, Tensor)> _data;
         private bool disposedValue;
 
-        private (TorchTensor, TorchTensor, TorchTensor) Batchifier(IEnumerable<(int, string)> input, Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab)
+        private (Tensor, Tensor, Tensor) Batchifier(IEnumerable<(int, string)> input, Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab)
         {
             var label_list = new List<long>();
-            var text_list = new List<TorchTensor>();
+            var text_list = new List<Tensor>();
             var offsets = new List<long>();
             offsets.Add(0);
 

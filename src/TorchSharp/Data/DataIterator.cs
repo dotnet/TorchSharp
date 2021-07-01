@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.Data
 {
@@ -34,7 +34,7 @@ namespace TorchSharp.Data
     /// </summary>
     public class DataIterator :
         IDisposable,
-        IEnumerable<(TorchTensor data, TorchTensor target)>
+        IEnumerable<(Tensor data, Tensor target)>
     {
         /// <summary>
         ///    Class wrapping PyTorch's iterator object reference.
@@ -118,7 +118,7 @@ namespace TorchSharp.Data
         /// Get the enumerator for this iterator.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<(TorchTensor data, TorchTensor target)> GetEnumerator()
+        public IEnumerator<(Tensor data, Tensor target)> GetEnumerator()
         {
             var iter = new DataIteratorEnumerator(this);
             iter.Reset();
@@ -131,7 +131,7 @@ namespace TorchSharp.Data
             return GetEnumerator();
         }
 
-        private class DataIteratorEnumerator : IEnumerator<(TorchTensor data, TorchTensor target)>
+        private class DataIteratorEnumerator : IEnumerator<(Tensor data, Tensor target)>
         {
             private DataIterator _iterator;
 
@@ -151,12 +151,12 @@ namespace TorchSharp.Data
                 _tRef = _tarray.CreateArray(new IntPtr[1]);
             }
 
-            public (TorchTensor data, TorchTensor target) Current
+            public (Tensor data, Tensor target) Current
             {
                 get
                 {
                     ExternMethods.THSData_current(_iterator.handle.DangerousGetHandle(), _dRef, _tRef);   
-                    return (new TorchTensor(_darray.Array[0]), new TorchTensor(_tarray.Array[0]));
+                    return (new Tensor(_darray.Array[0]), new Tensor(_tarray.Array[0]));
                 }
             }
 

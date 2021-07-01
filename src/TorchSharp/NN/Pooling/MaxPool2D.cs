@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,21 +21,21 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_MaxPool2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_MaxPool2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_MaxPool2d_forward_with_indices(torch.nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
-            public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
+            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
                 var res = THSNN_MaxPool2d_forward_with_indices(handle, tensor.Handle, out var indices);
                 if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new TorchTensor(res), new TorchTensor(indices));
+                return (new Tensor(res), new Tensor(indices));
             }
         }
     }
@@ -95,7 +95,7 @@ namespace TorchSharp
                 /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
                 /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
                 /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
-                static public TorchTensor max_pool2d(TorchTensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
+                static public Tensor max_pool2d(Tensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
                 {
                     using (var d = nn.MaxPool2d(kernelSize, stride, padding, dilation, ceilMode)) {
                         return d.forward(x);
@@ -112,7 +112,7 @@ namespace TorchSharp
                 /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
                 /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
                 /// <returns></returns>
-                static public TorchTensor max_pool2d(TorchTensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+                static public Tensor max_pool2d(Tensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
                 {
                     using (var d = nn.MaxPool2d(kernelSize, strides, padding, dilation, ceilMode)) {
                         return d.forward(x);

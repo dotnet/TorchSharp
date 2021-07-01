@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_AdaptiveMaxPool1d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -64,7 +64,7 @@ namespace TorchSharp
             /// <param name="x"></param>
             /// <param name="outputSize">The target output size H.</param>
             /// <returns></returns>
-            static public TorchTensor AdaptiveMaxPool1d(TorchTensor x, long outputSize)
+            static public Tensor AdaptiveMaxPool1d(Tensor x, long outputSize)
             {
                 using (var d = nn.AdaptiveMaxPool1d(outputSize)) {
                     return d.forward(x);

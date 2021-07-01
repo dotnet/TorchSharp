@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 
@@ -33,11 +33,11 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (seq_len, batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0_c0">Tensors of shape (num_layers * num_directions, batch, hidden_size) containing the initial hidden and cell state for each element in the batch</param>
             /// <returns></returns>
-            public (TorchTensor, TorchTensor, TorchTensor) forward(TorchTensor input, (TorchTensor, TorchTensor)? h0_c0 = null)
+            public (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
             {
                 var res = THSNN_LSTM_forward(handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr hN, out IntPtr cN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new TorchTensor(res), new TorchTensor(hN), new TorchTensor(cN));
+                return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
         }
     }

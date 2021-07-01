@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -15,7 +15,7 @@ namespace TorchSharp.torchvision
             this.bits = bits;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             if (input.Type != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
             var mask = -(1 << (8-bits));

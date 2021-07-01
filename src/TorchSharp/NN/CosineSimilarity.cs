@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -21,11 +21,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_CosineSimilarity_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-            public TorchTensor forward(TorchTensor input1, TorchTensor input2)
+            public Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -47,7 +47,7 @@ namespace TorchSharp
 
         public static partial class functional
         {
-            static public TorchTensor CosineSimilarity(TorchTensor input1, TorchTensor input2, long dim = 1, double eps = 1e-8)
+            static public Tensor CosineSimilarity(Tensor input1, Tensor input2, long dim = 1, double eps = 1e-8)
             {
                 using (var f = nn.CosineSimilarity(dim, eps)) {
                     return f.forward(input1, input2);

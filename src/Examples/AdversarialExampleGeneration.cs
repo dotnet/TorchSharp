@@ -2,9 +2,9 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn.functional;
-using static TorchSharp.Tensor.TensorExtensionMethods;
+using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.Examples
 {
@@ -111,7 +111,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static TorchTensor Attack(TorchTensor image, double ε, TorchTensor data_grad)
+        private static Tensor Attack(Tensor image, double ε, Tensor data_grad)
         {
             using (var sign = data_grad.sign()) {
                 var perturbed = (image + ε * sign).clamp(0.0, 1.0);
@@ -123,7 +123,7 @@ namespace TorchSharp.Examples
             MNIST.Model model,
             Loss criterion,
             double ε,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             int correct = 0;

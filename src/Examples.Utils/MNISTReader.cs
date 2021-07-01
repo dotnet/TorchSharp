@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TorchSharp.Tensor;
 using TorchSharp.torchvision;
+using static TorchSharp.torch;
 
 namespace TorchSharp.Examples
 {
@@ -14,7 +14,7 @@ namespace TorchSharp.Examples
     /// A number of single-channel (grayscale) images are laid out in a flat file with four 32-bit integers at the head.
     /// The format is documented at the bottom of the page at: http://yann.lecun.com/exdb/mnist/
     /// </summary>
-    public sealed class MNISTReader : IEnumerable<(TorchTensor, TorchTensor)>, IDisposable
+    public sealed class MNISTReader : IEnumerable<(Tensor, Tensor)>, IDisposable
     {
         /// <summary>
         /// Constructor
@@ -93,7 +93,7 @@ namespace TorchSharp.Examples
 
                     var floats = dataBytes[imgStart.. (imgStart+imgSize)].Select(b => b/256.0f).ToArray();
                     using (var inputTensor = Float32Tensor.from(floats))
-                        dataTensor.index_put_(inputTensor, TorchTensorIndex.Single(j));
+                        dataTensor.index_put_(inputTensor, TensorIndex.Single(j));
                     lablTensor[j] = Int64Tensor.from(labelBytes[idx]);
                 }
 
@@ -117,10 +117,10 @@ namespace TorchSharp.Examples
 
         public int BatchSize { get; private set; }
 
-        private List<TorchTensor> data = new List<TorchTensor>();
-        private List<TorchTensor> labels = new List<TorchTensor>();
+        private List<Tensor> data = new List<Tensor>();
+        private List<Tensor> labels = new List<Tensor>();
 
-        public IEnumerator<(TorchTensor, TorchTensor)> GetEnumerator()
+        public IEnumerator<(Tensor, Tensor)> GetEnumerator()
         {
             return new MNISTEnumerator(data, labels);
         }
@@ -136,15 +136,15 @@ namespace TorchSharp.Examples
             labels.ForEach(d => d.Dispose());
         }
 
-        private class MNISTEnumerator : IEnumerator<(TorchTensor, TorchTensor)>
+        private class MNISTEnumerator : IEnumerator<(Tensor, Tensor)>
         {
-            public MNISTEnumerator(List<TorchTensor> data, List<TorchTensor> labels)
+            public MNISTEnumerator(List<Tensor> data, List<Tensor> labels)
             {
                 this.data = data;
                 this.labels = labels;
             }
 
-            public (TorchTensor, TorchTensor) Current {
+            public (Tensor, Tensor) Current {
                 get {
                     if (curIdx == -1) throw new InvalidOperationException("Calling 'Current' before 'MoveNext()'");
                     return (data[curIdx], labels[curIdx]);
@@ -169,8 +169,8 @@ namespace TorchSharp.Examples
             }
 
             private int curIdx = -1;
-            private List<TorchTensor> data = null;
-            private List<TorchTensor> labels = null;
+            private List<Tensor> data = null;
+            private List<Tensor> labels = null;
         }
     }
 }

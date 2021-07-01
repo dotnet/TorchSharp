@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -18,7 +18,7 @@ namespace TorchSharp.torchvision
             this.kernelSize = kernelSize.ToArray();
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var dtype = TensorExtensionMethods.IsIntegral(input.Type) ? ScalarType.Float32 : input.Type;
 
@@ -42,7 +42,7 @@ namespace TorchSharp.torchvision
             return SqueezeOut(img, needCast, needSqueeze, out_dtype);
         }
 
-        private TorchTensor GetGaussianKernel1d(long size)
+        private Tensor GetGaussianKernel1d(long size)
         {
             var ksize_half = (size - 1) * 0.5f;
             var x = Float32Tensor.linspace(-ksize_half, ksize_half, size);
@@ -51,14 +51,14 @@ namespace TorchSharp.torchvision
             return pdf / pdf.sum();
         }
 
-        private TorchTensor GetGaussianKernel2d(ScalarType dtype, torch.device device)
+        private Tensor GetGaussianKernel2d(ScalarType dtype, torch.device device)
         {
-            var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device).index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Ellipsis });
-            var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device).index(new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.None });
+            var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device).index(new TensorIndex[] { TensorIndex.None, TensorIndex.Ellipsis });
+            var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device).index(new TensorIndex[] { TensorIndex.Ellipsis, TensorIndex.None });
             return kernel_Y.mm(kernel_X);
         }
 
-        private TorchTensor SqueezeIn(TorchTensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
+        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
         {
             needSqueeze = false;
 
@@ -78,7 +78,7 @@ namespace TorchSharp.torchvision
             return img;
         }
 
-        private TorchTensor SqueezeOut(TorchTensor img, bool needCast, bool needSqueeze, ScalarType dtype)
+        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
         {
             if (needSqueeze) {
                 img = img.squeeze(0);

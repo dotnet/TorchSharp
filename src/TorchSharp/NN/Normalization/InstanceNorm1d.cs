@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -22,12 +22,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_InstanceNorm1d_forward(IntPtr module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 2 || tensor.Dimensions > 3) throw new ArgumentException($"Invalid number of dimensions for InstanceNorm argument: {tensor.Dimensions}");
                 var res = THSNN_InstanceNorm1d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
         }
     }
@@ -74,7 +74,7 @@ namespace TorchSharp
             /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
             /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
             /// <returns></returns>
-            static public TorchTensor InstanceNorm1d(TorchTensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+            static public Tensor InstanceNorm1d(Tensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
             {
                 using (var d = nn.InstanceNorm1d(features, eps, momentum, affine, track_running_stats)) {
                     return d.forward(x);

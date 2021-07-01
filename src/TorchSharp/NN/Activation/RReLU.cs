@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp
 {
@@ -19,11 +19,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_RReLU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-            public override TorchTensor forward(TorchTensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_RReLU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new TorchTensor(res);
+                return new Tensor(res);
             }
 
             public override string GetName()
@@ -67,7 +67,7 @@ namespace TorchSharp
             /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
             /// <param name="inPlace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public TorchTensor RReLU(TorchTensor x, double lower, double upper, bool inPlace = false)
+            static public Tensor RReLU(Tensor x, double lower, double upper, bool inPlace = false)
             {
                 using (var m = nn.RReLU(lower, upper, inPlace)) {
                     return m.forward(x);

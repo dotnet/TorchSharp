@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -16,7 +16,7 @@ namespace TorchSharp.torchvision
             this.width = width;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var hoffset = input.Dimensions - 2;
             var iHeight = input.shape[hoffset];

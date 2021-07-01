@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 #nullable enable
 
 namespace TorchSharp
 {
-    public delegate TorchTensor Loss(TorchTensor source, TorchTensor target);
+    public delegate Tensor Loss(Tensor source, Tensor target);
 
     public static partial class torch
     {
@@ -29,13 +29,13 @@ namespace TorchSharp
                 /// <param name="ignore_index">Specifies a target value that is ignored and does not contribute to the input gradient.</param>
                 /// <param name="reduction">Specifies the reduction to apply to the output</param>
                 /// <returns></returns>
-                public static Loss cross_entropy_loss(TorchTensor? weight = null, long? ignore_index = null, Reduction reduction = Reduction.Mean)
+                public static Loss cross_entropy_loss(Tensor? weight = null, long? ignore_index = null, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var ii = ignore_index.HasValue ? ignore_index.Value : -100;
                         var res = THSNN_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -48,12 +48,12 @@ namespace TorchSharp
                 /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
                 /// <param name="reduction">Specifies the reduction to apply to the output</param>
                 /// <returns></returns>
-                public static Loss binary_cross_entropy_loss(TorchTensor? weight = null, Reduction reduction = Reduction.Mean)
+                public static Loss binary_cross_entropy_loss(Tensor? weight = null, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_binary_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -67,12 +67,12 @@ namespace TorchSharp
                 /// <param name="reduction">Specifies the reduction to apply to the output</param>
                 /// <param name="posWeights">A weight of positive examples. Must be a vector with length equal to the number of classes.</param>
                 /// <returns></returns>
-                public static Loss binary_cross_entropy_with_logits_loss(TorchTensor? weight = null, Reduction reduction = Reduction.Mean, TorchTensor? posWeights = null)
+                public static Loss binary_cross_entropy_with_logits_loss(Tensor? weight = null, Reduction reduction = Reduction.Mean, Tensor? posWeights = null)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_binary_cross_entropy_with_logits(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, posWeights?.Handle ?? IntPtr.Zero);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -89,14 +89,14 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static TwoInputLoss cosine_embedding_loss(double margin = 0.0, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input1, TorchTensor input2, TorchTensor target) => {
+                    return (Tensor input1, Tensor input2, Tensor target) => {
                         var res = THSNN_cosine_embedding_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
-                public delegate TorchTensor TwoInputLoss(TorchTensor input1, TorchTensor input2, TorchTensor target);
+                public delegate Tensor TwoInputLoss(Tensor input1, Tensor input2, Tensor target);
 
 
                 [DllImport("LibTorchSharp")]
@@ -114,14 +114,14 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static CTCLoss ctc_loss(long blank = 0, bool zeroInfinity = false, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor log_probs, TorchTensor targets, TorchTensor input_lengths, TorchTensor target_lengths) => {
+                    return (Tensor log_probs, Tensor targets, Tensor input_lengths, Tensor target_lengths) => {
                         var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, zeroInfinity, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
-                public delegate TorchTensor CTCLoss(TorchTensor log_probs, TorchTensor targets, TorchTensor input_lengths, TorchTensor target_lengths);
+                public delegate Tensor CTCLoss(Tensor log_probs, Tensor targets, Tensor input_lengths, Tensor target_lengths);
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_hinge_embedding_loss(IntPtr input, IntPtr trgt, double margin, long reduction);
@@ -136,10 +136,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss hinge_embedding_loss(double margin = 0.0, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input, TorchTensor target) => {
+                    return (Tensor input, Tensor target) => {
                         var res = THSNN_hinge_embedding_loss(input.Handle, target.Handle, margin, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -156,10 +156,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss huber_loss(double delta = 1.0, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input, TorchTensor target) => {
+                    return (Tensor input, Tensor target) => {
                         var res = THSNN_huber_loss(input.Handle, target.Handle, delta, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -169,10 +169,10 @@ namespace TorchSharp
 
                 public static TwoInputLoss margin_ranking_loss(double margin = 0, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input1, TorchTensor input2, TorchTensor target) => {
+                    return (Tensor input1, Tensor input2, Tensor target) => {
                         var res = THSNN_margin_ranking_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -181,38 +181,38 @@ namespace TorchSharp
 
                 public static Loss multilabel_margin_loss(Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input, TorchTensor target) => {
+                    return (Tensor input, Tensor target) => {
                         var res = THSNN_multilabel_margin_loss(input.Handle, target.Handle, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_multilabel_soft_margin_loss(IntPtr input, IntPtr target, IntPtr weight, long reduction);
 
-                public static Loss multilabel_soft_margin_loss(TorchTensor? weight = null, Reduction reduction = Reduction.Mean)
+                public static Loss multilabel_soft_margin_loss(Tensor? weight = null, Reduction reduction = Reduction.Mean)
                 {
                     IntPtr h = (weight is null) ? IntPtr.Zero : weight.Handle;
 
-                    return (TorchTensor input, TorchTensor target) => {
+                    return (Tensor input, Tensor target) => {
                         var res = THSNN_multilabel_soft_margin_loss(input.Handle, target.Handle, h, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_multi_margin_loss(IntPtr input, IntPtr target, long p, double margin, IntPtr weight, long reduction);
 
-                public static Loss multi_margin_loss(int p = 1, double margin = 1.0, TorchTensor? weight = null, Reduction reduction = Reduction.Mean)
+                public static Loss multi_margin_loss(int p = 1, double margin = 1.0, Tensor? weight = null, Reduction reduction = Reduction.Mean)
                 {
                     IntPtr h = (weight is null) ? IntPtr.Zero : weight.Handle;
 
-                    return (TorchTensor input, TorchTensor target) => {
+                    return (Tensor input, Tensor target) => {
                         var res = THSNN_multi_margin_loss(input.Handle, target.Handle, p, margin, h, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -226,10 +226,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss mse_loss(Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_mse_loss(src.Handle, target.Handle, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -243,10 +243,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss l1_loss(Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_l1_loss(src.Handle, target.Handle, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -259,12 +259,12 @@ namespace TorchSharp
                 /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
                 /// <param name="reduction">Specifies the reduction to apply to the output</param>
                 /// <returns></returns>
-                public static Loss nll_loss(TorchTensor? weight = null, Reduction reduction = Reduction.Mean)
+                public static Loss nll_loss(Tensor? weight = null, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_nll_loss(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -281,10 +281,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss poisson_loss(bool logInput = true, bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_poisson_loss(src.Handle, target.Handle, logInput, full, eps, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -299,10 +299,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss kl_div_loss(bool logTarget = true, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_kl_div_loss(src.Handle, target.Handle, (long)reduction, logTarget);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -317,11 +317,11 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss smooth_l1_loss(bool logInput = true, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         // Currently, the 'beta' parameter is being ignored by the native layer, so we just pass the default.
                         var res = THSNN_smooth_l1_loss(src.Handle, target.Handle, (long)reduction, 1.0);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -335,10 +335,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Loss soft_margin_loss(Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor src, TorchTensor target) => {
+                    return (Tensor src, Tensor target) => {
                         var res = THSNN_soft_margin_loss(src.Handle, target.Handle, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
@@ -347,40 +347,40 @@ namespace TorchSharp
 
                 public static TripletMarginLoss triplet_margin_loss(double margin = 1.0, long p = 2, double eps = 1e-06, bool swap = false, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor anchor, TorchTensor positive, TorchTensor negative) => {
+                    return (Tensor anchor, Tensor positive, Tensor negative) => {
                         var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new TorchTensor(res);
+                        return new Tensor(res);
                     };
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_triplet_margin_with_distance_loss(IntPtr anchor, IntPtr positive, IntPtr negative, DistanceFunctionNative? distance_function, double margin, bool swap, long reduction);
 
-                public static TripletMarginLoss triplet_margin_with_distance_loss(Func<TorchTensor, TorchTensor, TorchTensor>? distance = null, double margin = 1.0, bool swap = false, Reduction reduction = Reduction.Mean)
+                public static TripletMarginLoss triplet_margin_with_distance_loss(Func<Tensor, Tensor, Tensor>? distance = null, double margin = 1.0, bool swap = false, Reduction reduction = Reduction.Mean)
                 {
                     if (distance != null) {
-                        return (TorchTensor anchor, TorchTensor positive, TorchTensor negative) => {
+                        return (Tensor anchor, Tensor positive, Tensor negative) => {
                             DistanceFunctionNative func = (IntPtr x, IntPtr y) => {
-                                using (var x1 = new TorchTensor(x))
-                                using (var y1 = new TorchTensor(y))
+                                using (var x1 = new Tensor(x))
+                                using (var y1 = new Tensor(y))
                                     return distance(x1, y1).Handle;
                             };
                             var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new TorchTensor(res);
+                            return new Tensor(res);
                         };
                     } else {
-                        return (TorchTensor anchor, TorchTensor positive, TorchTensor negative) => {
+                        return (Tensor anchor, Tensor positive, Tensor negative) => {
                             var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, null, margin, swap, (long)reduction);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new TorchTensor(res);
+                            return new Tensor(res);
                         };
                     }
 
                 }
 
-                public delegate TorchTensor TripletMarginLoss(TorchTensor anchor, TorchTensor positive, TorchTensor negative);
+                public delegate Tensor TripletMarginLoss(Tensor anchor, Tensor positive, Tensor negative);
 
                 /// <summary>
                 /// Gaussian negative log likelihood loss.
@@ -391,7 +391,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static GaussianNLLLoss gaussian_nll_loss(bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean)
                 {
-                    return (TorchTensor input, TorchTensor target, TorchTensor variance) => {
+                    return (Tensor input, Tensor target, Tensor variance) => {
                         input = input.view(input.shape[0], -1);
                         target = target.view(target.shape[0], -1);
                         if (target.shape == input.shape) throw new ArgumentException("input and target must have the same shape");
@@ -413,7 +413,7 @@ namespace TorchSharp
                     };
                 }
 
-                public delegate TorchTensor GaussianNLLLoss(TorchTensor source, TorchTensor target, TorchTensor variance);
+                public delegate Tensor GaussianNLLLoss(Tensor source, Tensor target, Tensor variance);
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate IntPtr DistanceFunctionNative(IntPtr x, IntPtr y);

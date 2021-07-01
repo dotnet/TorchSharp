@@ -6,8 +6,9 @@ using System.Runtime.InteropServices;
 
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
-using TorchSharp.Tensor;
 using Xunit;
+
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -530,7 +531,7 @@ namespace TorchSharp
                     var optimizer = torch.optim.Optimizer.Adam(seq.parameters());
                     var loss = mse_loss(Reduction.Sum);
 
-                    using (TorchTensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
+                    using (Tensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
                            y = Float32Tensor.randn(new long[] { 64, 10 }, device: device)) {
 
                         float initialLoss = loss(seq.forward(x), y).ToSingle();

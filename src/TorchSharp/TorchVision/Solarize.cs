@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 
 namespace TorchSharp.torchvision
@@ -15,7 +15,7 @@ namespace TorchSharp.torchvision
             this.threshold = threshold;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             using (var inverted = transforms.Invert().forward(input))
                 return input.where(input < threshold, inverted);
