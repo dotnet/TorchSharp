@@ -41,9 +41,9 @@ let cmdArgs = Environment.GetCommandLineArgs()
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1")
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 

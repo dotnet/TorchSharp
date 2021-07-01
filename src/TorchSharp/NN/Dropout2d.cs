@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Dropout2d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -37,7 +37,7 @@ namespace TorchSharp.NN
         static public Dropout2d Dropout2d (double probability = 0.5, bool inPlace = false)
         {
             var handle = THSNN_Dropout2d_ctor (probability, inPlace, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Dropout2d (handle, boxedHandle);
         }
     }

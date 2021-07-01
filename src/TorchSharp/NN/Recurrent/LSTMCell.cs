@@ -30,7 +30,7 @@ namespace TorchSharp.NN
         public (TorchTensor,TorchTensor) forward (TorchTensor input, (TorchTensor, TorchTensor)? h0_c0 = null)
         {
             var hN = THSNN_LSTMCell_forward (handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr cN);
-            if (hN == IntPtr.Zero || cN == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
             return (new TorchTensor(hN), new TorchTensor(cN));
         }
     }
@@ -48,7 +48,7 @@ namespace TorchSharp.NN
         static public LSTMCell LSTMCell (long inputSize, long hiddenSize, bool bias = true)
         {
             var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new LSTMCell (res, boxedHandle);
         }
     }

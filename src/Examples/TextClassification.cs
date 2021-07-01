@@ -39,11 +39,11 @@ namespace TorchSharp.Examples
         static void Main(string[] args)
 
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
             Console.WriteLine($"Running TextClassification on {device.Type.ToString()}");
 
             using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, _dataLocation)) {

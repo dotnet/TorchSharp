@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_AlphaDropout_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -47,7 +47,7 @@ namespace TorchSharp.NN
         static public AlphaDropout AlphaDropout (double probability = 0.5, bool inPlace = false)
         {
             var handle = THSNN_AlphaDropout_ctor (probability, inPlace, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new AlphaDropout(handle, boxedHandle);
         }
     }

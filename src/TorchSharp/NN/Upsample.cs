@@ -24,7 +24,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward(TorchTensor tensor)
         {
             var res = THSNN_Upsample_forward(handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
     }
@@ -52,7 +52,7 @@ namespace TorchSharp.NN
                     fixed (double* pSF = scale_factor) {
                         byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
                         var res = THSNN_Upsample_ctor((IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, out var boxedHandle);
-                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Upsample(res, boxedHandle);
                     }
                 }

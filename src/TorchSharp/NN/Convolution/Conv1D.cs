@@ -31,7 +31,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Conv1d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -43,12 +43,12 @@ namespace TorchSharp.NN
         public TorchTensor? Bias {
             get {
                 var res = THSNN_Conv1d_bias(handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return ((res == IntPtr.Zero) ? null : new TorchTensor(res));
             }
             set {
                 THSNN_Conv1d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             }
         }
         [DllImport("LibTorchSharp")]
@@ -59,12 +59,12 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_Conv1d_weight(handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
             set {
                 THSNN_Conv1d_set_weight(handle, value.Handle);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             }
         }
     }
@@ -90,7 +90,7 @@ namespace TorchSharp.NN
         static public Conv1d Conv1d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
             var res = THSNN_Conv1d_ctor (inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Conv1d (res, boxedHandle);
         }
 
@@ -110,7 +110,7 @@ namespace TorchSharp.NN
         static public Conv1d Conv1d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
             var res = THSNN_Conv1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Conv1d(res, boxedHandle);
         }
     }

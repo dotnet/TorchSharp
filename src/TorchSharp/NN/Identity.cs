@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Identity_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
         static public Identity Identity ()
         {
             var res = THSNN_Identity_ctor (out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Identity (res, boxedHandle);
         }
     }

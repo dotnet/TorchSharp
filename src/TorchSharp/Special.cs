@@ -24,7 +24,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_entr(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -40,7 +40,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_erf(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -56,7 +56,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_erfc(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -72,7 +72,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_erfinv(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -88,7 +88,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_expit(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -104,7 +104,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_expm1(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -120,7 +120,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_exp2(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -136,7 +136,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_gammaln(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -152,7 +152,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_i0e(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -168,7 +168,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_logit(input.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
 
@@ -185,7 +185,7 @@ namespace TorchSharp
         {
             var res = THSSpecial_xlog1py(input.Handle, other.Handle);
             if (res == IntPtr.Zero)
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             return new TorchTensor(res);
         }
     }

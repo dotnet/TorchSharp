@@ -23,7 +23,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_PixelUnshuffle_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
         static public PixelUnshuffle PixelUnshuffle (long downscaleFactor)
         {
             var handle = THSNN_PixelUnshuffle_ctor (downscaleFactor, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new PixelUnshuffle(handle, boxedHandle);
         }
     }

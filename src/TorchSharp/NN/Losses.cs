@@ -30,7 +30,7 @@ namespace TorchSharp.NN
             return (TorchTensor src, TorchTensor target) => {
                 var ii = ignore_index.HasValue ? ignore_index.Value : -100;
                 var res = THSNN_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -48,7 +48,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_binary_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -67,7 +67,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_binary_cross_entropy_with_logits(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, posWeights?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -87,7 +87,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor input1, TorchTensor input2, TorchTensor target) => {
                 var res = THSNN_cosine_embedding_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -112,7 +112,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor log_probs, TorchTensor targets, TorchTensor input_lengths, TorchTensor target_lengths) => {
                 var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, zeroInfinity, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -134,7 +134,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor input, TorchTensor target) => {
                 var res = THSNN_hinge_embedding_loss(input.Handle, target.Handle, margin, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -154,7 +154,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor input, TorchTensor target) => {
                 var res = THSNN_huber_loss(input.Handle, target.Handle, delta, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -167,7 +167,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor input1, TorchTensor input2, TorchTensor target) => {
                 var res = THSNN_margin_ranking_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -179,7 +179,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor input, TorchTensor target) => {
                 var res = THSNN_multilabel_margin_loss(input.Handle, target.Handle, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -193,7 +193,7 @@ namespace TorchSharp.NN
 
             return (TorchTensor input, TorchTensor target) => {
                 var res = THSNN_multilabel_soft_margin_loss(input.Handle, target.Handle, h, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -207,7 +207,7 @@ namespace TorchSharp.NN
 
             return (TorchTensor input, TorchTensor target) => {
                 var res = THSNN_multi_margin_loss(input.Handle, target.Handle, p, margin, h, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -224,7 +224,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_mse_loss(src.Handle, target.Handle, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -241,7 +241,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_l1_loss(src.Handle, target.Handle, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -259,7 +259,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_nll_loss(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -279,7 +279,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_poisson_loss(src.Handle, target.Handle, logInput, full, eps, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -297,7 +297,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_kl_div_loss(src.Handle, target.Handle, (long)reduction, logTarget);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -316,7 +316,7 @@ namespace TorchSharp.NN
             return (TorchTensor src, TorchTensor target) => {
                 // Currently, the 'beta' parameter is being ignored by the native layer, so we just pass the default.
                 var res = THSNN_smooth_l1_loss(src.Handle, target.Handle, (long)reduction, 1.0);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -333,7 +333,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor src, TorchTensor target) => {
                 var res = THSNN_soft_margin_loss(src.Handle, target.Handle, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -345,7 +345,7 @@ namespace TorchSharp.NN
         {
             return (TorchTensor anchor, TorchTensor positive, TorchTensor negative) => {
                 var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             };
         }
@@ -363,13 +363,13 @@ namespace TorchSharp.NN
                             return distance(x1, y1).Handle;
                     };
                     var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 };
             } else {
                 return (TorchTensor anchor, TorchTensor positive, TorchTensor negative) => {
                     var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, null, margin, swap, (long)reduction);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 };
             }

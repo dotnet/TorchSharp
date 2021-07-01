@@ -204,7 +204,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }
@@ -223,7 +223,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }
@@ -242,7 +242,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_vstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }
@@ -263,7 +263,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_column_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }
@@ -282,7 +282,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_row_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }
@@ -302,7 +302,7 @@ namespace TorchSharp.Tensor
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
                 var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
         }

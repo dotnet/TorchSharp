@@ -30,7 +30,7 @@ namespace TorchSharp.NN
         public TorchTensor forward (TorchTensor input, TorchTensor? h0 = null)
         {
             var hN = THSNN_RNNCell_forward (handle, input.Handle, h0?.Handle ?? IntPtr.Zero);
-            if (hN == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (hN == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(hN);
         }
     }
@@ -50,7 +50,7 @@ namespace TorchSharp.NN
         static public RNNCell RNNCell (long inputSize, long hiddenSize, RNN.NonLinearities nonLinearity = NN.RNN.NonLinearities.Tanh, bool bias = true)
         {
             var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new RNNCell (res, boxedHandle);
         }
     }

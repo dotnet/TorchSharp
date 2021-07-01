@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_AvgPool3d_forward (handle.DangerousGetHandle (), tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides) {
                     var handle = THSNN_AvgPool3d_ctor ((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new AvgPool3d (handle, boxedHandle);
                 }
             }

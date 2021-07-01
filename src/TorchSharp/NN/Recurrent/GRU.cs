@@ -26,7 +26,7 @@ namespace TorchSharp.NN
         public (TorchTensor,TorchTensor) forward (TorchTensor input, TorchTensor? h0 = null)
         {
             var res = THSNN_GRU_forward (handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
-            if (res == IntPtr.Zero || hN == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
             return (new TorchTensor (res), new TorchTensor(hN));
         }
     }
@@ -49,7 +49,7 @@ namespace TorchSharp.NN
         static public GRU GRU (long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
         {
             var res = THSNN_GRU_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new GRU (res, boxedHandle);
         }
     }

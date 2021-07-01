@@ -60,10 +60,10 @@ namespace TorchSharp.Examples
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
-            Torch.SetSeed(1);
+            var _ = torch.random.manual_seed(1);
 
             //var device = Device.CPU;
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
             Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.Type.ToString()}\n");
             Console.WriteLine($"Dataset: {dataset}");
 

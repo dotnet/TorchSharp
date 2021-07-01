@@ -23,7 +23,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_ConstantPad3d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -41,7 +41,7 @@ namespace TorchSharp.NN
         static public ConstantPad3d ConstantPad3d(long padding, double value)
         {
             var handle = THSNN_ConstantPad3d_ctor(value, padding, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new ConstantPad3d(handle, boxedHandle);
         }
     }

@@ -21,7 +21,7 @@ namespace TorchSharp
         {
             // TorchTensor.DataItem gives a hard crash on GPU tensor
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var scalar = Float32Tensor.from(3.14f, Device.CUDA);
                 Assert.Throws<InvalidOperationException>(() => scalar.DataItem<float>());
                 var tensor = Float32Tensor.zeros(new long[] { 10, 10 }, Device.CUDA);

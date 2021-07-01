@@ -106,7 +106,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this byte value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_uint8_to_scalar(value));
         }
 
@@ -115,7 +115,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this sbyte value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_int8_to_scalar(value));
         }
 
@@ -124,7 +124,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this short value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_int16_to_scalar(value));
         }
 
@@ -133,7 +133,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this int value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_int32_to_scalar(value));
         }
 
@@ -142,7 +142,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this long value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_int64_to_scalar(value));
         }
 
@@ -151,7 +151,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this float value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_float32_to_scalar(value));
         }
 
@@ -160,7 +160,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this double value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_float64_to_scalar(value));
         }
 
@@ -169,7 +169,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this (float, float) value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_complex32_to_scalar(value.Item1, value.Item2));
         }
 
@@ -178,7 +178,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this System.Numerics.Complex value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_complex64_to_scalar(value.Real, value.Imaginary));
         }
 
@@ -187,7 +187,7 @@ namespace TorchSharp
 
         public static TorchScalar ToScalar(this bool value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_bool_to_scalar(value));
         }
 
@@ -196,7 +196,7 @@ namespace TorchSharp
 
         public static TorchScalar ToFloat16Scalar(this float value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_float16_to_scalar(value));
         }
 
@@ -205,7 +205,7 @@ namespace TorchSharp
 
         public static TorchScalar ToBFloat16Scalar(this float value)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             return new TorchScalar(THSTorch_bfloat16_to_scalar(value));
         }
 
@@ -282,7 +282,7 @@ namespace TorchSharp
 
             using (var pa = new PinnedArray<float>()) {
                 THSTorch_scalar_to_complex32(value.Handle, pa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 floatArray = pa.Array;
             }
 
@@ -298,7 +298,7 @@ namespace TorchSharp
 
             using (var pa = new PinnedArray<double>()) {
                 THSTorch_scalar_to_complex64(value.Handle, pa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 floatArray = pa.Array;
             }
 

@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {
             var res = THSNN_PairwiseDistance_forward (handle, input1.Handle, input2.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
         static public PairwiseDistance PairwiseDistance (double p = 2.0, double eps = 1e-6, bool keep_dim = false)
         {
             var handle = THSNN_PairwiseDistance_ctor(p, eps, keep_dim, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new PairwiseDistance (handle, boxedHandle);
         }
     }

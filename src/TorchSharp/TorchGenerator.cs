@@ -21,18 +21,18 @@ namespace TorchSharp
         public TorchTensor State {
             get {
                 var res = THSGenerator_get_rng_state(Handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
             set {
                 THSGenerator_set_rng_state(Handle, value.Handle);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             } 
         }
 
         public TorchGenerator ManualSeed(long seed)
         {
-            Torch.TryInitializeDeviceType(DeviceType.CUDA);
+            torch.TryInitializeDeviceType(DeviceType.CUDA);
             THSGenerator_gen_manual_seed(Handle, seed);
             return this;
         }
@@ -40,7 +40,7 @@ namespace TorchSharp
         public long Seed()
         {
             long seed = DateTime.UtcNow.Ticks;
-            Torch.TryInitializeDeviceType(DeviceType.CUDA);
+            torch.TryInitializeDeviceType(DeviceType.CUDA);
             THSGenerator_gen_manual_seed(Handle, seed);
             return seed;
         }

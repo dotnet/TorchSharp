@@ -100,7 +100,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
             var res = THSNN_RMSprop_ctor(paramsRef, parray.Array.Length, learningRate, alpha, eps, weight_decay, momentum, centered);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new RMSPropOptimizer(res, learningRate);
         }
 
@@ -126,7 +126,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
             var res = THSNN_Adam_ctor (paramsRef, parray.Array.Length, learningRate, beta1, beta2, eps, weight_decay, amsgrad);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new AdamOptimizer (res, learningRate);
         }
 
@@ -152,7 +152,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
             var res = THSNN_AdamW_ctor(paramsRef, parray.Array.Length, learningRate, beta1, beta2, eps, weight_decay, amsgrad);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new AdamWOptimizer(res, learningRate);
         }
 
@@ -177,7 +177,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
             var res = THSNN_Adagrad_ctor(paramsRef, parray.Array.Length, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new AdagradOptimizer(res, learningRate);
         }
 
@@ -200,7 +200,7 @@ namespace TorchSharp.NN
             IntPtr paramsRef = parray.CreateArray (parameters.Select (p => p.Handle).ToArray ());
 
             var res = THSNN_SGD_ctor (paramsRef, parray.Array.Length, learningRate, momentum, dampening, weight_decay, nesterov);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new SGDOptimizer(res, learningRate);
         }
 
@@ -210,7 +210,7 @@ namespace TorchSharp.NN
         public void zero_grad ()
         {
             THSNN_Optimizer_zero_grad (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -219,7 +219,7 @@ namespace TorchSharp.NN
         public void step ()
         {
             THSNN_Optimizer_step (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -231,7 +231,7 @@ namespace TorchSharp.NN
 
             using (var pa = new PinnedArray<IntPtr> ()) {
                 THSNN_Optimizer_getParameters (handle, pa.CreateArray);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
                 ptrArray = pa.Array;
             }
             return ptrArray.Select (x => new TorchTensor (x));
@@ -255,7 +255,7 @@ namespace TorchSharp.NN
 
         public double LearningRate {
             get { return _rate; }
-            set { THSNN_Adagrad_set_lr(handle, value); Torch.CheckForErrors(); }
+            set { THSNN_Adagrad_set_lr(handle, value); torch.CheckForErrors(); }
         }
 
         private double _rate;
@@ -273,7 +273,7 @@ namespace TorchSharp.NN
 
         public double LearningRate {
             get { return _rate; }
-            set { THSNN_Adam_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+            set { THSNN_Adam_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
         }
 
         private double _rate;
@@ -291,7 +291,7 @@ namespace TorchSharp.NN
 
         public double LearningRate {
             get { return _rate; }
-            set { THSNN_AdamW_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+            set { THSNN_AdamW_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
         }
 
         private double _rate;
@@ -309,7 +309,7 @@ namespace TorchSharp.NN
 
         public double LearningRate {
             get { return _rate; }
-            set { THSNN_RMSprop_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+            set { THSNN_RMSprop_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
         }
 
         private double _rate;
@@ -327,7 +327,7 @@ namespace TorchSharp.NN
 
         public double LearningRate {
             get { return _rate; }
-            set { THSNN_SGD_set_lr(handle, value); Torch.CheckForErrors(); _rate = value; }
+            set { THSNN_SGD_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
         }
 
         private double _rate;

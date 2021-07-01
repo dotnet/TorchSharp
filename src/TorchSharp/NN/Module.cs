@@ -107,9 +107,9 @@ namespace TorchSharp.NN
         /// <returns></returns>
         public Module to(DeviceType deviceType, int deviceIndex = -1)
         {
-            Torch.InitializeDeviceType(deviceType);
+            torch.InitializeDeviceType(deviceType);
             THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
-            Torch.CheckForErrors();
+            torch.CheckForErrors();
             return this;
         }
 
@@ -169,7 +169,7 @@ namespace TorchSharp.NN
         public static Module Load(String location)
         {
             var handle = THSNN_Module_load (location);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Module (handle, IntPtr.Zero);
         }
 
@@ -187,7 +187,7 @@ namespace TorchSharp.NN
         public virtual void Train ()
         {
             THSNN_Module_train (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -196,7 +196,7 @@ namespace TorchSharp.NN
         public virtual void Eval ()
         {
             THSNN_Module_eval (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -205,7 +205,7 @@ namespace TorchSharp.NN
         public bool IsTraining ()
         {
             var res = THSNN_Module_is_training (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
             return res;
         }
 
@@ -215,7 +215,7 @@ namespace TorchSharp.NN
         public virtual void ZeroGrad ()
         {
             THSNN_Module_zero_grad (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -229,7 +229,7 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr> ())
             using (var sa = new PinnedArray<IntPtr> ()) {
                 THSNN_Module_get_named_parameters (handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
@@ -248,7 +248,7 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr>())
             using (var sa = new PinnedArray<IntPtr>()) {
                 THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
@@ -266,7 +266,7 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr>())
             using (var sa = new PinnedArray<IntPtr>()) {
                 THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
@@ -285,7 +285,7 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr>())
             using (var sa = new PinnedArray<IntPtr>()) {
                 THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 ptrArray = pa.Array;
                 strArray = sa.Array;
             }
@@ -302,12 +302,12 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr>())
             using (var sa = new PinnedArray<IntPtr>()) {
                 THSNN_Module_get_named_parameters(handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 ptrArray.AddRange(pa.Array);
                 strArray.AddRange(sa.Array);
 
                 THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
                 ptrArray.AddRange(pa.Array);
                 strArray.AddRange(sa.Array);
             }
@@ -330,7 +330,7 @@ namespace TorchSharp.NN
             using (var pa = new PinnedArray<IntPtr> ()) {
                 AllocatePinnedArray allocator = pa.CreateArray;
                 THSNN_Module_get_parameters (handle, allocator);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
                 ptrArray = pa.Array;
             }
             return ptrArray.Select(x => new TorchTensor (x)).ToArray();
@@ -342,7 +342,7 @@ namespace TorchSharp.NN
         public bool HasParameter (string name)
         {
             var res = THSNN_Module_has_parameter (handle, name);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
             return res;
         }
 
@@ -352,7 +352,7 @@ namespace TorchSharp.NN
         public TorchTensor GetParameter (string name)
         {
             var parameter = THSNN_Module_get_parameter (handle, name);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
 
             if (parameter == IntPtr.Zero) {
                 throw new ArgumentNullException ("Linear module without bias term.");
@@ -367,7 +367,7 @@ namespace TorchSharp.NN
         public virtual void RegisterBuffer(string name, TorchTensor tensor)
         {
             THSNN_Module_register_buffer(handle, name, tensor.handle);
-            Torch.CheckForErrors();
+            torch.CheckForErrors();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -376,7 +376,7 @@ namespace TorchSharp.NN
         public virtual void RegisterModule (string name, Module submodule)
         {
             THSNN_Module_register_module (handle, name, submodule.handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         [DllImport ("LibTorchSharp")]
@@ -390,12 +390,12 @@ namespace TorchSharp.NN
         internal virtual Module[] GetModulesInternal ()
         {
             var numModules = THSNN_Module_children_size (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
             Module[] result = new Module[numModules];
 
             for (int i = 0; i < numModules; i++) {
                 var childHandle = THSNN_Module_child (handle, i);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
                 result[i] = new Module (childHandle, null, ownsHandle: false);
             }
 
@@ -409,7 +409,7 @@ namespace TorchSharp.NN
         public virtual string GetName ()
         {
             var res = THSNN_Module_name (handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
             return res;
         }
 
@@ -565,7 +565,7 @@ namespace TorchSharp.NN
 
             ForwardFunctionC forwardNative = t => (forward (new TorchTensor (t)).Handle);
             var res = THSNN_custom_module (name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
             this.handle = new HType (res, true);
             this.forwardNative = forwardNative;
             this.boxedModule = new BoxedModule(boxedHandle);

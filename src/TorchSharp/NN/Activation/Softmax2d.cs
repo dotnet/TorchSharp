@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Softmax2d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
         static public Softmax2d Softmax2d()
         {
             var handle = THSNN_Softmax2d_ctor(out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Softmax2d (handle, boxedHandle);
         }
     }

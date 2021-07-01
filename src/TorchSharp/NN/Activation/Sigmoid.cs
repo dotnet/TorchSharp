@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Sigmoid_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
         static public Sigmoid Sigmoid ()
         {
             var handle = THSNN_Sigmoid_ctor (out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Sigmoid (handle, boxedHandle);
         }
     }

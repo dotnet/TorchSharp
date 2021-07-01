@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_RReLU_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -43,7 +43,7 @@ namespace TorchSharp.NN
         static public RReLU RReLU(double lower = one_eighth, double upper = one_third, bool inPlace = false)
         {
             var handle = THSNN_RReLU_ctor (lower, upper, inPlace, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new RReLU (handle, boxedHandle);
         }
 

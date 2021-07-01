@@ -95,7 +95,7 @@ namespace TorchSharp
         public void CreateFloat16TensorZeros()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = Float16Tensor.zeros(shape, device: device);
@@ -110,7 +110,7 @@ namespace TorchSharp
         public void CreateBFloat16TensorZeros()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = BFloat16Tensor.zeros(shape, device: device);
@@ -211,7 +211,7 @@ namespace TorchSharp
         public void CreateFloat16TensorEmpty()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = Float16Tensor.empty(shape, device: device);
@@ -224,7 +224,7 @@ namespace TorchSharp
         public void CreateBFloat16TensorEmpty()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = BFloat16Tensor.empty(shape, device: device);
@@ -307,7 +307,7 @@ namespace TorchSharp
         public void CreateFloat16TensorOnes()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = Float16Tensor.ones(shape, device: device);
@@ -322,7 +322,7 @@ namespace TorchSharp
         public void CreateBFloat16TensorOnes()
         {
             foreach (var device in new Device[] { Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var shape = new long[] { 2, 2 };
 
                     TorchTensor t = BFloat16Tensor.ones(shape, device: device);
@@ -1597,7 +1597,7 @@ namespace TorchSharp
             TorchTensor cpu = Float32Tensor.ones(new long[] { 2, 2 });
             Assert.Equal("cpu", cpu.device);
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var cuda = cpu.cuda();
                 Assert.Equal("cuda:0", cuda.device);
 
@@ -1617,7 +1617,7 @@ namespace TorchSharp
         [Fact]
         public void CopyCudaToCpu()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var cuda = Float32Tensor.ones(new long[] { 2, 2 }, Device.CUDA);
                 Assert.Equal("cuda:0", cuda.device);
 
@@ -1662,7 +1662,7 @@ namespace TorchSharp
         [Fact]
         public void TestCatCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var zeros = Float32Tensor.zeros(new long[] { 1, 9 }).cuda();
                 var ones = Float32Tensor.ones(new long[] { 1, 9 }).cuda();
                 var centroids = new TorchTensor[] { zeros, ones }.cat(0);
@@ -1686,7 +1686,7 @@ namespace TorchSharp
         [Fact]
         public void TestCopyCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var first = Float32Tensor.rand(new long[] { 1, 9 }).cuda();
                 var second = Float32Tensor.zeros(new long[] { 1, 9 }).cuda();
 
@@ -1761,7 +1761,7 @@ namespace TorchSharp
         {
             var input = Float64Tensor.rand(new long[] { 128 }, Device.CPU);
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 var moved = input.to(ScalarType.Float32, Device.CUDA);
                 Assert.Equal(ScalarType.Float32, moved.Type);
                 Assert.Equal(DeviceType.CUDA, moved.device_type);
@@ -1809,7 +1809,7 @@ namespace TorchSharp
         [Fact]
         public void TestStackCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 TestStackGen(Device.CUDA);
             }
         }
@@ -2214,7 +2214,7 @@ namespace TorchSharp
             // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
             // Float16 arange_cpu not available on cuda in LibTorch 1.8.0
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2262,7 +2262,7 @@ namespace TorchSharp
             // BFloat16 arange_cuda not available on cuda in LibTorch 1.8.0
             // BFloat16 arange_cpu not available on cuda in LibTorch 1.8.0
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c2 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
                     var c3 = Float16Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2308,7 +2308,7 @@ namespace TorchSharp
         public void TestArithmeticOperatorsFloat32()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2354,7 +2354,7 @@ namespace TorchSharp
         public void TestArithmeticOperatorsComplexFloat32()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = ComplexFloat32Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2400,7 +2400,7 @@ namespace TorchSharp
         public void TestArithmeticOperatorsFloat64()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float64Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float64Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2446,7 +2446,7 @@ namespace TorchSharp
         public void TestArithmeticOperatorsComplexFloat64()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = ComplexFloat64Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = ComplexFloat64Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = ComplexFloat64Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2492,7 +2492,7 @@ namespace TorchSharp
         public void TestComparisonOperatorsFloat32()
         {
             foreach (var device in new Device[] { Device.CPU, Device.CUDA }) {
-                if (device.Type != DeviceType.CUDA || Torch.IsCudaAvailable()) {
+                if (device.Type != DeviceType.CUDA || torch.cuda.is_available()) {
                     var c1 = Float32Tensor.arange(0, 10, device: device).expand(new long[] { 10, 10 });
                     var c2 = Float32Tensor.arange(10, 0, -1, device: device).expand(new long[] { 10, 10 });
                     var c3 = Float32Tensor.ones(new long[] { 10, 10 }, device: device);
@@ -2698,7 +2698,7 @@ namespace TorchSharp
         [Fact]
         public void TestMmCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 TestMmGen(Device.CUDA);
             }
         }
@@ -2737,7 +2737,7 @@ namespace TorchSharp
         [Fact]
         public void TestMVCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 TestMVGen(Device.CUDA);
             }
         }
@@ -2751,7 +2751,7 @@ namespace TorchSharp
         [Fact]
         public void TestAddMVCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 TestAddMVGen(Device.CUDA);
             }
         }
@@ -2801,7 +2801,7 @@ namespace TorchSharp
         [Fact]
         public void TestAddRCuda()
         {
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 TestAddRGen(Device.CUDA);
             }
         }
@@ -3942,12 +3942,12 @@ namespace TorchSharp
             var t1t = Float32Tensor.from(t1raw, new long[] { 3, 4, 5 });
             var t2t = Float32Tensor.from(t2raw, new long[] { 2, 4, 3 });
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
             var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
 
@@ -4004,12 +4004,12 @@ namespace TorchSharp
             var t1t = Float32Tensor.from(t1raw, new long[] { 2, 3, 4 });
             var t2t = Float32Tensor.from(t2raw, new long[] { 2, 3, 2 });
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
             var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
 
@@ -4071,12 +4071,12 @@ namespace TorchSharp
             var t1t = Float32Tensor.from(t1raw, new long[] { 3, 4, 5 }); //.cuda();
             var t2t = Float32Tensor.from(t2raw, new long[] { 2, 4, 3 }); //.cuda();
 
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
             var t3p2d3 = t1t.conv1d(t2t, padding: 2, dilation: 3);
-            if (Torch.IsCudaAvailable()) {
+            if (torch.cuda.is_available()) {
                 t3p2d3 = t3p2d3.cpu();
             }
 

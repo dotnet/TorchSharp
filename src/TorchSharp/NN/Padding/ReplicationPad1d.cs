@@ -23,7 +23,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_ReplicationPad1d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
         static public ReplicationPad1d ReplicationPad1d(long padding)
         {
             var handle = THSNN_ReplicationPad1d_ctor(padding, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new ReplicationPad1d(handle, boxedHandle);
         }
     }

@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Flatten_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
         static public Flatten Flatten (long startDim = 1, long endDim = -1)
         {
             var handle = THSNN_Flatten_ctor (startDim, endDim, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Flatten (handle, boxedHandle);
         }
     }

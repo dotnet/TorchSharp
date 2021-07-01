@@ -34,7 +34,7 @@ namespace TorchSharp.NN
                 src.Handle,
                 src_mask?.Handle ?? IntPtr.Zero,
                 src_key_padding_mask?.Handle ?? IntPtr.Zero);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
     }
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         static public TransformerEncoder TransformerEncoder (TransformerEncoderLayer encoder_layer, long num_layers)
         {
             var res = THSNN_TransformerEncoder_ctor (encoder_layer.handle, num_layers, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TransformerEncoder (res, boxedHandle);
         }
     }

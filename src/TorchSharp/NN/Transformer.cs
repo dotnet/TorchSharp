@@ -44,7 +44,7 @@ namespace TorchSharp.NN
                 src_key_padding_mask?.Handle ?? IntPtr.Zero,
                 tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                 memory_key_padding_mask?.Handle ?? IntPtr.Zero);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -68,7 +68,7 @@ namespace TorchSharp.NN
         static public Transformer Transformer (long d_model = 512, long nhead = 8, long num_encoder_layers = 6, long num_decoder_layers = 6, long dim_feedforward = 2048, double dropout = 0.1, Transformer.Activations activation = NN.Transformer.Activations.ReLU)
         {
             var res = THSNN_Transformer_ctor (d_model, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, dropout, (long)activation, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Transformer (res, boxedHandle);
         }
     }

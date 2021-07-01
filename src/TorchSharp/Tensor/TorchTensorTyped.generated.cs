@@ -31,7 +31,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -39,7 +39,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -68,7 +68,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -76,7 +76,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -88,7 +88,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -100,7 +100,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -146,7 +146,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -158,7 +158,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -204,7 +204,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -216,7 +216,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -262,7 +262,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -274,7 +274,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -288,7 +288,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -300,7 +300,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -346,7 +346,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
@@ -355,7 +355,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -367,7 +367,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -379,7 +379,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -396,9 +396,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(byte scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newByteScalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -411,7 +411,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(byte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -431,7 +431,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Byte, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -486,7 +486,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -498,7 +498,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Byte, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -526,7 +526,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -534,7 +534,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -563,7 +563,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -571,7 +571,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -583,7 +583,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -595,7 +595,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -641,7 +641,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -653,7 +653,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -699,7 +699,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -711,7 +711,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -757,7 +757,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -769,7 +769,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -783,7 +783,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -795,7 +795,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -841,7 +841,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
@@ -850,7 +850,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -862,7 +862,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -874,7 +874,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -891,9 +891,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(sbyte scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newInt8Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -906,7 +906,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(sbyte[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -926,7 +926,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int8, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -981,7 +981,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -993,7 +993,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int8, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1021,7 +1021,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -1029,7 +1029,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -1058,7 +1058,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -1066,7 +1066,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -1078,7 +1078,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1090,7 +1090,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1136,7 +1136,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1148,7 +1148,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1194,7 +1194,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1206,7 +1206,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1252,7 +1252,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1264,7 +1264,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1278,7 +1278,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1290,7 +1290,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1336,7 +1336,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
@@ -1345,7 +1345,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -1357,7 +1357,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1369,7 +1369,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1386,9 +1386,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(short scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newInt16Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -1401,7 +1401,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(short[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -1421,7 +1421,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int16, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -1476,7 +1476,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1488,7 +1488,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1516,7 +1516,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -1524,7 +1524,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -1553,7 +1553,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -1561,7 +1561,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -1573,7 +1573,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1585,7 +1585,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1631,7 +1631,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1643,7 +1643,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1689,7 +1689,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1701,7 +1701,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1747,7 +1747,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1759,7 +1759,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1773,7 +1773,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1785,7 +1785,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1831,7 +1831,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
@@ -1840,7 +1840,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -1852,7 +1852,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1864,7 +1864,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -1881,9 +1881,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(int scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newInt32Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -1896,7 +1896,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(int[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -1916,7 +1916,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Int32, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -1971,7 +1971,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -1983,7 +1983,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2011,7 +2011,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -2019,7 +2019,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -2048,7 +2048,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -2056,7 +2056,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -2068,7 +2068,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2080,7 +2080,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2126,7 +2126,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2138,7 +2138,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2184,7 +2184,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2196,7 +2196,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2242,7 +2242,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2254,7 +2254,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2268,7 +2268,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2280,7 +2280,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2326,7 +2326,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
@@ -2335,7 +2335,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -2347,7 +2347,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2359,7 +2359,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2376,9 +2376,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(long scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newInt64Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -2391,7 +2391,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(long[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -2411,7 +2411,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_newInt64(dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -2466,7 +2466,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2478,7 +2478,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Int64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2506,7 +2506,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -2514,7 +2514,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -2543,7 +2543,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -2551,7 +2551,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -2563,7 +2563,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2575,7 +2575,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2621,7 +2621,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2633,7 +2633,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2679,7 +2679,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2691,7 +2691,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2737,7 +2737,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2749,7 +2749,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2763,7 +2763,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2775,7 +2775,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2821,7 +2821,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
@@ -2830,7 +2830,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -2842,7 +2842,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2854,7 +2854,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2869,7 +2869,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2881,7 +2881,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2927,7 +2927,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -2939,7 +2939,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -2985,7 +2985,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -2993,7 +2993,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3005,7 +3005,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3013,7 +3013,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3025,7 +3025,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3033,7 +3033,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3045,7 +3045,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3053,7 +3053,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
         [DllImport("LibTorchSharp")]
@@ -3064,7 +3064,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3072,7 +3072,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3084,7 +3084,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3092,7 +3092,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3104,7 +3104,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3112,7 +3112,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3124,7 +3124,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3132,7 +3132,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3144,7 +3144,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3152,7 +3152,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3164,9 +3164,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(float scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newFloat16Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -3179,7 +3179,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new Int16[rawArray.Length];
             unsafe
             {
@@ -3201,7 +3201,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_newFloat16((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(handle);
                 }
             }
@@ -3257,7 +3257,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3269,7 +3269,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3297,7 +3297,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3305,7 +3305,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3334,7 +3334,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3342,7 +3342,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -3354,7 +3354,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3366,7 +3366,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3412,7 +3412,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3424,7 +3424,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3470,7 +3470,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3482,7 +3482,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3528,7 +3528,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3540,7 +3540,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3554,7 +3554,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3566,7 +3566,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3612,7 +3612,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
@@ -3621,7 +3621,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3633,7 +3633,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3645,7 +3645,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3660,7 +3660,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3672,7 +3672,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3718,7 +3718,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -3730,7 +3730,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -3776,7 +3776,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3784,7 +3784,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3796,7 +3796,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3804,7 +3804,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3816,7 +3816,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3824,7 +3824,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3836,7 +3836,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3844,7 +3844,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
         [DllImport("LibTorchSharp")]
@@ -3855,7 +3855,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3863,7 +3863,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3875,7 +3875,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3883,7 +3883,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3895,7 +3895,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3903,7 +3903,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3915,7 +3915,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3923,7 +3923,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3935,7 +3935,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -3943,7 +3943,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -3955,9 +3955,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(float scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newBFloat16Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -3970,7 +3970,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new Int16[rawArray.Length];
             unsafe
             {
@@ -3992,7 +3992,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_newBFloat16((IntPtr)pRawArray, dataArrayAddr, deleter, dimensions, dimensions.Length, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(handle);
                 }
             }
@@ -4048,7 +4048,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4060,7 +4060,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.BFloat16, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4088,7 +4088,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4096,7 +4096,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4125,7 +4125,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4133,7 +4133,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -4145,7 +4145,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4157,7 +4157,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4203,7 +4203,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4215,7 +4215,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4261,7 +4261,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4273,7 +4273,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4319,7 +4319,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4331,7 +4331,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4345,7 +4345,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4357,7 +4357,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4403,7 +4403,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
@@ -4412,7 +4412,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4424,7 +4424,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4436,7 +4436,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4451,7 +4451,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4463,7 +4463,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4509,7 +4509,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4521,7 +4521,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4567,7 +4567,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4575,7 +4575,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4587,7 +4587,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4595,7 +4595,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4607,7 +4607,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor linspace(float start, float end, long steps, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4615,7 +4615,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4627,7 +4627,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor logspace(float start, float end, long steps, float @base = 10, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4635,7 +4635,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
         [DllImport("LibTorchSharp")]
@@ -4646,7 +4646,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4654,7 +4654,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4666,7 +4666,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4674,7 +4674,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4686,7 +4686,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4694,7 +4694,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4706,7 +4706,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4714,7 +4714,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4726,7 +4726,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4734,7 +4734,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4746,9 +4746,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(float scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newFloat32Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -4761,7 +4761,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(float[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -4781,7 +4781,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Float32, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -4836,7 +4836,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4848,7 +4848,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4876,7 +4876,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4884,7 +4884,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -4913,7 +4913,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -4921,7 +4921,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -4933,7 +4933,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -4945,7 +4945,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -4991,7 +4991,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5003,7 +5003,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5049,7 +5049,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5061,7 +5061,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5107,7 +5107,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5119,7 +5119,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5133,7 +5133,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5145,7 +5145,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5191,7 +5191,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
@@ -5200,7 +5200,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5212,7 +5212,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5224,7 +5224,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5239,7 +5239,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5251,7 +5251,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5297,7 +5297,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5309,7 +5309,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5355,7 +5355,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor fftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5363,7 +5363,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_fftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5375,7 +5375,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rfftfreq(long n, double d = 1.0, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5383,7 +5383,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_rfftfreq (n, d, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5395,7 +5395,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor linspace(double start, double end, long steps, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5403,7 +5403,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace (start, end, steps, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5415,7 +5415,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor logspace(double start, double end, long steps, double @base = 10, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5423,7 +5423,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace (start, end, steps, @base, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
         [DllImport("LibTorchSharp")]
@@ -5434,7 +5434,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor bartlett_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5442,7 +5442,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_bartlett_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5454,7 +5454,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor blackman_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5462,7 +5462,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_blackman_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5474,7 +5474,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hamming_window(long len, bool periodic = true, double alpha = 0.54f, double beta = 0.46f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5482,7 +5482,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hamming_window (len, periodic, alpha, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5494,7 +5494,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor hann_window(long len, bool periodic = true, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5502,7 +5502,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_hann_window (len, periodic, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5514,7 +5514,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor kaiser_window(long len, bool periodic = true, double beta = 12.0f, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5522,7 +5522,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_kaiser_window (len, periodic, beta, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5534,9 +5534,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(double scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newFloat64Scalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -5549,7 +5549,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(double[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -5569,7 +5569,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Float64, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -5624,7 +5624,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5636,7 +5636,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Float64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5681,7 +5681,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -5689,7 +5689,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -5701,7 +5701,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5713,7 +5713,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5759,7 +5759,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5771,7 +5771,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5817,7 +5817,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5829,7 +5829,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5875,7 +5875,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5887,7 +5887,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5901,7 +5901,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5913,7 +5913,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -5959,7 +5959,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
@@ -5968,7 +5968,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -5981,7 +5981,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -5993,7 +5993,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6039,7 +6039,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6051,7 +6051,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6100,7 +6100,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from((float Real, float Imaginary)[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new float[rawArray.Length * 2];
             for (var i = 0; i < rawArray.Length; i++) {
                 dataArray[i*2] = rawArray[i].Real;
@@ -6124,7 +6124,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.ComplexFloat32, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -6179,7 +6179,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6191,7 +6191,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6236,7 +6236,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -6244,7 +6244,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -6256,7 +6256,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6268,7 +6268,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6314,7 +6314,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6326,7 +6326,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6372,7 +6372,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6384,7 +6384,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6430,7 +6430,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6442,7 +6442,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6456,7 +6456,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6468,7 +6468,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6514,7 +6514,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
@@ -6523,7 +6523,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -6536,7 +6536,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor rand(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6548,7 +6548,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6594,7 +6594,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randn(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6606,7 +6606,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn ((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6655,7 +6655,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(System.Numerics.Complex[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = new double[rawArray.Length * 2];
             for (var i = 0; i < rawArray.Length; i++) {
                 dataArray[i*2] = rawArray[i].Real;
@@ -6679,7 +6679,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.ComplexFloat64, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -6734,7 +6734,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6746,7 +6746,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6774,7 +6774,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -6782,7 +6782,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange (start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -6811,7 +6811,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randperm(long n, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             var handle = THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
             if (handle == IntPtr.Zero) {
@@ -6819,7 +6819,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_randperm (n, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 		
@@ -6831,7 +6831,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor zeros(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6843,7 +6843,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_zeros ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6889,7 +6889,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor ones(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6901,7 +6901,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -6947,7 +6947,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty(long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -6959,7 +6959,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty ((IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -7005,7 +7005,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor empty_strided(long[] size, long[] strides, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -7017,7 +7017,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided ((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -7031,7 +7031,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor full(long[] size, TorchScalar value, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -7043,7 +7043,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full ((IntPtr)psizes, size.Length, value.Handle, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -7089,7 +7089,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor eye(long rows, long columns = -1L, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             columns = (columns == -1) ? rows : columns;
 
             var handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
@@ -7098,7 +7098,7 @@ namespace TorchSharp.Tensor {
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye (rows, columns, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
             }
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (handle);
         }
 
@@ -7110,7 +7110,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -7122,7 +7122,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint (max, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }
@@ -7139,9 +7139,9 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor from(bool scalar, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
             var handle = THSTensor_newBoolScalar(scalar, (int) device.Type, device.Index, requiresGrad);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(handle);
         }
 
@@ -7154,7 +7154,7 @@ namespace TorchSharp.Tensor {
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static TorchTensor from(bool[] rawArray, long[] dimensions, bool requiresGrad = false)
         {
-            Torch.InitializeDeviceType(DeviceType.CPU);
+            torch.InitializeDeviceType(DeviceType.CPU);
             var dataArray = rawArray;
             unsafe
             {
@@ -7174,7 +7174,7 @@ namespace TorchSharp.Tensor {
                     GC.WaitForPendingFinalizers();
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.Bool, requiresGrad);
                 }
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(handle);
             }
         }
@@ -7229,7 +7229,7 @@ namespace TorchSharp.Tensor {
         /// </summary>
         public static TorchTensor sparse(TorchTensor indices, TorchTensor values, long[] size, Device device = null, bool requiresGrad = false)
         {
-            device = Torch.InitializeDevice(device);
+            device = torch.InitializeDevice(device);
 
             unsafe
             {
@@ -7241,7 +7241,7 @@ namespace TorchSharp.Tensor {
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse (indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)ScalarType.Bool, (int) device.Type, device.Index, requiresGrad);
                     }
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor (handle);
                 }
             }

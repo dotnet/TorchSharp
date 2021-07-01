@@ -21,7 +21,7 @@ namespace TorchSharp.Tensor
         public TorchTensor cholesky(bool upper = false)
         {
             var res = THSTensor_cholesky(handle, upper);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -36,7 +36,7 @@ namespace TorchSharp.Tensor
         public TorchTensor cholesky_inverse(bool upper = false)
         {
             var res = THSTensor_cholesky_inverse(handle, upper);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -52,7 +52,7 @@ namespace TorchSharp.Tensor
         public TorchTensor cholesky_solve(TorchTensor input2, bool upper = false)
         {
             var res = THSTensor_cholesky_solve(handle, input2.Handle, upper);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -66,7 +66,7 @@ namespace TorchSharp.Tensor
         public TorchTensor cross(TorchScalar other, long dim)
         {
             var res = THSTensor_cross(handle, other.Handle, dim);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -89,7 +89,7 @@ namespace TorchSharp.Tensor
         public TorchTensor matmul(TorchTensor target)
         {
             var res = THSTensor_matmul(handle, target.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -104,7 +104,7 @@ namespace TorchSharp.Tensor
         public TorchTensor mm(TorchTensor target)
         {
             var res = THSTensor_mm(handle, target.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -119,7 +119,7 @@ namespace TorchSharp.Tensor
         public TorchTensor mv(TorchTensor target)
         {
             var res = THSTensor_mv(handle, target.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -135,7 +135,7 @@ namespace TorchSharp.Tensor
         public TorchTensor matrix_power(int n)
         {
             var res = THSLinalg_matrix_power(handle, n);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -155,7 +155,7 @@ namespace TorchSharp.Tensor
         {
             if (shape.Length != 1 || target.shape.Length != 1 || shape[0] != target.shape[0]) throw new InvalidOperationException("vdot arguments must have the same shape.");
             var res = THSTensor_vdot(handle, target.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 

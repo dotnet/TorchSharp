@@ -48,9 +48,9 @@ let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 

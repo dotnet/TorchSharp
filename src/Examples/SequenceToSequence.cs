@@ -44,11 +44,11 @@ namespace TorchSharp.Examples
         static void Main(string[] args)
 
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
             Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs.");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);

@@ -72,7 +72,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* psize = pad) {
                     var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -98,7 +98,7 @@ namespace TorchSharp.NN
         {
             byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
             var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)paddingMode, ac);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -115,7 +115,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* psize = size) {
                     var res = THSNN_affine_grid(theta.Handle, (IntPtr)psize, size is null ? 0 : size.Length, align_corners);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -146,7 +146,7 @@ namespace TorchSharp.NN
                     fixed (double* pSF = scale_factor) {
                         byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
                         var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor);
-                        if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new TorchTensor(res);
                     }
                 }

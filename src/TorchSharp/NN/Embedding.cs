@@ -15,7 +15,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor input)
         {
             var res = THSNN_Embedding_forward(handle, input.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -28,12 +28,12 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_Embedding_weight(handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
             set {
                 THSNN_Embedding_set_weight(handle, value.Handle);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             }
         }
 
@@ -59,7 +59,7 @@ namespace TorchSharp.NN
                 padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
                 max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                 norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Embedding(res, boxedHandle);
 
         }
@@ -89,7 +89,7 @@ namespace TorchSharp.NN
                 padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
                 max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                 norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Embedding (res, boxedHandle);
         }
     }

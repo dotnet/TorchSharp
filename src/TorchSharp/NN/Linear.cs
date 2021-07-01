@@ -24,7 +24,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Linear_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
         [DllImport ("LibTorchSharp")]
@@ -35,12 +35,12 @@ namespace TorchSharp.NN
         public TorchTensor? Bias {
             get {
                 var res = THSNN_Linear_bias (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
             }
             set {
                 THSNN_Linear_set_bias (handle, (value is null ? IntPtr.Zero : value.Handle));
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
             }
         }
         [DllImport ("LibTorchSharp")]
@@ -51,12 +51,12 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_Linear_weight (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor (res);
             }
             set {
                 THSNN_Linear_set_weight (handle, value.Handle);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
             }
         }
     }
@@ -68,7 +68,7 @@ namespace TorchSharp.NN
         static public Linear Linear (long inputSize, long outputSize, bool hasBias = true)
         {
             var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Linear (res, boxedHandle);
         }
     }

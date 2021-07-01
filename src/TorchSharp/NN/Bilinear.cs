@@ -24,7 +24,7 @@ namespace TorchSharp.NN
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {
             var res = THSNN_Bilinear_forward (handle, input1.Handle, input2.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
         [DllImport ("LibTorchSharp")]
@@ -35,12 +35,12 @@ namespace TorchSharp.NN
         public TorchTensor? Bias {
             get {
                 var res = THSNN_Bilinear_bias (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
             }
             set {
                 THSNN_Bilinear_set_bias (handle, (value is null ? IntPtr.Zero : value.Handle));
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
             }
         }
         [DllImport ("LibTorchSharp")]
@@ -51,12 +51,12 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_Bilinear_weight (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor (res);
             }
             set {
                 THSNN_Bilinear_set_weight (handle, value.Handle);
-                Torch.CheckForErrors ();
+                torch.CheckForErrors ();
             }
         }
     }
@@ -68,7 +68,7 @@ namespace TorchSharp.NN
         static public Bilinear Bilinear (long in1Features, long in2Features, long outputSize, bool hasBias = true)
         {
             var res = THSNN_Bilinear_ctor (in1Features, in2Features, outputSize, hasBias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Bilinear (res, boxedHandle);
         }
     }

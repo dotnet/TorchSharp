@@ -41,11 +41,11 @@ namespace TorchSharp.Examples
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
             Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 

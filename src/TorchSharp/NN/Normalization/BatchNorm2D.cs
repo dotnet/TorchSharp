@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         {
             if (tensor.Dimensions != 4) throw new ArgumentException($"Invalid number of dimensions for BatchNorm argument: {tensor.Dimensions}");
             var res = THSNN_BatchNorm2d_forward (handle.DangerousGetHandle (), tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
         {
             unsafe {
                 var handle = THSNN_BatchNorm2d_ctor (features, eps, momentum, affine, track_running_stats, out var boxedHandle);
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new BatchNorm2d (handle, boxedHandle);
             }
         }

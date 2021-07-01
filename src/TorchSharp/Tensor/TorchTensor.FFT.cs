@@ -25,7 +25,7 @@ namespace TorchSharp.Tensor
         public TorchTensor fft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_fft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -35,7 +35,7 @@ namespace TorchSharp.Tensor
         public TorchTensor ifft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_ifft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -49,7 +49,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_fft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -65,7 +65,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_ifft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -81,7 +81,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_fftn(handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -97,7 +97,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_ifftn(handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -109,7 +109,7 @@ namespace TorchSharp.Tensor
         public TorchTensor irfft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_irfft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -119,7 +119,7 @@ namespace TorchSharp.Tensor
         public TorchTensor rfft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_rfft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -133,7 +133,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_rfft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -149,7 +149,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_irfft2(handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -165,7 +165,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_rfftn(handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -181,7 +181,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* ps = s, pDim = dim) {
                     var res = THSTensor_irfftn(handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -193,7 +193,7 @@ namespace TorchSharp.Tensor
         public TorchTensor hfft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_hfft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -203,7 +203,7 @@ namespace TorchSharp.Tensor
         public TorchTensor ihfft(long n = -1, long dim = -1, FFTNormType norm = FFTNormType.Backward)
         {
             var res = THSTensor_ihfft(handle, n, dim, (sbyte)norm);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -216,7 +216,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* pDim = dim) {
                     var res = THSTensor_fftshift(handle, (IntPtr)pDim, dlen);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }
@@ -231,7 +231,7 @@ namespace TorchSharp.Tensor
             unsafe {
                 fixed (long* pDim = dim) {
                     var res = THSTensor_ifftshift(handle, (IntPtr)pDim, dlen);
-                    if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new TorchTensor(res);
                 }
             }

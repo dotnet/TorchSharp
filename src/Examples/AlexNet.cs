@@ -35,9 +35,9 @@ namespace TorchSharp.Examples
 
         static void Main(string[] args)
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
 
             if (device.Type == DeviceType.CUDA) {
                 _trainBatchSize *= 8;

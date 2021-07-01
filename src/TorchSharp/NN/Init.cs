@@ -41,7 +41,7 @@ namespace TorchSharp.NN
         public static TorchTensor ones(TorchTensor tensor)
         {
             var res = THSInit_ones_(tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -51,7 +51,7 @@ namespace TorchSharp.NN
         public static TorchTensor zeros(TorchTensor tensor)
         {
             var res = THSInit_zeros_(tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -62,7 +62,7 @@ namespace TorchSharp.NN
         public static TorchTensor dirac(TorchTensor tensor)
         {
             var res = THSInit_dirac_(tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -73,7 +73,7 @@ namespace TorchSharp.NN
         public static TorchTensor eye(TorchTensor tensor)
         {
             var res = THSInit_eye_(tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -83,7 +83,7 @@ namespace TorchSharp.NN
         public static TorchTensor constant(TorchTensor tensor, TorchScalar val)
         {
             var res = THSInit_constant_(tensor.Handle, val.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -93,7 +93,7 @@ namespace TorchSharp.NN
         public static TorchTensor uniform(TorchTensor tensor, double low = 0, double high = 1)
         {
             var res = THSInit_uniform_(tensor.Handle, low, high);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -103,7 +103,7 @@ namespace TorchSharp.NN
         public static TorchTensor normal(TorchTensor tensor, double mean = 0, double std = 1)
         {
             var res = THSInit_normal_(tensor.Handle, mean, std);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -113,7 +113,7 @@ namespace TorchSharp.NN
         public static TorchTensor orthogonal(TorchTensor tensor, double gain = 1.0)
         {
             var res = THSInit_orthogonal_(tensor.Handle, gain);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -123,7 +123,7 @@ namespace TorchSharp.NN
         public static TorchTensor sparse(TorchTensor tensor, double sparsity, double std = 0.01)
         {
             var res = THSInit_sparse_(tensor.Handle, sparsity, std);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -133,7 +133,7 @@ namespace TorchSharp.NN
         public static TorchTensor kaiming_uniform(TorchTensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
         {
             var res = THSInit_kaiming_uniform_(tensor.Handle, a, (long)mode, (long)nonlinearity);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -143,7 +143,7 @@ namespace TorchSharp.NN
         public static TorchTensor kaiming_normal(TorchTensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
         {
             var res = THSInit_kaiming_normal_(tensor.Handle, a, (long)mode, (long)nonlinearity);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -153,7 +153,7 @@ namespace TorchSharp.NN
         public static TorchTensor xavier_uniform(TorchTensor tensor, double gain = 1.0)
         {
             var res = THSInit_xavier_uniform_(tensor.Handle, gain);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 
@@ -168,7 +168,7 @@ namespace TorchSharp.NN
         public static TorchTensor xavier_normal(TorchTensor tensor, double gain = 1.0)
         {
             var res = THSInit_xavier_uniform_(tensor.Handle, gain);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
 

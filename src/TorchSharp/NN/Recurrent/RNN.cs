@@ -31,7 +31,7 @@ namespace TorchSharp.NN
         public (TorchTensor,TorchTensor) forward (TorchTensor input, TorchTensor? h0 = null)
         {
             var res = THSNN_RNN_forward (handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
-            if (res == IntPtr.Zero || hN == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
             return (new TorchTensor (res), new TorchTensor(hN));
         }
     }
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
         static public RNN RNN (long inputSize, long hiddenSize, long numLayers = 1, RNN.NonLinearities nonLinearity = NN.RNN.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
         {
             var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new RNN (res, boxedHandle);
         }
     }

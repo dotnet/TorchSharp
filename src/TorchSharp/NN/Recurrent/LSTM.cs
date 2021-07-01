@@ -30,7 +30,7 @@ namespace TorchSharp.NN
         public (TorchTensor,TorchTensor,TorchTensor) forward (TorchTensor input, (TorchTensor, TorchTensor)? h0_c0 = null)
         {
             var res = THSNN_LSTM_forward (handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr hN, out IntPtr cN);
-            if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
             return (new TorchTensor (res), new TorchTensor(hN), new TorchTensor(cN));
         }
     }
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         static public LSTM LSTM (long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
         {
             var res = THSNN_LSTM_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new LSTM (res, boxedHandle);
         }
     }

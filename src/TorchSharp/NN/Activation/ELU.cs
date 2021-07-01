@@ -18,7 +18,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_ELU_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -42,7 +42,7 @@ namespace TorchSharp.NN
         static public ELU ELU (double alpha = 1.0, bool inPlace = false)
         {
             var handle = THSNN_ELU_ctor (alpha, inPlace, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new ELU (handle, boxedHandle);
         }
     }

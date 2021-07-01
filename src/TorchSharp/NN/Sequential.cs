@@ -25,7 +25,7 @@ namespace TorchSharp.NN
                 throw new InvalidOperationException ("A Sequential or loaded module may not be added to a Sequential");
 
             THSNN_Sequential_push_back (handle, name, submodule.BoxedModule.handle);
-            Torch.CheckForErrors ();
+            torch.CheckForErrors ();
         }
 
         internal Sequential (IntPtr handle) : base (handle, IntPtr.Zero)
@@ -38,7 +38,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_Sequential_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -52,7 +52,7 @@ namespace TorchSharp.NN
         static public Sequential Sequential (params (string name, Module submodule)[] modules)
         {
             var handle = THSNN_Sequential_ctor ();
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             var res = new Sequential (handle);
             foreach (var module in modules)
                 res.Add(module.name, module.submodule);

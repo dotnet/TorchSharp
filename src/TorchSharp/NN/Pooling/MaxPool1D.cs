@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_MaxPool1d_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -30,7 +30,7 @@ namespace TorchSharp.NN
         public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
         {
             var res = THSNN_MaxPool1d_forward_with_indices(handle, tensor.Handle, out var indices);
-            if (res == IntPtr.Zero || indices == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
             return (new TorchTensor(res), new TorchTensor(indices));
         }
     }
@@ -61,7 +61,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
                     var handle = THSNN_MaxPool1d_ctor((IntPtr)pkernelSize, (IntPtr)pstrides, (IntPtr)pPadding, (IntPtr)pDilation, ceilMode, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new MaxPool1d(handle, boxedHandle);
                 }
             }

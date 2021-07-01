@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public override TorchTensor forward (TorchTensor tensor)
         {
             var res = THSNN_AdaptiveMaxPool1d_forward (handle.DangerousGetHandle (), tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -40,7 +40,7 @@ namespace TorchSharp.NN
             unsafe {
                 fixed (long* pkernelSize = new long[] { outputSize }) {
                     var handle = THSNN_AdaptiveMaxPool1d_ctor ((IntPtr)pkernelSize, 1, out var boxedHandle);
-                    if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new AdaptiveMaxPool1d (handle, boxedHandle);
                 }
             }

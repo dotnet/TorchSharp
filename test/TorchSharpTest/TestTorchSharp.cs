@@ -16,9 +16,9 @@ namespace TorchSharp
         {
             //var shape = new long[] { 2, 2 };
 
-            var isCudaAvailable = Torch.IsCudaAvailable();
-            var isCudnnAvailable = Torch.IsCudnnAvailable();
-            var deviceCount = Torch.CudaDeviceCount();
+            var isCudaAvailable = torch.cuda.is_available();
+            var isCudnnAvailable = torch.cuda.is_cudnn_available();
+            var deviceCount = torch.cuda.device_count();
             if (isCudaAvailable) {
                 Assert.True(deviceCount > 0);
                 Assert.True(isCudnnAvailable);
@@ -53,14 +53,14 @@ namespace TorchSharp
             // This tests that the default generator can be disposed, but will keep on going,
             long a, b, c;
             lock (_lock) {
-                using (var gen = Torch.ManualSeed(4711)) {
+                using (var gen = torch.random.manual_seed(4711)) {
                     a = gen.InitialSeed;
                 }
                 using (var gen = TorchGenerator.Default) {
                     b = gen.InitialSeed;
                 }
                 Assert.Equal(a, b);
-                using (var gen = Torch.ManualSeed(17)) {
+                using (var gen = torch.random.manual_seed(17)) {
                     c = gen.InitialSeed;
                 }
                 Assert.NotEqual(a, c);
@@ -77,7 +77,7 @@ namespace TorchSharp
             lock (_lock) {
 
                 long a, b, c;
-                using (var gen = Torch.ManualSeed(4711)) {
+                using (var gen = torch.random.manual_seed(4711)) {
                     a = gen.InitialSeed;
                 }
                 using (TorchGenerator gen = TorchGenerator.Default, genA = new TorchGenerator(4355)) {
@@ -94,13 +94,13 @@ namespace TorchSharp
         public void TestGeneratorState()
         {
             // This test fails intermittently with CUDA. Just skip it.
-            if (Torch.IsCudaAvailable()) return;
+            if (torch.cuda.is_available()) return;
 
             // After restoring a saved RNG state, the next number should be the
             // same as right after the snapshot.
 
             lock (_lock) {
-                using (var gen = Torch.ManualSeed(4711)) {
+                using (var gen = torch.random.manual_seed(4711)) {
 
                     // Take a snapshot
                     var state = gen.State;

@@ -29,7 +29,7 @@ namespace TorchSharp.NN
             if (input.Dimensions == 2 && input.Type == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
 
             var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
 
@@ -42,12 +42,12 @@ namespace TorchSharp.NN
         public TorchTensor Weight {
             get {
                 var res = THSNN_EmbeddingBag_weight(handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new TorchTensor(res);
             }
             set {
                 THSNN_EmbeddingBag_set_weight(handle, value.Handle);
-                Torch.CheckForErrors();
+                torch.CheckForErrors();
             }
         }
 
@@ -74,7 +74,7 @@ namespace TorchSharp.NN
             var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
                 max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                 norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new EmbeddingBag(res, boxedHandle);
 
         }
@@ -107,7 +107,7 @@ namespace TorchSharp.NN
             var res = THSNN_EmbeddingBag_ctor (num_embeddings, embedding_dims,
                 max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                 norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new EmbeddingBag (res, boxedHandle);
         }
     }

@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         {
             if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
             var res = THSNN_GroupNorm_forward (handle.DangerousGetHandle (), tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -38,7 +38,7 @@ namespace TorchSharp.NN
         {
             unsafe {
                 var handle = THSNN_GroupNorm_ctor(numGroups, numChannels, eps, affine, out var boxedHandle);
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new GroupNorm(handle, boxedHandle);
             }
         }

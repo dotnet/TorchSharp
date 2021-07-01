@@ -21,7 +21,7 @@ namespace TorchSharp.NN
         {
             if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {tensor.Dimensions}");
             var res = THSNN_LocalResponseNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor(res);
         }
     }
@@ -37,7 +37,7 @@ namespace TorchSharp.NN
         {
             unsafe {
                 var handle = THSNN_LocalResponseNorm_ctor(size, alpha, beta, k, out var boxedHandle);
-                if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LocalResponseNorm(handle, boxedHandle);
             }
         }

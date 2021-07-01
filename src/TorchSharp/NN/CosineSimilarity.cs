@@ -20,7 +20,7 @@ namespace TorchSharp.NN
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {
             var res = THSNN_CosineSimilarity_forward (handle, input1.Handle, input2.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new TorchTensor (res);
         }
     }
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
         static public CosineSimilarity CosineSimilarity (long dim = 1, double eps = 1e-8)
         {
             var handle = THSNN_CosineSimilarity_ctor (dim, eps, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new CosineSimilarity (handle, boxedHandle);
         }
     }
