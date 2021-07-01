@@ -96,7 +96,7 @@ namespace TorchSharp
         /// <param name="doCopy"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static Tensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
+        public static Tensor ToTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
             var array = doCopy ? (T[])rawArray.Clone() : rawArray;
 
@@ -141,7 +141,7 @@ namespace TorchSharp
         /// <param name="device"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static Tensor ToTorchTensor<T>(this T scalar, torch.device? device = null, bool requiresGrad = false) where T : struct
+        public static Tensor ToTensor<T>(this T scalar, torch.device? device = null, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");

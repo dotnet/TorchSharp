@@ -14,8 +14,8 @@ namespace TorchSharp.torchvision
         {
             if (means.Length != stdevs.Length) throw new ArgumentException("means and stdevs must be the same length in call to Normalize");
 
-            this.means = means.ToTorchTensor(new long[] { 1, means.Length, 1, 1 });     // Assumes NxCxHxW
-            this.stdevs = stdevs.ToTorchTensor(new long[] { 1, stdevs.Length, 1, 1 });  // Assumes NxCxHxW
+            this.means = means.ToTensor(new long[] { 1, means.Length, 1, 1 });     // Assumes NxCxHxW
+            this.stdevs = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 });  // Assumes NxCxHxW
 
             if (dtype != ScalarType.Float64) {
                 this.means = this.means.to_type(dtype);

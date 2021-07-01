@@ -6,12 +6,13 @@ using System.Runtime.InteropServices;
 using Xunit;
 
 using static TorchSharp.torch;
+using static TorchSharp.TensorExtensionMethods;
 
 #nullable enable
 
 namespace TorchSharp
 {
-    public class TestTorchTensor
+    public class TestTensor
     {
         [Fact]
         public void TestScalarCreation()
@@ -42,7 +43,7 @@ namespace TorchSharp
         [Fact]
         public void TestToString1()
         {
-            TorchTensor t = Float32Tensor.zeros(2, 2);
+            Tensor t = Float32Tensor.zeros(2, 2);
             var str = t.ToString();
             Assert.Equal("[2x2], type = Float32, device = cpu", str);
         }
@@ -51,17 +52,17 @@ namespace TorchSharp
         public void TestScalarToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(3.14f);
+                Tensor t = Float32Tensor.from(3.14f);
                 var str = t.ToString(true);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14", str);
             }
             {
-                TorchTensor t = Float32Tensor.from(3.14f);
+                Tensor t = Float32Tensor.from(3.14f);
                 var str = t.ToString(true, "E2");
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14E+000", str);
             }
             {
-                TorchTensor t = ComplexFloat32Tensor.from(3.14f, 6.28f);
+                Tensor t = ComplexFloat32Tensor.from(3.14f, 6.28f);
                 var str = t.ToString(true);
                 Assert.Equal("[], type = ComplexFloat32, device = cpu, value = 3.14+6.28i", str);
             }
@@ -73,17 +74,17 @@ namespace TorchSharp
         public void Test1DToString()
         {
             {
-                TorchTensor t = Float32Tensor.zeros(4);
+                Tensor t = Float32Tensor.zeros(4);
                 var str = t.ToString(true);
                 Assert.Equal($"[4], type = Float32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
-                TorchTensor t = ComplexFloat32Tensor.zeros(4);
+                Tensor t = ComplexFloat32Tensor.zeros(4);
                 var str = t.ToString(true);
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
-                TorchTensor t = ComplexFloat32Tensor.ones(4);
+                Tensor t = ComplexFloat32Tensor.ones(4);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = ComplexFloat32Tensor.from((1.0f*i, 2.43f*i*2));
                 var str = t.ToString(true);
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 1+4.86i 2+9.72i 3+14.58i{_sep}", str);
@@ -94,12 +95,12 @@ namespace TorchSharp
         public void Test2DToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f}, 2, 4);
+                Tensor t = Float32Tensor.from(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f}, 2, 4);
                 var str = t.ToString(true);
                 Assert.Equal($"[2x4], type = Float32, device = cpu{_sep}{_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}", str);
             }
             {
-                TorchTensor t = ComplexFloat32Tensor.zeros(2, 4);
+                Tensor t = ComplexFloat32Tensor.zeros(2, 4);
                 var str = t.ToString(true);
                 Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 0 0 0 0{_sep} 0 0 0 0{_sep}", str);
             }
@@ -109,7 +110,7 @@ namespace TorchSharp
         public void Test3DToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(new float[] {
+                Tensor t = Float32Tensor.from(new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
@@ -124,7 +125,7 @@ namespace TorchSharp
         public void Test4DToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(new float[] {
+                Tensor t = Float32Tensor.from(new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
@@ -142,7 +143,7 @@ namespace TorchSharp
         public void Test5DToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(new float[] {
+                Tensor t = Float32Tensor.from(new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
@@ -166,7 +167,7 @@ namespace TorchSharp
         public void Test6DToString()
         {
             {
-                TorchTensor t = Float32Tensor.from(new float[] {
+                Tensor t = Float32Tensor.from(new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
@@ -790,7 +791,7 @@ namespace TorchSharp
         {
             var data = new float[1000];
 
-            using (var tensor = data.ToTorchTensor(new long[] { 10, 100 })) {
+            using (var tensor = data.ToTensor(new long[] { 10, 100 })) {
                 Assert.Equal(default(float), tensor.Data<float>()[100]);
             }
         }
@@ -799,7 +800,7 @@ namespace TorchSharp
         public void CreateFloat32TensorFromDataCheckStrides()
         {
             var data = new double[] { 0.2663158, 0.1144736, 0.1147367, 0.1249998, 0.1957895, 0.1231576, 0.1944732, 0.111842, 0.1065789, 0.667881, 0.5682123, 0.5824502, 0.4824504, 0.4844371, 0.6463582, 0.5334439, 0.5079474, 0.2281452 };
-            var dataTensor = data.ToTorchTensor(new long[] { 2, 9 });
+            var dataTensor = data.ToTensor(new long[] { 2, 9 });
 
             for (int r = 0; r < 2; r++) {
                 for (int i = 0; i < 9; i++) {
@@ -935,7 +936,7 @@ namespace TorchSharp
         {
             float scalar = 333.0f;
 
-            using (var tensor = scalar.ToTorchTensor()) {
+            using (var tensor = scalar.ToTensor()) {
                 Assert.Equal(333, tensor.ToSingle());
             }
         }
@@ -1326,37 +1327,37 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor()
         {
-            Assert.Throws<ArgumentException>(() => 1.ToTorchTensor(requiresGrad: true));
+            Assert.Throws<ArgumentException>(() => 1.ToTensor(requiresGrad: true));
         }
 
         [Fact]
         public void TestScalarToTensor2()
         {
-            using (var tensor = 1.ToTorchTensor()) {
+            using (var tensor = 1.ToTensor()) {
                 Assert.Equal(ScalarType.Int32, tensor.Type);
                 Assert.Equal(1, tensor.ToInt32());
             }
-            using (var tensor = ((byte)1).ToTorchTensor()) {
+            using (var tensor = ((byte)1).ToTensor()) {
                 Assert.Equal(ScalarType.Byte, tensor.Type);
                 Assert.Equal(1, tensor.ToByte());
             }
-            using (var tensor = ((sbyte)-1).ToTorchTensor()) {
+            using (var tensor = ((sbyte)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int8, tensor.Type);
                 Assert.Equal(-1, tensor.ToSByte());
             }
-            using (var tensor = ((short)-1).ToTorchTensor()) {
+            using (var tensor = ((short)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int16, tensor.Type);
                 Assert.Equal(-1, tensor.ToInt16());
             }
-            using (var tensor = ((long)-1).ToTorchTensor()) {
+            using (var tensor = ((long)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int64, tensor.Type);
                 Assert.Equal(-1L, tensor.ToInt64());
             }
-            using (var tensor = ((float)-1).ToTorchTensor()) {
+            using (var tensor = ((float)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float32, tensor.Type);
                 Assert.Equal(-1.0f, tensor.ToSingle());
             }
-            using (var tensor = ((double)-1).ToTorchTensor()) {
+            using (var tensor = ((double)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float64, tensor.Type);
                 Assert.Equal(-1.0, tensor.ToDouble());
             }
@@ -1365,31 +1366,31 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor3()
         {
-            using (var tensor = 1.ToTorchTensor()) {
+            using (var tensor = 1.ToTensor()) {
                 Assert.Equal(ScalarType.Int32, tensor.Type);
                 Assert.Equal(1, (int)tensor);
             }
-            using (var tensor = ((byte)1).ToTorchTensor()) {
+            using (var tensor = ((byte)1).ToTensor()) {
                 Assert.Equal(ScalarType.Byte, tensor.Type);
                 Assert.Equal(1, (byte)tensor);
             }
-            using (var tensor = ((sbyte)-1).ToTorchTensor()) {
+            using (var tensor = ((sbyte)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int8, tensor.Type);
                 Assert.Equal(-1, (sbyte)tensor);
             }
-            using (var tensor = ((short)-1).ToTorchTensor()) {
+            using (var tensor = ((short)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int16, tensor.Type);
                 Assert.Equal(-1, (short)tensor);
             }
-            using (var tensor = ((long)-1).ToTorchTensor()) {
+            using (var tensor = ((long)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int64, tensor.Type);
                 Assert.Equal(-1L, (long)tensor);
             }
-            using (var tensor = ((float)-1).ToTorchTensor()) {
+            using (var tensor = ((float)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float32, tensor.Type);
                 Assert.Equal(-1.0f, (float)tensor);
             }
-            using (var tensor = ((double)-1).ToTorchTensor()) {
+            using (var tensor = ((double)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float64, tensor.Type);
                 Assert.Equal(-1.0, (double)tensor);
             }
@@ -1796,7 +1797,7 @@ namespace TorchSharp
         [Fact]
         public void TestSquareEuclideanDistance()
         {
-            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTorchTensor(new long[] { 9 }).to_type(ScalarType.Float32);
+            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
             var centroids = new Tensor[] { zeros, ones }.cat(0);

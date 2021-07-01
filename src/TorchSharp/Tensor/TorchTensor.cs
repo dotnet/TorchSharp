@@ -4475,21 +4475,21 @@ namespace TorchSharp
 
             } else {
                 builder.AppendLine();
-                var indices = new List<TorchTensorIndex>();
+                var indices = new List<TensorIndex>();
                 RecursivePrintDimensions(0, indices, fltFormat, width, builder);
             }
 
             return builder.ToString();
         }
 
-        private void RecursivePrintDimensions(int dim, IEnumerable<TorchTensorIndex> indices, string fltFormat, int width, StringBuilder builder)
+        private void RecursivePrintDimensions(int dim, IEnumerable<TensorIndex> indices, string fltFormat, int width, StringBuilder builder)
         {
             if (dim == Dimensions-3) {
                 // We're at the third-last dimension. This is where we can print out the last two dimensions.
 
                 for (int i = 0; i < shape[dim]; i++) {
 
-                    var idxs = indices.Append(TorchTensorIndex.Single(i)).Append(TorchTensorIndex.Ellipsis).Append(TorchTensorIndex.Ellipsis).ToArray();
+                    var idxs = indices.Append(TensorIndex.Single(i)).Append(TensorIndex.Ellipsis).Append(TensorIndex.Ellipsis).ToArray();
                     var str = IndicesToString(idxs);
                     builder.AppendLine().AppendLine($"{str} =");
                     var slice = this.index(idxs);
@@ -4500,29 +4500,29 @@ namespace TorchSharp
 
                 for (int i = 0; i < shape[dim]; i++) {
 
-                    RecursivePrintDimensions(dim+1, indices.Append(TorchTensorIndex.Single(i)), fltFormat, width, builder);
+                    RecursivePrintDimensions(dim+1, indices.Append(TensorIndex.Single(i)), fltFormat, width, builder);
                 }
             }
         }
 
-        private string IndicesToString(IList<TorchTensorIndex> indices)
+        private string IndicesToString(IList<TensorIndex> indices)
         {
             var builder = new StringBuilder("[");
             for (int i = 0; i < indices.Count(); i++) {
 
                 if (i > 0) builder.Append(',');
 
-                if (indices[i].kind == TorchTensorIndex.Kind.Ellipsis) {
+                if (indices[i].kind == TensorIndex.Kind.Ellipsis) {
                     builder.Append(':');
                 }
-                else if (indices[i].kind == TorchTensorIndex.Kind.Single) {
+                else if (indices[i].kind == TensorIndex.Kind.Single) {
                     builder.Append(indices[i].startIndexOrBoolOrSingle);
                 }
             }
             return builder.Append(']').ToString();
         }
 
-        private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, TorchTensor t)
+        private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, Tensor t)
         {
             // TODO: This code will align the first digits of each column, taking a leading '-' into account.
             //       An alternative would be to align periods, or to align the last character of each column.
@@ -4563,7 +4563,7 @@ namespace TorchSharp
 
         private const string ellipsis = "...";
 
-        private static void PrintOneRow(IList<string> row, int[] space, bool[] hasMinus, string fltFormat, StringBuilder builder, TorchTensor rowTensor, bool appendEllipsis)
+        private static void PrintOneRow(IList<string> row, int[] space, bool[] hasMinus, string fltFormat, StringBuilder builder, Tensor rowTensor, bool appendEllipsis)
         {
             for (var i = 0; i < row.Count; i++) {
                 var pad = space[i] - row[i].Length;
@@ -4582,7 +4582,7 @@ namespace TorchSharp
             builder.AppendLine();
         }
 
-        private static void BuildRow(List<string> row, TorchTensor t, int width, string fltFormat)
+        private static void BuildRow(List<string> row, Tensor t, int width, string fltFormat)
         {
             var type = t.Type;
             var endingWidth = ellipsis.Length+1;
@@ -4603,7 +4603,7 @@ namespace TorchSharp
             }
         }
 
-        private static void PrintValue(StringBuilder builder, ScalarType type, TorchScalar value, string fltFormat)
+        private static void PrintValue(StringBuilder builder, ScalarType type, Scalar value, string fltFormat)
         {
             switch (type) {
             case ScalarType.Byte:
@@ -4654,14 +4654,14 @@ namespace TorchSharp
             }
         }
 
-        public static explicit operator float (TorchTensor value) => value.ToSingle();
-        public static explicit operator double (TorchTensor value) => value.ToDouble();
-        public static explicit operator sbyte (TorchTensor value) => value.ToSByte();
-        public static explicit operator byte (TorchTensor value) => value.ToByte();
-        public static explicit operator short (TorchTensor value) => value.ToInt16();
-        public static explicit operator int (TorchTensor value) => value.ToInt32();
-        public static explicit operator long (TorchTensor value) => value.ToInt64();
-        public static explicit operator bool (TorchTensor value) => value.ToBoolean();
+        public static explicit operator float (Tensor value) => value.ToSingle();
+        public static explicit operator double (Tensor value) => value.ToDouble();
+        public static explicit operator sbyte (Tensor value) => value.ToSByte();
+        public static explicit operator byte (Tensor value) => value.ToByte();
+        public static explicit operator short (Tensor value) => value.ToInt16();
+        public static explicit operator int (Tensor value) => value.ToInt32();
+        public static explicit operator long (Tensor value) => value.ToInt64();
+        public static explicit operator bool (Tensor value) => value.ToBoolean();
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_block_diag(IntPtr tensor, int len);
