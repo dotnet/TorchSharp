@@ -8,14 +8,14 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a MaxPool3D module.
     /// </summary>
-    public class MaxPool3d : nn.Module
+    public class MaxPool3d : torch.nn.Module
     {
         internal MaxPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool3d_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_MaxPool3d_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool3d_forward_with_indices(nn.Module.HType module, IntPtr tensor, out IntPtr indices);
+        private static extern IntPtr THSNN_MaxPool3d_forward_with_indices(torch.nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
         public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
         {

@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a ZeroPad2d module.
     /// </summary>
-    public class ZeroPad2d : nn.Module
+    public class ZeroPad2d : torch.nn.Module
     {
         internal ZeroPad2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ZeroPad2d_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ZeroPad2d_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.

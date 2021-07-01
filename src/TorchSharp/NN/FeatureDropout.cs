@@ -8,14 +8,14 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a dropout module for 2d/3d convolutational layers.
     /// </summary>
-    public class FeatureAlphaDropout : nn.Module
+    public class FeatureAlphaDropout : torch.nn.Module
     {
         internal FeatureAlphaDropout (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_FeatureAlphaDropout_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_FeatureAlphaDropout_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

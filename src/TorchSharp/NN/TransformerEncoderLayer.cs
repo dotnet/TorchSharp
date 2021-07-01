@@ -6,14 +6,14 @@ using TorchSharp.Tensor;
 #nullable enable
 namespace TorchSharp
 {
-    public class TransformerEncoderLayer : nn.Module
+    public class TransformerEncoderLayer : torch.nn.Module
     {
         private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
 
         internal TransformerEncoderLayer (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_TransformerEncoderLayer_forward (nn.Module.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
+        private static extern IntPtr THSNN_TransformerEncoderLayer_forward (torch.nn.Module.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
 
         /// <summary>
         /// Pass the input through the encoder layer.

@@ -6,14 +6,14 @@ using TorchSharp.Tensor;
 #nullable enable
 namespace TorchSharp
 {
-    public class Transformer : nn.Module
+    public class Transformer : torch.nn.Module
     {
         private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
 
         internal Transformer (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Transformer_forward (nn.Module.HType module, IntPtr src, IntPtr tgt, IntPtr src_mask, IntPtr tgt_mask, IntPtr memory_mask, IntPtr src_key_padding_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
+        private static extern IntPtr THSNN_Transformer_forward (torch.nn.Module.HType module, IntPtr src, IntPtr tgt, IntPtr src_mask, IntPtr tgt_mask, IntPtr memory_mask, IntPtr src_key_padding_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
         /// <summary>
         /// Take in and process masked source/target sequences.

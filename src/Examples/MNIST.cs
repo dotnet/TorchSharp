@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
 using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
@@ -81,9 +82,9 @@ namespace TorchSharp.Examples
                 _epochs *= 4;
             }
 
-            var optimizer = optim.Optimizer.Adam(model.parameters());
+            var optimizer = torch.optim.Optimizer.Adam(model.parameters());
 
-            var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch: 5);
+            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch: 5);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -157,7 +158,7 @@ namespace TorchSharp.Examples
 
         private static void Train(
             Model model,
-            optim.Optimizer optimizer,
+            torch.optim.Optimizer optimizer,
             Loss loss,
             Device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,

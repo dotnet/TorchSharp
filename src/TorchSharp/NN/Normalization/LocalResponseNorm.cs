@@ -8,7 +8,7 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a LocalResponseNorm module.
     /// </summary>
-    public class LocalResponseNorm : nn.Module
+    public class LocalResponseNorm : torch.nn.Module
     {
         internal LocalResponseNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
         {

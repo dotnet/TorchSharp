@@ -8,7 +8,7 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a AvgPool3D module.
     /// </summary>
-    public class AvgPool3d : nn.Module
+    public class AvgPool3d : torch.nn.Module
     {
         internal AvgPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {

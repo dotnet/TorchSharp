@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
 
 namespace TorchSharp.TorchVision
 {
@@ -19,7 +19,7 @@ namespace TorchSharp.TorchVision
 
         public TorchTensor forward(TorchTensor input)
         {
-            return TorchSharp.nn.functional.Pad(input, pad, mode, value);
+            return TorchSharp.torch.nn.functional.Pad(input, pad, mode, value);
         }
 
         private long[] pad;

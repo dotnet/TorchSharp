@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a RReLU module.
     /// </summary>
-    public class RReLU : nn.Module
+    public class RReLU : torch.nn.Module
     {
         internal RReLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_RReLU_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_RReLU_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

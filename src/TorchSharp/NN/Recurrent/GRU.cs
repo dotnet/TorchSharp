@@ -8,12 +8,12 @@ using TorchSharp.Tensor;
 #nullable enable
 namespace TorchSharp
 {
-    public class GRU : nn.Module
+    public class GRU : torch.nn.Module
     {
         internal GRU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_GRU_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+        extern static IntPtr THSNN_GRU_forward (torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
         /// <summary>
         /// Applies a multi-layer gated recurrent unit (GRU) RNN to an input sequence.

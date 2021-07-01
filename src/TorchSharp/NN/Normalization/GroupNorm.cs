@@ -8,7 +8,7 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a GroupNorm module.
     /// </summary>
-    public class GroupNorm : nn.Module
+    public class GroupNorm : torch.nn.Module
     {
         internal GroupNorm (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {

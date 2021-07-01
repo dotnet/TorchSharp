@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a Softmax module.
     /// </summary>
-    public class Softmax : nn.Module
+    public class Softmax : torch.nn.Module
     {
         internal Softmax (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Softmax_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Softmax_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

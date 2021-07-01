@@ -5,12 +5,12 @@ using TorchSharp.Tensor;
 
 namespace TorchSharp
 {
-    public class Embedding : nn.Module
+    public class Embedding : torch.nn.Module
     {
         internal Embedding (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Embedding_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Embedding_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor input)
         {
@@ -20,10 +20,10 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_Embedding_weight(nn.Module.HType module);
+        extern static IntPtr THSNN_Embedding_weight(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_Embedding_set_weight(nn.Module.HType module, IntPtr tensor);
+        extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {

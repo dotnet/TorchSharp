@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a SELU module.
     /// </summary>
-    public class SELU : nn.Module
+    public class SELU : torch.nn.Module
     {
         internal SELU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_SELU_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_SELU_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

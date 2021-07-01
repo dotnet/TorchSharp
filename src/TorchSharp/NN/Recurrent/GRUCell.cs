@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
+
 
 #nullable enable
 namespace TorchSharp
 {
-    public class GRUCell : nn.Module
+    public class GRUCell : torch.nn.Module
     {
         internal GRUCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -20,7 +21,7 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_GRUCell_forward(nn.Module.HType module, IntPtr input, IntPtr h_0);
+        extern static IntPtr THSNN_GRUCell_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0);
 
         /// <summary>
         /// Apply the GRU cell to an input tensor.

@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a Dropout2d module.
     /// </summary>
-    public class Dropout2d : nn.Module
+    public class Dropout2d : torch.nn.Module
     {
         internal Dropout2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Dropout2d_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Dropout2d_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

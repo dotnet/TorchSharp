@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
 
 #nullable enable
 namespace TorchSharp
 {
-    public class Bilinear : nn.Module
+    public class Bilinear : torch.nn.Module
     {
         internal Bilinear (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
@@ -20,7 +20,7 @@ namespace TorchSharp
         }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Bilinear_forward (nn.Module.HType module, IntPtr input1, IntPtr input2);
+        extern static IntPtr THSNN_Bilinear_forward (torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {
@@ -29,9 +29,9 @@ namespace TorchSharp
             return new TorchTensor (res);
         }
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Bilinear_bias (nn.Module.HType module);
+        extern static IntPtr THSNN_Bilinear_bias (torch.nn.Module.HType module);
         [DllImport ("LibTorchSharp")]
-        extern static void THSNN_Bilinear_set_bias (nn.Module.HType module, IntPtr tensor);
+        extern static void THSNN_Bilinear_set_bias (torch.nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor? Bias {
             get {
@@ -45,9 +45,9 @@ namespace TorchSharp
             }
         }
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Bilinear_weight (nn.Module.HType module);
+        extern static IntPtr THSNN_Bilinear_weight (torch.nn.Module.HType module);
         [DllImport ("LibTorchSharp")]
-        extern static void THSNN_Bilinear_set_weight (nn.Module.HType module, IntPtr tensor);
+        extern static void THSNN_Bilinear_set_weight (torch.nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {

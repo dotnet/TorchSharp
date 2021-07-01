@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static TorchSharp.nn;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
 using static TorchSharp.nn.functional;
+using static TorchSharp.torch.nn.functional;
 using TorchSharp.Tensor;
 using Xunit;
 
@@ -1898,7 +1901,7 @@ namespace TorchSharp
         public void TestOneHotEncoding1()
         {
             var ones = Int64Tensor.from(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
-            var env = OneHot(ones, 5);
+            var env = one_hot(ones, 5);
             var values = env.Data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
             Assert.Equal(5, env.shape[1]);
@@ -1908,7 +1911,7 @@ namespace TorchSharp
         public void TestOneHotEncoding2()
         {
             var ones = Int64Tensor.from(new long[] { 1, 2, 0, 5, 3, 4, 2, 2 });
-            var env = OneHot(ones);
+            var env = one_hot(ones);
             var values = env.Data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
             Assert.Equal(6, env.shape[1]);

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
 using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
@@ -62,8 +63,8 @@ namespace TorchSharp.Examples
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
-                var optimizer = optim.Optimizer.SGD(model.parameters(), lr);
-                var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
+                var optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr);
+                var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
                 foreach (var epoch in Enumerable.Range(1, epochs)) {
 
@@ -94,7 +95,7 @@ namespace TorchSharp.Examples
 
         }
 
-        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, optim.Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
         {
             model.Train();
 

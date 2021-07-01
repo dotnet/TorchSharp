@@ -359,7 +359,7 @@ namespace TorchSharp.Tensor
                 // Note: according to the documentation, it should be LTRB, but that generates the wrong result. Here, we use LRTB.
                 var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(right - w, 0), Math.Max(-top, 0), Math.Max(bottom - h, 0) };
 
-                return nn.functional.Pad(slice, padding_ltrb);
+                return TorchSharp.torch.nn.functional.Pad(slice, padding_ltrb);
             }
 
             return image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right));

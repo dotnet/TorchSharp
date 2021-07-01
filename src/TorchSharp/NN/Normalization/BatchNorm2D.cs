@@ -8,7 +8,7 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a BatchNorm2D module.
     /// </summary>
-    public class BatchNorm2d : nn.Module
+    public class BatchNorm2d : torch.nn.Module
     {
         internal BatchNorm2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {

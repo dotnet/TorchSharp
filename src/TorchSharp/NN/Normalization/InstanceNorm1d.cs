@@ -8,7 +8,7 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a InstanceNorm1D module.
     /// </summary>
-    public class InstanceNorm1d : nn.Module
+    public class InstanceNorm1d : torch.nn.Module
     {
         internal InstanceNorm1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {

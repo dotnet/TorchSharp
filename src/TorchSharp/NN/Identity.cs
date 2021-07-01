@@ -8,12 +8,12 @@ using TorchSharp.Tensor;
 #nullable enable
 namespace TorchSharp
 {
-    public class Identity : nn.Module
+    public class Identity : torch.nn.Module
     {
         internal Identity (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Identity_forward (nn.Module.HType module, IntPtr tensor);
+        extern static IntPtr THSNN_Identity_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

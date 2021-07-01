@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a ConstantPad3d module.
     /// </summary>
-    public class ConstantPad3d : nn.Module
+    public class ConstantPad3d : torch.nn.Module
     {
         internal ConstantPad3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ConstantPad3d_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ConstantPad3d_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.

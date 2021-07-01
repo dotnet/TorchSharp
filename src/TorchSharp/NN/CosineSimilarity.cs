@@ -8,14 +8,14 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a dropout module for 2d/3d convolutational layers.
     /// </summary>
-    public class CosineSimilarity : nn.Module
+    public class CosineSimilarity : torch.nn.Module
     {
         internal CosineSimilarity (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_CosineSimilarity_forward (nn.Module.HType module, IntPtr input1, IntPtr input2);
+        private static extern IntPtr THSNN_CosineSimilarity_forward (torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {

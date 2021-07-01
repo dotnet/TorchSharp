@@ -11,14 +11,14 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a Sequential module.
     /// </summary>
-    public class Sequential : nn.Module
+    public class Sequential : torch.nn.Module
     {
         [DllImport ("LibTorchSharp")]
-        private static extern void THSNN_Sequential_push_back(nn.Module.HType module,
+        private static extern void THSNN_Sequential_push_back(torch.nn.Module.HType module,
             [MarshalAs(UnmanagedType.LPStr)] string name,
-            nn.BoxedModule.HType boxedSubModule);
+            torch.nn.BoxedModule.HType boxedSubModule);
 
-        public void Add (string name, nn.Module submodule)
+        public void Add (string name, torch.nn.Module submodule)
         {
             Debug.Assert (!handle.IsInvalid);
             if (submodule.BoxedModule == null)
@@ -33,7 +33,7 @@ namespace TorchSharp
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Sequential_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Sequential_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -57,7 +57,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="modules">An ordered list of the contained modules.</param>
         /// <returns></returns>
-        static public Sequential Sequential (params (string name, Module submodule)[] modules)
+        static public Sequential Sequential (params (string name, torch.nn.Module submodule)[] modules)
         {
             var handle = THSNN_Sequential_ctor ();
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }

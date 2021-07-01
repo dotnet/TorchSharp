@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a SiLU module.
     /// </summary>
-    public class SiLU : nn.Module
+    public class SiLU : torch.nn.Module
     {
         internal SiLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_SiLU_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_SiLU_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
+
 
 #nullable enable
 namespace TorchSharp
 {
-    public class LSTMCell : nn.Module
+    public class LSTMCell : torch.nn.Module
     {
         internal LSTMCell (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
@@ -20,7 +21,7 @@ namespace TorchSharp
         }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_LSTMCell_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr c_n);
+        extern static IntPtr THSNN_LSTMCell_forward (torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr c_n);
 
         /// <summary>
         /// Apply the RNN cell to an input tensor.

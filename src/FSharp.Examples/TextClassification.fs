@@ -9,6 +9,7 @@ open System.Collections.Generic
 open TorchSharp
 open TorchSharp.Tensor
 open type TorchSharp.nn
+open type TorchSharp.torch.nn
 
 open TorchSharp.Examples
 
@@ -66,7 +67,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as th
     member _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc
 
-let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) (optimizer:optim.Optimizer) =
+let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
 
     model.Train()
 
@@ -132,8 +133,8 @@ let run epochs =
 
     let model = new TextClassificationModel((int64 vocab.Count), emsize, 4L, device)
 
-    let optimizer = optim.Optimizer.SGD(model.parameters(), lr)
-    let scheduler = optim.lr_scheduler.StepLR(optimizer, 1u, 0.2, last_epoch=5)
+    let optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr)
+    let scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1u, 0.2, last_epoch=5)
 
     let sw = Stopwatch()
 

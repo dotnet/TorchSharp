@@ -7,7 +7,8 @@ open System.Diagnostics
 open TorchSharp
 open TorchSharp.Tensor
 open type TorchSharp.nn
-open type TorchSharp.optim
+open type TorchSharp.torch.nn
+open type TorchSharp.torch.optim
 open type TorchSharp.TorchScalar
 
 open TorchSharp.Examples

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 using static TorchSharp.nn;
+using static TorchSharp.torch.nn;
 using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
@@ -73,8 +74,8 @@ namespace TorchSharp.Examples
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
             var loss = cross_entropy_loss();
             var lr = 2.50;
-            var optimizer = optim.Optimizer.SGD(model.parameters(), lr);
-            var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
+            var optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr);
+            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
             totalTime.Start();
@@ -99,7 +100,7 @@ namespace TorchSharp.Examples
             Console.WriteLine($"\nEnd of training | time: {totalTime.Elapsed.TotalSeconds:0.0}s | loss: {tst_loss:0.00}\n");
         }
 
-        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, optim.Optimizer optimizer)
+        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -142,7 +143,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, optim.Optimizer optimizer)
+        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
             model.Eval();
 

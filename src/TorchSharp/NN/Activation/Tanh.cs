@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a Tanh module.
     /// </summary>
-    public class Tanh : nn.Module
+    public class Tanh : torch.nn.Module
     {
         internal Tanh (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Tanh_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Tanh_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

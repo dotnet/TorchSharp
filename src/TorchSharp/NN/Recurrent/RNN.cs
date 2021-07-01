@@ -9,12 +9,12 @@ using static TorchSharp.nn;
 #nullable enable
 namespace TorchSharp
 {
-    public class RNN : nn.Module
+    public class RNN : torch.nn.Module
     {
         internal RNN (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_RNN_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+        extern static IntPtr THSNN_RNN_forward (torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
         /// <summary>
         /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.

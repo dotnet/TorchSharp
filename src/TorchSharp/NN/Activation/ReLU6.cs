@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a ReLU6 module.
     /// </summary>
-    public class ReLU6 : nn.Module
+    public class ReLU6 : torch.nn.Module
     {
         internal ReLU6 (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReLU6_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ReLU6_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {

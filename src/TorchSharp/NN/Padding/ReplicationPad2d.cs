@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a ReplicationPad2d module.
     /// </summary>
-    public class ReplicationPad2d : nn.Module
+    public class ReplicationPad2d : torch.nn.Module
     {
         internal ReplicationPad2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReplicationPad2d_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ReplicationPad2d_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.

@@ -8,12 +8,12 @@ namespace TorchSharp
     /// <summary>
     /// This class is used to represent a Mish module.
     /// </summary>
-    public class Mish : nn.Module
+    public class Mish : torch.nn.Module
     {
         internal Mish (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Mish_forward (nn.Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Mish_forward (torch.nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
