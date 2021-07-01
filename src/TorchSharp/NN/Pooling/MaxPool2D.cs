@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a MaxPool2D module.
     /// </summary>
-    public class MaxPool2d : Module
+    public class MaxPool2d : nn.Module
     {
         internal MaxPool2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool2d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_MaxPool2d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool2d_forward_with_indices(Module.HType module, IntPtr tensor, out IntPtr indices);
+        private static extern IntPtr THSNN_MaxPool2d_forward_with_indices(nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
         public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
         {
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
             return (new TorchTensor(res), new TorchTensor(indices));
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_MaxPool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, IntPtr pDilation, int dilationLength, bool ceilMode, out IntPtr pBoxedModule);
@@ -75,9 +75,8 @@ namespace TorchSharp.NN
                 }
             }
         }
-    }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 2D max pooling over an input signal composed of several input planes.
@@ -88,9 +87,9 @@ namespace TorchSharp.NN
         /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
         /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
         /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
-        static public TorchTensor MaxPool2d(TorchTensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
+        static public TorchTensor max_pool2d(TorchTensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
         {
-            using (var d = Modules.MaxPool2d(kernelSize, stride, padding, dilation, ceilMode)) {
+            using (var d =nn.MaxPool2d(kernelSize, stride, padding, dilation, ceilMode)) {
                 return d.forward(x);
             }
         }
@@ -105,11 +104,12 @@ namespace TorchSharp.NN
         /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
         /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
         /// <returns></returns>
-        static public TorchTensor MaxPool2d (TorchTensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+        static public TorchTensor max_pool2d(TorchTensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
         {
-            using (var d = Modules.MaxPool2d (kernelSize, strides, padding, dilation, ceilMode)) {
+            using (var d =nn.MaxPool2d (kernelSize, strides, padding, dilation, ceilMode)) {
                 return d.forward (x);
             }
+        }
         }
     }
 }

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+using static TorchSharp.nn;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class LSTM : Module
+    public class LSTM : nn.Module
     {
         internal LSTM (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
@@ -19,7 +20,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_LSTM_forward (Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
+        extern static IntPtr THSNN_LSTM_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
 
         /// <summary>
         /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
@@ -34,7 +35,7 @@ namespace TorchSharp.NN
             return (new TorchTensor (res), new TorchTensor(hN), new TorchTensor(cN));
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_LSTM_ctor (long input_size, long hidden_size, long num_layers, bool bias, bool batchFirst, double dropout, bool bidirectional, out IntPtr pBoxedModule);

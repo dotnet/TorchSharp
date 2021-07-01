@@ -3,20 +3,22 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public static partial class Functions
+    public static partial class nn
     {
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_one_hot(IntPtr self, long num_classes);
-
-        static public TorchTensor OneHot (TorchTensor x, long num_classes = -1)
+        public static partial class functional
         {
-            if (x.Type != ScalarType.Int64) throw new ArgumentException("OneHot input tensor must have elements of type Int64");
-            var res = THSNN_one_hot(x.Handle, num_classes);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new TorchTensor(res);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_one_hot(IntPtr self, long num_classes);
+
+            static public TorchTensor OneHot(TorchTensor x, long num_classes = -1)
+            {
+                if (x.Type != ScalarType.Int64) throw new ArgumentException("OneHot input tensor must have elements of type Int64");
+                var res = THSNN_one_hot(x.Handle, num_classes);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new TorchTensor(res);
+            }
         }
     }
-
 }

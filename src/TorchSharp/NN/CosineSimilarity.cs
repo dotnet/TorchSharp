@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module for 2d/3d convolutational layers.
     /// </summary>
-    public class CosineSimilarity : Module
+    public class CosineSimilarity : nn.Module
     {
         internal CosineSimilarity (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_CosineSimilarity_forward (Module.HType module, IntPtr input1, IntPtr input2);
+        private static extern IntPtr THSNN_CosineSimilarity_forward (nn.Module.HType module, IntPtr input1, IntPtr input2);
 
         public TorchTensor forward (TorchTensor input1, TorchTensor input2)
         {
@@ -24,7 +24,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_CosineSimilarity_ctor (long dim, double eps, out IntPtr pBoxedModule);
@@ -37,11 +37,11 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         static public TorchTensor CosineSimilarity (TorchTensor input1, TorchTensor input2, long dim = 1, double eps = 1e-8)
         {
-            using (var f = Modules.CosineSimilarity (dim, eps)) {
+            using (var f =nn.CosineSimilarity (dim, eps)) {
                 return f.forward (input1, input2);
             }
         }

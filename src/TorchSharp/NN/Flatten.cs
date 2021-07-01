@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module for 2d/3d convolutational layers.
     /// </summary>
-    public class Flatten : Module
+    public class Flatten : nn.Module
     {
         internal Flatten (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Flatten_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Flatten_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -24,7 +24,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Flatten_ctor (long startDim, long endDim, out IntPtr pBoxedModule);
@@ -37,11 +37,11 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         static public TorchTensor Flatten (TorchTensor x, long startDim = 1, long endDim = -1)
         {
-            using (var f = Modules.Flatten (startDim, endDim)) {
+            using (var f =nn.Flatten (startDim, endDim)) {
                 return f.forward (x);
             }
         }

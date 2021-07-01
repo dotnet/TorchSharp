@@ -2,8 +2,9 @@
 using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+using static TorchSharp.nn;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     public enum EmbeddingBagMode
     {
@@ -12,12 +13,12 @@ namespace TorchSharp.NN
         Max = 2
     }
 
-    public class EmbeddingBag : Module
+    public class EmbeddingBag : nn.Module
     {
         internal EmbeddingBag (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_EmbeddingBag_forward (Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
+        private static extern IntPtr THSNN_EmbeddingBag_forward (nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
         public TorchTensor forward (TorchTensor input, TorchTensor offsets = null, TorchTensor perSampleWeights = null)
         {
@@ -34,10 +35,10 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_EmbeddingBag_weight(Module.HType module);
+        extern static IntPtr THSNN_EmbeddingBag_weight(nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_EmbeddingBag_set_weight(Module.HType module, IntPtr tensor);
+        extern static void THSNN_EmbeddingBag_set_weight(nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {
@@ -50,37 +51,9 @@ namespace TorchSharp.NN
                 torch.CheckForErrors();
             }
         }
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_EmbeddingBag_from_pretrained(IntPtr embeddings, bool freeze, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, long mode, bool sparse, bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
-
-        /// <summary>
-        /// A simple lookup table that stores embeddings of a fixed dictionary and size.
-        /// This module is often used to store word embeddings and retrieve them using indices. The input to the module is a list of indices, and the output is the corresponding word embeddings.
-        /// </summary>
-        /// <param name="embeddings">FloatTensor containing weights for the EmbeddingBag in two dimensions. First dimension is being passed to EmbeddingBag as num_embeddings, second as embedding_dim.</param>
-        /// <param name="freeze">If true (the default), the tensor does not get updated in the learning</param>
-        /// <param name="max_norm">If given, each embedding vector with norm larger than max_norm is renormalized to have norm max_norm.</param>
-        /// <param name="norm_type">The p of the p-norm to compute for the max_norm option. Default 2.</param>
-        /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
-        /// <param name="mode"></param>
-        /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
-        /// <param name="include_last_offset">If true, offsets has one additional element, where the last element is equivalent to the size of indices. This matches the CSR format.</param>
-        /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
-        /// <returns></returns>
-        /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-        public static EmbeddingBag from_pretrained(TorchTensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
-        {
-            var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
-                max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
-                norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
-            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new EmbeddingBag(res, boxedHandle);
-
-        }
-
     }
-    public static partial class Modules
+
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_EmbeddingBag_ctor (long num_embeddings, long embedding_dims, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, long mode, bool sparse, bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
@@ -110,8 +83,37 @@ namespace TorchSharp.NN
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new EmbeddingBag (res, boxedHandle);
         }
+
+        [DllImport("LibTorchSharp")]
+        private static extern IntPtr THSNN_EmbeddingBag_from_pretrained(IntPtr embeddings, bool freeze, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, long mode, bool sparse, bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
+
+        /// <summary>
+        /// A simple lookup table that stores embeddings of a fixed dictionary and size.
+        /// This module is often used to store word embeddings and retrieve them using indices. The input to the module is a list of indices, and the output is the corresponding word embeddings.
+        /// </summary>
+        /// <param name="embeddings">FloatTensor containing weights for the EmbeddingBag in two dimensions. First dimension is being passed to EmbeddingBag as num_embeddings, second as embedding_dim.</param>
+        /// <param name="freeze">If true (the default), the tensor does not get updated in the learning</param>
+        /// <param name="max_norm">If given, each embedding vector with norm larger than max_norm is renormalized to have norm max_norm.</param>
+        /// <param name="norm_type">The p of the p-norm to compute for the max_norm option. Default 2.</param>
+        /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
+        /// <param name="mode"></param>
+        /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
+        /// <param name="include_last_offset">If true, offsets has one additional element, where the last element is equivalent to the size of indices. This matches the CSR format.</param>
+        /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
+        /// <returns></returns>
+        /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
+        public static EmbeddingBag EmbeddingBag_from_pretrained(TorchTensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
+        {
+            var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
+                max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
+                norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new EmbeddingBag(res, boxedHandle);
+
+        }
     }
-    public static partial class Functions
+
+    public static partial class functional
     {
         /// <summary>
         /// A simple lookup table that stores embeddings of a fixed dictionary and size.
@@ -133,7 +135,7 @@ namespace TorchSharp.NN
         /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
         static public TorchTensor EmbeddingBag (TorchTensor x, long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
         {
-            using (var d = Modules.EmbeddingBag(num_embeddings, embedding_dims, max_norm, norm_type, scale_grad_by_freq, mode, sparse, include_last_offset, padding_index)) {
+            using (var d =nn.EmbeddingBag(num_embeddings, embedding_dims, max_norm, norm_type, scale_grad_by_freq, mode, sparse, include_last_offset, padding_index)) {
                 return d.forward (x);
             }
         }

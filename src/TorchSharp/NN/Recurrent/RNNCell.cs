@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+using static TorchSharp.nn;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class RNNCell : Module
+    public class RNNCell : nn.Module
     {
         internal RNNCell (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
@@ -19,7 +20,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_RNNCell_forward (Module.HType module, IntPtr input, IntPtr h_0);
+        extern static IntPtr THSNN_RNNCell_forward (nn.Module.HType module, IntPtr input, IntPtr h_0);
 
         /// <summary>
         /// Apply the RNN cell to an input tensor.
@@ -34,7 +35,7 @@ namespace TorchSharp.NN
             return new TorchTensor(hN);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_RNNCell_ctor (long input_size, long hidden_size, long nonlinearity, bool bias, out IntPtr pBoxedModule);
@@ -47,7 +48,7 @@ namespace TorchSharp.NN
         /// <param name="nonLinearity">The non-linearity to use. Can be either 'tanh' or 'relu'. Default: 'tanh'</param>
         /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
         /// <returns></returns>
-        static public RNNCell RNNCell (long inputSize, long hiddenSize, RNN.NonLinearities nonLinearity = NN.RNN.NonLinearities.Tanh, bool bias = true)
+        static public RNNCell RNNCell (long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true)
         {
             var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }

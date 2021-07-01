@@ -6,14 +6,14 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class Identity : Module
+    public class Identity : nn.Module
     {
         internal Identity (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Identity_forward (Module.HType module, IntPtr tensor);
+        extern static IntPtr THSNN_Identity_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -22,7 +22,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Identity_ctor (out IntPtr pBoxedModule);
@@ -38,7 +38,7 @@ namespace TorchSharp.NN
             return new Identity (res, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// A placeholder identity operator.
@@ -47,7 +47,7 @@ namespace TorchSharp.NN
         /// <returns>The same tensor as is input.</returns>
         static public TorchTensor Identity (TorchTensor x)
         {
-            using (var d = Modules.Identity()) {
+            using (var d =nn.Identity()) {
                 return d.forward (x);
             }
         }

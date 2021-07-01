@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module.
     /// </summary>
-    public class Dropout : Module
+    public class Dropout : nn.Module
     {
         internal Dropout (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Dropout_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Dropout_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Dropout_ctor (double probability, bool inPlace, out IntPtr pBoxedModule);
@@ -47,7 +47,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
@@ -59,7 +59,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Dropout (TorchTensor x, double probability = 0.5, bool inPlace = false)
         {
-            using (var d = Modules.Dropout (probability, inPlace)) {
+            using (var d =nn.Dropout (probability, inPlace)) {
                 return d.forward (x);
             }
         }

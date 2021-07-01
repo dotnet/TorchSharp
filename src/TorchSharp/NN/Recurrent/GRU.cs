@@ -6,14 +6,14 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class GRU : Module
+    public class GRU : nn.Module
     {
         internal GRU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_GRU_forward (Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+        extern static IntPtr THSNN_GRU_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
         /// <summary>
         /// Applies a multi-layer gated recurrent unit (GRU) RNN to an input sequence.
@@ -30,7 +30,7 @@ namespace TorchSharp.NN
             return (new TorchTensor (res), new TorchTensor(hN));
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_GRU_ctor (long input_size, long hidden_size, long num_layers, bool bias, bool batchFirst, double dropout, bool bidirectional, out IntPtr pBoxedModule);

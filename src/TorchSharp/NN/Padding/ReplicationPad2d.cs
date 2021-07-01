@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a ReplicationPad2d module.
     /// </summary>
-    public class ReplicationPad2d : Module
+    public class ReplicationPad2d : nn.Module
     {
         internal ReplicationPad2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReplicationPad2d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ReplicationPad2d_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_ReplicationPad2d_ctor (long padding, out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Pads the input tensor using replication of the input boundary.
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor ReplicationPad2d (TorchTensor x, long padding)
         {
-            using (var d = Modules.ReplicationPad2d (padding)) {
+            using (var d =nn.ReplicationPad2d (padding)) {
                 return d.forward (x);
             }
         }

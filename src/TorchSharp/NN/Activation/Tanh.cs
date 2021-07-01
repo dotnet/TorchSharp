@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Tanh module.
     /// </summary>
-    public class Tanh : Module
+    public class Tanh : nn.Module
     {
         internal Tanh (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Tanh_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Tanh_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Tanh_ctor (out IntPtr pBoxedModule);
@@ -44,7 +44,7 @@ namespace TorchSharp.NN
             return new Tanh (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Tanh activation
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Tanh (TorchTensor x)
         {
-            using (var m = Modules.Tanh()) {
+            using (var m =nn.Tanh()) {
                 return m.forward (x);
             }
         }

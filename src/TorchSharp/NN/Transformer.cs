@@ -4,22 +4,16 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class Transformer : Module
+    public class Transformer : nn.Module
     {
-        public enum Activations
-        {
-            ReLU = 0,
-            GELU = 1
-        }
-
         private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
 
         internal Transformer (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Transformer_forward (Module.HType module, IntPtr src, IntPtr tgt, IntPtr src_mask, IntPtr tgt_mask, IntPtr memory_mask, IntPtr src_key_padding_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
+        private static extern IntPtr THSNN_Transformer_forward (nn.Module.HType module, IntPtr src, IntPtr tgt, IntPtr src_mask, IntPtr tgt_mask, IntPtr memory_mask, IntPtr src_key_padding_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
         /// <summary>
         /// Take in and process masked source/target sequences.
@@ -49,8 +43,14 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
+        public enum Activations
+        {
+            ReLU = 0,
+            GELU = 1
+        }
+
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Transformer_ctor (long d_model, long nhead, long num_encoder_layers, long num_decoder_layers, long dim_feedforward, double dropout, long activation, out IntPtr pBoxedModule);
 
@@ -65,7 +65,7 @@ namespace TorchSharp.NN
         /// <param name="dropout">The dropout value (default=0.1).</param>
         /// <param name="activation">The activation function of encoder/decoder intermediate layer, relu or gelu (default=relu).</param>
         /// <returns></returns>
-        static public Transformer Transformer (long d_model = 512, long nhead = 8, long num_encoder_layers = 6, long num_decoder_layers = 6, long dim_feedforward = 2048, double dropout = 0.1, Transformer.Activations activation = NN.Transformer.Activations.ReLU)
+        static public Transformer Transformer (long d_model = 512, long nhead = 8, long num_encoder_layers = 6, long num_decoder_layers = 6, long dim_feedforward = 2048, double dropout = 0.1, Activations activation = nn.Activations.ReLU)
         {
             var res = THSNN_Transformer_ctor (d_model, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, dropout, (long)activation, out var boxedHandle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }

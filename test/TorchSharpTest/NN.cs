@@ -3,9 +3,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 using TorchSharp.Tensor;
 using Xunit;
 
@@ -428,7 +427,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             var eval = seq.forward(x);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(nn.Reduction.Sum);
             var output = loss(eval, y);
 
             var result = output.ToSingle();
@@ -442,9 +441,9 @@ namespace TorchSharp
             using (TorchTensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f, 2.5f }))
             using (TorchTensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
                 var componentWiseLoss = ((TorchTensor)input.exp()) - target * input;
-                Assert.True(componentWiseLoss.Equals(poisson_loss(reduction: NN.Reduction.None)(input, target)));
-                Assert.True(componentWiseLoss.sum().Equals(poisson_loss(reduction: NN.Reduction.Sum)(input, target)));
-                Assert.True(componentWiseLoss.mean().Equals(poisson_loss(reduction: NN.Reduction.Mean)(input, target)));
+                Assert.True(componentWiseLoss.Equals(poisson_loss(reduction: nn.Reduction.None)(input, target)));
+                Assert.True(componentWiseLoss.sum().Equals(poisson_loss(reduction: nn.Reduction.Sum)(input, target)));
+                Assert.True(componentWiseLoss.mean().Equals(poisson_loss(reduction: nn.Reduction.Mean)(input, target)));
             }
         }
 
@@ -757,7 +756,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(nn.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -779,7 +778,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(nn.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -804,7 +803,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(nn.Reduction.Sum);
             var output = loss(eval, y);
 
             seq.ZeroGrad();
@@ -904,7 +903,7 @@ namespace TorchSharp
             modT.Train();
 
             var eval = modT.forward(x);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(nn.Reduction.Sum);
             var output = loss(eval, y);
 
             modT.ZeroGrad();
@@ -1318,7 +1317,7 @@ namespace TorchSharp
         public void AvgPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
-            var obj = AvgPool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = avg_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1382,7 +1381,7 @@ namespace TorchSharp
         public void MaxPool2DObjectInitialized()
         {
             TorchTensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
-            var obj = MaxPool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+            var obj = max_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(TorchTensor), obj.GetType());
         }
 
@@ -1830,7 +1829,7 @@ namespace TorchSharp
             var ones = Int32Tensor.ones(new long[] { 16 });
             var weights = Float32Tensor.randn(new long[] { 1000, 12 });
 
-            using (var emb = NN.Embedding.from_pretrained(weights)) {
+            using (var emb = nn.Embedding_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
                 Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
@@ -1888,7 +1887,7 @@ namespace TorchSharp
             var ones = Int32Tensor.ones(new long[] { 16 });
             var weights = Float32Tensor.randn(new long[] { 1000, 12 });
 
-            using (var emb = NN.EmbeddingBag.from_pretrained(weights)) {
+            using (var emb = nn.EmbeddingBag_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
                 Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
@@ -2380,7 +2379,7 @@ namespace TorchSharp
         {
             using (TorchTensor input = Float32Tensor.randn(new long[] { 3, 10 }),
                    h0 = Float32Tensor.randn(new long[] { 3, 20 }))
-            using (var rnn = RNNCell(10, 20, NN.RNN.NonLinearities.ReLU)) {
+            using (var rnn = RNNCell(10, 20, nn.NonLinearities.ReLU)) {
                 var hN = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
             }

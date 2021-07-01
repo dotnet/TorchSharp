@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a GroupNorm module.
     /// </summary>
-    public class GroupNorm : Module
+    public class GroupNorm : nn.Module
     {
         internal GroupNorm (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_GroupNorm_ctor (long num_groups, long num_channels, double eps,  bool affine, out IntPtr pBoxedModule);
@@ -44,14 +44,14 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies Group Normalization over a mini-batch of inputs as described in the paper Group Normalization
         /// </summary>
         static public TorchTensor GroupNorm (TorchTensor x, long numGroups, long numChannels, double eps = 1e-05, bool affine = true)
         {
-            using (var d = Modules.GroupNorm (numGroups, numChannels, eps, affine)) {
+            using (var d =nn.GroupNorm (numGroups, numChannels, eps, affine)) {
                 return d.forward (x);
             }
         }

@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a ELU module.
     /// </summary>
-    public class ELU : Module
+    public class ELU : nn.Module
     {
         internal ELU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ELU_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ELU_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_ELU_ctor (double alpha, bool inplace, out IntPtr pBoxedModule);
@@ -46,7 +46,7 @@ namespace TorchSharp.NN
             return new ELU (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Exponential Linear Unit
@@ -57,7 +57,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor ELU (TorchTensor x, double alpha, bool inPlace = false)
         {
-            using (var m = Modules.ELU (alpha, inPlace)) {
+            using (var m =nn.ELU (alpha, inPlace)) {
                 return m.forward (x);
             }
         }

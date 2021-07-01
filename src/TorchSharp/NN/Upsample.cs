@@ -4,17 +4,17 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module.
     /// </summary>
-    public class Upsample : Module
+    public class Upsample : nn.Module
     {
         internal Upsample(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_Upsample_forward(Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Upsample_forward(nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
             return new TorchTensor(res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport("LibTorchSharp")]
         // align_corners -- 0=None, 1=true, 2=false
@@ -58,26 +58,26 @@ namespace TorchSharp.NN
                 }
             }
         }
-    }
 
-    public static partial class Functions
-    {
-        /// <summary>
-        /// Upsamples a given multi-channel 1D (temporal), 2D (spatial) or 3D (volumetric) data.
-        /// The input data is assumed to be of the form minibatch x channels x[optional depth] x[optional height] x width.
-        /// Hence, for spatial inputs, we expect a 4D Tensor and for volumetric inputs, we expect a 5D Tensor.
-        /// </summary>
-        /// <param name="x">Input tensor</param>
-        /// <param name="size">Output spatial sizes</param>
-        /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
-        /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
-        /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
-        /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
-        /// <returns></returns>
-        static public TorchTensor Upsample(TorchTensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
+        public static partial class functional
         {
-            using (var d = Modules.Upsample(size, scale_factor, mode, alignCorners)) {
-                return d.forward(x);
+            /// <summary>
+            /// Upsamples a given multi-channel 1D (temporal), 2D (spatial) or 3D (volumetric) data.
+            /// The input data is assumed to be of the form minibatch x channels x[optional depth] x[optional height] x width.
+            /// Hence, for spatial inputs, we expect a 4D Tensor and for volumetric inputs, we expect a 5D Tensor.
+            /// </summary>
+            /// <param name="x">Input tensor</param>
+            /// <param name="size">Output spatial sizes</param>
+            /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
+            /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
+            /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
+            /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
+            /// <returns></returns>
+            static public TorchTensor upsample(TorchTensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
+            {
+                using (var d = nn.Upsample(size, scale_factor, mode, alignCorners)) {
+                    return d.forward(x);
+                }
             }
         }
     }

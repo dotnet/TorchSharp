@@ -8,9 +8,8 @@ using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -63,8 +62,8 @@ namespace TorchSharp.Examples
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
-                var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
-                var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.2, last_epoch: 5);
+                var optimizer = optim.Optimizer.SGD(model.parameters(), lr);
+                var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
                 foreach (var epoch in Enumerable.Range(1, epochs)) {
 
@@ -95,7 +94,7 @@ namespace TorchSharp.Examples
 
         }
 
-        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -171,9 +170,9 @@ namespace TorchSharp.Examples
         {
             var initrange = 0.5;
 
-            Init.uniform(embedding.Weight, -initrange, initrange);
-            Init.uniform(fc.Weight, -initrange, initrange);
-            Init.zeros(fc.Bias);
+            init.uniform(embedding.Weight, -initrange, initrange);
+            init.uniform(fc.Weight, -initrange, initrange);
+            init.zeros(fc.Bias);
         }
 
         public override TorchTensor forward(TorchTensor t)

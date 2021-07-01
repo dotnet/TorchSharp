@@ -246,13 +246,13 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSGenerator_manual_seed(long seed);
 
-            public static TorchGenerator manual_seed(long seed)
+            public static Generator manual_seed(long seed)
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
                 var res = THSGenerator_manual_seed(seed);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
-                return new TorchGenerator();
+                return new Generator(res);
             }
         }
 

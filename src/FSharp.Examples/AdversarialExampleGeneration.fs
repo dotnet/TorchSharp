@@ -6,9 +6,8 @@ open System.Diagnostics
 
 open TorchSharp
 open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.nn
+open type TorchSharp.optim
 open type TorchSharp.TorchScalar
 
 open TorchSharp.Examples
@@ -54,7 +53,7 @@ let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 
-let criterion x y = Functions.nll_loss().Invoke(x,y)
+let criterion x y = functional.nll_loss().Invoke(x,y)
 
 let attack (image:TorchTensor) (eps:TorchScalar) (data_grad:TorchTensor) =
     use sign = data_grad.sign()

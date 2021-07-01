@@ -4,9 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -82,9 +81,9 @@ namespace TorchSharp.Examples
                 _epochs *= 4;
             }
 
-            var optimizer = NN.Optimizer.Adam(model.parameters());
+            var optimizer = optim.Optimizer.Adam(model.parameters());
 
-            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.7, last_epoch: 5);
+            var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch: 5);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -92,7 +91,7 @@ namespace TorchSharp.Examples
             for (var epoch = 1; epoch <= _epochs; epoch++) {
 
                 Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
-                Test(model, nll_loss(reduction: NN.Reduction.Sum), device, test, test.Size);
+                Test(model, nll_loss(reduction: nn.Reduction.Sum), device, test, test.Size);
 
                 Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
             }
@@ -158,7 +157,7 @@ namespace TorchSharp.Examples
 
         private static void Train(
             Model model,
-            NN.Optimizer optimizer,
+            optim.Optimizer optimizer,
             Loss loss,
             Device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,

@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a BatchNorm2D module.
     /// </summary>
-    public class BatchNorm2d : Module
+    public class BatchNorm2d : nn.Module
     {
         internal BatchNorm2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_BatchNorm2d_ctor (long features, double eps, double momentum, bool affine, bool track_running_stats, out IntPtr pBoxedModule);
@@ -51,7 +51,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies Batch Normalization over a 4D input (a mini-batch of 2D inputs with additional channel dimension) as described in the paper Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift.
@@ -68,7 +68,7 @@ namespace TorchSharp.NN
 
         static public TorchTensor BatchNorm2d(TorchTensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
-            using (var d = Modules.BatchNorm2d(features, eps, momentum, affine, track_running_stats)) {
+            using (var d =nn.BatchNorm2d(features, eps, momentum, affine, track_running_stats)) {
                 return d.forward (x);
             }
         }

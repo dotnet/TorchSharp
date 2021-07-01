@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.nn;
 
 namespace TorchSharp.TorchVision
 {
@@ -55,7 +55,7 @@ namespace TorchSharp.TorchVision
 
             var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var dtype);
 
-            img = Functions.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
+            img = nn.functional.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
 
             return SqueezeOut(img, needCast, needSqueeze, dtype);
         }

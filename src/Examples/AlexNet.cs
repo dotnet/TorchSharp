@@ -5,9 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -60,7 +59,7 @@ namespace TorchSharp.Examples
             using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device))
             using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
             using (var model = new Model("model", _numClasses, device))
-            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)) {
+            using (var optimizer = optim.Optimizer.Adam(model.parameters(), 0.001)) {
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -135,7 +134,7 @@ namespace TorchSharp.Examples
 
         private static void Train(
             Model model,
-            NN.Optimizer optimizer,
+            optim.Optimizer optimizer,
             Loss loss,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
@@ -154,7 +153,7 @@ namespace TorchSharp.Examples
                 optimizer.zero_grad();
 
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftmax(prediction, 1), target)) {
+                using (var output = loss(log_softmax(prediction, 1), target)) {
                     output.backward();
 
                     optimizer.step();
@@ -191,7 +190,7 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader) {
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftmax(prediction, 1), target)) {
+                using (var output = loss(log_softmax(prediction, 1), target)) {
 
                     testLoss += output.ToSingle();
                     batchCount += 1;

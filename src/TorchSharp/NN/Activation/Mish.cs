@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Mish module.
     /// </summary>
-    public class Mish : Module
+    public class Mish : nn.Module
     {
         internal Mish (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Mish_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Mish_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Mish_ctor(out IntPtr pBoxedModule);
@@ -44,7 +44,7 @@ namespace TorchSharp.NN
             return new Mish (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// A Self Regularized Non-Monotonic Neural Activation Function.
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Mish (TorchTensor x)
         {
-            using (var m = Modules.Mish()) {
+            using (var m =nn.Mish()) {
                 return m.forward (x);
             }
         }

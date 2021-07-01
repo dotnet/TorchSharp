@@ -3825,7 +3825,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_bernoulli_0(IntPtr tensor, double p, IntPtr gen);
 
-        public TorchTensor bernoulli_(double p = 0.5, TorchGenerator? generator = null)
+        public TorchTensor bernoulli_(double p = 0.5, torch.Generator? generator = null)
         {
             var res = THSTensor_bernoulli_0(handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3835,7 +3835,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_bernoulli_1(IntPtr tensor, IntPtr p_tensor, IntPtr gen);
 
-        public TorchTensor bernoulli_(TorchTensor p, TorchGenerator? generator = null)
+        public TorchTensor bernoulli_(TorchTensor p, torch.Generator? generator = null)
         {
             var res = THSTensor_bernoulli_1(handle, p.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3845,7 +3845,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cauchy_(IntPtr tensor, double median, double sigma, IntPtr gen);
 
-        public TorchTensor cauchy_(double median = 0.0, double sigma = 1.0, TorchGenerator? generator = null)
+        public TorchTensor cauchy_(double median = 0.0, double sigma = 1.0, torch.Generator? generator = null)
         {
             var res = THSTensor_cauchy_(handle, median, sigma, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3855,7 +3855,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_exponential_(IntPtr tensor, double lambda, IntPtr gen);
 
-        public TorchTensor exponential_(double lambda = 1.0, TorchGenerator? generator = null)
+        public TorchTensor exponential_(double lambda = 1.0, torch.Generator? generator = null)
         {
             var res = THSTensor_exponential_(handle, lambda, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3865,7 +3865,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_geometric_(IntPtr tensor, double p, IntPtr gen);
 
-        public TorchTensor geometric_(double p, TorchGenerator? generator = null)
+        public TorchTensor geometric_(double p, torch.Generator? generator = null)
         {
             var res = THSTensor_geometric_(handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3875,7 +3875,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
 
-        public TorchTensor normal_(double mean = 0.0, double stddev = 1.0, TorchGenerator? generator = null)
+        public TorchTensor normal_(double mean = 0.0, double stddev = 1.0, torch.Generator? generator = null)
         {
             var res = THSTensor_normal_(handle, mean, stddev, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3885,7 +3885,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_log_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
 
-        public TorchTensor log_normal_(double mean = 0.0, double stddev = 1.0, TorchGenerator? generator = null)
+        public TorchTensor log_normal_(double mean = 0.0, double stddev = 1.0, torch.Generator? generator = null)
         {
             var res = THSTensor_log_normal_(handle, mean, stddev, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3895,7 +3895,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_random_(IntPtr tensor, double low, double high, IntPtr gen);
 
-        public TorchTensor random_(double from, double to, TorchGenerator? generator = null)
+        public TorchTensor random_(double from, double to, torch.Generator? generator = null)
         {
             var res = THSTensor_random_(handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3905,7 +3905,7 @@ namespace TorchSharp.Tensor
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_uniform_(IntPtr tensor, double low, double high, IntPtr gen);
 
-        public TorchTensor uniform_(double from, double to, TorchGenerator? generator = null)
+        public TorchTensor uniform_(double from, double to, torch.Generator? generator = null)
         {
             var res = THSTensor_uniform_(handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -4433,7 +4433,7 @@ namespace TorchSharp.Tensor
         }
 
         // Specifically added to make F# look good.
-        public static TorchTensor op_MinusMinusGreater(TorchTensor t, TorchSharp.NN.Module m) => m.forward(t);
+        public static TorchTensor op_MinusMinusGreater(TorchTensor t, TorchSharp.nn.Module m) => m.forward(t);
 
         /// <summary>
         ///   Get a string representation of the tensor.

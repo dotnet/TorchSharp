@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a ReflectionPad1d module.
     /// </summary>
-    public class ReflectionPad1d : Module
+    public class ReflectionPad1d : nn.Module
     {
         internal ReflectionPad1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReflectionPad1d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ReflectionPad1d_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_ReflectionPad1d_ctor (long padding, out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Pads the input tensor using the reflection of the input boundary.
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor ReflectionPad1d (TorchTensor x, long padding)
         {
-            using (var d = Modules.ReflectionPad1d (padding)) {
+            using (var d =nn.ReflectionPad1d (padding)) {
                 return d.forward (x);
             }
         }

@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a LocalResponseNorm module.
     /// </summary>
-    public class LocalResponseNorm : Module
+    public class LocalResponseNorm : nn.Module
     {
         internal LocalResponseNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
             return new TorchTensor(res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_LocalResponseNorm_ctor(long size, double alpha, double beta, double k, out IntPtr pBoxedModule);
@@ -43,14 +43,14 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies local response normalization over an input signal composed of several input planes, where channels occupy the second dimension. Applies normalization across channels.
         /// </summary>
         static public TorchTensor LocalResponseNorm(TorchTensor x, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
         {
-            using (var d = Modules.LocalResponseNorm(size, alpha, beta, k)) {
+            using (var d =nn.LocalResponseNorm(size, alpha, beta, k)) {
                 return d.forward(x);
             }
         }

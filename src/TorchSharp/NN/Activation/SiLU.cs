@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a SiLU module.
     /// </summary>
-    public class SiLU : Module
+    public class SiLU : nn.Module
     {
         internal SiLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_SiLU_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_SiLU_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_SiLU_ctor (out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
             return new SiLU (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Sigmoid-Weighted Linear Unit
@@ -54,7 +54,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor SiLU(TorchTensor x)
         {
-            using (var m = Modules.SiLU()) {
+            using (var m =nn.SiLU()) {
                 return m.forward (x);
             }
         }

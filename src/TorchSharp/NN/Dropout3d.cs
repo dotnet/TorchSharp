@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Dropout3d module.
     /// </summary>
-    public class Dropout3d : Module
+    public class Dropout3d : nn.Module
     {
         internal Dropout3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Dropout3d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Dropout3d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -22,7 +22,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSNN_Dropout3d_ctor(double probability, bool inPlace, out IntPtr pBoxedModule);
@@ -42,7 +42,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Randomly zero out entire channels (a channel is a 3D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 3D tensor \text{input}[i, j]input[i,j] ).
@@ -54,7 +54,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Dropout3d(TorchTensor x, double probability = 0.5, bool inPlace = false)
         {
-            using (var d = Modules.Dropout3d(probability, inPlace)) {
+            using (var d =nn.Dropout3d(probability, inPlace)) {
                 return d.forward(x);
             }
         }

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     public enum PaddingModes
     {
@@ -21,12 +21,12 @@ namespace TorchSharp.NN
         Same = 1
     }
 
-    public class Conv1d : Module
+    public class Conv1d : nn.Module
     {
         internal Conv1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Conv1d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Conv1d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -36,9 +36,9 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_Conv1d_bias(Module.HType module);
+        extern static IntPtr THSNN_Conv1d_bias(nn.Module.HType module);
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_Conv1d_set_bias(Module.HType module, IntPtr tensor);
+        extern static void THSNN_Conv1d_set_bias(nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor? Bias {
             get {
@@ -52,9 +52,9 @@ namespace TorchSharp.NN
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_Conv1d_weight(Module.HType module);
+        extern static IntPtr THSNN_Conv1d_weight(nn.Module.HType module);
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_Conv1d_set_weight(Module.HType module, IntPtr tensor);
+        extern static void THSNN_Conv1d_set_weight(nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {
@@ -69,7 +69,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_Conv1d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
@@ -114,7 +114,7 @@ namespace TorchSharp.NN
             return new Conv1d(res, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 1D convolution over an input signal composed of several input planes.
@@ -132,7 +132,7 @@ namespace TorchSharp.NN
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
         static public TorchTensor Conv1d(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.Conv1d(inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
+            using (var d =nn.Conv1d(inputChannel, outputChannel, kernelSize, stride, padding, dilation, paddingMode, groups, bias)) {
                 return d.forward (x);
             }
         }
@@ -153,7 +153,7 @@ namespace TorchSharp.NN
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
         static public TorchTensor Conv1d(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.Conv1d(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, paddingMode, groups, bias)) {
+            using (var d =nn.Conv1d(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, paddingMode, groups, bias)) {
                 return d.forward(x);
             }
         }

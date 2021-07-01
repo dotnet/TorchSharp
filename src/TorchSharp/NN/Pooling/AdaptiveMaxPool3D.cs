@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a AdaptiveMaxPool3D module.
     /// </summary>
-    public class AdaptiveMaxPool3d : Module
+    public class AdaptiveMaxPool3d : nn.Module
     {
         internal AdaptiveMaxPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -24,7 +24,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_AdaptiveMaxPool3d_ctor (IntPtr psizes, int length, out IntPtr pBoxedModule);
@@ -48,7 +48,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
@@ -60,7 +60,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor AdaptiveMaxPool3d (TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveMaxPool3d (outputSize)) {
+            using (var d =nn.AdaptiveMaxPool3d (outputSize)) {
                 return d.forward (x);
             }
         }

@@ -8,9 +8,7 @@ open System.Collections.Generic
 
 open TorchSharp
 open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.nn
 
 open TorchSharp.Examples
 
@@ -43,7 +41,7 @@ let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 
-let criterion x y = Functions.cross_entropy_loss().Invoke(x,y)
+let criterion x y = functional.cross_entropy_loss().Invoke(x,y)
 
 type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as this =
     inherit CustomModule("Transformer")
@@ -54,9 +52,9 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as th
     do
         let initrange = 0.5
 
-        Init.uniform(embedding.Weight, -initrange, initrange) |> ignore
-        Init.uniform(fc.Weight, -initrange, initrange) |> ignore
-        Init.zeros(fc.Bias) |> ignore
+        init.uniform(embedding.Weight, -initrange, initrange) |> ignore
+        init.uniform(fc.Weight, -initrange, initrange) |> ignore
+        init.zeros(fc.Bias) |> ignore
 
         this.RegisterComponents()
 
@@ -68,7 +66,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as th
     member _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc
 
-let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) (optimizer:Optimizer) =
+let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) (optimizer:optim.Optimizer) =
 
     model.Train()
 
@@ -134,8 +132,8 @@ let run epochs =
 
     let model = new TextClassificationModel((int64 vocab.Count), emsize, 4L, device)
 
-    let optimizer = NN.Optimizer.SGD(model.parameters(), lr)
-    let scheduler = NN.Optimizer.StepLR(optimizer, 1u, 0.2, last_epoch=5)
+    let optimizer = optim.Optimizer.SGD(model.parameters(), lr)
+    let scheduler = optim.lr_scheduler.StepLR(optimizer, 1u, 0.2, last_epoch=5)
 
     let sw = Stopwatch()
 

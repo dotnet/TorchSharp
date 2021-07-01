@@ -6,9 +6,9 @@ open System.Diagnostics
 
 open TorchSharp
 open TorchSharp.Tensor
-open TorchSharp.NN
 
-open type TorchSharp.NN.Modules
+open type TorchSharp.nn
+open type TorchSharp.optim
 open type TorchSharp.TorchScalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
@@ -83,7 +83,7 @@ type Model(name,device:Device) as this =
 
         classifier.forward(x)
 
-let loss x y = Functions.nll_loss().Invoke(x,y)
+let loss x y = functional.nll_loss().Invoke(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
 
@@ -150,7 +150,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     
 let trainingLoop (model:Model) epochs trainData testData =
     
-        use optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)
+        use optimizer = Optimizer.Adam(model.parameters(), 0.001)
         //NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
     
         let sw = Stopwatch()

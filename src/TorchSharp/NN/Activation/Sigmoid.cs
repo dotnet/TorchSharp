@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Sigmoid module.
     /// </summary>
-    public class Sigmoid : Module
+    public class Sigmoid : nn.Module
     {
         internal Sigmoid (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Sigmoid_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Sigmoid_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Sigmoid_ctor (out IntPtr pBoxedModule);
@@ -44,7 +44,7 @@ namespace TorchSharp.NN
             return new Sigmoid (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Sigmoid activation
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Sigmoid (TorchTensor x)
         {
-            using (var m = Modules.Sigmoid()) {
+            using (var m =nn.Sigmoid()) {
                 return m.forward (x);
             }
         }

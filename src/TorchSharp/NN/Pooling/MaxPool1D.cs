@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a MaxPool1D module.
     /// </summary>
-    public class MaxPool1d : Module
+    public class MaxPool1d : nn.Module
     {
         internal MaxPool1d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool1d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_MaxPool1d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool1d_forward_with_indices(Module.HType module, IntPtr tensor, out IntPtr indices);
+        private static extern IntPtr THSNN_MaxPool1d_forward_with_indices(nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
         public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
         {
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
             return (new TorchTensor(res), new TorchTensor(indices));
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_MaxPool1d_ctor (IntPtr pkernelSize, IntPtr pStrides, IntPtr pPadding, IntPtr pDilation, bool ceilMode, out IntPtr pBoxedModule);
@@ -69,7 +69,7 @@ namespace TorchSharp.NN
 
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 1D max pooling over an input signal composed of several input planes.
@@ -83,7 +83,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor MaxPool1d (TorchTensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
         {
-            using (var d = Modules.MaxPool1d(kernelSize, stride, padding, dilation, ceilMode)) {
+            using (var d =nn.MaxPool1d(kernelSize, stride, padding, dilation, ceilMode)) {
                 return d.forward (x);
             }
         }

@@ -8,9 +8,8 @@ using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -74,8 +73,8 @@ namespace TorchSharp.Examples
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
             var loss = cross_entropy_loss();
             var lr = 2.50;
-            var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
-            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.95, last_epoch: 15);
+            var optimizer = optim.Optimizer.SGD(model.parameters(), lr);
+            var scheduler = optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
             totalTime.Start();
@@ -100,7 +99,7 @@ namespace TorchSharp.Examples
             Console.WriteLine($"\nEnd of training | time: {totalTime.Elapsed.TotalSeconds:0.0}s | loss: {tst_loss:0.00}\n");
         }
 
-        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
+        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -143,7 +142,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
+        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, optim.Optimizer optimizer)
         {
             model.Eval();
 
@@ -235,9 +234,9 @@ namespace TorchSharp.Examples
             {
                 var initrange = 0.1;
 
-                Init.uniform(encoder.Weight, -initrange, initrange);
-                Init.zeros(decoder.Bias);
-                Init.uniform(decoder.Weight, -initrange, initrange);
+                init.uniform(encoder.Weight, -initrange, initrange);
+                init.zeros(decoder.Bias);
+                init.uniform(decoder.Weight, -initrange, initrange);
             }
 
             public override TorchTensor forward(TorchTensor t)

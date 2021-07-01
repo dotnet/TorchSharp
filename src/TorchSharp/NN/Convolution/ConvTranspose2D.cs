@@ -4,14 +4,14 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class ConvTranspose2d : Module
+    public class ConvTranspose2d : nn.Module
     {
         internal ConvTranspose2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ConvTranspose2d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ConvTranspose2d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -21,9 +21,9 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_ConvTranspose2d_bias(Module.HType module);
+        extern static IntPtr THSNN_ConvTranspose2d_bias(nn.Module.HType module);
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_ConvTranspose2d_set_bias(Module.HType module, IntPtr tensor);
+        extern static void THSNN_ConvTranspose2d_set_bias(nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor? Bias {
             get {
@@ -37,9 +37,9 @@ namespace TorchSharp.NN
             }
         }
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSNN_ConvTranspose2d_weight(Module.HType module);
+        extern static IntPtr THSNN_ConvTranspose2d_weight(nn.Module.HType module);
         [DllImport("LibTorchSharp")]
-        extern static void THSNN_ConvTranspose2d_set_weight(Module.HType module, IntPtr tensor);
+        extern static void THSNN_ConvTranspose2d_set_weight(nn.Module.HType module, IntPtr tensor);
 
         public TorchTensor Weight {
             get {
@@ -54,7 +54,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_ConvTranspose2d_ctor (long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
@@ -80,7 +80,7 @@ namespace TorchSharp.NN
             return new ConvTranspose2d (res, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 1D convolution over an input signal composed of several input planes.
@@ -99,7 +99,7 @@ namespace TorchSharp.NN
         /// <returns>Tensor of shape (N,C_out,L_out)</returns>
         static public TorchTensor ConvTranspose2d(TorchTensor x, long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
         {
-            using (var d = Modules.ConvTranspose2d(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, paddingMode, groups, bias)) {
+            using (var d =nn.ConvTranspose2d(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, paddingMode, groups, bias)) {
                 return d.forward (x);
             }
         }

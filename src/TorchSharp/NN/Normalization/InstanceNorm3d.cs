@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a InstanceNorm3D module.
     /// </summary>
-    public class InstanceNorm3d : Module
+    public class InstanceNorm3d : nn.Module
     {
         internal InstanceNorm3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_InstanceNorm3d_ctor (long features, double eps, double momentum, bool affine, bool track_running_stats, out IntPtr pBoxedModule);
@@ -51,7 +51,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies Instance Normalization over a 5D input (a mini-batch of 3D inputs with additional channel dimension) as described in the paper Instance Normalization: The Missing Ingredient for Fast Stylization.
@@ -67,7 +67,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor InstanceNorm3d(TorchTensor x, long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
         {
-            using (var d = Modules.InstanceNorm3d(features, eps, momentum, affine, track_running_stats)) {
+            using (var d =nn.InstanceNorm3d(features, eps, momentum, affine, track_running_stats)) {
                 return d.forward (x);
             }
         }

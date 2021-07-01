@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a AdaptiveAvgPool2D module.
     /// </summary>
-    public class AdaptiveAvgPool2d : Module
+    public class AdaptiveAvgPool2d : nn.Module
     {
         internal AdaptiveAvgPool2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -24,7 +24,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_AdaptiveAvgPool2d_ctor (IntPtr psizes, int length, out IntPtr pBoxedModule);
@@ -47,7 +47,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
@@ -58,7 +58,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor AdaptiveAvgPool2d (TorchTensor x, long[] outputSize)
         {
-            using (var d = Modules.AdaptiveAvgPool2d (outputSize)) {
+            using (var d =nn.AdaptiveAvgPool2d (outputSize)) {
                 return d.forward (x);
             }
         }

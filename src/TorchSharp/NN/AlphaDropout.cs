@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// Alpha Dropout is a type of Dropout that maintains the self-normalizing property. For an input with zero mean and unit standard deviation,
@@ -13,12 +13,12 @@ namespace TorchSharp.NN
     /// The elements to masked are randomized on every forward call, and scaled and shifted to maintain zero mean and unit standard deviation.
     /// During evaluation the module simply computes an identity function.
     /// </summary>
-    public class AlphaDropout : Module
+    public class AlphaDropout : nn.Module
     {
         internal AlphaDropout (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_AlphaDropout_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_AlphaDropout_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -32,7 +32,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_AlphaDropout_ctor (double probability, bool inPlace, out IntPtr pBoxedModule);
@@ -52,7 +52,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Randomly zero out entire channels (a channel is a 2D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 2D tensor \text{input}[i, j]input[i,j] ).
@@ -64,7 +64,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor AlphaDropout (TorchTensor x, double probability = 0.5, bool inPlace = false)
         {
-            using (var d = Modules.AlphaDropout (probability, inPlace)) {
+            using (var d =nn.AlphaDropout (probability, inPlace)) {
                 return d.forward (x);
             }
         }

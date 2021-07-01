@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Softmax2d module.
     /// </summary>
-    public class Softmax2d : Module
+    public class Softmax2d : nn.Module
     {
         internal Softmax2d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Softmax2d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Softmax2d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Softmax2d_ctor (out IntPtr pBoxedModule);
@@ -44,7 +44,7 @@ namespace TorchSharp.NN
             return new Softmax2d (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies Softmax over features to each spatial location
@@ -53,7 +53,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Softmax2d (TorchTensor x)
         {
-            using (var m = Modules.Softmax2d()) {
+            using (var m =nn.Softmax2d()) {
                 return m.forward (x);
             }
         }

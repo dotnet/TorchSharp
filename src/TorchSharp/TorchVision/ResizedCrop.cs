@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.nn;
 
 namespace TorchSharp.TorchVision
 {

@@ -54,14 +54,14 @@ namespace TorchSharp
             long a, b, c;
             lock (_lock) {
                 using (var gen = torch.random.manual_seed(4711)) {
-                    a = gen.InitialSeed;
+                    a = gen.initial_seed();
                 }
-                using (var gen = TorchGenerator.Default) {
-                    b = gen.InitialSeed;
+                using (var gen = torch.Generator.Default) {
+                    b = gen.initial_seed();
                 }
                 Assert.Equal(a, b);
                 using (var gen = torch.random.manual_seed(17)) {
-                    c = gen.InitialSeed;
+                    c = gen.initial_seed();
                 }
                 Assert.NotEqual(a, c);
 
@@ -78,11 +78,11 @@ namespace TorchSharp
 
                 long a, b, c;
                 using (var gen = torch.random.manual_seed(4711)) {
-                    a = gen.InitialSeed;
+                    a = gen.initial_seed();
                 }
-                using (TorchGenerator gen = TorchGenerator.Default, genA = new TorchGenerator(4355)) {
-                    b = gen.InitialSeed;
-                    c = genA.InitialSeed;
+                using (torch.Generator gen = torch.Generator.Default, genA = new torch.Generator(4355)) {
+                    b = gen.initial_seed();
+                    c = genA.initial_seed();
                 }
                 Assert.Equal(a, b);
                 Assert.NotEqual(a, c);
@@ -103,7 +103,7 @@ namespace TorchSharp
                 using (var gen = torch.random.manual_seed(4711)) {
 
                     // Take a snapshot
-                    var state = gen.State;
+                    var state = gen.get_state();
                     Assert.NotNull(state);
 
                     // Generate a number
@@ -116,7 +116,7 @@ namespace TorchSharp
                     Assert.NotEqual(value1, value2);
 
                     // Restore the state
-                    gen.State = state;
+                    gen.set_state(state);
 
                     // Generate the first number again.
                     var val3 = Float32Tensor.randn(new long[] { 1 });

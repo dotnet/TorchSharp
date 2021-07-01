@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a ConstantPad3d module.
     /// </summary>
-    public class ConstantPad3d : Module
+    public class ConstantPad3d : nn.Module
     {
         internal ConstantPad3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ConstantPad3d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ConstantPad3d_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_ConstantPad3d_ctor (double value, long padding, out IntPtr pBoxedModule);
@@ -46,7 +46,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Pads the input tensor using replication of the input boundary.
@@ -57,7 +57,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor ConstantPad3d (TorchTensor x, long padding, double value)
         {
-            using (var d = Modules.ConstantPad3d (padding, value)) {
+            using (var d =nn.ConstantPad3d (padding, value)) {
                 return d.forward (x);
             }
         }

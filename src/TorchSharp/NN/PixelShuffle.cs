@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module.
     /// </summary>
-    public class PixelShuffle : Module
+    public class PixelShuffle : nn.Module
     {
         internal PixelShuffle (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_PixelShuffle_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_PixelShuffle_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_PixelShuffle_ctor (long upscaleFactor, out IntPtr pBoxedModule);
@@ -46,7 +46,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
@@ -58,7 +58,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor PixelShuffle (TorchTensor x, long upscaleFactor)
         {
-            using (var d = Modules.PixelShuffle (upscaleFactor)) {
+            using (var d =nn.PixelShuffle (upscaleFactor)) {
                 return d.forward (x);
             }
         }

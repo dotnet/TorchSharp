@@ -3,12 +3,12 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a LayerNorm module.
     /// </summary>
-    public class LayerNorm : Module
+    public class LayerNorm : nn.Module
     {
         internal LayerNorm (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
@@ -24,7 +24,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_LayerNorm_ctor (IntPtr norm_shape, long norm_shape_len, double eps, bool elementwise_affine, out IntPtr pBoxedModule);
@@ -45,14 +45,14 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies Layer Normalization over a mini-batch of inputs as described in the paper Layer Normalization
         /// </summary>
         static public TorchTensor LayerNorm (TorchTensor x, long[] normalizedShape, double eps = 1e-05, bool elementwiseAffine = true)
         {
-            using (var d = Modules.LayerNorm (normalizedShape, eps, elementwiseAffine)) {
+            using (var d =nn.LayerNorm (normalizedShape, eps, elementwiseAffine)) {
                 return d.forward (x);
             }
         }

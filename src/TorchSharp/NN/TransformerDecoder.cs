@@ -4,16 +4,16 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class TransformerDecoder : Module
+    public class TransformerDecoder : nn.Module
     {
         private TorchTensor NullTensor = new TorchTensor(IntPtr.Zero);
 
         internal TransformerDecoder (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_TransformerDecoder_forward (Module.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
+        private static extern IntPtr THSNN_TransformerDecoder_forward (nn.Module.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
         /// <summary>
         /// Pass the inputs (and mask) through the decoder layers in turn.
@@ -39,7 +39,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_TransformerDecoder_ctor (Module.HType decoder_layer, long num_layers, out IntPtr pBoxedModule);

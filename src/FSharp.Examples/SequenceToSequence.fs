@@ -8,9 +8,8 @@ open System.Collections.Generic
 
 open TorchSharp
 open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.nn
+open type TorchSharp.optim
 
 open TorchSharp.Examples
 
@@ -47,7 +46,7 @@ let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then Device.CUDA else Device.CPU
 
-let criterion x y = Functions.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
+let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
     inherit CustomModule("PositionalEncoding")
@@ -89,9 +88,9 @@ type TransformerModel(ntokens, device:Device) as this =
     do
         let initrange = 0.1
 
-        Init.uniform(encoder.Weight, -initrange, initrange) |> ignore
-        Init.zeros(decoder.Bias) |> ignore
-        Init.uniform(decoder.Weight, -initrange, initrange) |> ignore
+        init.uniform(encoder.Weight, -initrange, initrange) |> ignore
+        init.zeros(decoder.Bias) |> ignore
+        init.uniform(decoder.Weight, -initrange, initrange) |> ignore
 
         this.RegisterComponents()
 
@@ -241,8 +240,8 @@ let run epochs =
 
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
-    let optimizer = NN.Optimizer.SGD(model.parameters(), lr)
-    let scheduler = NN.Optimizer.StepLR(optimizer, (uint32 1), 0.95, last_epoch=15)
+    let optimizer = Optimizer.SGD(model.parameters(), lr)
+    let scheduler = lr_scheduler.StepLR(optimizer, (uint32 1), 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
     totalTime.Start()

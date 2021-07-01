@@ -6,9 +6,9 @@ open System.Diagnostics
 
 open TorchSharp
 open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.nn
+open type TorchSharp.optim
+open type TorchSharp.TorchScalar
 
 open TorchSharp.Examples
 
@@ -84,7 +84,7 @@ type Model(name,device:Device) as this =
         --> fc1 --> relu --> dropout2 --> fc2
         --> logsm
 
-let loss x y = Functions.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
+let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
     model.Train()
@@ -142,8 +142,8 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
 
     let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
 
-    let optimizer = NN.Optimizer.Adam(model.parameters())
-    NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
+    let optimizer = Optimizer.Adam(model.parameters())
+    lr_scheduler.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
 
     let sw = Stopwatch()
     sw.Start()

@@ -10,10 +10,8 @@ using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
-using TorchSharp.NN;
-
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.nn;
+using static TorchSharp.nn.functional;
 using static TorchSharp.Tensor.TensorExtensionMethods;
 
 namespace TorchSharp.Examples

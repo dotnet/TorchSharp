@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a Softmin module.
     /// </summary>
-    public class Softmin : Module
+    public class Softmin : nn.Module
     {
         internal Softmin (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Softmin_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_Softmin_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_Softmin_ctor (long dim, out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
             return new Softmin (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Softmin
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor Softmin (TorchTensor x, long dim)
         {
-            using (var m = Modules.Softmin(dim)) {
+            using (var m =nn.Softmin(dim)) {
                 return m.forward (x);
             }
         }

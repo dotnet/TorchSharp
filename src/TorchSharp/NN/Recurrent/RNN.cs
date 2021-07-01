@@ -4,22 +4,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
+using static TorchSharp.nn;
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class RNN : Module
+    public class RNN : nn.Module
     {
-        public enum NonLinearities
-        {
-            ReLU = 0,
-            Tanh = 1
-        }
-
         internal RNN (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_RNN_forward (Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+        extern static IntPtr THSNN_RNN_forward (nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
         /// <summary>
         /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
@@ -35,8 +30,15 @@ namespace TorchSharp.NN
             return (new TorchTensor (res), new TorchTensor(hN));
         }
     }
-    public static partial class Modules
+
+    public static partial class nn
     {
+        public enum NonLinearities
+        {
+            ReLU = 0,
+            Tanh = 1
+        }
+
         [DllImport ("LibTorchSharp")]
         private static extern IntPtr THSNN_RNN_ctor (long input_size, long hidden_size, long num_layers, long nonlinearity, bool bias, bool batchFirst, double dropout, bool bidirectional, out IntPtr pBoxedModule);
 
@@ -52,7 +54,7 @@ namespace TorchSharp.NN
         /// <param name="dropout">If non-zero, introduces a Dropout layer on the outputs of each RNN layer except the last layer, with dropout probability equal to dropout. Default: 0</param>
         /// <param name="bidirectional">if true, becomes a bidirectional RNN. Default: False</param>
         /// <returns></returns>
-        static public RNN RNN (long inputSize, long hiddenSize, long numLayers = 1, RNN.NonLinearities nonLinearity = NN.RNN.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
+        static public RNN RNN (long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
         {
             var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }

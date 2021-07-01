@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a MaxPool3D module.
     /// </summary>
-    public class MaxPool3d : Module
+    public class MaxPool3d : nn.Module
     {
         internal MaxPool3d (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
         {
         }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool3d_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_MaxPool3d_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.NN
         }
 
         [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSNN_MaxPool3d_forward_with_indices(Module.HType module, IntPtr tensor, out IntPtr indices);
+        private static extern IntPtr THSNN_MaxPool3d_forward_with_indices(nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
         public (TorchTensor Values, TorchTensor Indices) forward_with_indices(TorchTensor tensor)
         {
@@ -34,7 +34,7 @@ namespace TorchSharp.NN
             return (new TorchTensor(res), new TorchTensor(indices));
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_MaxPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, IntPtr pDilation, int dilationLength, bool ceilMode, out IntPtr pBoxedModule);
@@ -76,7 +76,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Applies a 3D max pooling over an input signal composed of several input planes.
@@ -89,7 +89,7 @@ namespace TorchSharp.NN
         /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
         static public TorchTensor MaxPool3d(TorchTensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
         {
-            using (var d = Modules.MaxPool3d(kernelSize, stride, padding, dilation, ceilMode)) {
+            using (var d =nn.MaxPool3d(kernelSize, stride, padding, dilation, ceilMode)) {
                 return d.forward(x);
             }
         }
@@ -106,7 +106,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor MaxPool3d (TorchTensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
         {
-            using (var d = Modules.MaxPool3d (kernelSize, strides, padding, dilation, ceilMode)) {
+            using (var d =nn.MaxPool3d (kernelSize, strides, padding, dilation, ceilMode)) {
                 return d.forward (x);
             }
         }

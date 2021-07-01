@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a ReLU module.
     /// </summary>
-    public class ReLU : Module
+    public class ReLU : nn.Module
     {
         internal ReLU (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_ReLU_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_ReLU_forward (nn.Module.HType module, IntPtr tensor);
 
         public override TorchTensor forward (TorchTensor tensor)
         {
@@ -28,7 +28,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_ReLU_ctor (bool inplace, out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
             return new ReLU (handle, boxedHandle);
         }
     }
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Rectified Linear Unit
@@ -55,7 +55,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor ReLU(TorchTensor x, bool inPlace = false)
         {
-            using (var m = Modules.ReLU(inPlace)) {
+            using (var m =nn.ReLU(inPlace)) {
                 return m.forward (x);
             }
         }

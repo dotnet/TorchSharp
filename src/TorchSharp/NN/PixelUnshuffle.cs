@@ -3,17 +3,17 @@ using System;
 using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
     /// <summary>
     /// This class is used to represent a dropout module.
     /// </summary>
-    public class PixelUnshuffle : Module
+    public class PixelUnshuffle : nn.Module
     {
         internal PixelUnshuffle (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
 
         [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_PixelUnshuffle_forward (Module.HType module, IntPtr tensor);
+        private static extern IntPtr THSNN_PixelUnshuffle_forward (nn.Module.HType module, IntPtr tensor);
 
         /// <summary>
         /// Forward pass.
@@ -27,7 +27,7 @@ namespace TorchSharp.NN
             return new TorchTensor (res);
         }
     }
-    public static partial class Modules
+    public static partial class nn
     {
         [DllImport ("LibTorchSharp")]
         extern static IntPtr THSNN_PixelUnshuffle_ctor (long downscaleFactor, out IntPtr pBoxedModule);
@@ -45,7 +45,7 @@ namespace TorchSharp.NN
         }
     }
 
-    public static partial class Functions
+    public static partial class functional
     {
         /// <summary>
         /// Reverses the PixelShuffle operation by rearranging elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an downscale factor.
@@ -57,7 +57,7 @@ namespace TorchSharp.NN
         /// <returns></returns>
         static public TorchTensor PixelUnshuffle (TorchTensor x, long downscaleFactor)
         {
-            using (var d = Modules.PixelUnshuffle (downscaleFactor)) {
+            using (var d =nn.PixelUnshuffle (downscaleFactor)) {
                 return d.forward (x);
             }
         }
