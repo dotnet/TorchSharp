@@ -12,13 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Tensor\TorchTensorTyped.tt" />
+    <None Remove="Tensor\TensorTyped.tt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Tensor\TorchTensorTyped.tt">
+    <Content Include="Tensor\TensorTyped.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TorchTensorTyped.generated.cs</LastGenOutput>
+      <LastGenOutput>TensorTyped.generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
 
@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Tensor\TorchTensorTyped.generated.cs">
+    <Compile Update="Tensor\TensorTyped.generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>TorchTensorTyped.tt</DependentUpon>
+      <DependentUpon>TensorTyped.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
