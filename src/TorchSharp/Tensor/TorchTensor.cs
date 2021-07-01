@@ -329,14 +329,17 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Gets a string representing the device where the tensor is stored.
         /// </summary>
-        public string device
+        public torch.device device
         {
             get
             {
-                var res = THSTensor_device_str(handle);
-                if (res == null)
-                    torch.CheckForErrors();
-                return res!;
+                var dev_type = device_type;
+                if (dev_type == DeviceType.CPU) {
+                    return new torch.device(DeviceType.CPU);
+                }
+                else {
+                    return new torch.device(dev_type, device_index);
+                }
             }
         }
 
@@ -496,7 +499,7 @@ namespace TorchSharp.Tensor
         }
 
         /// <summary>
-        /// Moves the tensor data.
+        /// Moves the tensor data to a specific device.
         /// </summary>
         /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
         /// <param name="deviceIndex">The optional device index.</param>
@@ -513,8 +516,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Moves the tensor data and casts it to the given element type.
         /// </summary>
+        /// <param name="type"></param>
+        /// <param name="device"></param>
         /// <returns></returns>
-        public TorchTensor to(ScalarType type, Device device)
+        public TorchTensor to(ScalarType type, torch.device device)
         {
             torch.InitializeDevice(device);
             var res = THSTensor_to_type_and_device(handle, (sbyte)type, (int)device.Type, device.Index);
@@ -542,14 +547,14 @@ namespace TorchSharp.Tensor
         /// </summary>
         /// <param name="device">A string denoting the target device.</param>
         /// <returns></returns>
-        public TorchTensor to(string device) => to(new Device(device));
+        public TorchTensor to(string device) => to(new torch.device(device));
 
         /// <summary>
         /// Moves the tensor data.
         /// </summary>
         /// <param name="device">The target device</param>
         /// <returns></returns>
-        public TorchTensor to(Device device) => to(device.Type, device.Index);
+        public TorchTensor to(torch.device device) => to(device.Type, device.Index);
 
         /// <summary>
         /// Moves the tensor data.
@@ -3732,10 +3737,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
         /// </summary>
-        public TorchTensor rand_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor rand_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -3753,10 +3758,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
         /// </summary>
-        public TorchTensor randn_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor randn_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -3774,10 +3779,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
         /// </summary>
-        public TorchTensor randint_like(long low, long high, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor randint_like(long low, long high, ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -3985,10 +3990,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor filled with the scalar value 0, with the same size as input.
         /// </summary>
-        public TorchTensor zeros_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor zeros_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -4006,10 +4011,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor filled with the scalar value 1, with the same size as input.
         /// </summary>
-        public TorchTensor ones_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor ones_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -4044,10 +4049,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         ///  Returns an uninitialized tensor with the same size as input.
         /// </summary>
-        public TorchTensor empty_like(ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor empty_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {
@@ -4082,10 +4087,10 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Returns a tensor with the same size as input filled with 'value.'
         /// </summary>
-        public TorchTensor full_like(TorchScalar value, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public TorchTensor full_like(TorchScalar value, ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
         {
             dtype = (dtype is null) ? this.Type : dtype;
-            device = (device is null) ? new Device(device_type, device_index) : device;
+            device = (device is null) ? this.device : device;
 
             var result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
             if (result == IntPtr.Zero) {

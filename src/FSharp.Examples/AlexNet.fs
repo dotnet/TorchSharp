@@ -34,7 +34,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -42,7 +42,7 @@ let getDataFiles sourceDir targetDir =
         Directory.CreateDirectory(targetDir) |> ignore
         Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir)
 
-type Model(name,device:Device) as this =
+type Model(name,device:torch.device) as this =
     inherit CustomModule(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),

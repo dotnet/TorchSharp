@@ -140,7 +140,7 @@ namespace TorchSharp.Tensor
         /// <param name="device"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static TorchTensor ToTorchTensor<T>(this T scalar, Device? device = null, bool requiresGrad = false) where T : struct
+        public static TorchTensor ToTorchTensor<T>(this T scalar, torch.device? device = null, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");

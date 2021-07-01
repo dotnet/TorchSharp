@@ -51,7 +51,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
 
 let criterion x y = functional.nll_loss().Invoke(x,y)
 
@@ -115,7 +115,7 @@ let run epochs =
             model 
 
         else
-            let model = new MNIST.Model("model", Device.CPU)
+            let model = new MNIST.Model("model", torch.device.CPU)
             model.load(modelFile) |> ignore
             model
 

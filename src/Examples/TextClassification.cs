@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 
@@ -39,7 +40,7 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
             Console.WriteLine($"Running TextClassification on {device.Type.ToString()}");
 
             using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, _dataLocation)) {
@@ -113,7 +114,7 @@ namespace TorchSharp.Examples
                 model.parameters().clip_grad_norm(0.5);
                 optimizer.step();
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(Device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(device.CPU).DataItem<long>();
                 total_count += labels.size(0);
 
                 if (batch % log_interval == 0 && batch > 0) {
@@ -141,7 +142,7 @@ namespace TorchSharp.Examples
                 var predicted_labels = model.forward(texts, offsets);
                 var loss = criterion(predicted_labels, labels);
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(Device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(device.CPU).DataItem<long>();
                 total_count += labels.size(0);
             }
 
@@ -182,7 +183,7 @@ namespace TorchSharp.Examples
             return fc.forward(embedding.forward(input, offsets));
         }
 
-        public new TextClassificationModel to(Device device)
+        public new TextClassificationModel to(device device)
         {
             base.to(device);
             return this;

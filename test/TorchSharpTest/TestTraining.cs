@@ -510,7 +510,7 @@ namespace TorchSharp
         public void TestTrainingConv2dCUDA()
         {
             if (torch.cuda.is_available()) {
-                var device = Device.CUDA;
+                var device = torch.device.CUDA;
 
                 using (Module conv1 = Conv2d(3, 4, 3, stride: 2),
                       lin1 = Linear(4 * 13 * 13, 32),

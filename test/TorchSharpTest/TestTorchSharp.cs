@@ -42,7 +42,7 @@ namespace TorchSharp
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
-                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, device: Device.CPU)) { }
+                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, device: torch.device.CPU)) { }
             }
             Console.WriteLine("Hello World!");
         }

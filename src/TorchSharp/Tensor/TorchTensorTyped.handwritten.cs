@@ -21,7 +21,7 @@ namespace TorchSharp.Tensor
 		/// common difference step, starting from start.
         /// </summary>
         /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
+        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -46,7 +46,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static TorchTensor from((float Real, float Imaginary) scalar, Device device = null, bool requiresGrad = false)
+        public static TorchTensor from((float Real, float Imaginary) scalar, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.Type, device.Index, requiresGrad);
@@ -57,7 +57,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static TorchTensor from(float real, float imaginary = 0.0f, Device device = null, bool requiresGrad = false)
+        public static TorchTensor from(float real, float imaginary = 0.0f, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.Type, device.Index, requiresGrad);
@@ -81,7 +81,7 @@ namespace TorchSharp.Tensor
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         ///  The real and imaginary parts will be filled independently of each other.
         /// </summary>
-        static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
+        static public TorchTensor randint(long max, long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -142,7 +142,7 @@ namespace TorchSharp.Tensor
 		/// common difference step, starting from start.
         /// </summary>
         /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, Device device = null, bool requiresGrad = false)
+        static public TorchTensor arange(TorchScalar start, TorchScalar stop, TorchScalar step, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -167,7 +167,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static TorchTensor from(System.Numerics.Complex scalar, Device device = null, bool requiresGrad = false)
+        public static TorchTensor from(System.Numerics.Complex scalar, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.Type, device.Index, requiresGrad);
@@ -178,7 +178,7 @@ namespace TorchSharp.Tensor
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static TorchTensor from(double real, double imaginary = 0.0f, Device device = null, bool requiresGrad = false)
+        public static TorchTensor from(double real, double imaginary = 0.0f, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.Type, device.Index, requiresGrad);
@@ -202,7 +202,7 @@ namespace TorchSharp.Tensor
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         ///  The real and imaginary parts will be filled independently of each other.
         /// </summary>
-        static public TorchTensor randint(long max, long[] size, Device device = null, bool requiresGrad = false)
+        static public TorchTensor randint(long max, long[] size, torch.device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 

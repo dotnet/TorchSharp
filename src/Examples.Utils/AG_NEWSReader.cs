@@ -4,25 +4,26 @@ using System.IO;
 using System.Linq;
 using TorchSharp;
 using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchText.Data
 {
     public class AG_NEWSReader : IDisposable
     {
-        public static AG_NEWSReader AG_NEWS(string split, Device device, string root = ".data")
+        public static AG_NEWSReader AG_NEWS(string split, device device, string root = ".data")
         {
             var dataPath = Path.Combine(root, $"{split}.csv");
             return new AG_NEWSReader(dataPath, device);
         }
 
-        private AG_NEWSReader(string path, Device device)
+        private AG_NEWSReader(string path, device device)
         {
             _path = path;
             _device = device;
         }
 
         private string _path;
-        private Device _device;
+        private device _device;
 
         public IEnumerable<(int, string)> Enumerate()
         {

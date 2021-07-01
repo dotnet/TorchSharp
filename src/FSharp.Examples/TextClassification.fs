@@ -39,11 +39,11 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
 
 let criterion x y = functional.cross_entropy_loss().Invoke(x,y)
 
-type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as this =
+type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.device) as this =
     inherit CustomModule("Transformer")
 
     let embedding = EmbeddingBag(vocabSize, embedDim, sparse=false)

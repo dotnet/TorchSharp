@@ -223,22 +223,22 @@ namespace TorchSharp
             }
         }
 
-        public static Device InitializeDevice(Device device)
+        public static device InitializeDevice(torch.device device)
         {
             if (device == null)
-                device = TorchSharp.Device.CPU;
+                device = torch.device.CPU;
             InitializeDeviceType(device.Type);
             return device;
         }
 
-        public static Device Device(string description)
+        public static device Device(string description)
         {
-            return new Device(description);
+            return new device(description);
         }
 
-        public static Device Device(DeviceType type, int index = -1)
+        public static device Device(DeviceType type, int index = -1)
         {
-            return new Device(type, index);
+            return new device(type, index);
         }
 
         public static partial class random

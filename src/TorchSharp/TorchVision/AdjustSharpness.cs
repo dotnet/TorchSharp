@@ -28,7 +28,7 @@ namespace TorchSharp.torchvision
 
         private TorchTensor BlurredDegenerateImage(TorchTensor input)
         {
-            var device = new Device(input.device);
+            var device = input.device;
             var dtype = input.IsIntegral() ? ScalarType.Float32 : input.Type;
             var kernel = Float32Tensor.ones(3, 3, device: device);
             kernel[1, 1] = Float32Tensor.from(5.0f);

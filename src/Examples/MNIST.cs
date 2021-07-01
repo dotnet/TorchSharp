@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
@@ -45,7 +46,7 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
             Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 
@@ -76,7 +77,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train, MNISTReader test)
+        internal static void TrainingLoop(string dataset, device device, Model model, MNISTReader train, MNISTReader test)
         {
             if (device.Type == DeviceType.CUDA) {
                 _epochs *= 4;
@@ -125,7 +126,7 @@ namespace TorchSharp.Examples
             private Module flatten = Flatten();
             private Module logsm = LogSoftmax(1);
 
-            public Model(string name, Device device = null) : base(name)
+            public Model(string name, torch.device device = null) : base(name)
             {
                 RegisterComponents();
 
@@ -160,7 +161,7 @@ namespace TorchSharp.Examples
             Model model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            Device device,
+            device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             int epoch,
             long batchSize,
@@ -194,7 +195,7 @@ namespace TorchSharp.Examples
         private static void Test(
             Model model,
             Loss loss,
-            Device device,
+            device device,
             IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
             long size)
         {

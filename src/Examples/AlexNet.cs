@@ -37,7 +37,7 @@ namespace TorchSharp.Examples
         {
             torch.random.manual_seed(1);
 
-            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
 
             if (device.Type == DeviceType.CUDA) {
                 _trainBatchSize *= 8;
@@ -85,7 +85,7 @@ namespace TorchSharp.Examples
             private readonly Module avgPool;
             private readonly Module classifier;
 
-            public Model(string name, int numClasses, Device device = null) : base(name)
+            public Model(string name, int numClasses, torch.device device = null) : base(name)
             {
                 features = Sequential(
                     ("c1", Conv2d(3, 64, kernelSize: 3, stride: 2, padding: 1)),

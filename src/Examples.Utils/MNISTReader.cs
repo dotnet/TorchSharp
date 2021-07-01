@@ -25,7 +25,7 @@ namespace TorchSharp.Examples
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
         /// <param name="transform"></param>
-        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, Device device = null, ITransform transform = null)
+        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, torch.device device = null, ITransform transform = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 

@@ -22,7 +22,7 @@ namespace TorchSharp.torchvision
         {
             var dtype = TensorExtensionMethods.IsIntegral(input.Type) ? ScalarType.Float32 : input.Type;
 
-            var kernel = GetGaussianKernel2d(dtype, new Device(input.device));
+            var kernel = GetGaussianKernel2d(dtype, input.device);
             kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
             var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var out_dtype);
@@ -51,7 +51,7 @@ namespace TorchSharp.torchvision
             return pdf / pdf.sum();
         }
 
-        private TorchTensor GetGaussianKernel2d(ScalarType dtype, Device device)
+        private TorchTensor GetGaussianKernel2d(ScalarType dtype, torch.device device)
         {
             var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device).index(new TorchTensorIndex[] { TorchTensorIndex.None, TorchTensorIndex.Ellipsis });
             var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device).index(new TorchTensorIndex[] { TorchTensorIndex.Ellipsis, TorchTensorIndex.None });

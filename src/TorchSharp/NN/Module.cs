@@ -123,7 +123,7 @@ namespace TorchSharp
                 public Module to(string device)
                 {
                     // Rely on the Device constructor to parse the string.
-                    return to(new Device(device));
+                    return to(new device(device));
                 }
 
                 /// <summary>
@@ -131,7 +131,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="device">The target device</param>
                 /// <returns></returns>
-                public Module to(Device device)
+                public Module to(torch.device device)
                 {
                     return to(device.Type, device.Index);
                 }

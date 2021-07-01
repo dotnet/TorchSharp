@@ -53,7 +53,7 @@ namespace TorchSharp.Examples
             var _ = torch.random.manual_seed(1);
 
             //var device = Device.CPU;
-            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
             Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.Type.ToString()}\n");
             Console.WriteLine($"Dataset: {dataset}");
 
@@ -95,7 +95,7 @@ namespace TorchSharp.Examples
                     Console.WriteLine("Moving on to the Adversarial model.\n");
 
                 } else {
-                    model = new MNIST.Model("model", Device.CPU);
+                    model = new MNIST.Model("model", torch.device.CPU);
                     model.load(modelFile);
                 }
 

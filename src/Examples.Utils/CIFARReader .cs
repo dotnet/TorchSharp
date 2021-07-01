@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.Examples
 {
@@ -23,7 +24,7 @@ namespace TorchSharp.Examples
         /// <param name="batch_size">The batch size</param>
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
-        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, Device device = null)
+        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, torch.device device = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 
@@ -40,7 +41,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private int ReadSingleFile(string path, int batch_size, bool shuffle, Device device)
+        private int ReadSingleFile(string path, int batch_size, bool shuffle, device device)
         {
             const int height = 32;
             const int width = 32;

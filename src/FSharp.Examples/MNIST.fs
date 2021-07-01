@@ -42,7 +42,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -53,7 +53,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
-type Model(name,device:Device) as this =
+type Model(name,device:torch.device) as this =
     inherit CustomModule(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)

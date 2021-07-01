@@ -44,7 +44,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
 
 let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
 
@@ -74,7 +74,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
         use x = t + pe.[TorchTensorIndex.Slice(NULL, t.shape.[0]), TorchTensorIndex.Slice()]
         dropout.forward(x)
 
-type TransformerModel(ntokens, device:Device) as this =
+type TransformerModel(ntokens, device:torch.device) as this =
     inherit CustomModule("Transformer")
 
     let pos_encoder = new PositionalEncoding(emsize, 5000L)
@@ -121,7 +121,7 @@ let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchT
                 t
     |].cat(0L)
     
-let batchify (data:TorchTensor) batchSize (device:Device) =
+let batchify (data:TorchTensor) batchSize (device:torch.device) =
     let nbatch = data.shape.[0] / batchSize
     let d2 = data.narrow(0L, 0L, nbatch * batchSize).view(batchSize, -1L).t()
     d2.contiguous().``to``(device)

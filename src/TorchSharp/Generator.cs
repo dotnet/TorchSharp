@@ -19,7 +19,7 @@ namespace TorchSharp
         {
             public IntPtr Handle { get; private set; }
 
-            public Device device { get; private set; }
+            public torch.device device { get; private set; }
 
             public TorchTensor get_state()
             {
@@ -52,13 +52,13 @@ namespace TorchSharp
             internal Generator(IntPtr nativeHandle)
             {
                 Handle = nativeHandle;
-                device = TorchSharp.Device.CPU;
+                device = torch.device.CPU;
             }
 
-            public Generator(ulong seed = 0, Device? device = null) :
+            public Generator(ulong seed = 0, torch.device? device = null) :
                 this(THSGenerator_new(seed, (long)(device?.Type ?? DeviceType.CPU), device?.Index ?? -1))
             {
-                this.device = device ?? TorchSharp.Device.CPU;
+                this.device = device ?? torch.device.CPU;
             }
 
             public static Generator Default {

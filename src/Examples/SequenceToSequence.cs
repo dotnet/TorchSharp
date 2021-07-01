@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TorchSharp.Tensor;
 
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 
@@ -44,7 +45,7 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
             Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs.");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);
@@ -126,7 +127,7 @@ namespace TorchSharp.Examples
                     model.parameters().clip_grad_norm(0.5);
                     optimizer.step();
 
-                    total_loss += loss.to(Device.CPU).DataItem<float>();
+                    total_loss += loss.to(device.CPU).DataItem<float>();
                 }
 
                 GC.Collect();
@@ -156,7 +157,7 @@ namespace TorchSharp.Examples
                 }
                 var output = model.forward(data, src_mask);
                 var loss = criterion(output.view(-1, ntokens), targets); 
-                total_loss += data.shape[0] * loss.to(Device.CPU).DataItem<float>();
+                total_loss += data.shape[0] * loss.to(device.CPU).DataItem<float>();
 
                 data.Dispose();
                 targets.Dispose();
@@ -203,7 +204,7 @@ namespace TorchSharp.Examples
             private impl.Linear decoder;
 
             private long ninputs;
-            private Device device;
+            private device device;
 
             public TransformerModel(long ntokens, long ninputs, long nheads, long nhidden, long nlayers, double dropout = 0.5) : base("Transformer")
             {
@@ -248,7 +249,7 @@ namespace TorchSharp.Examples
                 return decoder.forward(enc);
             }
 
-            public new TransformerModel to(Device device)
+            public new TransformerModel to(device device)
             {
                 base.to(device);
                 this.device = device;
