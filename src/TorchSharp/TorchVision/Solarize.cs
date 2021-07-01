@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Solarize : ITransform
     {
@@ -17,14 +17,14 @@ namespace TorchSharp.TorchVision
 
         public TorchTensor forward(TorchTensor input)
         {
-            using (var inverted = Transforms.Invert().forward(input))
+            using (var inverted = transforms.Invert().forward(input))
                 return input.where(input < threshold, inverted);
         }
 
         protected double threshold;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Solarize the image by inverting all pixel values above a threshold.

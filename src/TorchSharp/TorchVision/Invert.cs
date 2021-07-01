@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Invert : ITransform
     {
@@ -25,7 +25,7 @@ namespace TorchSharp.TorchVision
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Invert the image colors.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class RandomChoice : IDisposable, ITransform
     {
@@ -30,7 +30,7 @@ namespace TorchSharp.TorchVision
         private ITransform[] transforms;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Apply a single transformation randomly picked from a list. 

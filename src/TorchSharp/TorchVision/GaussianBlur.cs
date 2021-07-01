@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class GaussianBlur : ITransform
     {
@@ -98,7 +98,7 @@ namespace TorchSharp.TorchVision
         protected float sigma;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Apply a Gaussian blur effect to the image.

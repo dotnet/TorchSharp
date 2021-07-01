@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class CenterCrop : ITransform
     {
@@ -31,7 +31,7 @@ namespace TorchSharp.TorchVision
         protected int height, width;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Crop the center of the image.

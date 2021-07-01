@@ -7,7 +7,7 @@ using TorchSharp.Tensor;
 
 using static TorchSharp.Tensor.TensorExtensionMethods;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class AutoContrast : ITransform
     {
@@ -33,7 +33,7 @@ namespace TorchSharp.TorchVision
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Autocontrast the pixels of the given image

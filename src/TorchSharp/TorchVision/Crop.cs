@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Crop : ITransform
     {
@@ -26,7 +26,7 @@ namespace TorchSharp.TorchVision
         private int top, left, height, width;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Crop the image.

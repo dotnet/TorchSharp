@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Resize : ITransform
     {
@@ -102,7 +102,7 @@ namespace TorchSharp.TorchVision
         private int? max;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Resize the input image to the given size.

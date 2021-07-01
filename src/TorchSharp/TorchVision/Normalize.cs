@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Normalize : ITransform, IDisposable
     {
@@ -60,7 +60,7 @@ namespace TorchSharp.TorchVision
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, Device device = null)
         {

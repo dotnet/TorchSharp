@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class RandomOrder : IDisposable, ITransform
     {
@@ -33,7 +33,7 @@ namespace TorchSharp.TorchVision
         private IList<ITransform> transforms;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Apply a list of transformations in a random order.

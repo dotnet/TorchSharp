@@ -67,7 +67,7 @@ namespace TorchSharp.Examples
 
             var model = new Model("model", device);
 
-            var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
 
             using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
                                 test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {

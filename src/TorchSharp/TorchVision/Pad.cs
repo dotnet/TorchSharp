@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 using static TorchSharp.torch.nn;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Pad : ITransform
     {
@@ -27,7 +27,7 @@ namespace TorchSharp.TorchVision
         private double value;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Pad(long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
         {

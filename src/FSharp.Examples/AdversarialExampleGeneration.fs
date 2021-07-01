@@ -96,7 +96,7 @@ let run epochs =
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = TorchVision.Transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
     use testData = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
 
     let modelFile = dataset + ".model.bin"

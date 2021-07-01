@@ -4,7 +4,7 @@ using System.Text;
 
 using TorchSharp.Tensor;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     public interface ITransform
     {

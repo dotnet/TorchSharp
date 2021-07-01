@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Posterize : ITransform
     {
@@ -25,7 +25,7 @@ namespace TorchSharp.TorchVision
         protected int bits;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Posterize the image by reducing the number of bits for each color channel. 

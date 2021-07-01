@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using TorchSharp.Tensor;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class ComposedTransforms : IDisposable, ITransform
     {
@@ -32,7 +32,7 @@ namespace TorchSharp.TorchVision
         private ITransform[] transforms;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Compose(params ITransform[] transforms)
         {

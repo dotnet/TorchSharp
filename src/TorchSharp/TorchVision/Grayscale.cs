@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Tensor;
 
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Grayscale : ITransform
     {
@@ -27,7 +27,7 @@ namespace TorchSharp.TorchVision
         protected int outputChannels;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Grayscale(int outputChannels = 1)
         {

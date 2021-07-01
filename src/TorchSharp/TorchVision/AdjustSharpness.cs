@@ -7,7 +7,7 @@ using TorchSharp.Tensor;
 
 using static TorchSharp.Tensor.TensorExtensionMethods;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class AdjustSharpness : ITransform
     {
@@ -90,7 +90,7 @@ namespace TorchSharp.TorchVision
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Adjust the sharpness of the image. 
