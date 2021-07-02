@@ -250,6 +250,54 @@ namespace TorchSharp
                     }
                 }
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+            /// <summary>
+            /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
+            /// </summary>
+            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.device device = null, bool requiresGrad = false)
+            {
+                device = torch.InitializeDevice(device);
+                if (!dtype.HasValue) {
+                    // Determine the element type dynamically.
+                    dtype = get_default_dtype();
+                }
+
+                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                if (handle == IntPtr.Zero) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(handle);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+
+            /// <summary>
+            /// Computes the sample frequencies for rfft() with a signal of size n.
+            /// </summary>
+            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.device device = null, bool requiresGrad = false)
+            {
+                device = torch.InitializeDevice(device);
+                if (!dtype.HasValue) {
+                    // Determine the element type dynamically.
+                    dtype = get_default_dtype();
+                }
+
+                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                if (handle == IntPtr.Zero) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                }
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(handle);
+            }
         }
     }
 }

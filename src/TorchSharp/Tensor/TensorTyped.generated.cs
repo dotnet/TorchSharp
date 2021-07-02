@@ -2953,7 +2953,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -2961,7 +2961,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -2969,7 +2969,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -2977,7 +2977,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -3744,7 +3744,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -3752,7 +3752,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -3760,7 +3760,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -3768,7 +3768,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -4535,7 +4535,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -4543,7 +4543,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -4551,7 +4551,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -4559,7 +4559,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -5323,7 +5323,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -5331,7 +5331,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -5339,7 +5339,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -5347,7 +5347,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
         [DllImport("LibTorchSharp")]
@@ -6065,7 +6065,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6073,7 +6073,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6081,7 +6081,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6089,7 +6089,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
 
@@ -6620,7 +6620,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long size, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { size }, device, requiresGrad);
+            return randn(new long[] { size }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6628,7 +6628,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long rows, long columns, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { rows, columns }, device, requiresGrad);
+            return randn(new long[] { rows, columns }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6636,7 +6636,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2 }, device, requiresGrad);
         }
 
         /// <summary>
@@ -6644,7 +6644,7 @@ namespace TorchSharp {
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.device device = null, bool requiresGrad = false)
         {
-            return rand(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, device, requiresGrad);
         }
 
 

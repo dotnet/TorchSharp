@@ -211,10 +211,30 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateFloat32TensorZeros_()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0.0f, t[0, 0].ToSingle());
+            Assert.Equal(0.0f, t[1, 1].ToSingle());
+        }
+
+        [Fact]
         public void CreateByteTensorZeros()
         {
             var shape = new long[] { 2, 2 };
             Tensor t = ByteTensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal((byte)0, t[0, 0].ToByte());
+            Assert.Equal((byte)0, t[1, 1].ToByte());
+        }
+
+        [Fact]
+        public void CreateByteTensorZeros_()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.zeros(shape, torch.uint8);
             Assert.Equal(shape, t.shape);
             Assert.Equal((byte)0, t[0, 0].ToByte());
             Assert.Equal((byte)0, t[1, 1].ToByte());
@@ -231,11 +251,32 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateInt32TensorZeros_()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.zeros(shape, torch.int32);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0, t[0, 0].ToInt32());
+            Assert.Equal(0, t[1, 1].ToInt32());
+        }
+
+        [Fact]
         public void CreateInt64TensorZeros()
         {
             var shape = new long[] { 2, 2 };
 
             Tensor t = Int64Tensor.zeros(shape);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0L, t[0, 0].ToInt64());
+            Assert.Equal(0L, t[1, 1].ToInt64());
+        }
+
+        [Fact]
+        public void CreateInt64TensorZeros_()
+        {
+            var shape = new long[] { 2, 2 };
+
+            Tensor t = torch.zeros(shape, torch.int64);
             Assert.Equal(shape, t.shape);
             Assert.Equal(0L, t[0, 0].ToInt64());
             Assert.Equal(0L, t[1, 1].ToInt64());
@@ -288,6 +329,8 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = Float32Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
+            t = torch.empty(shape);
+            Assert.Equal(shape, t.shape);
         }
 
         [Fact]
@@ -295,6 +338,10 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
             Tensor t = Float32Tensor.full(2, 2, 3.14f);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(3.14f, t[0, 0].ToSingle());
+            Assert.Equal(3.14f, t[1, 1].ToSingle());
+            t = torch.full(2, 2, 3.14f);
             Assert.Equal(shape, t.shape);
             Assert.Equal(3.14f, t[0, 0].ToSingle());
             Assert.Equal(3.14f, t[1, 1].ToSingle());
@@ -306,6 +353,8 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = ByteTensor.empty(shape);
             Assert.Equal(shape, t.shape);
+            t = torch.empty(shape, torch.uint8);
+            Assert.Equal(shape, t.shape);
         }
 
         [Fact]
@@ -314,6 +363,8 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = Int32Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
+            t = torch.empty(shape,torch.int32);
+            Assert.Equal(shape, t.shape);
         }
 
         [Fact]
@@ -321,6 +372,10 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
             Tensor t = Int32Tensor.full(2, 2, 17);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(17, t[0, 0].ToInt32());
+            Assert.Equal(17, t[1, 1].ToInt32());
+            t = torch.full(2, 2, 17, torch.int32);
             Assert.Equal(shape, t.shape);
             Assert.Equal(17, t[0, 0].ToInt32());
             Assert.Equal(17, t[1, 1].ToInt32());
@@ -354,6 +409,10 @@ namespace TorchSharp
             Assert.Equal(shape, t.shape);
             Assert.Equal(1, t.stride(0));
             Assert.Equal(2, t.stride(1));
+            t = torch.empty_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.stride(0));
+            Assert.Equal(2, t.stride(1));
         }
 
         [Fact]
@@ -363,6 +422,10 @@ namespace TorchSharp
             var strides = new long[] { 1, 2 };
 
             Tensor t = Float32Tensor.empty(shape).as_strided(shape, strides);
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1, t.stride(0));
+            Assert.Equal(2, t.stride(1));
+            t = torch.empty(shape).as_strided(shape, strides);
             Assert.Equal(shape, t.shape);
             Assert.Equal(1, t.stride(0));
             Assert.Equal(2, t.stride(1));

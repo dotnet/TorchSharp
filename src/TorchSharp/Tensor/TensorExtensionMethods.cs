@@ -21,7 +21,7 @@ namespace TorchSharp
             return IsIntegral(tensor.Type);
         }
 
-        internal static bool IsIntegral(ScalarType type)
+        internal static bool IsIntegral(this ScalarType type)
         {
             switch (type) {
             case ScalarType.Byte:
@@ -30,6 +30,19 @@ namespace TorchSharp
             case ScalarType.Int32:
             case ScalarType.Int64:
             case ScalarType.Bool:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        internal static bool IsFloatingPoint(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.BFloat16:
+            case ScalarType.Float16:
+            case ScalarType.Float32:
+            case ScalarType.Float64:
                 return true;
             default:
                 return false;

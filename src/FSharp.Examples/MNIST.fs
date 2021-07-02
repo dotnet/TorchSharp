@@ -5,7 +5,6 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open type TorchSharp.torch
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 open type TorchSharp.Scalar

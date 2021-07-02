@@ -7,7 +7,6 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
-open type TorchSharp.torch
 open type TorchSharp.torch.nn
 
 open TorchSharp.Examples
@@ -66,7 +65,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.device)
     member _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc
 
-let train epoch (trainData:IEnumerable<Tensor*Tensor*Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
+let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
 
     model.Train()
 
@@ -98,7 +97,7 @@ let train epoch (trainData:IEnumerable<Tensor*Tensor*Tensor>) (model:TextClassif
 
     GC.Collect()
 
-let evaluate (testData:IEnumerable<Tensor*Tensor*Tensor>) (model:TextClassificationModel) =
+let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) =
 
     model.Eval()
 

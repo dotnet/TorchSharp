@@ -87,6 +87,11 @@ namespace TorchSharp
             /// </summary>
             public long dim() => Dimensions;
 
+            /// <summary>
+            ///  Returns the number of dimensions for this tensor
+            /// </summary>
+            public long ndim => Dimensions;
+
             [DllImport("LibTorchSharp")]
             static extern long THSTensor_element_size(IntPtr handle);
 
@@ -4763,5 +4768,75 @@ namespace TorchSharp
             //QUInt32 = 14,
             BFloat16 = 15
         }
+
+        static bool is_integral(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.Byte:
+            case ScalarType.Int8:
+            case ScalarType.Int16:
+            case ScalarType.Int32:
+            case ScalarType.Int64:
+            case ScalarType.Bool:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        static bool is_floating_point(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.BFloat16:
+            case ScalarType.Float16:
+            case ScalarType.Float32:
+            case ScalarType.Float64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        static bool is_complex(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.ComplexFloat32:
+            case ScalarType.ComplexFloat64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        static bool is_integral(Tensor t) => is_integral(t.Type);
+        static bool is_floating_point(Tensor t) => is_floating_point(t.Type);
+        static bool is_complex(Tensor t) => is_complex(t.Type);
+
+        public static ScalarType @bool = ScalarType.Bool;
+
+        public static ScalarType uint8 = ScalarType.Byte;
+        public static ScalarType int8 = ScalarType.Int8;
+        public static ScalarType int16 = ScalarType.Int16;
+        public static ScalarType int32 = ScalarType.Int32;
+        public static ScalarType int64 = ScalarType.Int64;
+
+        public static ScalarType bfloat16 = ScalarType.BFloat16;
+        public static ScalarType float16 = ScalarType.Float16;
+        public static ScalarType float32 = ScalarType.Float32;
+        public static ScalarType float64 = ScalarType.Float64;
+
+        public static ScalarType complex64 = ScalarType.ComplexFloat32;
+        public static ScalarType complex128 = ScalarType.ComplexFloat64;
+
+        public static ScalarType @short = ScalarType.Int16;
+        public static ScalarType @int = ScalarType.Int32;
+        public static ScalarType @long = ScalarType.Int64;
+
+        public static ScalarType half = ScalarType.Float16;
+        public static ScalarType @float = ScalarType.Float32;
+        public static ScalarType @double = ScalarType.Float64;
+
+        public static ScalarType cfloat = ScalarType.ComplexFloat32;
+        public static ScalarType cdouble = ScalarType.ComplexFloat64;
     }
 }

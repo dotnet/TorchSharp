@@ -7,7 +7,6 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
-open type TorchSharp.torch
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 
@@ -52,18 +51,18 @@ type PositionalEncoding(dmodel, maxLen) as this =
     inherit CustomModule("PositionalEncoding")
 
     let dropout = Dropout(dropout)
-    let mutable pe = Float32Tensor.zeros([| maxLen; dmodel|])
+    let mutable pe = torch.Float32Tensor.zeros([| maxLen; dmodel|])
 
     do
-        let position = Float32Tensor.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
-        let divTerm = (Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
+        let position = torch.Float32Tensor.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
+        let divTerm = (torch.Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
 
         let NULL = System.Nullable<int64>()
 
         // See: https://github.com/dotnet/fsharp/issues/9369 -- for now we have to use an explicit array within the index
         //
-        pe.[ [| TensorIndex.Ellipsis; TensorIndex.Slice(0L, NULL, 2L) |] ] <- (position * divTerm).sin()
-        pe.[ [| TensorIndex.Ellipsis; TensorIndex.Slice(1L, NULL, 2L) |] ] <- (position * divTerm).cos()
+        pe.[ [| torch.TensorIndex.Ellipsis; torch.TensorIndex.Slice(0L, NULL, 2L) |] ] <- (position * divTerm).sin()
+        pe.[ [| torch.TensorIndex.Ellipsis; torch.TensorIndex.Slice(1L, NULL, 2L) |] ] <- (position * divTerm).cos()
 
         pe <- pe.unsqueeze(0L).transpose(0L,1L)
 
@@ -71,7 +70,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
 
     override _.forward(t) =
         let NULL = System.Nullable<int64>()
-        use x = t + pe.[TensorIndex.Slice(NULL, t.shape.[0]), TensorIndex.Slice()]
+        use x = t + pe.[torch.TensorIndex.Slice(NULL, t.shape.[0]), torch.TensorIndex.Slice()]
         dropout.forward(x)
 
 type TransformerModel(ntokens, device:torch.device) as this =
@@ -105,10 +104,10 @@ type TransformerModel(ntokens, device:torch.device) as this =
         decoder.forward(enc)
 
     member _.GenerateSquareSubsequentMask(size:int64) =
-        use mask = Float32Tensor.ones([|size;size|]).eq(Float32Tensor.from(1.0f)).triu().transpose(0L,1L)
-        use maskIsZero = mask.eq(Float32Tensor.from(0.0f))
-        use maskIsOne = mask.eq(Float32Tensor.from(1.0f))
-        mask.to_type(ScalarType.Float32)
+        use mask = torch.Float32Tensor.ones([|size;size|]).eq(torch.Float32Tensor.from(1.0f)).triu().transpose(0L,1L)
+        use maskIsZero = mask.eq(torch.Float32Tensor.from(0.0f))
+        use maskIsOne = mask.eq(torch.Float32Tensor.from(1.0f))
+        mask.to_type(torch.float32)
             .masked_fill(maskIsZero, Single.NegativeInfinity.ToScalar())
             .masked_fill(maskIsOne, 0.0f.ToScalar()).``to``(device)
 
@@ -116,24 +115,24 @@ let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchT
     [|
         for item in iter do
             let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
-            let t = Int64Tensor.from(itemData)
+            let t = torch.Int64Tensor.from(itemData)
             if t.NumberOfElements > 0L then
                 t
     |].cat(0L)
     
-let batchify (data:Tensor) batchSize (device:torch.device) =
+let batchify (data:torch.Tensor) batchSize (device:torch.device) =
     let nbatch = data.shape.[0] / batchSize
     let d2 = data.narrow(0L, 0L, nbatch * batchSize).view(batchSize, -1L).t()
     d2.contiguous().``to``(device)
 
-let get_batch (source:Tensor) (index:int64) =
+let get_batch (source:torch.Tensor) (index:int64) =
 
     let len = min bptt (source.shape.[0]-1L-index)
-    let data = source.[TensorIndex.Slice(index, index + len)]
-    let target = source.[TensorIndex.Slice(index + 1L, index + 1L + len)].reshape(-1L)
+    let data = source.[torch.TensorIndex.Slice(index, index + len)]
+    let target = source.[torch.TensorIndex.Slice(index + 1L, index + 1L + len)].reshape(-1L)
     data,target
 
-let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:Tensor) ntokens =
+let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.Tensor) ntokens =
 
     model.Train()
 
@@ -179,7 +178,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:Tensor
         i <- i + bptt
 
 
-let evaluate (model:TransformerModel) (evalData:Tensor) ntokens =
+let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
     model.Eval()
 
