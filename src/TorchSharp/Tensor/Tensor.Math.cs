@@ -437,7 +437,7 @@ namespace TorchSharp
             /// Element-wise bitwise NOT, in-place
             /// </summary>
             /// <returns></returns>
-            public Tensor bitwise_not_(Tensor other)
+            public Tensor bitwise_not_()
             {
                 var res = THSTensor_bitwise_not_(handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -663,7 +663,6 @@ namespace TorchSharp
             /// Replaces each element with the exponential of the element minus 1 of input.
             /// </summary>
             /// <returns></returns>
-
             public Tensor expm1_()
             {
                 var res = THSTensor_expm1_(handle);
@@ -1509,7 +1508,7 @@ namespace TorchSharp
             /// Computes the element-wise square
             /// </summary>
             /// <returns></returns>
-            public Tensor square() => this.pow(2);
+            public Tensor square() => pow(2);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sqrt(IntPtr tensor);
@@ -1833,5 +1832,718 @@ namespace TorchSharp
             }
 
         }
+
+        // Duplication of tensor math opertors in the 'torch' namespace
+
+        /// <summary>
+        /// Compute the absolute value of each element in the tensor
+        /// </summary>
+        public static Tensor abs(Tensor input) => input.abs();
+
+        /// <summary>
+        /// Compute the absolute value of each element in the tensor
+        /// </summary>
+        public static Tensor absolute(Tensor input) => input.abs();
+
+        /// <summary>
+        /// Compute the absolute value of each element in the tensor, in-place
+        /// </summary>
+        public static Tensor abs_(Tensor input) => input.abs_();
+
+        /// <summary>
+        /// Compute the absolute value of each element in the tensor, in-place
+        /// </summary>
+        public static Tensor absolute_(Tensor input) => input.abs_();
+
+        /// <summary>
+        /// Add two tensors, element-wise
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor add(Tensor left, Tensor right) => left.add(right);
+
+        /// <summary>
+        /// Add a scalar value to each element in the target tensor.
+        /// </summary>
+        public static Tensor add(Tensor left, Scalar right) => left.add(right);
+
+        /// <summary>
+        /// Add two tensors, element-wise, scaling the second operator by 'alpha'
+        /// </summary>
+        public static Tensor add(Tensor left, Tensor right, Scalar scale) => left.add(right, scale);
+
+        /// <summary>
+        /// Add a scalar value to each element in the target tensor, scaled by 'alpha'
+        /// </summary>
+        public static Tensor add(Tensor left, Scalar right, Scalar scale) => left.add(right, scale);
+
+        /// <summary>
+        /// Add two tensors, element-wise, in place
+        /// </summary>
+        public static Tensor add_(Tensor left, Tensor right) => left.add_(right);
+
+        /// <summary>
+        /// Add a scalar value to each element in the target tensor, in place.
+        /// </summary>
+        public static Tensor add_(Tensor left, Scalar right) => left.add_(right);
+
+        /// <summary>
+        /// Add two tensors, element-wise, scaling the second operator by 'alpha', in place
+        /// </summary>
+        public static Tensor add_(Tensor left, Tensor right, Scalar scale) => left.add_(right, scale);
+
+        /// <summary>
+        /// Add a scalar value to each element in the target tensor, scaled by 'alpha', in place
+        /// </summary>
+        public static Tensor add_(Tensor left, Scalar right, Scalar scale) => left.add_(right, scale);
+
+        /// <summary>
+        /// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced
+        /// add step (all matrix multiplications get accumulated along the first dimension).
+        /// input is added to the final result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addbmm(Tensor input, Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1) => input.addbmm(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced
+        /// add step (all matrix multiplications get accumulated along the first dimension).
+        /// input is added to the final result.
+        /// In-place version of addbmm.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addbmm_(Tensor input, Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1) => input.addbmm_(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs the element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addcdiv(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcdiv(tensor1, tensor2, value);
+
+        /// <summary>
+        /// Performs the element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
+        /// In-place version of addcdiv.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addcdiv_(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcdiv_(tensor1, tensor2, value);
+
+        /// <summary>
+        /// Performs the element-wise multiplication of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addcmul(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcmul(tensor1, tensor2, value);
+
+        /// <summary>
+        /// Performs the element-wise divismultiplicationion of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
+        /// In-place version of addcdiv.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addcmul_(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcmul_(tensor1, tensor2, value);
+
+        /// <summary>
+        /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addmm(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmm(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addmm_(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmm_(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addmv(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmv(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addmv_(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmv_(mat1, mat2, beta, alpha);
+
+        /// <summary>
+        /// Performs the outer-product of vectors vec1 and vec2 and adds it to the input tensor.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addr(Tensor input, Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f) => input.addr(vec1, vec2, beta, alpha);
+
+        /// <summary>
+        /// Performs the outer-product of vectors vec1 and vec2 and adds it to the input tensor.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor addr_(Tensor input, Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f) => input.addr_(vec1, vec2, beta, alpha);
+
+        /// <summary>
+        /// Element-wise bitwise AND
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_and(Tensor left, Tensor right) => left.bitwise_and(right);
+
+        /// <summary>
+        /// Element-wise bitwise AND, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_and_(Tensor left, Tensor right) => left.bitwise_and_(right);
+
+        /// <summary>
+        /// Element-wise bitwise NOT
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_not(Tensor input) => input.bitwise_not();
+
+        /// <summary>
+        /// Element-wise bitwise NOT, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_not_(Tensor input) => input.bitwise_not_();
+
+        /// <summary>
+        /// Element-wise bitwise OR
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_or(Tensor left, Tensor right) => left.bitwise_or(right);
+
+        /// <summary>
+        /// Element-wise bitwiseXOR, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_or_(Tensor left, Tensor right) => left.bitwise_or_(right);
+
+        /// <summary>
+        /// Element-wise bitwise XOR
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_xor(Tensor left, Tensor right) => left.bitwise_xor(right);
+
+        /// <summary>
+        /// Element-wise bitwise XOR, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor bitwise_xor_(Tensor left, Tensor right) => left.bitwise_xor_(right);
+
+        /// <summary>
+        /// Returns a new tensor with the ceil of the elements of input, the smallest integer greater than or equal to each element.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor ceil(Tensor input) => input.ceil();
+
+        /// <summary>
+        /// Replaces each element of the input with the smallest integer greater than or equal to the element.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor ceil_(Tensor input) => input.ceil_();
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor div(Tensor left, Tensor right) => left.div(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor divide(Tensor left, Tensor right) => left.div(right);
+
+        /// <summary>
+        /// Divides each element of the input by a scalar value.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor div(Tensor left, Scalar right) => left.div(right);
+
+        /// <summary>
+        /// Divides each element of the input by a scalar value.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor divide(Tensor left, Scalar right) => left.div(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor div_(Tensor left, Tensor right) => left.div_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor divide_(Tensor left, Tensor right) => left.div_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor div_(Tensor left, Scalar right) => left.div_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor divide_(Tensor left, Scalar right) => left.div_(right);
+
+        /// <summary>
+        /// Returns a new tensor with the exponential of the elements of the input tensor input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor exp(Tensor input) => input.exp();
+
+        /// <summary>
+        /// Replaces each element of the input with the exponential of the elements of the input tensor input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor exp_(Tensor input) => input.exp_();
+
+        /// <summary>
+        /// Computes the base 2 exponential function of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor exp2(Tensor input) => input.exp2();
+
+        /// <summary>
+        /// Returns a new tensor with the exponential of the elements minus 1 of input.
+        /// </summary>
+        public static Tensor expm1(Tensor input) => input.expm1();
+
+        /// <summary>
+        /// Replaces each element with the exponential of the element minus 1 of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor expm1_(Tensor input) => input.expm1_();
+
+        /// <summary>
+        /// Raises input to the power of exponent, elementwise, in double precision.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks> If neither input is complex returns a torch.float64 tensor, and if one or more inputs is complex returns a torch.complex128 tensor.</remarks>
+        public static Tensor float_power(Tensor input, Tensor target) => input.float_power(target);
+
+        /// <summary>
+        /// Returns a new tensor with the floor of the elements of input, the largest integer less than or equal to each element.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor floor(Tensor input) => input.floor();
+
+        /// <summary>
+        /// Replaces each element with the floor of the input, the largest integer less than or equal to each element.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor floor_(Tensor input) => input.exp_();
+
+        /// <summary>
+        /// Computes the element-wise remainder of division.
+        /// </summary>
+        public static Tensor fmod(Tensor left, Tensor right) => left.fmod(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division, in place.
+        /// </summary>
+        public static Tensor fmod_(Tensor left, Tensor right) => left.fmod_(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division.
+        /// </summary>
+        public static Tensor fmod(Tensor left, Scalar right) => left.fmod(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division, in place.
+        /// </summary>
+        public static Tensor fmod_(Tensor left, Scalar right) => left.fmod_(right);
+
+        /// <summary>
+        /// Computes the fractional portion of each element in input.
+        /// </summary>
+        public static Tensor frac(Tensor input) => input.frac();
+
+        /// <summary>
+        /// Computes the fractional portion of each element in input, in-place.
+        /// </summary>
+        public static Tensor frac_(Tensor input) => input.frac_();
+
+        /// <summary>
+        /// Decomposes input into mantissa and exponent tensors 
+        /// </summary>
+        public static (Tensor Mantissa, Tensor Exponent) frexp(Tensor input) => input.frexp();
+
+        public static Tensor gcd(Tensor left, Tensor right) => left.gcd(right);
+
+        public static Tensor gcd_(Tensor left, Tensor right) => left.gcd_(right);
+
+        /// <summary>
+        /// Element-wise: given the legs of a right triangle, return its hypotenuse.
+        /// </summary>
+        public static Tensor hypot(Tensor left, Tensor right) => left.hypot(right);
+
+        /// <summary>
+        /// Returns a new tensor with the natural logarithm of the input elements.
+        /// </summary>
+        public static Tensor log(Tensor input) => input.log ();
+
+        /// <summary>
+        /// Replaces each elements with the natural logarithm of the input.
+        /// </summary>
+        public static Tensor log_(Tensor input) => input.log_();
+
+        /// <summary>
+        /// Returns a new tensor with the natural logarithm of (1 + input).
+        /// </summary>
+        public static Tensor log1p(Tensor input) => input.log1p();
+
+        /// <summary>
+        /// Replaces each elements with the natural logarithm of (1 + input), in place.
+        /// </summary>
+        public static Tensor log1p_(Tensor input) => input.log1p_();
+
+        /// <summary>
+        /// Logarithm of the sum of exponentiations of the inputs.
+        /// </summary>
+        public static Tensor logaddexp(Tensor left, Tensor right) => left.logaddexp(right);
+
+        /// <summary>
+        /// Logarithm of the sum of exponentiations of the inputs in base-2.
+        /// </summary>
+        public static Tensor logaddexp2(Tensor left, Tensor right) => left.logaddexp2(right);
+
+        /// <summary>
+        /// Returns the logarithm of the cumulative summation of the exponentiation of elements of input in the dimension dim.
+        /// </summary>
+        public static Tensor logcumsumexp(Tensor input, long dim) => input.logcumsumexp(dim);
+
+        /// <summary>
+        /// Returns the log of summed exponentials of each row of the input tensor in the given dimension dim. 
+        /// </summary>
+        public static Tensor logsumexp(Tensor input, long dim, Boolean keepdim = false) => input.logsumexp(dim, keepdim);
+
+        /// <summary>
+        /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
+        /// </summary>
+        public static Tensor log10(Tensor input) => input.log();
+
+        /// <summary>
+        /// Replaces each elements with the logarithm to the base 10 of the elements of input.
+        /// </summary>
+        public static Tensor log10_(Tensor input) => input.log_();
+
+        /// <summary>
+        /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
+        /// </summary>
+        public static Tensor log2(Tensor input) => input.log2();
+
+        /// <summary>
+        /// Replaces each elements with the logarithm to the base 10 of the elements of input.
+        /// </summary>
+        public static Tensor log2_(Tensor input) => input.log2_();
+
+        /// <summary>
+        /// Element-wise logical AND
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_and(Tensor left, Tensor right) => left.logical_and(right);
+
+        /// <summary>
+        /// Element-wise logical AND, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_and_(Tensor left, Tensor right) => left.logical_and_(right);
+
+        /// <summary>
+        /// Element-wise logical NOT
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_not(Tensor input) => input.logical_not();
+
+        /// <summary>
+        /// Element-wise logical OR
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_or(Tensor left, Tensor right) => left.logical_or(right);
+
+        /// <summary>
+        /// Element-wise logicalXOR, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_or_(Tensor left, Tensor right) => left.logical_or_(right);
+
+        /// <summary>
+        /// Element-wise logical XOR
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logical_xor(Tensor left, Tensor right) => left.logical_xor(right);
+
+        /// <summary>
+        /// Returns a new tensor with the logit of the elements of input.
+        /// input is clamped to [eps, 1 - eps] when eps is not null
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor mul(Tensor left, Tensor right) => left.mul(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor multiply(Tensor left, Tensor right) => left.mul(right);
+
+        /// <summary>
+        /// Divides each element of the input by a scalar value.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor mul(Tensor left, Scalar right) => left.mul(right);
+
+        /// <summary>
+        /// Divides each element of the input by a scalar value.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor multiply(Tensor left, Scalar right) => left.mul(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor mul_(Tensor left, Tensor right) => left.mul_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor multiply_(Tensor left, Tensor right) => left.mul_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor mul_(Tensor left, Scalar right) => left.mul_(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor multiply_(Tensor left, Scalar right) => left.mul_(right);
+
+        /// <summary>
+        /// Negation
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor neg(Tensor input) => input.neg();
+
+        /// <summary>
+        /// Negation
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor negative(Tensor input) => input.neg();
+
+        /// <summary>
+        /// In-place negation
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor neg_(Tensor input) => input.neg_();
+
+        /// <summary>
+        /// In-place negation
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor negative_(Tensor input) => input.neg_();
+
+        /// <summary>
+        /// Takes the power of each element in input with exponent and returns a tensor with the result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor pow(Tensor left, Tensor exponent) => left.pow(exponent);
+
+        /// <summary>
+        /// Takes the power of each element in input with exponent and returns a tensor with the result.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor pow(Tensor left, Scalar exponent) => left.pow(exponent);
+
+        /// <summary>
+        /// Replaces each element in input with the power of the element and the exponent.
+        /// </summary>
+        public static Tensor pow_(Tensor left, Tensor exponent) => left.pow_(exponent);
+
+        /// <summary>
+        /// Replaces each element in input with the power of the element and the exponent.
+        /// </summary>
+        public static Tensor pow_(Tensor left, Scalar exponent) => left.pow_(exponent);
+
+        /// <summary>
+        /// Returns a new tensor with the reciprocal of the elements of input
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor reciprocal(Tensor input) => input.reciprocal();
+
+        /// <summary>
+        /// Replaces each element with the reciprocal of the input
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor reciprocal_(Tensor input) => input.reciprocal_();
+
+        /// <summary>
+        /// Computes the element-wise remainder of division.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor remainder(Tensor left, Tensor right) => left.remainder(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor remainder(Tensor left, Scalar right) => left.remainder(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division, in place
+        /// </summary>
+        public static Tensor remainder_(Tensor left, Tensor right) => left.remainder_(right);
+
+        /// <summary>
+        /// Computes the element-wise remainder of division, in place
+        /// </summary>
+        public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
+
+        /// <summary>
+        /// Returns a new tensor with each of the elements of input rounded to the closest integer.
+        /// </summary>
+        public static Tensor round(Tensor input) => input.round();
+
+        /// <summary>
+        /// Replaces each of the elements of input with the element rounded to the closest integer.
+        /// </summary>
+        public static Tensor round_(Tensor input) => input.round_();
+
+        /// <summary>
+        /// Returns a new tensor with the reciprocal of the square-root of each of the elements of input.
+        /// </summary>
+        public static Tensor rsqrt(Tensor input) => input.rsqrt();
+
+        /// <summary>
+        /// Replaces each of the elements of input with  the reciprocal of the square-root of each of the elements of input.
+        /// </summary>
+        public static Tensor rsqrt_(Tensor input) => input.rsqrt_();
+
+        /// <summary>
+        /// Computes the element-wise square
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor square(Tensor input) => input.pow(2);
+
+        /// <summary>
+        /// Computes the element-wise square root
+        /// </summary>
+        public static Tensor sqrt(Tensor input) => input.sqrt();
+
+        /// <summary>
+        /// Computes the element-wise square root, in place
+        /// </summary>
+        public static Tensor sqrt_(Tensor input) => input.sqrt_();
+
+        /// <summary>
+        /// Returns a new tensor with the signs (-1, 0, 1) of the elements of input.
+        /// </summary>
+        public static Tensor sign(Tensor input) => input.sign();
+
+        /// <summary>
+        /// Replaces each element with the signs (-1, 0, 1) of the elements of input.
+        /// </summary>
+        public static Tensor sign_(Tensor input) => input.sign_();
+
+        /// <summary>
+        /// Tests whether each element of input has its sign bit set (is less than zero) or not.
+        /// </summary>
+        /// <returns>A boolean tensor of the same shape as the input.</returns>
+        public static Tensor signbit(Tensor input) => input.signbit();
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sub(Tensor left, Tensor right) => left.sub(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        public static Tensor sub(Tensor left, Scalar right) => left.sub(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor subtract(Tensor left, Tensor right) => left.sub(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        public static Tensor subtract(Tensor left, Scalar right) => left.sub(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sub_(Tensor left, Tensor right) => left.sub_(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        public static Tensor sub_(Tensor left, Scalar right) => left.sub_(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor subtract_(Tensor left, Tensor right) => left.sub_(right);
+
+        /// <summary>
+        /// Element-wise subtraction
+        /// </summary>
+        public static Tensor subtract_(Tensor left, Scalar right) => left.sub_(right);
+
+        /// <summary>
+        /// Returns a new tensor with the truncated integer values of the elements of input.
+        /// </summary>
+        public static Tensor trunc(Tensor input) => input.trunc();
+
+        /// <summary>
+        /// Replaces each element with the truncated integer values of the elements of input.
+        /// </summary>
+        public static Tensor trunc_(Tensor input) => input.trunc_();
+
+        /// <summary>
+        /// Returns a new tensor with the truncated integer values of the elements of input.
+        /// </summary>
+        public static Tensor fix(Tensor input) => input.fix();
+
+        /// <summary>
+        /// Replaces each element with the truncated integer values of the elements of input.
+        /// </summary>
+        public static Tensor fix_(Tensor input) => input.fix_();
+
+        /// <summary>
+        /// Computes x * log(y)
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor xlogy(Tensor left, Tensor right) => left.xlogy(right);
+
+        /// <summary>
+        /// Computes x * log(y)
+        /// </summary>
+        public static Tensor xlogy(Tensor left, Scalar right) => left.xlogy(right);
+
+        /// <summary>
+        /// Computes x * log(y) in place
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor xlogy_(Tensor left, Tensor right) => left.xlogy_(right);
+
+        /// <summary>
+        /// Computes x * log(y) in place
+        /// </summary>
+        public static Tensor xlogy_(Tensor left, Scalar right) => left.xlogy_(right);
+
+
     }
 }
