@@ -50,18 +50,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies local response normalization over an input signal composed of several input planes, where channels occupy the second dimension. Applies normalization across channels.
-            /// </summary>
-            static public Tensor LocalResponseNorm(Tensor x, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
-            {
-                using (var d = nn.LocalResponseNorm(size, alpha, beta, k)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

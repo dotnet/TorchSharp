@@ -256,6 +256,34 @@ namespace TorchSharp
             }
         }
 
+        public static partial class nn
+        {
+            public static partial class utils
+            {
+                [DllImport("LibTorchSharp")]
+                extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
+
+                /// <summary>
+                /// Clips gradient norm of an iterable of parameters.
+                /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
+                /// Gradients are modified in-place.
+                /// </summary>
+                /// <param name="tensors"></param>
+                /// <param name="max_norm"></param>
+                /// <param name="norm_type"></param>
+                /// <returns></returns>
+                public static double clip_grad_norm_(IList<Tensor> tensors, double max_norm, double norm_type = 2.0)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                        return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                    }
+                }
+
+            }
+        }
+
         public static partial class cuda
         {
             [DllImport("LibTorchSharp")]

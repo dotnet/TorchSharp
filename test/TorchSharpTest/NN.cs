@@ -827,7 +827,7 @@ namespace TorchSharp
             linear.Bias = new double[] { 373.8864 }.ToTensor(new long[] { 1, 1 }).to_type(ScalarType.Float32).with_requires_grad();
             linear.Weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
 
-            var afterCat = inputs.cat(1);
+            var afterCat = torch.cat(inputs, 1);
             var afterScaler = afterCat * scaler;
             var prediction = linear.forward(afterScaler);
 
@@ -1326,7 +1326,7 @@ namespace TorchSharp
         public void AvgPool2DTensor()
         {
             Tensor ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2 });
-            var obj = ones.avg_pool2d(new long[] { 2, 2 });
+            var obj = torch.nn.functional.avg_pool2d(ones,new long[] { 2, 2 });
             Assert.Equal(typeof(Tensor), obj.GetType());
             Assert.Equal(Float32Tensor.ones(new long[] { 4, 2, 1, 1 }), obj);
         }
@@ -1338,7 +1338,7 @@ namespace TorchSharp
             var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2 };
             var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1 });
-            var res = avg.avg_pool2d_backward(ones, kernelSize) * 4.0;
+            var res = torch.nn.functional.avg_pool2d_backward(avg,ones, kernelSize) * 4.0;
 
             var ones0000 = ones[0, 0, 0, 0].ToSingle();
             var res0000 = res[0, 0, 0, 0].ToSingle();
@@ -1354,7 +1354,7 @@ namespace TorchSharp
             var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2, 2 };
             var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1, 1 });
-            var res = avg.avg_pool3d_backward(ones, kernelSize) * 8.0;
+            var res = torch.nn.functional.avg_pool3d_backward(avg,ones, kernelSize) * 8.0;
 
             var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
             var res0000 = res[0, 0, 0, 0, 0].ToSingle();
@@ -1369,7 +1369,7 @@ namespace TorchSharp
             var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2, 2 };
             var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1, 1 });
-            var res = avg.avg_pool3d_backward(ones, kernelSize, divisorOverride: 6) * 6.0;
+            var res = torch.nn.functional.avg_pool3d_backward(avg,ones, kernelSize, divisorOverride: 6) * 6.0;
 
             var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
             var res0000 = res[0, 0, 0, 0, 0].ToSingle();

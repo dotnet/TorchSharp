@@ -1746,35 +1746,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_complex(IntPtr real, IntPtr imag);
-
-            /// <summary>
-            /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
-            /// </summary>
-            static public Tensor complex(Tensor real, Tensor imag)
-            {
-                var res = THSTensor_complex(real.Handle, imag.Handle);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_polar(IntPtr abs, IntPtr angle);
-
-            /// <summary>
-            /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value 'abs' and angle 'angle'.
-            /// </summary>
-            static public Tensor polar(Tensor abs, Tensor angle)
-            {
-                var res = THSTensor_polar(abs.Handle, angle.Handle);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-                return new Tensor(res);
-            }
-
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_polygamma(IntPtr tensor, long p);
 

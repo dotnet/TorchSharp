@@ -48,15 +48,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            static public Tensor Unflatten(Tensor x, long dim, long[] unflattenedSize)
-            {
-                using (var f = nn.Unflatten(dim, unflattenedSize)) {
-                    return f.forward(x);
-                }
-            }
-        }
     }
 }

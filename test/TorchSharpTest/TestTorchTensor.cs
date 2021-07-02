@@ -592,7 +592,7 @@ namespace TorchSharp
             Tensor r = Float32Tensor.randn(shape);
             Tensor i = Float32Tensor.randn(shape);
 
-            Tensor x = Tensor.complex(r, i);
+            Tensor x = torch.complex(r, i);
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat32, x.Type);
@@ -607,7 +607,7 @@ namespace TorchSharp
             Tensor r = Float64Tensor.randn(shape);
             Tensor i = Float64Tensor.randn(shape);
 
-            Tensor x = Tensor.complex(r, i);
+            Tensor x = torch.complex(r, i);
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat64, x.Type);
@@ -622,9 +622,9 @@ namespace TorchSharp
             Tensor r = Float32Tensor.randn(shape);
             Tensor i = Float32Tensor.randn(shape);
 
-            Tensor x = Tensor.complex(r, i);
+            Tensor x = torch.complex(r, i);
 
-            Tensor p = Tensor.polar(x.abs(), x.angle());
+            Tensor p = torch.polar(x.abs(), x.angle());
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.Type);
@@ -639,9 +639,9 @@ namespace TorchSharp
             Tensor r = Float64Tensor.randn(shape);
             Tensor i = Float64Tensor.randn(shape);
 
-            Tensor x = Tensor.complex(r, i);
+            Tensor x = torch.complex(r, i);
 
-            Tensor p = Tensor.polar(x.abs(), x.angle());
+            Tensor p = torch.polar(x.abs(), x.angle());
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.Type);
@@ -1863,7 +1863,7 @@ namespace TorchSharp
             var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = new Tensor[] { zeros, ones }.cat(0);
+            var centroids = torch.cat(new Tensor[] { zeros, ones },0);
 
             var distanceFromZero = input.reshape(new long[] { -1, 1, 9 }).sub(zeros).pow(2.ToScalar()).sum(new long[] { 2 });
             var distanceFromOne = input.reshape(new long[] { -1, 1, 9 }).sub(ones).pow(2.ToScalar()).sum(new long[] { 2 });
@@ -1877,7 +1877,7 @@ namespace TorchSharp
         {
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = new Tensor[] { zeros, ones }.cat(0);
+            var centroids = torch.cat(new Tensor[] { zeros, ones },0);
 
             var shape = centroids.shape;
             Assert.Equal(new long[] { 2, 9 }, shape);
@@ -1889,7 +1889,7 @@ namespace TorchSharp
             if (torch.cuda.is_available()) {
                 var zeros = Float32Tensor.zeros(new long[] { 1, 9 }).cuda();
                 var ones = Float32Tensor.ones(new long[] { 1, 9 }).cuda();
-                var centroids = new Tensor[] { zeros, ones }.cat(0);
+                var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
                 var shape = centroids.shape;
                 Assert.Equal(new long[] { 2, 9 }, shape);
                 Assert.Equal(DeviceType.CUDA, centroids.device_type);
@@ -1926,7 +1926,7 @@ namespace TorchSharp
                 var t1 = Float32Tensor.zeros(new long[] { }, device);
                 var t2 = Float32Tensor.ones(new long[] { }, device);
                 var t3 = Float32Tensor.ones(new long[] { }, device);
-                var res = new Tensor[] { t1, t2, t3 }.stack(0);
+                var res = torch.stack(new Tensor[] { t1, t2, t3 }, 0);
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 3 }, shape);
@@ -1936,7 +1936,7 @@ namespace TorchSharp
                 var t1 = Float32Tensor.zeros(new long[] { }, device);
                 var t2 = Float32Tensor.ones(new long[] { }, device);
                 var t3 = Float32Tensor.ones(new long[] { }, device);
-                var res = new Tensor[] { t1, t2, t3 }.hstack();
+                var res = torch.hstack(new Tensor[] { t1, t2, t3 });
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 3 }, shape);
@@ -1945,7 +1945,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new Tensor[] { t1, t2 }.stack(0);
+                var res = torch.stack(new Tensor[] { t1, t2 }, 0);
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 2, 9 }, shape);
@@ -1954,7 +1954,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new Tensor[] { t1, t2 }.hstack();
+                var res = torch.hstack(new Tensor[] { t1, t2 });
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 18 }, shape);
@@ -1963,7 +1963,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new Tensor[] { t1, t2 }.vstack();
+                var res = torch.vstack(new Tensor[] { t1, t2 });
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 4, 9 }, shape);
@@ -1972,7 +1972,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res = new Tensor[] { t1, t2 }.dstack();
+                var res =  torch.dstack(new Tensor[] { t1, t2 });
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 9, 2 }, shape);
@@ -3117,6 +3117,8 @@ namespace TorchSharp
             var expected = data.Select(MathF.Sin).ToArray();
             var res = Float32Tensor.from(data).sin();
             Assert.True(res.allclose(Float32Tensor.from(expected)));
+            res = torch.sin(torch.tensor(data));
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
         [Fact]
@@ -3125,6 +3127,8 @@ namespace TorchSharp
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Cos).ToArray();
             var res = Float32Tensor.from(data).cos();
+            Assert.True(res.allclose(Float32Tensor.from(expected)));
+            res = torch.cos(torch.tensor(data));
             Assert.True(res.allclose(Float32Tensor.from(expected)));
         }
 
@@ -4170,7 +4174,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
+            var t3t = torch.nn.functional.conv1d(t1t,t2t, stride: 1, padding: 0, dilation: 1);
             if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
@@ -4232,7 +4236,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3t = t1t.conv1d(t2t, stride: 1, padding: 0, dilation: 1);
+            var t3t = torch.nn.functional.conv1d(t1t,t2t, stride: 1, padding: 0, dilation: 1);
             if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
@@ -4299,7 +4303,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3p2d3 = t1t.conv1d(t2t, padding: 2, dilation: 3);
+            var t3p2d3 = torch.nn.functional.conv1d(t1t,t2t, padding: 2, dilation: 3);
             if (torch.cuda.is_available()) {
                 t3p2d3 = t3p2d3.cpu();
             }

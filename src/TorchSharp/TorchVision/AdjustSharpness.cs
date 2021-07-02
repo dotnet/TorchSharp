@@ -36,7 +36,7 @@ namespace TorchSharp.torchvision
             kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
             var result_tmp = SqueezeIn(input, out var needCast, out var needSqueeze, out var out_dtype);
-            result_tmp = result_tmp.conv2d(kernel, groups: result_tmp.shape[result_tmp.shape.Length - 3]);
+            result_tmp = torch.nn.functional.conv2d(result_tmp,kernel, groups: result_tmp.shape[result_tmp.shape.Length - 3]);
             result_tmp = SqueezeOut(result_tmp, needCast, needSqueeze, out_dtype);
 
             var result = input.clone();

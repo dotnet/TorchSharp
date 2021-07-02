@@ -66,7 +66,7 @@ namespace TorchSharp
             /// <param name="outputSize">The target output size of the image of the form D x H x W.
             /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
             /// <returns></returns>
-            static public Tensor AdaptiveMaxPool3d(Tensor x, long[] outputSize)
+            static public Tensor adaptive_max_pool3d(Tensor x, long[] outputSize)
             {
                 using (var d = nn.AdaptiveMaxPool3d(outputSize)) {
                     return d.forward(x);

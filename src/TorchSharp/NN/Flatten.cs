@@ -44,15 +44,5 @@ namespace TorchSharp
                 return new Flatten(handle, boxedHandle);
             }
         }
-
-        public static partial class functional
-        {
-            static public Tensor Flatten(Tensor x, long startDim = 1, long endDim = -1)
-            {
-                using (var f = nn.Flatten(startDim, endDim)) {
-                    return f.forward(x);
-                }
-            }
-        }
     }
 }

@@ -64,7 +64,7 @@ namespace TorchSharp
             /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
             /// <returns></returns>
             /// <returns></returns>
-            static public Tensor PixelShuffle(Tensor x, long upscaleFactor)
+            static public Tensor pixel_shuffle(Tensor x, long upscaleFactor)
             {
                 using (var d = nn.PixelShuffle(upscaleFactor)) {
                     return d.forward(x);

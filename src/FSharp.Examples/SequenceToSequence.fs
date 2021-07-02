@@ -112,13 +112,14 @@ type TransformerModel(ntokens, device:torch.device) as this =
             .masked_fill(maskIsOne, 0.0f.ToScalar()).``to``(device)
 
 let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchText.Vocab.Vocab) =
-    [|
-        for item in iter do
-            let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
-            let t = torch.Int64Tensor.from(itemData)
-            if t.NumberOfElements > 0L then
-                t
-    |].cat(0L)
+    torch.cat(
+        [|
+            for item in iter do
+                let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
+                let t = torch.Int64Tensor.from(itemData)
+                if t.NumberOfElements > 0L then
+                    t
+        |], 0L)
     
 let batchify (data:torch.Tensor) batchSize (device:torch.device) =
     let nbatch = data.shape.[0] / batchSize
@@ -161,7 +162,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             use output = model.forward(data, src_mask)
             use loss = criterion (output.view(-1L, ntokens)) targets
             loss.backward()
-            model.parameters().clip_grad_norm(0.5) |> ignore
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
             optimizer.step()
 
             total_loss <- total_loss + loss.cpu().DataItem<float32>()

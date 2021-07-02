@@ -37,7 +37,7 @@ namespace TorchSharp.torchvision
             var padding = new long[] { k0d2, k0sm1 - k0d2, k1d2, k1sm1 - k1d2 };
 
             img = TorchSharp.torch.nn.functional.Pad(img, padding, PaddingModes.Reflect);
-            img = img.conv2d(kernel, groups: img.shape[img.shape.Length - 3]);
+            img = torch.nn.functional.conv2d(img, kernel, groups: img.shape[img.shape.Length - 3]);
 
             return SqueezeOut(img, needCast, needSqueeze, out_dtype);
         }

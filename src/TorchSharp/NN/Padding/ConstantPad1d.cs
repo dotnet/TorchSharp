@@ -53,22 +53,5 @@ namespace TorchSharp
                 return new ConstantPad1d(handle, boxedHandle);
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Pads the input tensor using replication of the input boundary.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="padding">The size of the padding: (padding_left , padding_right)</param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            static public Tensor ConstantPad1d(Tensor x, long padding, double value)
-            {
-                using (var d = nn.ConstantPad1d(padding, value)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

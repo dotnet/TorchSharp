@@ -80,7 +80,7 @@ namespace TorchText.Data
             }
 
             var labels = Int64Tensor.from(label_list.ToArray()).to(_device);
-            var texts = text_list.ToArray().cat(0).to(_device);
+            var texts = torch.cat(text_list.ToArray(), 0).to(_device);
             var offs = Int64Tensor.from(offsets.Take(label_list.Count).ToArray()).to(_device);
 
             return (labels, texts, offs);

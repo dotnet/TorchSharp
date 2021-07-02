@@ -123,7 +123,7 @@ namespace TorchSharp.Examples
                 var loss = criterion(output.view(-1, ntokens), targets);
                 {
                     loss.backward();
-                    model.parameters().clip_grad_norm(0.5);
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
 
                     total_loss += loss.to(device.CPU).DataItem<float>();
@@ -177,7 +177,7 @@ namespace TorchSharp.Examples
                 }
                 data.Add(Int64Tensor.from(itemData.ToArray()));
             }
-            return data.Where(t => t.NumberOfElements > 0).ToArray().cat(0);
+            return torch.cat(data.Where(t => t.NumberOfElements > 0).ToArray(), 0);
         }
 
         static Tensor Batchify(Tensor data, int batch_size)

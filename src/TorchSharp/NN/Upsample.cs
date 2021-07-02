@@ -68,7 +68,7 @@ namespace TorchSharp
     namespace impl
     {
         /// <summary>
-        /// This class is used to represent a dropout module.
+        /// This class is used to represent an Upsample module.
         /// </summary>
         public class Upsample : torch.nn.Module
         {

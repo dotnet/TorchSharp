@@ -26,6 +26,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_det(IntPtr tensor);
 
+            /// <summary>
+            /// Computes the determinant of a square matrix.
+            /// </summary>
             public static Tensor det(Tensor input)
             {
                 var res = THSLinalg_det(input.Handle);

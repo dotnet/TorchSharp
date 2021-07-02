@@ -64,7 +64,7 @@ namespace TorchSharp
             /// <param name="x"></param>
             /// <param name="outputSize">The target output size H.</param>
             /// <returns></returns>
-            static public Tensor AdaptiveMaxPool1d(Tensor x, long outputSize)
+            static public Tensor adaptive_max_pool1d(Tensor x, long outputSize)
             {
                 using (var d = nn.AdaptiveMaxPool1d(outputSize)) {
                     return d.forward(x);

@@ -52,21 +52,5 @@ namespace TorchSharp
                 return new ReplicationPad3d(handle, boxedHandle);
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Pads the input tensor using replication of the input boundary.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="padding">The size of the padding.</param>
-            /// <returns></returns>
-            static public Tensor ReplicationPad3d(Tensor x, long padding)
-            {
-                using (var d = nn.ReplicationPad3d(padding)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

@@ -52,21 +52,5 @@ namespace TorchSharp
                 return new ReflectionPad1d(handle, boxedHandle);
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Pads the input tensor using the reflection of the input boundary.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="padding">The size of the padding: (padding_left , padding_right)</param>
-            /// <returns></returns>
-            static public Tensor ReflectionPad1d(Tensor x, long padding)
-            {
-                using (var d = nn.ReflectionPad1d(padding)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

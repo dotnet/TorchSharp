@@ -52,21 +52,5 @@ namespace TorchSharp
                 return new ZeroPad2d(handle, boxedHandle);
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Pads the input tensor boundaries with zero.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="padding">The size of the padding: (padding_left , padding_right, padding_top, padding_bottom)</param>
-            /// <returns></returns>
-            static public Tensor ZeroPad2d(Tensor x, long padding)
-            {
-                using (var d = nn.ZeroPad2d(padding)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

@@ -54,22 +54,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies a 3D adaptive average pooling over an input signal composed of several input planes.
-            /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
-            /// </summary>
-            /// <param name="x">The input signal tensor.</param>
-            /// <param name="outputSize">The target output size of the image of the form H x W.</param>
-            /// <returns></returns>
-            static public Tensor AdaptiveAvgPool3d(Tensor x, long[] outputSize)
-            {
-                using (var d = nn.AdaptiveAvgPool3d(outputSize)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

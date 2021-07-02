@@ -83,41 +83,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies a 3D max pooling over an input signal composed of several input planes.
-            /// </summary>
-            /// <param name="x">The input signal tensor</param>
-            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
-            /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
-            /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
-            /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
-            static public Tensor MaxPool3d(Tensor x, long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
-            {
-                using (var d = nn.MaxPool3d(kernelSize, stride, padding, dilation, ceilMode)) {
-                    return d.forward(x);
-                }
-            }
-
-            /// <summary>
-            /// Applies a 3D max pooling over an input signal composed of several input planes.
-            /// </summary>
-            /// <param name="x">The input signal tensor</param>
-            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
-            /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
-            /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
-            /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
-            /// <returns></returns>
-            static public Tensor MaxPool3d(Tensor x, long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
-            {
-                using (var d = nn.MaxPool3d(kernelSize, strides, padding, dilation, ceilMode)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

@@ -83,7 +83,7 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
         let loss = criterion predicted_labels labels
 
         loss.backward()
-        model.parameters().clip_grad_norm(0.5) |> ignore
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
         optimizer.step()
 
         total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())

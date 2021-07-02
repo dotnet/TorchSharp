@@ -13,6 +13,9 @@ namespace TorchSharp
         // This files contains trigonometric and hyperbolic functions.
         // All are element-wise operations on tensors.
 
+        // Most operations are duplicated -- in the 'torch' namespace, and as methods on 'Tensor.'
+        // This is done in order to mimic the Pytorch experience.
+
         public sealed partial class Tensor
         {
             [DllImport("LibTorchSharp")]
@@ -521,5 +524,357 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor atanh_() => arctanh_();
         }
+
+        // Duplicated methods in the 'torch' namespace:
+
+        /// <summary>
+        /// Computes the element-wise angle (in radians) of the given input tensor.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// Starting in Torch 1.8, angle returns pi for negative real numbers, zero for non-negative real numbers, and propagates NaNs.
+        /// Previously the function would return zero for all real numbers and not propagate floating-point NaNs.
+        /// </remarks>
+        public static Tensor angle(Tensor input)
+        {
+            return input.angle();
+        }
+
+        /// <summary>
+        /// Computes the arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor asin(Tensor input)
+        {
+            return input.asin();
+        }
+
+        /// <summary>
+        /// Computes the arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arcsin(Tensor input) => asin(input);
+
+        /// <summary>
+        /// Computes the arcsine of the elements of input, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor asin_(Tensor input)
+        {
+            return input.asinh_();
+        }
+
+        public static Tensor arcsin_(Tensor input) => asin_(input);
+
+        /// <summary>
+        /// Computes the arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor acos(Tensor input)
+        {
+            return input.acos();
+        }
+
+        /// <summary>
+        /// Computes the arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arccos(Tensor input) => acos(input);
+
+        /// <summary>
+        /// Computes the arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor acos_(Tensor input)
+        {
+            return input.acos_();
+        }
+
+        /// <summary>
+        /// Computes the arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arccos_(Tensor input) => acos_(input);
+
+        /// <summary>
+        /// Computes the arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atan(Tensor input)
+        {
+            return input.atan();
+        }
+
+        /// <summary>
+        /// Computes the arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctan(Tensor input) => atan(input);
+
+        /// <summary>
+        /// Computes the arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atan_(Tensor input)
+        {
+            return input.atan_();
+        }
+
+        /// <summary>
+        /// Computes the arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctan_(Tensor input) => atan_(input);
+
+
+
+        /// <summary>
+        /// Element-wise arctangent of input / other with consideration of the quadrant.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atan2(Tensor input, Tensor other)
+        {
+            return input.atan2(other);
+        }
+
+        /// <summary>
+        /// Element-wise arctangent of input / other with consideration of the quadrant.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctan(Tensor input, Tensor other) => atan2(input, other);
+
+        /// <summary>
+        /// Element-wise arctangent of input / other with consideration of the quadrant.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atan2_(Tensor input, Tensor other)
+        {
+            return input.atan2_(other);
+        }
+
+        /// <summary>
+        /// Element-wise arctangent of input / other with consideration of the quadrant.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctan2_(Tensor input, Tensor other) => atan2_(input, other);
+
+
+
+        /// <summary>
+        /// Computes the cosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor cos(Tensor input)
+        {
+            return input.cos();
+        }
+
+        /// <summary>
+        /// Computes the cosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor cos_(Tensor input)
+        {
+            return input.cos_();
+        }
+
+        /// <summary>
+        /// Computes the sine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sin(Tensor input)
+        {
+            return input.sin();
+        }
+
+        /// <summary>
+        /// Computes the sine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sin_(Tensor input)
+        {
+            return input.sin_();
+        }
+
+        /// <summary>
+        /// Computes the tangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor tan(Tensor input)
+        {
+            return input.tan();
+        }
+
+        /// <summary>
+        /// Computes the tangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor tan_(Tensor input)
+        {
+            return input.tan_();
+        }
+
+        /// <summary>
+        /// Computes the normalized sinc of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sinc(Tensor input)
+        {
+            return input.sinc();
+        }
+
+        /// <summary>
+        /// Computes the normalized sinc of input, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sinc_(Tensor input)
+        {
+            return input.sinc_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic sine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sinh(Tensor input)
+        {
+            return input.sinh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic sine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor sinh_(Tensor input)
+        {
+            return input.sinh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic cosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor cosh(Tensor input)
+        {
+            return input.cosh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic cosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor cosh_(Tensor input)
+        {
+            return input.cosh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic tangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor tanh(Tensor input)
+        {
+            return input.tanh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic tangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor tanh_(Tensor input)
+        {
+            return input.tanh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arcsinh(Tensor input)
+        {
+            return input.arcsinh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor asinh(Tensor input) => arcsinh(input);
+
+        /// <summary>
+        /// Computes the hyperbolic arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arcsinh_(Tensor input)
+        {
+            return input.arcsinh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arcsine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor asinh_(Tensor input) => arcsinh_(input);
+
+        /// <summary>
+        /// Computes the hyperbolic arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arccosh(Tensor input)
+        {
+            return input.arccosh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor acosh(Tensor input) => arccosh(input);
+
+
+        /// <summary>
+        /// Computes the hyperbolic arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arccosh_(Tensor input)
+        {
+            return input.arccosh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arccosine of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor acosh_(Tensor input) => arccosh_(input);
+
+        /// <summary>
+        /// Computes the hyperbolic arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctanh(Tensor input)
+        {
+            return input.arctanh();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atanh(Tensor input) => arctanh(input);
+
+        /// <summary>
+        /// Computes the hyperbolic arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor arctanh_(Tensor input)
+        {
+            return input.arctanh_();
+        }
+
+        /// <summary>
+        /// Computes the hyperbolic arctangent of the elements of input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor atanh_(Tensor input) => arctanh_(input);
     }
 }

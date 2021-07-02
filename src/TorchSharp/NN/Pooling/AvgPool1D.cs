@@ -61,22 +61,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies a 1D average pooling over an input signal composed of several input planes.
-            /// </summary>
-            /// <param name="x">The input signal tensor</param>
-            /// <param name="kernelSize">The size of the window</param>
-            /// <param name="stride">The stride of the window. Default value is kernel_size</param>
-            /// <returns></returns>
-            static public Tensor AvgPool1d(Tensor x, long kernelSize, long? stride = null)
-            {
-                using (var d = nn.AvgPool1d(kernelSize, stride)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

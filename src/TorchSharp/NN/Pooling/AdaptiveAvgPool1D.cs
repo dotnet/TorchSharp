@@ -54,15 +54,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            static public Tensor AdaptiveAvgPool1d(Tensor x, long outputSize)
-            {
-                using (var d = nn.AdaptiveAvgPool1d(outputSize)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

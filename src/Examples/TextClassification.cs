@@ -110,7 +110,7 @@ namespace TorchSharp.Examples
 
                 var loss = criterion(predicted_labels, labels);
                 loss.backward();
-                model.parameters().clip_grad_norm(0.5);
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                 optimizer.step();
 
                 total_acc += (predicted_labels.argmax(1) == labels).sum().to(device.CPU).DataItem<long>();

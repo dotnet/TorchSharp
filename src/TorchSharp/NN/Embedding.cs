@@ -102,29 +102,5 @@ namespace TorchSharp
 
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// A simple lookup table that stores embeddings of a fixed dictionary and size.
-            /// This module is often used to store word embeddings and retrieve them using indices. The input to the module is a list of indices, and the output is the corresponding word embeddings.
-            /// </summary>
-            /// <param name="x">An input tensor of arbitrary shape.</param>
-            /// <param name="num_embeddings">Size of the dictionary of embeddings, the vocabulary size.</param>
-            /// <param name="embedding_dims">The size of each embedding vector</param>
-            /// <param name="padding_idx">If given, pads the output with the embedding vector at padding_idx (initialized to zeros) whenever it encounters the index.</param>
-            /// <param name="max_norm">If given, each embedding vector with norm larger than max_norm is renormalized to have norm max_norm.</param>
-            /// <param name="norm_type">The p of the p-norm to compute for the max_norm option. Default 2.</param>
-            /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
-            /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
-            /// <returns></returns>
-            /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public Tensor Embedding(Tensor x, long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
-            {
-                using (var d = nn.Embedding(num_embeddings, embedding_dims, padding_idx, max_norm, norm_type, scale_grad_by_freq, sparse)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

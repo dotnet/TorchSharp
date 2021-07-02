@@ -53,18 +53,5 @@ namespace TorchSharp
                 }
             }
         }
-
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies Layer Normalization over a mini-batch of inputs as described in the paper Layer Normalization
-            /// </summary>
-            static public Tensor LayerNorm(Tensor x, long[] normalizedShape, double eps = 1e-05, bool elementwiseAffine = true)
-            {
-                using (var d = nn.LayerNorm(normalizedShape, eps, elementwiseAffine)) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }
