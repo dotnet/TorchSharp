@@ -1,29 +1,34 @@
 [![Build Status](https://donsyme.visualstudio.com/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=1&branchName=master)
 
+__NOTE:__ 
+
+__In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.__
+
 # TorchSharp
 
 TorchSharp is a .NET library that provides access to the library that powers
 PyTorch.  
 
-The focus is to bind the API surfaced by libtorch with a particular focus on tensors.
+The focus is to bind the API surfaced by libtorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
 
-The technology is a "wrapper library" no more no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
+The technology is a "wrapper library": no more, no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
 repository extensively and has been a major factor in iterating support.
 
 Things that you can try:
 
 ```csharp
 using TorchSharp;
+using static torch.nn;
 
-var lin1 = torch.Linear(1000, 100);
-var lin2 = torch.Linear(100, 10);
-var seq = torch.Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+var lin1 = Linear(1000, 100);
+var lin2 = Linear(100, 10);
+var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
 var x = torch.randn(64, 1000);
 var y = torch.randn(64, 10);
 
 var optimizer = torch.optim.Adam(seq.parameters());
-var loss = torch.nn.functional.mse_loss(NN.Reduction.Sum);
+var loss = functional.mse_loss(Reduction.Sum);
 
 for (int i = 0; i < 10; i++) {
     var eval = seq.forward(x);
@@ -36,6 +41,30 @@ for (int i = 0; i < 10; i++) {
     optimizer.step();
 }
 ```
+
+## A Few Things to Know
+
+While the intent has been to stay close to the Pytorch experience, there are some peculiarities to take note of:
+
+1. We have disregarded .NET naming conventions in favor of Python where it impacts the experience. We know this will feel wrong to some, but after a lot of deliberation, we decided to follow the lead of the SciSharp community and embrace naming similarity with Python over .NET tradition. We believe this will make it easier to take Python-based examples and snippets and apply them in .NET.
+
+2. In order to make a constructor call look more the Pytorch code, each class has a factory method with the same name. Because we cannot have a method and a class with the same name in a scope, we moved the class declarations to a nested scope 'Modules.'
+
+    For example:
+
+    ```csharp
+
+    Module conv1 = Conv1d(...);
+
+    ```
+    creates an instance of `Modules.Conv1d`, which has 'torch.Module' as its base class.
+
+3. C# uses ':' when passing a named parameter, while F# and Python uses '=', and Pytorch functions have enough parameters to encourage passing them by name. This means that you cannot simply copy a lot of code into C#.
+
+4. There are a number of APIs where Pytorch encodes what are effectively enum types as strings. We have chosen to use proper .NET enumeration types in most cases.
+
+5. The type `torch.device` is `torch.Device` in TorchSharp. We felt that using all-lowercase for a class type was one step too far. The device object constructors, which is what you use most of the time, are still called `device()`
+
 
 # Memory management
 
