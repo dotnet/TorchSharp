@@ -9,9 +9,9 @@ using static TorchSharp.torch.nn;
 #nullable enable
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
-    namespace impl
+    namespace Modules
     {
         public class Bilinear : torch.nn.Module
         {

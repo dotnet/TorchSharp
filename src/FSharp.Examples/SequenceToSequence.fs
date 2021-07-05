@@ -43,7 +43,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
 
@@ -73,7 +73,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
         use x = t + pe.[torch.TensorIndex.Slice(NULL, t.shape.[0]), torch.TensorIndex.Slice()]
         dropout.forward(x)
 
-type TransformerModel(ntokens, device:torch.device) as this =
+type TransformerModel(ntokens, device:torch.Device) as this =
     inherit CustomModule("Transformer")
 
     let pos_encoder = new PositionalEncoding(emsize, 5000L)
@@ -93,7 +93,7 @@ type TransformerModel(ntokens, device:torch.device) as this =
 
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
@@ -121,7 +121,7 @@ let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchT
                     t
         |], 0L)
     
-let batchify (data:torch.Tensor) batchSize (device:torch.device) =
+let batchify (data:torch.Tensor) batchSize (device:torch.Device) =
     let nbatch = data.shape.[0] / batchSize
     let d2 = data.narrow(0L, 0L, nbatch * batchSize).view(batchSize, -1L).t()
     d2.contiguous().``to``(device)
@@ -217,7 +217,7 @@ let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
 let run epochs =
 
-    printfn $"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs."
+    printfn $"Running SequenceToSequence on {device.``type``.ToString()} for {epochs} epochs."
 
     let vocabIter = TorchText.Datasets.WikiText2("train", datasetPath)
     let tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english")

@@ -5,9 +5,9 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
-    namespace impl
+    namespace Modules
     {
         /// <summary>
         /// This class is used to represent a ReLU6 module.

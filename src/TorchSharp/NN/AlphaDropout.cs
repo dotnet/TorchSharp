@@ -5,9 +5,9 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
-    namespace impl
+    namespace Modules
     {
         /// <summary>
         /// Alpha Dropout is a type of Dropout that maintains the self-normalizing property. For an input with zero mean and unit standard deviation,

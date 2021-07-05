@@ -7,7 +7,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
     public static partial class torch
     {
@@ -251,7 +251,7 @@ namespace TorchSharp
         }
     }
 
-    namespace impl
+    namespace Modules
     {
         using static torch.optim;
 

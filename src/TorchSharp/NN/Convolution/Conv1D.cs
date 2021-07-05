@@ -6,7 +6,7 @@ using static TorchSharp.torch;
 #nullable enable
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
     public enum PaddingModes
     {
@@ -23,7 +23,7 @@ namespace TorchSharp
         Same = 1
     }
 
-    namespace impl
+    namespace Modules
     {
         public class Conv1d : torch.nn.Module
         {

@@ -9,20 +9,20 @@ namespace TorchText.Data
 {
     public class AG_NEWSReader : IDisposable
     {
-        public static AG_NEWSReader AG_NEWS(string split, device device, string root = ".data")
+        public static AG_NEWSReader AG_NEWS(string split, Device device, string root = ".data")
         {
             var dataPath = Path.Combine(root, $"{split}.csv");
             return new AG_NEWSReader(dataPath, device);
         }
 
-        private AG_NEWSReader(string path, device device)
+        private AG_NEWSReader(string path, Device device)
         {
             _path = path;
             _device = device;
         }
 
         private string _path;
-        private device _device;
+        private Device _device;
 
         public IEnumerable<(int, string)> Enumerate()
         {
@@ -73,15 +73,15 @@ namespace TorchText.Data
 
             foreach (var (label, text) in input) {
                 label_list.Add(label);
-                var processed_text = Int64Tensor.from(tokenizer(text).Select(t => (long)vocab[t]).ToArray());
+                var processed_text = torch.tensor(tokenizer(text).Select(t => (long)vocab[t]).ToArray(),dtype:torch.int64);
                 text_list.Add(processed_text);
                 last += processed_text.size(0);
                 offsets.Add(last);
             }
 
-            var labels = Int64Tensor.from(label_list.ToArray()).to(_device);
+            var labels = torch.tensor(label_list.ToArray(), dtype: torch.int64).to(_device);
             var texts = torch.cat(text_list.ToArray(), 0).to(_device);
-            var offs = Int64Tensor.from(offsets.Take(label_list.Count).ToArray()).to(_device);
+            var offs = torch.tensor(offsets.Take(label_list.Count).ToArray(), dtype:torch.int64).to(_device);
 
             return (labels, texts, offs);
         }

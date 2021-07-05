@@ -8,9 +8,9 @@ using static TorchSharp.torch;
 #nullable enable
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
-    namespace impl
+    namespace Modules
     {
         public class GRU : torch.nn.Module
         {

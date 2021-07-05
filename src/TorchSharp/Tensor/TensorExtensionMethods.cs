@@ -18,7 +18,7 @@ namespace TorchSharp
     {
         internal static bool IsIntegral(this Tensor tensor)
         {
-            return IsIntegral(tensor.Type);
+            return IsIntegral(tensor.dtype);
         }
 
         internal static bool IsIntegral(this ScalarType type)
@@ -57,7 +57,7 @@ namespace TorchSharp
         public static void Save(this Tensor tensor, System.IO.BinaryWriter writer)
         {
             // First, write the type
-            writer.Encode((int)tensor.Type); // 4 bytes
+            writer.Encode((int)tensor.dtype); // 4 bytes
                                                 // Then, the shape.
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
@@ -75,7 +75,7 @@ namespace TorchSharp
             // First, read the type
             var type = (ScalarType)reader.Decode();
 
-            if (type != tensor.Type)
+            if (type != tensor.dtype)
                 throw new ArgumentException("Mismatched tensor data types while loading.");
 
             // Then, the shape
@@ -154,7 +154,7 @@ namespace TorchSharp
         /// <param name="device"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static Tensor ToTensor<T>(this T scalar, torch.device? device = null, bool requiresGrad = false) where T : struct
+        public static Tensor ToTensor<T>(this T scalar, torch.Device? device = null, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");

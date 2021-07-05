@@ -45,8 +45,8 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
-            Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running MNIST on {device.type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 
             var sourceDir = datasetPath;
@@ -60,14 +60,14 @@ namespace TorchSharp.Examples
                 Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
             }
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
             }
 
             var model = new Model("model", device);
 
-            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
 
             using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
                                 test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
@@ -76,9 +76,9 @@ namespace TorchSharp.Examples
             }
         }
 
-        internal static void TrainingLoop(string dataset, device device, Model model, MNISTReader train, MNISTReader test)
+        internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train, MNISTReader test)
         {
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _epochs *= 4;
             }
 
@@ -125,11 +125,11 @@ namespace TorchSharp.Examples
             private Module flatten = Flatten();
             private Module logsm = LogSoftmax(1);
 
-            public Model(string name, torch.device device = null) : base(name)
+            public Model(string name, torch.Device device = null) : base(name)
             {
                 RegisterComponents();
 
-                if (device != null && device.Type == DeviceType.CUDA)
+                if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
             }
 
@@ -160,7 +160,7 @@ namespace TorchSharp.Examples
             Model model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            device device,
+            Device device,
             IEnumerable<(Tensor, Tensor)> dataLoader,
             int epoch,
             long batchSize,
@@ -194,7 +194,7 @@ namespace TorchSharp.Examples
         private static void Test(
             Model model,
             Loss loss,
-            device device,
+            Device device,
             IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {

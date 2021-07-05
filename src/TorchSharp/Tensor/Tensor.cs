@@ -329,7 +329,7 @@ namespace TorchSharp
             /// <summary>
             /// Gets the type of the tensor elements.
             /// </summary>
-            public ScalarType Type => (ScalarType)THSTensor_type(handle);
+            public ScalarType dtype => (ScalarType)THSTensor_type(handle);
 
             [DllImport("LibTorchSharp")]
             [return: MarshalAs(UnmanagedType.LPStr)]
@@ -338,13 +338,13 @@ namespace TorchSharp
             /// <summary>
             /// Gets a string representing the device where the tensor is stored.
             /// </summary>
-            public torch.device device {
+            public torch.Device device {
                 get {
                     var dev_type = device_type;
                     if (dev_type == DeviceType.CPU) {
-                        return new torch.device(DeviceType.CPU);
+                        return new torch.Device(DeviceType.CPU);
                     } else {
-                        return new torch.device(dev_type, device_index);
+                        return new torch.Device(dev_type, device_index);
                     }
                 }
             }
@@ -523,17 +523,17 @@ namespace TorchSharp
             /// <param name="type"></param>
             /// <param name="device"></param>
             /// <returns></returns>
-            public Tensor to(ScalarType type, torch.device device)
+            public Tensor to(ScalarType type, torch.Device device)
             {
                 torch.InitializeDevice(device);
-                var res = THSTensor_to_type_and_device(handle, (sbyte)type, (int)device.Type, device.Index);
+                var res = THSTensor_to_type_and_device(handle, (sbyte)type, (int)device.type, device.index);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 //var res = THSTensor_to_type(handle, (sbyte)type);
                 //if (res == IntPtr.Zero)
                 //    Torch.CheckForErrors();
 
-                //res = THSTensor_to_device(res, (int)device.Type, device.Index);
+                //res = THSTensor_to_device(res, (int)device.type, device.index);
                 //if (res == IntPtr.Zero)
                 //    Torch.CheckForErrors();
 
@@ -551,14 +551,14 @@ namespace TorchSharp
             /// </summary>
             /// <param name="device">A string denoting the target device.</param>
             /// <returns></returns>
-            public Tensor to(string device) => to(new torch.device(device));
+            public Tensor to(string device) => to(new torch.Device(device));
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">The target device</param>
             /// <returns></returns>
-            public Tensor to(torch.device device) => to(device.Type, device.Index);
+            public Tensor to(torch.Device device) => to(device.type, device.index);
 
             /// <summary>
             /// Moves the tensor data.
@@ -1777,7 +1777,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor positive()
             {
-                if (this.Type == ScalarType.Bool) throw new ArgumentException("Boolean tensor");
+                if (this.dtype == ScalarType.Bool) throw new ArgumentException("Boolean tensor");
                 var res = THSTensor_positive(handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
@@ -2805,7 +2805,7 @@ namespace TorchSharp
 
             public Tensor masked_select(Tensor mask)
             {
-                if (mask.Type != ScalarType.Bool) throw new ArgumentException("The mask tensor must be Boolean.");
+                if (mask.dtype != ScalarType.Bool) throw new ArgumentException("The mask tensor must be Boolean.");
                 var res = THSTensor_masked_select(handle, mask.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -2939,7 +2939,7 @@ namespace TorchSharp
 
             public Tensor[] tensor_split(Tensor indices, int dimension = 0)
             {
-                if (indices.Type != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
+                if (indices.dtype != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
@@ -3696,16 +3696,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
             /// </summary>
-            public Tensor rand_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor rand_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_rand_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -3717,16 +3717,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
             /// </summary>
-            public Tensor randn_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor randn_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_randn_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -3738,16 +3738,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
             /// </summary>
-            public Tensor randint_like(long low, long high, ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor randint_like(long low, long high, ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_randint_like(handle, low, high, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -3767,24 +3767,35 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_bernoulli(IntPtr tensor, double p);
+            static extern IntPtr THSTensor_bernoulli(IntPtr tensor, IntPtr gen);
 
-            public Tensor bernoulli(double p)
+            public Tensor bernoulli(torch.Generator? generator = null)
             {
-                var res = THSTensor_bernoulli(handle, p);
+                var res = THSTensor_bernoulli(handle, (generator is null) ? IntPtr.Zero : generator.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_multinomial(IntPtr tensor, double num_samples, bool replacement);
+            static extern IntPtr THSTensor_multinomial(IntPtr tensor, long num_samples, bool replacement, IntPtr gen);
 
-            public Tensor multinomial(double num_samples, bool replacement = false)
+            public Tensor multinomial(long num_samples, bool replacement = false, torch.Generator ? generator = null)
             {
-                var res = THSTensor_multinomial(handle, num_samples, replacement);
+                var res = THSTensor_multinomial(handle, num_samples, replacement, (generator is null) ? IntPtr.Zero : generator.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_poisson(IntPtr tensor, IntPtr gen);
+
+            public Tensor poisson(torch.Generator? generator = null)
+            {
+                var res = THSTensor_poisson(handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_bernoulli_0(IntPtr tensor, double p, IntPtr gen);
@@ -3949,16 +3960,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor filled with the scalar value 0, with the same size as input.
             /// </summary>
-            public Tensor zeros_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor zeros_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_zeros_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -3970,16 +3981,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor filled with the scalar value 1, with the same size as input.
             /// </summary>
-            public Tensor ones_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor ones_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_ones_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -4008,16 +4019,16 @@ namespace TorchSharp
             /// <summary>
             ///  Returns an uninitialized tensor with the same size as input.
             /// </summary>
-            public Tensor empty_like(ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor empty_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_empty_like(handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -4046,16 +4057,16 @@ namespace TorchSharp
             /// <summary>
             /// Returns a tensor with the same size as input filled with 'value.'
             /// </summary>
-            public Tensor full_like(Scalar value, ScalarType? dtype = null, torch.device? device = null, bool requiresGrad = false)
+            public Tensor full_like(Scalar value, ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
-                dtype = (dtype is null) ? this.Type : dtype;
+                dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    result = THSTensor_full_like(handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -4280,7 +4291,7 @@ namespace TorchSharp
 
             public Tensor where(Tensor condition, Tensor other)
             {
-                if (condition.Type != ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
+                if (condition.dtype != ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
 
                 var res = THSTensor_where(condition.Handle, this.Handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -4418,7 +4429,7 @@ namespace TorchSharp
 
                 sb.Append("]");
             }
-            sb.Append($", type = {Type}, device = {device}");
+            sb.Append($", type = {dtype}, device = {device}");
 
             return sb.ToString();
         }
@@ -4432,7 +4443,7 @@ namespace TorchSharp
             if (Dimensions == 0) {
 
                 builder.Append(", value = ");
-                PrintValue(builder, Type, this.ToScalar(), fltFormat);
+                PrintValue(builder, dtype, this.ToScalar(), fltFormat);
 
             } else if (Dimensions == 1) {
 
@@ -4560,7 +4571,7 @@ namespace TorchSharp
 
         private static void BuildRow(List<string> row, Tensor t, int width, string fltFormat)
         {
-            var type = t.Type;
+            var type = t.dtype;
             var endingWidth = ellipsis.Length+1;
             
             for (int i = 0; i < t.shape[0]; i++) {
@@ -4779,9 +4790,9 @@ namespace TorchSharp
             }
         }
 
-        static bool is_integral(Tensor t) => is_integral(t.Type);
-        static bool is_floating_point(Tensor t) => is_floating_point(t.Type);
-        static bool is_complex(Tensor t) => is_complex(t.Type);
+        static bool is_integral(Tensor t) => is_integral(t.dtype);
+        static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
+        static bool is_complex(Tensor t) => is_complex(t.dtype);
 
         public static ScalarType @bool = ScalarType.Bool;
 

@@ -37,16 +37,16 @@ namespace TorchSharp.Examples
         {
             torch.random.manual_seed(1);
 
-            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 8;
                 _testBatchSize *= 8;
                 _epochs *= 16;
             }
 
             Console.WriteLine();
-            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.Type.ToString()} for {_epochs} epochs");
+            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.type.ToString()} for {_epochs} epochs");
             Console.WriteLine();
 
             var sourceDir = _dataLocation;
@@ -85,7 +85,7 @@ namespace TorchSharp.Examples
             private readonly Module avgPool;
             private readonly Module classifier;
 
-            public Model(string name, int numClasses, torch.device device = null) : base(name)
+            public Model(string name, int numClasses, torch.Device device = null) : base(name)
             {
                 features = Sequential(
                     ("c1", Conv2d(3, 64, kernelSize: 3, stride: 2, padding: 1)),
@@ -119,7 +119,7 @@ namespace TorchSharp.Examples
                 RegisterModule("avg", avgPool);
                 RegisterModule("classify", classifier);
 
-                if (device != null && device.Type == DeviceType.CUDA)
+                if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
             }
 

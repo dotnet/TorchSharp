@@ -2178,7 +2178,7 @@ namespace TorchSharp
         /// <summary>
         /// Returns a new tensor with the natural logarithm of the input elements.
         /// </summary>
-        public static Tensor log(Tensor input) => input.log ();
+        public static Tensor log(Tensor input) => input.log();
 
         /// <summary>
         /// Replaces each elements with the natural logarithm of the input.
@@ -2545,5 +2545,24 @@ namespace TorchSharp
         public static Tensor xlogy_(Tensor left, Scalar right) => left.xlogy_(right);
 
 
+        // Duplication of random distribution opertors in the 'torch' namespace
+
+        public static Tensor rand_out(Tensor input, params long[] sizes) => input.randn_out(sizes);
+
+        public static Tensor randint_out(Tensor input, long high, long[] sizes) => input.randint_out(high, sizes);
+
+        public static Tensor rand_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.rand_like(dtype, device, requiresGrad);
+
+        public static Tensor randn_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randn_like(dtype, device, requiresGrad);
+
+        public static Tensor randint_like(Tensor input, long low, long high, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randint_like(low, high, dtype, device, requiresGrad);
+
+        public static Tensor randperm_out(Tensor input, long n) => input.randperm_out(n);
+
+        public static Tensor bernoulli(Tensor input, torch.Generator generator = null) => input.bernoulli(generator);
+
+        public static Tensor poisson(Tensor input, torch.Generator generator = null) => input.poisson(generator);
+
+        public static Tensor multinomial(Tensor input, long num_samples, bool replacement = false, torch.Generator generator = null) => input.multinomial(num_samples, replacement, generator);
     }
 }

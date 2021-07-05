@@ -5,7 +5,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
     public enum EmbeddingBagMode
     {
@@ -14,7 +14,7 @@ namespace TorchSharp
         Max = 2
     }
 
-    namespace impl
+    namespace Modules
     {
         public class EmbeddingBag : torch.nn.Module
         {
@@ -26,11 +26,11 @@ namespace TorchSharp
             public Tensor forward(Tensor input, Tensor offsets = null, Tensor perSampleWeights = null)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
-                if (!(offsets is null) && input.Type != offsets.Type) throw new ArgumentException("input and offsets must have the same element type.");
+                if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");
                 if (input.Dimensions == 1 && offsets is null) throw new ArgumentException("'offsets' must be non-null for a 1-D input.");
                 if (input.Dimensions == 2 && !(offsets is null)) throw new ArgumentException("'offsets' must be null for a 2-D input.");
 
-                if (input.Dimensions == 2 && input.Type == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
+                if (input.Dimensions == 2 && input.dtype == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
 
                 var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

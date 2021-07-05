@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
     using static torch;
 
-    namespace impl
+    namespace Modules
     {
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool2D module.

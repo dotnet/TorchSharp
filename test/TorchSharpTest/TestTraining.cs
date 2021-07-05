@@ -511,7 +511,7 @@ namespace TorchSharp
         public void TestTrainingConv2dCUDA()
         {
             if (torch.cuda.is_available()) {
-                var device = torch.device.CUDA;
+                var device = torch.CUDA;
 
                 using (Module conv1 = Conv2d(3, 4, 3, stride: 2),
                       lin1 = Linear(4 * 13 * 13, 32),
@@ -526,13 +526,13 @@ namespace TorchSharp
                         ("r2", ReLU(inPlace: true)),
                         ("lin2", lin2))) {
 
-                    seq.to(device);
+                    seq.to((Device)device);
 
                     var optimizer = torch.optim.Optimizer.Adam(seq.parameters());
                     var loss = mse_loss(Reduction.Sum);
 
-                    using (Tensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
-                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: device)) {
+                    using (Tensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
+                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
                         float initialLoss = loss(seq.forward(x), y).ToSingle();
                         float finalLoss = float.MaxValue;

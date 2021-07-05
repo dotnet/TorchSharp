@@ -10,7 +10,7 @@ namespace TorchSharp.torchvision
 {
     internal class Normalize : ITransform, IDisposable
     {
-        internal Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.device device = null)
+        internal Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             if (means.Length != stdevs.Length) throw new ArgumentException("means and stdevs must be the same length in call to Normalize");
 
@@ -62,7 +62,7 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
-        static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.device device = null)
+        static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);
         }

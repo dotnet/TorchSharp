@@ -39,10 +39,10 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
-            Console.WriteLine($"Running TextClassification on {device.Type.ToString()}");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running TextClassification on {device.type.ToString()}");
 
-            using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, _dataLocation)) {
+            using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", (Device)device, _dataLocation)) {
 
                 var dataloader = reader.Enumerate();
 
@@ -55,7 +55,7 @@ namespace TorchSharp.Examples
 
                 var vocab = new TorchText.Vocab.Vocab(counter);
 
-                var model = new TextClassificationModel(vocab.Count, emsize, 4).to(device);
+                var model = new TextClassificationModel(vocab.Count, emsize, 4).to((Device)device);
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
@@ -75,7 +75,7 @@ namespace TorchSharp.Examples
                     scheduler.step();
                 }
 
-                using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", device, _dataLocation)) {
+                using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", (Device)device, _dataLocation)) {
 
                     var sw = new Stopwatch();
                     sw.Start();
@@ -113,7 +113,7 @@ namespace TorchSharp.Examples
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                 optimizer.step();
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
                 total_count += labels.size(0);
 
                 if (batch % log_interval == 0 && batch > 0) {
@@ -141,7 +141,7 @@ namespace TorchSharp.Examples
                 var predicted_labels = model.forward(texts, offsets);
                 var loss = criterion(predicted_labels, labels);
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
                 total_count += labels.size(0);
             }
 
@@ -151,8 +151,8 @@ namespace TorchSharp.Examples
 
     class TextClassificationModel : CustomModule
     {
-        private impl.EmbeddingBag embedding;
-        private impl.Linear fc;
+        private Modules.EmbeddingBag embedding;
+        private Modules.Linear fc;
 
         public TextClassificationModel(long vocab_size, long embed_dim, long num_class) : base("TextClassification")
         {
@@ -182,7 +182,7 @@ namespace TorchSharp.Examples
             return fc.forward(embedding.forward(input, offsets));
         }
 
-        public new TextClassificationModel to(device device)
+        public new TextClassificationModel to(Device device)
         {
             base.to(device);
             return this;

@@ -257,7 +257,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
             /// </summary>
-            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.device device = null, bool requiresGrad = false)
+            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -265,11 +265,11 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
@@ -281,7 +281,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the sample frequencies for rfft() with a signal of size n.
             /// </summary>
-            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.device device = null, bool requiresGrad = false)
+            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -289,11 +289,11 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.Type, device.Index, requiresGrad);
+                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);

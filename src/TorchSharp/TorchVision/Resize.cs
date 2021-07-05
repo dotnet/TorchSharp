@@ -68,7 +68,7 @@ namespace TorchSharp.torchvision
                 needSqueeze = true;
             }
 
-            dtype = img.Type;
+            dtype = img.dtype;
             needCast = false;
 
             if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {

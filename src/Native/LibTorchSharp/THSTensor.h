@@ -1178,9 +1178,11 @@ EXPORT_API(Tensor) THSTensor_zeros_like(const Tensor input, const int8_t scalar_
 
 // Random numbers:
 
-EXPORT_API(Tensor) THSTensor_bernoulli(const Tensor tensor, const double p, const Generator gen);
+EXPORT_API(Tensor) THSTensor_bernoulli(const Tensor tensor, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement, const Generator gen);
+EXPORT_API(Tensor) THSTensor_multinomial(const Tensor tensor, const int64_t num_samples, const bool replacement, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_poisson(const Tensor tensor, const Generator gen);
 
 // Random number in-place:
 

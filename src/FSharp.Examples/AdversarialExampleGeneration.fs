@@ -50,7 +50,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let criterion x y = functional.nll_loss().Invoke(x,y)
 
@@ -84,14 +84,14 @@ let test (model:MNIST.Model) (eps:float) (dataLoader:MNISTReader) size =
 
 let run epochs =
 
-    printfn $"Running AdversarialExampleGeneration on {device.Type.ToString()}"
+    printfn $"Running AdversarialExampleGeneration on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
     let targetDir = Path.Combine(datasetPath, "test_data")
 
     MNIST.getDataFiles datasetPath targetDir
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
@@ -102,7 +102,7 @@ let run epochs =
 
     let model = 
         if not (File.Exists(modelFile)) then
-            printfn $"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model."
+            printfn $"\n  Running MNIST on {device.``type``.ToString()} in order to pre-train the model."
 
             let model = new MNIST.Model("model",device)
 
@@ -114,7 +114,7 @@ let run epochs =
             model 
 
         else
-            let model = new MNIST.Model("model", torch.device.CPU)
+            let model = new MNIST.Model("model", torch.CPU)
             model.load(modelFile) |> ignore
             model
 

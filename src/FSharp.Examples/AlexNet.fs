@@ -33,7 +33,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -41,7 +41,7 @@ let getDataFiles sourceDir targetDir =
         Directory.CreateDirectory(targetDir) |> ignore
         Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir)
 
-type Model(name,device:torch.device) as this =
+type Model(name,device:torch.Device) as this =
     inherit CustomModule(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),
@@ -72,7 +72,7 @@ type Model(name,device:torch.device) as this =
     do
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) =
@@ -166,14 +166,14 @@ let trainingLoop (model:Model) epochs trainData testData =
 
 let run epochs =
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 8
         testBatchSize <- testBatchSize * 8
 
-    let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
+    let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
     
     printfn ""
-    printfn $"\tRunning AlexNet with {dataset} on {device.Type.ToString()} for {epochs} epochs"
+    printfn $"\tRunning AlexNet with {dataset} on {device.``type``.ToString()} for {epochs} epochs"
     printfn ""
 
     let targetDir = Path.Combine(datasetPath, "test_data")

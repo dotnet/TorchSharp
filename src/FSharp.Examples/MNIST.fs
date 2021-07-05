@@ -41,7 +41,7 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -52,7 +52,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
-type Model(name,device:torch.device) as this =
+type Model(name,device:torch.Device) as this =
     inherit CustomModule(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)
@@ -73,7 +73,7 @@ type Model(name,device:torch.device) as this =
     do
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) =
@@ -139,7 +139,7 @@ let test (model:Model) (dataLoader:MNISTReader) =
 
 let trainingLoop (model:Model) epochs dataset trainData testData =
 
-    let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
+    let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
 
     let optimizer = Optimizer.Adam(model.parameters())
     lr_scheduler.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
@@ -159,14 +159,14 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
     model.save(dataset + ".model.bin")
 
 let run epochs =
-    printfn $"Running MNIST on {device.Type.ToString()}"
+    printfn $"Running MNIST on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
     let targetDir = Path.Combine(datasetPath, "test_data")
 
     getDataFiles datasetPath targetDir
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 

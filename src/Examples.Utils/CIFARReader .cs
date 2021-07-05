@@ -23,7 +23,7 @@ namespace TorchSharp.Examples
         /// <param name="batch_size">The batch size</param>
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
-        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, device device = null)
+        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, Device device = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 
@@ -40,7 +40,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private int ReadSingleFile(string path, int batch_size, bool shuffle, device device)
+        private int ReadSingleFile(string path, int batch_size, bool shuffle, Device device)
         {
             const int height = 32;
             const int width = 32;
@@ -67,8 +67,8 @@ namespace TorchSharp.Examples
 
                 if (take < 1) break;
 
-                var dataTensor = Float32Tensor.zeros(new long[] { take, imgSize }, device);
-                var lablTensor = Int64Tensor.zeros(new long[] { take }, device);
+                var dataTensor = torch.zeros(new long[] { take, imgSize }, device: device);
+                var lablTensor = torch.zeros(new long[] { take }, torch.int64, device: device);
 
                 // Take
                 for (var j = 0; j < take; j++) {
@@ -76,10 +76,10 @@ namespace TorchSharp.Examples
                     var lblStart = idx * (1 + imgSize);
                     var imgStart = lblStart + 1;
 
-                    lablTensor[j] = Int64Tensor.from(dataBytes[lblStart]);
+                    lablTensor[j] = torch.tensor(dataBytes[lblStart], torch.int64);
 
                     var floats = dataBytes[imgStart..(imgStart + imgSize)].Select(b => (float)b).ToArray();
-                    using (var inputTensor = Float32Tensor.from(floats))
+                    using (var inputTensor = torch.tensor(floats))
                         dataTensor.index_put_(inputTensor, TensorIndex.Single(j));
                 }
 

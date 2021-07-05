@@ -25,7 +25,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 static public Tensor one_hot(Tensor x, long num_classes = -1)
                 {
-                    if (x.Type != ScalarType.Int64) throw new ArgumentException("OneHot input tensor must have elements of type Int64");
+                    if (x.dtype != ScalarType.Int64) throw new ArgumentException("OneHot input tensor must have elements of type Int64");
                     var res = THSNN_one_hot(x.Handle, num_classes);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);

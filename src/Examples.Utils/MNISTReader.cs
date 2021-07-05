@@ -25,7 +25,7 @@ namespace TorchSharp.Examples
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
         /// <param name="transform"></param>
-        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, torch.device device = null, ITransform transform = null)
+        public MNISTReader(string path, string prefix, int batch_size = 32, bool shuffle = false, torch.Device device = null, ITransform transform = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 
@@ -83,8 +83,8 @@ namespace TorchSharp.Examples
 
                 if (take < 1) break;
 
-                var dataTensor = Float32Tensor.zeros(new long[] { take, imgSize}, device);
-                var lablTensor = Int64Tensor.zeros(new long[] { take }, device);
+                var dataTensor = torch.zeros(new long[] { take, imgSize}, device: device);
+                var lablTensor = torch.zeros(new long[] { take }, torch.int64, device: device);
 
                 // Take
                 for (var j = 0; j < take; j++) {
@@ -92,9 +92,9 @@ namespace TorchSharp.Examples
                     var imgStart = idx * imgSize;
 
                     var floats = dataBytes[imgStart.. (imgStart+imgSize)].Select(b => b/256.0f).ToArray();
-                    using (var inputTensor = Float32Tensor.from(floats))
+                    using (var inputTensor = torch.tensor(floats))
                         dataTensor.index_put_(inputTensor, TensorIndex.Single(j));
-                    lablTensor[j] = Int64Tensor.from(labelBytes[idx]);
+                    lablTensor[j] = torch.tensor(labelBytes[idx], torch.int64);
                 }
 
                 var batch = dataTensor.reshape(take, 1, height, width);

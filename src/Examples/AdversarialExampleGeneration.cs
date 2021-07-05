@@ -52,12 +52,12 @@ namespace TorchSharp.Examples
 
             var _ = torch.random.manual_seed(1);
 
-            //var device = Device.CPU;
-            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
-            Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.Type.ToString()}\n");
+            //var device = torch.CPU;
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.type.ToString()}\n");
             Console.WriteLine($"Dataset: {dataset}");
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
                 _epochs *= 4;
@@ -76,7 +76,7 @@ namespace TorchSharp.Examples
 
             MNIST.Model model = null;
 
-            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
 
             using (var test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
 
@@ -84,22 +84,22 @@ namespace TorchSharp.Examples
 
                 if (!File.Exists(modelFile)) {
                     // We need the model to be trained first, because we want to start with a trained model.
-                    Console.WriteLine($"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model.");
+                    Console.WriteLine($"\n  Running MNIST on {device.type.ToString()} in order to pre-train the model.");
 
                     model = new MNIST.Model("model", device);
 
                     using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage)) {
-                        MNIST.TrainingLoop(dataset, device, model, train, test);
+                        MNIST.TrainingLoop(dataset, (Device)device, model, train, test);
                     }
 
                     Console.WriteLine("Moving on to the Adversarial model.\n");
 
                 } else {
-                    model = new MNIST.Model("model", torch.device.CPU);
+                    model = new MNIST.Model("model", torch.CPU);
                     model.load(modelFile);
                 }
 
-                model.to(device);
+                model.to((Device)device);
                 model.Eval();
 
                 var epsilons = new double[] { 0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50 };

@@ -6,7 +6,7 @@ using static TorchSharp.torch;
 #nullable enable
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
     public static partial class torch
     {
@@ -65,7 +65,7 @@ namespace TorchSharp
         }
     }
 
-    namespace impl
+    namespace Modules
     {
         /// <summary>
         /// This class is used to represent an Upsample module.

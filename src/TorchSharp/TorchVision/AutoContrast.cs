@@ -18,7 +18,7 @@ namespace TorchSharp.torchvision
         public Tensor forward(Tensor input)
         {
             var bound = input.IsIntegral() ? 255.0f : 1.0f;
-            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.Type;
+            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
 
             var minimum = input.amin(new long[] { -2, -1 }, keepDim: true).to(dtype);
             var maximum = input.amax(new long[] { -2, -1 }, keepDim: true).to(dtype);
@@ -29,7 +29,7 @@ namespace TorchSharp.torchvision
 
             var scale = Float32Tensor.from(bound) / (maximum - minimum);
 
-            return ((input - minimum) * scale).clamp(0, bound).to(input.Type);
+            return ((input - minimum) * scale).clamp(0, bound).to(input.dtype);
         }
     }
 

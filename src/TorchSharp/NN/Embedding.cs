@@ -5,9 +5,9 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using impl;
+    using Modules;
 
-    namespace impl
+    namespace Modules
     {
         public class Embedding : torch.nn.Module
         {

@@ -38,11 +38,11 @@ torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then torch.device.CUDA else torch.device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let criterion x y = functional.cross_entropy_loss().Invoke(x,y)
 
-type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.device) as this =
+type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device) as this =
     inherit CustomModule("Transformer")
 
     let embedding = EmbeddingBag(vocabSize, embedDim, sparse=false)
@@ -57,7 +57,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.device)
 
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
@@ -116,7 +116,7 @@ let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (mod
 
 let run epochs =
 
-    printfn $"Running TextClassification on {device.Type.ToString()} for {epochs} epochs."
+    printfn $"Running TextClassification on {device.``type``.ToString()} for {epochs} epochs."
 
     use reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, datasetPath)
     let dataloader = reader.Enumerate()

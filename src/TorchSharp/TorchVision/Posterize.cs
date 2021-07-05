@@ -17,7 +17,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            if (input.Type != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
+            if (input.dtype != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
             var mask = -(1 << (8-bits));
             return input & ByteTensor.from((byte)mask);
         }

@@ -44,8 +44,8 @@ namespace TorchSharp.Examples
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = torch.cuda.is_available() ? torch.device.CUDA : torch.device.CPU;
-            Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs.");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running SequenceToSequence on {device.type.ToString()} for {epochs} epochs.");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);
             var tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english");
@@ -59,15 +59,15 @@ namespace TorchSharp.Examples
 
             var (train_iter, valid_iter, test_iter) = TorchText.Datasets.WikiText2(_dataLocation);
 
-            var train_data = Batchify(ProcessInput(train_iter, tokenizer, vocab), batch_size).to(device);
-            var valid_data = Batchify(ProcessInput(valid_iter, tokenizer, vocab), eval_batch_size).to(device);
-            var test_data = Batchify(ProcessInput(test_iter, tokenizer, vocab), eval_batch_size).to(device);
+            var train_data = Batchify(ProcessInput(train_iter, tokenizer, vocab), batch_size).to((Device)device);
+            var valid_data = Batchify(ProcessInput(valid_iter, tokenizer, vocab), eval_batch_size).to((Device)device);
+            var test_data = Batchify(ProcessInput(test_iter, tokenizer, vocab), eval_batch_size).to((Device)device);
 
             var bptt = 32;
 
             var ntokens = vocab.Count;
 
-            var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
+            var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to((Device)device);
             var loss = cross_entropy_loss();
             var lr = 2.50;
             var optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr);
@@ -126,7 +126,7 @@ namespace TorchSharp.Examples
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
 
-                    total_loss += loss.to(device.CPU).DataItem<float>();
+                    total_loss += loss.to(torch.CPU).DataItem<float>();
                 }
 
                 GC.Collect();
@@ -156,7 +156,7 @@ namespace TorchSharp.Examples
                 }
                 var output = model.forward(data, src_mask);
                 var loss = criterion(output.view(-1, ntokens), targets); 
-                total_loss += data.shape[0] * loss.to(device.CPU).DataItem<float>();
+                total_loss += data.shape[0] * loss.to(torch.CPU).DataItem<float>();
 
                 data.Dispose();
                 targets.Dispose();
@@ -175,7 +175,7 @@ namespace TorchSharp.Examples
                 foreach (var token in tokenizer(item)) {
                     itemData.Add(vocab[token]);
                 }
-                data.Add(Int64Tensor.from(itemData.ToArray()));
+                data.Add(torch.tensor(itemData.ToArray(), torch.int64));
             }
             return torch.cat(data.Where(t => t.NumberOfElements > 0).ToArray(), 0);
         }
@@ -197,13 +197,13 @@ namespace TorchSharp.Examples
 
         class TransformerModel : CustomModule
         {
-            private impl.TransformerEncoder transformer_encoder;
+            private Modules.TransformerEncoder transformer_encoder;
             private PositionalEncoding pos_encoder;
-            private impl.Embedding encoder;
-            private impl.Linear decoder;
+            private Modules.Embedding encoder;
+            private Modules.Linear decoder;
 
             private long ninputs;
-            private device device;
+            private Device device;
 
             public TransformerModel(long ntokens, long ninputs, long nheads, long nhidden, long nlayers, double dropout = 0.5) : base("Transformer")
             {
@@ -221,7 +221,7 @@ namespace TorchSharp.Examples
 
             public Tensor GenerateSquareSubsequentMask(long size)
             {
-                var mask = (Float32Tensor.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
+                var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
                 return mask.to_type(ScalarType.Float32)
                     .masked_fill(mask == 0, float.NegativeInfinity)
                     .masked_fill(mask == 1, 0.0f).to(device);
@@ -248,7 +248,7 @@ namespace TorchSharp.Examples
                 return decoder.forward(enc);
             }
 
-            public new TransformerModel to(device device)
+            public new TransformerModel to(Device device)
             {
                 base.to(device);
                 this.device = device;
@@ -264,9 +264,9 @@ namespace TorchSharp.Examples
             public PositionalEncoding(long dmodel, double dropout, int maxLen = 5000) : base("PositionalEncoding")
             {
                 this.dropout = Dropout(dropout);
-                var pe = Float32Tensor.zeros(new long[] { maxLen, dmodel });
-                var position = Float32Tensor.arange(0, maxLen, 1).unsqueeze(1);
-                var divTerm = (Float32Tensor.arange(0, dmodel, 2) * (-Math.Log(10000.0) / dmodel)).exp();
+                var pe = torch.zeros(new long[] { maxLen, dmodel });
+                var position = torch.arange(0, maxLen, 1).unsqueeze(1);
+                var divTerm = (torch.arange(0, dmodel, 2) * (-Math.Log(10000.0) / dmodel)).exp();
                 pe[TensorIndex.Ellipsis, TensorIndex.Slice(0, null, 2)] = (position * divTerm).sin();
                 pe[TensorIndex.Ellipsis, TensorIndex.Slice(1, null, 2)] = (position * divTerm).cos();
                 this.pe = pe.unsqueeze(0).transpose(0, 1);

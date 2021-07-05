@@ -29,7 +29,7 @@ namespace TorchSharp.torchvision
         private Tensor BlurredDegenerateImage(Tensor input)
         {
             var device = input.device;
-            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.Type;
+            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
             var kernel = Float32Tensor.ones(3, 3, device: device);
             kernel[1, 1] = Float32Tensor.from(5.0f);
             kernel /= kernel.sum();
@@ -50,7 +50,7 @@ namespace TorchSharp.torchvision
         private Tensor Blend(Tensor img1, Tensor img2, double ratio)
         {
             var bound = img1.IsIntegral() ? 255.0 : 1.0;
-            return (img1 * ratio + img2 * (1.0 - ratio)).clamp(0, bound).to(img2.Type);
+            return (img1 * ratio + img2 * (1.0 - ratio)).clamp(0, bound).to(img2.dtype);
         }
 
         private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
@@ -62,7 +62,7 @@ namespace TorchSharp.torchvision
                 needSqueeze = true;
             }
 
-            dtype = img.Type;
+            dtype = img.dtype;
             needCast = false;
 
             if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
