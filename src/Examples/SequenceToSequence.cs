@@ -35,9 +35,9 @@ namespace TorchSharp.Examples
         private const int batch_size = 64;
         private const int eval_batch_size = 32;
 
-        private const int epochs = 50;
+        private const int epochs = 10;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
 
         {
             torch.random.manual_seed(1);

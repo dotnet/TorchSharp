@@ -43,7 +43,7 @@ namespace TorchSharp.Examples
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var cwd = Environment.CurrentDirectory;
 

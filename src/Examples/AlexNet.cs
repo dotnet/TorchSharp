@@ -33,7 +33,7 @@ namespace TorchSharp.Examples
         private readonly static int _logInterval = 25;
         private readonly static int _numClasses = 10;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             torch.random.manual_seed(1);
 
@@ -75,7 +75,6 @@ namespace TorchSharp.Examples
 
                 sw.Stop();
                 Console.WriteLine($"Elapsed time {sw.Elapsed.TotalSeconds} s.");
-                Console.ReadLine();
             }
         }
 

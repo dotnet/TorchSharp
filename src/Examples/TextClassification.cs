@@ -32,7 +32,7 @@ namespace TorchSharp.Examples
 
         // This path assumes that you're running this on Windows.
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
-        static void Main(string[] args)
+        internal static void Main(string[] args)
 
         {
             torch.random.manual_seed(1);

@@ -156,7 +156,7 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
     printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
     printfn $"Saving model to '{dataset}'.model.bin"
 
-    model.save(dataset + ".model.bin")
+    model.save(dataset + ".model.bin") |> ignore
 
 let run epochs =
     printfn $"Running MNIST on {device.``type``.ToString()}"

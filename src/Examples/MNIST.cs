@@ -36,7 +36,7 @@ namespace TorchSharp.Examples
 
         private readonly static int _logInterval = 100;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
