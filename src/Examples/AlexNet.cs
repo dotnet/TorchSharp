@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -33,20 +33,20 @@ namespace TorchSharp.Examples
         private readonly static int _logInterval = 25;
         private readonly static int _numClasses = 10;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 8;
                 _testBatchSize *= 8;
                 _epochs *= 16;
             }
 
             Console.WriteLine();
-            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.Type.ToString()} for {_epochs} epochs");
+            Console.WriteLine($"\tRunning AlexNet with {_dataset} on {device.type.ToString()} for {_epochs} epochs");
             Console.WriteLine();
 
             var sourceDir = _dataLocation;
@@ -60,7 +60,7 @@ namespace TorchSharp.Examples
             using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device))
             using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
             using (var model = new Model("model", _numClasses, device))
-            using (var optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)) {
+            using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -75,17 +75,16 @@ namespace TorchSharp.Examples
 
                 sw.Stop();
                 Console.WriteLine($"Elapsed time {sw.Elapsed.TotalSeconds} s.");
-                Console.ReadLine();
             }
         }
 
         private class Model : CustomModule
         {
-            private readonly Sequential features;
-            private readonly AdaptiveAvgPool2d avgPool;
-            private readonly Sequential classifier;
+            private readonly Module features;
+            private readonly Module avgPool;
+            private readonly Module classifier;
 
-            public Model(string name, int numClasses, Device device = null) : base(name)
+            public Model(string name, int numClasses, torch.Device device = null) : base(name)
             {
                 features = Sequential(
                     ("c1", Conv2d(3, 64, kernelSize: 3, stride: 2, padding: 1)),
@@ -119,11 +118,11 @@ namespace TorchSharp.Examples
                 RegisterModule("avg", avgPool);
                 RegisterModule("classify", classifier);
 
-                if (device != null && device.Type == DeviceType.CUDA)
+                if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
             }
 
-            public override TorchTensor forward(TorchTensor input)
+            public override Tensor forward(Tensor input)
             {
                 using (var f = features.forward(input))
                 using (var avg = avgPool.forward(f))
@@ -135,9 +134,9 @@ namespace TorchSharp.Examples
 
         private static void Train(
             Model model,
-            NN.Optimizer optimizer,
+            torch.optim.Optimizer optimizer,
             Loss loss,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -154,7 +153,7 @@ namespace TorchSharp.Examples
                 optimizer.zero_grad();
 
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftmax(prediction, 1), target)) {
+                using (var output = loss(log_softmax(prediction, 1), target)) {
                     output.backward();
 
                     optimizer.step();
@@ -180,7 +179,7 @@ namespace TorchSharp.Examples
         private static void Test(
             Model model,
             Loss loss,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             model.Eval();
@@ -191,7 +190,7 @@ namespace TorchSharp.Examples
 
             foreach (var (data, target) in dataLoader) {
                 using (var prediction = model.forward(data))
-                using (var output = loss(LogSoftmax(prediction, 1), target)) {
+                using (var output = loss(log_softmax(prediction, 1), target)) {
 
                     testLoss += output.ToSingle();
                     batchCount += 1;

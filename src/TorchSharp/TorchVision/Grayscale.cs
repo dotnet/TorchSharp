@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+
+namespace TorchSharp.torchvision
 {
     internal class Grayscale : ITransform
     {
@@ -16,7 +16,7 @@ namespace TorchSharp.TorchVision
             this.outputChannels = outputChannels;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             int cDim = (int)input.Dimensions - 3;
             var rgb = input.unbind(cDim);
@@ -27,7 +27,7 @@ namespace TorchSharp.TorchVision
         protected int outputChannels;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Grayscale(int outputChannels = 1)
         {

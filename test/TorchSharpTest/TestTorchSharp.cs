@@ -2,8 +2,9 @@
 using System;
 using System.Runtime.InteropServices;
 using TorchSharp;
-using TorchSharp.Tensor;
 using Xunit;
+
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -16,9 +17,9 @@ namespace TorchSharp
         {
             //var shape = new long[] { 2, 2 };
 
-            var isCudaAvailable = Torch.IsCudaAvailable();
-            var isCudnnAvailable = Torch.IsCudnnAvailable();
-            var deviceCount = Torch.CudaDeviceCount();
+            var isCudaAvailable = torch.cuda.is_available();
+            var isCudnnAvailable = torch.cuda.is_cudnn_available();
+            var deviceCount = torch.cuda.device_count();
             if (isCudaAvailable) {
                 Assert.True(deviceCount > 0);
                 Assert.True(isCudnnAvailable);
@@ -27,7 +28,7 @@ namespace TorchSharp
                 Assert.False(isCudnnAvailable);
             }
 
-            //TorchTensor t = Float32Tensor.ones(shape);
+            //Tensor t = Float32Tensor.ones(shape);
             //Assert.Equal(shape, t.Shape);
             //Assert.Equal(1.0f, t[0, 0].ToSingle());
             //Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -42,7 +43,7 @@ namespace TorchSharp
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
-                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, device: Device.CPU)) { }
+                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, device: torch.CPU)) { }
             }
             Console.WriteLine("Hello World!");
         }
@@ -53,15 +54,15 @@ namespace TorchSharp
             // This tests that the default generator can be disposed, but will keep on going,
             long a, b, c;
             lock (_lock) {
-                using (var gen = Torch.ManualSeed(4711)) {
-                    a = gen.InitialSeed;
+                using (var gen = torch.random.manual_seed(4711)) {
+                    a = gen.initial_seed();
                 }
-                using (var gen = TorchGenerator.Default) {
-                    b = gen.InitialSeed;
+                using (var gen = torch.Generator.Default) {
+                    b = gen.initial_seed();
                 }
                 Assert.Equal(a, b);
-                using (var gen = Torch.ManualSeed(17)) {
-                    c = gen.InitialSeed;
+                using (var gen = torch.random.manual_seed(17)) {
+                    c = gen.initial_seed();
                 }
                 Assert.NotEqual(a, c);
 
@@ -77,12 +78,12 @@ namespace TorchSharp
             lock (_lock) {
 
                 long a, b, c;
-                using (var gen = Torch.ManualSeed(4711)) {
-                    a = gen.InitialSeed;
+                using (var gen = torch.random.manual_seed(4711)) {
+                    a = gen.initial_seed();
                 }
-                using (TorchGenerator gen = TorchGenerator.Default, genA = new TorchGenerator(4355)) {
-                    b = gen.InitialSeed;
-                    c = genA.InitialSeed;
+                using (torch.Generator gen = torch.Generator.Default, genA = new torch.Generator(4355)) {
+                    b = gen.initial_seed();
+                    c = genA.initial_seed();
                 }
                 Assert.Equal(a, b);
                 Assert.NotEqual(a, c);
@@ -94,16 +95,16 @@ namespace TorchSharp
         public void TestGeneratorState()
         {
             // This test fails intermittently with CUDA. Just skip it.
-            if (Torch.IsCudaAvailable()) return;
+            if (torch.cuda.is_available()) return;
 
             // After restoring a saved RNG state, the next number should be the
             // same as right after the snapshot.
 
             lock (_lock) {
-                using (var gen = Torch.ManualSeed(4711)) {
+                using (var gen = torch.random.manual_seed(4711)) {
 
                     // Take a snapshot
-                    var state = gen.State;
+                    var state = gen.get_state();
                     Assert.NotNull(state);
 
                     // Generate a number
@@ -116,7 +117,7 @@ namespace TorchSharp
                     Assert.NotEqual(value1, value2);
 
                     // Restore the state
-                    gen.State = state;
+                    gen.set_state(state);
 
                     // Generate the first number again.
                     var val3 = Float32Tensor.randn(new long[] { 1 });

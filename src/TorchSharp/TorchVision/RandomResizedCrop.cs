@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class RandomResizedCrop : ITransform
     {
@@ -20,7 +19,7 @@ namespace TorchSharp.TorchVision
             this.mode = mode;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var hoffset = input.Dimensions - 2;
             var iHeight = input.shape[hoffset];
@@ -52,7 +51,7 @@ namespace TorchSharp.TorchVision
         private InterpolateMode mode;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Crop a random portion of image and resize it to a given size. 

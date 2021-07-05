@@ -2,7 +2,7 @@
 //using System;
 //using System.Linq;
 //using System.Runtime.InteropServices;
-//using TorchSharp.Tensor;
+//using static TorchSharp.torch;
 
 //namespace TorchSharp.JIT
 //{
@@ -141,14 +141,14 @@
 //        }
 
 //        [DllImport("LibTorchSharp")]
-//        private static extern IntPtr THSJIT_forward(Module.HType module, IntPtr tensors, int length);
+//        private static extern IntPtr THSJIT_forward(torch.nn.Module.HType module, IntPtr tensors, int length);
 
-//        public TorchTensor forward(params TorchTensor[] tensors)
+//        public Tensor forward(params Tensor[] tensors)
 //        {
 //            var parray = new PinnedArray<IntPtr>();
 //            IntPtr tensorRefs = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-//            return new TorchTensor(THSJIT_forward(handle, tensorRefs, parray.Array.Length));
+//            return new Tensor(THSJIT_forward(handle, tensorRefs, parray.Array.Length));
 //        }
 //    }
 //}

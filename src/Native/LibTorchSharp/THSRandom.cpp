@@ -6,9 +6,9 @@
 
 
 
-Tensor THSTensor_bernoulli(const Tensor tensor, const double p, const Generator gen)
+Tensor THSTensor_bernoulli(const Tensor tensor, const Generator gen)
 {
-    CATCH_TENSOR(gen == nullptr ? tensor->bernoulli(p) : tensor->bernoulli(p, *gen));
+    CATCH_TENSOR(gen == nullptr ? tensor->bernoulli() : tensor->bernoulli(*gen));
 }
 
 Tensor THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen)
@@ -41,9 +41,14 @@ Tensor THSTensor_log_normal_(Tensor tensor, double mean, double std, const Gener
     CATCH_TENSOR(gen == nullptr ? tensor->log_normal_(mean, std) : tensor->log_normal_(mean, std, *gen));
 }
 
-Tensor THSTensor_multinomial(const Tensor tensor, const double num_samples, const bool replacement, const Generator gen)
+Tensor THSTensor_multinomial(const Tensor tensor, const int64_t num_samples, const bool replacement, const Generator gen)
 {
     CATCH_TENSOR(gen == nullptr ? tensor->multinomial(num_samples, replacement) : tensor->multinomial(num_samples, replacement, *gen));
+}
+
+Tensor THSTensor_poisson(const Tensor tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::poisson(*tensor) : torch::poisson(*tensor, *gen))
 }
 
 Tensor THSInit_normal_(Tensor tensor, double mean, double std)

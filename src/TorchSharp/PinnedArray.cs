@@ -2,83 +2,77 @@
 using System;
 using System.Runtime.InteropServices;
 
-/// <summary>
-/// Allocator of T[] that pins the memory and handles unpinning.
-/// (taken from StackOverflow)
-/// </summary>
-/// <typeparam name="T"></typeparam>
-internal sealed class PinnedArray<T> : IDisposable where T : struct
+namespace TorchSharp
 {
-    private GCHandle handle;
-
-    public T[] Array { get; private set; }
-
-    public IntPtr CreateArray(int length)
+    /// <summary>
+    /// Allocator of T[] that pins the memory and handles unpinning.
+    /// (taken from StackOverflow)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal sealed class PinnedArray<T> : IDisposable where T : struct
     {
-        FreeHandle();
+        private GCHandle handle;
 
-        Array = new T[length];
+        public T[] Array { get; private set; }
 
-        // try... finally trick to be sure that the code isn't interrupted by asynchronous exceptions
-        try
+        public IntPtr CreateArray(int length)
         {
-        }
-        finally
-        {
-            handle = GCHandle.Alloc(Array, GCHandleType.Pinned);
-        }
+            FreeHandle();
 
-        return handle.AddrOfPinnedObject();
-    }
+            Array = new T[length];
 
-    public IntPtr CreateArray(IntPtr length)
-    {
-        return CreateArray((int)length);
-    }
+            // try... finally trick to be sure that the code isn't interrupted by asynchronous exceptions
+            try {
+            } finally {
+                handle = GCHandle.Alloc(Array, GCHandleType.Pinned);
+            }
 
-    public IntPtr CreateArray(T[] array)
-    {
-        FreeHandle();
-
-        Array = array;
-
-        // try... finally trick to be sure that the code isn't interrupted by asynchronous exceptions
-        try
-        {
-        }
-        finally
-        {
-            handle = GCHandle.Alloc(Array, GCHandleType.Pinned);
+            return handle.AddrOfPinnedObject();
         }
 
-        return handle.AddrOfPinnedObject();
-    }
-
-    public void Dispose()
-    {
-        if (Array != null)
+        public IntPtr CreateArray(IntPtr length)
         {
-            foreach (var val in Array)
-            {
-                (val as IDisposable)?.Dispose();
+            return CreateArray((int)length);
+        }
+
+        public IntPtr CreateArray(T[] array)
+        {
+            FreeHandle();
+
+            Array = array;
+
+            // try... finally trick to be sure that the code isn't interrupted by asynchronous exceptions
+            try {
+            } finally {
+                handle = GCHandle.Alloc(Array, GCHandleType.Pinned);
+            }
+
+            return handle.AddrOfPinnedObject();
+        }
+
+        public void Dispose()
+        {
+            if (Array != null) {
+                foreach (var val in Array) {
+                    (val as IDisposable)?.Dispose();
+                }
+            }
+            FreeHandle();
+        }
+
+        ~PinnedArray()
+        {
+            FreeHandle();
+        }
+
+        private void FreeHandle()
+        {
+            if (handle.IsAllocated) {
+                handle.Free();
             }
         }
-        FreeHandle();
     }
 
-    ~PinnedArray()
-    {
-        FreeHandle();
-    }
-
-    private void FreeHandle()
-    {
-        if (handle.IsAllocated)
-        {
-            handle.Free();
-        }
-    }
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtr AllocatePinnedArray(IntPtr length);
 }
-
-[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-public delegate IntPtr AllocatePinnedArray(IntPtr length);

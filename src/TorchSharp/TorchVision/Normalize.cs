@@ -3,19 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+
+namespace TorchSharp.torchvision
 {
     internal class Normalize : ITransform, IDisposable
     {
-        internal Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, Device device = null)
+        internal Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             if (means.Length != stdevs.Length) throw new ArgumentException("means and stdevs must be the same length in call to Normalize");
 
-            this.means = means.ToTorchTensor(new long[] { 1, means.Length, 1, 1 });     // Assumes NxCxHxW
-            this.stdevs = stdevs.ToTorchTensor(new long[] { 1, stdevs.Length, 1, 1 });  // Assumes NxCxHxW
+            this.means = means.ToTensor(new long[] { 1, means.Length, 1, 1 });     // Assumes NxCxHxW
+            this.stdevs = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 });  // Assumes NxCxHxW
 
             if (dtype != ScalarType.Float64) {
                 this.means = this.means.to_type(dtype);
@@ -27,14 +27,14 @@ namespace TorchSharp.TorchVision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             if (means.size(1) != input.size(1)) throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
             return (input - means) / stdevs;
         }
 
-        private TorchTensor means;
-        private TorchTensor stdevs;
+        private Tensor means;
+        private Tensor stdevs;
         bool disposedValue;
 
         protected virtual void Dispose(bool disposing)
@@ -60,9 +60,9 @@ namespace TorchSharp.TorchVision
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
-        static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, Device device = null)
+        static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);
         }

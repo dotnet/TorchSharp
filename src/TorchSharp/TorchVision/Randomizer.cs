@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+
+namespace TorchSharp.torchvision
 {
     internal class Randomizer : ITransform
     {
@@ -16,7 +16,7 @@ namespace TorchSharp.TorchVision
             this.transform = transform;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             using (var chance = Float32Tensor.rand(1))
 
@@ -31,7 +31,7 @@ namespace TorchSharp.TorchVision
         private double p;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Randomly apply a transform given a probability.

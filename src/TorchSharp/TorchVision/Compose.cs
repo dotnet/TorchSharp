@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class ComposedTransforms : IDisposable, ITransform
     {
@@ -21,7 +21,7 @@ namespace TorchSharp.TorchVision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             foreach (var t in transforms) {
                 input = t.forward(input);
@@ -32,7 +32,7 @@ namespace TorchSharp.TorchVision
         private ITransform[] transforms;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Compose(params ITransform[] transforms)
         {

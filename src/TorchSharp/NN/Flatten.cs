@@ -1,48 +1,47 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    /// <summary>
-    /// This class is used to represent a dropout module for 2d/3d convolutational layers.
-    /// </summary>
-    public class Flatten : Module
+    using Modules;
+
+    namespace Modules
     {
-        internal Flatten (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle)
+        /// <summary>
+        /// This class is used to represent a dropout module for 2d/3d convolutational layers.
+        /// </summary>
+        public class Flatten : torch.nn.Module
         {
-        }
+            internal Flatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Flatten_forward (Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_Flatten_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-        public override TorchTensor forward (TorchTensor tensor)
-        {
-            var res = THSNN_Flatten_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor (res);
-        }
-    }
-    public static partial class Modules
-    {
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Flatten_ctor (long startDim, long endDim, out IntPtr pBoxedModule);
-
-        static public Flatten Flatten (long startDim = 1, long endDim = -1)
-        {
-            var handle = THSNN_Flatten_ctor (startDim, endDim, out var boxedHandle);
-            if (handle == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Flatten (handle, boxedHandle);
+            public override Tensor forward(Tensor tensor)
+            {
+                var res = THSNN_Flatten_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
         }
     }
 
-    public static partial class Functions
+    public static partial class torch
     {
-        static public TorchTensor Flatten (TorchTensor x, long startDim = 1, long endDim = -1)
+        public static partial class nn
         {
-            using (var f = Modules.Flatten (startDim, endDim)) {
-                return f.forward (x);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_Flatten_ctor(long startDim, long endDim, out IntPtr pBoxedModule);
+
+            static public Flatten Flatten(long startDim = 1, long endDim = -1)
+            {
+                var handle = THSNN_Flatten_ctor(startDim, endDim, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Flatten(handle, boxedHandle);
             }
         }
     }

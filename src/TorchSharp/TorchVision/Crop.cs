@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+
+namespace TorchSharp.torchvision
 {
     internal class Crop : ITransform
     {
@@ -18,7 +18,7 @@ namespace TorchSharp.TorchVision
             this.width = width;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             return input.crop(top, left, height, width);
         }
@@ -26,7 +26,7 @@ namespace TorchSharp.TorchVision
         private int top, left, height, width;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Crop the image.

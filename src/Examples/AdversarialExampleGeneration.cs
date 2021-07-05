@@ -1,20 +1,10 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.IO;
-using System.Runtime.Serialization;
-
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
-using System.Diagnostics;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
-using static TorchSharp.Tensor.TensorExtensionMethods;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn.functional;
+using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.Examples
 {
@@ -53,21 +43,21 @@ namespace TorchSharp.Examples
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var cwd = Environment.CurrentDirectory;
 
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
-            Torch.SetSeed(1);
+            var _ = torch.random.manual_seed(1);
 
-            //var device = Device.CPU;
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.Type.ToString()}\n");
+            //var device = torch.CPU;
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"\n  Running AdversarialExampleGeneration on {device.type.ToString()}\n");
             Console.WriteLine($"Dataset: {dataset}");
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
                 _epochs *= 4;
@@ -86,7 +76,7 @@ namespace TorchSharp.Examples
 
             MNIST.Model model = null;
 
-            var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
 
             using (var test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
 
@@ -94,22 +84,22 @@ namespace TorchSharp.Examples
 
                 if (!File.Exists(modelFile)) {
                     // We need the model to be trained first, because we want to start with a trained model.
-                    Console.WriteLine($"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model.");
+                    Console.WriteLine($"\n  Running MNIST on {device.type.ToString()} in order to pre-train the model.");
 
                     model = new MNIST.Model("model", device);
 
                     using (var train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage)) {
-                        MNIST.TrainingLoop(dataset, device, model, train, test);
+                        MNIST.TrainingLoop(dataset, (Device)device, model, train, test);
                     }
 
                     Console.WriteLine("Moving on to the Adversarial model.\n");
 
                 } else {
-                    model = new MNIST.Model("model", Device.CPU);
+                    model = new MNIST.Model("model", torch.CPU);
                     model.load(modelFile);
                 }
 
-                model.to(device);
+                model.to((Device)device);
                 model.Eval();
 
                 var epsilons = new double[] { 0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50 };
@@ -121,7 +111,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static TorchTensor Attack(TorchTensor image, double ε, TorchTensor data_grad)
+        private static Tensor Attack(Tensor image, double ε, Tensor data_grad)
         {
             using (var sign = data_grad.sign()) {
                 var perturbed = (image + ε * sign).clamp(0.0, 1.0);
@@ -133,7 +123,7 @@ namespace TorchSharp.Examples
             MNIST.Model model,
             Loss criterion,
             double ε,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             int correct = 0;

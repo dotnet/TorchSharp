@@ -3,12 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TorchSharp.NN;
-using TorchSharp.Tensor;
-using static TorchSharp.NN.Functions;
-using static TorchSharp.NN.Modules;
+using TorchSharp;
+
+using static TorchSharp.torch.nn;
 
 namespace TorchText.Vocab
 {
@@ -54,10 +51,10 @@ namespace TorchText.Vocab
     /// </summary>
     public class Vocab
     {
-        public Vocab(Counter<string> counter, int? maxSize = null, int minFreq = 1, string[] specials = null, Func<TorchTensor, TorchTensor> unkInit = null, bool specialsFirst = true)
+        public Vocab(Counter<string> counter, int? maxSize = null, int minFreq = 1, string[] specials = null, Func<torch.Tensor, torch.Tensor> unkInit = null, bool specialsFirst = true)
         {
             if (specials == null) specials = new string[] { "<unk>", "<pad>" };
-            if (unkInit == null) unkInit = (t => Init.zeros(t.clone()));
+            if (unkInit == null) unkInit = (t => init.zeros(t.clone()));
             if (specialsFirst) {
                 foreach (var sp in specials) {
                     _dict.Add(sp, _last++);

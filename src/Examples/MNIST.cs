@@ -3,10 +3,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+using static TorchSharp.torch;
+
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -36,17 +36,17 @@ namespace TorchSharp.Examples
 
         private readonly static int _logInterval = 100;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running MNIST on {device.Type.ToString()}");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running MNIST on {device.type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 
             var sourceDir = datasetPath;
@@ -60,14 +60,14 @@ namespace TorchSharp.Examples
                 Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
             }
 
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
             }
 
             var model = new Model("model", device);
 
-            var normImage = TorchVision.Transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
 
             using (MNISTReader train = new MNISTReader(targetDir, "train", _trainBatchSize, device: device, shuffle: true, transform: normImage),
                                 test = new MNISTReader(targetDir, "t10k", _testBatchSize, device: device, transform: normImage)) {
@@ -78,13 +78,13 @@ namespace TorchSharp.Examples
 
         internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train, MNISTReader test)
         {
-            if (device.Type == DeviceType.CUDA) {
+            if (device.type == DeviceType.CUDA) {
                 _epochs *= 4;
             }
 
-            var optimizer = NN.Optimizer.Adam(model.parameters());
+            var optimizer = torch.optim.Adam(model.parameters());
 
-            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.7, last_epoch: 5);
+            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch: 5);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -92,7 +92,7 @@ namespace TorchSharp.Examples
             for (var epoch = 1; epoch <= _epochs; epoch++) {
 
                 Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
-                Test(model, nll_loss(reduction: NN.Reduction.Sum), device, test, test.Size);
+                Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test.Size);
 
                 Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
             }
@@ -106,34 +106,34 @@ namespace TorchSharp.Examples
 
         internal class Model : CustomModule
         {
-            private Conv2d conv1 = Conv2d(1, 32, 3);
-            private Conv2d conv2 = Conv2d(32, 64, 3);
-            private Linear fc1 = Linear(9216, 128);
-            private Linear fc2 = Linear(128, 10);
+            private Module conv1 = Conv2d(1, 32, 3);
+            private Module conv2 = Conv2d(32, 64, 3);
+            private Module fc1 = Linear(9216, 128);
+            private Module fc2 = Linear(128, 10);
 
             // These don't have any parameters, so the only reason to instantiate
             // them is performance, since they will be used over and over.
-            private MaxPool2d pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+            private Module pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
 
-            private ReLU relu1 = ReLU();
-            private ReLU relu2 = ReLU();
-            private ReLU relu3 = ReLU();
+            private Module relu1 = ReLU();
+            private Module relu2 = ReLU();
+            private Module relu3 = ReLU();
 
-            private Dropout dropout1 = Dropout(0.25);
-            private Dropout dropout2 = Dropout(0.5);
+            private Module dropout1 = Dropout(0.25);
+            private Module dropout2 = Dropout(0.5);
 
-            private Flatten flatten = Flatten();
-            private LogSoftmax logsm = LogSoftmax(1);
+            private Module flatten = Flatten();
+            private Module logsm = LogSoftmax(1);
 
-            public Model(string name, Device device = null) : base(name)
+            public Model(string name, torch.Device device = null) : base(name)
             {
                 RegisterComponents();
 
-                if (device != null && device.Type == DeviceType.CUDA)
+                if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
             }
 
-            public override TorchTensor forward(TorchTensor input)
+            public override Tensor forward(Tensor input)
             {
                 var l11 = conv1.forward(input);
                 var l12 = relu2.forward(l11);
@@ -158,10 +158,10 @@ namespace TorchSharp.Examples
 
         private static void Train(
             Model model,
-            NN.Optimizer optimizer,
+            torch.optim.Optimizer optimizer,
             Loss loss,
             Device device,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -195,7 +195,7 @@ namespace TorchSharp.Examples
             Model model,
             Loss loss,
             Device device,
-            IEnumerable<(TorchTensor, TorchTensor)> dataLoader,
+            IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
             model.Eval();

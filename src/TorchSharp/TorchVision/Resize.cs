@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Resize : ITransform
     {
@@ -22,7 +21,7 @@ namespace TorchSharp.TorchVision
             this.max = maxSize; 
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var hoffset = input.Dimensions - 2;
             var iHeight = input.shape[hoffset];
@@ -55,12 +54,12 @@ namespace TorchSharp.TorchVision
 
             var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var dtype);
 
-            img = Functions.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
+            img = torch.nn.functional.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
 
             return SqueezeOut(img, needCast, needSqueeze, dtype);
         }
 
-        private TorchTensor SqueezeIn(TorchTensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
+        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
         {
             needSqueeze = false;
 
@@ -69,7 +68,7 @@ namespace TorchSharp.TorchVision
                 needSqueeze = true;
             }
 
-            dtype = img.Type;
+            dtype = img.dtype;
             needCast = false;
 
             if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
@@ -80,7 +79,7 @@ namespace TorchSharp.TorchVision
             return img;
         }
 
-        private TorchTensor SqueezeOut(TorchTensor img, bool needCast, bool needSqueeze, ScalarType dtype)
+        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
         {
             if (needSqueeze) {
                 img = img.squeeze(0);
@@ -102,7 +101,7 @@ namespace TorchSharp.TorchVision
         private int? max;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Resize the input image to the given size.

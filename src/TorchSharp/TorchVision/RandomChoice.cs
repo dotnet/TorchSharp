@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class RandomChoice : IDisposable, ITransform
     {
@@ -21,7 +21,7 @@ namespace TorchSharp.TorchVision
             }
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             using (var chance = Int32Tensor.randint(transforms.Length, new long[] { 1 }))
                 return transforms[chance.DataItem<int>()].forward(input);
@@ -30,7 +30,7 @@ namespace TorchSharp.TorchVision
         private ITransform[] transforms;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Apply a single transformation randomly picked from a list. 

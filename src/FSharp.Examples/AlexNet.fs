@@ -5,11 +5,10 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open TorchSharp.Tensor
-open TorchSharp.NN
 
-open type TorchSharp.NN.Modules
-open type TorchSharp.TorchScalar
+open type TorchSharp.torch.nn
+open type TorchSharp.torch.optim
+open type TorchSharp.Scalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
 // 
@@ -30,11 +29,11 @@ let dataset = "CIFAR10"
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -42,7 +41,7 @@ let getDataFiles sourceDir targetDir =
         Directory.CreateDirectory(targetDir) |> ignore
         Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir)
 
-type Model(name,device:Device) as this =
+type Model(name,device:torch.Device) as this =
     inherit CustomModule(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),
@@ -73,7 +72,7 @@ type Model(name,device:Device) as this =
     do
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) =
@@ -83,7 +82,7 @@ type Model(name,device:Device) as this =
 
         classifier.forward(x)
 
-let loss x y = Functions.nll_loss().Invoke(x,y)
+let loss x y = functional.nll_loss().Invoke(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
 
@@ -150,7 +149,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     
 let trainingLoop (model:Model) epochs trainData testData =
     
-        use optimizer = NN.Optimizer.Adam(model.parameters(), 0.001)
+        use optimizer = Adam(model.parameters(), 0.001)
         //NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
     
         let sw = Stopwatch()
@@ -167,14 +166,14 @@ let trainingLoop (model:Model) epochs trainData testData =
 
 let run epochs =
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 8
         testBatchSize <- testBatchSize * 8
 
-    let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
+    let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
     
     printfn ""
-    printfn $"\tRunning AlexNet with {dataset} on {device.Type.ToString()} for {epochs} epochs"
+    printfn $"\tRunning AlexNet with {dataset} on {device.``type``.ToString()} for {epochs} epochs"
     printfn ""
 
     let targetDir = Path.Combine(datasetPath, "test_data")

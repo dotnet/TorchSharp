@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TorchSharp;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchText.Data
 {
@@ -29,7 +29,7 @@ namespace TorchText.Data
             return File.ReadLines(_path).Select(line => ParseLine(line));
         }
 
-        public IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> GetBatches(Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab, long batch_size)
+        public IEnumerable<(Tensor, Tensor, Tensor)> GetBatches(Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab, long batch_size)
         {
             // This data set fits in memory, so we will simply load it all and cache it between epochs.
 
@@ -37,7 +37,7 @@ namespace TorchText.Data
 
             if (_data == null) {
 
-                _data = new List<(TorchTensor, TorchTensor, TorchTensor)>();
+                _data = new List<(Tensor, Tensor, Tensor)>();
 
                 var counter = 0;
                 var lines = Enumerate().ToList();
@@ -59,13 +59,13 @@ namespace TorchText.Data
             return _data;
         }
 
-        private List<(TorchTensor, TorchTensor, TorchTensor)> _data;
+        private List<(Tensor, Tensor, Tensor)> _data;
         private bool disposedValue;
 
-        private (TorchTensor, TorchTensor, TorchTensor) Batchifier(IEnumerable<(int, string)> input, Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab)
+        private (Tensor, Tensor, Tensor) Batchifier(IEnumerable<(int, string)> input, Func<string, IEnumerable<string>> tokenizer, Vocab.Vocab vocab)
         {
             var label_list = new List<long>();
-            var text_list = new List<TorchTensor>();
+            var text_list = new List<Tensor>();
             var offsets = new List<long>();
             offsets.Add(0);
 
@@ -73,15 +73,15 @@ namespace TorchText.Data
 
             foreach (var (label, text) in input) {
                 label_list.Add(label);
-                var processed_text = Int64Tensor.from(tokenizer(text).Select(t => (long)vocab[t]).ToArray());
+                var processed_text = torch.tensor(tokenizer(text).Select(t => (long)vocab[t]).ToArray(),dtype:torch.int64);
                 text_list.Add(processed_text);
                 last += processed_text.size(0);
                 offsets.Add(last);
             }
 
-            var labels = Int64Tensor.from(label_list.ToArray()).to(_device);
-            var texts = text_list.ToArray().cat(0).to(_device);
-            var offs = Int64Tensor.from(offsets.Take(label_list.Count).ToArray()).to(_device);
+            var labels = torch.tensor(label_list.ToArray(), dtype: torch.int64).to(_device);
+            var texts = torch.cat(text_list.ToArray(), 0).to(_device);
+            var offs = torch.tensor(offsets.Take(label_list.Count).ToArray(), dtype:torch.int64).to(_device);
 
             return (labels, texts, offs);
         }

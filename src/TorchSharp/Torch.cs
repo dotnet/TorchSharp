@@ -12,28 +12,10 @@ namespace TorchSharp
 {
     using Debug = System.Diagnostics.Debug;
 
-    public static class Torch
+    public static partial class torch
     {
         const string libtorchPackageVersion = "1.9.0.7";
         const string cudaVersion = "11.1";
-
-        [DllImport("LibTorchSharp")]
-        private static extern void THSTorch_manual_seed(long seed);
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSGenerator_manual_seed(long seed);
-
-        public static void SetSeed(long seed)
-        {
-            TryInitializeDeviceType(DeviceType.CUDA);
-            THSTorch_manual_seed(seed);
-        }
-
-        public static TorchGenerator ManualSeed(long seed)
-        {
-            TryInitializeDeviceType(DeviceType.CUDA);
-            return new TorchGenerator(THSGenerator_manual_seed(seed));
-        }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -99,24 +81,24 @@ namespace TorchSharp
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.  
                         // 
-                        TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("nvrtc-builtins64_111", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(Torch).Assembly);
-                        TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(Torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("nvrtc-builtins64_111", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly);
+                        TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(torch).Assembly);
                     }
                     Trace.WriteLine($"TorchSharp: LoadNativeBackend: Try loading torch_cuda native component");
-                    TryLoadNativeLibraryByName("torch_cuda", typeof(Torch).Assembly);
+                    TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly);
                 } else {
                     Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loading torch_cpu");
-                    TryLoadNativeLibraryByName("torch_cpu", typeof(Torch).Assembly);
+                    TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly);
                 }
                 Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loading LibTorchSharp");
-                ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(Torch).Assembly);
+                ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly);
 
                 Trace.WriteLine($"TorchSharp: LoadNativeBackend: Loaded LibTorchSharp, ok = {ok}");
                 // Try dynamic load from package directories
@@ -136,7 +118,7 @@ namespace TorchSharp
                     // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net5.0\TorchSharp.dll
                     //
                     // TODO: on linux make these copies link not shadow-copy
-                    var torchsharpLoc = Path.GetDirectoryName(typeof(Torch).Assembly.Location);
+                    var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
                     var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
                     var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", ".."));
                     if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
@@ -193,7 +175,7 @@ namespace TorchSharp
         {
             LoadNativeBackend(deviceType == DeviceType.CUDA);
             if (deviceType == DeviceType.CUDA) {
-                return CallTorchCudaIsAvailable();
+                return cuda.CallTorchCudaIsAvailable();
             } else {
                 return true;
             }
@@ -241,57 +223,94 @@ namespace TorchSharp
             }
         }
 
-        public static Device InitializeDevice(Device device)
+        public static Device InitializeDevice(torch.Device device)
         {
             if (device == null)
-                device = TorchSharp.Device.CPU;
-            InitializeDeviceType(device.Type);
+                device = torch.CPU;
+            InitializeDeviceType(device.type);
             return device;
         }
 
-        public static Device Device(string description)
+        public static partial class random
         {
-            return new Device(description);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSGenerator_manual_seed(long seed);
+
+            public static Generator manual_seed(long seed)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                var res = THSGenerator_manual_seed(seed);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Generator(res);
+            }
         }
 
-        public static Device Device(DeviceType type, int index = -1)
+        public static partial class nn
         {
-            return new Device(type, index);
+            public static partial class utils
+            {
+                [DllImport("LibTorchSharp")]
+                extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
+
+                /// <summary>
+                /// Clips gradient norm of an iterable of parameters.
+                /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
+                /// Gradients are modified in-place.
+                /// </summary>
+                /// <param name="tensors"></param>
+                /// <param name="max_norm"></param>
+                /// <param name="norm_type"></param>
+                /// <returns></returns>
+                public static double clip_grad_norm_(IList<Tensor> tensors, double max_norm, double norm_type = 2.0)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                        return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                    }
+                }
+
+            }
         }
 
-        [DllImport("LibTorchSharp")]
-        private static extern bool THSTorchCuda_is_available();
-
-        /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
-        /// is not raised as early as a DllImportException
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-        private static bool CallTorchCudaIsAvailable()
+        public static partial class cuda
         {
-            return THSTorchCuda_is_available();
-        }
+            [DllImport("LibTorchSharp")]
+            private static extern bool THSTorchCuda_is_available();
 
-        public static bool IsCudaAvailable()
-        {
-            TryInitializeDeviceType(DeviceType.CUDA);
-            return CallTorchCudaIsAvailable();
-        }
+            /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
+            /// is not raised as early as a DllImportException
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+            internal static bool CallTorchCudaIsAvailable()
+            {
+                return THSTorchCuda_is_available();
+            }
 
-        [DllImport("LibTorchSharp")]
-        private static extern bool THSTorchCuda_cudnn_is_available();
+            public static bool is_available()
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                return CallTorchCudaIsAvailable();
+            }
 
-        public static bool IsCudnnAvailable()
-        {
-            TryInitializeDeviceType(DeviceType.CUDA);
-            return THSTorchCuda_cudnn_is_available();
-        }
+            [DllImport("LibTorchSharp")]
+            private static extern bool THSTorchCuda_cudnn_is_available();
 
-        [DllImport("LibTorchSharp")]
-        private static extern int THSTorchCuda_device_count();
+            public static bool is_cudnn_available()
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                return THSTorchCuda_cudnn_is_available();
+            }
 
-        public static int CudaDeviceCount()
-        {
-            TryInitializeDeviceType(DeviceType.CUDA);
-            return THSTorchCuda_device_count();
+            [DllImport("LibTorchSharp")]
+            private static extern int THSTorchCuda_device_count();
+
+            public static int device_count()
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                return THSTorchCuda_device_count();
+            }
+
         }
 
         [DllImport("LibTorchSharp")]

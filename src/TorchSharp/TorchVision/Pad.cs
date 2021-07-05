@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
 
-namespace TorchSharp.TorchVision
+namespace TorchSharp.torchvision
 {
     internal class Pad : ITransform
     {
@@ -17,9 +17,9 @@ namespace TorchSharp.TorchVision
             this.value = value;
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
-            return TorchSharp.NN.Functions.Pad(input, pad, mode, value);
+            return TorchSharp.torch.nn.functional.Pad(input, pad, mode, value);
         }
 
         private long[] pad;
@@ -27,7 +27,7 @@ namespace TorchSharp.TorchVision
         private double value;
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         static public ITransform Pad(long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
         {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
 
 namespace TorchSharp.Examples
 {
@@ -13,7 +13,7 @@ namespace TorchSharp.Examples
     /// A number of single-channel (grayscale) images are laid out in a flat file with four 32-bit integers at the head.
     /// The format is documented at the bottom of the page at: http://yann.lecun.com/exdb/mnist/
     /// </summary>
-    public sealed class CIFARReader : IEnumerable<(TorchTensor, TorchTensor)>, IDisposable
+    public sealed class CIFARReader : IEnumerable<(Tensor, Tensor)>, IDisposable
     {
         /// <summary>
         /// Constructor
@@ -67,8 +67,8 @@ namespace TorchSharp.Examples
 
                 if (take < 1) break;
 
-                var dataTensor = Float32Tensor.zeros(new long[] { take, imgSize }, device);
-                var lablTensor = Int64Tensor.zeros(new long[] { take }, device);
+                var dataTensor = torch.zeros(new long[] { take, imgSize }, device: device);
+                var lablTensor = torch.zeros(new long[] { take }, torch.int64, device: device);
 
                 // Take
                 for (var j = 0; j < take; j++) {
@@ -76,11 +76,11 @@ namespace TorchSharp.Examples
                     var lblStart = idx * (1 + imgSize);
                     var imgStart = lblStart + 1;
 
-                    lablTensor[j] = Int64Tensor.from(dataBytes[lblStart]);
+                    lablTensor[j] = torch.tensor(dataBytes[lblStart], torch.int64);
 
                     var floats = dataBytes[imgStart..(imgStart + imgSize)].Select(b => (float)b).ToArray();
-                    using (var inputTensor = Float32Tensor.from(floats))
-                        dataTensor.index_put_(inputTensor, TorchTensorIndex.Single(j));
+                    using (var inputTensor = torch.tensor(floats))
+                        dataTensor.index_put_(inputTensor, TensorIndex.Single(j));
                 }
 
                 data.Add(dataTensor.reshape(take, channels, height, width));
@@ -93,10 +93,10 @@ namespace TorchSharp.Examples
 
         public int Size { get; set; }
 
-        private List<TorchTensor> data = new List<TorchTensor>();
-        private List<TorchTensor> labels = new List<TorchTensor>();
+        private List<Tensor> data = new List<Tensor>();
+        private List<Tensor> labels = new List<Tensor>();
 
-        public IEnumerator<(TorchTensor, TorchTensor)> GetEnumerator()
+        public IEnumerator<(Tensor, Tensor)> GetEnumerator()
         {
             return new CIFAREnumerator(data, labels);
         }
@@ -112,15 +112,15 @@ namespace TorchSharp.Examples
             labels.ForEach(d => d.Dispose());
         }
 
-        private class CIFAREnumerator : IEnumerator<(TorchTensor, TorchTensor)>
+        private class CIFAREnumerator : IEnumerator<(Tensor, Tensor)>
         {
-            public CIFAREnumerator(List<TorchTensor> data, List<TorchTensor> labels)
+            public CIFAREnumerator(List<Tensor> data, List<Tensor> labels)
             {
                 this.data = data;
                 this.labels = labels;
             }
 
-            public (TorchTensor, TorchTensor) Current {
+            public (Tensor, Tensor) Current {
                 get {
                     if (curIdx == -1) throw new InvalidOperationException("Calling 'Current' before 'MoveNext()'");
                     return (data[curIdx], labels[curIdx]);
@@ -145,8 +145,8 @@ namespace TorchSharp.Examples
             }
 
             private int curIdx = -1;
-            private List<TorchTensor> data = null;
-            private List<TorchTensor> labels = null;
+            private List<Tensor> data = null;
+            private List<Tensor> labels = null;
         }
     }
 }

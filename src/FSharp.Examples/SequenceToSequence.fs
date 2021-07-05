@@ -7,10 +7,8 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
-open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.torch.nn
+open type TorchSharp.torch.optim
 
 open TorchSharp.Examples
 
@@ -41,30 +39,30 @@ let cmdArgs = Environment.GetCommandLineArgs()
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1")
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
-let criterion x y = Functions.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
+let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
     inherit CustomModule("PositionalEncoding")
 
     let dropout = Dropout(dropout)
-    let mutable pe = Float32Tensor.zeros([| maxLen; dmodel|])
+    let mutable pe = torch.Float32Tensor.zeros([| maxLen; dmodel|])
 
     do
-        let position = Float32Tensor.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
-        let divTerm = (Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
+        let position = torch.Float32Tensor.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
+        let divTerm = (torch.Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
 
         let NULL = System.Nullable<int64>()
 
         // See: https://github.com/dotnet/fsharp/issues/9369 -- for now we have to use an explicit array within the index
         //
-        pe.[ [| TorchTensorIndex.Ellipsis; TorchTensorIndex.Slice(0L, NULL, 2L) |] ] <- (position * divTerm).sin()
-        pe.[ [| TorchTensorIndex.Ellipsis; TorchTensorIndex.Slice(1L, NULL, 2L) |] ] <- (position * divTerm).cos()
+        pe.[ [| torch.TensorIndex.Ellipsis; torch.TensorIndex.Slice(0L, NULL, 2L) |] ] <- (position * divTerm).sin()
+        pe.[ [| torch.TensorIndex.Ellipsis; torch.TensorIndex.Slice(1L, NULL, 2L) |] ] <- (position * divTerm).cos()
 
         pe <- pe.unsqueeze(0L).transpose(0L,1L)
 
@@ -72,10 +70,10 @@ type PositionalEncoding(dmodel, maxLen) as this =
 
     override _.forward(t) =
         let NULL = System.Nullable<int64>()
-        use x = t + pe.[TorchTensorIndex.Slice(NULL, t.shape.[0]), TorchTensorIndex.Slice()]
+        use x = t + pe.[torch.TensorIndex.Slice(NULL, t.shape.[0]), torch.TensorIndex.Slice()]
         dropout.forward(x)
 
-type TransformerModel(ntokens, device:Device) as this =
+type TransformerModel(ntokens, device:torch.Device) as this =
     inherit CustomModule("Transformer")
 
     let pos_encoder = new PositionalEncoding(emsize, 5000L)
@@ -89,13 +87,13 @@ type TransformerModel(ntokens, device:Device) as this =
     do
         let initrange = 0.1
 
-        Init.uniform(encoder.Weight, -initrange, initrange) |> ignore
-        Init.zeros(decoder.Bias) |> ignore
-        Init.uniform(decoder.Weight, -initrange, initrange) |> ignore
+        init.uniform(encoder.Weight, -initrange, initrange) |> ignore
+        init.zeros(decoder.Bias) |> ignore
+        init.uniform(decoder.Weight, -initrange, initrange) |> ignore
 
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
@@ -106,35 +104,36 @@ type TransformerModel(ntokens, device:Device) as this =
         decoder.forward(enc)
 
     member _.GenerateSquareSubsequentMask(size:int64) =
-        use mask = Float32Tensor.ones([|size;size|]).eq(Float32Tensor.from(1.0f)).triu().transpose(0L,1L)
-        use maskIsZero = mask.eq(Float32Tensor.from(0.0f))
-        use maskIsOne = mask.eq(Float32Tensor.from(1.0f))
-        mask.to_type(ScalarType.Float32)
+        use mask = torch.Float32Tensor.ones([|size;size|]).eq(torch.Float32Tensor.from(1.0f)).triu().transpose(0L,1L)
+        use maskIsZero = mask.eq(torch.Float32Tensor.from(0.0f))
+        use maskIsOne = mask.eq(torch.Float32Tensor.from(1.0f))
+        mask.to_type(torch.float32)
             .masked_fill(maskIsZero, Single.NegativeInfinity.ToScalar())
             .masked_fill(maskIsOne, 0.0f.ToScalar()).``to``(device)
 
 let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchText.Vocab.Vocab) =
-    [|
-        for item in iter do
-            let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
-            let t = Int64Tensor.from(itemData)
-            if t.NumberOfElements > 0L then
-                t
-    |].cat(0L)
+    torch.cat(
+        [|
+            for item in iter do
+                let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
+                let t = torch.Int64Tensor.from(itemData)
+                if t.NumberOfElements > 0L then
+                    t
+        |], 0L)
     
-let batchify (data:TorchTensor) batchSize (device:Device) =
+let batchify (data:torch.Tensor) batchSize (device:torch.Device) =
     let nbatch = data.shape.[0] / batchSize
     let d2 = data.narrow(0L, 0L, nbatch * batchSize).view(batchSize, -1L).t()
     d2.contiguous().``to``(device)
 
-let get_batch (source:TorchTensor) (index:int64) =
+let get_batch (source:torch.Tensor) (index:int64) =
 
     let len = min bptt (source.shape.[0]-1L-index)
-    let data = source.[TorchTensorIndex.Slice(index, index + len)]
-    let target = source.[TorchTensorIndex.Slice(index + 1L, index + 1L + len)].reshape(-1L)
+    let data = source.[torch.TensorIndex.Slice(index, index + len)]
+    let target = source.[torch.TensorIndex.Slice(index + 1L, index + 1L + len)].reshape(-1L)
     data,target
 
-let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:TorchTensor) ntokens =
+let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.Tensor) ntokens =
 
     model.Train()
 
@@ -163,7 +162,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:TorchT
             use output = model.forward(data, src_mask)
             use loss = criterion (output.view(-1L, ntokens)) targets
             loss.backward()
-            model.parameters().clip_grad_norm(0.5) |> ignore
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
             optimizer.step()
 
             total_loss <- total_loss + loss.cpu().DataItem<float32>()
@@ -180,7 +179,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:TorchT
         i <- i + bptt
 
 
-let evaluate (model:TransformerModel) (evalData:TorchTensor) ntokens =
+let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
     model.Eval()
 
@@ -218,7 +217,7 @@ let evaluate (model:TransformerModel) (evalData:TorchTensor) ntokens =
 
 let run epochs =
 
-    printfn $"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs."
+    printfn $"Running SequenceToSequence on {device.``type``.ToString()} for {epochs} epochs."
 
     let vocabIter = TorchText.Datasets.WikiText2("train", datasetPath)
     let tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english")
@@ -241,8 +240,8 @@ let run epochs =
 
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
-    let optimizer = NN.Optimizer.SGD(model.parameters(), lr)
-    let scheduler = NN.Optimizer.StepLR(optimizer, (uint32 1), 0.95, last_epoch=15)
+    let optimizer = SGD(model.parameters(), lr)
+    let scheduler = lr_scheduler.StepLR(optimizer, (uint32 1), 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
     totalTime.Start()

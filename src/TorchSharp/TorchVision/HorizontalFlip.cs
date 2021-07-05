@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+
+namespace TorchSharp.torchvision
 {
     internal class HorizontalFlip : ITransform
     {
@@ -14,13 +14,13 @@ namespace TorchSharp.TorchVision
         {
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             return input.fliplr();
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Flip the image horizontally.

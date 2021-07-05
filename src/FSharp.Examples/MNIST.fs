@@ -5,10 +5,9 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.torch.nn
+open type TorchSharp.torch.optim
+open type TorchSharp.Scalar
 
 open TorchSharp.Examples
 
@@ -38,11 +37,11 @@ let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let getDataFiles sourceDir targetDir =
 
@@ -53,7 +52,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
-type Model(name,device:Device) as this =
+type Model(name,device:torch.Device) as this =
     inherit CustomModule(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)
@@ -74,7 +73,7 @@ type Model(name,device:Device) as this =
     do
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) =
@@ -84,7 +83,7 @@ type Model(name,device:Device) as this =
         --> fc1 --> relu --> dropout2 --> fc2
         --> logsm
 
-let loss x y = Functions.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
+let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
     model.Train()
@@ -140,10 +139,10 @@ let test (model:Model) (dataLoader:MNISTReader) =
 
 let trainingLoop (model:Model) epochs dataset trainData testData =
 
-    let epochs = if device.Type = DeviceType.CUDA then epochs * 4 else epochs
+    let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
 
-    let optimizer = NN.Optimizer.Adam(model.parameters())
-    NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
+    let optimizer = Adam(model.parameters())
+    lr_scheduler.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
 
     let sw = Stopwatch()
     sw.Start()
@@ -157,21 +156,21 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
     printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
     printfn $"Saving model to '{dataset}'.model.bin"
 
-    model.save(dataset + ".model.bin")
+    model.save(dataset + ".model.bin") |> ignore
 
 let run epochs =
-    printfn $"Running MNIST on {device.Type.ToString()}"
+    printfn $"Running MNIST on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
     let targetDir = Path.Combine(datasetPath, "test_data")
 
     getDataFiles datasetPath targetDir
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = TorchVision.Transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
     use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
     use test = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
 

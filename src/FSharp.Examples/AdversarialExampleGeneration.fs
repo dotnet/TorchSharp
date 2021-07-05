@@ -5,11 +5,9 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
-open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
-open type TorchSharp.TorchScalar
+open type TorchSharp.torch.nn
+open type TorchSharp.torch.optim
+open type TorchSharp.Scalar
 
 open TorchSharp.Examples
 
@@ -48,15 +46,15 @@ let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
-let criterion x y = Functions.nll_loss().Invoke(x,y)
+let criterion x y = functional.nll_loss().Invoke(x,y)
 
-let attack (image:TorchTensor) (eps:TorchScalar) (data_grad:TorchTensor) =
+let attack (image:torch.Tensor) (eps:Scalar) (data_grad:torch.Tensor) =
     use sign = data_grad.sign()
     (image + eps * sign).clamp(0.0.ToScalar(), 1.0.ToScalar())
 
@@ -86,25 +84,25 @@ let test (model:MNIST.Model) (eps:float) (dataLoader:MNISTReader) size =
 
 let run epochs =
 
-    printfn $"Running AdversarialExampleGeneration on {device.Type.ToString()}"
+    printfn $"Running AdversarialExampleGeneration on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
     let targetDir = Path.Combine(datasetPath, "test_data")
 
     MNIST.getDataFiles datasetPath targetDir
 
-    if device.Type = DeviceType.CUDA then
+    if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = TorchVision.Transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
     use testData = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
 
     let modelFile = dataset + ".model.bin"
 
     let model = 
         if not (File.Exists(modelFile)) then
-            printfn $"\n  Running MNIST on {device.Type.ToString()} in order to pre-train the model."
+            printfn $"\n  Running MNIST on {device.``type``.ToString()} in order to pre-train the model."
 
             let model = new MNIST.Model("model",device)
 
@@ -116,7 +114,7 @@ let run epochs =
             model 
 
         else
-            let model = new MNIST.Model("model", Device.CPU)
+            let model = new MNIST.Model("model", torch.CPU)
             model.load(modelFile) |> ignore
             model
 

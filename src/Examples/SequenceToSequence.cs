@@ -1,16 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -39,17 +35,17 @@ namespace TorchSharp.Examples
         private const int batch_size = 64;
         private const int eval_batch_size = 32;
 
-        private const int epochs = 50;
+        private const int epochs = 10;
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
 
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running SequenceToSequence on {device.Type.ToString()} for {epochs} epochs.");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running SequenceToSequence on {device.type.ToString()} for {epochs} epochs.");
 
             var vocab_iter = TorchText.Datasets.WikiText2("train", _dataLocation);
             var tokenizer = TorchText.Data.Utils.get_tokenizer("basic_english");
@@ -63,19 +59,19 @@ namespace TorchSharp.Examples
 
             var (train_iter, valid_iter, test_iter) = TorchText.Datasets.WikiText2(_dataLocation);
 
-            var train_data = Batchify(ProcessInput(train_iter, tokenizer, vocab), batch_size).to(device);
-            var valid_data = Batchify(ProcessInput(valid_iter, tokenizer, vocab), eval_batch_size).to(device);
-            var test_data = Batchify(ProcessInput(test_iter, tokenizer, vocab), eval_batch_size).to(device);
+            var train_data = Batchify(ProcessInput(train_iter, tokenizer, vocab), batch_size).to((Device)device);
+            var valid_data = Batchify(ProcessInput(valid_iter, tokenizer, vocab), eval_batch_size).to((Device)device);
+            var test_data = Batchify(ProcessInput(test_iter, tokenizer, vocab), eval_batch_size).to((Device)device);
 
             var bptt = 32;
 
             var ntokens = vocab.Count;
 
-            var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device);
+            var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to((Device)device);
             var loss = cross_entropy_loss();
             var lr = 2.50;
-            var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
-            var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.95, last_epoch: 15);
+            var optimizer = torch.optim.SGD(model.parameters(), lr);
+            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
             totalTime.Start();
@@ -100,7 +96,7 @@ namespace TorchSharp.Examples
             Console.WriteLine($"\nEnd of training | time: {totalTime.Elapsed.TotalSeconds:0.0}s | loss: {tst_loss:0.00}\n");
         }
 
-        private static void train(int epoch, TorchTensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
+        private static void train(int epoch, Tensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -127,10 +123,10 @@ namespace TorchSharp.Examples
                 var loss = criterion(output.view(-1, ntokens), targets);
                 {
                     loss.backward();
-                    model.parameters().clip_grad_norm(0.5);
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
 
-                    total_loss += loss.to(Device.CPU).DataItem<float>();
+                    total_loss += loss.to(torch.CPU).DataItem<float>();
                 }
 
                 GC.Collect();
@@ -143,7 +139,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private static double evaluate(TorchTensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, Optimizer optimizer)
+        private static double evaluate(Tensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
             model.Eval();
 
@@ -160,7 +156,7 @@ namespace TorchSharp.Examples
                 }
                 var output = model.forward(data, src_mask);
                 var loss = criterion(output.view(-1, ntokens), targets); 
-                total_loss += data.shape[0] * loss.to(Device.CPU).DataItem<float>();
+                total_loss += data.shape[0] * loss.to(torch.CPU).DataItem<float>();
 
                 data.Dispose();
                 targets.Dispose();
@@ -171,40 +167,40 @@ namespace TorchSharp.Examples
             return total_loss / eval_data.shape[0];
         }
 
-        static TorchTensor ProcessInput(IEnumerable<string> iter, Func<string, IEnumerable<string>> tokenizer, TorchText.Vocab.Vocab vocab)
+        static Tensor ProcessInput(IEnumerable<string> iter, Func<string, IEnumerable<string>> tokenizer, TorchText.Vocab.Vocab vocab)
         {
-            List<TorchTensor> data = new List<TorchTensor>();
+            List<Tensor> data = new List<Tensor>();
             foreach (var item in iter) {
                 List<long> itemData = new List<long>();
                 foreach (var token in tokenizer(item)) {
                     itemData.Add(vocab[token]);
                 }
-                data.Add(Int64Tensor.from(itemData.ToArray()));
+                data.Add(torch.tensor(itemData.ToArray(), torch.int64));
             }
-            return data.Where(t => t.NumberOfElements > 0).ToArray().cat(0);
+            return torch.cat(data.Where(t => t.NumberOfElements > 0).ToArray(), 0);
         }
 
-        static TorchTensor Batchify(TorchTensor data, int batch_size)
+        static Tensor Batchify(Tensor data, int batch_size)
         {
             var nbatch = data.shape[0] / batch_size;
             var d2 = data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t();
             return d2.contiguous();
         }
 
-        static (TorchTensor, TorchTensor) GetBatch(TorchTensor source, int index, int bptt)
+        static (Tensor, Tensor) GetBatch(Tensor source, int index, int bptt)
         {
             var len = Math.Min(bptt, source.shape[0] - 1 - index);
-            var data = source[TorchTensorIndex.Slice(index, index + len)];
-            var target = source[TorchTensorIndex.Slice(index + 1, index + 1 + len)].reshape(-1);
+            var data = source[TensorIndex.Slice(index, index + len)];
+            var target = source[TensorIndex.Slice(index + 1, index + 1 + len)].reshape(-1);
             return (data, target);
         }
 
         class TransformerModel : CustomModule
         {
-            private TransformerEncoder transformer_encoder;
+            private Modules.TransformerEncoder transformer_encoder;
             private PositionalEncoding pos_encoder;
-            private Embedding encoder;
-            private Linear decoder;
+            private Modules.Embedding encoder;
+            private Modules.Linear decoder;
 
             private long ninputs;
             private Device device;
@@ -223,9 +219,9 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            public TorchTensor GenerateSquareSubsequentMask(long size)
+            public Tensor GenerateSquareSubsequentMask(long size)
             {
-                var mask = (Float32Tensor.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
+                var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
                 return mask.to_type(ScalarType.Float32)
                     .masked_fill(mask == 0, float.NegativeInfinity)
                     .masked_fill(mask == 1, 0.0f).to(device);
@@ -235,17 +231,17 @@ namespace TorchSharp.Examples
             {
                 var initrange = 0.1;
 
-                Init.uniform(encoder.Weight, -initrange, initrange);
-                Init.zeros(decoder.Bias);
-                Init.uniform(decoder.Weight, -initrange, initrange);
+                init.uniform(encoder.Weight, -initrange, initrange);
+                init.zeros(decoder.Bias);
+                init.uniform(decoder.Weight, -initrange, initrange);
             }
 
-            public override TorchTensor forward(TorchTensor t)
+            public override Tensor forward(Tensor t)
             {
                 throw new NotImplementedException("single-argument forward()");
             }
 
-            public TorchTensor forward(TorchTensor t, TorchTensor mask)
+            public Tensor forward(Tensor t, Tensor mask)
             {
                 var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
                 var enc = transformer_encoder.forward(src, mask);
@@ -262,25 +258,25 @@ namespace TorchSharp.Examples
 
         class PositionalEncoding : CustomModule
         {
-            private Dropout dropout;
-            private TorchTensor pe;
+            private Module dropout;
+            private Tensor pe;
 
             public PositionalEncoding(long dmodel, double dropout, int maxLen = 5000) : base("PositionalEncoding")
             {
                 this.dropout = Dropout(dropout);
-                var pe = Float32Tensor.zeros(new long[] { maxLen, dmodel });
-                var position = Float32Tensor.arange(0, maxLen, 1).unsqueeze(1);
-                var divTerm = (Float32Tensor.arange(0, dmodel, 2) * (-Math.Log(10000.0) / dmodel)).exp();
-                pe[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(0, null, 2)] = (position * divTerm).sin();
-                pe[TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(1, null, 2)] = (position * divTerm).cos();
+                var pe = torch.zeros(new long[] { maxLen, dmodel });
+                var position = torch.arange(0, maxLen, 1).unsqueeze(1);
+                var divTerm = (torch.arange(0, dmodel, 2) * (-Math.Log(10000.0) / dmodel)).exp();
+                pe[TensorIndex.Ellipsis, TensorIndex.Slice(0, null, 2)] = (position * divTerm).sin();
+                pe[TensorIndex.Ellipsis, TensorIndex.Slice(1, null, 2)] = (position * divTerm).cos();
                 this.pe = pe.unsqueeze(0).transpose(0, 1);
 
                 RegisterComponents();
             }
 
-            public override TorchTensor forward(TorchTensor t)
+            public override Tensor forward(Tensor t)
             {
-                var x = t + pe[TorchTensorIndex.Slice(null, t.shape[0]), TorchTensorIndex.Slice()];
+                var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
                 return dropout.forward(x);
             }
         }

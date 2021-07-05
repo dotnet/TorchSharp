@@ -3,83 +3,94 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+
 
 #nullable enable
-namespace TorchSharp.NN
+namespace TorchSharp
 {
-    public class Linear : Module
+    using Modules;
+
+    namespace Modules
     {
-        internal Linear (IntPtr handle, IntPtr boxedHandle) : base (handle, boxedHandle) { }
-
-        public new static Linear Load (String modelPath)
+        public class Linear : torch.nn.Module
         {
-            var res = Module.Load (modelPath);
-            return new Linear (res.handle.DangerousGetHandle(), IntPtr.Zero);
-        }
+            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Linear_forward (Module.HType module, IntPtr tensor);
-
-        public override TorchTensor forward (TorchTensor tensor)
-        {
-            var res = THSNN_Linear_forward (handle, tensor.Handle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new TorchTensor (res);
-        }
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Linear_bias (Module.HType module);
-        [DllImport ("LibTorchSharp")]
-        extern static void THSNN_Linear_set_bias (Module.HType module, IntPtr tensor);
-
-        public TorchTensor? Bias {
-            get {
-                var res = THSNN_Linear_bias (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return ((res == IntPtr.Zero) ? null : new TorchTensor (res));
+            public new static Linear Load(String modelPath)
+            {
+                var res = Module.Load(modelPath);
+                return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
-            set {
-                THSNN_Linear_set_bias (handle, (value is null ? IntPtr.Zero : value.Handle));
-                Torch.CheckForErrors ();
-            }
-        }
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_Linear_weight (Module.HType module);
-        [DllImport ("LibTorchSharp")]
-        extern static void THSNN_Linear_set_weight (Module.HType module, IntPtr tensor);
 
-        public TorchTensor Weight {
-            get {
-                var res = THSNN_Linear_weight (handle);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor (res);
-            }
-            set {
-                THSNN_Linear_set_weight (handle, value.Handle);
-                Torch.CheckForErrors ();
-            }
-        }
-    }
-    public static partial class Modules
-    {
-        [DllImport ("LibTorchSharp")]
-        private static extern IntPtr THSNN_Linear_ctor (long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_Linear_forward(torch.nn.Module.HType module, IntPtr tensor);
 
-        static public Linear Linear (long inputSize, long outputSize, bool hasBias = true)
-        {
-            var res = THSNN_Linear_ctor (inputSize, outputSize, hasBias, out var boxedHandle);
-            if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-            return new Linear (res, boxedHandle);
-        }
-    }
-    public static partial class Functions
-    {
-        static public TorchTensor Linear (TorchTensor x, long inputSize, long outputSize, bool hasBias = true)
-        {
-            using (var d = Modules.Linear (inputSize, outputSize, hasBias)) {
-                return d.forward (x);
+            public override Tensor forward(Tensor tensor)
+            {
+                var res = THSNN_Linear_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_Linear_bias(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_Linear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Tensor? Bias {
+                get {
+                    var res = THSNN_Linear_bias(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                }
+                set {
+                    THSNN_Linear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                }
+            }
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_Linear_weight(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Tensor Weight {
+                get {
+                    var res = THSNN_Linear_weight(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_Linear_set_weight(handle, value.Handle);
+                    torch.CheckForErrors();
+                }
             }
         }
     }
 
+    public static partial class torch
+    {
+        public static partial class nn
+        {
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_Linear_ctor(long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
+
+            static public Linear Linear(long inputSize, long outputSize, bool hasBias = true)
+            {
+                var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Linear(res, boxedHandle);
+            }
+        }
+
+        public static partial class functional
+        {
+            static public Tensor Linear(Tensor x, long inputSize, long outputSize, bool hasBias = true)
+            {
+                using (var d = nn.Linear(inputSize, outputSize, hasBias)) {
+                    return d.forward(x);
+                }
+            }
+        }
+    }
 }

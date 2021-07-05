@@ -7,10 +7,7 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
-open TorchSharp.Tensor
-open TorchSharp.NN
-
-open type TorchSharp.NN.Modules
+open type TorchSharp.torch.nn
 
 open TorchSharp.Examples
 
@@ -37,15 +34,15 @@ let cmdArgs = Environment.GetCommandLineArgs()
 
 let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS")
 
-Torch.SetSeed(1L)
+torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = Torch.IsCudaAvailable()
+let hasCUDA = torch.cuda.is_available()
 
-let device = if hasCUDA then Device.CUDA else Device.CPU
+let device = if hasCUDA then torch.CUDA else torch.CPU
 
-let criterion x y = Functions.cross_entropy_loss().Invoke(x,y)
+let criterion x y = functional.cross_entropy_loss().Invoke(x,y)
 
-type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as this =
+type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device) as this =
     inherit CustomModule("Transformer")
 
     let embedding = EmbeddingBag(vocabSize, embedDim, sparse=false)
@@ -54,13 +51,13 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as th
     do
         let initrange = 0.5
 
-        Init.uniform(embedding.Weight, -initrange, initrange) |> ignore
-        Init.uniform(fc.Weight, -initrange, initrange) |> ignore
-        Init.zeros(fc.Bias) |> ignore
+        init.uniform(embedding.Weight, -initrange, initrange) |> ignore
+        init.uniform(fc.Weight, -initrange, initrange) |> ignore
+        init.zeros(fc.Bias) |> ignore
 
         this.RegisterComponents()
 
-        if device.Type = DeviceType.CUDA then
+        if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
@@ -68,7 +65,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:Device) as th
     member _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc
 
-let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) (optimizer:Optimizer) =
+let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
 
     model.Train()
 
@@ -86,7 +83,7 @@ let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (mo
         let loss = criterion predicted_labels labels
 
         loss.backward()
-        model.parameters().clip_grad_norm(0.5) |> ignore
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
         optimizer.step()
 
         total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())
@@ -100,7 +97,7 @@ let train epoch (trainData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (mo
 
     GC.Collect()
 
-let evaluate (testData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:TextClassificationModel) =
+let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) =
 
     model.Eval()
 
@@ -119,7 +116,7 @@ let evaluate (testData:IEnumerable<TorchTensor*TorchTensor*TorchTensor>) (model:
 
 let run epochs =
 
-    printfn $"Running TextClassification on {device.Type.ToString()} for {epochs} epochs."
+    printfn $"Running TextClassification on {device.``type``.ToString()} for {epochs} epochs."
 
     use reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, datasetPath)
     let dataloader = reader.Enumerate()
@@ -134,8 +131,8 @@ let run epochs =
 
     let model = new TextClassificationModel((int64 vocab.Count), emsize, 4L, device)
 
-    let optimizer = NN.Optimizer.SGD(model.parameters(), lr)
-    let scheduler = NN.Optimizer.StepLR(optimizer, 1u, 0.2, last_epoch=5)
+    let optimizer = torch.optim.SGD(model.parameters(), lr)
+    let scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1u, 0.2, last_epoch=5)
 
     let sw = Stopwatch()
 

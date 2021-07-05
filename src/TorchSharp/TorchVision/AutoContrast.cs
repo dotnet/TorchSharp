@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.Tensor.TensorExtensionMethods;
+using static TorchSharp.torch;
 
-namespace TorchSharp.TorchVision
+using static TorchSharp.TensorExtensionMethods;
+
+namespace TorchSharp.torchvision
 {
     internal class AutoContrast : ITransform
     {
@@ -15,10 +15,10 @@ namespace TorchSharp.TorchVision
         {
         }
 
-        public TorchTensor forward(TorchTensor input)
+        public Tensor forward(Tensor input)
         {
             var bound = input.IsIntegral() ? 255.0f : 1.0f;
-            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.Type;
+            var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
 
             var minimum = input.amin(new long[] { -2, -1 }, keepDim: true).to(dtype);
             var maximum = input.amax(new long[] { -2, -1 }, keepDim: true).to(dtype);
@@ -29,11 +29,11 @@ namespace TorchSharp.TorchVision
 
             var scale = Float32Tensor.from(bound) / (maximum - minimum);
 
-            return ((input - minimum) * scale).clamp(0, bound).to(input.Type);
+            return ((input - minimum) * scale).clamp(0, bound).to(input.dtype);
         }
     }
 
-    public static partial class Transforms
+    public static partial class transforms
     {
         /// <summary>
         /// Autocontrast the pixels of the given image

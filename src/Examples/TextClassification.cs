@@ -1,16 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TorchSharp.Tensor;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
+
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -36,17 +32,17 @@ namespace TorchSharp.Examples
 
         // This path assumes that you're running this on Windows.
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
-        static void Main(string[] args)
+        internal static void Main(string[] args)
 
         {
-            Torch.SetSeed(1);
+            torch.random.manual_seed(1);
 
             var cwd = Environment.CurrentDirectory;
 
-            var device = Torch.IsCudaAvailable() ? Device.CUDA : Device.CPU;
-            Console.WriteLine($"Running TextClassification on {device.Type.ToString()}");
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            Console.WriteLine($"Running TextClassification on {device.type.ToString()}");
 
-            using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", device, _dataLocation)) {
+            using (var reader = TorchText.Data.AG_NEWSReader.AG_NEWS("train", (Device)device, _dataLocation)) {
 
                 var dataloader = reader.Enumerate();
 
@@ -59,12 +55,12 @@ namespace TorchSharp.Examples
 
                 var vocab = new TorchText.Vocab.Vocab(counter);
 
-                var model = new TextClassificationModel(vocab.Count, emsize, 4).to(device);
+                var model = new TextClassificationModel(vocab.Count, emsize, 4).to((Device)device);
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
-                var optimizer = NN.Optimizer.SGD(model.parameters(), lr);
-                var scheduler = NN.Optimizer.StepLR(optimizer, 1, 0.2, last_epoch: 5);
+                var optimizer = torch.optim.SGD(model.parameters(), lr);
+                var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
                 foreach (var epoch in Enumerable.Range(1, epochs)) {
 
@@ -79,7 +75,7 @@ namespace TorchSharp.Examples
                     scheduler.step();
                 }
 
-                using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", device, _dataLocation)) {
+                using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", (Device)device, _dataLocation)) {
 
                     var sw = new Stopwatch();
                     sw.Start();
@@ -95,7 +91,7 @@ namespace TorchSharp.Examples
 
         }
 
-        static void train(int epoch, IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> train_data, TextClassificationModel model, Loss criterion, Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
         {
             model.Train();
 
@@ -114,10 +110,10 @@ namespace TorchSharp.Examples
 
                 var loss = criterion(predicted_labels, labels);
                 loss.backward();
-                model.parameters().clip_grad_norm(0.5);
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                 optimizer.step();
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(Device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
                 total_count += labels.size(0);
 
                 if (batch % log_interval == 0 && batch > 0) {
@@ -133,7 +129,7 @@ namespace TorchSharp.Examples
             GC.Collect();
         }
 
-        static double evaluate(IEnumerable<(TorchTensor, TorchTensor, TorchTensor)> test_data, TextClassificationModel model, Loss criterion)
+        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
         {
             model.Eval();
 
@@ -145,7 +141,7 @@ namespace TorchSharp.Examples
                 var predicted_labels = model.forward(texts, offsets);
                 var loss = criterion(predicted_labels, labels);
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(Device.CPU).DataItem<long>();
+                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
                 total_count += labels.size(0);
             }
 
@@ -155,8 +151,8 @@ namespace TorchSharp.Examples
 
     class TextClassificationModel : CustomModule
     {
-        private EmbeddingBag embedding;
-        private Linear fc;
+        private Modules.EmbeddingBag embedding;
+        private Modules.Linear fc;
 
         public TextClassificationModel(long vocab_size, long embed_dim, long num_class) : base("TextClassification")
         {
@@ -171,17 +167,17 @@ namespace TorchSharp.Examples
         {
             var initrange = 0.5;
 
-            Init.uniform(embedding.Weight, -initrange, initrange);
-            Init.uniform(fc.Weight, -initrange, initrange);
-            Init.zeros(fc.Bias);
+            init.uniform(embedding.Weight, -initrange, initrange);
+            init.uniform(fc.Weight, -initrange, initrange);
+            init.zeros(fc.Bias);
         }
 
-        public override TorchTensor forward(TorchTensor t)
+        public override Tensor forward(Tensor t)
         {
             throw new NotImplementedException();
         }
 
-        public TorchTensor forward(TorchTensor input, TorchTensor offsets)
+        public Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));
         }

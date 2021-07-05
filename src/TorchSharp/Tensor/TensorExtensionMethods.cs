@@ -7,20 +7,21 @@ using System.Runtime.InteropServices;
 using static TorchSharp.Utils.LEB128Codec;
 
 #nullable enable
-namespace TorchSharp.Tensor
+namespace TorchSharp
 {
+    using static torch;
 
     /// <summary>
-    /// A few extensions to the TorchTensor type.
+    /// A few extensions to the Tensor type.
     /// </summary>
     public static class TensorExtensionMethods
     {
-        internal static bool IsIntegral(this TorchTensor tensor)
+        internal static bool IsIntegral(this Tensor tensor)
         {
-            return IsIntegral(tensor.Type);
+            return IsIntegral(tensor.dtype);
         }
 
-        internal static bool IsIntegral(ScalarType type)
+        internal static bool IsIntegral(this ScalarType type)
         {
             switch (type) {
             case ScalarType.Byte:
@@ -35,19 +36,32 @@ namespace TorchSharp.Tensor
             }
         }
 
+        internal static bool IsFloatingPoint(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.BFloat16:
+            case ScalarType.Float16:
+            case ScalarType.Float32:
+            case ScalarType.Float64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
         /// <summary>
         /// Save the tensor in a .NET-specific format.
         /// </summary>
         /// <param name="tensor"></param>
         /// <param name="writer"></param>
-        public static void Save(this TorchTensor tensor, System.IO.BinaryWriter writer)
+        public static void Save(this Tensor tensor, System.IO.BinaryWriter writer)
         {
             // First, write the type
-            writer.Encode((int)tensor.Type); // 4 bytes
-            // Then, the shape.
+            writer.Encode((int)tensor.dtype); // 4 bytes
+                                                // Then, the shape.
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
-            // Then, the data
+                                                                // Then, the data
             writer.Write(tensor.Bytes()); // ElementSize * NumberofElements
         }
 
@@ -56,12 +70,12 @@ namespace TorchSharp.Tensor
         /// </summary>
         /// <param name="tensor"></param>
         /// <param name="reader"></param>
-        public static void Load(this TorchTensor tensor, System.IO.BinaryReader reader)
+        public static void Load(this Tensor tensor, System.IO.BinaryReader reader)
         {
             // First, read the type
             var type = (ScalarType)reader.Decode();
 
-            if (type != tensor.Type)
+            if (type != tensor.dtype)
                 throw new ArgumentException("Mismatched tensor data types while loading.");
 
             // Then, the shape
@@ -95,7 +109,7 @@ namespace TorchSharp.Tensor
         /// <param name="doCopy"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static TorchTensor ToTorchTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
+        public static Tensor ToTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
             var array = doCopy ? (T[])rawArray.Clone() : rawArray;
 
@@ -140,7 +154,7 @@ namespace TorchSharp.Tensor
         /// <param name="device"></param>
         /// <param name="requiresGrad"></param>
         /// <returns></returns>
-        public static TorchTensor ToTorchTensor<T>(this T scalar, Device? device = null, bool requiresGrad = false) where T : struct
+        public static Tensor ToTensor<T>(this T scalar, torch.Device? device = null, bool requiresGrad = false) where T : struct
         {
             if (requiresGrad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requiresGrad), "Only floating point types support gradients.");
@@ -163,187 +177,21 @@ namespace TorchSharp.Tensor
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
+        public static float ToSingle(this Tensor value) => value.ToScalar().ToSingle();
+        public static double ToDouble(this Tensor value) => value.ToScalar().ToDouble();
+        public static sbyte ToSByte(this Tensor value) => value.ToScalar().ToSByte();
+        public static byte ToByte(this Tensor value) => value.ToScalar().ToByte();
+        public static short ToInt16(this Tensor value) => value.ToScalar().ToInt16();
+        public static int ToInt32(this Tensor value) => value.ToScalar().ToInt32();
+        public static long ToInt64(this Tensor value) => value.ToScalar().ToInt64();
+        public static bool ToBoolean(this Tensor value) => value.ToScalar().ToBoolean();
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
-
-        /// <summary>
-        /// Concatenates the given sequence of seq tensors in the given dimension.
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <param name="dimension"></param>
-        /// <returns></returns>
-        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
-        public static TorchTensor cat(this IList<TorchTensor> tensors, long dimension)
-        {
-            if (tensors.Count == 0) {
-                throw new ArgumentException(nameof(tensors));
-            }
-            if (tensors.Count == 1) {
-                return tensors[0];
-            }
-
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                return new TorchTensor(THSTensor_cat(tensorsRef, parray.Array.Length, dimension));
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);
-
-        /// <summary>
-        /// Concatenates a sequence of tensors along a new dimension.
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>All tensors need to be of the same size.</remarks>
-        public static TorchTensor stack(this IList<TorchTensor> tensors, long dimension)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_hstack(IntPtr tensor, int len);
-
-        /// <summary>
-        /// Stack tensors in sequence horizontally (column wise).
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
-        public static TorchTensor hstack(this IList<TorchTensor> tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_hstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_vstack(IntPtr tensor, int len);
-
-        /// <summary>
-        /// Stack tensors in sequence vertically (row wise).
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
-        public static TorchTensor vstack(this IList<TorchTensor> tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_vstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        /// <summary>
-        /// Creates a new tensor by horizontally stacking the tensors in tensors.
-        /// </summary>
-        /// <param name="tensor"></param>
-        /// <param name="len"></param>
-        /// <returns></returns>
-        /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_column_stack(IntPtr tensor, int len);
-
-        public static TorchTensor column_stack(this IList<TorchTensor> tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_column_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_row_stack(IntPtr tensor, int len);
-
-        /// <summary>
-        /// Stack tensors in sequence vertically (row wise).
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
-        public static TorchTensor row_stack(this IList<TorchTensor> tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_row_stack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_dstack(IntPtr tensor, int len);
-
-        /// <summary>
-        /// Stack tensors in sequence depthwise (along third axis).
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <returns></returns>
-        /// <remarks>This is equivalent to concatenation along the third axis after 1-D and 2-D tensors have been reshaped by torch.atleast_3d().</remarks>
-        public static TorchTensor dstack(this IList<TorchTensor> tensors)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                var res = THSTensor_dstack(tensorsRef, parray.Array.Length);
-                if (res == IntPtr.Zero) { Torch.CheckForErrors(); }
-                return new TorchTensor(res);
-            }
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
-
-        /// <summary>
-        /// Clips gradient norm of an iterable of parameters.
-        /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
-        /// Gradients are modified in-place.
-        /// </summary>
-        /// <param name="tensors"></param>
-        /// <param name="max_norm"></param>
-        /// <param name="norm_type"></param>
-        /// <returns></returns>
-        public static double clip_grad_norm(this IList<TorchTensor> tensors, double max_norm, double norm_type = 2.0)
-        {
-            using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
-            }
-        }
-
-
-        public static float ToSingle(this TorchTensor value) => value.ToScalar().ToSingle();
-        public static double ToDouble(this TorchTensor value) => value.ToScalar().ToDouble();
-        public static sbyte ToSByte(this TorchTensor value) => value.ToScalar().ToSByte();
-        public static byte ToByte(this TorchTensor value) => value.ToScalar().ToByte();
-        public static short ToInt16(this TorchTensor value) => value.ToScalar().ToInt16();
-        public static int ToInt32(this TorchTensor value) => value.ToScalar().ToInt32();
-        public static long ToInt64(this TorchTensor value) => value.ToScalar().ToInt64();
-        public static bool ToBoolean(this TorchTensor value) => value.ToScalar().ToBoolean();
-
-        public static (float Real, float Imaginary) ToComplex32(this TorchTensor value) => value.ToScalar().ToComplexFloat32();
-        public static System.Numerics.Complex ToComplex64(this TorchTensor value) => value.ToScalar().ToComplexFloat64();
+        public static (float Real, float Imaginary) ToComplex32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static System.Numerics.Complex ToComplex64(this Tensor value) => value.ToScalar().ToComplexFloat64();
 
         // Vision-related operations
 
-        public static TorchTensor crop(this TorchTensor image, int top, int left, int height, int width)
+        public static Tensor crop(this Tensor image, int top, int left, int height, int width)
         {
             var dims = image.Dimensions;
             var hoffset = dims - 2;
@@ -354,15 +202,15 @@ namespace TorchSharp.Tensor
 
             if (left < 0 || top < 0 || right > w || bottom > h) {
 
-                var slice = image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(Math.Max(top, 0), bottom), TorchTensorIndex.Slice(Math.Max(left, 0), right));
+                var slice = image.index(TensorIndex.Ellipsis, TensorIndex.Slice(Math.Max(top, 0), bottom), TensorIndex.Slice(Math.Max(left, 0), right));
 
                 // Note: according to the documentation, it should be LTRB, but that generates the wrong result. Here, we use LRTB.
                 var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(right - w, 0), Math.Max(-top, 0), Math.Max(bottom - h, 0) };
 
-                return NN.Functions.Pad(slice, padding_ltrb);
+                return TorchSharp.torch.nn.functional.Pad(slice, padding_ltrb);
             }
 
-            return image.index(TorchTensorIndex.Ellipsis, TorchTensorIndex.Slice(top, bottom), TorchTensorIndex.Slice(left, right));
+            return image.index(TensorIndex.Ellipsis, TensorIndex.Slice(top, bottom), TensorIndex.Slice(left, right));
         }
     }
 }

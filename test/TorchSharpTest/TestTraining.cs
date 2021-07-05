@@ -3,11 +3,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.NN;
-using static TorchSharp.NN.Modules;
-using static TorchSharp.NN.Functions;
-using TorchSharp.Tensor;
+
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.nn.functional;
 using Xunit;
+
+using static TorchSharp.torch;
 
 #nullable enable
 
@@ -31,7 +32,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -60,7 +61,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Adding a dropout module to the linear NN.
+        /// Adding a dropout module to the linear nn.
         /// </summary>
         [Fact]
         public void TestTrainingWithDropout()
@@ -73,7 +74,7 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
-            var loss = mse_loss(NN.Reduction.Sum);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -110,7 +111,7 @@ namespace TorchSharp
 
             double learning_rate = 0.00001;
 
-            var optimizer = NN.Optimizer.Adam(seq.parameters(), learning_rate);
+            var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
 
             Assert.NotNull(optimizer);
         }
@@ -126,11 +127,11 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = NN.Optimizer.Adam(seq.parameters());
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.Adam(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -161,8 +162,8 @@ namespace TorchSharp
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
-            var optimizer = NN.Optimizer.Adam(seq.parameters(), amsgrad: true);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -197,8 +198,8 @@ namespace TorchSharp
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
-            var optimizer = NN.Optimizer.AdamW(seq.parameters());
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.AdamW(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -236,8 +237,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.Adagrad(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -273,8 +274,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -306,8 +307,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -339,8 +340,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.RMSProp(seq.parameters(), learning_rate, centered: true);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, centered: true);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -376,8 +377,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate, momentum: 0.5);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.5);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -409,8 +410,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate, nesterov: true);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, nesterov: true);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -442,8 +443,8 @@ namespace TorchSharp
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = NN.Optimizer.SGD(seq.parameters(), learning_rate);
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -483,8 +484,8 @@ namespace TorchSharp
             var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
 
-            var optimizer = NN.Optimizer.Adam(seq.parameters());
-            var loss = mse_loss(NN.Reduction.Sum);
+            var optimizer = torch.optim.Adam(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -509,8 +510,8 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingConv2dCUDA()
         {
-            if (Torch.IsCudaAvailable()) {
-                var device = Device.CUDA;
+            if (torch.cuda.is_available()) {
+                var device = torch.CUDA;
 
                 using (Module conv1 = Conv2d(3, 4, 3, stride: 2),
                       lin1 = Linear(4 * 13 * 13, 32),
@@ -525,13 +526,13 @@ namespace TorchSharp
                         ("r2", ReLU(inPlace: true)),
                         ("lin2", lin2))) {
 
-                    seq.to(device);
+                    seq.to((Device)device);
 
-                    var optimizer = NN.Optimizer.Adam(seq.parameters());
-                    var loss = mse_loss(NN.Reduction.Sum);
+                    var optimizer = torch.optim.Adam(seq.parameters());
+                    var loss = mse_loss(Reduction.Sum);
 
-                    using (TorchTensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: device),
-                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: device)) {
+                    using (Tensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
+                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
                         float initialLoss = loss(seq.forward(x), y).ToSingle();
                         float finalLoss = float.MaxValue;
