@@ -149,7 +149,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     
 let trainingLoop (model:Model) epochs trainData testData =
     
-        use optimizer = Optimizer.Adam(model.parameters(), 0.001)
+        use optimizer = Adam(model.parameters(), 0.001)
         //NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
     
         let sw = Stopwatch()

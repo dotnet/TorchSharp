@@ -59,7 +59,7 @@ namespace TorchSharp.Examples
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
-                var optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr);
+                var optimizer = torch.optim.SGD(model.parameters(), lr);
                 var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
                 foreach (var epoch in Enumerable.Range(1, epochs)) {

@@ -13,20 +13,21 @@ repository extensively and has been a major factor in iterating support.
 Things that you can try:
 
 ```csharp
-var lin1 = Linear(1000, 100);
-var lin2 = Linear(100, 10);
-var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+using TorchSharp;
 
-var x = Float32Tensor.randn(64, 1000);
-var y = Float32Tensor.randn(64, 10);
+var lin1 = torch.Linear(1000, 100);
+var lin2 = torch.Linear(100, 10);
+var seq = torch.Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
-var optimizer = NN.Optimizer.Adam(seq.parameters());
-var loss = mse_loss(NN.Reduction.Sum);
+var x = torch.randn(64, 1000);
+var y = torch.randn(64, 10);
+
+var optimizer = torch.optim.Adam(seq.parameters());
+var loss = torch.nn.functional.mse_loss(NN.Reduction.Sum);
 
 for (int i = 0; i < 10; i++) {
     var eval = seq.forward(x);
     var output = loss(eval, y);
-    var lossVal = output.ToSingle();
 
     optimizer.zero_grad();
 

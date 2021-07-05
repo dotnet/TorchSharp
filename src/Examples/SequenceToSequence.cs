@@ -70,7 +70,7 @@ namespace TorchSharp.Examples
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to((Device)device);
             var loss = cross_entropy_loss();
             var lr = 2.50;
-            var optimizer = torch.optim.Optimizer.SGD(model.parameters(), lr);
+            var optimizer = torch.optim.SGD(model.parameters(), lr);
             var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
 
             var totalTime = new Stopwatch();
