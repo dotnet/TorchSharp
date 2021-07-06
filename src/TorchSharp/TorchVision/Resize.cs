@@ -7,7 +7,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
-    internal class Resize : ITransform
+    internal class Resize : AffineGridBase, ITransform
     {
         internal Resize(int height, int width, InterpolateMode mode, int? maxSize, bool antialias)
         {
@@ -52,47 +52,11 @@ namespace TorchSharp.torchvision
             }
 
 
-            var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var dtype);
+            var img = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
-            img = torch.nn.functional.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
+            img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: mode, align_corners: null);
 
             return SqueezeOut(img, needCast, needSqueeze, dtype);
-        }
-
-        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
-        {
-            needSqueeze = false;
-
-            if (img.Dimensions < 4) {
-                img = img.unsqueeze(0);
-                needSqueeze = true;
-            }
-
-            dtype = img.dtype;
-            needCast = false;
-
-            if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
-                needCast = true;
-                img = img.to_type(ScalarType.Float32);
-            }
-
-            return img;
-        }
-
-        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
-        {
-            if (needSqueeze) {
-                img = img.squeeze(0);
-            }
-
-            if (needCast) {
-                if (TensorExtensionMethods.IsIntegral(dtype))
-                    img = img.round();
-
-                img = img.to_type(dtype);
-            }
-
-            return img;
         }
 
         private bool antialias;

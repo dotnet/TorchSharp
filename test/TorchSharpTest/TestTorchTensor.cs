@@ -5357,6 +5357,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void RotateTensor()
+        {
+            {
+                using (var input = torch.rand(16, 3, 25, 50)) {
+                    var poster = torchvision.transforms.Rotate(90).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
+                }
+                using (var input = torch.rand(16, 3, 25, 49)) {
+                    var poster = torchvision.transforms.Rotate(30, expand:true).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 50, 26 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void AutocontrastTensor()
         {
             {

@@ -9,7 +9,7 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustSharpness : ITransform
+    internal class AdjustSharpness : AffineGridBase, ITransform
     {
         internal AdjustSharpness(double sharpness)
         {
@@ -35,7 +35,7 @@ namespace TorchSharp.torchvision
             kernel /= kernel.sum();
             kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
-            var result_tmp = SqueezeIn(input, out var needCast, out var needSqueeze, out var out_dtype);
+            var result_tmp = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64}, out var needCast, out var needSqueeze, out var out_dtype);
             result_tmp = torch.nn.functional.conv2d(result_tmp,kernel, groups: result_tmp.shape[result_tmp.shape.Length - 3]);
             result_tmp = SqueezeOut(result_tmp, needCast, needSqueeze, out_dtype);
 
@@ -46,47 +46,10 @@ namespace TorchSharp.torchvision
 
         protected double sharpness;
 
-
         private Tensor Blend(Tensor img1, Tensor img2, double ratio)
         {
             var bound = img1.IsIntegral() ? 255.0 : 1.0;
             return (img1 * ratio + img2 * (1.0 - ratio)).clamp(0, bound).to(img2.dtype);
-        }
-
-        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
-        {
-            needSqueeze = false;
-
-            if (img.Dimensions < 4) {
-                img = img.unsqueeze(0);
-                needSqueeze = true;
-            }
-
-            dtype = img.dtype;
-            needCast = false;
-
-            if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
-                needCast = true;
-                img = img.to_type(ScalarType.Float32);
-            }
-
-            return img;
-        }
-
-        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
-        {
-            if (needSqueeze) {
-                img = img.squeeze(0);
-            }
-
-            if (needCast) {
-                if (TensorExtensionMethods.IsIntegral(dtype))
-                    img = img.round();
-
-                img = img.to_type(dtype);
-            }
-
-            return img;
         }
     }
 

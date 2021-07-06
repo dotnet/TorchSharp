@@ -1673,7 +1673,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
         /// </summary>
-        static public Tensor linspace(float start, float end, long steps, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        static public Tensor linspace(double start, double end, long steps, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -1697,7 +1697,7 @@ namespace TorchSharp
         /// <summary>
         ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
         /// </summary>
-        static public Tensor logspace(float start, float end, long steps, float @base = 10, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        static public Tensor logspace(double start, double end, long steps, double @base = 10, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {

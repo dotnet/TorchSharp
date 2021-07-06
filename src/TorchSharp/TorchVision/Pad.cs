@@ -19,7 +19,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            return TorchSharp.torch.nn.functional.Pad(input, pad, mode, value);
+            return TorchSharp.torch.nn.functional.pad(input, pad, mode, value);
         }
 
         private long[] pad;

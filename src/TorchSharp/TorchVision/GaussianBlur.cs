@@ -8,7 +8,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
-    internal class GaussianBlur : ITransform
+    internal class GaussianBlur : AffineGridBase, ITransform
     {
         internal GaussianBlur(IList<long> kernelSize, float min, float max)
         {
@@ -25,7 +25,7 @@ namespace TorchSharp.torchvision
             var kernel = GetGaussianKernel2d(dtype, input.device);
             kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
-            var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var out_dtype);
+            var img = SqueezeIn(input, new ScalarType[] { kernel.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
 
             // The padding needs to be adjusted to make sure that the output is the same size as the input.
 
@@ -36,7 +36,7 @@ namespace TorchSharp.torchvision
 
             var padding = new long[] { k0d2, k0sm1 - k0d2, k1d2, k1sm1 - k1d2 };
 
-            img = TorchSharp.torch.nn.functional.Pad(img, padding, PaddingModes.Reflect);
+            img = TorchSharp.torch.nn.functional.pad(img, padding, PaddingModes.Reflect);
             img = torch.nn.functional.conv2d(img, kernel, groups: img.shape[img.shape.Length - 3]);
 
             return SqueezeOut(img, needCast, needSqueeze, out_dtype);
@@ -53,45 +53,9 @@ namespace TorchSharp.torchvision
 
         private Tensor GetGaussianKernel2d(ScalarType dtype, torch.Device device)
         {
-            var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device).index(new TensorIndex[] { TensorIndex.None, TensorIndex.Ellipsis });
-            var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device).index(new TensorIndex[] { TensorIndex.Ellipsis, TensorIndex.None });
+            var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device)[TensorIndex.None, TensorIndex.Slice()];
+            var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device)[TensorIndex.Slice(), TensorIndex.None];
             return kernel_Y.mm(kernel_X);
-        }
-
-        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
-        {
-            needSqueeze = false;
-
-            if (img.Dimensions < 4) {
-                img = img.unsqueeze(0);
-                needSqueeze = true;
-            }
-
-            dtype = img.dtype;
-            needCast = false;
-
-            if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
-                needCast = true;
-                img = img.to_type(ScalarType.Float32);
-            }
-
-            return img;
-        }
-
-        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
-        {
-            if (needSqueeze) {
-                img = img.squeeze(0);
-            }
-
-            if (needCast) {
-                if (TensorExtensionMethods.IsIntegral(dtype))
-                    img = img.round();
-
-                img = img.to_type(dtype);
-            }
-
-            return img;
         }
 
         protected long[] kernelSize;

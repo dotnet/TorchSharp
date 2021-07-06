@@ -73,7 +73,7 @@ namespace TorchSharp
                 /// <param name="mode">'constant', 'reflect', 'replicate' or 'circular'. Default: 'constant'</param>
                 /// <param name="value">Fill value for 'constant' padding. Default: 0</param>
                 /// <returns></returns>
-                static public Tensor Pad(Tensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
+                static public Tensor pad(Tensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
                 {
                     unsafe {
                         fixed (long* psize = pad) {
@@ -91,8 +91,8 @@ namespace TorchSharp
                 /// <param name="input">Tensor of 4D or 5D</param>
                 /// <param name="grid">Flow-field tensor.</param>
                 /// <param name="mode">Interpolation mode to calculate output values 'bilinear' | 'nearest' | 'bicubic'.</param>
-                /// <param name="paddingMode">Padding mode for outside grid values 'zeros' | 'border' | 'reflection'. Default: 'zeros'</param>
-                /// <param name="alignCorners">Geometrically, we consider the pixels of the input as squares rather than points.
+                /// <param name="padding_mode">Padding mode for outside grid values 'zeros' | 'border' | 'reflection'. Default: 'zeros'</param>
+                /// <param name="align_corners">Geometrically, we consider the pixels of the input as squares rather than points.
                 /// If set to true, the extrema (-1 and 1) are considered as referring to the center points of the input’s corner pixels.
                 /// If set to false, they are instead considered as referring to the corner points of the input’s corner pixels, making the sampling more resolution agnostic.</param>
                 /// <returns></returns>
@@ -100,10 +100,10 @@ namespace TorchSharp
                 /// Currently, only spatial (4-D) and volumetric (5-D) input are supported.
                 /// Note: mode='bicubic' supports only 4-D input.
                 /// </remarks>
-                static public Tensor GridSample(Tensor input, Tensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode paddingMode = GridSamplePaddingMode.Zeros, bool? alignCorners = null)
+                static public Tensor grid_sample(Tensor input, Tensor grid, GridSampleMode mode = GridSampleMode.Bilinear, GridSamplePaddingMode padding_mode = GridSamplePaddingMode.Zeros, bool? align_corners = null)
                 {
-                    byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
-                    var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)paddingMode, ac);
+                    byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
+                    var res = THSNN_grid_sample(input.Handle, grid.Handle, (byte)mode, (byte)padding_mode, ac);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -116,7 +116,7 @@ namespace TorchSharp
                 /// <param name="align_corners">if true, consider -1 and 1 to refer to the centers of the corner pixels rather than the image corners.
                 /// Refer to grid_sample() for a more complete description.</param>
                 /// <returns></returns>
-                static public Tensor AffineGrid(Tensor theta, long[]? size = null, bool align_corners = false)
+                static public Tensor affine_grid(Tensor theta, long[]? size = null, bool align_corners = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
@@ -134,7 +134,7 @@ namespace TorchSharp
                 /// <param name="size">Output spatial size</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size if it is a tuple.</param>
                 /// <param name="mode">The algorithm used for upsampling: 'nearest' | 'linear' | 'bilinear' | 'bicubic' | 'trilinear' | 'area'</param>
-                /// <param name="alignCorners">Geometrically, we consider the pixels of the input and output as squares rather than points.
+                /// <param name="align_corners">Geometrically, we consider the pixels of the input and output as squares rather than points.
                 /// If set to true, the input and output tensors are aligned by the center points of their corner pixels, preserving the values at the corner pixels.
                 /// If set to false, the input and output tensors are aligned by the corner points of their corner pixels, and the interpolation uses edge value padding for out-of-boundary values, making this operation independent of input size when scale_factor is kept the same.</param>
                 /// <param name="recompute_scale_factor">
@@ -145,12 +145,12 @@ namespace TorchSharp
                 /// (i.e. the computation will be identical to if the computed output_size were passed-in explicitly).
                 /// </param>
                 /// <returns></returns>
-                static public Tensor Interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolateMode mode = InterpolateMode.Nearest, bool? alignCorners = null, bool recompute_scale_factor = false)
+                static public Tensor interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolateMode mode = InterpolateMode.Nearest, bool? align_corners = null, bool recompute_scale_factor = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
                             fixed (double* pSF = scale_factor) {
-                                byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
+                                byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
                                 var res = THSNN_interpolate(x.Handle, (IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, recompute_scale_factor);
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                                 return new Tensor(res);
@@ -167,12 +167,12 @@ namespace TorchSharp
                 /// <param name="x">Input tensor</param>
                 /// <param name="size">Output spatial sizes</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
-                /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
+                /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public Tensor UpsampleBilinear(Tensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
+                static public Tensor upsample_bilinear(Tensor x, long[]? size = null, double[]? scale_factor = null, bool align_corners = false)
                 {
-                    using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Bilinear, alignCorners)) {
+                    using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Bilinear, align_corners)) {
                         return d.forward(x);
                     }
                 }
@@ -185,12 +185,12 @@ namespace TorchSharp
                 /// <param name="x">Input tensor</param>
                 /// <param name="size">Output spatial sizes</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
-                /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
+                /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public Tensor UpsampleNearest(Tensor x, long[]? size = null, double[]? scale_factor = null, bool alignCorners = false)
+                static public Tensor upsample_nearest(Tensor x, long[]? size = null, double[]? scale_factor = null, bool align_corners = false)
                 {
-                    using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Nearest, alignCorners)) {
+                    using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Nearest, align_corners)) {
                         return d.forward(x);
                     }
                 }

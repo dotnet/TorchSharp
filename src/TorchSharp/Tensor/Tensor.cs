@@ -3583,6 +3583,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Expand this tensor to the same size as other.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor expand_as(Tensor other) => expand(other.shape);
+
+
+            /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
             public Tensor expand(params long[] sizes)
@@ -4271,17 +4278,30 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dimension);
+
             /// <summary>
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
             /// </summary>
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dimension);
-
             public Tensor unsqueeze(long dimension)
             {
                 var res = THSTensor_unsqueeze(handle, dimension);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unsqueeze_(IntPtr tensor, long dimension);
+
+            /// <summary>
+            ///  Returns a new tensor with a dimension of size one inserted at the specified position.
+            ///  The returned tensor shares the same underlying data with this tensor.
+            /// </summary>
+            public Tensor unsqueeze_(long dimension)
+            {
+                var res = THSTensor_unsqueeze_(handle, dimension);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -4720,12 +4740,25 @@ namespace TorchSharp
             {
                 return new TensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
             }
+
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
+
             static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
+
             static public TensorIndex Tensor(Tensor tensor) => new TensorIndex() { tensor = tensor, kind = Kind.Tensor };
-            static public TensorIndex Ellipsis => new TensorIndex() { kind = Kind.Ellipsis };
-            static public TensorIndex None => new TensorIndex() { kind = Kind.None };
-            static public TensorIndex Null => new TensorIndex() { kind = Kind.Null };
+
+            static public TensorIndex Ellipsis = new TensorIndex() { kind = Kind.Ellipsis };
+
+            static public TensorIndex None = new TensorIndex() { kind = Kind.None };
+
+            static public TensorIndex Null = new TensorIndex() { kind = Kind.Null };
+
+            static public TensorIndex Colon = Slice();
+
+            public static implicit operator TensorIndex(long value)
+            {
+                return TensorIndex.Single(value);
+            }
         }
 
         /// <summary>
@@ -4790,9 +4823,9 @@ namespace TorchSharp
             }
         }
 
-        static bool is_integral(Tensor t) => is_integral(t.dtype);
-        static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
-        static bool is_complex(Tensor t) => is_complex(t.dtype);
+        public static bool is_integral(Tensor t) => is_integral(t.dtype);
+        public static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
+        public static bool is_complex(Tensor t) => is_complex(t.dtype);
 
         public static ScalarType @bool = ScalarType.Bool;
 

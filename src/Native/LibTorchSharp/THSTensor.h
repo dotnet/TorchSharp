@@ -1117,6 +1117,7 @@ EXPORT_API(int8_t) THSTensor_type(const Tensor tensor);
 EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dim);
+EXPORT_API(Tensor) THSTensor_unsqueeze_(Tensor tensor, int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_upsample_nearest1d(
     const Tensor tensor,

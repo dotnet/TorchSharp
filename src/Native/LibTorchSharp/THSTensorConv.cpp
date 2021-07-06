@@ -386,6 +386,11 @@ Tensor THSTensor_unsqueeze(Tensor tensor, int64_t dim)
     CATCH_TENSOR(tensor->unsqueeze(dim))
 }
 
+Tensor THSTensor_unsqueeze_(Tensor tensor, int64_t dim)
+{
+    CATCH_TENSOR(tensor->unsqueeze_(dim))
+}
+
 Tensor THSTensor_upsample_nearest1d(
     const Tensor tensor,
     const int64_t* outputSize, const int outputSizeLength,
