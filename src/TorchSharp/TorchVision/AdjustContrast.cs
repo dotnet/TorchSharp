@@ -9,7 +9,7 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustContrast : Adjustment, ITransform
+    internal class AdjustContrast : ITransform
     {
         internal AdjustContrast(double contrast_factor)
         {
@@ -20,13 +20,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            if (contrast_factor == 1.0)
-                // Special case -- no change.
-                return input;
-
-            var dtype = torch.is_floating_point(input) ? input.dtype : torch.float32;
-            var mean = torch.mean(transforms.Grayscale().forward(input).to_type(dtype), new long[] { -3, -2, -1 }, keepDimension: true);
-            return Blend(input, mean, contrast_factor);
+            return transforms.functional.adjust_contrast(input, contrast_factor);
         }
 
         private double contrast_factor;

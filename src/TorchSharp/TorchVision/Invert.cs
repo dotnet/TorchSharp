@@ -16,12 +16,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            if (input.IsIntegral()) {
-                return -input + 255;
-            }
-            else {
-                return -input + 1.0.ToScalar();
-            }
+            return transforms.functional.invert(input);
         }
     }
 

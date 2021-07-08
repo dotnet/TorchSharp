@@ -9,7 +9,7 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustBrightness : Adjustment, ITransform
+    internal class AdjustBrightness : ITransform
     {
         internal AdjustBrightness(double brightness_factor)
         {
@@ -20,11 +20,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            if (brightness_factor == 1.0)
-                // Special case -- no change.
-                return input;
-
-            return Blend(input, torch.zeros_like(input), brightness_factor);
+            return transforms.functional.adjust_brightness(input, brightness_factor);
         }
 
         private double brightness_factor;

@@ -9,7 +9,7 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustGamma : Adjustment, ITransform
+    internal class AdjustGamma : ITransform
     {
         internal AdjustGamma(double gamma, double gain = 1.0)
         {

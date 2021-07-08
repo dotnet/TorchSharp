@@ -14,71 +14,14 @@ namespace TorchSharp.torchvision
         internal ConvertImageDType(ScalarType dtype)
         {
             this.dtype = dtype;
-            this.output_max = MaxValue(dtype);
         }
 
         public Tensor forward(Tensor image)
         {
-            if (image.dtype == this.dtype)
-                return image;
-
-            if (torch.is_floating_point(image)) {
-
-                if (torch.is_floating_point(this.dtype)) {
-                    return image.to_type(dtype);
-                }
-
-                if ((image.dtype == torch.float32 && (dtype == torch.int32 || dtype == torch.int64)) ||
-                    (image.dtype == torch.float64 && dtype == torch.int64))        {
-                    throw new ArgumentException($"The cast from {image.dtype} to {dtype} cannot be performed safely.");
-                }
-
-                var eps = 1e-3;
-                var result = image.mul(output_max + 1.0 - eps);
-                return result.to_type(dtype);
-
-            } else {
-                // Integer to floating point.
-
-                var input_max = MaxValue(image.dtype);
-
-                if (torch.is_floating_point(this.dtype)) {
-                    return image.to_type(dtype) / input_max;
-                }
-
-                if (input_max > output_max) {
-                    var factor = (input_max + 1) / (output_max + 1);
-                    image = torch.div(image, factor);
-                    return image.to_type(dtype);
-                }
-                else {
-                    var factor = (output_max + 1) / (input_max + 1);
-                    image = image.to_type(dtype);
-                    return image * factor;
-                }
-            }
-        }
-
-        private long MaxValue(ScalarType dtype)
-        {
-            switch (dtype) {
-            case ScalarType.Byte:
-                return byte.MaxValue;
-            case ScalarType.Int8:
-                return sbyte.MaxValue;
-            case ScalarType.Int16:
-                return short.MaxValue;
-            case ScalarType.Int32:
-                return int.MaxValue;
-            case ScalarType.Int64:
-                return long.MaxValue;
-            }
-
-            return 0L;
+            return transforms.functional.convert_image_dtype(image, dtype);
         }
 
         private ScalarType dtype;
-        private long output_max;
     }
 
     public static partial class transforms

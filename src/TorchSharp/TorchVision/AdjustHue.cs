@@ -9,46 +9,18 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustHue : Adjustment, ITransform
+    internal class AdjustHue : ITransform
     {
         internal AdjustHue(double hue_factor)
         {
             hue_factor %= 1.0;
 
-s            this.hue_factor = hue_factor;
+            this.hue_factor = hue_factor;
         }
 
         public Tensor forward(Tensor img)
         {
-            if (hue_factor == 0.0)
-                // Special case -- no change.
-                return img;
-
-            if (img.shape.Length < 4 || img.shape[img.shape.Length - 3] == 1)
-                return img;
-
-            var orig_dtype = img.dtype;
-            if (!torch.is_floating_point(img))
-                img = img.to_type(torch.float32) / 255.0;
-
-            var HSV = RGBtoHSV(img);
-
-            HSV.h = (HSV.h + hue_factor) % 1.0;
-
-            var img_hue_adj = HSVtoRGB(HSV.h, HSV.s, HSV.v);
-
-            if (orig_dtype.IsIntegral())
-                img_hue_adj = (img_hue_adj * 255.0).to_type(orig_dtype);
-
-            //
-            // Something really strange happens in the process -- the image comes out as 'NxCxHxW', but the
-            // underlying memory is formatted as if it's 'NxHxWxC'.
-            // So, as a workaround, we need to reshape it and permute.
-            //
-            long[] NHWC = new long[] { img.shape[0], img.shape[2], img.shape[3], img.shape[1] };
-            long[] permutation = new long[] { 0, 3, 1, 2 };
-
-            return img_hue_adj.reshape(NHWC).permute(permutation);
+            return transforms.functional.adjust_hue(img, hue_factor);
         }
 
         private double hue_factor;
@@ -70,7 +42,7 @@ s            this.hue_factor = hue_factor;
         /// <returns></returns>
         /// <remarks>
         /// Unlike Pytorch, TorchSharp will allow the hue_factor to lie outside the range [-0.5,0.5].
-        /// A factor of 0.75 has the same image effect as -.25
+        /// A factor of 0.75 has the same image  -.25
         /// </remarks>
         static public ITransform AdjustHue(double hue_factor)
         {

@@ -267,3 +267,4 @@ packages/
 .fake
 .ionide
 *.bin
+/*.png

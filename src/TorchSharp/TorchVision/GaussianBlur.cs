@@ -20,26 +20,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            var dtype = TensorExtensionMethods.IsIntegral(input.dtype) ? ScalarType.Float32 : input.dtype;
-
-            var kernel = GetGaussianKernel2d(dtype, input.device);
-            kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
-
-            var img = SqueezeIn(input, new ScalarType[] { kernel.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
-
-            // The padding needs to be adjusted to make sure that the output is the same size as the input.
-
-            var k0d2 = kernelSize[0] / 2;
-            var k1d2 = kernelSize[1] / 2;
-            var k0sm1 = kernelSize[0] - 1;
-            var k1sm1 = kernelSize[1] - 1;
-
-            var padding = new long[] { k0d2, k1d2, k0sm1 - k0d2, k1sm1 - k1d2 };
-
-            img = TorchSharp.torch.nn.functional.pad(img, padding, PaddingModes.Reflect);
-            img = torch.nn.functional.conv2d(img, kernel, groups: img.shape[img.shape.Length - 3]);
-
-            return SqueezeOut(img, needCast, needSqueeze, out_dtype);
+            return transforms.functional.gaussian_blur(input, kernelSize, new float[] { sigma });
         }
 
         private Tensor GetGaussianKernel1d(long size)

@@ -5,31 +5,34 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AutoContrast : ITransform
+    internal class Lambda : ITransform
     {
-        internal AutoContrast()
+        internal Lambda(Func<Tensor, Tensor> lambda)
         {
+            this.lambda = lambda;
         }
 
-        public Tensor forward(Tensor input)
+        public Tensor forward(Tensor img)
         {
-            return transforms.functional.autocontrast(input);
+            return lambda(img);
         }
+
+        private Func<Tensor,Tensor> lambda;
     }
 
     public static partial class transforms
     {
         /// <summary>
-        /// Autocontrast the pixels of the given image
+        /// Crop the image.
         /// </summary>
         /// <returns></returns>
-        static public ITransform AutoContrast()
+        /// <remarks>The image will not be cropped outside its boundaries.</remarks>
+        static public ITransform Lambda(Func<Tensor, Tensor> lambda)
         {
-            return new AutoContrast();
+            return new Lambda(lambda);
         }
     }
 }

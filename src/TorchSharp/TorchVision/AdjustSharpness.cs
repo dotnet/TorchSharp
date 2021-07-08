@@ -20,10 +20,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            if (input.shape[input.shape.Length - 1] <= 2 || input.shape[input.shape.Length - 2] <= 2)
-                return input;
-
-            return Blend(input, BlurredDegenerateImage(input), sharpness);
+            return transforms.functional.adjust_sharpness(input, sharpness);
         }
 
         private Tensor BlurredDegenerateImage(Tensor input)

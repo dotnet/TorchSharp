@@ -9,7 +9,7 @@ using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class AdjustSaturation : Adjustment, ITransform
+    internal class AdjustSaturation : ITransform
     {
         internal AdjustSaturation(double saturation_factor)
         {
@@ -20,11 +20,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor img)
         {
-            if (saturation_factor == 1.0)
-                // Special case -- no change.
-                return img;
-
-            return Blend(img, transforms.Grayscale().forward(img), saturation_factor);
+            return transforms.functional.adjust_saturation(img, saturation_factor);
         }
 
         private double saturation_factor;
