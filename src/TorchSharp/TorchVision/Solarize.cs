@@ -21,7 +21,7 @@ namespace TorchSharp.torchvision
                 return input.where(input < threshold, inverted);
         }
 
-        protected double threshold;
+        private double threshold;
     }
 
     public static partial class transforms

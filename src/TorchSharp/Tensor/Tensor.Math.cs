@@ -1791,6 +1791,11 @@ namespace TorchSharp
                 return left.sub(right);
             }
 
+            public static Tensor operator -(Scalar left, Tensor right)
+            {
+                return right.negative().add(left);
+            }
+
             public static Tensor operator /(Tensor left, Tensor right)
             {
                 return left.div(right);
@@ -1799,6 +1804,11 @@ namespace TorchSharp
             public static Tensor operator /(Tensor left, Scalar right)
             {
                 return left.div(right);
+            }
+
+            public static Tensor operator /(Scalar left, Tensor right)
+            {
+                return right.reciprocal().mul(left);
             }
 
             public static Tensor operator %(Tensor left, Tensor right)
@@ -2083,6 +2093,33 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor divide_(Tensor left, Scalar right) => left.div_(right);
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
+
+        /// <summary>
+        /// Sums the product of the elements of the input operands along dimensions specified using a notation based on the Einstein summation convention.
+        /// </summary>
+        /// <param name="equation">The subscripts for the Einstein summation.</param>
+        /// <param name="tensors">The operands to compute the Einstein sum of.</param>
+        /// <remarks>
+        /// Einsum allows computing many common multi-dimensional linear algebraic array operations by representing them in a short-hand format based on the
+        /// Einstein summation convention, given by equation.The details of this format are described below, but the general idea is to label every dimension
+        /// of the input operands with some subscript and define which subscripts are part of the output. The output is then computed by summing the product
+        /// of the elements of the operands along the dimensions whose subscripts are not part of the output.For example, matrix multiplication can be computed
+        /// using einsum as torch.einsum(“ij,jk->ik”, A, B). Here, j is the summation subscript and i and k the output subscripts(see section below for more details on why).
+        /// </remarks>
+        /// <returns></returns>
+        public static Tensor einsum(string equation, params Tensor[] tensors)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+        }
+
         /// <summary>
         /// Returns a new tensor with the exponential of the elements of the input tensor input.
         /// </summary>
@@ -2277,6 +2314,22 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
+
+        public static Tensor max(Tensor input) => input.max();
+
+        static public Tensor max(Tensor input, Tensor other) => input.max(other);
+
+        static public (Tensor values, Tensor indexes) max(Tensor input, long dimension, bool keepDim = false) => input.max(dimension, keepDim);
+
+        public static Tensor mean(Tensor input) => input.mean();
+
+        public static Tensor mean(Tensor input, long[] dimensions, bool keepDimension = false, ScalarType? type = null) => input.mean(dimensions, keepDimension, type);
+
+        public static Tensor min(Tensor input) => input.min();
+
+        static public Tensor min(Tensor input, Tensor other) => input.min(other);
+
+        static public (Tensor values, Tensor indexes) min(Tensor input, long dimension, bool keepDim = false) => input.min(dimension, keepDim);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.

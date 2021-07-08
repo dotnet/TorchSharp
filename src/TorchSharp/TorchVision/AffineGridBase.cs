@@ -55,7 +55,7 @@ namespace TorchSharp.torchvision
             base_grid[TensorIndex.Ellipsis, 1].copy_(y_grid);
             base_grid[TensorIndex.Ellipsis, 2].fill_(1);
 
-            var rescaled_theta = theta.transpose(1, 2) / torch.tensor(0.5 * w, 0.5 * h, dtype: theta.dtype, device: theta.device);
+            var rescaled_theta = theta.transpose(1, 2) / torch.tensor(new float[] { 0.5f * w, 0.5f * h }, dtype: theta.dtype, device: theta.device);
             var output_grid = base_grid.view(1, oh * ow, 3).bmm(rescaled_theta);
             return output_grid.view(1, oh, ow, 2);
         }

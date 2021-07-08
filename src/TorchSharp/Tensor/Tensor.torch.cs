@@ -56,6 +56,13 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        ///  Returns a view of the original tensor with its dimensions permuted.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="permutation">The desired ordering of dimensions</param>
+        static public Tensor permute(Tensor input, params long[] permutation) => input.permute(permutation);
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_hstack(IntPtr tensor, int len);
 
@@ -153,5 +160,26 @@ namespace TorchSharp
                 return new Tensor(res);
             }
         }
+
+        static public Tensor clamp(Tensor input, Scalar min, Scalar max) => input.clamp(min, max);
+
+        static public Tensor clamp_(Tensor input, Scalar min, Scalar max) => input.clamp_(min, max);
+
+        static public Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
+
+        static public Tensor clamp_max_(Tensor input, Scalar max) => input.clamp_max(max);
+
+        static public Tensor clamp_min(Tensor input, Scalar min) => input.clamp_min(min);
+
+        static public Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min(min);
+
+        /// <summary>
+        /// Return a tensor of elements selected from either x or y, depending on condition.
+        /// </summary>
+        /// <param name="condition">When true, yield x, otherwise yield y.</param>
+        /// <param name="x">Values selected at indices where condition is true</param>
+        /// <param name="y">Values selected at indices where condition is false</param>
+        /// <returns></returns>
+        static public Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
+        }
     }
-}

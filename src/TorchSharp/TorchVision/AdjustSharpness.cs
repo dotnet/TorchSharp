@@ -44,7 +44,7 @@ namespace TorchSharp.torchvision
             return result;
         }
 
-        protected double sharpness;
+        private double sharpness;
 
         private Tensor Blend(Tensor img1, Tensor img2, double ratio)
         {
@@ -65,6 +65,8 @@ namespace TorchSharp.torchvision
         /// <returns></returns>
         static public ITransform AdjustSharpness(double sharpness)
         {
+            if (sharpness < 0.0)
+                throw new ArgumentException("Negative sharpness factor");
             return new AdjustSharpness(sharpness);
         }
     }

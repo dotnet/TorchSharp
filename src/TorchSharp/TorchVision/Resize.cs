@@ -27,6 +27,9 @@ namespace TorchSharp.torchvision
             var iHeight = input.shape[hoffset];
             var iWidth = input.shape[hoffset + 1];
 
+            if (iHeight == height && iWidth == width)
+                return input;
+
             var h = height;
             var w = width;
 

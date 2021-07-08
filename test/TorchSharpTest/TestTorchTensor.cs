@@ -5357,6 +5357,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AdjustHueTensor()
+        {
+            {
+                using (var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3)) {
+                    var poster = torchvision.transforms.AdjustHue(0).forward(input);
+                    poster = poster.reshape(1, 2, 2, 3).permute(new long[] { 0, 3, 1, 2 });
+
+                    Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                    Assert.True(poster.allclose(input));
+                }
+            }
+        }
+
+        [Fact]
         public void RotateTensor()
         {
             {
@@ -5364,11 +5378,6 @@ namespace TorchSharp
                     var poster = torchvision.transforms.Rotate(90).forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
-                }
-                using (var input = torch.rand(16, 3, 25, 49)) {
-                    var poster = torchvision.transforms.Rotate(30, expand:true).forward(input);
-
-                    Assert.Equal(new long[] { 16, 3, 50, 26 }, poster.shape);
                 }
             }
         }

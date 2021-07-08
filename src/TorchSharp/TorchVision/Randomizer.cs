@@ -95,7 +95,7 @@ namespace TorchSharp.torchvision
         /// <returns></returns>
         static public ITransform RandomGrayscale(double p = 0.1)
         {
-            return new Randomizer(Grayscale(), p);
+            return new Randomizer(Grayscale(3), p);
         }
 
         /// <summary>

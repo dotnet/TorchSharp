@@ -3916,7 +3916,7 @@ namespace TorchSharp
             ///  Returns a view of the original tensor with its dimensions permuted.
             /// </summary>
             /// <param name="permutation">The desired ordering of dimensions</param>
-            public Tensor permute(long[] permutation)
+            public Tensor permute(params long[] permutation)
             {
                 unsafe {
                     fixed (long* pPermutation = permutation) {
@@ -4316,20 +4316,6 @@ namespace TorchSharp
                 var res = THSTensor_where(condition.Handle, this.Handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
-
-            public static Tensor einsum(string equation, params Tensor[] tensors)
-            {
-                using (var parray = new PinnedArray<IntPtr>()) {
-                    IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                    var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
-                }
             }
 
 
@@ -4759,6 +4745,11 @@ namespace TorchSharp
             {
                 return TensorIndex.Single(value);
             }
+
+            public static implicit operator TensorIndex(System.Range value)
+            {
+                return TensorIndex.Slice(value.Start.Value, value.End.Value);
+            }
         }
 
         /// <summary>
@@ -4784,7 +4775,7 @@ namespace TorchSharp
             BFloat16 = 15
         }
 
-        static bool is_integral(ScalarType type)
+        public static bool is_integral(ScalarType type)
         {
             switch (type) {
             case ScalarType.Byte:
@@ -4799,7 +4790,7 @@ namespace TorchSharp
             }
         }
 
-        static bool is_floating_point(ScalarType type)
+        public static bool is_floating_point(ScalarType type)
         {
             switch (type) {
             case ScalarType.BFloat16:
@@ -4812,7 +4803,7 @@ namespace TorchSharp
             }
         }
 
-        static bool is_complex(ScalarType type)
+        public static bool is_complex(ScalarType type)
         {
             switch (type) {
             case ScalarType.ComplexFloat32:

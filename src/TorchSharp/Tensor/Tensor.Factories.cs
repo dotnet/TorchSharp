@@ -163,6 +163,11 @@ namespace TorchSharp
             return zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
 
+        /// <summary>
+        /// Returns a tensor filled with the scalar value 0, with the same size as input.
+        /// </summary>
+        public static Tensor zeros_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.zeros_like(dtype, device, requiresGrad);
+
 
         // ones()
 
@@ -226,6 +231,11 @@ namespace TorchSharp
             return ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
 
+        /// <summary>
+        /// Returns a tensor filled with the scalar value 1, with the same size as input.
+        /// </summary>
+        public static Tensor ones_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.ones_like(dtype, device, requiresGrad);
+
 
         // empty()
 
@@ -288,6 +298,12 @@ namespace TorchSharp
         {
             return empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
+
+        /// <summary>
+        /// Returns a tensor filled with uninitialized data, with the same size as input.
+        /// </summary>
+        public static Tensor empty_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.empty_like(dtype, device, requiresGrad);
+
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
@@ -381,7 +397,10 @@ namespace TorchSharp
             return full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
         }
 
-
+        /// <summary>
+        /// Returns a tensor with the same size as input filled with 'value.'
+        /// </summary>
+        static public Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.full_like(value, dtype, device, requiresGrad);
 
 
         [DllImport("LibTorchSharp")]
@@ -737,7 +756,7 @@ namespace TorchSharp
         public static Tensor tensor(float scalar, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
-            var handle = THSTensor_newFloat16Scalar(scalar, (int)device.type, device.index, requiresGrad);
+            var handle = THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requiresGrad);
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(handle);
         }
@@ -779,23 +798,6 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(float real, float imaginary = 0.0f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            device = torch.InitializeDevice(device);
-            var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            if (device is not null) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
-            }
-            return tensor;
-        }
-
-        /// <summary>
-        /// Create a scalar tensor from a single value
-        /// </summary>
         public static Tensor tensor(System.Numerics.Complex scalar, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
@@ -809,24 +811,6 @@ namespace TorchSharp
             }
             return tensor;
         }
-
-        /// <summary>
-        /// Create a scalar tensor from a single value
-        /// </summary>
-        public static Tensor tensor(double real, double imaginary = 0.0f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            device = torch.InitializeDevice(device);
-            var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            var tensor = new Tensor(handle);
-            if (device is not null) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
-            }
-            return tensor;
-        }
-
 
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
