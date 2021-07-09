@@ -684,7 +684,7 @@ namespace TorchSharp
             if (device is not null) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
+                tensor = tensor.to_type(dtype.Value);
             }
             return tensor;
         }
@@ -745,7 +745,7 @@ namespace TorchSharp
             if (device is not null) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
+                tensor = tensor.to_type(dtype.Value);
             }
             return tensor;
         }
@@ -773,7 +773,7 @@ namespace TorchSharp
             if (device is not null) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
+                tensor = tensor.to_type(dtype.Value);
             }
             return tensor;
         }
@@ -790,7 +790,7 @@ namespace TorchSharp
             if (device is not null) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
+                tensor = tensor.to_type(dtype.Value);
             }
             return tensor;
         }
@@ -807,7 +807,7 @@ namespace TorchSharp
             if (device is not null) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
-                tensor.to_type(dtype.Value);
+                tensor = tensor.to_type(dtype.Value);
             }
             return tensor;
         }
@@ -843,7 +843,7 @@ namespace TorchSharp
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 }
                 else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -922,7 +922,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1001,7 +1001,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1080,7 +1080,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1158,7 +1158,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1236,7 +1236,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1315,7 +1315,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1394,7 +1394,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1473,7 +1473,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }
@@ -1552,7 +1552,7 @@ namespace TorchSharp
                 if (device is not null) {
                     tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
                 } else if (dtype.HasValue) {
-                    tensor.to_type(dtype.Value);
+                    tensor = tensor.to_type(dtype.Value);
                 }
                 return tensor;
             }

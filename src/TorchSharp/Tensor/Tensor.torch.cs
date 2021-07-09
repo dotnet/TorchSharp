@@ -45,7 +45,7 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         /// <remarks>All tensors need to be of the same size.</remarks>
-        public static Tensor stack(IList<Tensor> tensors, long dimension)
+        public static Tensor stack(IEnumerable<Tensor> tensors, long dimension = 0)
         {
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
@@ -160,6 +160,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
         }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTorch_lstsq(IntPtr input, IntPtr A, out IntPtr pQR);
+
+        public static (Tensor Solution, Tensor QR) lstsq(Tensor input, Tensor A)
+        {
+            var solution = THSTorch_lstsq(input.Handle, A.Handle, out var qr);
+            if (solution == IntPtr.Zero || qr == IntPtr.Zero)
+                torch.CheckForErrors();
+            return (new Tensor(solution), new Tensor(qr));
+        }
+
 
         static public Tensor clamp(Tensor input, Scalar min, Scalar max) => input.clamp(min, max);
 

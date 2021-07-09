@@ -54,6 +54,8 @@ EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
 EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length));
 EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length));
 
+EXPORT_API(Tensor) THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr);
+
 EXPORT_API(int8_t) THSTorch_scalar_type(Scalar value);
 
 // Dispose the scalar.

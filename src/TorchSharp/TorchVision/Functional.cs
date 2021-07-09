@@ -4,6 +4,16 @@ using System.Linq;
 
 using static TorchSharp.torch;
 
+// A number of implementation details in this file have been translated from the Python version or torchvision,
+// largely located in the files found in this folder:
+//
+// https://github.com/pytorch/vision/tree/993325dd82567f5d4f28ccb321e3a9a16984d2d8/torchvision/transforms
+//
+// The origin has the following copyright notice and license:
+//
+// https://github.com/pytorch/vision/blob/master/LICENSE
+//
+
 namespace TorchSharp.torchvision
 {
     public static partial class transforms
@@ -11,6 +21,15 @@ namespace TorchSharp.torchvision
         public static partial class functional
         {
 
+            /// <summary>
+            /// Adjust the brightness of an image.
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="brightness_factor">
+            /// How much to adjust the brightness. Can be any non negative number.
+            /// 0 gives a black image, 1 gives the original image while 2 increases the brightness by a factor of 2.
+            /// </param>
+            /// <returns></returns>
             public static Tensor adjust_brightness(Tensor img, double brightness_factor)
             {
                 if (brightness_factor == 1.0)
@@ -20,6 +39,15 @@ namespace TorchSharp.torchvision
                 return Blend(img, torch.zeros_like(img), brightness_factor);
             }
 
+            /// <summary>
+            /// Adjust the contrast of the image. 
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="contrast_factor">
+            /// How much to adjust the contrast. Can be any non-negative number.
+            /// 0 gives a solid gray image, 1 gives the original image while 2 increases the contrast by a factor of 2.
+            /// </param>
+            /// <returns></returns>
             public static Tensor adjust_contrast(Tensor img, double contrast_factor)
             {
                 if (contrast_factor == 1.0)
@@ -31,6 +59,18 @@ namespace TorchSharp.torchvision
                 return Blend(img, mean, contrast_factor);
             }
 
+            /// <summary>
+            /// Perform gamma correction on an image.
+            /// 
+            /// See: https://en.wikipedia.org/wiki/Gamma_correction
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="gamma">
+            /// Non negative real number.
+            /// gamma larger than 1 make the shadows darker, while gamma smaller than 1 make dark regions lighter.
+            /// </param>
+            /// <param name="gain">The constant multiplier in the gamma correction equation.</param>
+            /// <returns></returns>
             public static Tensor adjust_gamma(Tensor img, double gamma, double gain = 1.0)
             {
                 var dtype = img.dtype;
@@ -42,6 +82,23 @@ namespace TorchSharp.torchvision
                 return convert_image_dtype(img, dtype);
             }
 
+            /// <summary>
+            /// Adjust the hue of an image.
+            /// The image hue is adjusted by converting the image to HSV and cyclically shifting the intensities in the hue channel(H).
+            /// The image is then converted back to original image mode.
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="hue_factor">
+            /// How much to shift the hue channel. 0 means no shift in hue.
+            /// Hue is often defined in degrees, with 360 being a full turn on the color wheel.
+            /// In this library, 1.0 is a full turn, which means that 0.5 and -0.5 give complete reversal of
+            /// the hue channel in HSV space in positive and negative direction respectively.
+            /// </param>
+            /// <returns></returns>
+            /// <remarks>
+            /// Unlike Pytorch, TorchSharp will allow the hue_factor to lie outside the range [-0.5,0.5].
+            /// A factor of 0.75 has the same effect as -.25
+            /// </remarks>
             public static Tensor adjust_hue(Tensor img, double hue_factor)
             {
                 if (hue_factor == 0.0)
@@ -67,6 +124,15 @@ namespace TorchSharp.torchvision
                 return img_hue_adj;
             }
 
+            /// <summary>
+            /// Adjust the color saturation of an image.
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="saturation_factor">
+            /// How much to adjust the saturation. 0 will give a black and white image, 1 will give the original image
+            /// while 2 will enhance the saturation by a factor of 2.
+            /// </param>
+            /// <returns></returns>
             public static Tensor adjust_saturation(Tensor img, double saturation_factor)
             {
                 if (saturation_factor == 1.0)
@@ -76,14 +142,84 @@ namespace TorchSharp.torchvision
                 return Blend(img, transforms.functional.rgb_to_grayscale(img), saturation_factor);
             }
 
-            public static Tensor adjust_sharpness(Tensor input, double sharpness)
+            /// <summary>
+            /// Adjust the sharpness of the image. 
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="sharpness">
+            /// How much to adjust the sharpness. Can be any non negative number.
+            /// 0 gives a blurred image, 1 gives the original image while 2 increases the sharpness by a factor of 2.
+            /// </param>
+            /// <returns></returns>
+            public static Tensor adjust_sharpness(Tensor img, double sharpness)
             {
-                if (input.shape[input.shape.Length - 1] <= 2 || input.shape[input.shape.Length - 2] <= 2)
-                    return input;
+                if (img.shape[img.shape.Length - 1] <= 2 || img.shape[img.shape.Length - 2] <= 2)
+                    return img;
 
-                return Blend(input, BlurredDegenerateImage(input), sharpness);
+                return Blend(img, BlurredDegenerateImage(img), sharpness);
             }
 
+            /// <summary>
+            /// Apply affine transformation on the image keeping image center invariant.
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="shear">Shear angle value in degrees between -180 to 180, clockwise direction. </param>
+            /// <param name="angle">Rotation angle in degrees between -180 and 180, clockwise direction</param>
+            /// <param name="translate">Horizontal and vertical translations (post-rotation translation)</param>
+            /// <param name="scale">Overall scale</param>
+            /// <param name="interpolation">Desired interpolation.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
+            /// <returns></returns>
+            public static Tensor affine(Tensor img, IList<float> shear = null, float angle = 0.0f, IList<int> translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
+            {
+                IList<float> fills = (fill.HasValue) ? new float[] { fill.Value } : null;
+
+                if (translate == null) {
+                    translate = new int[] { 0, 0 };
+                }
+
+                if (shear == null) {
+                    shear = new float[] { 0.0f, 0.0f };
+                }
+
+                if (shear.Count == 1) {
+                    shear = new float[] { shear[0], shear[0] };
+                }
+
+                var matrix = GetInverseAffineMatrix((0.0f, 0.0f), angle, (translate[0], translate[1]), scale, (shear[0], shear[1]));
+
+                var dtype = torch.is_floating_point(img) ? img.dtype : ScalarType.Float32;
+                var theta = torch.tensor(matrix, dtype: dtype, device: img.device).reshape(1, 2, 3);
+
+                var end_ = img.shape.Length;
+
+                var grid = GenerateAffineGrid(theta, img.shape[end_ - 1], img.shape[end_ - 2], img.shape[end_ - 1], img.shape[end_ - 2]);
+                return ApplyGridTransform(img, grid, InterpolationMode.Nearest, fill: fills);
+            }
+
+            /// <summary>
+            /// Apply affine transformation on the image keeping image center invariant.
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="img">An image tensor.</param>
+            /// <param name="shear">Shear angle value in degrees between -180 to 180, clockwise direction. </param>
+            /// <param name="angle">Rotation angle in degrees between -180 and 180, clockwise direction</param>
+            /// <param name="translate">Horizontal and vertical translations (post-rotation translation)</param>
+            /// <param name="scale">Overall scale</param>
+            /// <param name="interpolation">Desired interpolation.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
+            /// <returns></returns>
+            public static Tensor affine(Tensor img, float shear, float angle = 0.0f, IList<int> translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
+            {
+                return affine(img, new float[] { shear, 0.0f }, angle, translate, scale, interpolation, fill);
+            }
+
+            /// <summary>
+            /// Maximize contrast of an image by remapping its pixels per channel so that the lowest becomes black and the lightest becomes white.
+            /// </summary>
+            /// <param name="input"></param>
+            /// <returns></returns>
             public static Tensor autocontrast(Tensor input)
             {
                 var bound = input.IsIntegral() ? 255.0f : 1.0f;
@@ -132,6 +268,9 @@ namespace TorchSharp.torchvision
             /// <returns></returns>
             public static Tensor center_crop(Tensor input, int size) => center_crop(input, size, size);
 
+            /// <summary>
+            /// Convert a tensor image to the given dtype and scale the values accordingly
+            /// </summary>
             public static Tensor convert_image_dtype(Tensor image, ScalarType dtype = ScalarType.Float32)
             {
                 if (image.dtype == dtype)
@@ -206,9 +345,22 @@ namespace TorchSharp.torchvision
                 return crop(input, top, left, size, size);
             }
 
+            /// <summary>
+            /// Equalize the histogram of an image by applying a non-linear mapping to the input in order to create a uniform distribution of grayscale values in the output.
+            /// </summary>
+            /// <param name="input">The image tensor</param>
+            /// <returns></returns>
             public static Tensor equalize(Tensor input)
             {
-                throw new NotImplementedException("equalize not yet implemented");
+                if (input.dtype != ScalarType.Byte)
+                    throw new ArgumentException($"equalize() requires a byte image, but the type of the argument is {input.dtype}.");
+
+                if (input.ndim == 3) {
+                    return EqualizeSingleImage(input);
+                }
+
+                var images = Enumerable.Range(0,(int)input.shape[0]).Select(i => EqualizeSingleImage(input[i]));
+                return torch.stack(images);
             }
 
             /// <summary>
@@ -296,8 +448,18 @@ namespace TorchSharp.torchvision
                 return gaussian_blur(input, new long[] { kernelHeight, kernelWidth }, new float[] { sigma_x, sigma_y });
             }
 
+            /// <summary>
+            /// Horizontally flip the given image.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <returns></returns>
             public static Tensor hflip(Tensor input) => input.flip(-1);
 
+            /// <summary>
+            /// Invert the colors of an RGB/grayscale image.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <returns></returns>
             public static Tensor invert(Tensor input)
             {
                 if (input.IsIntegral()) {
@@ -307,6 +469,14 @@ namespace TorchSharp.torchvision
                 }
             }
 
+            /// <summary>
+            /// Normalize a float tensor image with mean and standard deviation.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="means">Sequence of means for each channel.</param>
+            /// <param name="stdevs">Sequence of standard deviations for each channel.</param>
+            /// <param name="dtype">Bool to make this operation inplace.</param>
+            /// <returns></returns>
             public static Tensor normalize(Tensor input, double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32)
             {
                 if (means.Length != stdevs.Length)
@@ -320,16 +490,56 @@ namespace TorchSharp.torchvision
                 return (input - mean) / stdev;
             }
 
+            /// <summary>
+            /// Pad the given image on all sides with the given “pad” value.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="padding">
+            /// Padding on each border. If a single int is provided this is used to pad all borders.
+            /// If sequence of length 2 is provided this is the padding on left/right and top/bottom respectively.
+            /// If a sequence of length 4 is provided this is the padding for the left, top, right and bottom borders respectively.
+            /// </param>
+            /// <param name="fill">Pixel fill value for constant fill.</param>
+            /// <param name="padding_mode"></param>
+            /// <returns></returns>
             public static Tensor pad(Tensor input, long[] padding, int fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
             {
                 return torch.nn.functional.pad(input, padding, padding_mode, fill);
             }
 
-            public static Tensor perspective(Tensor input)
+            /// <summary>
+            /// Perform perspective transform of the given image.
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="img">An image tensor</param>
+            /// <param name="startpoints">List containing four lists of two integers corresponding to four corners [top-left, top-right, bottom-right, bottom-left] of the original image.</param>
+            /// <param name="endpoints">List containing four lists of two integers corresponding to four corners [top-left, top-right, bottom-right, bottom-left] of the transformed image.</param>
+            /// <param name="interpolation">Desired interpolation. Only InterpolationMode.Nearest, InterpolationMode.Bilinear are supported. </param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
+            /// <returns></returns>
+            public static Tensor perspective(Tensor img, IList<IList<int>> startpoints, IList<IList<int>> endpoints, InterpolationMode interpolation = InterpolationMode.Bilinear, IList<float> fill = null)
             {
-                throw new NotImplementedException("perspective not yet implemented");
+                if (interpolation != InterpolationMode.Nearest && interpolation != InterpolationMode.Bilinear)
+                    throw new ArgumentException($"Invalid interpolation mode for 'perspective': {interpolation}. Use 'nearest' or 'bilinear'.");
+
+                var coeffs = GetPerspectiveCoefficients(startpoints, endpoints);
+
+                var _end = img.shape.Length;
+                var ow = img.shape[_end - 1];
+                var oh = img.shape[_end - 2];
+
+                var dtype = torch.is_floating_point(img) ? img.dtype : ScalarType.Float32;
+                var grid = PerspectiveGrid(coeffs, ow, oh, dtype: dtype, device: img.device);
+
+                return ApplyGridTransform(img, grid, interpolation, fill);
             }
 
+            /// <summary>
+            /// Posterize an image by reducing the number of bits for each color channel.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="bits">The number of high-order bits to keep.</param>
+            /// <returns></returns>
             public static Tensor posterize(Tensor input, int bits)
             {
                 if (input.dtype != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
@@ -337,10 +547,18 @@ namespace TorchSharp.torchvision
                 return input & ByteTensor.from((byte)mask);
             }
 
-            public static Tensor resize(Tensor input, int height, int width, InterpolateMode mode, int? maxSize = null, bool antialias = false)
+            /// <summary>
+            /// Resize the input image to the given size. 
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="height"></param>
+            /// <param name="width"></param>
+            /// <param name="maxSize"></param>
+            /// <returns></returns>
+            public static Tensor resize(Tensor input, int height, int width, int? maxSize = null)
             {
-                if (antialias && mode != InterpolateMode.Bilinear && mode != InterpolateMode.Bicubic)
-                    throw new ArgumentException("Antialias option is supported for bilinear and bicubic interpolation modes only");
+                // For now, we don't allow any other modes.
+                const InterpolationMode interpolation = InterpolationMode.Nearest;
 
                 var hoffset = input.Dimensions - 2;
                 var iHeight = input.shape[hoffset];
@@ -368,23 +586,40 @@ namespace TorchSharp.torchvision
                     }
                 }
 
-                if (mode != InterpolateMode.Nearest) {
+                if (interpolation != InterpolationMode.Nearest) {
                     throw new NotImplementedException("Interpolation mode != 'Nearest'");
                 }
 
 
                 var img = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
-                img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: mode, align_corners: null);
+                img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: interpolation, align_corners: null);
 
                 return SqueezeOut(img, needCast, needSqueeze, dtype);
             }
 
-            public static Tensor resized_crop(Tensor input, int top, int left, int height, int width, int newHeight, int newWidth, InterpolateMode mode = InterpolateMode.Nearest)
+            /// <summary>
+            /// Crop the given image and resize it to desired size.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+            /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+            /// <param name="height">Height of the crop box.</param>
+            /// <param name="width">Width of the crop box.</param>
+            /// <param name="newHeight">New height.</param>
+            /// <param name="newWidth">New width.</param>
+            /// <returns></returns>
+            public static Tensor resized_crop(Tensor input, int top, int left, int height, int width, int newHeight, int newWidth)
             {
-                return resize(crop(input, top, left, height, width), newHeight, newWidth, mode);
+                return resize(crop(input, top, left, height, width), newHeight, newWidth);
             }
 
+            /// <summary>
+            /// Convert RGB image to grayscale version of image.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="num_output_channels">The number of channels of the output image. Value must be 1 or 3.</param>
+            /// <returns></returns>
             public static Tensor rgb_to_grayscale(Tensor input, int num_output_channels = 1)
             {
                 if (num_output_channels != 1 && num_output_channels != 3)
@@ -400,7 +635,10 @@ namespace TorchSharp.torchvision
                 return num_output_channels == 3 ? img.expand(input.shape) : img;
             }
 
-            public static Tensor rotate(Tensor img, float angle, GridSampleMode interpolation = GridSampleMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
+            /// <summary>
+            /// Rotate the image by angle, counter-clockwise.
+            /// </summary>
+            public static Tensor rotate(Tensor img, float angle, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
             {
                 var center_f = (0.0f, 0.0f);
 
@@ -414,15 +652,26 @@ namespace TorchSharp.torchvision
                 return RotateImage(img, matrix, interpolation, expand, fill);
             }
 
+            /// <summary>
+            /// Solarize an RGB/grayscale image by inverting all pixel values above a threshold.
+            /// </summary>
+            /// <returns></returns>
             public static Tensor solarize(Tensor input, double threshold)
             {
                 using (var inverted = invert(input))
                     return torch.where(input < threshold, input, inverted);
             }
 
+            /// <summary>
+            /// Vertically flip the given image.
+            /// </summary>
             public static Tensor vflip(Tensor input) => input.flip(-2);
 
-            private static Tensor RotateImage(Tensor img, IList<float> matrix, GridSampleMode interpolation, bool expand, IList<float> fill)
+
+            //
+            // Supporting implementation details.
+            //
+            private static Tensor RotateImage(Tensor img, IList<float> matrix, InterpolationMode interpolation, bool expand, IList<float> fill)
             {
                 var (w, h) = GetImageSize(img);
                 var (ow, oh) = expand ? ComputeOutputSize(matrix, w, h) : (w, h);
@@ -538,7 +787,7 @@ namespace TorchSharp.torchvision
 
             }
 
-            private static Tensor ApplyGridTransform(Tensor img, Tensor grid, GridSampleMode mode, IList<float> fill = null)
+            private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float> fill = null)
             {
                 img = SqueezeIn(img, new ScalarType[] { grid.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
 
@@ -551,7 +800,7 @@ namespace TorchSharp.torchvision
                     img = torch.cat(new Tensor[] { img, dummy }, dimension: 1);
                 }
 
-                img = nn.functional.grid_sample(img, grid, mode: mode, padding_mode: GridSamplePaddingMode.Zeros, align_corners: false);
+                img = nn.functional.grid_sample(img, grid, mode: (GridSampleMode)mode, padding_mode: GridSamplePaddingMode.Zeros, align_corners: false);
 
 
                 if (fill != null) {
@@ -562,7 +811,7 @@ namespace TorchSharp.torchvision
                     var len_fill = fill.Count;
                     var fill_img = torch.tensor(fill, dtype: img.dtype, device: img.device).view(1, len_fill, 1, 1).expand_as(img);
 
-                    if (mode == GridSampleMode.Nearest) {
+                    if (mode == InterpolationMode.Nearest) {
                         mask = mask < 0.5;
                         img[mask] = fill_img[mask];
                     } else {
@@ -638,7 +887,75 @@ namespace TorchSharp.torchvision
                 return (img.shape[hOffset + 1], img.shape[hOffset]);
             }
 
-            private static Tensor SqueezeIn(Tensor img, IList<ScalarType> req_dtypes, out bool needCast, out bool needSqueeze, out ScalarType dtype)
+            private static Tensor PerspectiveGrid(IList<float> coeffs, long ow, long oh, ScalarType dtype, Device device)
+            {
+                var theta1 = torch.tensor(new float[] { coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5] }, dtype: dtype, device: device).view(1, 2, 3);
+                var theta2 = torch.tensor(new float[] { coeffs[6], coeffs[7], 1.0f, coeffs[6], coeffs[7], 1.0f }, dtype: dtype, device: device).view(1, 2, 3);
+
+                var d = 0.5f;
+                var base_grid = torch.empty(1, oh, ow, 3, dtype: dtype, device: device);
+                var x_grid = torch.linspace(d, ow * 1.0 + d - 1.0, steps: ow, device: device);
+                base_grid[TensorIndex.Ellipsis, 0].copy_(x_grid);
+
+                var y_grid = torch.linspace(d, oh * 1.0 + d - 1.0, steps: oh, device: device).unsqueeze_(-1);
+                base_grid[TensorIndex.Ellipsis, 1].copy_(y_grid);
+                base_grid[TensorIndex.Ellipsis, 2].fill_(1);
+
+                var rescaled_theta1 = theta1.transpose(1, 2) / torch.tensor(new float[] { 0.5f * ow, 0.5f * oh }, dtype: dtype, device: device);
+
+                var output_grid1 = base_grid.view(1, oh * ow, 3).bmm(rescaled_theta1);
+                var output_grid2 = base_grid.view(1, oh * ow, 3).bmm(theta2.transpose(1, 2));
+                var output_grid = output_grid1 / output_grid2 - 1.0f;
+
+                return output_grid.view(1, oh, ow, 2);
+            }
+
+            private static IList<float> GetPerspectiveCoefficients(IList<IList<int>> startpoints, IList<IList<int>> endpoints)
+            {
+                var a_matrix = torch.zeros(2 * startpoints.Count, 8, dtype: torch.float32);
+
+                for (int i = 0; i < startpoints.Count; i++) {
+                    var p1 = endpoints[i];
+                    var p2 = startpoints[i];
+                    a_matrix[2 * i, TensorIndex.Colon] = torch.tensor(new int[] { p1[0], p1[1], 1, 0, 0, 0, -p2[0] * p1[0], -p2[0] * p1[1] }, dtype: torch.float32);
+                    a_matrix[2 * i + 1, TensorIndex.Colon] = torch.tensor(new int[] { 0, 0, 0, p1[0], p1[1], 1, -p2[1] * p1[0], -p2[1] * p1[1] }, dtype: torch.float32);
+                }
+
+                var b_matrix = torch.tensor(startpoints.SelectMany(sp => sp).ToArray(), dtype: torch.float32).view(8);
+
+                var a_str = a_matrix.ToString(true);
+                var b_str = b_matrix.ToString(true);
+
+                var res = torch.linalg.lstsq(a_matrix, b_matrix).Solution;
+                return res.Data<float>().ToArray();
+            }
+
+            private static Tensor EqualizeSingleImage(Tensor img)
+            {
+                var channels = new Tensor[] { img[0], img[1], img[2] };
+                return torch.stack(channels.Select(c => ScaleChannel(c)));
+            }
+
+            private static Tensor ScaleChannel(Tensor img_chan)
+            {
+                var hist = img_chan.is_cuda ?
+                    torch.histc(img_chan.to(torch.float32), bins: 256, min: 0, max: 255) :
+                    torch.bincount(img_chan.view(-1), minlength: 256);
+
+                var nonzero_hist = hist[hist != 0];
+
+                var step = torch.div(nonzero_hist[TensorIndex.Slice(null, -1)].sum(), 255, rounding_mode: RoundingMode.floor);
+
+                if (step.count_nonzero().ToInt32() == 0)
+                    return img_chan;
+
+                var lut = torch.div(torch.cumsum(hist, 0) + torch.div(step, 2, rounding_mode: RoundingMode.floor), step, rounding_mode: RoundingMode.floor);
+                lut = torch.nn.functional.pad(lut, new long[] { 1, 0 })[TensorIndex.Slice(null,-1)].clamp(0, 255);
+
+                return lut[img_chan.to(torch.int64)].to(torch.uint8);
+            }
+
+            internal static Tensor SqueezeIn(Tensor img, IList<ScalarType> req_dtypes, out bool needCast, out bool needSqueeze, out ScalarType dtype)
             {
                 needSqueeze = false;
 
@@ -658,7 +975,7 @@ namespace TorchSharp.torchvision
                 return img;
             }
 
-            private static Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
+            internal static Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
             {
                 if (needSqueeze) {
                     img = img.squeeze(0);

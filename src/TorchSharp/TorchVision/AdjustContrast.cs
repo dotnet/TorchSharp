@@ -29,7 +29,7 @@ namespace TorchSharp.torchvision
     public static partial class transforms
     {
         /// <summary>
-        /// Adjust the sharpness of the image. 
+        /// Adjust the contrast of the image. 
         /// </summary>
         /// <param name="contrast_factor">
         /// How much to adjust the contrast. Can be any non-negative number.

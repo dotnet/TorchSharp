@@ -23,30 +23,46 @@ namespace TorchSharp.Examples
 
             var tensors = LoadImages(images, 4, 3, 256, 256);
 
-            var transform = torchvision.transforms.Compose(
-                torchvision.transforms.ConvertImageDType(ScalarType.Float32),
-                torchvision.transforms.Pad(new long[] { 0, 16, 32, 64 }),
-                torchvision.transforms.ConvertImageDType(ScalarType.Byte),
-                torchvision.transforms.Resize(256,256)
-                );
-
-            //var rotated = tensors.Select(t => transform.forward(t)).ToList();
-
             var first = tensors[0];
 
-            //var second = transform.forward(first);
-            var second = first;
-            second = torchvision.transforms.functional.convert_image_dtype(second);
-            second = torchvision.transforms.functional.solarize(second, 0.85);
+            int n = 0;
 
-            second = torchvision.transforms.functional.convert_image_dtype(second, dtype: ScalarType.Byte);
+            // First, use the transform version.
 
-            for (var n = 0; n < second.shape[0]; n++) {
+            var transform = torchvision.transforms.Compose(
+                torchvision.transforms.ConvertImageDType(ScalarType.Float32),
+                //torchvision.transforms.ColorJitter(.5f, .5f, .5f, .25f),
+                torchvision.transforms.ConvertImageDType(ScalarType.Byte),
+                torchvision.transforms.Resize(256, 256)
+                );
 
-                var image = second[n].to_type(ScalarType.Byte); // CxHxW
+            var second = transform.forward(first);
+
+            for (; n < second.shape[0]; n++) {
+
+                var image = second[n]; // CxHxW
                 var channels = image.shape[0];
 
                 using (var stream = File.OpenWrite(@"D:\repos\niklasgustafsson\TorchSharp\output-" + n + ".png")) {
+                    var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
+                    bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
+                }
+            }
+
+            // Then the functional API version.
+
+            second = torchvision.transforms.functional.convert_image_dtype(first);
+            // Have to do this to make sure that everything's in the right format before saving.
+            second = torchvision.transforms.functional.convert_image_dtype(second, dtype: ScalarType.Byte);
+            second = torchvision.transforms.functional.equalize(second);
+            second = torchvision.transforms.functional.resize(second, 256, 256);
+
+            for (n = 0; n < second.shape[0]; n++) {
+
+                var image = second[n]; // CxHxW
+                var channels = image.shape[0];
+
+                using (var stream = File.OpenWrite(@"D:\repos\niklasgustafsson\TorchSharp\output-" + (n + first.shape[0]) + ".png")) {
                     var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
                     bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
                 }
@@ -91,7 +107,7 @@ namespace TorchSharp.Examples
 
                             if (bitmap.Width != width || bitmap.Height != height) {
                                 var t = inputTensor.reshape(1, channels, bitmap.Height, bitmap.Width);
-                                finalized = torchvision.transforms.Resize(height, width).forward(t).reshape(imgSize);
+                                finalized = torchvision.transforms.functional.resize(t, height, width).reshape(imgSize);
                             }
 
                             dataTensor.index_put_(finalized, TensorIndex.Single(j));
@@ -182,8 +198,7 @@ namespace TorchSharp.Examples
                 // Greyscale
 
                 outBytes = inputBytes;
-            }
-            else {
+            } else {
 
                 outBytes = new byte[(channelCount + 1) * channelLength];
 

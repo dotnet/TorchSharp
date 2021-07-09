@@ -3,10 +3,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Xunit;
+using System.Collections.Generic;
 
 using static TorchSharp.torch;
 using static TorchSharp.TensorExtensionMethods;
+
+using Xunit;
 
 #nullable enable
 
@@ -5362,7 +5364,9 @@ namespace TorchSharp
             {
                 using (var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3)) {
                     var poster = torchvision.transforms.AdjustHue(0).forward(input);
-                    poster = poster.reshape(1, 2, 2, 3).permute(new long[] { 0, 3, 1, 2 });
+
+                    var istr = input.ToString(true);
+                    var pstr = poster.ToString(true);
 
                     Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
                     Assert.True(poster.allclose(input));
@@ -5397,6 +5401,33 @@ namespace TorchSharp
                     var poster = torchvision.transforms.AutoContrast().forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void PerspectiveTest()
+        {
+            {
+                using (var input = torch.ones(1, 3, 8, 8)) {
+
+                    var startpoints = new List<IList<int>>();
+                    startpoints.Add(new int[] { 0, 0 });
+                    startpoints.Add(new int[] { 7, 0 });
+                    startpoints.Add(new int[] { 7, 7 });
+                    startpoints.Add(new int[] { 0, 7 });
+
+                    var endpoints = new List<IList<int>>();
+                    endpoints.Add(new int[] { 1, 1 });
+                    endpoints.Add(new int[] { 5, 2 });
+                    endpoints.Add(new int[] { 5, 6 });
+                    endpoints.Add(new int[] { 3, 7 });
+
+                    var poster = torchvision.transforms.functional.perspective(input, startpoints, endpoints);
+
+                    var pStr = poster.ToString(true);
+
+                    Assert.Equal(new long[] { 1, 3, 8, 8 }, poster.shape);
                 }
             }
         }

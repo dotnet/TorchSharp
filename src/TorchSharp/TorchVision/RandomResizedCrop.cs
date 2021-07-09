@@ -8,7 +8,7 @@ namespace TorchSharp.torchvision
 {
     internal class RandomResizedCrop : ITransform
     {
-        public RandomResizedCrop(int height, int width, double scaleMin, double scaleMax, double ratioMin, double ratioMax, InterpolateMode mode)
+        public RandomResizedCrop(int height, int width, double scaleMin, double scaleMax, double ratioMin, double ratioMax)
         {
             this.height = height;
             this.width = width;
@@ -16,7 +16,6 @@ namespace TorchSharp.torchvision
             this.scaleMin = scaleMin;
             this.ratioMax = ratioMax;
             this.ratioMin = ratioMin;
-            this.mode = mode;
         }
 
         public Tensor forward(Tensor input)
@@ -42,13 +41,12 @@ namespace TorchSharp.torchvision
             var top = (int)Math.Floor((iHeight - h) * random.NextDouble());
             var left = (int)Math.Floor((iWidth - w) * random.NextDouble());
 
-            return new ResizedCrop(top, left, (int)Math.Floor(h), (int)Math.Floor(w), height, width, mode).forward(input);
+            return new ResizedCrop(top, left, (int)Math.Floor(h), (int)Math.Floor(w), height, width).forward(input);
         }
 
         private int height, width;
         private double scaleMin, scaleMax;
         private double ratioMin, ratioMax;
-        private InterpolateMode mode;
     }
 
     public static partial class transforms
@@ -56,17 +54,17 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Crop a random portion of image and resize it to a given size. 
         /// </summary>
-        static public ITransform RandomResizedCrop(int height, int width, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333, InterpolateMode mode = InterpolateMode.Nearest)
+        static public ITransform RandomResizedCrop(int height, int width, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333)
         {
-            return new RandomResizedCrop(height, width, scaleMin, scaleMax, ratioMin, ratioMax, mode);
+            return new RandomResizedCrop(height, width, scaleMin, scaleMax, ratioMin, ratioMax);
         }
 
         /// <summary>
         /// Crop a random portion of image and resize it to a given size. 
         /// </summary>
-        static public ITransform RandomResizedCrop(int size, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333, InterpolateMode mode = InterpolateMode.Nearest)
+        static public ITransform RandomResizedCrop(int size, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333)
         {
-            return RandomResizedCrop(size, size, scaleMin, scaleMax, ratioMin, ratioMax, mode);
+            return RandomResizedCrop(size, size, scaleMin, scaleMax, ratioMin, ratioMax);
         }
     }
 }

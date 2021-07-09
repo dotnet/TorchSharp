@@ -42,7 +42,7 @@ namespace TorchSharp.torchvision
         /// <returns></returns>
         /// <remarks>
         /// Unlike Pytorch, TorchSharp will allow the hue_factor to lie outside the range [-0.5,0.5].
-        /// A factor of 0.75 has the same image  -.25
+        /// A factor of 0.75 has the same effect as -.25
         /// </remarks>
         static public ITransform AdjustHue(double hue_factor)
         {

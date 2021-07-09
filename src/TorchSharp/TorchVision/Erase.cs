@@ -37,10 +37,15 @@ namespace TorchSharp.torchvision
     public static partial class transforms
     {
         /// <summary>
-        /// Crop the image.
+        /// Erase a region of an image tensor with given value. 
         /// </summary>
+        /// <param name="top">Vertical component of the top left corner of the erased region.</param>
+        /// <param name="left">Horizontal component of the top left corner of the erased region.</param>
+        /// <param name="height">The height of the erased region.</param>
+        /// <param name="width">The width of the erased region.</param>
+        /// <param name="value">Erasing value.</param>
+        /// <param name="inplace">For in-place operations.</param>
         /// <returns></returns>
-        /// <remarks>The image will not be cropped outside its boundaries.</remarks>
         static public ITransform Erase(int top, int left, int height, int width, Tensor value, bool inplace = false)
         {
             return new Erase(top, left, height, width, value, inplace);

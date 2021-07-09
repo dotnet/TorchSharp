@@ -5,34 +5,32 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class Lambda : ITransform
+    internal class Equalize : ITransform
     {
-        internal Lambda(Func<Tensor, Tensor> lambda)
+        internal Equalize()
         {
-            this.lambda = lambda;
         }
 
-        public Tensor forward(Tensor img)
+        public Tensor forward(Tensor input)
         {
-            return lambda(img);
+            return transforms.functional.equalize(input);
         }
-
-        private Func<Tensor,Tensor> lambda;
     }
 
     public static partial class transforms
     {
         /// <summary>
-        /// Apply a user-defined function as a transform. 
+        /// Equalize the histogram of an image by applying a non-linear mapping to the input
+        /// in order to create a uniform distribution of grayscale values in the output.
         /// </summary>
-        /// <param name="lambda">Lambda/function to be used for transform.</param>
         /// <returns></returns>
-        static public ITransform Lambda(Func<Tensor, Tensor> lambda)
+        static public ITransform Equalize()
         {
-            return new Lambda(lambda);
+            return new Equalize();
         }
     }
 }

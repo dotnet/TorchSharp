@@ -8,7 +8,7 @@ namespace TorchSharp.torchvision
 {
     internal class RandomRotation : ITransform
     {
-        public RandomRotation((double, double) degrees, GridSampleMode mode = GridSampleMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
+        public RandomRotation((double, double) degrees, InterpolationMode mode = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
             this.degrees = degrees;
             this.mode = mode;
@@ -30,7 +30,7 @@ namespace TorchSharp.torchvision
         private bool expand;
         private (int, int)? center;
         private IList<float> fill;
-        private GridSampleMode mode;
+        private InterpolationMode mode;
     }
 
     public static partial class transforms
@@ -38,7 +38,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Rotate the image by a random angle. 
         /// </summary>
-        static public ITransform RandomRotation(double degrees, GridSampleMode mode = GridSampleMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
+        static public ITransform RandomRotation(double degrees, InterpolationMode mode = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
             return new RandomRotation((-degrees, degrees), mode, expand, center, fill);
         }
@@ -46,7 +46,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         ///Rotate the image by a random angle.  
         /// </summary>
-        static public ITransform RandomRotation((double, double) degrees, GridSampleMode mode = GridSampleMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
+        static public ITransform RandomRotation((double, double) degrees, InterpolationMode mode = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
             return RandomRotation(degrees, mode, expand, center, fill);
         }

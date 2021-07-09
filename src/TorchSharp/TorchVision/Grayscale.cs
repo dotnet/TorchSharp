@@ -26,6 +26,11 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
+        /// <summary>
+        /// Convert image to grayscale. 
+        /// </summary>
+        /// <param name="outputChannels">The number of channels in the output image tensor.</param>
+        /// <returns></returns>
         static public ITransform Grayscale(int outputChannels = 1)
         {
             return new Grayscale(outputChannels);

@@ -321,13 +321,13 @@ EXPORT_API(void) THSTensor_dispose(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_dist(const Tensor tensor, const Tensor other, const float p);
 
-EXPORT_API(Tensor) THSTensor_div(const Tensor left, const Tensor right);
+EXPORT_API(Tensor) THSTensor_div(const Tensor left, const Tensor right, const char* rounding_mode);
 
-EXPORT_API(Tensor) THSTensor_div_(const Tensor left, const Tensor right);
+EXPORT_API(Tensor) THSTensor_div_(const Tensor left, const Tensor right, const char* rounding_mode);
 
-EXPORT_API(Tensor) THSTensor_div_scalar(const Tensor left, const Scalar right);
+EXPORT_API(Tensor) THSTensor_div_scalar(const Tensor left, const Scalar right, const char* rounding_mode);
 
-EXPORT_API(Tensor) THSTensor_div_scalar_(const Tensor left, const Scalar right);
+EXPORT_API(Tensor) THSTensor_div_scalar_(const Tensor left, const Scalar right, const char* rounding_mode);
 
 EXPORT_API(Tensor) THSTensor_dot(const Tensor left, const Tensor right);
 
@@ -518,6 +518,8 @@ EXPORT_API(Tensor) THSTensor_hardsigmoid_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_hardswish(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_hardswish_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_histc(const Tensor tensor, const int64_t bins, const int64_t min, const int64_t max);
 
 EXPORT_API(Tensor) THSTensor_imag(const Tensor tensor);
 

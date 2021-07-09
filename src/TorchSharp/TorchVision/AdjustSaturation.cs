@@ -29,7 +29,7 @@ namespace TorchSharp.torchvision
     public static partial class transforms
     {
         /// <summary>
-        /// Adjust color saturation of an image.
+        /// Adjust the color saturation of an image.
         /// </summary>
         /// <param name="saturation_factor">
         /// How much to adjust the saturation. 0 will give a black and white image, 1 will give the original image

@@ -8,7 +8,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
-    internal class GaussianBlur : AffineGridBase, ITransform
+    internal class GaussianBlur : ITransform
     {
         internal GaussianBlur(IList<long> kernelSize, float min, float max)
         {
@@ -21,22 +21,6 @@ namespace TorchSharp.torchvision
         public Tensor forward(Tensor input)
         {
             return transforms.functional.gaussian_blur(input, kernelSize, new float[] { sigma });
-        }
-
-        private Tensor GetGaussianKernel1d(long size)
-        {
-            var ksize_half = (size - 1) * 0.5f;
-            var x = Float32Tensor.linspace(-ksize_half, ksize_half, size);
-            var pdf = -(x / sigma).pow(2) * 0.5f;
-
-            return pdf / pdf.sum();
-        }
-
-        private Tensor GetGaussianKernel2d(ScalarType dtype, torch.Device device)
-        {
-            var kernel_X = GetGaussianKernel1d(kernelSize[0]).to(dtype, device)[TensorIndex.None, TensorIndex.Slice()];
-            var kernel_Y = GetGaussianKernel1d(kernelSize[1]).to(dtype, device)[TensorIndex.Slice(), TensorIndex.None];
-            return kernel_Y.mm(kernel_X);
         }
 
         protected long[] kernelSize;

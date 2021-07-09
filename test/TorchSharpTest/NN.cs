@@ -2550,7 +2550,7 @@ namespace TorchSharp
         public void TestInterpolateNearest()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Nearest)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Nearest)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2559,7 +2559,7 @@ namespace TorchSharp
         public void TestInterpolateBilinear2D()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Bilinear)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Bilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2569,7 +2569,7 @@ namespace TorchSharp
         public void TestInterpolateArea()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Area)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Area)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2578,7 +2578,7 @@ namespace TorchSharp
         public void TestInterpolateTrilinear()
         {
             using (Tensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolateMode.Trilinear)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
             }
         }

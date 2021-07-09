@@ -115,6 +115,12 @@ namespace TorchSharp
 
             public long element_size() => THSTensor_element_size(handle);
 
+            public bool is_integral() => torch.is_integral(dtype);
+            public bool is_floating_point() => torch.is_floating_point(dtype);
+            public bool is_complex() => torch.is_complex(dtype);
+
+            public bool is_cuda { get { return device.type == DeviceType.CUDA; } } 
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_data(IntPtr handle);
 
@@ -2334,58 +2340,6 @@ namespace TorchSharp
             public Tensor clamp_min_(Scalar min)
             {
                 var res = THSTensor_clamp_min_(handle, min.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
-
-            public (Tensor values, Tensor indexes) cummax(long dimension)
-            {
-                IntPtr[] ptrArray;
-
-                using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummax(handle, pa.CreateArray, dimension);
-                    torch.CheckForErrors();
-                    ptrArray = pa.Array;
-                }
-
-                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
-
-            public (Tensor values, Tensor indexes) cummin(long dimension)
-            {
-                IntPtr[] ptrArray;
-
-                using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummin(handle, pa.CreateArray, dimension);
-                    torch.CheckForErrors();
-                    ptrArray = pa.Array;
-                }
-
-                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
-
-            public Tensor cumsum(long dimension, ScalarType? type = null)
-            {
-                var res = THSTensor_cumsum(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
-
-            public Tensor cumprod(long dimension, ScalarType? type = null)
-            {
-                var res = THSTensor_cumprod(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

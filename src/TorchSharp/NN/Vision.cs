@@ -18,7 +18,7 @@ namespace TorchSharp
             Trilinear = 4
         }
 
-        public enum InterpolateMode
+        public enum InterpolationMode
         {
             Nearest = 0,
             Linear = 1,
@@ -80,26 +80,25 @@ namespace TorchSharp
                     // the ordering of padding elements goes. This code converts from the documented order, to the actual.
                     // See: https://pytorch.org/vision/stable/transforms.html#torchvision.transforms.functional.pad
                     //
-                    long[] correctedPad;
+                    long[] correctedPad = pad;
 
-                    switch (pad.Length) {
-                    case 1:
-                        correctedPad = new long[] { pad[0], pad[0], pad[0], pad[0] };
-                        break;
-                    case 2:
-                        correctedPad = new long[] { pad[0], pad[0], pad[1], pad[1] };
-                        break;
-                    case 4:
-                        correctedPad = new long[] { pad[0], pad[2], pad[1], pad[3] };
-                        break;
-                    default:
-                        correctedPad = pad;
-                        break;
+                    if (input.ndim > 1) {
+                        switch (pad.Length) {
+                        case 1:
+                            correctedPad = new long[] { pad[0], pad[0], pad[0], pad[0] };
+                            break;
+                        case 2:
+                            correctedPad = new long[] { pad[0], pad[0], pad[1], pad[1] };
+                            break;
+                        case 4:
+                            correctedPad = new long[] { pad[0], pad[2], pad[1], pad[3] };
+                            break;
+                        }
                     }
 
                     unsafe {
                         fixed (long* psize = correctedPad) {
-                            var res = THSNN_pad(input.Handle, (IntPtr)psize, 4, (byte)mode, value);
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, correctedPad.Length, (byte)mode, value);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -188,7 +187,7 @@ namespace TorchSharp
                 /// (i.e. the computation will be identical to if the computed output_size were passed-in explicitly).
                 /// </param>
                 /// <returns></returns>
-                static public Tensor interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolateMode mode = InterpolateMode.Nearest, bool? align_corners = null, bool recompute_scale_factor = false)
+                static public Tensor interpolate(Tensor x, long[]? size = null, double[]? scale_factor = null, InterpolationMode mode = InterpolationMode.Nearest, bool? align_corners = null, bool recompute_scale_factor = false)
                 {
                     unsafe {
                         fixed (long* psize = size) {
