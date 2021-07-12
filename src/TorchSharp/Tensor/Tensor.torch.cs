@@ -37,6 +37,27 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
+        /// <returns></returns>
+        public static Tensor squeeze(Tensor input, long? dim = null) => input.squeeze(dim);
+
+
+        /// <summary>
+        ///  Returns a new tensor with a dimension of size one inserted at the specified position.
+        ///  The returned tensor shares the same underlying data with this tensor.
+        /// </summary>
+        public static Tensor unsqueeze(Tensor input, long dim) => input.unsqueeze(dim);
+
+        /// <summary>
+        ///  Returns a new tensor with a dimension of size one inserted at the specified position.
+        ///  The returned tensor shares the same underlying data with this tensor.
+        /// </summary>
+        public static Tensor unsqueeze_(Tensor input, long dim) => input.unsqueeze_(dim);
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);
 

@@ -1045,6 +1045,7 @@ EXPORT_API(void) THSTensor_split_with_size(const Tensor tensor, Tensor* (*alloca
 EXPORT_API(void) THSTensor_split_with_sizes(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t* sizes, const int length, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_squeeze(Tensor tensor, int64_t dim);
+EXPORT_API(Tensor) THSTensor_squeeze_no_dim(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_stack(const Tensor* tensor, const int length, const int64_t dim);
 

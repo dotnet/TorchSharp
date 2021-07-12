@@ -1243,14 +1243,17 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_squeeze_no_dim(IntPtr tensor);
+
             /// <summary>
             /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
             /// </summary>
             /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
             /// <returns></returns>
-            public Tensor squeeze(long dim)
+            public Tensor squeeze(long? dim = null)
             {
-                var res = THSTensor_squeeze(handle, dim);
+                var res = dim.HasValue ? THSTensor_squeeze(handle, dim.Value) : THSTensor_squeeze_no_dim(handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -4239,9 +4242,9 @@ namespace TorchSharp
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
             /// </summary>
-            public Tensor unsqueeze(long dimension)
+            public Tensor unsqueeze(long dim)
             {
-                var res = THSTensor_unsqueeze(handle, dimension);
+                var res = THSTensor_unsqueeze(handle, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -4253,9 +4256,9 @@ namespace TorchSharp
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
             /// </summary>
-            public Tensor unsqueeze_(long dimension)
+            public Tensor unsqueeze_(long dim)
             {
-                var res = THSTensor_unsqueeze_(handle, dimension);
+                var res = THSTensor_unsqueeze_(handle, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

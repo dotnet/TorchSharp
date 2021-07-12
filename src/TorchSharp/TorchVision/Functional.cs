@@ -764,7 +764,7 @@ namespace TorchSharp.torchvision
                 var q = torch.clamp((v * (1.0 - s * f)), 0.0, 1.0);
                 var t = torch.clamp((v * (1.0 - s * (1.0 - f))), 0.0, 1.0);
 
-                var iunsq = i.unsqueeze(dimension: -3);
+                var iunsq = i.unsqueeze(dim: -3);
                 var mask = iunsq == torch.arange(6, device: i.device).view(-1, 1, 1);
 
                 var a1 = torch.stack(new Tensor[] { v, q, p, p, t, v }, dimension: -3);
