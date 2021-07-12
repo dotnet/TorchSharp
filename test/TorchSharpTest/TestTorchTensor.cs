@@ -630,8 +630,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.dtype);
-            Assert.True(r.allclose(p.Real));
-            Assert.True(i.allclose(p.Imag));
+            Assert.True(r.allclose(p.Real), rtol: 1e-04, atol: 1e-07);
+            Assert.True(i.allclose(p.Imag), rtol: 1e-04, atol: 1e-07);
         }
 
         [Fact]
@@ -647,8 +647,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.dtype);
-            Assert.True(r.allclose(p.Real));
-            Assert.True(i.allclose(p.Imag));
+            Assert.True(r.allclose(p.Real), rtol: 1e-04, atol: 1e-07);
+            Assert.True(i.allclose(p.Imag), rtol: 1e-04, atol: 1e-07);
         }
 
         [Fact]
