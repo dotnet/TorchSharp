@@ -14,6 +14,7 @@
   <ItemGroup>
     <Compile Include="..\TorchSharpTest\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
+    <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchSharp.cs" Link="TestTorchSharp.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensor.cs" Link="TestTorchTensor.cs" />

@@ -56,21 +56,22 @@ namespace TorchSharp
 
             private const double one_eighth = 1.0 / 8.0;
             private const double one_third = 1.0 / 3.0;
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Randomized Rectified Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="lower">Lower bound of the uniform distribution. Default: 1/8</param>
-            /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor RReLU(Tensor x, double lower, double upper, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.RReLU(lower, upper, inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Randomized Rectified Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="lower">Lower bound of the uniform distribution. Default: 1/8</param>
+                /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor rrelu(Tensor x, double lower, double upper, bool inPlace = false)
+                {
+                    using (var m = nn.RReLU(lower, upper, inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

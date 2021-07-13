@@ -63,7 +63,7 @@ namespace TorchSharp
                 /// <param name="alpha">The α value for the CELU formulation. Default: 1.0</param>
                 /// <param name="inPlace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor CELU(Tensor x, double alpha, bool inPlace = false)
+                static public Tensor celu(Tensor x, double alpha, bool inPlace = false)
                 {
                     using (var m = nn.CELU(alpha, inPlace)) {
                         return m.forward(x);

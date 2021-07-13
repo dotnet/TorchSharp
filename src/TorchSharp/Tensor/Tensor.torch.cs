@@ -11,6 +11,34 @@ namespace TorchSharp
 
     {
 
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_broadcast_tensors(IntPtr tensor, long length, AllocatePinnedArray allocator);
+
+        public static IList<Tensor> broadcast_tensors(params Tensor[] tensors)
+        {
+            if (tensors.Length == 0) {
+                throw new ArgumentException(nameof(tensors));
+            }
+            if (tensors.Length == 1) {
+                return tensors;
+            }
+
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using(var parray = new PinnedArray<IntPtr>()) {
+
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                THSTensor_broadcast_tensors(tensorsRef, tensors.Length, pa.CreateArray);
+                torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new Tensor(x)).ToList();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
 
@@ -194,9 +222,9 @@ namespace TorchSharp
         }
 
 
-        static public Tensor clamp(Tensor input, Scalar min, Scalar max) => input.clamp(min, max);
+        static public Tensor clamp(Tensor input, Scalar min = null, Scalar max = null) => input.clamp(min, max);
 
-        static public Tensor clamp_(Tensor input, Scalar min, Scalar max) => input.clamp_(min, max);
+        static public Tensor clamp_(Tensor input, Scalar min = null, Scalar max = null) => input.clamp_(min, max);
 
         static public Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
 

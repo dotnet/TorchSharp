@@ -51,19 +51,20 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Softmin(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Softmin
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="dim">A dimension along which Softmin will be computed (so every slice along dim will sum to 1)</param>
-            /// <returns></returns>
-            static public Tensor Softmin(Tensor x, long dim)
+
+            public static partial class functional
             {
-                using (var m = nn.Softmin(dim)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Softmin
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="dim">A dimension along which Softmin will be computed (so every slice along dim will sum to 1)</param>
+                /// <returns></returns>
+                static public Tensor softmin(Tensor x, long dim)
+                {
+                    using (var m = nn.Softmin(dim)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

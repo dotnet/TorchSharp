@@ -57,6 +57,13 @@ namespace TorchSharp
                     };
                 }
 
+                public static Tensor binary_cross_entropy(Tensor src, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_binary_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_binary_cross_entropy_with_logits(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction, IntPtr posWeights);
 
@@ -74,6 +81,13 @@ namespace TorchSharp
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     };
+                }
+
+                public static Tensor binary_cross_entropy_with_logits(Tensor input, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean, Tensor? posWeights = null)
+                {
+                    var res = THSNN_binary_cross_entropy_with_logits(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, posWeights?.Handle ?? IntPtr.Zero);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]

@@ -509,6 +509,11 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Returns this tensor cast to the type of the given tensor.
+            /// </summary>
+            public Tensor type_as(Tensor tensor) => to_type(tensor.dtype);
+
+            /// <summary>
             /// Moves the tensor data to a specific device.
             /// </summary>
             /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
@@ -2288,9 +2293,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
 
-            public Tensor clamp(Scalar min, Scalar max)
+            public Tensor clamp(Scalar? min = null, Scalar? max = null)
             {
-                var res = THSTensor_clamp(handle, min.Handle, max.Handle);
+                var res = THSTensor_clamp(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -2300,9 +2305,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
 
-            public Tensor clamp_(Scalar min, Scalar max)
+            public Tensor clamp_(Scalar? min = null, Scalar? max = null)
             {
-                var res = THSTensor_clamp_(handle, min.Handle, max.Handle);
+                var res = THSTensor_clamp_(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -3782,6 +3787,16 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_binomial(IntPtr count, IntPtr prob, IntPtr gen);
+
+            public Tensor binomial(Tensor prob, torch.Generator? generator = null)
+            {
+                var res = THSTensor_binomial(handle, prob.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_cauchy_(IntPtr tensor, double median, double sigma, IntPtr gen);
 
             public Tensor cauchy_(double median = 0.0, double sigma = 1.0, torch.Generator? generator = null)
@@ -4730,6 +4745,46 @@ namespace TorchSharp
             //QUInt8 = 13,
             //QUInt32 = 14,
             BFloat16 = 15
+        }
+
+        public struct FInfo
+        {
+            public int bits;
+            public double eps;
+            public double max;
+            public double min;
+            public double tiny;
+        }
+
+        public static FInfo finfo(ScalarType dtype)
+        {
+            if (!is_floating_point(dtype) && !is_complex(dtype))
+                throw new ArgumentException("'dtype' must be floating point or complex");
+
+            if (dtype == ScalarType.ComplexFloat32)
+                dtype = ScalarType.Float32;
+            if (dtype == ScalarType.ComplexFloat64)
+                dtype = ScalarType.Float64;
+
+            FInfo result = new FInfo();
+
+            switch (dtype) {
+            case ScalarType.Float32:
+                result.bits = 32;
+                result.min = float.MinValue;
+                result.max = float.MaxValue;
+                result.eps = float.Epsilon;
+                result.tiny = float.Epsilon;
+                break;
+            case ScalarType.Float64:
+                result.bits = 64;
+                result.min = double.MinValue;
+                result.max = double.MaxValue;
+                result.eps = double.Epsilon;
+                result.tiny = double.Epsilon;
+                break;
+            }
+            return result;
         }
 
         public static bool is_integral(ScalarType type)

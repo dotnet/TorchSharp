@@ -53,21 +53,22 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU6(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Rectified Linear Unit
-            ///
-            /// This ReLU version caps positive values at 6.
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor ReLU6(Tensor x, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.ReLU6(inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Rectified Linear Unit
+                ///
+                /// This ReLU version caps positive values at 6.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor relu6(Tensor x, bool inPlace = false)
+                {
+                    using (var m = nn.ReLU6(inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

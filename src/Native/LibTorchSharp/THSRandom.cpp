@@ -21,6 +21,11 @@ Tensor THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generat
     CATCH_TENSOR(gen == nullptr ? tensor->bernoulli_(*p_tensor) : tensor->bernoulli_(*p_tensor, *gen));
 }
 
+Tensor THSTensor_binomial(Tensor tensor, const Tensor p_tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::binomial(*tensor, *p_tensor) : torch::binomial(*tensor, *p_tensor, *gen));
+}
+
 Tensor THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen)
 {
     CATCH_TENSOR(gen == nullptr ? tensor->cauchy_(median, sigma) : tensor->cauchy_(median, sigma, *gen));

@@ -2320,6 +2320,51 @@ namespace TorchSharp
         public static Tensor hypot(Tensor left, Tensor right) => left.hypot(right);
 
         /// <summary>
+        /// Computes the logarithmic derivative of the gamma function on input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor digamma(Tensor input) => input.digamma();
+
+        /// <summary>
+        /// Computes the logarithmic derivative of the gamma function on input, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor digamma_(Tensor input) => input.digamma_();
+
+        /// <summary>
+        /// Computes the logarithm of the gamma function on input.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor lgamma(Tensor input) => input.lgamma();
+
+        /// <summary>
+        /// Computes the logarithm of the gamma function on input, in place.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor lgamma_(Tensor input) => input.lgamma();
+
+        /// <summary>
+        /// Computes the multivariate log-gamma function) with dimension pp element-wise
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="p">The number of dimensions</param>
+        /// <returns></returns>
+        public static Tensor mvlgamma(Tensor input, long p) => input.mvlgamma(p);
+
+        /// <summary>
+        /// Computes the multivariate log-gamma function) with dimension pp element-wise, in place.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="p">The number of dimensions</param>
+        /// <returns></returns>
+        public static Tensor mvlgamma_(Tensor input, long p) => input.mvlgamma_(p);
+
+        
+        public static Tensor polygamma(Tensor input, long p) => input.polygamma(p);
+
+        public static Tensor polygamma_(Tensor input, long p) => input.polygamma_(p);
+
+        /// <summary>
         /// Returns a new tensor with the natural logarithm of the input elements.
         /// </summary>
         public static Tensor log(Tensor input) => input.log();
@@ -2603,6 +2648,20 @@ namespace TorchSharp
         public static Tensor sqrt_(Tensor input) => input.sqrt_();
 
         /// <summary>
+        /// Computes the logistic sigmoid function of the elements of input.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static Tensor sigmoid(Tensor input) => input.sigmoid();
+
+        /// <summary>
+        /// Computes the logistic sigmoid function of the elements of input.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
+
+        /// <summary>
         /// Returns a new tensor with the signs (-1, 0, 1) of the elements of input.
         /// </summary>
         public static Tensor sign(Tensor input) => input.sign();
@@ -2720,6 +2779,8 @@ namespace TorchSharp
         public static Tensor randperm_out(Tensor input, long n) => input.randperm_out(n);
 
         public static Tensor bernoulli(Tensor input, torch.Generator generator = null) => input.bernoulli(generator);
+
+        public static Tensor binomial(Tensor count, Tensor probs, torch.Generator generator = null) => count.binomial(probs, generator);
 
         public static Tensor poisson(Tensor input, torch.Generator generator = null) => input.poisson(generator);
 

@@ -100,6 +100,17 @@ Tensor THSTensor_block_diag(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::block_diag(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
+void THSTensor_broadcast_tensors(const Tensor* tensors, const int length, Tensor* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = torch::broadcast_tensors(toTensors<at::Tensor>((torch::Tensor**)tensors, length));
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
+    );
+}
+
 Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len)
 {
     CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
@@ -147,12 +158,16 @@ void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), c
 
 Tensor THSTensor_clamp(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    CATCH_TENSOR(tensor->clamp(*min, *max));
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>::optional() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>::optional() : *max;
+    CATCH_TENSOR(tensor->clamp(mn, mx));
 }
 
 Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    CATCH_TENSOR(tensor->clamp_(*min, *max));
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>::optional() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>::optional() : *max;
+    CATCH_TENSOR(tensor->clamp_(mn, mx));
 }
 
 Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)

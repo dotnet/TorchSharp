@@ -50,18 +50,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new SiLU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Sigmoid-Weighted Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor SiLU(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.SiLU()) {
-                    return m.forward(x);
+                /// <summary>
+                /// Sigmoid-Weighted Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor SiLU(Tensor x)
+                {
+                    using (var m = nn.SiLU()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

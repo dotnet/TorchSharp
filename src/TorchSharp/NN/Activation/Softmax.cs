@@ -51,19 +51,20 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Softmax(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Softmax
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="dim">A dimension along which Softmax will be computed (so every slice along dim will sum to 1)</param>
-            /// <returns></returns>
-            static public Tensor Softmax(Tensor x, long dim)
+
+            public static partial class functional
             {
-                using (var m = nn.Softmax(dim)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Softmax
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="dim">A dimension along which Softmax will be computed (so every slice along dim will sum to 1)</param>
+                /// <returns></returns>
+                static public Tensor softmax(Tensor x, long dim)
+                {
+                    using (var m = nn.Softmax(dim)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

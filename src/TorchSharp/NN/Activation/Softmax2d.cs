@@ -49,18 +49,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Softmax2d(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies Softmax over features to each spatial location
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor Softmax2d(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.Softmax2d()) {
-                    return m.forward(x);
+                /// <summary>
+                /// Applies Softmax over features to each spatial location
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor softmax2d(Tensor x)
+                {
+                    using (var m = nn.Softmax2d()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }
