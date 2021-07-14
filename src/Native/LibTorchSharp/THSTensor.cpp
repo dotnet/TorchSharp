@@ -990,6 +990,33 @@ Tensor THSTensor_scatter(
     CATCH_TENSOR(torch::scatter(*tensor, dim, *index, *source));
 }
 
+Tensor THSTensor_scatter_(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(tensor->scatter_(dim, *index, *source));
+}
+
+Tensor THSTensor_scatter_add(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(torch::scatter_add(*tensor, dim, *index, *source));
+}
+
+Tensor THSTensor_scatter_add_(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(tensor->scatter_add_(dim, *index, *source));
+}
+
 Tensor THSTensor_selu(const Tensor tensor)
 {
     CATCH_TENSOR(torch::selu(*tensor));

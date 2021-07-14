@@ -56,7 +56,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="sample_shape"></param>
                 /// <returns></returns>
-                public Tensor sample(params long[] sample_shape)
+                public virtual Tensor sample(params long[] sample_shape)
                 {
                     return rsample(sample_shape);
                 }

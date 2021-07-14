@@ -1018,6 +1018,10 @@ EXPORT_API(Tensor) THSTensor_sum_along_dimensions(const Tensor tensor, const int
 EXPORT_API(void) THSTensor_save(const Tensor tensor, const char* location);
 
 EXPORT_API(Tensor) THSTensor_scatter(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(Tensor) THSTensor_scatter_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+
+EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 

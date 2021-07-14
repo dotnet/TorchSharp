@@ -40,6 +40,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestNormal()
+        {
+            var dist = Normal(torch.tensor(0.0), torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestBernoulli()
         {
             var dist = Bernoulli(torch.rand(3, dtype: ScalarType.Float64));
@@ -286,6 +307,31 @@ namespace TorchSharp
                 var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, 3, 3 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestMultinomial()
+        {
+            var categories = 17;
+            var dist = Multinomial(100, torch.rand(3, categories));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(new long[] { 3, categories }, sample.shape);
+                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, categories }, sample.shape);
+                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3, categories }, sample.shape);
+                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
         }
     }

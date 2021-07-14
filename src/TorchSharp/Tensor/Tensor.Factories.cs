@@ -622,6 +622,11 @@ namespace TorchSharp
             }
         }
 
+        static public Tensor normal(Tensor means, Tensor stddev)
+        {
+            return randn(means.shape) * stddev + means;
+        }
+
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>

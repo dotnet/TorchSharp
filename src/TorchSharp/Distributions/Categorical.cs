@@ -40,8 +40,14 @@ namespace TorchSharp
                 }
             }
 
-            private Tensor _probs;
-            private Tensor _logits;
+            public long[] param_shape {
+                get {
+                    return _probs is null ? _logits.shape : _probs.shape;
+                }
+            }
+
+            internal Tensor _probs;
+            internal Tensor _logits;
             private long num_events;
 
             public override Tensor rsample(params long[] sample_shape)

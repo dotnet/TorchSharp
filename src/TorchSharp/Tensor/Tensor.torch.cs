@@ -221,6 +221,33 @@ namespace TorchSharp
             return (new Tensor(solution), new Tensor(qr));
         }
 
+        /// <summary>
+        ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter(dimension, index, src);
+
+        /// <summary>
+        ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_(dimension, index, src);
+
+        /// <summary>
+        /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
+        /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+        /// corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_add(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add(dimension, index, src);
+
+        /// <summary>
+        /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
+        /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+        /// corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_add_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add_(dimension, index, src);
 
         static public Tensor clamp(Tensor input, Scalar min = null, Scalar max = null) => input.clamp(min, max);
 
