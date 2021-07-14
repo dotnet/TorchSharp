@@ -69,8 +69,8 @@ namespace TorchSharp
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {
-                    newDistribution._probs = _probs?.expand(batch_shape);
-                    newDistribution._logits = _logits?.expand(batch_shape);
+                    newDistribution._probs = p;
+                    newDistribution._logits = l;
                 }
                 return newDistribution;
             }

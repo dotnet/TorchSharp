@@ -1279,6 +1279,17 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Is this Tensor with its dimensions reversed.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor T 
+            {
+                get {
+                    return this.permute(Enumerable.Range(0,(int)ndim).Reverse().Select(i => (long)i).ToArray());
+                }
+            }
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_transpose(IntPtr tensor, long dim1, long dim2);
 
@@ -3516,15 +3527,39 @@ namespace TorchSharp
             /// <summary>
             ///  Returns the sum of each row of the input tensor in the given dimensions.
             /// </summary>
-            public Tensor sum(long[] dimensions, bool keepDimension = false, ScalarType? type = null)
+            public Tensor sum(long[] dimensions, bool keepdim = false, ScalarType? type = null)
             {
                 unsafe {
                     fixed (long* pdims = dimensions) {
-                        var res = THSTensor_sum_along_dimensions(handle, (IntPtr)pdims, dimensions.Length, keepDimension, type.HasValue, (sbyte)type.GetValueOrDefault());
+                        var res = THSTensor_sum_along_dimensions(handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            ///  Returns the sum of each row of the input tensor in the given dimension.
+            /// </summary>
+            public Tensor sum(long dim, bool keepdim = false, ScalarType? type = null)
+            {
+                return sum(new long[] { dim }, keepdim, type);
+            }
+
+            /// <summary>
+            ///  Returns the sum of each row of the input tensor in the given dimensions.
+            /// </summary>
+            public Tensor sum(long dim0, long dim1, bool keepdim = false, ScalarType? type = null)
+            {
+                return sum(new long[] { dim0, dim1 }, keepdim, type);
+            }
+
+            /// <summary>
+            ///  Returns the sum of each row of the input tensor in the given dimensions.
+            /// </summary>
+            public Tensor sum(long dim0, long dim1, long dim2, bool keepDimension = false, ScalarType? type = null)
+            {
+                return sum(new long[] { dim0, dim1, dim2 }, keepDimension, type);
             }
 
             [DllImport("LibTorchSharp")]
@@ -3916,6 +3951,48 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            ///  Create a new tensor filled with ones
+            /// </summary>
+            public Tensor new_ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.ones(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 1-D tensor filled with ones
+            /// </summary>
+            public Tensor new_ones(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_ones(new long[] { size }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 2-D tensor filled with ones
+            /// </summary>
+            public Tensor new_ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_ones(new long[] { rows, columns }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 3-D tensor filled with ones
+            /// </summary>
+            public Tensor new_ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 4-D tensor filled with ones
+            /// </summary>
+            public Tensor new_ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            }
+
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_zeros_out(IntPtr psizes, int length, IntPtr tensorOut);
 
@@ -3932,6 +4009,49 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            ///  Create a new tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.zeros(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 1-D tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_zeros(new long[] { size }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 2-D tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_zeros(new long[] { rows, columns }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 3-D tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 4-D tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            }
+
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_zeros_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
@@ -3973,6 +4093,48 @@ namespace TorchSharp
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
+            }
+
+            /// <summary>
+            ///  Create a new tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.empty(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 1-D tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_empty(new long[] { size }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 2-D tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_empty(new long[] { rows, columns }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 3-D tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_empty(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 4-D tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
             }
 
             [DllImport("LibTorchSharp")]
@@ -4029,6 +4191,49 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            ///  Create a new tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.full(size, value, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 1-D tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_full(new long[] { size }, value, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 2-D tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_full(new long[] { rows, columns }, value, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 3-D tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new 4-D tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                return new_full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
+            }
+
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_full_like(IntPtr input, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);

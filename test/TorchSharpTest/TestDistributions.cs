@@ -86,5 +86,48 @@ namespace TorchSharp
                 Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d < 100));
             }
         }
+
+
+        [Fact]
+        public void TestCategorical()
+        {
+            var categories = 7;
+            var dist = Categorical(torch.rand(3, categories, dtype: ScalarType.Float64));
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+                Assert.Equal(3, sample.shape[0]);
+                Assert.All<long>(sample.Data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+                Assert.All<long>(sample.Data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+            }
+        }
+
+
+        [Fact]
+        public void TestCauchy()
+        {
+            var dist = Cauchy(torch.rand(3, 3), torch.tensor(1.0f));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(new long[] { 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3, 3 }, sample.shape);
+            }
+        }
     }
 }
