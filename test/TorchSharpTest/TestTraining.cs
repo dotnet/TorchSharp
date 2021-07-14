@@ -48,7 +48,7 @@ namespace TorchSharp
 
                 output.backward();
 
-                using (var noGrad = new AutoGradMode(false)) {
+                using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
                         var update = grad.mul(learning_rate);
@@ -90,7 +90,7 @@ namespace TorchSharp
 
                 output.backward();
 
-                using (var noGrad = new AutoGradMode(false)) {
+                using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
                         var update = grad.mul(learning_rate);

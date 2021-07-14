@@ -19,7 +19,7 @@ namespace TorchSharp
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
 
 
-            public Cauchy(Tensor loc, Tensor scale) : base(null)
+            public Cauchy(Tensor loc, Tensor scale) 
             {
                 this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);

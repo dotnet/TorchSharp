@@ -18,7 +18,7 @@ namespace TorchSharp
 
             public override Tensor variance => probs * (1 - probs);
 
-            public Bernoulli(Tensor p = null, Tensor l = null) : base(null)
+            public Bernoulli(Tensor p = null, Tensor l = null) 
             {
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;

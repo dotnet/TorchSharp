@@ -224,6 +224,16 @@ Tensor THSTensor_uniform_(Tensor tensor, double low, double high, const Generato
     CATCH_TENSOR(gen == nullptr ? tensor->uniform_(low, high) : tensor->uniform_(low, high, *gen));
 }
 
+Tensor THSTensor_sample_dirichlet_(Tensor tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::_sample_dirichlet(*tensor) : torch::_sample_dirichlet(*tensor, *gen));
+}
+
+Tensor THSTensor_standard_gamma_(Tensor tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::_standard_gamma(*tensor)  : torch::_standard_gamma(*tensor, *gen));
+}
+
 Tensor THSInit_uniform_(Tensor tensor, double low, double high)
 {
     CATCH_TENSOR(torch::nn::init::uniform_(*tensor, low, high))

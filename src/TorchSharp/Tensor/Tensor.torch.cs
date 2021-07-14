@@ -27,7 +27,7 @@ namespace TorchSharp
             IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr>())
-            using(var parray = new PinnedArray<IntPtr>()) {
+            using (var parray = new PinnedArray<IntPtr>()) {
 
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
@@ -242,5 +242,25 @@ namespace TorchSharp
         /// <param name="y">Values selected at indices where condition is false</param>
         /// <returns></returns>
         static public Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_standard_gamma_(IntPtr tensor, IntPtr gen);
+
+        public static Tensor _standard_gamma(Tensor input, torch.Generator generator = null)
+        {
+            var res = THSTensor_standard_gamma_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new Tensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_sample_dirichlet_(IntPtr tensor, IntPtr gen);
+
+        public static Tensor _sample_dirichlet(Tensor input, torch.Generator generator = null)
+        {
+            var res = THSTensor_sample_dirichlet_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new Tensor(res);
         }
     }
+}

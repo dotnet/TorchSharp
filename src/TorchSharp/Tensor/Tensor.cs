@@ -448,6 +448,17 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Change if autograd should record operations on this tensor: sets this tensor’s requires_grad attribute in-place. Returns this tensor.
+            /// </summary>
+            /// <param name="requires_grad"></param>
+            /// <returns></returns>
+            public Tensor requires_grad_(bool requires_grad = true)
+            {
+                this.requires_grad = true;
+                return this;
+            }
+
+            /// <summary>
             /// Adds gradient tracking.
             /// </summary>
             public Tensor with_requires_grad()
@@ -577,7 +588,6 @@ namespace TorchSharp
             /// <param name="other">The tensor serving as a template.</param>
             /// <returns></returns>
             public Tensor to(Tensor other) => to(other.device_type, other.device_index);
-
 
             [DllImport("LibTorchSharp")]
             static extern long THSTensor_size(IntPtr handle, long dimension);
@@ -1151,6 +1161,24 @@ namespace TorchSharp
             public Tensor index_select(long dimension, Tensor index)
             {
                 var res = THSTensor_index_select(handle, dimension, index.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_select(IntPtr tensor, long dimension, long index);
+
+            /// <summary>
+            /// Slices the self tensor along the selected dimension at the given index.
+            /// This function returns a view of the original tensor with the given dimension removed.
+            /// </summary>
+            /// <param name="dim">The dimension to slice</param>
+            /// <param name="index">The index to select with</param>
+            /// <returns></returns>
+            public Tensor select(long dim, long index)
+            {
+                var res = THSTensor_select(handle, dim, index);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -3901,7 +3929,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_arange_out(IntPtr start, IntPtr strp, IntPtr step, IntPtr tensorOut);
 
@@ -4254,6 +4281,26 @@ namespace TorchSharp
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_detach(IntPtr tensor);
+
+            public Tensor detach()
+            {
+                var res = THSTensor_detach(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_detach_(IntPtr tensor);
+
+            public Tensor detach_()
+            {
+                var res = THSTensor_detach_(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]

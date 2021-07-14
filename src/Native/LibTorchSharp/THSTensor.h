@@ -305,6 +305,9 @@ EXPORT_API(float) THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t
 
 EXPORT_API(Tensor) THSTensor_deg2rad(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_detach(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_detach_(const Tensor tensor);
+
 EXPORT_API(const char*) THSTensor_device_str(const Tensor tensor);
 
 EXPORT_API(int) THSTensor_device_type(const Tensor tensor);
@@ -956,6 +959,8 @@ EXPORT_API(Tensor) THSTensor_rsqrt_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm);
 
+EXPORT_API(Tensor) THSTensor_select(Tensor tensor, int64_t dim, int64_t index);
+
 EXPORT_API(Tensor) THSTensor_selu(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_selu_(const Tensor tensor);
@@ -1191,6 +1196,11 @@ EXPORT_API(Tensor) THSTensor_binomial(const Tensor count, const Tensor prob, con
 EXPORT_API(Tensor) THSTensor_multinomial(const Tensor tensor, const int64_t num_samples, const bool replacement, const Generator gen);
 
 EXPORT_API(Tensor) THSTensor_poisson(const Tensor tensor, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_sample_dirichlet_(Tensor tensor, const Generator gen);
+
+EXPORT_API(Tensor) THSTensor_standard_gamma_(Tensor tensor, const Generator gen);
+
 
 // Random number in-place:
 

@@ -2347,15 +2347,34 @@ namespace TorchSharp
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
-                using (var mode = new AutoGradMode(false)) {
-                    Assert.False(AutoGradMode.IsAutogradEnabled());
+                using (torch.no_grad()) {
+                    Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
                     Assert.Throws<ExternalException>(() => sum.backward());
                     //var grad = x.Grad();
                     //Assert.True(grad.Handle == IntPtr.Zero);
                 }
-                using (var mode = new AutoGradMode(true)) {
-                    Assert.True(AutoGradMode.IsAutogradEnabled());
+                using (torch.enable_grad()) {
+                    Assert.True(torch.is_grad_enabled());
+                    var sum = x.sum();
+                    sum.backward();
+                    var grad = x.grad();
+                    Assert.False(grad.Handle == IntPtr.Zero);
+                    var data = grad.Data<float>();
+                    for (int i = 0; i < 2 * 3; i++) {
+                        Assert.Equal(1.0, data[i]);
+                    }
+                }
+                x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
+                using (torch.set_grad_enabled(false)) {
+                    Assert.False(torch.is_grad_enabled());
+                    var sum = x.sum();
+                    Assert.Throws<ExternalException>(() => sum.backward());
+                    //var grad = x.Grad();
+                    //Assert.True(grad.Handle == IntPtr.Zero);
+                }
+                using (torch.set_grad_enabled(true)) {
+                    Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();

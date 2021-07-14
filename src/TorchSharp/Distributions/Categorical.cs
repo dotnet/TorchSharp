@@ -18,7 +18,7 @@ namespace TorchSharp
 
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: probs.dtype, device: probs.device);
 
-            public Categorical(Tensor p = null, Tensor l = null) : base(null)
+            public Categorical(Tensor p = null, Tensor l = null) 
             {
                 var param = p is null ? l : p;
 

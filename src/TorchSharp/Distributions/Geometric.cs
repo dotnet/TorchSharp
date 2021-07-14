@@ -11,21 +11,18 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Binomial : torch.distributions.Distribution
+        public class Geometric : torch.distributions.Distribution
         {
 
-            public override Tensor mean => total_count * probs;
+            public override Tensor mean => 1 / (probs - 1);
 
-            public override Tensor variance => total_count * probs * (1 - probs);
+            public override Tensor variance => (1.0f / probs - 1.0f) / probs;
 
-            public Binomial(Tensor total_count, Tensor p = null, Tensor l = null) 
+            public Geometric(Tensor p = null, Tensor l = null) 
             {
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;
                 this._logits = l;
-
-                var broadcast = (p is null) ? torch.broadcast_tensors(total_count, l) : torch.broadcast_tensors(total_count, p);
-                this.total_count = broadcast[0].type_as(p ?? l);
             }
 
             public Tensor probs {
@@ -41,22 +38,24 @@ namespace TorchSharp
 
             private Tensor _probs;
             private Tensor _logits;
-            private Tensor total_count;
 
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                return torch.binomial(total_count.expand(shape), probs.expand(shape));
+                var tiny = torch.finfo(probs.dtype).tiny;
+                using (torch.no_grad()) {
+                    var u = probs.new_empty(shape).uniform_(tiny, 1);
+                    return (u.log() / (-probs).log1p()).floor();
+                }
             }
 
             public override Tensor log_prob(Tensor value)
             {
-                var log_factorial_n = torch.lgamma(total_count + 1);
-                var log_factorial_k = torch.lgamma(value + 1);
-                var log_factorial_nmk = torch.lgamma(total_count - value + 1);
-
-                var normalize_term = (total_count * ClampByZero(logits) + total_count * torch.log1p(torch.exp(-torch.abs(logits))) - log_factorial_n);
-                return value * logits - log_factorial_k - log_factorial_nmk - normalize_term;
+                var bcast = torch.broadcast_tensors(value, probs);
+                value = bcast[0];
+                var p = bcast[1].clone();
+                p[(p == 1) & (value == 0)] = torch.tensor(0);
+                return value * (-p).log1p() + probs.log();
             }
 
             public override Tensor entropy()
@@ -66,16 +65,15 @@ namespace TorchSharp
 
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
-                if (instance != null && !(instance is Binomial))
-                    throw new ArgumentException("expand(): 'instance' must be a Binomial distribution");
+                if (instance != null && !(instance is Geometric))
+                    throw new ArgumentException("expand(): 'instance' must be a Geometric distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape)) :
-                    instance) as Binomial;
+                    new Geometric(p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape)) :
+                    instance) as Geometric;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {
-                    newDistribution.total_count = total_count.expand(batch_shape);
                     newDistribution._probs = _probs?.expand(batch_shape);
                     newDistribution._logits = _logits?.expand(batch_shape);
                 }
@@ -89,16 +87,18 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
-            /// `total_count` must be broadcastable with `probs`/`logits`.
+            /// Creates a Geometric distribution parameterized by probs,
+            /// where probs is the probability of success of Bernoulli trials.
+            ///
+            /// It represents the probability that in k+1 Bernoulli trials, the
+            /// first k trials failed, before seeing a success.
             /// </summary>
-            /// <param name="total_count">Number of Bernoulli trials</param>
-            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="probs">The probability of sampling '1'. Must be in range (0, 1]</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <returns></returns>
-            public static Binomial Binomial(Tensor total_count, Tensor probs = null, Tensor logits = null)
+            public static Geometric Geometric(Tensor probs = null, Tensor logits = null)
             {
-                return new Binomial(total_count, probs, logits);
+                return new Geometric(probs, logits);
             }
         }
     }

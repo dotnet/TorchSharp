@@ -77,6 +77,70 @@ namespace TorchSharp
             return arange(0, stop, 1, dtype, device, requiresGrad);
         }
 
+        // as_tensor()
+
+        public static Tensor as_tensor(Tensor data, ScalarType? dtype = null, torch.Device device = null)
+        {
+            if (data.dtype != dtype || data.device != device) {
+
+                return data.clone().to(dtype.Value, device).requires_grad_(data.requires_grad);
+
+            } else {
+
+                return data;
+            }
+        }
+
+        public static Tensor as_tensor(IList<bool> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<byte> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<sbyte> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<short> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<int> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<long> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<float> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<(float,float)> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
+        public static Tensor as_tensor(IList<System.Numerics.Complex> rawArray, torch.ScalarType? dtype = null, torch.Device device = null)
+        {
+            return torch.tensor(rawArray, dtype, device);
+        }
+
         // randperm()
 
         [DllImport("LibTorchSharp")]

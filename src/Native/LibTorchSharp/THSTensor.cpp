@@ -278,6 +278,16 @@ const char* THSTensor_device_str(const Tensor tensor)
     return make_sharable_string(device.str());
 }
 
+Tensor THSTensor_detach(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->detach());
+}
+
+Tensor THSTensor_detach_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->detach_());
+}
+
 int THSTensor_device_index(const Tensor tensor)
 {
     auto device = tensor->device();
@@ -653,6 +663,12 @@ Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
 {
     CATCH_TENSOR(tensor->index_select(dim, *index));
 }
+
+Tensor THSTensor_select(Tensor tensor, int64_t dim, int64_t index)
+{
+    CATCH_TENSOR(tensor->select(dim, index));
+}
+
 
 Tensor THSTensor_indices(Tensor tensor)
 {
