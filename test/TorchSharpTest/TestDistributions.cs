@@ -61,6 +61,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestPoisson()
+        {
+            var dist = Poisson(torch.tensor(0.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestBernoulli()
         {
             var dist = Bernoulli(torch.rand(3, dtype: ScalarType.Float64));
