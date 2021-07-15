@@ -14,9 +14,16 @@ void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocato
     }
 }
 
-void THSNN_Optimizer_step(const Optimizer optimizer)
+void THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)())
 {
-    (*optimizer)->step();
+    if (loss_closure == nullptr)
+    {
+        (*optimizer)->step();
+    }
+    else
+    {
+        (*optimizer)->step([loss_closure]() -> at::Tensor { return *(loss_closure()); });
+    }    
 }
 
 void THSNN_Optimizer_zero_grad(const Optimizer optimizer)
@@ -59,6 +66,19 @@ Optimizer THSNN_AdamW_ctor(const Tensor* parameters, const int length, const dou
         .amsgrad(amsgrad);
 
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::AdamW>(torch::optim::AdamW(params, options)));
+}
+
+Optimizer THSNN_LBFGS_ctor(const Tensor* parameters, const int length, const double learning_rate, const int64_t max_iter, const int64_t max_eval, const double tolerange_grad, const double tolerance_change, const int64_t history_size)
+{
+    auto  params = toTensors<at::Tensor>((torch::Tensor**)parameters, length);
+    auto options = torch::optim::LBFGSOptions(learning_rate)
+        .max_iter(max_iter)
+        .max_eval(max_eval)
+        .tolerance_grad(tolerange_grad)
+        .tolerance_change(tolerance_change)
+        .history_size(history_size);
+
+    return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::LBFGS>(torch::optim::LBFGS(params, options)));
 }
 
 Optimizer THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered)
@@ -121,6 +141,11 @@ void THSNN_AdamW_set_lr(const Optimizer optimizer, const double lr)
 void THSNN_RMSprop_set_lr(const Optimizer optimizer, const double lr)
 {
     SetLearningRate<torch::optim::RMSpropOptions>(optimizer, lr);
+}
+
+void THSNN_LBFGS_set_lr(const Optimizer optimizer, const double lr)
+{
+    SetLearningRate<torch::optim::LBFGSOptions>(optimizer, lr);
 }
 
 void THSNN_SGD_set_lr(const Optimizer optimizer, const double lr)

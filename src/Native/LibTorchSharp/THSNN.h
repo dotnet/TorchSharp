@@ -319,17 +319,20 @@ EXPORT_API(Tensor) THSNN_triplet_margin_with_distance_loss(const Tensor anchor, 
 EXPORT_API(Optimizer) THSNN_Adagrad_ctor(const Tensor* parameters, const int len, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps);
 EXPORT_API(Optimizer) THSNN_Adam_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
 EXPORT_API(Optimizer) THSNN_AdamW_ctor(const Tensor* parameters, const int len, const double learning_rate, const double beta1, const double beta2, const double eps, const double weight_decay, const bool amsgrad);
+EXPORT_API(Optimizer) THSNN_LBFGS_ctor(const Tensor* parameters, const int len, const double lr, const int64_t max_iter, const int64_t max_eval, const double tolerange_grad, const double tolerance_change, const int64_t history_size);
 EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
 EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
 
 EXPORT_API(void) THSNN_Optimizer_zero_grad(const Optimizer optimizer);
 EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
-EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer);
+EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)());
+
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 
 EXPORT_API(void) THSNN_Adagrad_set_lr(const Optimizer optimizer, const double lr);
 EXPORT_API(void) THSNN_Adam_set_lr(const Optimizer optimizer, const double lr);
 EXPORT_API(void) THSNN_AdamW_set_lr(const Optimizer optimizer, const double lr);
+EXPORT_API(void) THSNN_LBFGS_set_lr(const Optimizer optimizer, const double lr);
 EXPORT_API(void) THSNN_RMSprop_set_lr(const Optimizer optimizer, const double lr);
 EXPORT_API(void) THSNN_SGD_set_lr(const Optimizer optimizer, const double lr);
 

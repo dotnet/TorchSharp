@@ -90,12 +90,21 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_step(HType module);
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+                public delegate IntPtr LossClosure();
 
-                public void step()
+
+                [DllImport("LibTorchSharp")]
+                private static extern void THSNN_Optimizer_step(HType module, LossClosure closure);
+
+                public virtual void step(Func<Tensor> closure = null)
                 {
-                    THSNN_Optimizer_step(handle);
+                    if (closure == null) {
+                        THSNN_Optimizer_step(handle, null);
+                    }
+                    else {
+                        THSNN_Optimizer_step(handle, () => closure().handle);
+                    }
                     torch.CheckForErrors();
                 }
 
@@ -118,6 +127,21 @@ namespace TorchSharp
             public interface ILearningRateController
             {
                 double LearningRate { set; get; }
+            }
+
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_LBFGS_ctor(IntPtr parameters, int len, double learningRate, long max_iter, long max_eval, double tolerange_grad, double tolerance_change, long history_size);
+
+            public static LBFGSOptimizer LBFGS(IEnumerable<Tensor> parameters, double learningRate = 0.01, long max_iter = 20, long? max_eval = null, double tolerange_grad = 1e-5, double tolerance_change = 1e-9, long history_size = 100)
+            {
+                if (!max_eval.HasValue) max_eval = 5 * max_iter / 4;
+
+                var parray = new PinnedArray<IntPtr>();
+                IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
+
+                var res = THSNN_LBFGS_ctor(paramsRef, parray.Array.Length, learningRate, max_iter, max_eval.Value, tolerange_grad, tolerance_change, history_size);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new LBFGSOptimizer(res, learningRate);
             }
 
             [DllImport("LibTorchSharp")]
@@ -319,6 +343,31 @@ namespace TorchSharp
             public double LearningRate {
                 get { return _rate; }
                 set { THSNN_RMSprop_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
+            }
+
+            private double _rate;
+        }
+
+        public class LBFGSOptimizer : Optimizer, ILearningRateController
+        {
+            public LBFGSOptimizer(IntPtr handle, double lr) : base(handle)
+            {
+                _rate = lr;
+            }
+
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_LBFGS_set_lr(HType optimizer, double lr);
+
+            public double LearningRate {
+                get { return _rate; }
+                set { THSNN_LBFGS_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
+            }
+
+            public override void step(Func<Tensor> closure = null)
+            {
+                if (closure == null)
+                    throw new ArgumentNullException("'closure' must be non-null when using the LBFGS optimizer. See: https://pytorch.org/docs/1.9.0/optim.html");
+                base.step(closure);
             }
 
             private double _rate;

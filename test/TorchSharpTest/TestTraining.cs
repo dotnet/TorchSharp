@@ -466,6 +466,89 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingLBFGSDefaults()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+
+                Func<Tensor> closure = () => {
+                    var eval = seq.forward(x);
+                    var output = loss(eval, y);
+
+                    finalLoss = output.ToSingle();
+
+                    optimizer.zero_grad();
+
+                    output.backward();
+                    return output;
+                };
+
+                optimizer.step(closure);
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingLBFGSNoClosure()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
+            Assert.Throws<ArgumentNullException>(() => optimizer.step());
+        }
+
+        [Fact]
+        public void TestTrainingLBFGS_ME()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 });
+            var y = Float32Tensor.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter:15, max_eval: 15);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+
+                Func<Tensor> closure = () => {
+                    var eval = seq.forward(x);
+                    var output = loss(eval, y);
+
+                    finalLoss = output.ToSingle();
+
+                    optimizer.zero_grad();
+
+                    output.backward();
+                    return output;
+                };
+
+                optimizer.step(closure);
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
         public void TestTrainingConv2d()
         {
             var conv1 = Conv2d(3, 4, 3, stride: 2);
