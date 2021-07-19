@@ -62,6 +62,15 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
+        /// <summary>
+        /// Normalize a float tensor image with mean and standard deviation.
+        /// </summary>
+        /// <param name="means">Sequence of means for each channel.</param>
+        /// <param name="stdevs">Sequence of standard deviations for each channel.</param>
+        /// <param name="dtype">Bool to make this operation inplace.</param>
+        /// <param name="device">The device to place the output tensor on.</param>
+        /// <returns></returns>
+
         static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);

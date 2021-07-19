@@ -2527,14 +2527,11 @@ namespace TorchSharp
         public void TestPad()
         {
             using (Tensor p4d = Float32Tensor.randn(new long[] { 3, 3, 4, 2 })) {
-                using (var res = Pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
-                    Assert.Equal(new long[] { 3, 3, 4, 4 }, res.shape);
+                using (var res = pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 6, 4 }, res.shape);
                 }
-                using (var res = Pad(p4d, new long[] { 1, 1, 2, 2 }, PaddingModes.Constant, 0.0)) {
-                    Assert.Equal(new long[] { 3, 3, 8, 4 }, res.shape);
-                }
-                using (var res = Pad(p4d, new long[] { 0, 1, 2, 1, 3, 3 }, PaddingModes.Constant, 0.0)) {
-                    Assert.Equal(new long[] { 3, 9, 7, 3 }, res.shape);
+                using (var res = pad(p4d, new long[] { 1, 1, 2, 2 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 7, 5 }, res.shape);
                 }
             }
         }
@@ -2544,7 +2541,7 @@ namespace TorchSharp
         public void TestInterpolateDefaults()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 })) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 })) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2553,7 +2550,7 @@ namespace TorchSharp
         public void TestInterpolateNearest()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Nearest)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Nearest)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2562,7 +2559,7 @@ namespace TorchSharp
         public void TestInterpolateBilinear2D()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Bilinear)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Bilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2572,7 +2569,7 @@ namespace TorchSharp
         public void TestInterpolateArea()
         {
             using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
-            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolateMode.Area)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Area)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
         }
@@ -2581,7 +2578,7 @@ namespace TorchSharp
         public void TestInterpolateTrilinear()
         {
             using (Tensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
-            using (var res = Interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolateMode.Trilinear)) {
+            using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
             }
         }

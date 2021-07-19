@@ -58,6 +58,17 @@ namespace TorchSharp.torchvision
         }
 
         /// <summary>
+        /// Equalize the image randomly with a given probability. 
+        /// </summary>
+        /// <param name="p">Probability of the transform being applied.</param>
+        /// <returns></returns>
+        /// <remarks>The tensor must be an integer tensor</remarks>
+        static public ITransform Equalize(double p = 0.5)
+        {
+            return new Randomizer(Equalize(), p);
+        }
+
+        /// <summary>
         /// Solarize the image randomly with a given probability by inverting all pixel values above a threshold.
         /// </summary>
         /// <param name="threshold">All pixels equal or above this value are inverted.</param>
@@ -95,7 +106,7 @@ namespace TorchSharp.torchvision
         /// <returns></returns>
         static public ITransform RandomGrayscale(double p = 0.1)
         {
-            return new Randomizer(Grayscale(), p);
+            return new Randomizer(Grayscale(3), p);
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace TorchSharp
                 using (var noGrad = new AutoGradMode(false)) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
-                        var update = grad.mul(learning_rate.ToScalar());
+                        var update = grad.mul(learning_rate);
                         param.sub_(update);
                     }
                 }
@@ -93,7 +93,7 @@ namespace TorchSharp
                 using (var noGrad = new AutoGradMode(false)) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
-                        var update = grad.mul(learning_rate.ToScalar());
+                        var update = grad.mul(learning_rate);
                         param.sub_(update);
                     }
                 }

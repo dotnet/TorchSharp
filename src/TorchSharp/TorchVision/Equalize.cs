@@ -5,30 +5,32 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+using static TorchSharp.TensorExtensionMethods;
 
 namespace TorchSharp.torchvision
 {
-    internal class HorizontalFlip : ITransform
+    internal class Equalize : ITransform
     {
-        internal HorizontalFlip()
+        internal Equalize()
         {
         }
 
         public Tensor forward(Tensor input)
         {
-            return input.flip(-1);
+            return transforms.functional.equalize(input);
         }
     }
 
     public static partial class transforms
     {
         /// <summary>
-        /// Flip the image horizontally.
+        /// Equalize the histogram of an image by applying a non-linear mapping to the input
+        /// in order to create a uniform distribution of grayscale values in the output.
         /// </summary>
         /// <returns></returns>
-        static public ITransform HorizontalFlip()
+        static public ITransform Equalize()
         {
-            return new HorizontalFlip();
+            return new Equalize();
         }
     }
 }

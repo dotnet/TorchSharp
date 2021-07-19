@@ -29,10 +29,15 @@ namespace TorchSharp.torchvision
     public static partial class transforms
     {
         /// <summary>
-        /// Crop the image.
+        /// Crop an image at specified location and output size. The image is expected to have […, H, W] shape,
+        /// where … means an arbitrary number of leading dimensions. If image size is smaller than output size along any edge,
+        /// image is padded with 0 and then cropped.
         /// </summary>
+        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+        /// <param name="height">The height of the crop box.</param>
+        /// <param name="width">The width of the crop box.</param>
         /// <returns></returns>
-        /// <remarks>The image will not be cropped outside its boundaries.</remarks>
         static public ITransform Crop(int top, int left, int height, int width)
         {
             return new Crop(top, left, height, width);

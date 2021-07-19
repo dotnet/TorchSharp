@@ -9,15 +9,11 @@ namespace TorchSharp.torchvision
 {
     internal class Resize : ITransform
     {
-        internal Resize(int height, int width, InterpolateMode mode, int? maxSize, bool antialias)
+        internal Resize(int height, int width, int? maxSize)
         {
-            if (antialias && mode != InterpolateMode.Bilinear && mode != InterpolateMode.Bicubic)
-                throw new ArgumentException("Antialias option is supported for bilinear and bicubic interpolation modes only");
-
             this.height = height;
             this.width = width;
-            this.mode = mode;
-            this.antialias = antialias;
+            this.mode = InterpolationMode.Nearest;
             this.max = maxSize; 
         }
 
@@ -26,6 +22,9 @@ namespace TorchSharp.torchvision
             var hoffset = input.Dimensions - 2;
             var iHeight = input.shape[hoffset];
             var iWidth = input.shape[hoffset + 1];
+
+            if (iHeight == height && iWidth == width)
+                return input;
 
             var h = height;
             var w = width;
@@ -47,56 +46,14 @@ namespace TorchSharp.torchvision
                 }
             }
 
-            if (mode != InterpolateMode.Nearest) {
-                throw new NotImplementedException("Interpolation mode != 'Nearest'");
-            }
+            var img = transforms.functional.SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
+            img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: mode, align_corners: null);
 
-            var img = SqueezeIn(input, out var needCast, out var needSqueeze, out var dtype);
-
-            img = torch.nn.functional.Interpolate(img, new long[] { h, w }, mode: mode, alignCorners: null);
-
-            return SqueezeOut(img, needCast, needSqueeze, dtype);
+            return transforms.functional.SqueezeOut(img, needCast, needSqueeze, dtype);
         }
 
-        private Tensor SqueezeIn(Tensor img, out bool needCast, out bool needSqueeze, out ScalarType dtype)
-        {
-            needSqueeze = false;
-
-            if (img.Dimensions < 4) {
-                img = img.unsqueeze(0);
-                needSqueeze = true;
-            }
-
-            dtype = img.dtype;
-            needCast = false;
-
-            if (dtype != ScalarType.Float32 && dtype != ScalarType.Float64) {
-                needCast = true;
-                img = img.to_type(ScalarType.Float32);
-            }
-
-            return img;
-        }
-
-        private Tensor SqueezeOut(Tensor img, bool needCast, bool needSqueeze, ScalarType dtype)
-        {
-            if (needSqueeze) {
-                img = img.squeeze(0);
-            }
-
-            if (needCast) {
-                if (TensorExtensionMethods.IsIntegral(dtype))
-                    img = img.round();
-
-                img = img.to_type(dtype);
-            }
-
-            return img;
-        }
-
-        private bool antialias;
-        private InterpolateMode mode;
+        private InterpolationMode mode;
         private int height, width;
         private int? max;
     }
@@ -108,25 +65,20 @@ namespace TorchSharp.torchvision
         /// </summary>
         /// <param name="height"></param>
         /// <param name="width"></param>
-        /// <param name="mode"></param>
-        /// <param name="antialias"></param>
         /// <returns></returns>
-        static public ITransform Resize(int height, int width, InterpolateMode mode = InterpolateMode.Nearest, bool antialias = false)
+        static public ITransform Resize(int height, int width)
         {
-            return new Resize(height, width, mode, null, antialias);
+            return new Resize(height, width, null);
         }
 
         /// <summary>
         /// Resize the input image to the given size.
         /// </summary>
         /// <param name="size"></param>
-        /// <param name="mode"></param>
         /// <param name="maxSize"></param>
-        /// <param name="antialias"></param>
-        /// <returns></returns>
-        static public ITransform Resize(int size, InterpolateMode mode = InterpolateMode.Nearest, int? maxSize = null, bool antialias = false)
+        static public ITransform Resize(int size, int? maxSize = null)
         {
-            return new Resize(size, -1, mode, maxSize, antialias);
+            return new Resize(size, -1, maxSize);
         }
     }
 }

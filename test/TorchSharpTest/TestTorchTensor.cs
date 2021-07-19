@@ -3,10 +3,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Xunit;
+using System.Collections.Generic;
 
 using static TorchSharp.torch;
 using static TorchSharp.TensorExtensionMethods;
+
+using Xunit;
 
 #nullable enable
 
@@ -85,7 +87,7 @@ namespace TorchSharp
             }
             {
                 Tensor t = ComplexFloat32Tensor.ones(4);
-                for (int i = 0; i < t.shape[0]; i++) t[i] = ComplexFloat32Tensor.from((1.0f*i, 2.43f*i*2));
+                for (int i = 0; i < t.shape[0]; i++) t[i] = ComplexFloat32Tensor.from((1.0f * i, 2.43f * i * 2));
                 var str = t.ToString(true);
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 1+4.86i 2+9.72i 3+14.58i{_sep}", str);
             }
@@ -95,7 +97,7 @@ namespace TorchSharp
         public void Test2DToString()
         {
             {
-                Tensor t = Float32Tensor.from(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f}, 2, 4);
+                Tensor t = Float32Tensor.from(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
                 var str = t.ToString(true);
                 Assert.Equal($"[2x4], type = Float32, device = cpu{_sep}{_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}", str);
             }
@@ -115,7 +117,7 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
                 var str = t.ToString(true, "0.0000000");
-                Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,:,:] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}"+
+                Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,:,:] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}" +
                              $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,:,:] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
                              $" 0.0000000 0.0000000 0.0000000 0.0000000{_sep}", str);
             }
@@ -363,7 +365,7 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = Int32Tensor.empty(shape);
             Assert.Equal(shape, t.shape);
-            t = torch.empty(shape,torch.int32);
+            t = torch.empty(shape, torch.int32);
             Assert.Equal(shape, t.shape);
         }
 
@@ -628,8 +630,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.dtype);
-            Assert.True(r.allclose(p.Real));
-            Assert.True(i.allclose(p.Imag));
+            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -645,8 +647,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.dtype);
-            Assert.True(r.allclose(p.Real));
-            Assert.True(i.allclose(p.Imag));
+            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -1887,7 +1889,7 @@ namespace TorchSharp
             var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = torch.cat(new Tensor[] { zeros, ones },0);
+            var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
 
             var distanceFromZero = input.reshape(new long[] { -1, 1, 9 }).sub(zeros).pow(2.ToScalar()).sum(new long[] { 2 });
             var distanceFromOne = input.reshape(new long[] { -1, 1, 9 }).sub(ones).pow(2.ToScalar()).sum(new long[] { 2 });
@@ -1901,7 +1903,7 @@ namespace TorchSharp
         {
             var zeros = Float32Tensor.zeros(new long[] { 1, 9 });
             var ones = Float32Tensor.ones(new long[] { 1, 9 });
-            var centroids = torch.cat(new Tensor[] { zeros, ones },0);
+            var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
 
             var shape = centroids.shape;
             Assert.Equal(new long[] { 2, 9 }, shape);
@@ -1996,7 +1998,7 @@ namespace TorchSharp
             {
                 var t1 = Float32Tensor.zeros(new long[] { 2, 9 }, device);
                 var t2 = Float32Tensor.ones(new long[] { 2, 9 }, device);
-                var res =  torch.dstack(new Tensor[] { t1, t2 });
+                var res = torch.dstack(new Tensor[] { t1, t2 });
 
                 var shape = res.shape;
                 Assert.Equal(new long[] { 2, 9, 2 }, shape);
@@ -4125,6 +4127,13 @@ namespace TorchSharp
                 Assert.Equal(2.0f, res[1].ToSingle());
                 Assert.Equal(3.1f, res[2].ToSingle());
             }
+            // And all dims.
+            using (var res = Float32Tensor.from(data).expand(new long[] { 1, 1, 3 }).squeeze()) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
         }
 
         [Fact]
@@ -4198,7 +4207,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3t = torch.nn.functional.conv1d(t1t,t2t, stride: 1, padding: 0, dilation: 1);
+            var t3t = torch.nn.functional.conv1d(t1t, t2t, stride: 1, padding: 0, dilation: 1);
             if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
@@ -4260,7 +4269,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3t = torch.nn.functional.conv1d(t1t,t2t, stride: 1, padding: 0, dilation: 1);
+            var t3t = torch.nn.functional.conv1d(t1t, t2t, stride: 1, padding: 0, dilation: 1);
             if (torch.cuda.is_available()) {
                 t3t = t3t.cpu();
             }
@@ -4327,7 +4336,7 @@ namespace TorchSharp
                 t1t = t1t.cuda();
                 t2t = t2t.cuda();
             }
-            var t3p2d3 = torch.nn.functional.conv1d(t1t,t2t, padding: 2, dilation: 3);
+            var t3p2d3 = torch.nn.functional.conv1d(t1t, t2t, padding: 2, dilation: 3);
             if (torch.cuda.is_available()) {
                 t3p2d3 = t3p2d3.cpu();
             }
@@ -5357,6 +5366,34 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AdjustHueTensor()
+        {
+            {
+                using (var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3)) {
+                    var poster = torchvision.transforms.AdjustHue(0).forward(input);
+
+                    var istr = input.ToString(true);
+                    var pstr = poster.ToString(true);
+
+                    Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                    Assert.True(poster.allclose(input));
+                }
+            }
+        }
+
+        [Fact]
+        public void RotateTensor()
+        {
+            {
+                using (var input = torch.rand(16, 3, 25, 50)) {
+                    var poster = torchvision.transforms.Rotate(90).forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void AutocontrastTensor()
         {
             {
@@ -5371,6 +5408,33 @@ namespace TorchSharp
                     var poster = torchvision.transforms.AutoContrast().forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void PerspectiveTest()
+        {
+            {
+                using (var input = torch.ones(1, 3, 8, 8)) {
+
+                    var startpoints = new List<IList<int>>();
+                    startpoints.Add(new int[] { 0, 0 });
+                    startpoints.Add(new int[] { 7, 0 });
+                    startpoints.Add(new int[] { 7, 7 });
+                    startpoints.Add(new int[] { 0, 7 });
+
+                    var endpoints = new List<IList<int>>();
+                    endpoints.Add(new int[] { 1, 1 });
+                    endpoints.Add(new int[] { 5, 2 });
+                    endpoints.Add(new int[] { 5, 6 });
+                    endpoints.Add(new int[] { 3, 7 });
+
+                    var poster = torchvision.transforms.functional.perspective(input, startpoints, endpoints);
+
+                    var pStr = poster.ToString(true);
+
+                    Assert.Equal(new long[] { 1, 3, 8, 8 }, poster.shape);
                 }
             }
         }

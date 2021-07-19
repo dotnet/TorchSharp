@@ -9,10 +9,10 @@ namespace TorchSharp.torchvision
 {
     internal class ResizedCrop : ITransform
     {
-        internal ResizedCrop(int top, int left, int height, int width, int newHeight, int newWidth, InterpolateMode mode)
+        internal ResizedCrop(int top, int left, int height, int width, int newHeight, int newWidth)
         {
             cropper = transforms.Crop(top, left, height, width);
-            resizer = transforms.Resize(newHeight, newWidth, mode);
+            resizer = transforms.Resize(newHeight, newWidth);
         }
 
         public Tensor forward(Tensor input)
@@ -26,14 +26,31 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
-        static public ITransform ResizedCrop(int top, int left, int height, int width, int newHeight, int newWidth, InterpolateMode mode = InterpolateMode.Nearest)
+        /// <summary>
+        /// Crop the given image and resize it to desired size.
+        /// </summary>
+        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+        /// <param name="height">Height of the crop box.</param>
+        /// <param name="width">Width of the crop box.</param>
+        /// <param name="newHeight">New height.</param>
+        /// <param name="newWidth">New width.</param>
+
+        static public ITransform ResizedCrop(int top, int left, int height, int width, int newHeight, int newWidth)
         {
-            return new ResizedCrop(top, left, height, width, newHeight, newWidth, mode);
+            return new ResizedCrop(top, left, height, width, newHeight, newWidth);
         }
 
-        static public ITransform ResizedCrop(int top, int left, int height, int width, int newSize, InterpolateMode mode = InterpolateMode.Nearest)
+        /// <summary>
+        /// Crop the given image and resize it to desired (square) size.
+        /// </summary>
+        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+        /// <param name="size">Height and width of the crop box.</param>
+        /// <param name="newSize">New height and width.</param>
+        static public ITransform ResizedCrop(int top, int left, int size, int newSize)
         {
-            return new ResizedCrop(top, left, height, width, newSize, -1, mode);
+            return new ResizedCrop(top, left, size, size, newSize, -1);
         }
     }
 }

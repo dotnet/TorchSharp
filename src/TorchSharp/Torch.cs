@@ -287,6 +287,10 @@ namespace TorchSharp
                 return THSTorchCuda_is_available();
             }
 
+            /// <summary>
+            /// Returns a bool indicating if CUDA is currently available.
+            /// </summary>
+            /// <returns></returns>
             public static bool is_available()
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
@@ -305,12 +309,57 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern int THSTorchCuda_device_count();
 
+            /// <summary>
+            /// Returns the number of GPUs available.
+            /// </summary>
+            /// <returns></returns>
             public static int device_count()
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
                 return THSTorchCuda_device_count();
             }
 
+            [DllImport("LibTorchSharp")]
+            private static extern void THSCuda_manual_seed(long seed);
+
+            /// <summary>
+            /// Sets the seed for generating random numbers for the current GPU.
+            /// It’s safe to call this function if CUDA is not available; in that case, it is silently ignored.
+            /// </summary>
+            /// <param name="seed">The desired seed.</param>
+            public static void manual_seed(long seed)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSCuda_manual_seed(seed);
+            }
+
+            [DllImport("LibTorchSharp")]
+            private static extern void THSCuda_manual_seed_all(long seed);
+
+            /// <summary>
+            /// Sets the seed for generating random numbers on all GPUs.
+            /// It’s safe to call this function if CUDA is not available; in that case, it is silently ignored.
+            /// </summary>
+            /// <param name="seed"></param>
+            public static void manual_seed_all(long seed)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSCuda_manual_seed_all(seed);
+            }
+
+            [DllImport("LibTorchSharp")]
+            private static extern void THSCuda_synchronize(long device_index);
+
+            /// <summary>
+            /// Waits for all kernels in all streams on a CUDA device to complete.
+            /// </summary>
+            /// <param name="seed">Device for which to synchronize.
+            /// It uses the current device, given by current_device(), if a device is not provided.</param>
+            public static void synchronize(long seed = -1L)
+            {
+                TryInitializeDeviceType(DeviceType.CUDA);
+                THSCuda_synchronize(seed);
+            }
         }
 
         [DllImport("LibTorchSharp")]

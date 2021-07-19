@@ -9,6 +9,8 @@
 
 // Sets manually the seed.
 EXPORT_API(void)      THSTorch_manual_seed(const int64_t seed);
+EXPORT_API(void) THSCuda_manual_seed(const int64_t seed);
+EXPORT_API(void) THSCuda_manual_seed_all(const int64_t seed);
 
 EXPORT_API(Generator) THSGenerator_manual_seed(const int64_t seed);
 EXPORT_API(void) THSGenerator_gen_manual_seed(const Generator gen, const int64_t seed);
@@ -24,6 +26,7 @@ EXPORT_API(void)      THSGenerator_dispose(const Generator generator);
 EXPORT_API(int) THSTorchCuda_is_available();
 EXPORT_API(int) THSTorchCuda_cudnn_is_available();
 EXPORT_API(int) THSTorchCuda_device_count();
+EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
 // Returns the latest error. This is thread-local.
 EXPORT_API(const char *) THSTorch_get_and_reset_last_err();
@@ -53,6 +56,8 @@ EXPORT_API(bool) THSTorch_scalar_to_bool(Scalar value);
 
 EXPORT_API(void) THSTorch_scalar_to_complex32(Scalar value, float* (*allocator)(size_t length));
 EXPORT_API(void) THSTorch_scalar_to_complex64(Scalar value, double* (*allocator)(size_t length));
+
+EXPORT_API(Tensor) THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr);
 
 EXPORT_API(int8_t) THSTorch_scalar_type(Scalar value);
 

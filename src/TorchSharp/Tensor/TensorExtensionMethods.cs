@@ -204,10 +204,9 @@ namespace TorchSharp
 
                 var slice = image.index(TensorIndex.Ellipsis, TensorIndex.Slice(Math.Max(top, 0), bottom), TensorIndex.Slice(Math.Max(left, 0), right));
 
-                // Note: according to the documentation, it should be LTRB, but that generates the wrong result. Here, we use LRTB.
-                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(right - w, 0), Math.Max(-top, 0), Math.Max(bottom - h, 0) };
+                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
 
-                return TorchSharp.torch.nn.functional.Pad(slice, padding_ltrb);
+                return TorchSharp.torch.nn.functional.pad(slice, padding_ltrb);
             }
 
             return image.index(TensorIndex.Ellipsis, TensorIndex.Slice(top, bottom), TensorIndex.Slice(left, right));

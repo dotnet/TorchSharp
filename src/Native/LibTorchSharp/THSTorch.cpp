@@ -15,6 +15,17 @@ Generator THSGenerator_manual_seed(const int64_t seed)
     return THSGenerator_default_generator();
 }
 
+void THSCuda_manual_seed(const int64_t seed)
+{
+    CATCH(torch::cuda::manual_seed(seed);)
+}
+
+void THSCuda_manual_seed_all(const int64_t seed)
+{
+    CATCH(torch::cuda::manual_seed_all(seed);)
+}
+
+
 void THSGenerator_gen_manual_seed(const Generator generator, const int64_t seed)
 {
     generator->set_current_seed(seed);
@@ -68,6 +79,12 @@ int THSTorchCuda_device_count()
 {
     return (int)torch::cuda::device_count();
 }
+
+EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device_index)
+{
+    CATCH(torch::cuda::synchronize(device_index);)
+}
+
 
 const char * THSTorch_get_and_reset_last_err()
 {
@@ -200,4 +217,12 @@ int8_t THSTorch_scalar_type(Scalar value)
 void THSTorch_dispose_scalar(Scalar scalar)
 {
     delete scalar;
+}
+
+Tensor THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::lstsq(*input, *A);)
+    *qr = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }

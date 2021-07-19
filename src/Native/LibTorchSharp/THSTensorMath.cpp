@@ -260,24 +260,24 @@ Tensor THSTensor_deg2rad(const Tensor tensor)
 {
     CATCH_TENSOR(torch::deg2rad(*tensor));
 }
-Tensor THSTensor_div(const Tensor left, const Tensor right)
+Tensor THSTensor_div(const Tensor left, const Tensor right, const char* rounding_mode)
 {
-    CATCH_TENSOR(left->div(*right));
+    CATCH_TENSOR(rounding_mode == nullptr ? left->div(*right) : left->div(*right, rounding_mode));
 }
 
-Tensor THSTensor_div_(const Tensor left, const Tensor right)
+Tensor THSTensor_div_(const Tensor left, const Tensor right, const char* rounding_mode)
 {
-    CATCH_TENSOR(left->div_(*right));
+    CATCH_TENSOR(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode));
 }
 
-Tensor THSTensor_div_scalar(const Tensor left, const Scalar right)
+Tensor THSTensor_div_scalar(const Tensor left, const Scalar right, const char* rounding_mode)
 {
-    CATCH_TENSOR(left->div(*right));
+    CATCH_TENSOR(rounding_mode == nullptr ? left->div(*right) : left->div(*right, rounding_mode));
 }
 
-Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right)
+Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right, const char* rounding_mode)
 {
-    CATCH_TENSOR(left->div_(*right));
+    CATCH_TENSOR(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode));
 }
 
 Tensor THSTensor_dot(const Tensor left, const Tensor right)
@@ -463,6 +463,11 @@ Tensor THSTensor_gt_scalar(const Tensor left, const Scalar right)
 Tensor THSTensor_gt_scalar_(const Tensor left, const Scalar right)
 {
     CATCH_TENSOR(left->gt_(*right));
+}
+
+Tensor THSTensor_histc(const Tensor tensor, const int64_t bins, const int64_t min, const int64_t max)
+{
+    CATCH_TENSOR(tensor->histc(bins, min, max));
 }
 
 Tensor THSTensor_ldexp(const Tensor left, const Tensor right)

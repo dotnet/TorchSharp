@@ -11,6 +11,13 @@ namespace TorchSharp
     public static partial class torch
     {
 
+        public enum RoundingMode
+        {
+            None,
+            trunc,
+            floor
+        }
+
         // This file contains the mathematical operators on Tensor
 
         public sealed partial class Tensor
@@ -531,16 +538,69 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg);
+            static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
+
+            public (Tensor values, Tensor indexes) cummax(long dimension)
+            {
+                IntPtr[] ptrArray;
+
+                using (var pa = new PinnedArray<IntPtr>()) {
+                    THSTensor_cummax(handle, pa.CreateArray, dimension);
+                    torch.CheckForErrors();
+                    ptrArray = pa.Array;
+                }
+
+                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
+
+            public (Tensor values, Tensor indexes) cummin(long dimension)
+            {
+                IntPtr[] ptrArray;
+
+                using (var pa = new PinnedArray<IntPtr>()) {
+                    THSTensor_cummin(handle, pa.CreateArray, dimension);
+                    torch.CheckForErrors();
+                    ptrArray = pa.Array;
+                }
+
+                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
+
+            public Tensor cumsum(long dimension, ScalarType? type = null)
+            {
+                var res = THSTensor_cumsum(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
+
+            public Tensor cumprod(long dimension, ScalarType? type = null)
+            {
+                var res = THSTensor_cumprod(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
 
             /// <summary>
             /// Divides each element of the input by the corresponding element of other.
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor div(Tensor target)
+            public Tensor div(Tensor target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div(handle, target.Handle);
+                var res = THSTensor_div(handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -549,20 +609,22 @@ namespace TorchSharp
             /// Divides each element of the input by the corresponding element of other.
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor divide(Tensor target) => div(target);
+            public Tensor divide(Tensor target, RoundingMode rounding_mode = RoundingMode.None) => div(target, rounding_mode);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_div_scalar(IntPtr tensor, IntPtr trg);
+            static extern IntPtr THSTensor_div_scalar(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
 
             /// <summary>
             /// Scalar division
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor div(Scalar target)
+            public Tensor div(Scalar target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div_scalar(handle, target.Handle);
+                var res = THSTensor_div_scalar(handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -571,38 +633,57 @@ namespace TorchSharp
             /// Scalar division
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor divide(Scalar target) => div(target);
+            public Tensor divide(Scalar target, RoundingMode rounding_mode = RoundingMode.None) => div(target, rounding_mode);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_div_(IntPtr tensor, IntPtr trg);
+            static extern IntPtr THSTensor_div_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
 
             /// <summary>
             /// In-place division
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor div_(Tensor target)
+            public Tensor div_(Tensor target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div_(handle, target.Handle);
+                var res = THSTensor_div_(handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// In-place division
+            /// </summary>
+            /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
+            /// <returns></returns>
+            public Tensor divide_(Tensor target, RoundingMode rounding_mode = RoundingMode.None) => div_(target, rounding_mode);
+
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_div_scalar_(IntPtr tensor, IntPtr trg);
+            static extern IntPtr THSTensor_div_scalar_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
 
             /// <summary>
             /// In-place scalar division
             /// </summary>
             /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
             /// <returns></returns>
-            public Tensor div_(Scalar target)
+            public Tensor div_(Scalar target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div_scalar_(handle, target.Handle);
+                var res = THSTensor_div_scalar_(handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            /// <summary>
+            /// In-place scalar division
+            /// </summary>
+            /// <param name="target"></param>
+            /// <param name="rounding_mode"></param>
+            /// <returns></returns>
+            public Tensor divide_(Scalar target, RoundingMode rounding_mode = RoundingMode.None) => div_(target, rounding_mode);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_exp(IntPtr tensor);
@@ -841,6 +922,26 @@ namespace TorchSharp
             {
                 var res = THSTensor_gcd_(handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_histc(IntPtr tensor, long bins, long min, long max);
+
+            /// <summary>
+            /// Computes the histogram of a tensor.
+            /// The elements are sorted into equal width bins between min and max.If min and max are both zero, the minimum and maximum values of the data are used.
+            /// Elements lower than min and higher than max are ignored.
+            /// </summary>
+            /// <param name="bins">Number of histogram bins</param>
+            /// <param name="min">Lower end of the range (inclusive)</param>
+            /// <param name="max">Upper end of the range (inclusive)</param>
+            /// <returns></returns>
+            public Tensor histc(long bins = 100, long min = 0, long max = 0)
+            {
+                var res = THSTensor_histc(handle, bins, min, max);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
                 return new Tensor(res);
             }
 
@@ -1791,6 +1892,11 @@ namespace TorchSharp
                 return left.sub(right);
             }
 
+            public static Tensor operator -(Scalar left, Tensor right)
+            {
+                return right.negative().add(left);
+            }
+
             public static Tensor operator /(Tensor left, Tensor right)
             {
                 return left.div(right);
@@ -1799,6 +1905,11 @@ namespace TorchSharp
             public static Tensor operator /(Tensor left, Scalar right)
             {
                 return left.div(right);
+            }
+
+            public static Tensor operator /(Scalar left, Tensor right)
+            {
+                return right.reciprocal().mul(left);
             }
 
             public static Tensor operator %(Tensor left, Tensor right)
@@ -1975,6 +2086,8 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor addr_(Tensor input, Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f) => input.addr_(vec1, vec2, beta, alpha);
 
+        public static Tensor bincount(Tensor input, Tensor weights = null, long minlength = 0) => input.bincount(weights, minlength);
+
         /// <summary>
         /// Element-wise bitwise AND
         /// </summary>
@@ -2035,53 +2148,82 @@ namespace TorchSharp
         /// <returns></returns>
         public static Tensor ceil_(Tensor input) => input.ceil_();
 
-        /// <summary>
-        /// Divides each element of the input by the corresponding element of other.
-        /// </summary>
-        /// <returns></returns>
-        public static Tensor div(Tensor left, Tensor right) => left.div(right);
+        public static Tensor cumsum(Tensor input, long dimension, ScalarType? type = null) => input.cumsum(dimension, type);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
         /// <returns></returns>
-        public static Tensor divide(Tensor left, Tensor right) => left.div(right);
+        public static Tensor div(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
+
+        /// <summary>
+        /// Divides each element of the input by the corresponding element of other.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor divide(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
         /// <returns></returns>
-        public static Tensor div(Tensor left, Scalar right) => left.div(right);
+        public static Tensor div(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
         /// <returns></returns>
-        public static Tensor divide(Tensor left, Scalar right) => left.div(right);
+        public static Tensor divide(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
         /// <returns></returns>
-        public static Tensor div_(Tensor left, Tensor right) => left.div_(right);
+        public static Tensor div_(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
         /// <returns></returns>
-        public static Tensor divide_(Tensor left, Tensor right) => left.div_(right);
+        public static Tensor divide_(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
         /// <returns></returns>
-        public static Tensor div_(Tensor left, Scalar right) => left.div_(right);
+        public static Tensor div_(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
         /// <returns></returns>
         public static Tensor divide_(Tensor left, Scalar right) => left.div_(right);
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
+
+        /// <summary>
+        /// Sums the product of the elements of the input operands along dimensions specified using a notation based on the Einstein summation convention.
+        /// </summary>
+        /// <param name="equation">The subscripts for the Einstein summation.</param>
+        /// <param name="tensors">The operands to compute the Einstein sum of.</param>
+        /// <remarks>
+        /// Einsum allows computing many common multi-dimensional linear algebraic array operations by representing them in a short-hand format based on the
+        /// Einstein summation convention, given by equation.The details of this format are described below, but the general idea is to label every dimension
+        /// of the input operands with some subscript and define which subscripts are part of the output. The output is then computed by summing the product
+        /// of the elements of the operands along the dimensions whose subscripts are not part of the output.For example, matrix multiplication can be computed
+        /// using einsum as torch.einsum(“ij,jk->ik”, A, B). Here, j is the summation subscript and i and k the output subscripts(see section below for more details on why).
+        /// </remarks>
+        /// <returns></returns>
+        public static Tensor einsum(string equation, params Tensor[] tensors)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+        }
 
         /// <summary>
         /// Returns a new tensor with the exponential of the elements of the input tensor input.
@@ -2169,6 +2311,8 @@ namespace TorchSharp
         public static Tensor gcd(Tensor left, Tensor right) => left.gcd(right);
 
         public static Tensor gcd_(Tensor left, Tensor right) => left.gcd_(right);
+
+        public static Tensor histc(Tensor input, long bins = 100, long min = 0, long max = 0) => input.histc(bins, min, max);
 
         /// <summary>
         /// Element-wise: given the legs of a right triangle, return its hypotenuse.
@@ -2277,6 +2421,22 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
+
+        public static Tensor max(Tensor input) => input.max();
+
+        static public Tensor max(Tensor input, Tensor other) => input.max(other);
+
+        static public (Tensor values, Tensor indexes) max(Tensor input, long dimension, bool keepDim = false) => input.max(dimension, keepDim);
+
+        public static Tensor mean(Tensor input) => input.mean();
+
+        public static Tensor mean(Tensor input, long[] dimensions, bool keepDimension = false, ScalarType? type = null) => input.mean(dimensions, keepDimension, type);
+
+        public static Tensor min(Tensor input) => input.min();
+
+        static public Tensor min(Tensor input, Tensor other) => input.min(other);
+
+        static public (Tensor values, Tensor indexes) min(Tensor input, long dimension, bool keepDim = false) => input.min(dimension, keepDim);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.

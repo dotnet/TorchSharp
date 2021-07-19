@@ -8,27 +8,31 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.torchvision
 {
-    internal class HorizontalFlip : ITransform
+    internal class Lambda : ITransform
     {
-        internal HorizontalFlip()
+        internal Lambda(Func<Tensor, Tensor> lambda)
         {
+            this.lambda = lambda;
         }
 
-        public Tensor forward(Tensor input)
+        public Tensor forward(Tensor img)
         {
-            return input.flip(-1);
+            return lambda(img);
         }
+
+        private Func<Tensor,Tensor> lambda;
     }
 
     public static partial class transforms
     {
         /// <summary>
-        /// Flip the image horizontally.
+        /// Apply a user-defined function as a transform. 
         /// </summary>
+        /// <param name="lambda">Lambda/function to be used for transform.</param>
         /// <returns></returns>
-        static public ITransform HorizontalFlip()
+        static public ITransform Lambda(Func<Tensor, Tensor> lambda)
         {
-            return new HorizontalFlip();
+            return new Lambda(lambda);
         }
     }
 }

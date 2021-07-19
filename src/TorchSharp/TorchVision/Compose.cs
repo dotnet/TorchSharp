@@ -34,6 +34,11 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
+        /// <summary>
+        /// Composes several transforms together.
+        /// </summary>
+        /// <param name="transforms">A list of transforms to compose serially.</param>
+        /// <returns></returns>
         static public ITransform Compose(params ITransform[] transforms)
         {
             return new ComposedTransforms(transforms);

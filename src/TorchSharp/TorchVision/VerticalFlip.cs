@@ -16,7 +16,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            return input.flipud();
+            return input.flip(-2);
         }
     }
 

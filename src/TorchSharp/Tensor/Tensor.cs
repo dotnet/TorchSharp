@@ -115,6 +115,12 @@ namespace TorchSharp
 
             public long element_size() => THSTensor_element_size(handle);
 
+            public bool is_integral() => torch.is_integral(dtype);
+            public bool is_floating_point() => torch.is_floating_point(dtype);
+            public bool is_complex() => torch.is_complex(dtype);
+
+            public bool is_cuda { get { return device.type == DeviceType.CUDA; } } 
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_data(IntPtr handle);
 
@@ -1237,14 +1243,17 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_squeeze_no_dim(IntPtr tensor);
+
             /// <summary>
             /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
             /// </summary>
             /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
             /// <returns></returns>
-            public Tensor squeeze(long dim)
+            public Tensor squeeze(long? dim = null)
             {
-                var res = THSTensor_squeeze(handle, dim);
+                var res = dim.HasValue ? THSTensor_squeeze(handle, dim.Value) : THSTensor_squeeze_no_dim(handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -2334,58 +2343,6 @@ namespace TorchSharp
             public Tensor clamp_min_(Scalar min)
             {
                 var res = THSTensor_clamp_min_(handle, min.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
-
-            public (Tensor values, Tensor indexes) cummax(long dimension)
-            {
-                IntPtr[] ptrArray;
-
-                using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummax(handle, pa.CreateArray, dimension);
-                    torch.CheckForErrors();
-                    ptrArray = pa.Array;
-                }
-
-                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
-
-            public (Tensor values, Tensor indexes) cummin(long dimension)
-            {
-                IntPtr[] ptrArray;
-
-                using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummin(handle, pa.CreateArray, dimension);
-                    torch.CheckForErrors();
-                    ptrArray = pa.Array;
-                }
-
-                return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
-
-            public Tensor cumsum(long dimension, ScalarType? type = null)
-            {
-                var res = THSTensor_cumsum(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
-
-            public Tensor cumprod(long dimension, ScalarType? type = null)
-            {
-                var res = THSTensor_cumprod(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -3583,6 +3540,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Expand this tensor to the same size as other.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor expand_as(Tensor other) => expand(other.shape);
+
+
+            /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
             public Tensor expand(params long[] sizes)
@@ -3909,7 +3873,7 @@ namespace TorchSharp
             ///  Returns a view of the original tensor with its dimensions permuted.
             /// </summary>
             /// <param name="permutation">The desired ordering of dimensions</param>
-            public Tensor permute(long[] permutation)
+            public Tensor permute(params long[] permutation)
             {
                 unsafe {
                     fixed (long* pPermutation = permutation) {
@@ -4271,17 +4235,30 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dimension);
+
             /// <summary>
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
             /// </summary>
+            public Tensor unsqueeze(long dim)
+            {
+                var res = THSTensor_unsqueeze(handle, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dimension);
+            static extern IntPtr THSTensor_unsqueeze_(IntPtr tensor, long dimension);
 
-            public Tensor unsqueeze(long dimension)
+            /// <summary>
+            ///  Returns a new tensor with a dimension of size one inserted at the specified position.
+            ///  The returned tensor shares the same underlying data with this tensor.
+            /// </summary>
+            public Tensor unsqueeze_(long dim)
             {
-                var res = THSTensor_unsqueeze(handle, dimension);
+                var res = THSTensor_unsqueeze_(handle, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -4296,20 +4273,6 @@ namespace TorchSharp
                 var res = THSTensor_where(condition.Handle, this.Handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
-
-            public static Tensor einsum(string equation, params Tensor[] tensors)
-            {
-                using (var parray = new PinnedArray<IntPtr>()) {
-                    IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                    var res = THSTensor_einsum(equation, tensorsRef, parray.Array.Length);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
-                }
             }
 
 
@@ -4720,12 +4683,30 @@ namespace TorchSharp
             {
                 return new TensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
             }
+
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
+
             static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
+
             static public TensorIndex Tensor(Tensor tensor) => new TensorIndex() { tensor = tensor, kind = Kind.Tensor };
-            static public TensorIndex Ellipsis => new TensorIndex() { kind = Kind.Ellipsis };
-            static public TensorIndex None => new TensorIndex() { kind = Kind.None };
-            static public TensorIndex Null => new TensorIndex() { kind = Kind.Null };
+
+            static public TensorIndex Ellipsis = new TensorIndex() { kind = Kind.Ellipsis };
+
+            static public TensorIndex None = new TensorIndex() { kind = Kind.None };
+
+            static public TensorIndex Null = new TensorIndex() { kind = Kind.Null };
+
+            static public TensorIndex Colon = Slice();
+
+            public static implicit operator TensorIndex(long value)
+            {
+                return TensorIndex.Single(value);
+            }
+
+            public static implicit operator TensorIndex(System.Range value)
+            {
+                return TensorIndex.Slice(value.Start.Value, value.End.Value);
+            }
         }
 
         /// <summary>
@@ -4751,7 +4732,7 @@ namespace TorchSharp
             BFloat16 = 15
         }
 
-        static bool is_integral(ScalarType type)
+        public static bool is_integral(ScalarType type)
         {
             switch (type) {
             case ScalarType.Byte:
@@ -4766,7 +4747,7 @@ namespace TorchSharp
             }
         }
 
-        static bool is_floating_point(ScalarType type)
+        public static bool is_floating_point(ScalarType type)
         {
             switch (type) {
             case ScalarType.BFloat16:
@@ -4779,7 +4760,7 @@ namespace TorchSharp
             }
         }
 
-        static bool is_complex(ScalarType type)
+        public static bool is_complex(ScalarType type)
         {
             switch (type) {
             case ScalarType.ComplexFloat32:
@@ -4790,9 +4771,9 @@ namespace TorchSharp
             }
         }
 
-        static bool is_integral(Tensor t) => is_integral(t.dtype);
-        static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
-        static bool is_complex(Tensor t) => is_complex(t.dtype);
+        public static bool is_integral(Tensor t) => is_integral(t.dtype);
+        public static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
+        public static bool is_complex(Tensor t) => is_complex(t.dtype);
 
         public static ScalarType @bool = ScalarType.Bool;
 

@@ -18,10 +18,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            int cDim = (int)input.Dimensions - 3;
-            var rgb = input.unbind(cDim);
-            var img = (rgb[0] * 0.2989 + rgb[1] * 0.587 + rgb[2] * 0.114).unsqueeze(cDim);
-            return outputChannels == 3 ? img.expand(input.shape) : img;
+            return transforms.functional.rgb_to_grayscale(input, outputChannels);
         }
 
         protected int outputChannels;
@@ -29,6 +26,11 @@ namespace TorchSharp.torchvision
 
     public static partial class transforms
     {
+        /// <summary>
+        /// Convert image to grayscale. 
+        /// </summary>
+        /// <param name="outputChannels">The number of channels in the output image tensor.</param>
+        /// <returns></returns>
         static public ITransform Grayscale(int outputChannels = 1)
         {
             return new Grayscale(outputChannels);

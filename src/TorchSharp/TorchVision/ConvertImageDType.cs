@@ -4,32 +4,34 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
-
 using static TorchSharp.TensorExtensionMethods;
+
 
 namespace TorchSharp.torchvision
 {
-    internal class AutoContrast : ITransform
+    internal class ConvertImageDType : ITransform
     {
-        internal AutoContrast()
+        internal ConvertImageDType(ScalarType dtype)
         {
+            this.dtype = dtype;
         }
 
-        public Tensor forward(Tensor input)
+        public Tensor forward(Tensor image)
         {
-            return transforms.functional.autocontrast(input);
+            return transforms.functional.convert_image_dtype(image, dtype);
         }
+
+        private ScalarType dtype;
     }
 
     public static partial class transforms
     {
         /// <summary>
-        /// Autocontrast the pixels of the given image
+        /// Convert a tensor image to the given dtype and scale the values accordingly
         /// </summary>
-        /// <returns></returns>
-        static public ITransform AutoContrast()
+        static public ITransform ConvertImageDType(ScalarType dtype)
         {
-            return new AutoContrast();
+            return new ConvertImageDType(dtype);
         }
     }
 }

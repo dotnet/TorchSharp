@@ -1230,6 +1230,11 @@ void THSTensor_dsplit_with_sizes(
     )
 }
 
+Tensor THSTensor_squeeze_no_dim(Tensor tensor)
+{
+    CATCH_TENSOR(tensor->squeeze());
+}
+
 Tensor THSTensor_squeeze(Tensor tensor, int64_t dim)
 {
     CATCH_TENSOR(tensor->squeeze(dim));

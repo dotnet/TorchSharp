@@ -13,6 +13,18 @@ namespace TorchSharp
     public class TestTorch
     {
         [Fact]
+        public void TestEnumEquivalence()
+        {
+            Assert.Equal((int)InterpolationMode.Nearest, (int)UpsampleMode.Nearest);
+            Assert.Equal((int)InterpolationMode.Linear, (int)UpsampleMode.Linear);
+            Assert.Equal((int)InterpolationMode.Bilinear, (int)UpsampleMode.Bilinear);
+            Assert.Equal((int)InterpolationMode.Bicubic, (int)UpsampleMode.Bicubic);
+            Assert.Equal((int)InterpolationMode.Trilinear, (int)UpsampleMode.Trilinear);
+            Assert.Equal((int)InterpolationMode.Nearest, (int)GridSampleMode.Nearest);
+            Assert.Equal((int)InterpolationMode.Bilinear, (int)GridSampleMode.Bilinear);
+        }
+
+        [Fact]
         public void TestDeviceCount()
         {
             //var shape = new long[] { 2, 2 };

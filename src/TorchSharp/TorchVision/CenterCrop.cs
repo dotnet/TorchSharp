@@ -18,14 +18,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            var hoffset = input.Dimensions - 2;
-            var iHeight = input.shape[hoffset];
-            var iWidth = input.shape[hoffset + 1];
-
-            var top = (int)(iHeight - height) / 2;
-            var left = (int)(iWidth - width) / 2;
-
-            return input.crop(top, left, height, width);
+            return transforms.functional.center_crop(input, height, width);
         }
 
         protected int height, width;
