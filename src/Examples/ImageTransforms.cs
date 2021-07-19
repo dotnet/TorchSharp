@@ -16,11 +16,12 @@ namespace TorchSharp.Examples
         internal static void Main(string[] args)
         {
             var images = new string[] {
-                @"D:\repos\mono\SkiaSharp\samples\Gallery\Shared\Media\baboon.png",
-                @"D:\repos\mono\SkiaSharp\samples\Gallery\Shared\Media\nine-patch.png",
-                @"D:\repos\mono\SkiaSharp\samples\Gallery\Shared\Media\color-wheel.png",
+                //
+                // Find some PNG (or JPEG, etc.) files, download them, and then put their file paths here.
+                //
             };
 
+            const string outputPathPrefix = /* Add the very first part of your repo path here. */ @"\TorchSharp\output-";
             var tensors = LoadImages(images, 4, 3, 256, 256);
 
             var first = tensors[0];
@@ -43,7 +44,7 @@ namespace TorchSharp.Examples
                 var image = second[n]; // CxHxW
                 var channels = image.shape[0];
 
-                using (var stream = File.OpenWrite(@"D:\repos\niklasgustafsson\TorchSharp\output-" + n + ".png")) {
+                using (var stream = File.OpenWrite(outputPathPrefix + n + ".png")) {
                     var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
                     bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
                 }
@@ -62,7 +63,7 @@ namespace TorchSharp.Examples
                 var image = second[n]; // CxHxW
                 var channels = image.shape[0];
 
-                using (var stream = File.OpenWrite(@"D:\repos\niklasgustafsson\TorchSharp\output-" + (n + first.shape[0]) + ".png")) {
+                using (var stream = File.OpenWrite(outputPathPrefix + (n + first.shape[0]) + ".png")) {
                     var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
                     bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
                 }
