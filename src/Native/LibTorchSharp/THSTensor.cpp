@@ -158,15 +158,15 @@ void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), c
 
 Tensor THSTensor_clamp(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    auto mn = min == nullptr ? c10::optional<c10::Scalar>::optional() : *min;
-    auto mx = max == nullptr ? c10::optional<c10::Scalar>::optional() : *max;
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>() : *max;
     CATCH_TENSOR(tensor->clamp(mn, mx));
 }
 
 Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    auto mn = min == nullptr ? c10::optional<c10::Scalar>::optional() : *min;
-    auto mx = max == nullptr ? c10::optional<c10::Scalar>::optional() : *max;
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>() : *max;
     CATCH_TENSOR(tensor->clamp_(mn, mx));
 }
 
