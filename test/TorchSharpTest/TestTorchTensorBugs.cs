@@ -29,5 +29,30 @@ namespace TorchSharp
                 Assert.Throws<InvalidOperationException>(() => tensor.Bytes());
             }
         }
+
+        class DoubleIt : nn.CustomModule
+        {
+            public DoubleIt() : base("double") { }
+
+            public override Tensor forward(Tensor t) => t * 2;
+        }
+
+        [Fact]
+        public void ValidateIssue315()
+        {
+            // https://github.com/xamarin/TorchSharp/issues/315
+            // custom module crash in GC thread
+
+            // make Torch call our custom module by adding a ReLU in front of it
+            using var net = nn.Sequential(
+                ("relu", nn.ReLU()),
+                ("double", new DoubleIt())
+            );
+
+            using var @in = Float32Tensor.from(3);
+            using var @out = net.forward(@in);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
     }
 }
