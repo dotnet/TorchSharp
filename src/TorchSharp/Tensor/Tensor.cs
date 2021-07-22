@@ -4998,9 +4998,17 @@ namespace TorchSharp
             internal long? step;
             internal Kind kind;
             internal Tensor? tensor;
+
             static public TensorIndex Slice(long? start = null, long? stop = null, long? step = null)
             {
                 return new TensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
+            }
+
+            static public TensorIndex Slice(System.Range range)
+            {
+                long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
+                long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
+                return TensorIndex.Slice(start, end);
             }
 
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
@@ -5022,9 +5030,11 @@ namespace TorchSharp
                 return TensorIndex.Single(value);
             }
 
-            public static implicit operator TensorIndex(System.Range value)
+            public static implicit operator TensorIndex(System.Range range)
             {
-                return TensorIndex.Slice(value.Start.Value, value.End.Value);
+                long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
+                long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
+                return TensorIndex.Slice(start, end);
             }
         }
 
