@@ -565,7 +565,15 @@ namespace TorchSharp
                     var pparray = paramsPinned.CreateArray(@params);
                     var gparray = wGradPinned.CreateArray(withGrads);
 
-                    ForwardFunctionC forwardNative = t => (forward(new Tensor(t)).Handle);
+                    ForwardFunctionC forwardNative = t => {
+                        var input = new Tensor(t);
+                        var output = forward(input);
+                        // handles must live on - we don't own them
+                        GC.SuppressFinalize(output);
+                        GC.SuppressFinalize(input);
+                        return output.Handle;
+                    };
+
                     var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
                     torch.CheckForErrors();
                     this.handle = new HType(res, true);

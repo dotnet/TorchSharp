@@ -101,9 +101,12 @@ namespace TorchSharp
                 {
                     if (closure == null) {
                         THSNN_Optimizer_step(handle, null);
-                    }
-                    else {
-                        THSNN_Optimizer_step(handle, () => closure().handle);
+                    } else {
+                        THSNN_Optimizer_step(handle, () => {
+                            var res = closure();
+                            GC.SuppressFinalize(res);
+                            return res.handle;
+                        });
                     }
                     torch.CheckForErrors();
                 }
