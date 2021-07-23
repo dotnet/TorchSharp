@@ -376,9 +376,15 @@ namespace TorchSharp
                     if (distance != null) {
                         return (Tensor anchor, Tensor positive, Tensor negative) => {
                             DistanceFunctionNative func = (IntPtr x, IntPtr y) => {
-                                using (var x1 = new Tensor(x))
-                                using (var y1 = new Tensor(y))
-                                    return distance(x1, y1).Handle;
+                                var x1 = new Tensor(x);
+                                var y1 = new Tensor(y);
+                                var res = distance(x1, y1);
+
+                                GC.SuppressFinalize(x1);
+                                GC.SuppressFinalize(y1);
+                                GC.SuppressFinalize(res);
+
+                                return res.Handle;
                             };
                             var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
