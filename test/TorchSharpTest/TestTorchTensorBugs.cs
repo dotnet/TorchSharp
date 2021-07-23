@@ -121,7 +121,10 @@ namespace TorchSharp
             );
 
             using var @in = Float32Tensor.from(3);
-            using var @out = net.forward(@in);
+
+            for (var i = 0; i < 1000; i++) {
+                using var @out = net.forward(@in);
+            }
         }
 
         [Fact]
