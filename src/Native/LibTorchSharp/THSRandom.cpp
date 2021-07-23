@@ -21,6 +21,11 @@ Tensor THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generat
     CATCH_TENSOR(gen == nullptr ? tensor->bernoulli_(*p_tensor) : tensor->bernoulli_(*p_tensor, *gen));
 }
 
+Tensor THSTensor_binomial(Tensor tensor, const Tensor p_tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::binomial(*tensor, *p_tensor) : torch::binomial(*tensor, *p_tensor, *gen));
+}
+
 Tensor THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen)
 {
     CATCH_TENSOR(gen == nullptr ? tensor->cauchy_(median, sigma) : tensor->cauchy_(median, sigma, *gen));
@@ -217,6 +222,16 @@ Tensor THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, con
 Tensor THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen)
 {
     CATCH_TENSOR(gen == nullptr ? tensor->uniform_(low, high) : tensor->uniform_(low, high, *gen));
+}
+
+Tensor THSTensor_sample_dirichlet_(Tensor tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::_sample_dirichlet(*tensor) : torch::_sample_dirichlet(*tensor, *gen));
+}
+
+Tensor THSTensor_standard_gamma_(Tensor tensor, const Generator gen)
+{
+    CATCH_TENSOR(gen == nullptr ? torch::_standard_gamma(*tensor)  : torch::_standard_gamma(*tensor, *gen));
 }
 
 Tensor THSInit_uniform_(Tensor tensor, double low, double high)

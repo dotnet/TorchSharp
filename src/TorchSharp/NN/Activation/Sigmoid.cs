@@ -49,18 +49,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Sigmoid(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Sigmoid activation
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor Sigmoid(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.Sigmoid()) {
-                    return m.forward(x);
+                /// <summary>
+                /// Sigmoid activation
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor Sigmoid(Tensor x)
+                {
+                    using (var m = nn.Sigmoid()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

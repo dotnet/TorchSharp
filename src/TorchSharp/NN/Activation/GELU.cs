@@ -50,18 +50,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new GELU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Gaussian Error Linear Units
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor GELU(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.GELU()) {
-                    return m.forward(x);
+                /// <summary>
+                /// Gaussian Error Linear Units
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor gelu(Tensor x)
+                {
+                    using (var m = nn.GELU()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

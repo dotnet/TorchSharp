@@ -50,18 +50,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tanh(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Tanh activation
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor Tanh(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.Tanh()) {
-                    return m.forward(x);
+                /// <summary>
+                /// Tanh activation
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor tanh(Tensor x)
+                {
+                    using (var m = nn.Tanh()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

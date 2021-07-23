@@ -50,19 +50,20 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Rectified Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor ReLU(Tensor x, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.ReLU(inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Rectified Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor relu(Tensor x, bool inPlace = false)
+                {
+                    using (var m = nn.ReLU(inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

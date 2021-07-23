@@ -51,19 +51,20 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new SELU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Scaled Exponential Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor SELU(Tensor x, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.SELU(inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Scaled Exponential Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor selu(Tensor x, bool inPlace = false)
+                {
+                    using (var m = nn.SELU(inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

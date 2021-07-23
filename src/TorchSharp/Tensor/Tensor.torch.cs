@@ -11,6 +11,34 @@ namespace TorchSharp
 
     {
 
+
+        [DllImport("LibTorchSharp")]
+        static extern void THSTensor_broadcast_tensors(IntPtr tensor, long length, AllocatePinnedArray allocator);
+
+        public static IList<Tensor> broadcast_tensors(params Tensor[] tensors)
+        {
+            if (tensors.Length == 0) {
+                throw new ArgumentException(nameof(tensors));
+            }
+            if (tensors.Length == 1) {
+                return tensors;
+            }
+
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>())
+            using (var parray = new PinnedArray<IntPtr>()) {
+
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                THSTensor_broadcast_tensors(tensorsRef, tensors.Length, pa.CreateArray);
+                torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new Tensor(x)).ToList();
+        }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
 
@@ -193,10 +221,37 @@ namespace TorchSharp
             return (new Tensor(solution), new Tensor(qr));
         }
 
+        /// <summary>
+        ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter(dimension, index, src);
 
-        static public Tensor clamp(Tensor input, Scalar min, Scalar max) => input.clamp(min, max);
+        /// <summary>
+        ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
+        ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
+        ///  corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_(dimension, index, src);
 
-        static public Tensor clamp_(Tensor input, Scalar min, Scalar max) => input.clamp_(min, max);
+        /// <summary>
+        /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
+        /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+        /// corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_add(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add(dimension, index, src);
+
+        /// <summary>
+        /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
+        /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+        /// corresponding value in index for dimension = dim.
+        /// </summary>
+        public static Tensor scatter_add_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add_(dimension, index, src);
+
+        static public Tensor clamp(Tensor input, Scalar min = null, Scalar max = null) => input.clamp(min, max);
+
+        static public Tensor clamp_(Tensor input, Scalar min = null, Scalar max = null) => input.clamp_(min, max);
 
         static public Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
 
@@ -214,5 +269,25 @@ namespace TorchSharp
         /// <param name="y">Values selected at indices where condition is false</param>
         /// <returns></returns>
         static public Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
+
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_standard_gamma_(IntPtr tensor, IntPtr gen);
+
+        public static Tensor _standard_gamma(Tensor input, torch.Generator generator = null)
+        {
+            var res = THSTensor_standard_gamma_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new Tensor(res);
+        }
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_sample_dirichlet_(IntPtr tensor, IntPtr gen);
+
+        public static Tensor _sample_dirichlet(Tensor input, torch.Generator generator = null)
+        {
+            var res = THSTensor_sample_dirichlet_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new Tensor(res);
         }
     }
+}

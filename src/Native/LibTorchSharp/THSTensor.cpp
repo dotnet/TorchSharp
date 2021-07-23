@@ -100,6 +100,17 @@ Tensor THSTensor_block_diag(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::block_diag(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
+void THSTensor_broadcast_tensors(const Tensor* tensors, const int length, Tensor* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = torch::broadcast_tensors(toTensors<at::Tensor>((torch::Tensor**)tensors, length));
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
+    );
+}
+
 Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const int shape_len)
 {
     CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
@@ -147,12 +158,16 @@ void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), c
 
 Tensor THSTensor_clamp(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    CATCH_TENSOR(tensor->clamp(*min, *max));
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>() : *max;
+    CATCH_TENSOR(tensor->clamp(mn, mx));
 }
 
 Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    CATCH_TENSOR(tensor->clamp_(*min, *max));
+    auto mn = min == nullptr ? c10::optional<c10::Scalar>() : *min;
+    auto mx = max == nullptr ? c10::optional<c10::Scalar>() : *max;
+    CATCH_TENSOR(tensor->clamp_(mn, mx));
 }
 
 Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)
@@ -261,6 +276,16 @@ const char* THSTensor_device_str(const Tensor tensor)
     auto device = tensor->device();
 
     return make_sharable_string(device.str());
+}
+
+Tensor THSTensor_detach(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->detach());
+}
+
+Tensor THSTensor_detach_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->detach_());
 }
 
 int THSTensor_device_index(const Tensor tensor)
@@ -639,6 +664,12 @@ Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
     CATCH_TENSOR(tensor->index_select(dim, *index));
 }
 
+Tensor THSTensor_select(Tensor tensor, int64_t dim, int64_t index)
+{
+    CATCH_TENSOR(tensor->select(dim, index));
+}
+
+
 Tensor THSTensor_indices(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_indices());
@@ -957,6 +988,33 @@ Tensor THSTensor_scatter(
     const Tensor source)
 {
     CATCH_TENSOR(torch::scatter(*tensor, dim, *index, *source));
+}
+
+Tensor THSTensor_scatter_(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(tensor->scatter_(dim, *index, *source));
+}
+
+Tensor THSTensor_scatter_add(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(torch::scatter_add(*tensor, dim, *index, *source));
+}
+
+Tensor THSTensor_scatter_add_(
+    const Tensor tensor,
+    const int64_t dim,
+    const Tensor index,
+    const Tensor source)
+{
+    CATCH_TENSOR(tensor->scatter_add_(dim, *index, *source));
 }
 
 Tensor THSTensor_selu(const Tensor tensor)

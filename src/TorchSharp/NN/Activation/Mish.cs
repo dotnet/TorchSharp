@@ -50,18 +50,19 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Mish(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// A Self Regularized Non-Monotonic Neural Activation Function.
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <returns></returns>
-            static public Tensor Mish(Tensor x)
+
+            public static partial class functional
             {
-                using (var m = nn.Mish()) {
-                    return m.forward(x);
+                /// <summary>
+                /// A Self Regularized Non-Monotonic Neural Activation Function.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <returns></returns>
+                static public Tensor Mish(Tensor x)
+                {
+                    using (var m = nn.Mish()) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

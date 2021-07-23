@@ -1802,7 +1802,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestIndexSlice()
+        public void TestIndexSlice1()
         {
             using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
                 var t1 = i.index(new TensorIndex[] { TensorIndex.Slice(0, 2), TensorIndex.Single(0) });
@@ -1840,6 +1840,41 @@ namespace TorchSharp
             }
         }
 
+
+        [Fact]
+        public void TestIndexSlice2()
+        {
+            using (var i = Int64Tensor.from(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+                var t1 = i[ 0..2, 0];
+                Assert.Equal(0, t1[0].ToInt32());
+                Assert.Equal(6, t1[1].ToInt32());
+
+                // one slice
+                var t2 = i[ 1..2, 0 ];
+                Assert.Equal(6, t2[0].ToInt32());
+
+                // two slice
+                var t3 = i[ 1..2, 1..3];
+                Assert.Equal(5, t3[0, 0].ToInt32());
+                Assert.Equal(4, t3[0, 1].ToInt32());
+
+                // both absent
+                var t4 = i[.., ..];
+                Assert.Equal(0, t4[0, 0].ToInt32());
+                Assert.Equal(1, t4[0, 1].ToInt32());
+
+                // end absent
+                var t5 = i[1.., 1..];
+                Assert.Equal(5, t5[0, 0].ToInt32());
+                Assert.Equal(4, t5[0, 1].ToInt32());
+
+                // start absent
+                var t6 = i[1.., ..2];
+                Assert.Equal(6, t6[0, 0].ToInt32());
+                Assert.Equal(5, t6[0, 1].ToInt32());
+
+            }
+        }
 
         [Fact]
         public void CopyCpuToCuda()
@@ -2347,15 +2382,34 @@ namespace TorchSharp
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
-                using (var mode = new AutoGradMode(false)) {
-                    Assert.False(AutoGradMode.IsAutogradEnabled());
+                using (torch.no_grad()) {
+                    Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
                     Assert.Throws<ExternalException>(() => sum.backward());
                     //var grad = x.Grad();
                     //Assert.True(grad.Handle == IntPtr.Zero);
                 }
-                using (var mode = new AutoGradMode(true)) {
-                    Assert.True(AutoGradMode.IsAutogradEnabled());
+                using (torch.enable_grad()) {
+                    Assert.True(torch.is_grad_enabled());
+                    var sum = x.sum();
+                    sum.backward();
+                    var grad = x.grad();
+                    Assert.False(grad.Handle == IntPtr.Zero);
+                    var data = grad.Data<float>();
+                    for (int i = 0; i < 2 * 3; i++) {
+                        Assert.Equal(1.0, data[i]);
+                    }
+                }
+                x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
+                using (torch.set_grad_enabled(false)) {
+                    Assert.False(torch.is_grad_enabled());
+                    var sum = x.sum();
+                    Assert.Throws<ExternalException>(() => sum.backward());
+                    //var grad = x.Grad();
+                    //Assert.True(grad.Handle == IntPtr.Zero);
+                }
+                using (torch.set_grad_enabled(true)) {
+                    Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();

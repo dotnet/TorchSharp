@@ -52,20 +52,21 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ELU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Exponential Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="alpha">The α value for the ELU formulation. Default: 1.0</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor ELU(Tensor x, double alpha, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.ELU(alpha, inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Exponential Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="alpha">The α value for the ELU formulation. Default: 1.0</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor elu(Tensor x, double alpha, bool inPlace = false)
+                {
+                    using (var m = nn.ELU(alpha, inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }

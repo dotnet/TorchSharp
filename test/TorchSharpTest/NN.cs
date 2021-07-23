@@ -944,15 +944,15 @@ namespace TorchSharp
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
-                using (var mode = new AutoGradMode(false)) {
-                    Assert.False(AutoGradMode.IsAutogradEnabled());
+                using (torch.no_grad()) {
+                    Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
                     Assert.Throws<ExternalException>(() => sum.backward());
                     //var grad = x.Grad();
                     //Assert.True(grad.Handle == IntPtr.Zero);
                 }
-                using (var mode = new AutoGradMode(true)) {
-                    Assert.True(AutoGradMode.IsAutogradEnabled());
+                using (torch.enable_grad()) {
+                    Assert.True(torch.is_grad_enabled());
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();
@@ -1290,7 +1290,7 @@ namespace TorchSharp
             Assert.Equal(1000, module.GetParameter("test").shape[0]);
             Assert.Equal(100, module.GetParameter("test").shape[1]);
 
-            using (var grad = new AutoGradMode(false)) {
+            using (torch.no_grad()) {
                 param.transpose_(0, 1);
             }
             Assert.Equal(100, module.GetParameter("test").shape[0]);

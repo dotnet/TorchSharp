@@ -77,11 +77,12 @@ std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const int length)
 {
     std::vector<T> tensors;
 
-    for (int i = 0; i < length; i++)
-    {
-        tensors.push_back(*tensorPtrs[i]);
+    if (tensorPtrs != nullptr) {
+        for (int i = 0; i < length; i++)
+        {
+            tensors.push_back(*tensorPtrs[i]);
+        }
     }
-
     return tensors;
 }
 

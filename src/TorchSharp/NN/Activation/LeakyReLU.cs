@@ -52,20 +52,21 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LeakyReLU(handle, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            /// <summary>
-            /// Continuously Differentiable Exponential Linear Unit
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
-            /// <returns></returns>
-            static public Tensor LeakyReLU(Tensor x, double negativeSlope, bool inPlace = false)
+
+            public static partial class functional
             {
-                using (var m = nn.LeakyReLU(negativeSlope, inPlace)) {
-                    return m.forward(x);
+                /// <summary>
+                /// Continuously Differentiable Exponential Linear Unit
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
+                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <returns></returns>
+                static public Tensor leaky_relu(Tensor x, double negativeSlope, bool inPlace = false)
+                {
+                    using (var m = nn.LeakyReLU(negativeSlope, inPlace)) {
+                        return m.forward(x);
+                    }
                 }
             }
         }
