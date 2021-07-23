@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+
+using System.Threading;
 
 using static TorchSharp.torch.nn;
 using Xunit;
@@ -108,6 +110,39 @@ namespace TorchSharp
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
+        }
+
+
+        private void ThreadFunc()
+        {
+            using var net = nn.Sequential(
+                ("relu", nn.ReLU()),
+                ("double", new DoubleIt())
+            );
+
+            using var @in = Float32Tensor.from(3);
+            using var @out = net.forward(@in);
+        }
+
+        [Fact]
+        public void ValidateIssue315_4()
+        {
+            // Is CustomModule thread-safe?
+            // See: https://github.com/pytorch/pytorch/issues/19029
+
+            var threads = new List<Thread>();
+
+            for (var i = 0; i < 10; i++) {
+                var t = new Thread(ThreadFunc);
+                threads.Add(t);
+            }
+
+            foreach (var t in threads) {
+                t.Start();
+            }
+            foreach (var t in threads) {
+                t.Join();
+            }
         }
     }
 }
