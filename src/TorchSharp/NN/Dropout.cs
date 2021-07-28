@@ -53,24 +53,25 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Dropout(handle, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            /// <summary>
-            /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
-            /// Each channel will be zeroed out independently on every forward call.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
-            /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
-            /// <returns></returns>
-            static public Tensor Dropout(Tensor x, double probability = 0.5, bool inPlace = false)
+            public static partial class functional
             {
-                using (var d = nn.Dropout(probability, inPlace)) {
-                    return d.forward(x);
+                /// <summary>
+                /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
+                /// Each channel will be zeroed out independently on every forward call.
+                /// </summary>
+                /// <param name="x">Input tensor</param>
+                /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
+                /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
+                /// <returns></returns>
+                static public Tensor Dropout(Tensor x, double probability = 0.5, bool inPlace = false)
+                {
+                    using (var d = nn.Dropout(probability, inPlace)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }
+
     }
 }

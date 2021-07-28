@@ -52,22 +52,22 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new PixelShuffle(handle, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            /// <summary>
-            /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
-            /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
-            /// <returns></returns>
-            /// <returns></returns>
-            static public Tensor pixel_shuffle(Tensor x, long upscaleFactor)
+            public static partial class functional
             {
-                using (var d = nn.PixelShuffle(upscaleFactor)) {
-                    return d.forward(x);
+                /// <summary>
+                /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
+                /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
+                /// </summary>
+                /// <param name="x">Input tensor</param>
+                /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
+                /// <returns></returns>
+                /// <returns></returns>
+                static public Tensor pixel_shuffle(Tensor x, long upscaleFactor)
+                {
+                    using (var d = nn.PixelShuffle(upscaleFactor)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }

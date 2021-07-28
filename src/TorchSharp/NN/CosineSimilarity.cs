@@ -43,14 +43,14 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new CosineSimilarity(handle, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            static public Tensor CosineSimilarity(Tensor input1, Tensor input2, long dim = 1, double eps = 1e-8)
+            public static partial class functional
             {
-                using (var f = nn.CosineSimilarity(dim, eps)) {
-                    return f.forward(input1, input2);
+                static public Tensor cosine_similarity(Tensor input1, Tensor input2, long dim = 1, double eps = 1e-8)
+                {
+                    using (var f = nn.CosineSimilarity(dim, eps)) {
+                        return f.forward(input1, input2);
+                    }
                 }
             }
         }

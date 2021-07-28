@@ -81,14 +81,14 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Linear(res, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            static public Tensor Linear(Tensor x, long inputSize, long outputSize, bool hasBias = true)
+            public static partial class functional
             {
-                using (var d = nn.Linear(inputSize, outputSize, hasBias)) {
-                    return d.forward(x);
+                static public Tensor linear(Tensor x, long inputSize, long outputSize, bool hasBias = true)
+                {
+                    using (var d = nn.Linear(inputSize, outputSize, hasBias)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }

@@ -54,22 +54,22 @@ namespace TorchSharp
                     }
                 }
             }
-        }
 
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
-            /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
-            /// </summary>
-            /// <param name="x"></param>
-            /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
-            /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
-            /// <returns></returns>
-            static public Tensor adaptive_max_pool2d(Tensor x, long[] outputSize)
+            public static partial class functional
             {
-                using (var d = nn.AdaptiveMaxPool2d(outputSize)) {
-                    return d.forward(x);
+                /// <summary>
+                /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
+                /// </summary>
+                /// <param name="x"></param>
+                /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
+                /// <returns></returns>
+                static public Tensor adaptive_max_pool2d(Tensor x, long[] outputSize)
+                {
+                    using (var d = nn.AdaptiveMaxPool2d(outputSize)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }

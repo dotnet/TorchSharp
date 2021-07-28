@@ -51,22 +51,22 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new PixelUnshuffle(handle, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            /// <summary>
-            /// Reverses the PixelShuffle operation by rearranging elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an downscale factor.
-            /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
-            /// </summary>
-            /// <param name="x">Input tensor</param>
-            /// <param name="downscaleFactor">Factor to increase spatial resolution by</param>
-            /// <returns></returns>
-            /// <returns></returns>
-            static public Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
+            public static partial class functional
             {
-                using (var d = nn.PixelUnshuffle(downscaleFactor)) {
-                    return d.forward(x);
+                /// <summary>
+                /// Reverses the PixelShuffle operation by rearranging elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an downscale factor.
+                /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
+                /// </summary>
+                /// <param name="x">Input tensor</param>
+                /// <param name="downscaleFactor">Factor to increase spatial resolution by</param>
+                /// <returns></returns>
+                /// <returns></returns>
+                static public Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
+                {
+                    using (var d = nn.PixelUnshuffle(downscaleFactor)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }
