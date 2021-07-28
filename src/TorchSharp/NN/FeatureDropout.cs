@@ -43,14 +43,14 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new FeatureAlphaDropout(handle, boxedHandle);
             }
-        }
 
-        public static partial class functional
-        {
-            static public Tensor FeatureAlphaDropout(Tensor x, double probability = 0.5)
+            public static partial class functional
             {
-                using (var f = nn.FeatureAlphaDropout(probability)) {
-                    return f.forward(x);
+                static public Tensor feature_alpha_dropout(Tensor x, double probability = 0.5)
+                {
+                    using (var f = nn.FeatureAlphaDropout(probability)) {
+                        return f.forward(x);
+                    }
                 }
             }
         }

@@ -54,22 +54,22 @@ namespace TorchSharp
                     }
                 }
             }
-        }
 
-        public static partial class functional
-        {
-            /// <summary>
-            /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
-            /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
-            /// </summary>
-            /// <param name="x">The input tensor</param>
-            /// <param name="outputSize">The target output size of the image of the form D x H x W.
-            /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
-            /// <returns></returns>
-            static public Tensor adaptive_max_pool3d(Tensor x, long[] outputSize)
+            public static partial class functional
             {
-                using (var d = nn.AdaptiveMaxPool3d(outputSize)) {
-                    return d.forward(x);
+                /// <summary>
+                /// Applies a 3D adaptive max pooling over an input signal composed of several input planes.
+                /// The output is of size D x H x W, for any input size.The number of output features is equal to the number of input planes.
+                /// </summary>
+                /// <param name="x">The input tensor</param>
+                /// <param name="outputSize">The target output size of the image of the form D x H x W.
+                /// Can be a tuple (D, H, W) or a single D for a cube D x D x D. D, H and W can be either a int, or null which means the size will be the same as that of the input.</param>
+                /// <returns></returns>
+                static public Tensor adaptive_max_pool3d(Tensor x, long[] outputSize)
+                {
+                    using (var d = nn.AdaptiveMaxPool3d(outputSize)) {
+                        return d.forward(x);
+                    }
                 }
             }
         }

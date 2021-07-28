@@ -46,19 +46,5 @@ namespace TorchSharp
                 return new Identity(res, boxedHandle);
             }
         }
-        public static partial class functional
-        {
-            /// <summary>
-            /// A placeholder identity operator.
-            /// </summary>
-            /// <param name="x">The input tensor.</param>
-            /// <returns>The same tensor as is input.</returns>
-            static public Tensor Identity(Tensor x)
-            {
-                using (var d = nn.Identity()) {
-                    return d.forward(x);
-                }
-            }
-        }
     }
 }

@@ -33,24 +33,23 @@ namespace TorchSharp
     public static partial class torch
     {
         public static partial class nn
-    {
-        [DllImport ("LibTorchSharp")]
-        extern static IntPtr THSNN_PairwiseDistance_ctor (double p, double eps, bool keep_dim, out IntPtr pBoxedModule);
-
-        static public PairwiseDistance PairwiseDistance (double p = 2.0, double eps = 1e-6, bool keep_dim = false)
         {
-            var handle = THSNN_PairwiseDistance_ctor(p, eps, keep_dim, out var boxedHandle);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new PairwiseDistance (handle, boxedHandle);
-        }
-    }
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, out IntPtr pBoxedModule);
 
-        public static partial class functional
-        {
-            static public Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
+            static public PairwiseDistance PairwiseDistance(double p = 2.0, double eps = 1e-6, bool keep_dim = false)
             {
-                using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
-                    return f.forward(input1, input2);
+                var handle = THSNN_PairwiseDistance_ctor(p, eps, keep_dim, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new PairwiseDistance(handle, boxedHandle);
+            }
+            public static partial class functional
+            {
+                static public Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
+                {
+                    using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
+                        return f.forward(input1, input2);
+                    }
                 }
             }
         }

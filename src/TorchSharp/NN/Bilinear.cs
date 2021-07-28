@@ -80,13 +80,14 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Bilinear(res, boxedHandle);
             }
-        }
-        public static partial class functional
-        {
-            static public Tensor Bilinear(Tensor x1, Tensor x2, long in1Features, long in2Features, long outputSize, bool hasBias = true)
+
+            public static partial class functional
             {
-                using (var d = nn.Bilinear(in1Features, in2Features, outputSize, hasBias)) {
-                    return d.forward(x1, x2);
+                static public Tensor bilinear(Tensor x1, Tensor x2, long in1Features, long in2Features, long outputSize, bool hasBias = true)
+                {
+                    using (var d = nn.Bilinear(in1Features, in2Features, outputSize, hasBias)) {
+                        return d.forward(x1, x2);
+                    }
                 }
             }
         }
