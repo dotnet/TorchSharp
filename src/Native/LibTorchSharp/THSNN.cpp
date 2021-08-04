@@ -593,6 +593,33 @@ Tensor   THSNN_TransformerDecoderLayer_forward(const NNModule module, const Tens
     );
 }
 
+NNModule THSNN_MultiheadAttention_ctor(const int64_t embeded_dim, const int64_t num_heads, const double dropout, const bool bias, const bool add_bias_kv, const bool add_zero_attn, const int64_t kdim, const int64_t vdim, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MultiheadAttentionOptions(embeded_dim, num_heads)
+        .dropout(dropout)
+        .bias(bias)
+        .add_bias_kv(add_bias_kv)
+        .add_zero_attn(add_zero_attn)
+        .kdim(kdim)
+        .vdim(vdim);
+
+    res = create_module<torch::nn::MultiheadAttentionImpl>(opts, outAsAnyModule);
+    );
+}
+
+void THSNN_MultiheadAttention_forward(const NNModule module, const Tensor query, const Tensor key, const Tensor value, const Tensor key_padding_mask, const bool need_weights, const Tensor attn_mask, Tensor& res1, Tensor& res2)
+{
+    CATCH_TENSORS_2((*module)->as<torch::nn::MultiheadAttention>()->forward(
+        *query,
+        *key,
+        *value,
+        (key_padding_mask ? *key_padding_mask : at::Tensor()),
+        need_weights,
+        (attn_mask ? *attn_mask : at::Tensor()))
+    );
+}
+
 NNModule THSNN_TransformerEncoder_ctor(const NNModule encoder_layer, const int64_t num_layers, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
