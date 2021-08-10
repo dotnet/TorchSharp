@@ -41,7 +41,7 @@ namespace TorchSharp
                     attn_mask?.Handle ?? IntPtr.Zero,
                     out var res1,
                     out var res2);
-                if (res1 == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (res1 == IntPtr.Zero || (need_weights && res2 == IntPtr.Zero)) { torch.CheckForErrors(); }
                 return Tuple.Create(new Tensor(res1), new Tensor(res2));
             }
         }
@@ -57,7 +57,7 @@ namespace TorchSharp
             /// <summary>
             /// Allows the model to jointly attend to information from different representation subspaces (based on the paper “Attention Is All You Need”). 
             /// </summary>
-            /// <param name="embeded_dim">total dimension of the model</param>
+            /// <param name="embedded_dim">total dimension of the model</param>
             /// <param name="num_heads">parallel attention heads</param>
             /// <param name="dropout">a Dropout layer on attn_output_weights. Default: 0.0</param>
             /// <param name="bias">add bias as module parameter. Default: true</param>
@@ -66,11 +66,11 @@ namespace TorchSharp
             /// <param name="kdim">total number of features in key</param>
             /// <param name="vdim">total number of features in value</param>
             /// <returns></returns>
-            static public MultiheadAttention MultiheadAttention(long embeded_dim, long num_heads, double dropout = 0.0, bool bias = true, bool add_bias_kv = false, bool add_zero_attn = false, long? kdim=null, long? vdim=null)
+            static public MultiheadAttention MultiheadAttention(long embedded_dim, long num_heads, double dropout = 0.0, bool bias = true, bool add_bias_kv = false, bool add_zero_attn = false, long? kdim=null, long? vdim=null)
             {
-                var _kdim = kdim.HasValue ? kdim.Value : embeded_dim;
-                var _vdim = vdim.HasValue ? vdim.Value : embeded_dim;
-                var res = THSNN_MultiheadAttention_ctor(embeded_dim, num_heads, dropout, bias, add_bias_kv, add_zero_attn, _kdim, _vdim, out var boxedHandle);
+                var _kdim = kdim.HasValue ? kdim.Value : embedded_dim;
+                var _vdim = vdim.HasValue ? vdim.Value : embedded_dim;
+                var res = THSNN_MultiheadAttention_ctor(embedded_dim, num_heads, dropout, bias, add_bias_kv, add_zero_attn, _kdim, _vdim, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new MultiheadAttention(res, boxedHandle);
             }
