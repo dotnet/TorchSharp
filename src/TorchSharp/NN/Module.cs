@@ -276,7 +276,6 @@ namespace TorchSharp
 
                 }
 
-
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
                 public virtual (string name, Module parameter)[] NamedModules()
@@ -415,7 +414,9 @@ namespace TorchSharp
                     return res;
                 }
 
-                public virtual Tensor forward(Tensor t) => throw new NotImplementedException("forward");
+                public virtual Tensor forward(Tensor t) => throw new NotImplementedException("forward(t)");
+
+                public virtual Tensor forward(Tensor x, Tensor y) => throw new NotImplementedException("forward(x,y)");
 
                 public Module save(string location)
                 {
@@ -472,6 +473,62 @@ namespace TorchSharp
 
                     return this;
                 }
+
+                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
+
+                [DllImport("LibTorchSharp")]
+                private static extern IntPtr THSNN_custom_module([MarshalAs(UnmanagedType.LPStr)] string name,
+                    IntPtr names, IntPtr parameters, IntPtr require_grad,
+                    int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
+
+                protected Module(string name, params parameter.Parameter[] parameters) : this(IntPtr.Zero, IntPtr.Zero)
+                {
+                    var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
+                    var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
+                    var withGrads = parameters.Select(p => p.WithGrad).ToArray();
+
+                    var namesPinned = new PinnedArray<IntPtr>();
+                    var paramsPinned = new PinnedArray<IntPtr>();
+                    var wGradPinned = new PinnedArray<bool>();
+
+                    var nparray = namesPinned.CreateArray(names);
+                    var pparray = paramsPinned.CreateArray(@params);
+                    var gparray = wGradPinned.CreateArray(withGrads);
+
+                    ForwardFunctionC forwardNative = t => {
+                        var input = new Tensor(t);
+                        var output = forward(input);
+                        // handles must live on - we don't own them
+                        GC.SuppressFinalize(output);
+                        GC.SuppressFinalize(input);
+                        return output.Handle;
+                    };
+
+                    var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
+                    torch.CheckForErrors();
+                    this.handle = new HType(res, true);
+                    this.forwardNative = forwardNative;
+                    this.boxedModule = new BoxedModule(boxedHandle);
+                }
+
+                protected void RegisterComponents()
+                {
+                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                        var value = field.GetValue(this);
+
+                        var module = field.GetValue(this) as Module;
+                        Tensor tensor = value as Tensor;
+
+                        if (module != null) {
+                            RegisterModule(field.Name, module);
+                        } else if (!(tensor is null)) {
+                            RegisterBuffer(field.Name, tensor);
+                        }
+                    }
+                }
+
+                /// Keeps the callback delegate alive
+                private ForwardFunctionC forwardNative;
             }
 
             internal class BoxedModule : IDisposable
@@ -539,66 +596,6 @@ namespace TorchSharp
                         handle.SetHandleAsInvalid();
                     }
                 }
-            }
-
-#nullable enable
-            public abstract class CustomModule : Module
-            {
-                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_custom_module([MarshalAs(UnmanagedType.LPStr)] string name,
-                    IntPtr names, IntPtr parameters, IntPtr require_grad,
-                    int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
-
-                protected CustomModule(string name, params parameter.Parameter[] parameters) : base(IntPtr.Zero, IntPtr.Zero)
-                {
-                    var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
-                    var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
-                    var withGrads = parameters.Select(p => p.WithGrad).ToArray();
-
-                    var namesPinned = new PinnedArray<IntPtr>();
-                    var paramsPinned = new PinnedArray<IntPtr>();
-                    var wGradPinned = new PinnedArray<bool>();
-
-                    var nparray = namesPinned.CreateArray(names);
-                    var pparray = paramsPinned.CreateArray(@params);
-                    var gparray = wGradPinned.CreateArray(withGrads);
-
-                    ForwardFunctionC forwardNative = t => {
-                        var input = new Tensor(t);
-                        var output = forward(input);
-                        // handles must live on - we don't own them
-                        GC.SuppressFinalize(output);
-                        GC.SuppressFinalize(input);
-                        return output.Handle;
-                    };
-
-                    var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
-                    torch.CheckForErrors();
-                    this.handle = new HType(res, true);
-                    this.forwardNative = forwardNative;
-                    this.boxedModule = new BoxedModule(boxedHandle);
-                }
-
-                protected void RegisterComponents()
-                {
-                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
-                        var value = field.GetValue(this);
-
-                        var module = field.GetValue(this) as Module;
-                        Tensor? tensor = value as Tensor;
-
-                        if (module != null) {
-                            RegisterModule(field.Name, module);
-                        } else if (!(tensor is null)) {
-                            RegisterBuffer(field.Name, tensor);
-                        }
-                    }
-                }
-
-                /// Keeps the callback delegate alive
-                private ForwardFunctionC forwardNative;
             }
         }
     }
