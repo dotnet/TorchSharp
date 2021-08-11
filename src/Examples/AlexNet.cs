@@ -78,7 +78,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        private class Model : CustomModule
+        private class Model : Module
         {
             private readonly Module features;
             private readonly Module avgPool;

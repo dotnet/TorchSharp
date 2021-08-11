@@ -75,6 +75,13 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Linear_ctor(long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
 
+            /// <summary>
+            /// Applies a linear transformation to the incoming data.
+            /// </summary>
+            /// <param name="inputSize">Size of each input sample</param>
+            /// <param name="outputSize">Size of each output sample</param>
+            /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
+            /// <returns></returns>
             static public Linear Linear(long inputSize, long outputSize, bool hasBias = true)
             {
                 var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
@@ -84,6 +91,13 @@ namespace TorchSharp
 
             public static partial class functional
             {
+                /// <summary>
+                /// Applies a linear transformation to the incoming data.
+                /// </summary>
+                /// <param name="x">Input tensor</param>
+                /// <param name="inputSize">Size of each input sample</param>
+                /// <param name="outputSize">Size of each output sample</param>
+                /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
                 static public Tensor linear(Tensor x, long inputSize, long outputSize, bool hasBias = true)
                 {
                     using (var d = nn.Linear(inputSize, outputSize, hasBias)) {

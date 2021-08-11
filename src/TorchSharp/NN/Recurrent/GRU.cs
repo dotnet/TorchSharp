@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -27,7 +26,7 @@ namespace TorchSharp
             /// Defaults to 0 if not provided. If the GRU is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
             /// <returns></returns>
-            public (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
+            public new (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
             {
                 var res = THSNN_GRU_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }

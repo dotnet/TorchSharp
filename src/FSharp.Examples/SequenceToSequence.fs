@@ -48,7 +48,7 @@ let device = if hasCUDA then torch.CUDA else torch.CPU
 let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
-    inherit CustomModule("PositionalEncoding")
+    inherit Module("PositionalEncoding")
 
     let dropout = Dropout(dropout)
     let mutable pe = torch.Float32Tensor.zeros([| maxLen; dmodel|])
@@ -74,7 +74,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
         dropout.forward(x)
 
 type TransformerModel(ntokens, device:torch.Device) as this =
-    inherit CustomModule("Transformer")
+    inherit Module("Transformer")
 
     let pos_encoder = new PositionalEncoding(emsize, 5000L)
     let encoder_layers = TransformerEncoderLayer(emsize, nheads, nhidden, dropout)
@@ -98,7 +98,7 @@ type TransformerModel(ntokens, device:torch.Device) as this =
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
 
-    member _.forward(t, mask) =
+    override _.forward(t, mask) =
         let src = pos_encoder.forward(encoder.forward(t) * sqrEmSz)
         let enc = transformer_encoder.forward(src, mask)
         decoder.forward(enc)

@@ -42,7 +42,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir)
 
 type Model(name,device:torch.Device) as this =
-    inherit CustomModule(name)
+    inherit Module(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),
                               ("r1", ReLU(inPlace=true) :> Module),

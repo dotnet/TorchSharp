@@ -37,6 +37,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Flatten_ctor(long startDim, long endDim, out IntPtr pBoxedModule);
 
+            /// <summary>
+            /// Flattens a contiguous range of dims into a tensor. For use with Sequential.
+            /// </summary>
+            /// <param name="startDim">First dim to flatten (default = 1).</param>
+            /// <param name="endDim">Last dim to flatten (default = -1).</param>
+            /// <returns></returns>
             static public Flatten Flatten(long startDim = 1, long endDim = -1)
             {
                 var handle = THSNN_Flatten_ctor(startDim, endDim, out var boxedHandle);

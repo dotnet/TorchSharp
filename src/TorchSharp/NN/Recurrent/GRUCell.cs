@@ -7,7 +7,6 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -33,7 +32,7 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0">Tensor of shape (batch, hidden_size) containing the initial hidden state for each element in the batch.</param>
             /// <returns></returns>
-            public Tensor forward(Tensor input, Tensor? h0 = null)
+            public override Tensor forward(Tensor input, Tensor h0 = null)
             {
                 var hN = THSNN_GRUCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero);
                 if (hN == IntPtr.Zero) { torch.CheckForErrors(); }

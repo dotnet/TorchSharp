@@ -104,7 +104,7 @@ namespace TorchSharp.Examples
             model.save(dataset + ".model.bin");
         }
 
-        internal class Model : CustomModule
+        internal class Model : Module
         {
             private Module conv1 = Conv2d(1, 32, 3);
             private Module conv2 = Conv2d(32, 64, 3);

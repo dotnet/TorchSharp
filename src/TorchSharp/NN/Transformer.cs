@@ -3,7 +3,6 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -31,7 +30,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The ByteTensor mask for tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The ByteTensor mask for memory keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor tgt, Tensor? src_mask = null, Tensor? tgt_mask = null, Tensor? memory_mask = null, Tensor? src_key_padding_mask = null, Tensor? tgt_key_padding_mask = null, Tensor? memory_key_padding_mask = null)
+            public Tensor forward(Tensor src, Tensor tgt, Tensor src_mask, Tensor tgt_mask = null, Tensor memory_mask = null, Tensor src_key_padding_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {
                 var res = THSNN_Transformer_forward(handle,
                     src.Handle,
@@ -42,6 +41,26 @@ namespace TorchSharp
                     src_key_padding_mask?.Handle ?? IntPtr.Zero,
                     tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                     memory_key_padding_mask?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Take in and process masked source/target sequences.
+            /// </summary>
+            /// <param name="src">The sequence to the encoder (required).</param>
+            /// <param name="tgt">The sequence to the decoder (required).</param>
+            public override Tensor forward(Tensor src, Tensor tgt)
+            {
+                var res = THSNN_Transformer_forward(handle,
+                    src.Handle,
+                    tgt.Handle,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
