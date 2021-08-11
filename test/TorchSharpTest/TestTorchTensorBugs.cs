@@ -10,6 +10,7 @@ using static TorchSharp.torch.nn;
 using Xunit;
 
 using static TorchSharp.torch;
+using System.Runtime.CompilerServices;
 
 #nullable enable
 
@@ -34,7 +35,7 @@ namespace TorchSharp
             }
         }
 
-        class DoubleIt : nn.CustomModule
+        class DoubleIt : nn.Module
         {
             public DoubleIt() : base("double") { }
 
@@ -146,6 +147,31 @@ namespace TorchSharp
             foreach (var t in threads) {
                 t.Join();
             }
+        }
+
+        class TestModule : Module
+        {
+            public TestModule() : base(nameof(TestModule)) { }
+
+            public override torch.Tensor forward(torch.Tensor t) => t;
+
+            public static void Reproduce()
+            {
+                var seq = Make();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                seq.forward(torch.zeros(10));
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            static Module Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 1)));
+        }
+
+        [Fact]
+        void ValidateIssue321()
+        {
+            TestModule.Reproduce();
         }
     }
 }

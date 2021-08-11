@@ -858,7 +858,7 @@ namespace TorchSharp
             Assert.False(x.requires_grad);
         }
 
-        private class CondModel : CustomModule
+        private class CondModel : Module
         {
             private Module fb = Linear(1000, 100, false);
             private Module fbT1 = Linear(100, 10, false);
@@ -1299,7 +1299,7 @@ namespace TorchSharp
             Assert.Equal(1000, param.shape[1]);
         }
 
-        private class TestModule : CustomModule
+        private class TestModule : Module
         {
             public TestModule(string name, Tensor tensor, bool withGrad)
                 : base(name, new parameter.Parameter(name, tensor, withGrad))

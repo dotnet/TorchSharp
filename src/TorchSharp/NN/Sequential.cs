@@ -30,6 +30,8 @@ namespace TorchSharp
 
                 THSNN_Sequential_push_back(handle, name, submodule.BoxedModule.handle);
                 torch.CheckForErrors();
+                // Keep the sub-module alive for at least as long as the Sequential object is alive.
+                _modules.Add(submodule);
             }
 
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
@@ -45,6 +47,11 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            // There is no functional reason for this collection, but since the module
+            // handles are held in the native runtime, which calls back into managed code,
+            // the modules need to stay alive, and keeping a list of them will do that.
+            private List<torch.nn.Module> _modules = new List<nn.Module>();
         }
     }
 

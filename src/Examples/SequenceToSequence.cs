@@ -195,9 +195,9 @@ namespace TorchSharp.Examples
             return (data, target);
         }
 
-        class TransformerModel : CustomModule
+        class TransformerModel : Module
         {
-            private Modules.TransformerEncoder transformer_encoder;
+            private Module transformer_encoder;
             private PositionalEncoding pos_encoder;
             private Modules.Embedding encoder;
             private Modules.Linear decoder;
@@ -241,7 +241,7 @@ namespace TorchSharp.Examples
                 throw new NotImplementedException("single-argument forward()");
             }
 
-            public Tensor forward(Tensor t, Tensor mask)
+            public override Tensor forward(Tensor t, Tensor mask)
             {
                 var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
                 var enc = transformer_encoder.forward(src, mask);
@@ -256,7 +256,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        class PositionalEncoding : CustomModule
+        class PositionalEncoding : Module
         {
             private Module dropout;
             private Tensor pe;

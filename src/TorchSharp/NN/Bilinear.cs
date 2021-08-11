@@ -26,7 +26,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-            public Tensor forward(Tensor input1, Tensor input2)
+            public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

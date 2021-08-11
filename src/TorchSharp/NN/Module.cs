@@ -481,6 +481,11 @@ namespace TorchSharp
                     IntPtr names, IntPtr parameters, IntPtr require_grad,
                     int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
 
+                /// <summary>
+                /// Constructor for custom modules, i.e. those defined outside of TorchSharp.
+                /// </summary>
+                /// <param name="name">The name of the module. Useful for debugging purposes, mostly.</param>
+                /// <param name="parameters">The module parameters, i.e. its trainable weights and (non-trainable) "buffers."</param>
                 protected Module(string name, params parameter.Parameter[] parameters) : this(IntPtr.Zero, IntPtr.Zero)
                 {
                     var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();

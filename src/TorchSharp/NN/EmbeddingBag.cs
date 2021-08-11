@@ -23,7 +23,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
-            public Tensor forward(Tensor input, Tensor offsets = null, Tensor perSampleWeights = null)
+            public Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
                 if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");
@@ -33,6 +33,32 @@ namespace TorchSharp
                 if (input.Dimensions == 2 && input.dtype == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
 
                 var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public override Tensor forward(Tensor input, Tensor offsets)
+            {
+                if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
+                if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");
+                if (input.Dimensions == 1 && offsets is null) throw new ArgumentException("'offsets' must be non-null for a 1-D input.");
+                if (input.Dimensions == 2 && !(offsets is null)) throw new ArgumentException("'offsets' must be null for a 2-D input.");
+
+                if (input.Dimensions == 2 && input.dtype == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
+
+                var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
+                if (input.Dimensions == 1) throw new ArgumentException("'offsets' must be non-null for a 1-D input.");
+
+                if (input.Dimensions == 2 && input.dtype == ScalarType.Int32) throw new NotImplementedException("EmbeddingBag for 32-bit integers -- there's some issue in the native runtime that prevents this from working.");
+
+                var res = THSNN_EmbeddingBag_forward(handle, input.Handle, IntPtr.Zero, IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

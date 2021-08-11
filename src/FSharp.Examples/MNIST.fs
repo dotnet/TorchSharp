@@ -53,7 +53,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
 type Model(name,device:torch.Device) as this =
-    inherit CustomModule(name)
+    inherit Module(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)
     let conv2 = Conv2d(32L, 64L, 3L)
