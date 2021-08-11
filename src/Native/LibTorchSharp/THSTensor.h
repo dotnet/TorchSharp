@@ -1229,6 +1229,11 @@ EXPORT_API(Tensor) THSTensor_uniform_(Tensor tensor, double low, double high, co
 
 // torch.linalg:
 
+EXPORT_API(Tensor) THSLinalg_cond_int(const Tensor tensor, const int p);
+EXPORT_API(Tensor) THSLinalg_cond_float(const Tensor tensor, const double p);
+EXPORT_API(Tensor) THSLinalg_cond_str(const Tensor tensor, const char *p);
+EXPORT_API(Tensor) THSLinalg_cond_none(const Tensor tensor);
+
 EXPORT_API(Tensor) THSLinalg_cholesky(const Tensor tensor);
 
 EXPORT_API(Tensor) THSLinalg_det(const Tensor tensor);

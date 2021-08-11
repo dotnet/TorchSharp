@@ -4429,6 +4429,41 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CondTestF64()
+        {
+            {
+                var a = Float64Tensor.randn(new long[] { 3, 3, 3 });
+                // The following mostly checks that the runtime interop doesn't blow up.
+                var l = linalg.cond(a);
+                l = linalg.cond(a, "fro");
+                l = linalg.cond(a, "nuc");
+                l = linalg.cond(a, 1);
+                l = linalg.cond(a, -1);
+                l = linalg.cond(a, 2);
+                l = linalg.cond(a, -2);
+                l = linalg.cond(a, Double.PositiveInfinity);
+                l = linalg.cond(a, Double.NegativeInfinity);
+            }
+        }
+        [Fact]
+        public void CondTestCF64()
+        {
+            {
+                var a = ComplexFloat64Tensor.randn(new long[] { 3, 3, 3 });
+                // The following mostly checks that the runtime interop doesn't blow up.
+                var l = linalg.cond(a);
+                l = linalg.cond(a, "fro");
+                l = linalg.cond(a, "nuc");
+                l = linalg.cond(a, 1);
+                l = linalg.cond(a, -1);
+                l = linalg.cond(a, 2);
+                l = linalg.cond(a, -2);
+                l = linalg.cond(a, Double.PositiveInfinity);
+                l = linalg.cond(a, Double.NegativeInfinity);
+            }
+        }
+
+        [Fact]
         public void QRTest()
         {
             var a = Float32Tensor.randn(new long[] { 4, 25, 25 });

@@ -24,6 +24,47 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_int(IntPtr tensor, int p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_float(IntPtr tensor, double p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_none(IntPtr tensor);
+
+            public static Tensor cond(Tensor input, int p)
+            {
+                var res = THSLinalg_cond_int(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input, double p)
+            {
+                var res = THSLinalg_cond_float(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input, string p)
+            {
+                var res = THSLinalg_cond_str(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input)
+            {
+                var res = THSLinalg_cond_none(input.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_det(IntPtr tensor);
 
             /// <summary>

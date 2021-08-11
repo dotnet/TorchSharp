@@ -9,6 +9,26 @@ Tensor THSLinalg_cholesky(const Tensor tensor)
     CATCH_TENSOR(torch::linalg::cholesky(*tensor));
 }
 
+Tensor THSLinalg_cond_int(const Tensor tensor, const int p)
+{
+    CATCH_TENSOR(torch::linalg_cond(*tensor, p));
+}
+
+Tensor THSLinalg_cond_float(const Tensor tensor, const double p)
+{
+    CATCH_TENSOR(torch::linalg_cond(*tensor, p));
+}
+
+Tensor THSLinalg_cond_str(const Tensor tensor, const char* p)
+{
+    CATCH_TENSOR(p != nullptr ? torch::linalg_cond(*tensor, p) : torch::linalg_cond(*tensor));
+}
+
+Tensor THSLinalg_cond_none(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::linalg_cond(*tensor));
+}
+
 Tensor THSLinalg_det(const Tensor tensor)
 {
     CATCH_TENSOR(torch::linalg::det(*tensor));
