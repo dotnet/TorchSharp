@@ -135,7 +135,7 @@ namespace TorchSharp.Examples
                 using (var output = model.forward(data))
                 using (var loss = criterion(output, target)) {
 
-                    model.ZeroGrad();
+                    model.zero_grad();
                     loss.backward();
 
                     var perturbed = Attack(data, ε, data.grad());

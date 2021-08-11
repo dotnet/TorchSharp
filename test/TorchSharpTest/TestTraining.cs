@@ -44,7 +44,7 @@ namespace TorchSharp
 
                 finalLoss = lossVal;
 
-                seq.ZeroGrad();
+                seq.zero_grad();
 
                 output.backward();
 
@@ -86,7 +86,7 @@ namespace TorchSharp
 
                 finalLoss = lossVal;
 
-                seq.ZeroGrad();
+                seq.zero_grad();
 
                 output.backward();
 

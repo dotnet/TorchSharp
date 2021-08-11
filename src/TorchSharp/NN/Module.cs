@@ -14,6 +14,16 @@ namespace TorchSharp
     {
         public static partial class nn
         {
+            /// <summary>
+            /// Base class for all neural network modules.
+            /// Your models should subclass this class.
+            /// </summary>
+            /// <remarks>
+            /// Modules can also contain other Modules, allowing to nest them in a tree structure.
+            /// You can assign the submodules as regular fields of the derived Module class. Submodules assigned
+            /// to fields will be registered, and will have their parameters converted and moved when you call to(),
+            /// and saved to disk when calling save().
+            /// </remarks>
             public class Module : IDisposable
             {
                 /// <summary>
@@ -101,6 +111,9 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 extern static void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
 
+                [DllImport("LibTorchSharp")]
+                extern static void THSNN_Module_to_dtype(HType module, sbyte dtype);
+
                 /// <summary>
                 /// Moves the parameters and buffers.
                 /// </summary>
@@ -137,13 +150,25 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Moves the parameters and buffers.
+                /// Convert the parameters and buffers.
+                /// </summary>
+                /// <returns></returns>
+                public Module to(ScalarType dtype)
+                {
+                    THSNN_Module_to_dtype(handle, (sbyte)dtype);
+                    torch.CheckForErrors();
+                    return this;
+                }
+
+                /// <summary>
+                /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="other">The tensor serving as a template.</param>
                 /// <returns></returns>
                 public Module to(Tensor other)
                 {
-                    return to(other.device_type, other.device_index);
+                    to(other.device_type, other.device_index);
+                    return to(other.dtype);
                 }
 
                 /// <summary>
@@ -152,6 +177,18 @@ namespace TorchSharp
                 public Module cpu()
                 {
                     return to(DeviceType.CPU);
+                }
+
+                /// <summary>
+                /// Applies a function recursively to every submodule as well as this.
+                /// </summary>
+                /// <param name="fn">Function to be applied to each submodule</param>
+                /// <returns></returns>
+                public virtual Module apply(Action<Module> fn)
+                {
+                    foreach (var m in GetModulesInternal()) m.apply(fn);
+                    fn(this);
+                    return this;
                 }
 
                 /// <summary>
@@ -204,17 +241,18 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern bool THSNN_Module_is_training(HType module);
 
-                public bool IsTraining()
-                {
-                    var res = THSNN_Module_is_training(handle);
-                    torch.CheckForErrors();
-                    return res;
+                public bool training {
+                    get {
+                        var res = THSNN_Module_is_training(handle);
+                        torch.CheckForErrors();
+                        return res;
+                    }
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_zero_grad(HType module);
 
-                public virtual void ZeroGrad()
+                public virtual void zero_grad()
                 {
                     THSNN_Module_zero_grad(handle);
                     torch.CheckForErrors();
@@ -322,15 +360,15 @@ namespace TorchSharp
 
 
                 [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator);
+                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator, bool recurse);
 
-                public virtual Tensor[] parameters()
+                public virtual Tensor[] parameters(bool recurse = true)
                 {
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
                         AllocatePinnedArray allocator = pa.CreateArray;
-                        THSNN_Module_get_parameters(handle, allocator);
+                        THSNN_Module_get_parameters(handle, allocator, recurse);
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                     }

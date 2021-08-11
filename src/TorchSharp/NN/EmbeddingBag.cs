@@ -23,6 +23,15 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
+            /// <summary>
+            /// Forward pass of EmbeddingBag.
+            /// </summary>
+            /// <param name="input">Tensor containing bags of indices into the embedding matrix.</param>
+            /// <param name="offsets">Only used when input is 1D. offsets determines the starting index position of each bag (sequence) in input.</param>
+            /// <param name="perSampleWeights">a tensor of float / double weights, or None to indicate all weights should be taken to be 1.
+            /// If specified, per_sample_weights must have exactly the same shape as input and is treated as having the same offsets, if those are not None.
+            /// Only supported for mode='sum'.</param>
+            /// <returns></returns>
             public Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
@@ -37,6 +46,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Forward pass of EmbeddingBag.
+            /// </summary>
+            /// <param name="input">Tensor containing bags of indices into the embedding matrix.</param>
+            /// <param name="offsets">Only used when input is 1D. offsets determines the starting index position of each bag (sequence) in input.</param>
+            /// <returns></returns>
             public override Tensor forward(Tensor input, Tensor offsets)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
@@ -51,6 +66,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Forward pass of EmbeddingBag.
+            /// </summary>
+            /// <param name="input">Tensor containing bags of indices into the embedding matrix.</param>
+            /// <returns></returns>
             public override Tensor forward(Tensor input)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");

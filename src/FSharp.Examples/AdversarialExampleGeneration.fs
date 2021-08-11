@@ -70,7 +70,7 @@ let test (model:MNIST.Model) (eps:float) (dataLoader:MNISTReader) size =
             use estimate = input --> model
             use loss = criterion estimate labels
 
-            model.ZeroGrad()
+            model.zero_grad()
             loss.backward()
 
             use perturbed = attack input (eps.ToScalar()) (input.grad())

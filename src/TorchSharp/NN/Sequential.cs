@@ -48,6 +48,15 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public override nn.Module apply(Action<nn.Module> fn)
+            {
+                // More efficient than asking C++ for the children. We already have the list, after all.
+                foreach (var m in _modules) m.apply(fn);
+                fn(this);
+                return this;
+
+            }
+
             // There is no functional reason for this collection, but since the module
             // handles are held in the native runtime, which calls back into managed code,
             // the modules need to stay alive, and keeping a list of them will do that.

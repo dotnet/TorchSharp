@@ -760,7 +760,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
         }
@@ -782,7 +782,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
 
@@ -807,7 +807,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
 
@@ -834,7 +834,7 @@ namespace TorchSharp
             var loss = mse_loss();
             var output = loss(prediction, y);
 
-            linear.ZeroGrad();
+            linear.zero_grad();
 
             output.backward();
 
@@ -907,7 +907,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            modT.ZeroGrad();
+            modT.zero_grad();
 
             output.backward();
             var gradCounts = 0;
@@ -925,7 +925,7 @@ namespace TorchSharp
             eval = modF.forward(x);
             output = loss(eval, y);
 
-            modF.ZeroGrad();
+            modF.zero_grad();
 
             output.backward();
             gradCounts = 0;
