@@ -43,6 +43,11 @@ using `using` in C# or explicit calls to `System.IDisposable.Dispose()`.
 > NOTE: Disposing a tensor only releases the underlying storage if this is the last
 > live TorchTensor which has a view on that tensor -- the native runtime does reference counting of tensors.
 
+## Use 'Sequential' when possible.
+
+Rather than passing tensor arguments between neural network layers inside a custom module's forward, you should rely on the 'Sequential' layer collection, which will be more efficient at memory management, since it manages the lifetime of temporaries directly in native code.
+
+This may not be ideal when first experimenting with a model and trying to debug it, but once you are done with that and move on to a full training data set, it is advisable.
 
 ## Links and resources
 
