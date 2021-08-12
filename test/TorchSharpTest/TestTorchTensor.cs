@@ -4429,6 +4429,34 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CholeskyExTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
+            var (l,info) = linalg.cholesky_ex(a);
+
+            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1))));
+        }
+
+        [Fact]
+        public void InvTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            var l = linalg.inv(a);
+
+            Assert.Equal(a.shape, l.shape);
+        }
+
+        [Fact]
+        public void InvExTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            var (l, info) = linalg.inv_ex(a);
+
+            Assert.Equal(a.shape, l.shape);
+        }
+
+        [Fact]
         public void CondTestF64()
         {
             {

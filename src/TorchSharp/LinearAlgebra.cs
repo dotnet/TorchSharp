@@ -15,12 +15,23 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_cholesky(IntPtr tensor);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cholesky_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
+
             public static Tensor cholesky(Tensor input)
             {
                 var res = THSLinalg_cholesky(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            public static (Tensor L, Tensor info) cholesky_ex(Tensor input, bool check_errors = false)
+            {
+                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(pInfo));
             }
 
             [DllImport("LibTorchSharp")]
@@ -142,6 +153,17 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_inv_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
+
+            public static (Tensor L, Tensor info) inv_ex(Tensor input, bool check_errors = false)
+            {
+                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(pInfo));
             }
 
             [DllImport("LibTorchSharp")]

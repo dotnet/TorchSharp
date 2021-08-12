@@ -9,6 +9,14 @@ Tensor THSLinalg_cholesky(const Tensor tensor)
     CATCH_TENSOR(torch::linalg::cholesky(*tensor));
 }
 
+Tensor THSLinalg_cholesky_ex(const Tensor tensor, bool check_errors, Tensor* info)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_cholesky_ex(*tensor, check_errors););
+    *info = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_cond_int(const Tensor tensor, const int p)
 {
     CATCH_TENSOR(torch::linalg_cond(*tensor, p));
@@ -75,6 +83,14 @@ Tensor THSLinalg_eigvalsh(const Tensor tensor, const char UPLO)
 Tensor THSLinalg_inv(const Tensor tensor)
 {
     CATCH_TENSOR(torch::linalg::inv(*tensor));
+}
+
+Tensor THSLinalg_inv_ex(const Tensor tensor, bool check_errors, Tensor* info)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_inv_ex(*tensor, check_errors););
+    *info = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 Tensor THSLinalg_lstsq_none(const Tensor A, const Tensor B, Tensor* residuals, Tensor* rank, Tensor* singular_values)
