@@ -184,7 +184,8 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Note that things may have changed in the LibTorch header files, linking flags etc.  There is a CMakeLists.txt that acquires
    the cmake information delievered in the LibTorch download. It can be subtle.
-   If the vxcproj for the native code gets configured by cmake then you should now be able to start developing the C++ code in Visual Studio.
+   
+   If the vxcproj for the native code gets configured by cmake then you should now be able to start developing the C++ code in Visual Studio. In order to get the correct environment variables and PATH, start VS from the command line, not from the Start menu:
 
        devenv TorchSharp.sln
 
