@@ -626,6 +626,11 @@ Tensor THSTensor_matmul(const Tensor left, const Tensor right)
     return  new torch::Tensor(left->matmul(*right));
 }
 
+Tensor THSTensor_matrix_exp(const Tensor input)
+{
+    CATCH_TENSOR(input->matrix_exp());
+}
+
 Tensor THSTensor_mm(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->mm(*right));

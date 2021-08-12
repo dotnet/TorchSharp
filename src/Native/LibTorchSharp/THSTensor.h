@@ -675,6 +675,8 @@ EXPORT_API(Tensor) THSTensor_masked_select(const Tensor tensor, const Tensor mas
 
 EXPORT_API(Tensor) THSTensor_matmul(const Tensor left, const Tensor right);
 
+EXPORT_API(Tensor) THSTensor_matrix_exp(const Tensor input);
+
 EXPORT_API(Tensor) THSTensor_max(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim, const bool keep_dim);

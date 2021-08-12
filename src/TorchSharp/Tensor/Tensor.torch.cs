@@ -265,6 +265,10 @@ namespace TorchSharp
 
         static public Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min(min);
 
+        static public Tensor amax(Tensor input, long[] dims, bool keepDim = false) => input.amax(dims, keepDim);
+
+        static public Tensor amin(Tensor input, long[] dims, bool keepDim = false) => input.amin(dims, keepDim);
+
         /// <summary>
         /// Return a tensor of elements selected from either x or y, depending on condition.
         /// </summary>

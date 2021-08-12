@@ -4593,6 +4593,29 @@ namespace TorchSharp
             Assert.Equal(new long[] { 25, 25 }, b.shape);
         }
 
+
+        [Fact]
+        public void MatrixExpTest1()
+        {
+            var a = Float32Tensor.randn(new long[] { 25, 25 });
+            var b = a.matrix_exp();
+            Assert.Equal(new long[] { 25, 25 }, b.shape);
+
+            var c = torch.matric_exp(a);
+            Assert.Equal(new long[] { 25, 25 }, c.shape);
+        }
+
+
+        [Fact]
+        public void MatrixExpTest2()
+        {
+            var a = Float32Tensor.randn(new long[] { 16, 25, 25 });
+            var b = a.matrix_exp();
+            Assert.Equal(new long[] { 16, 25, 25 }, b.shape);
+            var c = torch.matric_exp(a);
+            Assert.Equal(new long[] { 16, 25, 25 }, c.shape);
+        }
+
         [Fact]
         public void MultiDotTest()
         {

@@ -135,6 +135,19 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_matrix_exp(IntPtr input);
+
+            /// <summary>
+            /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
+            /// </summary>
+            public Tensor matrix_exp()
+            {
+                var res = THSTensor_matrix_exp(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             extern static IntPtr THSLinalg_matrix_power(IntPtr tensor, long n);
 
             /// <summary>
