@@ -253,6 +253,10 @@ namespace TorchSharp
 
         static public Tensor clamp_(Tensor input, Scalar min = null, Scalar max = null) => input.clamp_(min, max);
 
+        static public Tensor clamp(Tensor input, Tensor min = null, Tensor max = null) => input.clamp(min, max);
+
+        static public Tensor clamp_(Tensor input, Tensor min = null, Tensor max = null) => input.clamp_(min, max);
+
         static public Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
 
         static public Tensor clamp_max_(Tensor input, Scalar max) => input.clamp_max(max);

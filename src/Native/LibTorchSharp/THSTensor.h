@@ -217,8 +217,10 @@ EXPORT_API(Tensor) THSTensor_cholesky_solve(const Tensor tensor, const Tensor te
 EXPORT_API(void) THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_clamp(const Tensor input, const Scalar min, const Scalar max);
-
 EXPORT_API(Tensor) THSTensor_clamp_(const Tensor input, const Scalar min, const Scalar max);
+
+EXPORT_API(Tensor) THSTensor_clamp_tensor(const Tensor input, const Tensor min, const Tensor max);
+EXPORT_API(Tensor) THSTensor_clamp_tensor_(const Tensor input, const Tensor min, const Tensor max);
 
 EXPORT_API(Tensor) THSTensor_clamp_max(const Tensor input, const Scalar max);
 

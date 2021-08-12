@@ -170,6 +170,20 @@ Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
     CATCH_TENSOR(tensor->clamp_(mn, mx));
 }
 
+Tensor THSTensor_clamp_tensor(const Tensor tensor, const Tensor min, const Tensor max)
+{
+    auto mn = min == nullptr ? c10::optional<at::Tensor>() : *min;
+    auto mx = max == nullptr ? c10::optional<at::Tensor>() : *max;
+    CATCH_TENSOR(tensor->clamp(mn, mx));
+}
+
+Tensor THSTensor_clamp_tensor_(const Tensor tensor, const Tensor min, const Tensor max)
+{
+    auto mn = min == nullptr ? c10::optional<at::Tensor>() : *min;
+    auto mx = max == nullptr ? c10::optional<at::Tensor>() : *max;
+    CATCH_TENSOR(tensor->clamp_(mn, mx));
+}
+
 Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)
 {
     CATCH_TENSOR(tensor->clamp_max(*max));

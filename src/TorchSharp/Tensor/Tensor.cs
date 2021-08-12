@@ -2328,12 +2328,23 @@ namespace TorchSharp
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
 
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_clamp_tensor(IntPtr input, IntPtr min, IntPtr max);
 
             public Tensor clamp(Scalar? min = null, Scalar? max = null)
             {
                 var res = THSTensor_clamp(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public Tensor clamp(Tensor? min = null, Tensor? max = null)
+            {
+                var res = THSTensor_clamp_tensor(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -2343,9 +2354,19 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_clamp_tensor_(IntPtr input, IntPtr min, IntPtr max);
+
             public Tensor clamp_(Scalar? min = null, Scalar? max = null)
             {
                 var res = THSTensor_clamp_(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public Tensor clamp_(Tensor? min = null, Tensor? max = null)
+            {
+                var res = THSTensor_clamp_tensor_(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

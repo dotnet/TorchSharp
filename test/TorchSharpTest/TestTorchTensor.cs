@@ -3120,6 +3120,42 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void ClampTest1()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = data.clamp(1, 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest2()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = data.clamp(torch.ones(3,3,3), torch.ones(3,3,3) * 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest3()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = torch.clamp(data, 1, 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest4()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = torch.clamp(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
         public void Rad2DegTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
