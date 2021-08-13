@@ -11,7 +11,7 @@ namespace TorchSharp.Examples
     /// </summary>
     /// <remarks>
     /// With an unaugmented CIFAR-10 data set, the author of this saw training converge
-    /// at roughly 75% accuracy on the test set, over the course of 1500 epochs using VGG-16.
+    /// at roughly 85% accuracy on the test set, after 50 epochs using VGG-16.
     /// </remarks>
     class VGG : Module
     {
