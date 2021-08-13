@@ -12,7 +12,7 @@ open type TorchSharp.Scalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
 // 
-// The dataset for this example can be found at: http://yann.lecun.com/exdb/mnist/
+// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
 // Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
 // the '_dataLocation' definition below to point at the right folder.
 //

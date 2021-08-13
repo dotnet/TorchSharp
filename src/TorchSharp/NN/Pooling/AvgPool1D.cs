@@ -46,11 +46,17 @@ namespace TorchSharp
             static public AvgPool1d AvgPool1d(long kernelSize, long? stride = null)
             {
                 return stride.HasValue ?
-                    AvgPool1D(new long[] { kernelSize }, new long[] { stride.Value }) :
-                    AvgPool1D(new long[] { kernelSize }, null);
+                    AvgPool1d(new long[] { kernelSize }, new long[] { stride.Value }) :
+                    AvgPool1d(new long[] { kernelSize }, null);
             }
 
-            static private AvgPool1d AvgPool1D(long[] kernelSize, long[] strides = null)
+            /// <summary>
+            /// Applies a 1D average pooling over an input signal composed of several input planes.
+            /// </summary>
+            /// <param name="kernelSize">The size of the window</param>
+            /// <param name="strides">The stride of the window. Default value is kernel_size</param>
+            /// <returns></returns>
+            static private AvgPool1d AvgPool1d(long[] kernelSize, long[] strides = null)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides) {
