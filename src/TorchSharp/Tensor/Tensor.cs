@@ -45,6 +45,11 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// A friendly name for the tensor. This is useful for debugging purposes.
+            /// </summary>
+            public string? name { get; set; }
+
+            /// <summary>
             ///   Finalize the tensor. Releases the tensor and its associated data.
             /// </summary>
             ~Tensor() => Dispose(false);
@@ -65,6 +70,17 @@ namespace TorchSharp
             {
                 if (handle != IntPtr.Zero) {
                     THSTensor_dispose(handle);
+                    handle = IntPtr.Zero;
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSTensor_free(IntPtr handle);
+
+            public void free()
+            {
+                if (handle != IntPtr.Zero) {
+                    THSTensor_free(handle);
                     handle = IntPtr.Zero;
                 }
             }

@@ -13,7 +13,7 @@ namespace TorchSharp.Examples
     /// A number of single-channel (grayscale) images are laid out in a flat file with four 32-bit integers at the head.
     /// The format is documented at the bottom of the page at: http://yann.lecun.com/exdb/mnist/
     /// </summary>
-    public sealed class CIFARReader : IEnumerable<(Tensor, Tensor)>, IDisposable
+    public sealed class CIFARReader : IDisposable
     {
         /// <summary>
         /// Constructor
@@ -23,20 +23,23 @@ namespace TorchSharp.Examples
         /// <param name="batch_size">The batch size</param>
         /// <param name="shuffle">Randomly shuffle the images.</param>
         /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
-        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, Device device = null)
+        /// <param name="transforms">A list of image transformations, helpful for data augmentation.</param>
+        public CIFARReader(string path, bool test, int batch_size = 32, bool shuffle = false, Device device = null, IList<torchvision.ITransform> transforms = null)
         {
+            _transforms = transforms == null ? new List<torchvision.ITransform>() : transforms;
+
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 
             var dataPath = Path.Combine(path, "cifar-10-batches-bin");
 
             if (test) {
-                Size = ReadSingleFile(Path.Combine(dataPath, "test_batch.bin"), batch_size, shuffle, device);
+                _size = ReadSingleFile(Path.Combine(dataPath, "test_batch.bin"), batch_size, shuffle, device);
             } else {
-                Size += ReadSingleFile(Path.Combine(dataPath, "data_batch_1.bin"), batch_size, shuffle, device);
-                Size += ReadSingleFile(Path.Combine(dataPath, "data_batch_2.bin"), batch_size, shuffle, device);
-                Size += ReadSingleFile(Path.Combine(dataPath, "data_batch_3.bin"), batch_size, shuffle, device);
-                Size += ReadSingleFile(Path.Combine(dataPath, "data_batch_4.bin"), batch_size, shuffle, device);
-                Size += ReadSingleFile(Path.Combine(dataPath, "data_batch_5.bin"), batch_size, shuffle, device);
+                _size += ReadSingleFile(Path.Combine(dataPath, "data_batch_1.bin"), batch_size, shuffle, device);
+                _size += ReadSingleFile(Path.Combine(dataPath, "data_batch_2.bin"), batch_size, shuffle, device);
+                _size += ReadSingleFile(Path.Combine(dataPath, "data_batch_3.bin"), batch_size, shuffle, device);
+                _size += ReadSingleFile(Path.Combine(dataPath, "data_batch_4.bin"), batch_size, shuffle, device);
+                _size += ReadSingleFile(Path.Combine(dataPath, "data_batch_5.bin"), batch_size, shuffle, device);
             }
         }
 
@@ -91,62 +94,31 @@ namespace TorchSharp.Examples
             return count;
         }
 
-        public int Size { get; set; }
+        public int Size { get {
+                return _size * (_transforms.Count + 1);
+            } }
+        private int _size = 0;
 
         private List<Tensor> data = new List<Tensor>();
         private List<Tensor> labels = new List<Tensor>();
 
-        public IEnumerator<(Tensor, Tensor)> GetEnumerator()
-        {
-            return new CIFAREnumerator(data, labels);
-        }
+        private IList<torchvision.ITransform> _transforms;
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public IEnumerable<(Tensor, Tensor)> Data()
         {
-            return GetEnumerator();
+            for (var i = 0; i < data.Count; i++) {
+                yield return (data[i], labels[i]);
+
+                foreach (var tfrm in _transforms) {
+                    yield return (tfrm.forward(data[i]), labels[i]);
+                }
+            }
         }
 
         public void Dispose()
         {
             data.ForEach(d => d.Dispose());
             labels.ForEach(d => d.Dispose());
-        }
-
-        private class CIFAREnumerator : IEnumerator<(Tensor, Tensor)>
-        {
-            public CIFAREnumerator(List<Tensor> data, List<Tensor> labels)
-            {
-                this.data = data;
-                this.labels = labels;
-            }
-
-            public (Tensor, Tensor) Current {
-                get {
-                    if (curIdx == -1) throw new InvalidOperationException("Calling 'Current' before 'MoveNext()'");
-                    return (data[curIdx], labels[curIdx]);
-                }
-            }
-
-            object IEnumerator.Current => Current;
-
-            public void Dispose()
-            {
-            }
-
-            public bool MoveNext()
-            {
-                curIdx += 1;
-                return curIdx < data.Count;
-            }
-
-            public void Reset()
-            {
-                curIdx = -1;
-            }
-
-            private int curIdx = -1;
-            private List<Tensor> data = null;
-            private List<Tensor> labels = null;
         }
     }
 }

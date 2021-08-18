@@ -56,7 +56,7 @@ namespace TorchSharp.Examples
             var timeout = args.Length > 2 ? int.Parse(args[2]) : _timeout;
 
             Console.WriteLine();
-            Console.WriteLine($"\tRunning {modelName} with {_dataset} on {device.type.ToString()} for {epochs} epochs, terminating after {timeout/3600} hours.");
+            Console.WriteLine($"\tRunning {modelName} with {_dataset} on {device.type.ToString()} for {epochs} epochs, terminating after {TimeSpan.FromSeconds(timeout)}.");
             Console.WriteLine();
 
             var sourceDir = _dataLocation;
@@ -77,20 +77,43 @@ namespace TorchSharp.Examples
                 model = new MobileNet(modelName, _numClasses, device);
                 break;
             case "vgg11":
-                model = new VGG(modelName, _numClasses, device);
-                break;
             case "vgg13":
-                model = new VGG(modelName, _numClasses, device);
-                break;
             case "vgg16":
-                model = new VGG(modelName, _numClasses, device);
-                break;
             case "vgg19":
                 model = new VGG(modelName, _numClasses, device);
                 break;
+            case "resnet18":
+                model = ResNet.ResNet18(_numClasses, device);
+                break;
+            case "resnet34":
+                _testBatchSize /= 4; 
+                model = ResNet.ResNet34(_numClasses, device);
+                break;
+            case "resnet50":
+                _trainBatchSize /= 6;
+                _testBatchSize /= 8;
+                model = ResNet.ResNet50(_numClasses, device);
+                break;
+#if false
+            // The following is disabled, because they require big CUDA processors in order to run.
+            case "resnet101":
+                _trainBatchSize /= 6;
+                _testBatchSize /= 8;
+                model = ResNet.ResNet101(_numClasses, device);
+                break;
+            case "resnet152":
+                _testBatchSize /= 4;
+                model = ResNet.ResNet152(_numClasses, device);
+                break;
+#endif
             }
 
-            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device))
+            var hflip = torchvision.transforms.HorizontalFlip();
+            var gray = torchvision.transforms.Grayscale(3);
+            var rotate = torchvision.transforms.Rotate(90);
+            var contrast = torchvision.transforms.AdjustContrast(1.25);
+
+            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device, transforms: new torchvision.ITransform[] { hflip, gray, rotate, contrast }))
             using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
             using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 
@@ -102,8 +125,8 @@ namespace TorchSharp.Examples
                     Stopwatch epchSW = new Stopwatch();
                     epchSW.Start();
 
-                    Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train.Size);
-                    Test(model, nll_loss(), test, test.Size);
+                    Train(model, optimizer, nll_loss(), train.Data(), epoch, _trainBatchSize, train.Size);
+                    Test(model, nll_loss(), test.Data(), test.Size);
                     GC.Collect();
 
                     epchSW.Stop();
@@ -113,7 +136,7 @@ namespace TorchSharp.Examples
                 }
 
                 totalSW.Stop();
-                Console.WriteLine($"Elapsed training time: {totalSW.Elapsed.TotalSeconds} s.");
+                Console.WriteLine($"Elapsed training time: {totalSW.Elapsed} s.");
             }
 
             model.Dispose();

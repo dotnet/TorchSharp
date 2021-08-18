@@ -2,6 +2,8 @@
   "profiles": {
     "Examples": {
       "commandName": "Project",
+      "commandLineArgs": "ResNet50 2 1800",
+      "workingDirectory": "D:\\repos\\niklasgustafsson\\TorchSharp",
       "nativeDebugging": true
     }
   }

@@ -321,6 +321,11 @@ Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, c
     CATCH_TENSOR(tensor->diff(n, dim, prep, app));
 }
 
+void THSTensor_free(const Tensor tensor)
+{
+    // If we can figure out how to decref the native tensor, the logic should go here.
+}
+
 void THSTensor_dispose(const Tensor tensor)
 {
     delete tensor;

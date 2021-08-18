@@ -63,8 +63,8 @@ namespace TorchSharp
             static public AvgPool2d AvgPool2d(long kernel_size, long? stride = null)
             {
                 return stride.HasValue ?
-                    AvgPool2d(new long[] { kernel_size }, new long[] { stride.Value }) :
-                    AvgPool2d(new long[] { kernel_size }, null);
+                    AvgPool2d(new long[] { kernel_size, kernel_size }, new long[] { stride.Value, stride.Value }) :
+                    AvgPool2d(new long[] { kernel_size, kernel_size }, null);
             }
         }
     }

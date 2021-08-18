@@ -96,7 +96,7 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
 
     printfn $"Epoch: {epoch}..."
 
-    for (input,labels) in dataLoader do
+    for (input,labels) in dataLoader.Data() do
         optimizer.zero_grad()
 
         begin
@@ -131,7 +131,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     let mutable correct = 0L
     let mutable batchCount = 0L
 
-    for (input,labels) in dataLoader do
+    for (input,labels) in dataLoader.Data() do
 
         use estimate = input --> model
         use output = loss estimate labels

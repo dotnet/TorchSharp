@@ -153,19 +153,24 @@ namespace TorchSharp
         {
             public TestModule() : base(nameof(TestModule)) { }
 
-            public override torch.Tensor forward(torch.Tensor t) => t;
+            public override torch.Tensor forward(torch.Tensor t) => t.clone();
 
             public static void Reproduce()
             {
+                Tensor t = torch.zeros(10);
+
                 var seq = Make();
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                GC.Collect();
-                seq.forward(torch.zeros(10));
+                for (var i = 0; i < 100; i++) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    t = seq.forward(t);
+                }
             }
 
             [MethodImpl(MethodImplOptions.NoInlining)]
-            static Module Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 1)));
+            static Module Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 10)));
         }
 
         [Fact]

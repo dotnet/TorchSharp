@@ -32,6 +32,7 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 // Keep the sub-module alive for at least as long as the Sequential object is alive.
                 _modules.Add(submodule);
+                _names.Add(name);
             }
 
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
@@ -43,9 +44,13 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Sequential_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                if (_modules.Count == 0) return tensor.clone();
+
+                // Using an index helps debugging, because we know the ordinal of the submodule.
+                for (var idx = 0; idx < _modules.Count; idx++) {
+                    tensor = _modules[idx].forward(tensor);
+                }
+                return tensor;
             }
 
             public override nn.Module apply(Action<nn.Module> fn)
@@ -61,6 +66,7 @@ namespace TorchSharp
             // handles are held in the native runtime, which calls back into managed code,
             // the modules need to stay alive, and keeping a list of them will do that.
             private List<torch.nn.Module> _modules = new List<nn.Module>();
+            private List<string> _names = new List<string>();
         }
     }
 

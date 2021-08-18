@@ -324,6 +324,8 @@ EXPORT_API(Tensor) THSTensor_diagonal(const Tensor tensor, const int64_t offset,
 
 EXPORT_API(Tensor) THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append);
 
+EXPORT_API(void) THSTensor_free(const Tensor tensor);
+
 EXPORT_API(void) THSTensor_dispose(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_dist(const Tensor tensor, const Tensor other, const float p);
