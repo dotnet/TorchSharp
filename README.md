@@ -99,7 +99,6 @@ binaries of LibTorch installed through other means (for example, by installing [
     NativeLibrary.Load("/home/gunes/anaconda3/lib/python3.8/site-packages/torch/lib/libtorch.so")
 ```
 
-
 # Developing
 
 See [DEVGUIDE.md](DEVGUIDE.md).
