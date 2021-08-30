@@ -526,6 +526,8 @@ namespace TorchSharp
                 /// <param name="parameters">The module parameters, i.e. its trainable weights and (non-trainable) "buffers."</param>
                 protected Module(string name, params parameter.Parameter[] parameters) : this(IntPtr.Zero, IntPtr.Zero)
                 {
+                    this.name = name;
+
                     var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
                     var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
                     var withGrads = parameters.Select(p => p.WithGrad).ToArray();
@@ -541,9 +543,17 @@ namespace TorchSharp
                     ForwardFunctionC forwardNative = t => {
                         var input = new Tensor(t);
                         var output = forward(input);
+
                         // handles must live on - we don't own them
-                        GC.SuppressFinalize(output);
                         GC.SuppressFinalize(input);
+
+                        // TODO: Figure out what do do here:
+                        //
+                        // Suppressing the output finalization leads to a memory leak, since the
+                        // native handle is never destroyed. Ideally, we could decrement the ref
+                        // count and then suppress finalization.
+                        //GC.SuppressFinalize(output);
+
                         return output.Handle;
                     };
 
@@ -572,6 +582,7 @@ namespace TorchSharp
 
                 /// Keeps the callback delegate alive
                 private ForwardFunctionC forwardNative;
+                protected string name;
             }
 
             internal class BoxedModule : IDisposable

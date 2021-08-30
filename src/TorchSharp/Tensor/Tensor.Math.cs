@@ -2496,6 +2496,12 @@ namespace TorchSharp
         public static Tensor multiply(Tensor left, Tensor right) => left.mul(right);
 
         /// <summary>
+        /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor matric_exp(Tensor input) => input.matrix_exp();
+
+        /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
         /// <returns></returns>

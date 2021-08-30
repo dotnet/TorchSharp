@@ -397,6 +397,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvalEmptySequence()
+        {
+            var seq = Sequential();
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var eval = seq.forward(x);
+            Assert.Equal(x, eval);
+        }
+
+        [Fact]
         public void CreateSequence()
         {
             var lin1 = Linear(1000, 100);
