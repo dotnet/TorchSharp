@@ -1,4 +1,5 @@
-// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.using System;
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
