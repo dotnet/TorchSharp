@@ -6,8 +6,7 @@ __In PR 302, significant changes were made to the TorchSharp API, aligning more 
 
 # TorchSharp
 
-TorchSharp is a .NET library that provides access to the library that powers
-PyTorch.  
+TorchSharp is a .NET library that provides access to the library that powers PyTorch. It is part of the .NET Foundation.
 
 The focus is to bind the API surfaced by libtorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
 
@@ -99,6 +98,11 @@ binaries of LibTorch installed through other means (for example, by installing [
     NativeLibrary.Load("/home/gunes/anaconda3/lib/python3.8/site-packages/torch/lib/libtorch.so")
 ```
 
+# Code of Conduct
+The .NET Foundation has adopted the Contributor Covenant You can read more guidance on the Code of Conduct here. However, it is good practice to include the following text somewhere appropriate in your README.
+
+This project has adopted the code of conduct defined by the Contributor Covenant to clarify expected behavior in our community.
+For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct). 
 
 # Developing
 
