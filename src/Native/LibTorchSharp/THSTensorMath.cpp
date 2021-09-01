@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSTensor.h"
 
 #include <iostream>
@@ -624,6 +624,11 @@ Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
 {
     return  new torch::Tensor(left->matmul(*right));
+}
+
+Tensor THSTensor_matrix_exp(const Tensor input)
+{
+    CATCH_TENSOR(input->matrix_exp());
 }
 
 Tensor THSTensor_mm(const Tensor left, const Tensor right)

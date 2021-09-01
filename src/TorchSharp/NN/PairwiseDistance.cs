@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
@@ -21,7 +21,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
 
-            public Tensor forward(Tensor input1, Tensor input2)
+            public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_PairwiseDistance_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

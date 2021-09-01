@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -45,6 +45,11 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// A friendly name for the tensor. This is useful for debugging purposes.
+            /// </summary>
+            public string? name { get; set; }
+
+            /// <summary>
             ///   Finalize the tensor. Releases the tensor and its associated data.
             /// </summary>
             ~Tensor() => Dispose(false);
@@ -65,6 +70,17 @@ namespace TorchSharp
             {
                 if (handle != IntPtr.Zero) {
                     THSTensor_dispose(handle);
+                    handle = IntPtr.Zero;
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSTensor_free(IntPtr handle);
+
+            public void free()
+            {
+                if (handle != IntPtr.Zero) {
+                    THSTensor_free(handle);
                     handle = IntPtr.Zero;
                 }
             }
@@ -2328,12 +2344,23 @@ namespace TorchSharp
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
 
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_clamp_tensor(IntPtr input, IntPtr min, IntPtr max);
 
             public Tensor clamp(Scalar? min = null, Scalar? max = null)
             {
                 var res = THSTensor_clamp(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public Tensor clamp(Tensor? min = null, Tensor? max = null)
+            {
+                var res = THSTensor_clamp_tensor(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -2343,9 +2370,19 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_clamp_tensor_(IntPtr input, IntPtr min, IntPtr max);
+
             public Tensor clamp_(Scalar? min = null, Scalar? max = null)
             {
                 var res = THSTensor_clamp_(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            public Tensor clamp_(Tensor? min = null, Tensor? max = null)
+            {
+                var res = THSTensor_clamp_tensor_(handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,6 +99,8 @@ namespace TorchSharp.torchvision
             /// <remarks>
             /// Unlike Pytorch, TorchSharp will allow the hue_factor to lie outside the range [-0.5,0.5].
             /// A factor of 0.75 has the same effect as -.25
+            /// Note that adjusting the hue is a very expensive operation, and may therefore not be suitable as a method
+            /// for data augmentation when training speed is important.
             /// </remarks>
             public static Tensor adjust_hue(Tensor img, double hue_factor)
             {

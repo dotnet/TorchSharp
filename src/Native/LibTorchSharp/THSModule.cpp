@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSNN.h"
 
 #include <torch/nn/init.h>
@@ -36,6 +36,11 @@ void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)
     if (device == 1)
         dev = c10::kCUDA;
     (*module)->to(torch::Device(dev, index));
+}
+
+void THSNN_Module_to_dtype(NNModule module, int8_t dtype)
+{
+    (*module)->to((at::ScalarType)dtype);
 }
 
 void THSNN_Module_dispose(const NNModule module)
@@ -79,9 +84,9 @@ Tensor THSNN_Module_get_parameter(const NNModule module, const char* name)
     CATCH_TENSOR(*(*module)->named_parameters().find(name));
 }
 
-void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length))
+void THSNN_Module_get_parameters(const NNModule module, Tensor* (*allocator1)(size_t length), bool recurse)
 {
-    auto parameters = (*module)->parameters();
+    auto parameters = (*module)->parameters(recurse);
     Tensor* result1 = allocator1(parameters.size());
 
     for (size_t i = 0; i < parameters.size(); i++)

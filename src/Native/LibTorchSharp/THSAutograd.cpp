@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSAutograd.h"
 
 #include "torch/torch.h"

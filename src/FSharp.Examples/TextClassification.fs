@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 module TorchSharp.Examples.TextClassification
 
 open System
@@ -43,7 +44,7 @@ let device = if hasCUDA then torch.CUDA else torch.CPU
 let criterion x y = functional.cross_entropy_loss().Invoke(x,y)
 
 type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device) as this =
-    inherit CustomModule("Transformer")
+    inherit Module("Transformer")
 
     let embedding = EmbeddingBag(vocabSize, embedDim, sparse=false)
     let fc = Linear(embedDim, nClasses)
@@ -62,7 +63,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device)
 
     override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
 
-    member _.forward(input, offsets) =
+    override _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc
 
 let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =

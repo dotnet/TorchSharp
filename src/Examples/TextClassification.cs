@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
 using System.Linq;
@@ -149,7 +150,7 @@ namespace TorchSharp.Examples
         }
     }
 
-    class TextClassificationModel : CustomModule
+    class TextClassificationModel : Module
     {
         private Modules.EmbeddingBag embedding;
         private Modules.Linear fc;
@@ -177,7 +178,7 @@ namespace TorchSharp.Examples
             throw new NotImplementedException();
         }
 
-        public Tensor forward(Tensor input, Tensor offsets)
+        public override Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));
         }

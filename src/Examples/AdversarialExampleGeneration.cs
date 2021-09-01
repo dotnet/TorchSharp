@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -135,7 +135,7 @@ namespace TorchSharp.Examples
                 using (var output = model.forward(data))
                 using (var loss = criterion(output, target)) {
 
-                    model.ZeroGrad();
+                    model.zero_grad();
                     loss.backward();
 
                     var perturbed = Attack(data, ε, data.grad());

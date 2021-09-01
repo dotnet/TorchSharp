@@ -1,6 +1,6 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -26,7 +26,13 @@ namespace TorchSharp
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            submodules.Add(("lin1", lin1));
+            submodules.Add(("relu1", ReLU()));
+            submodules.Add(("lin2", lin2));
+
+            var seq = Sequential(submodules);
 
             var x = Float32Tensor.randn(new long[] { 64, 1000 });
             var y = Float32Tensor.randn(new long[] { 64, 10 });
@@ -44,7 +50,7 @@ namespace TorchSharp
 
                 finalLoss = lossVal;
 
-                seq.ZeroGrad();
+                seq.zero_grad();
 
                 output.backward();
 
@@ -86,7 +92,7 @@ namespace TorchSharp
 
                 finalLoss = lossVal;
 
-                seq.ZeroGrad();
+                seq.zero_grad();
 
                 output.backward();
 

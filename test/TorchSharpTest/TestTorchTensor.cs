@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
 using System.Linq;
@@ -3120,6 +3120,42 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void ClampTest1()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = data.clamp(1, 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest2()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = data.clamp(torch.ones(3,3,3), torch.ones(3,3,3) * 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest3()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = torch.clamp(data, 1, 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
+        public void ClampTest4()
+        {
+            var data = torch.rand(3, 3, 3) * 10;
+            var cl = torch.clamp(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
+
+            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+        }
+
+        [Fact]
         public void Rad2DegTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4429,6 +4465,69 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CholeskyExTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
+            var (l,info) = linalg.cholesky_ex(a);
+
+            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1))));
+        }
+
+        [Fact]
+        public void InvTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            var l = linalg.inv(a);
+
+            Assert.Equal(a.shape, l.shape);
+        }
+
+        [Fact]
+        public void InvExTest()
+        {
+            var a = Float64Tensor.randn(new long[] { 3, 2, 2 });
+            var (l, info) = linalg.inv_ex(a);
+
+            Assert.Equal(a.shape, l.shape);
+        }
+
+        [Fact]
+        public void CondTestF64()
+        {
+            {
+                var a = Float64Tensor.randn(new long[] { 3, 3, 3 });
+                // The following mostly checks that the runtime interop doesn't blow up.
+                var l = linalg.cond(a);
+                l = linalg.cond(a, "fro");
+                l = linalg.cond(a, "nuc");
+                l = linalg.cond(a, 1);
+                l = linalg.cond(a, -1);
+                l = linalg.cond(a, 2);
+                l = linalg.cond(a, -2);
+                l = linalg.cond(a, Double.PositiveInfinity);
+                l = linalg.cond(a, Double.NegativeInfinity);
+            }
+        }
+        [Fact]
+        public void CondTestCF64()
+        {
+            {
+                var a = ComplexFloat64Tensor.randn(new long[] { 3, 3, 3 });
+                // The following mostly checks that the runtime interop doesn't blow up.
+                var l = linalg.cond(a);
+                l = linalg.cond(a, "fro");
+                l = linalg.cond(a, "nuc");
+                l = linalg.cond(a, 1);
+                l = linalg.cond(a, -1);
+                l = linalg.cond(a, 2);
+                l = linalg.cond(a, -2);
+                l = linalg.cond(a, Double.PositiveInfinity);
+                l = linalg.cond(a, Double.NegativeInfinity);
+            }
+        }
+
+        [Fact]
         public void QRTest()
         {
             var a = Float32Tensor.randn(new long[] { 4, 25, 25 });
@@ -4492,6 +4591,29 @@ namespace TorchSharp
             var a = Float32Tensor.randn(new long[] { 25, 25 });
             var b = a.matrix_power(3);
             Assert.Equal(new long[] { 25, 25 }, b.shape);
+        }
+
+
+        [Fact]
+        public void MatrixExpTest1()
+        {
+            var a = Float32Tensor.randn(new long[] { 25, 25 });
+            var b = a.matrix_exp();
+            Assert.Equal(new long[] { 25, 25 }, b.shape);
+
+            var c = torch.matric_exp(a);
+            Assert.Equal(new long[] { 25, 25 }, c.shape);
+        }
+
+
+        [Fact]
+        public void MatrixExpTest2()
+        {
+            var a = Float32Tensor.randn(new long[] { 16, 25, 25 });
+            var b = a.matrix_exp();
+            Assert.Equal(new long[] { 16, 25, 25 }, b.shape);
+            var c = torch.matric_exp(a);
+            Assert.Equal(new long[] { 16, 25, 25 }, c.shape);
         }
 
         [Fact]

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -188,6 +188,20 @@ namespace TorchSharp
 
         public static (float Real, float Imaginary) ToComplex32(this Tensor value) => value.ToScalar().ToComplexFloat32();
         public static System.Numerics.Complex ToComplex64(this Tensor value) => value.ToScalar().ToComplexFloat64();
+
+        /// <summary>
+        /// Multiply the dimensions of a tensor shape to provide a complete size.
+        /// </summary>
+        /// <param name="shape">The shape.</param>
+        /// <returns></returns>
+        public static long TotalSize(this IEnumerable<long> shape)
+        {
+            long result = 1;
+            foreach (var sz in shape) {
+                result *= sz;
+            }
+            return result;
+        }
 
         // Vision-related operations
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSTensor.h"
 
 #include <iostream>
@@ -170,6 +170,20 @@ Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
     CATCH_TENSOR(tensor->clamp_(mn, mx));
 }
 
+Tensor THSTensor_clamp_tensor(const Tensor tensor, const Tensor min, const Tensor max)
+{
+    auto mn = min == nullptr ? c10::optional<at::Tensor>() : *min;
+    auto mx = max == nullptr ? c10::optional<at::Tensor>() : *max;
+    CATCH_TENSOR(tensor->clamp(mn, mx));
+}
+
+Tensor THSTensor_clamp_tensor_(const Tensor tensor, const Tensor min, const Tensor max)
+{
+    auto mn = min == nullptr ? c10::optional<at::Tensor>() : *min;
+    auto mx = max == nullptr ? c10::optional<at::Tensor>() : *max;
+    CATCH_TENSOR(tensor->clamp_(mn, mx));
+}
+
 Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)
 {
     CATCH_TENSOR(tensor->clamp_max(*max));
@@ -305,6 +319,11 @@ Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, c
     c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
     c10::optional<at::Tensor> app = append != nullptr ? *append : c10::optional<at::Tensor>(c10::nullopt);
     CATCH_TENSOR(tensor->diff(n, dim, prep, app));
+}
+
+void THSTensor_free(const Tensor tensor)
+{
+    // If we can figure out how to decref the native tensor, the logic should go here.
 }
 
 void THSTensor_dispose(const Tensor tensor)

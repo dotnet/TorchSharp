@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 module TorchSharp.Examples.AdversarialExampleGeneration
 
 open System
@@ -70,7 +71,7 @@ let test (model:MNIST.Model) (eps:float) (dataLoader:MNISTReader) size =
             use estimate = input --> model
             use loss = criterion estimate labels
 
-            model.ZeroGrad()
+            model.zero_grad()
             loss.backward()
 
             use perturbed = attack input (eps.ToScalar()) (input.grad())

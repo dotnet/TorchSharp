@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -15,9 +16,61 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_cholesky(IntPtr tensor);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cholesky_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
+
             public static Tensor cholesky(Tensor input)
             {
                 var res = THSLinalg_cholesky(input.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static (Tensor L, Tensor info) cholesky_ex(Tensor input, bool check_errors = false)
+            {
+                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(pInfo));
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_int(IntPtr tensor, int p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_float(IntPtr tensor, double p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cond_none(IntPtr tensor);
+
+            public static Tensor cond(Tensor input, int p)
+            {
+                var res = THSLinalg_cond_int(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input, double p)
+            {
+                var res = THSLinalg_cond_float(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input, string p)
+            {
+                var res = THSLinalg_cond_str(input.Handle, p);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor cond(Tensor input)
+            {
+                var res = THSLinalg_cond_none(input.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -101,6 +154,17 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_inv_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
+
+            public static (Tensor L, Tensor info) inv_ex(Tensor input, bool check_errors = false)
+            {
+                var res = THSLinalg_cholesky_ex(input.Handle, check_errors, out var pInfo);
+                if (res == IntPtr.Zero || pInfo == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(pInfo));
             }
 
             [DllImport("LibTorchSharp")]

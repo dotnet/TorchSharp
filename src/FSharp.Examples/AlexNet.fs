@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 module TorchSharp.Examples.AlexNet
 
 open System
@@ -12,7 +13,7 @@ open type TorchSharp.Scalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
 // 
-// The dataset for this example can be found at: http://yann.lecun.com/exdb/mnist/
+// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
 // Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
 // the '_dataLocation' definition below to point at the right folder.
 //
@@ -42,7 +43,7 @@ let getDataFiles sourceDir targetDir =
         Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir)
 
 type Model(name,device:torch.Device) as this =
-    inherit CustomModule(name)
+    inherit Module(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),
                               ("r1", ReLU(inPlace=true) :> Module),
@@ -96,7 +97,7 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
 
     printfn $"Epoch: {epoch}..."
 
-    for (input,labels) in dataLoader do
+    for (input,labels) in dataLoader.Data() do
         optimizer.zero_grad()
 
         begin
@@ -131,7 +132,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     let mutable correct = 0L
     let mutable batchCount = 0L
 
-    for (input,labels) in dataLoader do
+    for (input,labels) in dataLoader.Data() do
 
         use estimate = input --> model
         use output = loss estimate labels

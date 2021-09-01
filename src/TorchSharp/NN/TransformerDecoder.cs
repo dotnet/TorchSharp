@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -29,7 +28,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The mask for the tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The mask for the memory keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor tgt, Tensor memory, Tensor? tgt_mask = null, Tensor? memory_mask = null, Tensor? tgt_key_padding_mask = null, Tensor? memory_key_padding_mask = null)
+            public Tensor forward(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {
                 var res = THSNN_TransformerDecoder_forward(handle,
                     tgt.Handle,
@@ -38,6 +37,24 @@ namespace TorchSharp
                     memory_mask?.Handle ?? IntPtr.Zero,
                     tgt_key_padding_mask?.Handle ?? IntPtr.Zero,
                     memory_key_padding_mask?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Pass the inputs (and mask) through the decoder layers in turn.
+            /// </summary>
+            /// <param name="tgt">The sequence to the decoder layer (required).</param>
+            /// <param name="memory">The sequence from the last layer of the encoder (required).</param>
+            public override Tensor forward(Tensor tgt, Tensor memory)
+            {
+                var res = THSNN_TransformerDecoder_forward(handle,
+                    tgt.Handle,
+                    memory.Handle,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

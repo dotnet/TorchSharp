@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
@@ -37,6 +37,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Flatten_ctor(long startDim, long endDim, out IntPtr pBoxedModule);
 
+            /// <summary>
+            /// Flattens a contiguous range of dims into a tensor. For use with Sequential.
+            /// </summary>
+            /// <param name="startDim">First dim to flatten (default = 1).</param>
+            /// <param name="endDim">Last dim to flatten (default = -1).</param>
+            /// <returns></returns>
             static public Flatten Flatten(long startDim = 1, long endDim = -1)
             {
                 var handle = THSNN_Flatten_ctor(startDim, endDim, out var boxedHandle);

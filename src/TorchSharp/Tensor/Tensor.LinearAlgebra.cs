@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Globalization;
 using System.Linq;
@@ -130,6 +131,19 @@ namespace TorchSharp
             public Tensor mv(Tensor target)
             {
                 var res = THSTensor_mv(handle, target.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_matrix_exp(IntPtr input);
+
+            /// <summary>
+            /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
+            /// </summary>
+            public Tensor matrix_exp()
+            {
+                var res = THSTensor_matrix_exp(handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

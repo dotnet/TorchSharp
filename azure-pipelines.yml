@@ -7,7 +7,7 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 variables: 
   MyRunNumber:  $[counter('MyRunNumber', 52201)]
   
-  # Set this to 'true' to build the libtorch-* packages as part of master branch CI and
+  # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
 
@@ -68,7 +68,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -99,7 +99,7 @@ jobs:
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -118,7 +118,7 @@ jobs:
 # ################################################################################
 - job: MacOS_Native_Build_For_Packages
 # ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -138,7 +138,7 @@ jobs:
 ################################################################################
 - job: Build_And_Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
@@ -289,7 +289,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Build_And_Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Windows_Native_Build_For_Packages
   variables:
@@ -406,7 +406,7 @@ jobs:
 ################################################################################
 - job: Build_And_Push_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'master'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   variables:

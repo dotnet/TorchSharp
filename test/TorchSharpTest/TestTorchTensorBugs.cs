@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,7 @@ using static TorchSharp.torch.nn;
 using Xunit;
 
 using static TorchSharp.torch;
+using System.Runtime.CompilerServices;
 
 #nullable enable
 
@@ -34,7 +35,7 @@ namespace TorchSharp
             }
         }
 
-        class DoubleIt : nn.CustomModule
+        class DoubleIt : nn.Module
         {
             public DoubleIt() : base("double") { }
 
@@ -146,6 +147,36 @@ namespace TorchSharp
             foreach (var t in threads) {
                 t.Join();
             }
+        }
+
+        class TestModule : Module
+        {
+            public TestModule() : base(nameof(TestModule)) { }
+
+            public override torch.Tensor forward(torch.Tensor t) => t.clone();
+
+            public static void Reproduce()
+            {
+                Tensor t = torch.zeros(10);
+
+                var seq = Make();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                for (var i = 0; i < 100; i++) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    t = seq.forward(t);
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            static Module Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 10)));
+        }
+
+        [Fact]
+        void ValidateIssue321()
+        {
+            TestModule.Reproduce();
         }
     }
 }

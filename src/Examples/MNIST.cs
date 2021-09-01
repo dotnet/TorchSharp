@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -104,7 +104,7 @@ namespace TorchSharp.Examples
             model.save(dataset + ".model.bin");
         }
 
-        internal class Model : CustomModule
+        internal class Model : Module
         {
             private Module conv1 = Conv2d(1, 32, 3);
             private Module conv2 = Conv2d(32, 64, 3);

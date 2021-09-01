@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
 using System.Linq;
@@ -397,6 +397,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvalEmptySequence()
+        {
+            var seq = Sequential();
+
+            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var eval = seq.forward(x);
+            Assert.Equal(x, eval);
+        }
+
+        [Fact]
         public void CreateSequence()
         {
             var lin1 = Linear(1000, 100);
@@ -760,7 +770,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
         }
@@ -782,7 +792,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
 
@@ -807,7 +817,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            seq.ZeroGrad();
+            seq.zero_grad();
 
             output.backward();
 
@@ -834,7 +844,7 @@ namespace TorchSharp
             var loss = mse_loss();
             var output = loss(prediction, y);
 
-            linear.ZeroGrad();
+            linear.zero_grad();
 
             output.backward();
 
@@ -858,7 +868,7 @@ namespace TorchSharp
             Assert.False(x.requires_grad);
         }
 
-        private class CondModel : CustomModule
+        private class CondModel : Module
         {
             private Module fb = Linear(1000, 100, false);
             private Module fbT1 = Linear(100, 10, false);
@@ -907,7 +917,7 @@ namespace TorchSharp
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
 
-            modT.ZeroGrad();
+            modT.zero_grad();
 
             output.backward();
             var gradCounts = 0;
@@ -925,7 +935,7 @@ namespace TorchSharp
             eval = modF.forward(x);
             output = loss(eval, y);
 
-            modF.ZeroGrad();
+            modF.zero_grad();
 
             output.backward();
             gradCounts = 0;
@@ -1299,7 +1309,7 @@ namespace TorchSharp
             Assert.Equal(1000, param.shape[1]);
         }
 
-        private class TestModule : CustomModule
+        private class TestModule : Module
         {
             public TestModule(string name, Tensor tensor, bool withGrad)
                 : base(name, new parameter.Parameter(name, tensor, withGrad))

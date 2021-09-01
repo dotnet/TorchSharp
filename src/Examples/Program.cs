@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace TorchSharp.Examples
         {
             //MNIST.Main(args);
             //AdversarialExampleGeneration.Main(args);
-            //AlexNet.Main(args);
+            CIFAR10.Main(args);
             //SequenceToSequence.Main(args);
             //TextClassification.Main(args);
-            ImageTransforms.Main(args);
+            //ImageTransforms.Main(args);
         }
     }
 }

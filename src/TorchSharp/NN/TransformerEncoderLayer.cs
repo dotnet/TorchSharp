@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -26,12 +25,41 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor? src_mask = null, Tensor? src_key_padding_mask = null)
+            public Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,
                     src_mask?.Handle ?? IntPtr.Zero,
                     src_key_padding_mask?.Handle ?? IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Pass the input through the encoder layer.
+            /// </summary>
+            /// <param name="src">The sequence to the encoder (required).</param>
+            /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
+            public override Tensor forward(Tensor src, Tensor src_mask)
+            {
+                var res = THSNN_TransformerEncoderLayer_forward(handle,
+                    src.Handle,
+                    src_mask?.Handle ?? IntPtr.Zero,
+                    IntPtr.Zero);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Pass the input through the encoder layer.
+            /// </summary>
+            /// <param name="src">The sequence to the encoder (required).</param>
+            public override Tensor forward(Tensor src)
+            {
+                var res = THSNN_TransformerEncoderLayer_forward(handle,
+                    src.Handle,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

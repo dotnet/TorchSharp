@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,6 +14,16 @@ namespace TorchSharp
     {
         public static partial class nn
         {
+            /// <summary>
+            /// Base class for all neural network modules.
+            /// Your models should subclass this class.
+            /// </summary>
+            /// <remarks>
+            /// Modules can also contain other Modules, allowing to nest them in a tree structure.
+            /// You can assign the submodules as regular fields of the derived Module class. Submodules assigned
+            /// to fields will be registered, and will have their parameters converted and moved when you call to(),
+            /// and saved to disk when calling save().
+            /// </remarks>
             public class Module : IDisposable
             {
                 /// <summary>
@@ -101,6 +111,9 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 extern static void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
 
+                [DllImport("LibTorchSharp")]
+                extern static void THSNN_Module_to_dtype(HType module, sbyte dtype);
+
                 /// <summary>
                 /// Moves the parameters and buffers.
                 /// </summary>
@@ -137,13 +150,25 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Moves the parameters and buffers.
+                /// Convert the parameters and buffers.
+                /// </summary>
+                /// <returns></returns>
+                public Module to(ScalarType dtype)
+                {
+                    THSNN_Module_to_dtype(handle, (sbyte)dtype);
+                    torch.CheckForErrors();
+                    return this;
+                }
+
+                /// <summary>
+                /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="other">The tensor serving as a template.</param>
                 /// <returns></returns>
                 public Module to(Tensor other)
                 {
-                    return to(other.device_type, other.device_index);
+                    to(other.device_type, other.device_index);
+                    return to(other.dtype);
                 }
 
                 /// <summary>
@@ -152,6 +177,18 @@ namespace TorchSharp
                 public Module cpu()
                 {
                     return to(DeviceType.CPU);
+                }
+
+                /// <summary>
+                /// Applies a function recursively to every submodule as well as this.
+                /// </summary>
+                /// <param name="fn">Function to be applied to each submodule</param>
+                /// <returns></returns>
+                public virtual Module apply(Action<Module> fn)
+                {
+                    foreach (var m in GetModulesInternal()) m.apply(fn);
+                    fn(this);
+                    return this;
                 }
 
                 /// <summary>
@@ -204,17 +241,18 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern bool THSNN_Module_is_training(HType module);
 
-                public bool IsTraining()
-                {
-                    var res = THSNN_Module_is_training(handle);
-                    torch.CheckForErrors();
-                    return res;
+                public bool training {
+                    get {
+                        var res = THSNN_Module_is_training(handle);
+                        torch.CheckForErrors();
+                        return res;
+                    }
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_zero_grad(HType module);
 
-                public virtual void ZeroGrad()
+                public virtual void zero_grad()
                 {
                     THSNN_Module_zero_grad(handle);
                     torch.CheckForErrors();
@@ -276,7 +314,6 @@ namespace TorchSharp
 
                 }
 
-
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
                 public virtual (string name, Module parameter)[] NamedModules()
@@ -323,15 +360,15 @@ namespace TorchSharp
 
 
                 [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator);
+                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator, bool recurse);
 
-                public virtual Tensor[] parameters()
+                public virtual Tensor[] parameters(bool recurse = true)
                 {
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
                         AllocatePinnedArray allocator = pa.CreateArray;
-                        THSNN_Module_get_parameters(handle, allocator);
+                        THSNN_Module_get_parameters(handle, allocator, recurse);
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                     }
@@ -415,7 +452,9 @@ namespace TorchSharp
                     return res;
                 }
 
-                public virtual Tensor forward(Tensor t) => throw new NotImplementedException("forward");
+                public virtual Tensor forward(Tensor t) => throw new NotImplementedException("forward(t)");
+
+                public virtual Tensor forward(Tensor x, Tensor y) => throw new NotImplementedException("forward(x,y)");
 
                 public Module save(string location)
                 {
@@ -472,6 +511,78 @@ namespace TorchSharp
 
                     return this;
                 }
+
+                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
+
+                [DllImport("LibTorchSharp")]
+                private static extern IntPtr THSNN_custom_module([MarshalAs(UnmanagedType.LPStr)] string name,
+                    IntPtr names, IntPtr parameters, IntPtr require_grad,
+                    int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
+
+                /// <summary>
+                /// Constructor for custom modules, i.e. those defined outside of TorchSharp.
+                /// </summary>
+                /// <param name="name">The name of the module. Useful for debugging purposes, mostly.</param>
+                /// <param name="parameters">The module parameters, i.e. its trainable weights and (non-trainable) "buffers."</param>
+                protected Module(string name, params parameter.Parameter[] parameters) : this(IntPtr.Zero, IntPtr.Zero)
+                {
+                    this.name = name;
+
+                    var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
+                    var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
+                    var withGrads = parameters.Select(p => p.WithGrad).ToArray();
+
+                    var namesPinned = new PinnedArray<IntPtr>();
+                    var paramsPinned = new PinnedArray<IntPtr>();
+                    var wGradPinned = new PinnedArray<bool>();
+
+                    var nparray = namesPinned.CreateArray(names);
+                    var pparray = paramsPinned.CreateArray(@params);
+                    var gparray = wGradPinned.CreateArray(withGrads);
+
+                    ForwardFunctionC forwardNative = t => {
+                        var input = new Tensor(t);
+                        var output = forward(input);
+
+                        // handles must live on - we don't own them
+                        GC.SuppressFinalize(input);
+
+                        // TODO: Figure out what do do here:
+                        //
+                        // Suppressing the output finalization leads to a memory leak, since the
+                        // native handle is never destroyed. Ideally, we could decrement the ref
+                        // count and then suppress finalization.
+                        //GC.SuppressFinalize(output);
+
+                        return output.Handle;
+                    };
+
+                    var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
+                    torch.CheckForErrors();
+                    this.handle = new HType(res, true);
+                    this.forwardNative = forwardNative;
+                    this.boxedModule = new BoxedModule(boxedHandle);
+                }
+
+                protected void RegisterComponents()
+                {
+                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                        var value = field.GetValue(this);
+
+                        var module = field.GetValue(this) as Module;
+                        Tensor tensor = value as Tensor;
+
+                        if (module != null) {
+                            RegisterModule(field.Name, module);
+                        } else if (!(tensor is null)) {
+                            RegisterBuffer(field.Name, tensor);
+                        }
+                    }
+                }
+
+                /// Keeps the callback delegate alive
+                private ForwardFunctionC forwardNative;
+                protected string name;
             }
 
             internal class BoxedModule : IDisposable
@@ -539,66 +650,6 @@ namespace TorchSharp
                         handle.SetHandleAsInvalid();
                     }
                 }
-            }
-
-#nullable enable
-            public abstract class CustomModule : Module
-            {
-                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_custom_module([MarshalAs(UnmanagedType.LPStr)] string name,
-                    IntPtr names, IntPtr parameters, IntPtr require_grad,
-                    int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
-
-                protected CustomModule(string name, params parameter.Parameter[] parameters) : base(IntPtr.Zero, IntPtr.Zero)
-                {
-                    var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
-                    var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
-                    var withGrads = parameters.Select(p => p.WithGrad).ToArray();
-
-                    var namesPinned = new PinnedArray<IntPtr>();
-                    var paramsPinned = new PinnedArray<IntPtr>();
-                    var wGradPinned = new PinnedArray<bool>();
-
-                    var nparray = namesPinned.CreateArray(names);
-                    var pparray = paramsPinned.CreateArray(@params);
-                    var gparray = wGradPinned.CreateArray(withGrads);
-
-                    ForwardFunctionC forwardNative = t => {
-                        var input = new Tensor(t);
-                        var output = forward(input);
-                        // handles must live on - we don't own them
-                        GC.SuppressFinalize(output);
-                        GC.SuppressFinalize(input);
-                        return output.Handle;
-                    };
-
-                    var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
-                    torch.CheckForErrors();
-                    this.handle = new HType(res, true);
-                    this.forwardNative = forwardNative;
-                    this.boxedModule = new BoxedModule(boxedHandle);
-                }
-
-                protected void RegisterComponents()
-                {
-                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
-                        var value = field.GetValue(this);
-
-                        var module = field.GetValue(this) as Module;
-                        Tensor? tensor = value as Tensor;
-
-                        if (module != null) {
-                            RegisterModule(field.Name, module);
-                        } else if (!(tensor is null)) {
-                            RegisterBuffer(field.Name, tensor);
-                        }
-                    }
-                }
-
-                /// Keeps the callback delegate alive
-                private ForwardFunctionC forwardNative;
             }
         }
     }
