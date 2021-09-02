@@ -2050,6 +2050,52 @@ namespace TorchSharp
                 Assert.Equal(tgt.shape, output.shape);
             }
         }
+
+        [Fact]
+        public void TestMultiheadAttention()
+        {
+            var num_heads = 1;
+            var qembed_dim = 2L; // Must be divisible by the number of heads
+            var kembed_dim = 2L;
+            var vembed_dim = 2L;
+            var src_seq_len = 3L;
+            var tgt_seq_len = 3L;
+            var batch_size = 1L;
+            var dropout = 0.0; //  # This is not supported
+            var bias = false;
+            var add_bias_kv = false;
+            var add_zero_attn = false;
+
+            var q_data = new float[]{  0.3367f, 0.1288f,
+                                       0.2345f,  0.2303f,
+                                       -1.1229f, -0.1863f};
+
+            var k_data = new float[] { 2.2082f, -0.6380f,
+                                       0.4617f,  0.2674f,
+                                       0.5349f,  0.8094f};
+
+            var v_data = new float[] {1.1103f, -1.6898f,
+                                      -0.9890f,  0.9580f,
+                                       1.3221f,  0.8172f};
+
+            var attn_data = new float[] {0.342628956f, 0.3370244f, 0.3203467f,
+                                         0.336390018f, 0.333694249f, 0.329915673f,
+                                         0.296296269f, 0.314919323f, 0.388784438f};
+
+
+
+            using (var mha = MultiheadAttention(qembed_dim, num_heads, dropout: dropout, bias: bias, add_bias_kv: add_bias_kv, add_zero_attn: add_zero_attn, kdim: kembed_dim, vdim: vembed_dim))
+            using (var Q = Float32Tensor.from(q_data, tgt_seq_len, batch_size, qembed_dim))
+            using (var K = Float32Tensor.from(k_data, src_seq_len, batch_size, kembed_dim))
+            using (var V = Float32Tensor.from(v_data, src_seq_len, batch_size, vembed_dim))
+            using (var Attn = Float32Tensor.from(attn_data, batch_size, src_seq_len, src_seq_len)) {
+                mha.Eval();
+                var (att_out, att_wts) = mha.forward(Q, K, V);
+                var t = att_wts.allclose(Attn, rtol: 0.5, atol: 0.5);
+                Assert.True(t);
+            }
+        }
+
         #endregion
 
         #region Dropout
