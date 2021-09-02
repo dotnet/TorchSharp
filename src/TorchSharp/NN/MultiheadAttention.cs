@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and contributors.  All Rights Reserved.  See License.txt in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
@@ -28,10 +28,7 @@ namespace TorchSharp
             /// <returns>attn_output, attn_ouput_weights</returns>
 
             public Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask = null, bool need_weights = true, Tensor? attn_mask = null)
-            //const NNModule module, const Tensor query, const Tensor key, const Tensor value, const Tensor key_padding_mask, const bool need_weights, const Tensor attn_mask, Tensor res1, Tensor res2 )
             {
-                //var res1 = IntPtr.Zero;
-                //var res2 = IntPtr.Zero;
                 THSNN_MultiheadAttention_forward(handle,
                     query.Handle,
                     key.Handle,
