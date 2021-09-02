@@ -9,13 +9,18 @@ If you are here, it means you are interested in helping us out. A hearty welcome
 
 This document describes contribution guidelines that are specific to TorchSharp. Please read [.NET Core Guidelines](https://github.com/dotnet/coreclr/blob/master/Documentation/project-docs/contributing.md) for more general .NET Core contribution guidelines.
 
+## Developers
 
-Pull Requests
--------------
+See the [Developer Guide](DEVGUIDE.md) for details about building and developing in this repo.
 
-If you send us a PR, we will require that you sign a digital Contributor License Agreement (CLA), so that we know you have the right to contribute. Once you have signed it, future PRs should go through without further requests to sign.
 
-* **DO** submit all code changes via pull requests (PRs) rather than through a direct commit. PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.
+## Pull Requests
+
+If you send us a PR, whether for documentation, examples, or library code, we require that you sign a digital Contributor License Agreement (CLA), so that we know you have the right to contribute. Once you have signed it, future PRs should go through without further requests to sign.
+
+* **DO** use your own forked repository for all development, and submit cross-fork PRs.
+* **DO** resolve merge conflicts early, by merging recent changes to 'main' into your development fork before submitting a PR.
+* **DO** submit all code changes via pull requests (PRs). PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.
 * **DO** give PRs short-but-descriptive names (for example, "Improve code coverage for System.Console by 10%", not "Fix #1234")
 * **DO** refer to any relevant issues, and include [keywords](https://help.github.com/articles/closing-issues-via-commit-messages/) that automatically close issues when the PR is merged.
 * **DO** tag any users that should know about and/or review the change.
@@ -26,7 +31,30 @@ If you send us a PR, we will require that you sign a digital Contributor License
 * **DO NOT** mix independent, unrelated changes in one PR. Separate unrelated fixes into separate PRs.
 
 
-Developers
-----------
+## A Useful Tip
 
-See the [Developer Guide](DEVGUIDE.md) for details about developing in this repo.
+A useful tip from the Tensorflow.NET repo:
+
+After you fork, add dotnet/TorchSharp as 'upstream' to your local repo ...
+
+```git
+git remote add upstream https://github.com/dotnet/TorchSharp.git
+```
+
+This makes it easy to keep your fork up to date by regularly pulling and merging from upstream.
+
+Assuming that you do all your development off your main branch, keep your main updated
+with these commands:
+
+```git
+git checkout main
+git pull upstream main
+git push origin main
+```
+
+Then, you merge onto your dev branch:
+
+```git
+git checkout <<your dev branch>>
+git merge main
+```

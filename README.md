@@ -1,8 +1,12 @@
 [![Build Status](https://donsyme.visualstudio.com/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=master)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=1&branchName=master)
 
-__NOTE:__ 
+__TorchSharp is now in the .NET Foundation!__
 
-__In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.__
+__NOTE:__
+
+In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users. 
+
+<i>Further API changes are coming. Specifically, we will remove the static type tensor factories, e.g. 'Int32Tensor.rand(...),' etc. Please move to using 'torch.rand(...)' instead.</i>
 
 # TorchSharp
 
