@@ -60,6 +60,15 @@ inline Tensor ResultTensor(const at::Tensor & res)
     );  \
     return ResultTensor(res);
 
+#define CATCH_TENSORS_2(expr) \
+    at::Tensor fst = at::Tensor();  \
+    at::Tensor snd = at::Tensor();  \
+    CATCH(  \
+        std::tie(fst,snd) = expr;  \
+    );  \
+    res1 = ResultTensor(fst); \
+    res2 = ResultTensor(snd);     
+
 #define CATCH_SCALAR(expr) \
     at::Scalar res = at::Scalar(); \
     CATCH(  \
