@@ -2,7 +2,7 @@
   <!-- Directory.Build.props contains the common build settings for all projects in the repo. -->
 
   <Import Project="build/BranchInfo.props" />
-  <Import Project="build/Dependencies.props" /> 
+  <Import Project="build/Dependencies.props" />
 
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
@@ -37,7 +37,7 @@
     <OutputPath Condition="'$(OutputPath)'==''">$(BaseOutputPath)$(PlatformConfig)\$(MSBuildProjectName)\</OutputPath>
 
     <PackagePreparationPath>$(ObjDir)packprep/$(Configuration)/</PackagePreparationPath>
-    
+
     <PackageOutputPath Condition="'$(PackageOutputPath)'==''">$(BinDir)packages/$(Configuration)/</PackageOutputPath>
 
     <NativeConfiguration>$(Configuration)</NativeConfiguration>
@@ -62,13 +62,13 @@
 
   <!-- Version properties -->
   <PropertyGroup>
-     
+
     <VersionPrefix >$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <VersionSuffix>local-$(Configuration)-$([System.DateTime]::Now.ToString(yyyyMMdd))</VersionSuffix>
 
     <VersionPrefix Condition="'$(TF_BUILD)' != ''">$(MajorVersion).$(MinorVersion).$(MyRunNumber)</VersionPrefix>
-    <VersionSuffix Condition="'$(TF_BUILD)' != ''  AND '$(BUILD_SOURCEBRANCHNAME)' == 'master'"></VersionSuffix>
-    <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'master'">preview-$(VersionSuffix)</VersionSuffix>
+    <VersionSuffix Condition="'$(TF_BUILD)' != ''  AND '$(BUILD_SOURCEBRANCHNAME)' == 'main'"></VersionSuffix>
+    <VersionSuffix Condition="'$(TF_BUILD)' != '' AND '$(BUILD_SOURCEBRANCHNAME)' != 'main'">preview-$(VersionSuffix)</VersionSuffix>
 
   </PropertyGroup>
 
@@ -85,7 +85,7 @@
     <SkipCuda Condition="'$(TargetOS)' == 'mac'">true</SkipCuda>
     <SkipCuda Condition="'$(TargetOS)' != 'mac'">false</SkipCuda>
     <SkipTests>false</SkipTests>
-    
+
     <!-- By default only TorchSharp and no libtorch-cpu or libtorch-cuda packages are built.  The CI file controls these via 'BuildLibTorchPackages' -->
     <!-- This then selectively turns these on over several CI jobs since different pacakges are done in different jobs -->
     <IncludeTorchSharpPackage>true</IncludeTorchSharpPackage>
@@ -126,8 +126,8 @@
     <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersion)</LibTorchCudaArchiveNameSuffix>
     <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersion)</LibTorchCudaLocalNameSuffix>
-    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>  
-    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName> 
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
@@ -141,7 +141,7 @@
     <LangVersion>latest</LangVersion> <!-- default to allowing all language features -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
- 
+
   <!-- Need to explicitly set these properties for the -Intrinsics or -Netfx configurations becuase they are typically based off 'Debug' or 'Release' configs -->
   <!-- Taken from https://github.com/dotnet/sdk/blob/073c98b92c81066c6c2e17c3674adbb6e833409a/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.Sdk.props#L41-L47 -->
   <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">

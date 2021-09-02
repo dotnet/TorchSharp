@@ -39,13 +39,13 @@ Requirements:
 - .NET SDK 5.0.300
 - Cmake 3.20.3
 
-Build with 
+Build with
 
     dotnet build /p:SkipNative=true
 
 ## Packages
 
-An ephemeral feed of packages from CI is available 
+An ephemeral feed of packages from CI is available
 
 * View link: https://donsyme.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=packages2
 * Nuget feed: https://donsyme.pkgs.visualstudio.com/TorchSharp/_packaging/packages2/nuget/v3/index.json
@@ -63,16 +63,16 @@ from your local `.nuget` package cache.
     bin/packages/Debug/TorchSharp.0.3.0-local-Debug-20200520.nupkg
     bin/packages/Release/TorchSharp.0.3.0-local-Release-20200520.nupkg
 
-To change the TorchSharp package version update this [file](https://github.com/xamarin/TorchSharp/blob/master/build/BranchInfo.props).
+To change the TorchSharp package version update this [file](https://github.com/dotnet/TorchSharp/blob/main/build/BranchInfo.props).
 
 ## Doing releases of the TorchSharp package
 
 The TorchSharp package is pushed to nuget.org via Azure DevOps CI release pipeline.  Assuming you're not building or updating the LibTorch packages
-(`BuildLibTorchPackages` is `false` in [azure-pipelines.yml](azure-pipelines.yml)) this is pretty simple once you have the permissions: 
+(`BuildLibTorchPackages` is `false` in [azure-pipelines.yml](azure-pipelines.yml)) this is pretty simple once you have the permissions:
 
-1. Integrate code to master and wait for CI to process
+1. Integrate code to main and wait for CI to process
 2. Go to [releases](https://donsyme.visualstudio.com/TorchSharp/_release) and choose "Create Release" (top right)
-3. Under "Artifacts-->Version" choose the pipeline build corresponding to the thing you want to release.  It should be a successful build on master
+3. Under "Artifacts-->Version" choose the pipeline build corresponding to the thing you want to release.  It should be a successful build on main
 4. Press "Create"
 
 The package version is currently taken from the CI build version.
@@ -104,17 +104,17 @@ For this reason, we do the following
        libtorch-cuda-11.1-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
-   Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together 
+   Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together
    to one file on the target machine with a SHA check.  This is a hack but there is no other realistic way to deliver
    these vast files as packages (the alternative is to abandon packaging and require a manual
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
 3. The `libtorch-*` packages are built in Azure DevOps CI
-   [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in master
-   branch and only when `BuildLibTorchPackages` is set to true in [azure-pipelines.yml](azure-pipelines.yml) in the master branch.
-   You must currently manually edit this and submit to master to get new `libtorch-*` packages
-   built.  Also increment `LibTorchPackageVersion` if necessary.  Do a push to master and the packages will build.  This process could be adjusted but at least gets us off the ground.
+   [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
+   branch and only when `BuildLibTorchPackages` is set to true in [azure-pipelines.yml](azure-pipelines.yml) in the main branch.
+   You must currently manually edit this and submit to main to get new `libtorch-*` packages
+   built.  Also increment `LibTorchPackageVersion` if necessary.  Do a push to main and the packages will build.  This process could be adjusted but at least gets us off the ground.
 
 4. After a successful build, the `libtorch-*` packages can be trialled using the package feed from CI (see above).  When
    they are appropriate they can be  pushed to nuget using
@@ -125,12 +125,12 @@ For this reason, we do the following
 
    b. Press 'New Release'
 
-   c. Select the successful master CI build that includes the `libtorch` packages, create the release and wait for it to finish. You should
+   c. Select the successful main CI build that includes the `libtorch` packages, create the release and wait for it to finish. You should
       see `Initialize job`, `Download artifact - _xamarin.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
 
    d. All packages should now be pushed to `nuget.org` and will appear after indexing.
 
-6. If updating libtorch packages, remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml) in master branch.
+6. If updating libtorch packages, remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml) in main branch.
 
 ### Updating PyTorch version for new libtorch packages
 
@@ -139,9 +139,9 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 0. Make sure you have plenty of disk space, e.g. 15GB
 
-0. Clean and reset to master
+0. Clean and reset to main
 
-       git checkout master
+       git checkout main
        git clean -xfd .
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
@@ -184,13 +184,13 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Note that things may have changed in the LibTorch header files, linking flags etc.  There is a CMakeLists.txt that acquires
    the cmake information delievered in the LibTorch download. It can be subtle.
-   
+
    If the vxcproj for the native code gets configured by cmake then you should now be able to start developing the C++ code in Visual Studio. In order to get the correct environment variables and PATH, start VS from the command line, not from the Start menu:
 
        devenv TorchSharp.sln
 
    e.g. the vcxproj is created here:
-   
+
        bin\obj\x64.Debug\Native\LibTorchSharp\LibTorchSharp.vcxproj
 
 5. Similarly build the native code with CUDA
@@ -199,7 +199,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 6. You must also **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
    [libtorch-cpu](src\Redist\libtorch-cpu\libtorch-cpu.proj) and [libtorch-cuda](src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj).
-   
+
    Check the contents of the unzip of the archive, e.g.
 
        bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.9.0\libtorch\lib
@@ -226,5 +226,5 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 10. Submit to CI and debug problems
 
-11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml) 
+11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 
