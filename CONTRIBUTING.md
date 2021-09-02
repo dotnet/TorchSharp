@@ -7,7 +7,7 @@ If you are here, it means you are interested in helping us out. A hearty welcome
 * Give us feedback and bug reports regarding the software or the documentation.
 * Improve our examples, tutorials, and documentation.
 
-This document describes contribution guidelines that are specific to TorchSharp. Please read [.NET Core Guidelines](https://github.com/dotnet/coreclr/blob/master/Documentation/project-docs/contributing.md) for more general .NET Core contribution guidelines.
+This document describes contribution guidelines that are specific to TorchSharp. Please read [.NET Core Guidelines](https://github.com/dotnet/coreclr/blob/main/Documentation/project-docs/contributing.md) for more general .NET Core contribution guidelines.
 
 ## Developers
 
