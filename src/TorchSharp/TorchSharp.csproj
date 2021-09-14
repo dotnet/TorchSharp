@@ -9,6 +9,7 @@
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
       <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
       <IsPackable>false</IsPackable>
+      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

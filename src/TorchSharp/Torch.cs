@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,22 +13,30 @@ namespace TorchSharp
 {
     public static partial class torch
     {
+#if LIBTORCH_1_9_0_10
         const string libtorchPackageVersion = "1.9.0.10";
+#else
+#error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
+#endif
+#if CUDA_11_1
         const string cudaVersion = "11.1";
+#else
+#error "Please update cudaVersion to match CudaVersionDot"
+#endif
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetDllDirectory(string lpPathName);
 
         static string nativeRid =>
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? "win-x64" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) ? "linux-x64" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? "osx-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx-x64" :
             "any";
 
         static string nativeGlob =>
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) ? @".*\.dll" :
-            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) ? @".*\.dylib\.*" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? @".*\.dll" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? @".*\.dylib\.*" :
             // must match
             //   lib.so
             //   lib.so.1
