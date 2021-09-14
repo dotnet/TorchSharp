@@ -14,7 +14,7 @@ namespace TorchSharp
 
     public static partial class torch
     {
-        const string libtorchPackageVersion = "1.9.0.7";
+        const string libtorchPackageVersion = "1.9.0.10";
         const string cudaVersion = "11.1";
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
