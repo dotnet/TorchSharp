@@ -50,5 +50,5 @@ def save_state_dict(sd, stream):
     for entry in sd:
         stream.write(leb128.u.encode(len(entry)))
         stream.write(bytes(entry, 'utf-8'))
-        write_tensor(sd[entry], stream)
+        _write_tensor(sd[entry], stream)
 
