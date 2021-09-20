@@ -305,7 +305,7 @@ namespace TorchSharp
 
                     using (var pa = new PinnedArray<IntPtr>())
                     using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                        THSNN_Module_get_named_children(handle, pa.CreateArray, sa.CreateArray);
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                         strArray = sa.Array;
@@ -323,7 +323,7 @@ namespace TorchSharp
 
                     using (var pa = new PinnedArray<IntPtr>())
                     using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                        THSNN_Module_get_named_modules(handle, pa.CreateArray, sa.CreateArray);
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                         strArray = sa.Array;
@@ -406,6 +406,15 @@ namespace TorchSharp
                 public virtual void RegisterBuffer(string name, Tensor tensor)
                 {
                     THSNN_Module_register_buffer(handle, name, tensor.handle);
+                    torch.CheckForErrors();
+                }
+
+                [DllImport("LibTorchSharp")]
+                private static extern void THSNN_Module_register_parameter(HType module, string name, IntPtr tensor, bool requires_grad);
+
+                public virtual void RegisterParameter(string name, Tensor tensor, bool requires_grad = true)
+                {
+                    THSNN_Module_register_parameter(handle, name, tensor.handle, requires_grad);
                     torch.CheckForErrors();
                 }
 
