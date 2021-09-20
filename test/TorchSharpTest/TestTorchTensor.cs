@@ -3201,7 +3201,7 @@ namespace TorchSharp
                 return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
             }).ToArray();
             var res = data.angle();
-            Assert.True(res.allclose(Float32Tensor.from(expected), rtol: 1e-04, atol: 1e-07));
+            Assert.True(res.allclose(Float32Tensor.from(expected), rtol: 1e-03, atol: 1e-05));
         }
 
         [Fact]
@@ -3214,7 +3214,7 @@ namespace TorchSharp
                 return (x > 0 || y != 0) ? 2 * Math.Atan(y / (Math.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? Math.PI : 0;
             }).ToArray<double>();
             var res = data.angle();
-            Assert.True(res.allclose(Float64Tensor.from(expected)));
+            Assert.True(res.allclose(Float64Tensor.from(expected), rtol: 1e-03, atol: 1e-05));
         }
 
         [Fact]
