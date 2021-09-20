@@ -2,7 +2,15 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-### NuGet Version 0.92.52214
+### NuGet Version 0.93.0
+
+With this release, releases will have explicit control over the patch version number.
+
+__Fixed Bugs:__
+
+Fixed incorrectly implemented Module APIs related to parameter / module registration.
+
+### NuGet Version 0.92.52220
 
 This was the first release since moving TorchSharp to the .NET Foundation organization. Most of the new functionality is related to continuing the API changes that were started in the previous release, and fixing some bugs.
 
