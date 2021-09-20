@@ -2470,7 +2470,7 @@ namespace TorchSharp
 
         public static Tensor max(Tensor input) => input.max();
 
-        static public Tensor max(Tensor input, Tensor other) => input.max(other);
+        static public Tensor maximum(Tensor input, Tensor other) => input.maximum(other);
 
         static public (Tensor values, Tensor indexes) max(Tensor input, long dimension, bool keepDim = false) => input.max(dimension, keepDim);
 
@@ -2480,7 +2480,7 @@ namespace TorchSharp
 
         public static Tensor min(Tensor input) => input.min();
 
-        static public Tensor min(Tensor input, Tensor other) => input.min(other);
+        static public Tensor minimum(Tensor input, Tensor other) => input.minimum(other);
 
         static public (Tensor values, Tensor indexes) min(Tensor input, long dimension, bool keepDim = false) => input.min(dimension, keepDim);
 
