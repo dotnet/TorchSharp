@@ -3188,19 +3188,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_max_elementwise(IntPtr tensor, IntPtr other);
 
-            public Tensor max(Tensor other)
-            {
-                var res = THSTensor_max_elementwise(handle, other.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_maximum(IntPtr tensor, IntPtr other);
-
             public Tensor maximum(Tensor other)
             {
-                var res = THSTensor_maximum(handle, other.handle);
+                var res = THSTensor_max_elementwise(handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -3323,16 +3313,6 @@ namespace TorchSharp
             public Tensor min()
             {
                 var res = THSTensor_min(handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_minimum(IntPtr tensor, IntPtr other);
-
-            public Tensor min(Tensor other)
-            {
-                var res = THSTensor_minimum(handle, other.handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

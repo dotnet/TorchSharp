@@ -9,6 +9,7 @@ With this release, releases will have explicit control over the patch version nu
 __Fixed Bugs:__
 
 Fixed incorrectly implemented Module APIs related to parameter / module registration.
+#353 Missing torch.minimum (with an alternative raising exception)
 
 ### NuGet Version 0.92.52220
 

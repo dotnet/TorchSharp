@@ -178,5 +178,27 @@ namespace TorchSharp
         {
             TestModule.Reproduce();
         }
+
+        [Fact]
+        public void ValidateIssue353()
+        {
+            //
+            // Just validating that the methods are there.
+            //
+            using var x = Float32Tensor.zeros(3,3);
+            using var y = Float32Tensor.ones(3,3);
+
+            var mx1 = x.max();
+            Assert.Equal(0, mx1.DataItem<float>());
+
+            var mx2 = x.maximum(y);
+            Assert.True(mx2.allclose(y));
+
+            var mn1 = x.min();
+            Assert.Equal(0, mn1.DataItem<float>());
+
+            var mn2 = x.minimum(y);
+            Assert.True(mn2.allclose(x));
+        }
     }
 }
