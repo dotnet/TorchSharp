@@ -67,6 +67,13 @@ void THSNN_Module_register_module(const NNModule module, const char* name, const
     );
 }
 
+void THSNN_Module_register_parameter(const NNModule module, const char* name, const Tensor tensor, bool requires_grad)
+{
+    CATCH(
+        (*module)->register_parameter(name, *tensor, requires_grad);
+    );
+}
+
 void THSNN_Module_register_buffer(const NNModule module, const char* name, const Tensor tensor)
 {
     CATCH(
