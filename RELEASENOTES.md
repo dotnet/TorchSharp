@@ -10,6 +10,7 @@ __Fixed Bugs:__
 
 Fixed incorrectly implemented Module APIs related to parameter / module registration.
 #353 Missing torch.minimum (with an alternative raising exception)
+#327 Tensor.Data<T> should do a type check
 
 __API Changes:__
 
