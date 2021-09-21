@@ -6,7 +6,7 @@ __NOTE:__
 
 In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
 
-<i>Further API changes are coming. Specifically, we will remove the static type tensor factories, e.g. 'Int32Tensor.rand(...),' etc. Please move to using 'torch.rand(...)' instead.</i>
+In PR 354, further significant changes were made, again aligning with the Pytorch APIs. It is also a massively braking change. We removed the {IntNN|FloatNN|ComplexNN}Tensor.* APIs, which had no parallel in PyTorch. Once again, we apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
 
 # TorchSharp
 
