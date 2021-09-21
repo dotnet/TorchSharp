@@ -34,8 +34,8 @@ namespace TorchSharp
 
             var seq = Sequential(submodules);
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
             var loss = mse_loss(Reduction.Sum);
@@ -76,8 +76,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
             var loss = mse_loss(Reduction.Sum);
@@ -165,8 +165,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
             var loss = mse_loss(Reduction.Sum);
@@ -201,8 +201,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             var optimizer = torch.optim.AdamW(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
@@ -239,8 +239,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate);
@@ -276,8 +276,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
@@ -309,8 +309,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
@@ -342,8 +342,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, centered: true);
@@ -379,8 +379,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.5);
@@ -412,8 +412,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, nesterov: true);
@@ -445,8 +445,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -478,8 +478,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
@@ -528,8 +528,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter:15, max_eval: 15);
@@ -576,8 +576,8 @@ namespace TorchSharp
                 ("r2", ReLU(inPlace: true)),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 3, 28, 28 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             var optimizer = torch.optim.Adam(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
@@ -626,8 +626,8 @@ namespace TorchSharp
                     var optimizer = torch.optim.Adam(seq.parameters());
                     var loss = mse_loss(Reduction.Sum);
 
-                    using (Tensor x = Float32Tensor.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
-                           y = Float32Tensor.randn(new long[] { 64, 10 }, device: (Device)device)) {
+                    using (Tensor x = torch.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
+                           y = torch.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
                         float initialLoss = loss(seq.forward(x), y).ToSingle();
                         float finalLoss = float.MaxValue;
@@ -649,7 +649,7 @@ namespace TorchSharp
                     }
                 }
             } else {
-                Assert.Throws<InvalidOperationException>(() => Float32Tensor.randn(new long[] { 64, 3, 28, 28 }).cuda());
+                Assert.Throws<InvalidOperationException>(() => torch.randn(new long[] { 64, 3, 28, 28 }).cuda());
             }
         }
 

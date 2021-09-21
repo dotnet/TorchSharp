@@ -18,7 +18,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            using (var chance = Float32Tensor.rand(1))
+            using (var chance = torch.rand(1))
 
                 if (chance.DataItem<float>() < p) {
                     return transform.forward(input);

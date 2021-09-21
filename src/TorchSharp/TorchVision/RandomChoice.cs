@@ -25,7 +25,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            using (var chance = Int32Tensor.randint(transforms.Length, new long[] { 1 }))
+            using (var chance = torch.randint(transforms.Length, new long[] { 1 }, ScalarType.Int32))
                 return transforms[chance.DataItem<int>()].forward(input);
         }
 

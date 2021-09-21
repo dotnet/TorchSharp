@@ -235,7 +235,7 @@ namespace TorchSharp.torchvision
                 minimum.index_put_(0, eq_idxs);
                 maximum.index_put_(bound, eq_idxs);
 
-                var scale = Float32Tensor.from(bound) / (maximum - minimum);
+                var scale = torch.tensor(bound, float32) / (maximum - minimum);
 
                 return ((input - minimum) * scale).clamp(0, bound).to(input.dtype);
             }
@@ -547,7 +547,7 @@ namespace TorchSharp.torchvision
             {
                 if (input.dtype != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
                 var mask = -(1 << (8 - bits));
-                return input & ByteTensor.from((byte)mask);
+                return input & torch.tensor((byte)mask);
             }
 
             /// <summary>
@@ -695,8 +695,8 @@ namespace TorchSharp.torchvision
             {
                 var device = input.device;
                 var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
-                var kernel = Float32Tensor.ones(3, 3, device: device);
-                kernel[1, 1] = Float32Tensor.from(5.0f);
+                var kernel = torch.ones(3, 3, device: device);
+                kernel[1, 1] = torch.tensor(5.0f);
                 kernel /= kernel.sum();
                 kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
@@ -712,7 +712,7 @@ namespace TorchSharp.torchvision
             private static Tensor GetGaussianKernel1d(long size, float sigma)
             {
                 var ksize_half = (size - 1) * 0.5f;
-                var x = Float32Tensor.linspace(-ksize_half, ksize_half, size);
+                var x = torch.linspace(-ksize_half, ksize_half, size);
                 var pdf = -(x / sigma).pow(2) * 0.5f;
 
                 return pdf / pdf.sum();

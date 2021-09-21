@@ -1243,7 +1243,7 @@ namespace TorchSharp
             /// <param name="indices">The indices into input. Must have long dtype.</param>
             /// <returns></returns>
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
-            public Tensor take_along_dim(IEnumerable<long> indices) => take_along_dim(Int64Tensor.from(indices.ToArray()));
+            public Tensor take_along_dim(IEnumerable<long> indices) => take_along_dim(torch.tensor(indices.ToArray()));
 
             /// <summary>
             /// Selects values from input at the 1-dimensional indices from indices along the given dim.
@@ -1267,7 +1267,7 @@ namespace TorchSharp
             /// <param name="dim">Dimension to select along.</param>
             /// <returns></returns>
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
-            public Tensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(Int64Tensor.from(indices.ToArray()), dim);
+            public Tensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(torch.tensor(indices.ToArray()), dim);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);

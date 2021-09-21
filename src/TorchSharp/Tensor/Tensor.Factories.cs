@@ -35,8 +35,18 @@ namespace TorchSharp
 
         /// <summary>
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
-		/// common difference step, starting from start
+        /// common difference step, starting from start
         /// </summary>
+        /// <param name="start">The starting value for the set of points.</param>
+        /// <param name="stop">The ending value for the set of points</param>
+        /// <param name="step">The gap between each pair of adjacent points.</param>
+        /// <param name="dtype">the desired data type of returned tensor.
+        /// Default: if null, uses a global default (see torch.set_default_tensor_type()).
+        /// If dtype is not given, infer the data type from the other input arguments.
+        /// If any of start, end, or stop are floating-point, the dtype is inferred to be the default dtype, see get_default_dtype().
+        /// Otherwise, the dtype is inferred to be torch.int64.</param>
+        /// <param name="device"></param>
+        /// <param name="requiresGrad"> If autograd should record operations on the returned tensor. Default: false.</param>
         static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
@@ -49,6 +59,13 @@ namespace TorchSharp
                 else {
                     dtype = get_default_dtype();
                 }
+            }
+
+            if (dtype == ScalarType.ComplexFloat32) {
+                return ComplexFloat32Tensor.arange(start, stop, step, device, requiresGrad);
+            }
+            else if (dtype == ScalarType.ComplexFloat64) {
+                return ComplexFloat64Tensor.arange(start, stop, step, device, requiresGrad);
             }
 
             var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
@@ -512,7 +529,6 @@ namespace TorchSharp
             }
 
             if (dtype == ScalarType.ComplexFloat32) {
-
                 return randint_c32(max, size, device, requiresGrad);
             }
             else if (dtype == ScalarType.ComplexFloat64) {
@@ -851,10 +867,61 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
+        public static Tensor tensor(float real, float imaginary, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            device = torch.InitializeDevice(device);
+            var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            var tensor = new Tensor(handle);
+            if (device is not null) {
+                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
+            } else if (dtype.HasValue) {
+                tensor = tensor.to_type(dtype.Value);
+            }
+            return tensor;
+        }
+
+        /// <summary>
+        /// Create a scalar tensor from a single value
+        /// </summary>
         public static Tensor tensor((float Real, float Imaginary) scalar, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requiresGrad);
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            var tensor = new Tensor(handle);
+            if (device is not null) {
+                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
+            } else if (dtype.HasValue) {
+                tensor = tensor.to_type(dtype.Value);
+            }
+            return tensor;
+        }
+
+        /// <summary>
+        /// Create a scalar tensor from a single value
+        /// </summary>
+        public static Tensor tensor((double Real, double Imaginary) scalar, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            device = torch.InitializeDevice(device);
+            var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requiresGrad);
+            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            var tensor = new Tensor(handle);
+            if (device is not null) {
+                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
+            } else if (dtype.HasValue) {
+                tensor = tensor.to_type(dtype.Value);
+            }
+            return tensor;
+        }
+
+        /// <summary>
+        /// Create a scalar tensor from a single value
+        /// </summary>
+        public static Tensor tensor(double real, double imaginary, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            device = torch.InitializeDevice(device);
+            var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             var tensor = new Tensor(handle);
             if (device is not null) {
@@ -1520,7 +1587,11 @@ namespace TorchSharp
         public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long[] dimensions, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
-            var dataArray = rawArray.ToArray();
+            var dataArray = new float[rawArray.Count * 2];
+            for (var i = 0; i < rawArray.Count; i++) {
+                dataArray[i * 2] = rawArray[i].Real;
+                dataArray[i * 2 + 1] = rawArray[i].Imaginary;
+            }
             unsafe {
                 var dataHandle = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
                 var dataArrayAddr = dataHandle.AddrOfPinnedObject();
@@ -1539,13 +1610,7 @@ namespace TorchSharp
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.ComplexFloat32, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                var tensor = new Tensor(handle);
-                if (device is not null) {
-                    tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-                } else if (dtype.HasValue) {
-                    tensor = tensor.to_type(dtype.Value);
-                }
-                return tensor;
+                return new Tensor(handle);
             }
         }
 
@@ -1599,7 +1664,11 @@ namespace TorchSharp
         public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long[] dimensions, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
-            var dataArray = rawArray.ToArray();
+            var dataArray = new double[rawArray.Count * 2];
+            for (var i = 0; i < rawArray.Count; i++) {
+                dataArray[i * 2] = rawArray[i].Real;
+                dataArray[i * 2 + 1] = rawArray[i].Imaginary;
+            }
             unsafe {
                 var dataHandle = GCHandle.Alloc(dataArray, GCHandleType.Pinned);
                 var dataArrayAddr = dataHandle.AddrOfPinnedObject();
@@ -1618,13 +1687,7 @@ namespace TorchSharp
                     handle = THSTensor_new(dataArrayAddr, deleter, dimensions, dimensions.Length, (sbyte)ScalarType.ComplexFloat64, requiresGrad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                var tensor = new Tensor(handle);
-                if (device is not null) {
-                    tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-                } else if (dtype.HasValue) {
-                    tensor = tensor.to_type(dtype.Value);
-                }
-                return tensor;
+                return new Tensor(handle);
             }
         }
 

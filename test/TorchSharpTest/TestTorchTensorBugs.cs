@@ -27,9 +27,9 @@ namespace TorchSharp
             // Tensor.DataItem gives a hard crash on GPU tensor
 
             if (torch.cuda.is_available()) {
-                var scalar = Float32Tensor.from(3.14f, torch.CUDA);
+                var scalar = torch.tensor(3.14f, torch.CUDA);
                 Assert.Throws<InvalidOperationException>(() => scalar.DataItem<float>());
-                var tensor = Float32Tensor.zeros(new long[] { 10, 10 }, torch.CUDA);
+                var tensor = torch.zeros(new long[] { 10, 10 }, device: torch.CUDA);
                 Assert.Throws<InvalidOperationException>(() => tensor.Data<float>());
                 Assert.Throws<InvalidOperationException>(() => tensor.Bytes());
             }
@@ -54,7 +54,7 @@ namespace TorchSharp
                 ("double", new DoubleIt())
             );
 
-            using var @in = Float32Tensor.from(3);
+            using var @in = torch.tensor(3);
             using var @out = net.forward(@in);
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -68,9 +68,9 @@ namespace TorchSharp
                     return (x - y).abs();
                 };
 
-            using (Tensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = nn.functional.triplet_margin_with_distance_loss(distance);
                 using (var result = output(anchor, positive, negative)) { }
@@ -88,8 +88,8 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            using var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            using var y = Float32Tensor.randn(new long[] { 64, 10 });
+            using var x = torch.randn(new long[] { 64, 1000 });
+            using var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
@@ -121,7 +121,7 @@ namespace TorchSharp
                 ("double", new DoubleIt())
             );
 
-            using var @in = Float32Tensor.from(3);
+            using var @in = torch.tensor(3);
 
             for (var i = 0; i < 1000; i++) {
                 using var @out = net.forward(@in);
@@ -185,8 +185,8 @@ namespace TorchSharp
             //
             // Just validating that the methods are there.
             //
-            using var x = Float32Tensor.zeros(3,3);
-            using var y = Float32Tensor.ones(3,3);
+            using var x = torch.zeros(3,3);
+            using var y = torch.ones(3,3);
 
             var mx1 = x.max();
             Assert.Equal(0, mx1.DataItem<float>());
