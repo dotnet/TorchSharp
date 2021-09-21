@@ -9,6 +9,7 @@ With this release, releases will have explicit control over the patch version nu
 __Fixed Bugs:__
 
 Fixed incorrectly implemented Module APIs related to parameter / module registration.
+Changed Module.state_dict() and Module.load() to 'virtual,' so that saving and restoring state may be customized.
 #353 Missing torch.minimum (with an alternative raising exception)
 
 __API Changes:__
