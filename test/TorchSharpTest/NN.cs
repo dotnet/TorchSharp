@@ -46,7 +46,7 @@ namespace TorchSharp
         public void TestSetGetBiasInLinear()
         {
             var lin = Linear(1000, 100, true);
-            var bias = Float32Tensor.ones(new long[] { 1000 });
+            var bias = torch.ones(new long[] { 1000 });
             lin.Bias = bias;
             Assert.True(!(lin.Bias is null));
 
@@ -102,7 +102,7 @@ namespace TorchSharp
             var lin = Linear(1000, 100, true);
             var bias = lin.Bias!;
             var weight = lin.Weight.t();
-            var input = Float32Tensor.randn(new long[] { 1, 1000 });
+            var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight).add(bias);
 
@@ -119,8 +119,8 @@ namespace TorchSharp
         public void TestBilinearWithBias()
         {
             var lin = Bilinear(20, 30, 40);
-            var input1 = Float32Tensor.randn(new long[] { 128, 20 });
-            var input2 = Float32Tensor.randn(new long[] { 128, 30 });
+            var input1 = torch.randn(new long[] { 128, 20 });
+            var input2 = torch.randn(new long[] { 128, 30 });
             var forward = lin.forward(input1, input2);
 
             Assert.Equal(2, forward.shape.Length);
@@ -135,7 +135,7 @@ namespace TorchSharp
             Assert.False(!(lin.Bias is null));
 
             var weight = lin.Weight.transpose(0, 1);
-            var input = Float32Tensor.randn(new long[] { 1, 1000 });
+            var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight);
 
@@ -153,7 +153,7 @@ namespace TorchSharp
         {
             var lin = Identity();
 
-            var input = Float32Tensor.randn(new long[] { 1, 1000 });
+            var input = torch.randn(new long[] { 1, 1000 });
             var output = lin.forward(input);
 
             for (int i = 0; i < 1000; i++) {
@@ -165,7 +165,7 @@ namespace TorchSharp
         public void TestLinearEditBias()
         {
             var lin = Linear(1000, 100, true);
-            var bias = Float32Tensor.randn(new long[] { 100 });
+            var bias = torch.randn(new long[] { 100 });
             lin.Bias = bias;
 
             for (int i = 0; i < 100; i++) {
@@ -177,8 +177,8 @@ namespace TorchSharp
         public void TestLinearEditWeightsAndBias()
         {
             var lin = Linear(1000, 1000, true);
-            var bias = Float32Tensor.randn(new long[] { 100 });
-            var weights = Float32Tensor.randn(new long[] { 100, 1000 });
+            var bias = torch.randn(new long[] { 100 });
+            var weights = torch.randn(new long[] { 100, 1000 });
 
             lin.Bias = bias;
             lin.Weight = weights;
@@ -196,8 +196,8 @@ namespace TorchSharp
         public void TestLinearEditWeightsAndBiasGetParameters()
         {
             var lin = Linear(1000, 1000, true);
-            var bias = Float32Tensor.randn(new long[] { 100 });
-            var weights = Float32Tensor.randn(new long[] { 1000, 1000 });
+            var bias = torch.randn(new long[] { 100 });
+            var weights = torch.randn(new long[] { 1000, 1000 });
             lin.Bias = bias;
             lin.Weight = weights;
 
@@ -222,7 +222,7 @@ namespace TorchSharp
         public void EvaluateRelu()
         {
             var rel = ReLU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -233,7 +233,7 @@ namespace TorchSharp
         public void EvaluateRelu6()
         {
             var rel = ReLU6();
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -244,7 +244,7 @@ namespace TorchSharp
         public void EvaluateLeakyRelu()
         {
             var rel = LeakyReLU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -254,7 +254,7 @@ namespace TorchSharp
         public void EvaluateMish()
         {
             var rel = Mish();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -264,7 +264,7 @@ namespace TorchSharp
         public void EvaluateRRelu()
         {
             var rel = RReLU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -274,7 +274,7 @@ namespace TorchSharp
         public void EvaluateCELU()
         {
             var rel = CELU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -285,7 +285,7 @@ namespace TorchSharp
         public void EvaluateELU()
         {
             var rel = ELU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -296,7 +296,7 @@ namespace TorchSharp
         public void EvaluateSELU()
         {
             var rel = SELU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 });
+            var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -307,7 +307,7 @@ namespace TorchSharp
         public void EvaluateGELU()
         {
             var rel = GELU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -318,7 +318,7 @@ namespace TorchSharp
         public void EvaluateSigmoid()
         {
             var rel = Sigmoid();
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -329,7 +329,7 @@ namespace TorchSharp
         public void EvaluateSiLU()
         {
             var rel = SiLU();
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -340,7 +340,7 @@ namespace TorchSharp
         public void EvaluateSoftmax2d()
         {
             var rel = Softmax2d();
-            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -351,7 +351,7 @@ namespace TorchSharp
         public void EvaluateTanh()
         {
             var rel = Tanh();
-            var input = Float32Tensor.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -362,7 +362,7 @@ namespace TorchSharp
         public void EvaluateSoftmax()
         {
             var rel = Softmax(1);
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -373,7 +373,7 @@ namespace TorchSharp
         public void EvaluateSoftmin()
         {
             var rel = Softmax(1);
-            var input = Float32Tensor.randn(new long[] { 64, 8 }) * 25.0;
+            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
             var values = output.Data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
@@ -392,7 +392,7 @@ namespace TorchSharp
                 ("relu1", ReLU()),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
             var eval = seq.forward(x);
         }
 
@@ -401,7 +401,7 @@ namespace TorchSharp
         {
             var seq = Sequential();
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
             var eval = seq.forward(x);
             Assert.Equal(x, eval);
         }
@@ -434,8 +434,8 @@ namespace TorchSharp
                 ("relu1", ReLU()),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 });
-            var y = Float32Tensor.randn(new long[] { 64, 10 });
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
 
             var eval = seq.forward(x);
             var loss = mse_loss(Reduction.Sum);
@@ -449,8 +449,8 @@ namespace TorchSharp
         [Fact]
         public void TestPoissonNLLLoss()
         {
-            using (Tensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f, 2.5f }))
-            using (Tensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
+            using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }))
+            using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f })) {
                 var componentWiseLoss = ((Tensor)input.exp()) - target * input;
                 Assert.True(componentWiseLoss.Equals(poisson_loss(reduction: Reduction.None)(input, target)));
                 Assert.True(componentWiseLoss.sum().Equals(poisson_loss(reduction: Reduction.Sum)(input, target)));
@@ -461,8 +461,8 @@ namespace TorchSharp
         [Fact]
         public void TestPoissonNLLLoss2()
         {
-            using (Tensor input = Float32Tensor.rand(new long[] { 5, 2 }))
-            using (Tensor target = Float32Tensor.rand(new long[] { 5, 2 })) {
+            using (Tensor input = torch.rand(new long[] { 5, 2 }))
+            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = poisson_loss(true, true)(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -473,8 +473,8 @@ namespace TorchSharp
         [Fact]
         public void TestCrossEntropyLoss()
         {
-            using (Tensor input = Float32Tensor.rand(new long[] { 5, 12 }))
-            using (Tensor target = Int64Tensor.randint(12, new long[] { 5 })) {
+            using (Tensor input = torch.rand(new long[] { 5, 12 }))
+            using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64)) {
                 var outTensor = cross_entropy_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -485,8 +485,8 @@ namespace TorchSharp
         [Fact]
         public void TestL1Loss()
         {
-            using (Tensor input = Float32Tensor.rand(new long[] { 5, 2 }))
-            using (Tensor target = Float32Tensor.rand(new long[] { 5, 2 })) {
+            using (Tensor input = torch.rand(new long[] { 5, 2 }))
+            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = l1_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -498,8 +498,8 @@ namespace TorchSharp
         public void TestBinaryCrossEntropyLoss()
         {
             var m = Sigmoid();
-            using (Tensor input = Float32Tensor.randn(new long[] { 3 }))
-            using (Tensor target = Float32Tensor.randn(new long[] { 3 })) {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = binary_cross_entropy_loss()(m.forward(input), target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -510,8 +510,8 @@ namespace TorchSharp
         [Fact]
         public void TestBinaryCrossEntropyLossWithLogits()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3 }))
-            using (Tensor target = Float32Tensor.randn(new long[] { 3 })) {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = binary_cross_entropy_with_logits_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -522,8 +522,8 @@ namespace TorchSharp
         [Fact]
         public void TestKLDivLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3 }))
-            using (Tensor target = Float32Tensor.randn(new long[] { 3 })) {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = kl_div_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -534,8 +534,8 @@ namespace TorchSharp
         [Fact]
         public void TestSmoothL1Loss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3 }))
-            using (Tensor target = Float32Tensor.randn(new long[] { 3 })) {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = smooth_l1_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -546,8 +546,8 @@ namespace TorchSharp
         [Fact]
         public void TestSoftMarginLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3 }))
-            using (Tensor target = Float32Tensor.randn(new long[] { 3 })) {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = soft_margin_loss()(input, target);
                 var values = outTensor.Data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
@@ -558,9 +558,9 @@ namespace TorchSharp
         [Fact]
         public void TestGaussianNLLLoss32()
         {
-            using (Tensor variance = Float32Tensor.rand(new long[] { 15, 1 }, requiresGrad:true))
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad:true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5, 5 })) {
+            using (Tensor variance = torch.rand(new long[] { 15, 1 }, requiresGrad:true))
+            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad:true))
+            using (Tensor target = torch.randn(new long[] { 15, 5, 5 })) {
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
@@ -568,9 +568,9 @@ namespace TorchSharp
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
-            using (Tensor variance = Float32Tensor.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5, 5 })) {
+            using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5, 5 })) {
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
@@ -583,9 +583,9 @@ namespace TorchSharp
         [Fact]
         public void TestGaussianNLLLoss64()
         {
-            using (Tensor variance = Float64Tensor.rand(new long[] { 15, 1 }, requiresGrad: true))
-            using (Tensor input = Float64Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor target = Float64Tensor.randn(new long[] { 15, 5, 5 })) {
+            using (Tensor variance = torch.rand(new long[] { 15, 1 }, torch.float64, requiresGrad: true))
+            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
@@ -593,9 +593,9 @@ namespace TorchSharp
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
-            using (Tensor variance = Float64Tensor.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor input = Float64Tensor.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor target = Float64Tensor.randn(new long[] { 15, 5, 5 })) {
+            using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, torch.float64, requiresGrad: true))
+            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
@@ -608,9 +608,9 @@ namespace TorchSharp
         [Fact]
         public void TestGaussianNLLLossWithError()
         {
-            using (Tensor variance = Float32Tensor.rand(new long[] { 15, 1 }, requiresGrad: true).neg())
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5 })) {
+            using (Tensor variance = torch.rand(new long[] { 15, 1 }, requiresGrad: true).neg())
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 })) {
 
                 Assert.Throws<ArgumentException>(() => {
                     var outTensor = gaussian_nll_loss()(input, target, variance);
@@ -623,9 +623,9 @@ namespace TorchSharp
         [Fact]
         public void TestCosineEmbeddingLoss()
         {
-            using (Tensor input1 = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor input2 = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15 }).sign()) {
+            using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
 
                 var outTensor = cosine_embedding_loss()(input1, input2, target);
                 outTensor.backward();
@@ -636,8 +636,8 @@ namespace TorchSharp
         [Fact]
         public void TestCTCLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
                 var outTensor = hinge_embedding_loss()(input, target);
                 outTensor.backward();
             }
@@ -646,8 +646,8 @@ namespace TorchSharp
         [Fact]
         public void TestHingeEmbeddingLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
                 var outTensor = hinge_embedding_loss()(input, target);
                 outTensor.backward();
             }
@@ -656,8 +656,8 @@ namespace TorchSharp
         [Fact]
         public void TestHuberLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15, 5 }).sign()) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
                 var outTensor = huber_loss()(input, target);
                 outTensor.backward();
                 outTensor = huber_loss(1.5)(input, target);
@@ -668,9 +668,9 @@ namespace TorchSharp
         [Fact]
         public void TestMarginRankingLoss()
         {
-            using (Tensor input1 = Float32Tensor.randn(new long[] { 15 }, requiresGrad: true))
-            using (Tensor input2 = Float32Tensor.randn(new long[] { 15 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.randn(new long[] { 15 }).sign()) {
+            using (Tensor input1 = torch.randn(new long[] { 15 }, requiresGrad: true))
+            using (Tensor input2 = torch.randn(new long[] { 15 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
                 var outTensor = margin_ranking_loss()(input1, input2, target);
                 outTensor.backward();
             }
@@ -679,8 +679,8 @@ namespace TorchSharp
         [Fact]
         public void TestMultilabelMarginLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Int64Tensor.ones(new long[] { 15, 5 })) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64)) {
                 var outTensor = multilabel_margin_loss()(input, target);
                 outTensor.backward();
             }
@@ -689,8 +689,8 @@ namespace TorchSharp
         [Fact]
         public void TestMultilabelSoftMarginLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Float32Tensor.ones(new long[] { 15, 5 })) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15, 5 })) {
                 var outTensor = multilabel_soft_margin_loss()(input, target);
                 outTensor.backward();
             }
@@ -699,8 +699,8 @@ namespace TorchSharp
         [Fact]
         public void TestMultiMarginLoss()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = Int64Tensor.ones(new long[] { 15 })) {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15 }, torch.int64)) {
                 var outTensor = multi_margin_loss()(input, target);
                 outTensor.backward();
             }
@@ -709,9 +709,9 @@ namespace TorchSharp
         [Fact]
         public void TestTripleMarginLoss()
         {
-            using (Tensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = triplet_margin_loss();
                 var result = output(anchor, positive, negative);
@@ -727,9 +727,9 @@ namespace TorchSharp
                     return (x - y).abs();
                 };
 
-            using (Tensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = triplet_margin_with_distance_loss(distance);
                 var result = output(anchor, positive, negative);
@@ -740,9 +740,9 @@ namespace TorchSharp
         [Fact]
         public void TestTripleMarginWithDistanceLossNoDistance()
         {
-            using (Tensor anchor = Float32Tensor.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor positive = Float32Tensor.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor negative = Float32Tensor.randn(new long[] { 15, 5 })) {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = triplet_margin_with_distance_loss();
                 var result = output(anchor, positive, negative);
@@ -763,8 +763,8 @@ namespace TorchSharp
                 ("relu1", ReLU()),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
-            var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
             var loss = mse_loss(Reduction.Sum);
@@ -785,8 +785,8 @@ namespace TorchSharp
                 ("relu1", ReLU()),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
-            var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
             var loss = mse_loss(Reduction.Sum);
@@ -810,8 +810,8 @@ namespace TorchSharp
                 ("relu1", ReLU()),
                 ("lin2", lin2));
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
-            var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             var eval = seq.forward(x);
             var loss = mse_loss(Reduction.Sum);
@@ -829,7 +829,7 @@ namespace TorchSharp
         [Fact]
         public void TestGrad2()
         {
-            var y = Float32Tensor.randn(new long[] { 32, 1 });
+            var y = torch.randn(new long[] { 32, 1 });
             var input = new double[] { -2.75, 0.77, -0.61, 0.14, 1.39, 0.38, -0.53, -0.5, -2.13, -0.39, 0.46, -0.61, -0.37, -0.12, 0.55, -1, 0.84, -0.02, 1.3, -0.24, -0.5, -2.12, -0.85, -0.91, 1.81, 0.02, -0.78, -1.41, -1.09, -0.65, 0.9, -0.37, -0.22, 0.28, 1.05, -0.24, 0.3, -0.99, 0.19, 0.32, -0.95, -1.19, -0.63, 0.75, 0.16, 0.15, 0.3, -0.69, 0.2, -0.4, -0.67, 0.18, -1.43, -0.61, -0.78, -0.11, -1.07, -1.71, -0.45, -0.6, 0.05, -1.59, 1.24, 0.62, 0.01, 1.35, -0.9, -1.25, 1.62, -1.45, 0.92, 1.51, -0.19, -1.33, -0.01, -0.13, 0.1, -1.34, 1.23, 0.57, -0.24, 0.5, 0.71, -0.15, -1.37, -1.03, 1.8, 1.4, -0.63, 0.8, -0.97, -0.64, 0.51, 0.52, 0.95, 0.86, 0.43, 0.73, -1.38, -0.56, 0.44, 1.2, -1.45, -0.07, 1.88, 1.57, 0.38, -2.2, -0.56, -1.52, -0.17, 1.38, -1.02, -1.61, -0.13, -0.44, -0.37, 0.23, 1.75, 0.83, -0.02, -1.91, -0.23, -0.47, -1.41, -1.01, -0.91, -0.56, -1.72, 1.47, 0.31, 0.24, 0.48, 2.06, 0.07, -0.96, 1.03, -0.4, -0.64, -0.85, 0.42, -0.33, 0.85, -0.11, -1.24, -0.71, -1.04, -0.37, -0.37, 0.84, -0.9, -1.63, -2.91, -0.71, 0.09, 1.64, -1.1, -1.05, 0.51, 0.57, 0.19, 0.36, 1.36, 1.45, 0.35, -1.66, -0.65, 0.47, 1.95, -0.32, 0.19, -2.06, 0.5, 1.03, 0.94, -0.65, -2.94, 0.41, 1.13, 0.95, -0.02, 1.12, 0.19, 0.66, -0.77, -0.39, 0.59, -1.58, -0.67, 0.88, 0.26, -0.63, 0.49, 1.38, 1.48, -0.55, 0.4, 0.65, 0.19, 0.25, 0.03, -0.31, 0.75, 2.16, -1.36, 0.05, 0.22, 0.65, 1.28, 0.42, 1.35, -0.08, 1.1, 0.25, 0.44, 1.06, -1.78, 0.47, 1.38, 0.43, -1.56, 0.14, -0.22, 1.48, 0.04, 0.33, 0.1, 0.2, -0.99, 1.04, 0.61, -0.4, 0.96, 0.4, 0.5, 0.1, 0.02, 0.01, 0.22, 1.45, -0.77, 0.69, 0.95, 0.96, -0.09, -0.26, 0.22, -1.61, 1.86, -0.06, -0.34, -0.35, 0.55, -1.08, 1.29, 0.92, 0.16, 0.55, -0.01, 0.2, -0.61, -0.28, -2.17, -0.46, 1.63, 1.61, 0.64, 0.32, -0.75, 0.33, 0.3, -1.15, 0.42, -0.06, -1.14, 1.62, -0.9, -0.39, 0.4, 1.52, -0.43, 1.22, -0.32, -0.02, 1, -0.92, 0.11, 0.8, -0.99, -0.26, -2.85, -1.13, 0.49, -0.63, -0.54, -0.86, -0.97, -0.9, 0.23, 1.26, -1.78, -0.84, -0.48, 0.35, -1.13, -2.23, 0.1, 0.95, 1.27, 0.08, -2.21, 0.67, -0.2, 0.6, -1.14, 0.65, -0.73, -0.01, 0.9, -1.33, -1.16, 0.29, 1.16, 1.19, 0.84, 0.66, -1.55, -0.58, 1.85, -1.16, -0.95, 0.98, -0.1, -1.47, 0.78, -0.75, -1.32, 0.61, -0.5, -1, -0.42, 0.96, -1.39, 0.08, -1.82, 0.51, -0.71, -0.02, 2.32, -0.71, 0.08, -1.07 }.ToTensor(new long[] { 32, 11 }).to_type(ScalarType.Float32);
             var inputs = new Tensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
@@ -859,7 +859,7 @@ namespace TorchSharp
         [Fact]
         public void TestSetGrad()
         {
-            var x = Float32Tensor.rand(new long[] { 10, 10 });
+            var x = torch.rand(new long[] { 10, 10 });
             Assert.False(x.requires_grad);
 
             x.requires_grad = true;
@@ -908,8 +908,8 @@ namespace TorchSharp
             var psF = modF.parameters();
             Assert.Equal(4, psF.Length);
 
-            var x = Float32Tensor.randn(new long[] { 64, 1000 }, requiresGrad: true);
-            var y = Float32Tensor.randn(new long[] { 64, 10 }, requiresGrad: true);
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
 
             modT.Train();
 
@@ -953,7 +953,7 @@ namespace TorchSharp
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var x = Float32Tensor.randn(new long[] { 2, 3 }, requiresGrad: true);
+                var x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
                 using (torch.no_grad()) {
                     Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
@@ -981,7 +981,7 @@ namespace TorchSharp
         public void TestConv1d()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv1d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1005,8 +1005,8 @@ namespace TorchSharp
         {
             var conv = Conv1d(3, 64, 3);
 
-            conv.Bias = Float32Tensor.randn(new long[] { 64 });
-            var weights = Float32Tensor.randn(new long[] { 64, 3, 3 });
+            conv.Bias = torch.randn(new long[] { 64 });
+            var weights = torch.randn(new long[] { 64, 3, 3 });
 
             var weight = conv.Weight;
             var bias = conv.Bias;
@@ -1024,7 +1024,7 @@ namespace TorchSharp
         public void TestConv1dStride()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv1d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1036,7 +1036,7 @@ namespace TorchSharp
         public void TestConv1dPadding()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
 
             using (var conv = Conv1d(3, 64, 3, padding: 1))
             using (var output = conv.forward(t)) {
@@ -1062,7 +1062,7 @@ namespace TorchSharp
         public void TestConv2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv2d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1087,8 +1087,8 @@ namespace TorchSharp
         {
             var conv = Conv2d(3, 64, 3);
 
-            conv.Bias = Float32Tensor.randn(new long[] { 64 });
-            var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
+            conv.Bias = torch.randn(new long[] { 64 });
+            var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
             var weight = conv.Weight;
             var bias = conv.Bias;
@@ -1106,7 +1106,7 @@ namespace TorchSharp
         public void TestConv2dStride()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv2d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1119,7 +1119,7 @@ namespace TorchSharp
         public void TestConv2dPadding()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             using (var conv = Conv2d(3, 64, 3, padding: 1))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
@@ -1147,7 +1147,7 @@ namespace TorchSharp
         public void TestConv3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv3d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1173,8 +1173,8 @@ namespace TorchSharp
         {
             var conv = Conv3d(3, 64, 3);
 
-            conv.Bias = Float32Tensor.randn(new long[] { 64 });
-            var weights = Float32Tensor.randn(new long[] { 64, 3, 3, 3 });
+            conv.Bias = torch.randn(new long[] { 64 });
+            var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
             var weight = conv.Weight;
             var bias = conv.Bias;
@@ -1192,7 +1192,7 @@ namespace TorchSharp
         public void TestConv3dStride()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = Conv3d(3, 64, 3, stride: 2);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1208,7 +1208,7 @@ namespace TorchSharp
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var shape = new long[] { 16, 3, 28, 28, 28 };
-                Tensor t = Float32Tensor.rand(shape);
+                Tensor t = torch.rand(shape);
                 using (var conv = Conv3d(3, 64, 3, padding: 1))
                 using (var output = conv.forward(t)) {
                     Assert.Equal(16, output.shape[0]);
@@ -1240,7 +1240,7 @@ namespace TorchSharp
         public void TestConvTranspose1d()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = ConvTranspose1d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1252,7 +1252,7 @@ namespace TorchSharp
         public void TestConvTranspose2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = ConvTranspose2d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1265,7 +1265,7 @@ namespace TorchSharp
         public void TestConvTranspose3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
-            Tensor t = Float32Tensor.rand(shape);
+            Tensor t = torch.rand(shape);
             var conv = ConvTranspose3d(3, 64, 3);
             var output = conv.forward(t);
             Assert.Equal(16, output.shape[0]);
@@ -1280,7 +1280,7 @@ namespace TorchSharp
         [Fact]
         public void TestCustomModule()
         {
-            var module = new TestModule("test", Float32Tensor.randn(new long[] { 2, 2 }), true);
+            var module = new TestModule("test", torch.randn(new long[] { 2, 2 }), true);
             var name = module.GetName();
             Assert.NotNull(name);
             Assert.Equal("test", name);
@@ -1294,7 +1294,7 @@ namespace TorchSharp
         [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
-            var param = Float32Tensor.randn(new long[] { 1000, 100 });
+            var param = torch.randn(new long[] { 1000, 100 });
             var module = new TestModule("test", param, true);
 
             Assert.Equal(1000, module.GetParameter("test").shape[0]);
@@ -1327,7 +1327,7 @@ namespace TorchSharp
         [Fact]
         public void AvgPool2DObjectInitialized()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
+            Tensor ones = torch.ones(new long[] { 2, 2, 2 });
             var obj = avg_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(Tensor), obj.GetType());
         }
@@ -1335,19 +1335,19 @@ namespace TorchSharp
         [Fact]
         public void AvgPool2DTensor()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2 });
+            Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
             var obj = torch.nn.functional.avg_pool2d(ones,new long[] { 2, 2 });
             Assert.Equal(typeof(Tensor), obj.GetType());
-            Assert.Equal(Float32Tensor.ones(new long[] { 4, 2, 1, 1 }), obj);
+            Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
         }
 
 
         [Fact]
         public void AvgPool2DBackwardTensor()
         {
-            var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2 });
+            var ones = torch.ones(new long[] { 4, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2 };
-            var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1 });
+            var avg = torch.ones(new long[] { 4, 2, 1, 1 });
             var res = torch.nn.functional.avg_pool2d_backward(avg,ones, kernelSize) * 4.0;
 
             var ones0000 = ones[0, 0, 0, 0].ToSingle();
@@ -1361,9 +1361,9 @@ namespace TorchSharp
         [Fact]
         public void AvgPool3DBackwardTensor()
         {
-            var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2, 2 });
+            var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2, 2 };
-            var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1, 1 });
+            var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 });
             var res = torch.nn.functional.avg_pool3d_backward(avg,ones, kernelSize) * 8.0;
 
             var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
@@ -1376,9 +1376,9 @@ namespace TorchSharp
         [Fact]
         public void AvgPool3DBackwardTensorExplicitDivisor()
         {
-            var ones = Float32Tensor.ones(new long[] { 4, 2, 2, 2, 2 });
+            var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 });
             var kernelSize = new long[] { 2, 2, 2 };
-            var avg = Float32Tensor.ones(new long[] { 4, 2, 1, 1, 1 });
+            var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 });
             var res = torch.nn.functional.avg_pool3d_backward(avg,ones, kernelSize, divisorOverride: 6) * 6.0;
 
             var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
@@ -1391,7 +1391,7 @@ namespace TorchSharp
         [Fact]
         public void MaxPool2DObjectInitialized()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 2, 2, 2 });
+            Tensor ones = torch.ones(new long[] { 2, 2, 2 });
             var obj = max_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
             Assert.Equal(typeof(Tensor), obj.GetType());
         }
@@ -1399,7 +1399,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool1D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
             using (var pool = MaxPool1d(2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 3, 2 };
@@ -1416,7 +1416,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool1D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
             using (var pool = MaxPool1d(2, 1)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 3, 3 };
@@ -1430,7 +1430,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool1D_3()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 32, 40 });
+            Tensor ones = torch.ones(new long[] { 16, 32, 40 });
             using (var pool = MaxPool1d(3, 1, 1, 2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 32, 38 };
@@ -1452,7 +1452,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool2D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
             using (var pool = MaxPool2d(2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 2, 2 };
@@ -1471,7 +1471,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool2D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
             using (var pool = MaxPool2d(2, 1)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
@@ -1490,7 +1490,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool2D_3()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 32, 40 });
+            Tensor ones = torch.ones(new long[] { 16, 32, 40 });
             using (var pool = MaxPool2d(3, 1, 1, 2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38 };
@@ -1512,7 +1512,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool3D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
             using (var pool = MaxPool3d(2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 2, 2, 4 };
@@ -1531,7 +1531,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool3D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
             using (var pool = MaxPool3d(2, 1)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
@@ -1550,7 +1550,7 @@ namespace TorchSharp
         [Fact]
         public void TestMaxPool3D_3()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 32, 40, 40 });
+            Tensor ones = torch.ones(new long[] { 16, 32, 40, 40 });
             using (var pool = MaxPool3d(3, 1, 1, 2)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38, 38 };
@@ -1572,7 +1572,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool1D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
             using (var pool = AvgPool1d(2)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
@@ -1584,7 +1584,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool1D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 3, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
             using (var pool = AvgPool1d(2, 1)) {
                 var pooled = pool.forward(ones);
 
@@ -1598,7 +1598,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool2D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
             using (var pool = AvgPool2d(new long[] { 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
@@ -1612,7 +1612,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool2D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
             using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
@@ -1627,7 +1627,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 2, 2].ToSingle());
             }
 
-            ones = Float32Tensor.ones(new long[] { 16, 4, 4, 4 });
+            ones = torch.ones(new long[] { 16, 4, 4, 4 });
             using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
@@ -1646,7 +1646,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool3D_1()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
             using (var pool = AvgPool3d(new long[] { 2, 2, 2 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
@@ -1660,7 +1660,7 @@ namespace TorchSharp
         [Fact]
         public void TestAvgPool3D_2()
         {
-            Tensor ones = Float32Tensor.ones(new long[] { 16, 4, 4, 8 });
+            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
             using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
@@ -1675,7 +1675,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 2, 2, 0].ToSingle());
             }
 
-            ones = Float32Tensor.ones(new long[] { 16, 3, 4, 4, 8 });
+            ones = torch.ones(new long[] { 16, 3, 4, 4, 8 });
             using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(new long[] { 16, 3, 3, 3, 7 }, pooled.shape);
@@ -1696,79 +1696,79 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm1D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 28 });
             using (var pool = BatchNorm1d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestBatchNorm2D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
             using (var pool = BatchNorm2d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestBatchNorm3D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
             using (var pool = BatchNorm3d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestInstanceNorm1D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 28 });
             using (var pool = InstanceNorm1d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestInstanceNorm2D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
             using (var pool = InstanceNorm2d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestInstanceNorm3D()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
             using (var pool = InstanceNorm3d(3)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 16, 2, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
             }
         }
 
         [Fact]
         public void TestLayerNorm()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
             using (var pool = LayerNorm(new long[] { 12, 28, 28})) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
@@ -1778,22 +1778,22 @@ namespace TorchSharp
         [Fact]
         public void TestLocalResponseNorm()
         {
-            var ones = Float32Tensor.ones(new long[] { 16, 3, 12, 28, 28 });
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
             using (var pool = LocalResponseNorm(2)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2 })));
             }
         }
 
         [Fact]
         public void TestGroupNorm()
         {
-            var ones = Float32Tensor.ones(new long[] { 20, 6, 10, 10 });
+            var ones = torch.ones(new long[] { 20, 6, 10, 10 });
             using (var pool = GroupNorm(3,6)) {
                 var pooled = pool.forward(ones);
                 Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(Float32Tensor.ones(new long[] { 2, 2 })));
+                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2 })));
             }
         }
         #endregion
@@ -1802,7 +1802,7 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingDefaults()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = Embedding(1000, 12)) {
                 var output = emb.forward(ones);
                 Assert.Equal(new long[] { 16, 12 }, output.shape);
@@ -1812,7 +1812,7 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingWithMaxNorm()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = Embedding(1000, 128, max_norm: 1.5)) {
                 var output = emb.forward(ones);
                 Assert.Equal(new long[] { 16, 128 }, output.shape);
@@ -1822,9 +1822,9 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingSetWeights()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = Embedding(1000, 12)) {
-                var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+                var weights = torch.randn(new long[] { 1000, 12 });
 
                 emb.Weight = weights;
 
@@ -1837,8 +1837,8 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingFromPretrained()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
-            var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
+            var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = Embedding_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
@@ -1850,7 +1850,7 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingBagDefaults()
         {
-            var ones = Int64Tensor.ones(new long[] { 16, 12 });
+            var ones = torch.ones(new long[] { 16, 12 }, torch.int64);
             using (var emb = EmbeddingBag(1000, 12)) {
                 var output = emb.forward(ones);
                 Assert.Equal(new long[] { 16, 12 }, output.shape);
@@ -1860,7 +1860,7 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingBagWithMaxNormAndSum()
         {
-            var ones = Int64Tensor.ones(new long[] { 16, 12 });
+            var ones = torch.ones(new long[] { 16, 12 }, torch.int64);
             using (var emb = EmbeddingBag(1000, 128, max_norm: 1.5, mode: EmbeddingBagMode.Sum)) {
                 var output = emb.forward(ones);
                 Assert.Equal(new long[] { 16, 128 }, output.shape);
@@ -1870,8 +1870,8 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingBagWithOffsets()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
-            var offsets = Int32Tensor.from(new int[] { 0, 8 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
+            var offsets = torch.tensor(new int[] { 0, 8 });
             using (var emb = EmbeddingBag(1000, 128, max_norm: 1.5, mode: EmbeddingBagMode.Sum)) {
                 var output = emb.forward(ones, offsets);
                 Assert.Equal(new long[] { offsets.shape[0], 128 }, output.shape);
@@ -1881,9 +1881,9 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingBagSetWeights()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = EmbeddingBag(1000, 12)) {
-                var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+                var weights = torch.randn(new long[] { 1000, 12 });
                 emb.Weight = weights;
 
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
@@ -1895,8 +1895,8 @@ namespace TorchSharp
         [Fact]
         public void TestEmbeddingBagFromPretrained()
         {
-            var ones = Int32Tensor.ones(new long[] { 16 });
-            var weights = Float32Tensor.randn(new long[] { 1000, 12 });
+            var ones = torch.ones(new long[] { 16 }, torch.int32);
+            var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = EmbeddingBag_from_pretrained(weights)) {
                 Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
@@ -1908,7 +1908,7 @@ namespace TorchSharp
         [Fact]
         public void TestOneHotEncoding1()
         {
-            var ones = Int64Tensor.from(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
+            var ones = torch.tensor(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
             var env = one_hot(ones, 5);
             var values = env.Data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
@@ -1918,7 +1918,7 @@ namespace TorchSharp
         [Fact]
         public void TestOneHotEncoding2()
         {
-            var ones = Int64Tensor.from(new long[] { 1, 2, 0, 5, 3, 4, 2, 2 });
+            var ones = torch.tensor(new long[] { 1, 2, 0, 5, 3, 4, 2, 2 });
             var env = one_hot(ones);
             var values = env.Data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
@@ -1930,8 +1930,8 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var transformer_model = Transformer(d_model: 64, nhead: 2, num_encoder_layers: 2, dim_feedforward: 128)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
                 var output = transformer_model.forward(src, tgt);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -1942,10 +1942,10 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var transformer_model = Transformer(d_model: 64, nhead: 2, num_encoder_layers: 2, dim_feedforward: 128)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
-                var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
-                var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
+                var src_mask = torch.rand(new long[] { 10, 10 });
+                var tgt_mask = torch.rand(new long[] { 20, 20 });
                 var output = transformer_model.forward(src, tgt, src_mask: src_mask, tgt_mask: tgt_mask);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -1956,7 +1956,7 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
                 var output = encoder_layer.forward(src);
                 Assert.Equal(src.shape, output.shape);
             }
@@ -1967,8 +1967,8 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
+                var src_mask = torch.rand(new long[] { 10, 10 });
                 var output = encoder_layer.forward(src, src_mask: src_mask);
                 Assert.Equal(src.shape, output.shape);
             }
@@ -1980,7 +1980,7 @@ namespace TorchSharp
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
             using (var encoder = TransformerEncoder(encoder_layer, 1)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
                 var output = encoder.forward(src);
                 Assert.Equal(src.shape, output.shape);
             }
@@ -1992,8 +1992,8 @@ namespace TorchSharp
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var encoder_layer = TransformerEncoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
             using (var encoder = TransformerEncoder(encoder_layer, 1)) {
-                var src = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var src_mask = Float32Tensor.rand(new long[] { 10, 10 });
+                var src = torch.rand(new long[] { 10, 16, 64 });
+                var src_mask = torch.rand(new long[] { 10, 10 });
                 var output = encoder.forward(src, src_mask: src_mask);
                 Assert.Equal(src.shape, output.shape);
             }
@@ -2004,8 +2004,8 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
-                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
+                var memory = torch.rand(new long[] { 10, 16, 64 });
                 var output = decoder_layer.forward(tgt, memory);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -2016,9 +2016,9 @@ namespace TorchSharp
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128)) {
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
-                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
+                var memory = torch.rand(new long[] { 10, 16, 64 });
+                var tgt_mask = torch.rand(new long[] { 20, 20 });
                 var output = decoder_layer.forward(tgt, memory, tgt_mask: tgt_mask);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -2030,8 +2030,8 @@ namespace TorchSharp
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
             using (var decoder = TransformerDecoder(decoder_layer, 1)) {
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
-                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
+                var memory = torch.rand(new long[] { 10, 16, 64 });
                 var output = decoder.forward(tgt, memory);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -2043,9 +2043,9 @@ namespace TorchSharp
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
             using (var decoder_layer = TransformerDecoderLayer(d_model: 64, nhead: 2, dim_feedforward: 128))
             using (var decoder = TransformerDecoder(decoder_layer, 1)) {
-                var tgt = Float32Tensor.rand(new long[] { 20, 16, 64 });
-                var memory = Float32Tensor.rand(new long[] { 10, 16, 64 });
-                var tgt_mask = Float32Tensor.rand(new long[] { 20, 20 });
+                var tgt = torch.rand(new long[] { 20, 16, 64 });
+                var memory = torch.rand(new long[] { 10, 16, 64 });
+                var tgt_mask = torch.rand(new long[] { 20, 20 });
                 var output = decoder.forward(tgt, memory, tgt_mask: tgt_mask);
                 Assert.Equal(tgt.shape, output.shape);
             }
@@ -2085,10 +2085,10 @@ namespace TorchSharp
 
 
             using (var mha = MultiheadAttention(qembed_dim, num_heads, dropout: dropout, bias: bias, add_bias_kv: add_bias_kv, add_zero_attn: add_zero_attn, kdim: kembed_dim, vdim: vembed_dim))
-            using (var Q = Float32Tensor.from(q_data, tgt_seq_len, batch_size, qembed_dim))
-            using (var K = Float32Tensor.from(k_data, src_seq_len, batch_size, kembed_dim))
-            using (var V = Float32Tensor.from(v_data, src_seq_len, batch_size, vembed_dim))
-            using (var Attn = Float32Tensor.from(attn_data, batch_size, src_seq_len, src_seq_len)) {
+            using (var Q = torch.tensor(q_data, tgt_seq_len, batch_size, qembed_dim))
+            using (var K = torch.tensor(k_data, src_seq_len, batch_size, kembed_dim))
+            using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
+            using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
                 mha.Eval();
                 var (att_out, att_wts) = mha.forward(Q, K, V);
                 var t = att_wts.allclose(Attn, rtol: 0.5, atol: 0.5);
@@ -2103,7 +2103,7 @@ namespace TorchSharp
         public void TestDropout()
         {
             var drop = Dropout(0.75);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var data = torch.rand(new long[] { 12, 23, 24 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2116,7 +2116,7 @@ namespace TorchSharp
         public void TestDropoutInPlace()
         {
             var drop = Dropout(0.75, inPlace: true);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var data = torch.rand(new long[] { 12, 23, 24 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2129,7 +2129,7 @@ namespace TorchSharp
         public void TestDropout2d()
         {
             var drop = Dropout2d(0.75);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5 });
+            var data = torch.rand(new long[] { 12, 23, 24, 5 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2142,7 +2142,7 @@ namespace TorchSharp
         public void TestDropout2dInPlace()
         {
             var drop = Dropout2d(0.75, inPlace: true);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5 });
+            var data = torch.rand(new long[] { 12, 23, 24, 5 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2155,7 +2155,7 @@ namespace TorchSharp
         public void TestDropout3d()
         {
             var drop = Dropout3d(0.75);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5, 6 });
+            var data = torch.rand(new long[] { 12, 23, 24, 5, 6 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2168,7 +2168,7 @@ namespace TorchSharp
         public void TestDropout3dInPlace()
         {
             var drop = Dropout3d(0.75, inPlace: true);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24, 5, 6 });
+            var data = torch.rand(new long[] { 12, 23, 24, 5, 6 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2181,7 +2181,7 @@ namespace TorchSharp
         public void TestAlphaDropout()
         {
             var drop = AlphaDropout(0.75);
-            var data = Float32Tensor.rand(new long[] { 12, 23, 24 });
+            var data = torch.rand(new long[] { 12, 23, 24 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
@@ -2195,8 +2195,8 @@ namespace TorchSharp
         [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
         public void TestErrorHandling()
         {
-            using (Tensor input = Float32Tensor.from(new float[] { 0.5f, 1.5f }))
-            using (Tensor target = Float32Tensor.from(new float[] { 1f, 2f, 3f })) {
+            using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f }))
+            using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f })) {
                 Assert.Throws<ExternalException>(() => poisson_loss()(input, target));
             }
         }
@@ -2205,7 +2205,7 @@ namespace TorchSharp
         [Fact]
         public void TestFlatten()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 5, 6 });
+            var data = torch.rand(new long[] { 32, 3, 4, 5, 6 });
 
             using (var flat = Flatten()) {
                 var output = flat.forward(data);
@@ -2226,7 +2226,7 @@ namespace TorchSharp
         [Fact]
         public void TestUnflatten()
         {
-            var input = Float32Tensor.rand(new long[] { 2, 50 });
+            var input = torch.rand(new long[] { 2, 50 });
 
             var uf = Unflatten(1, new long[] { 2, 5, 5 });
             var res = uf.forward(input);
@@ -2238,8 +2238,8 @@ namespace TorchSharp
         [Fact]
         public void TestCosineSimilarity()
         {
-            using (Tensor input1 = Float32Tensor.rand(new long[] { 5, 12 }))
-            using (Tensor input2 = Int64Tensor.randint(12, new long[] { 5, 12 }))
+            using (Tensor input1 = torch.rand(new long[] { 5, 12 }))
+            using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64))
 
             using (var module = CosineSimilarity()) {
                 var output = module.forward(input1, input2);
@@ -2250,8 +2250,8 @@ namespace TorchSharp
         [Fact]
         public void TestPairwiseDistance()
         {
-            using (Tensor input1 = Float32Tensor.rand(new long[] { 5, 12 }))
-            using (Tensor input2 = Int64Tensor.randint(12, new long[] { 5, 12 }))
+            using (Tensor input1 = torch.rand(new long[] { 5, 12 }))
+            using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64))
 
             using (var module = PairwiseDistance(keep_dim:true)) {
                 var output = module.forward(input1, input2);
@@ -2263,7 +2263,7 @@ namespace TorchSharp
         [Fact]
         public void TestZeroPad2d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4 });
 
             using (var pad = ZeroPad2d(3)) {
                 var output = pad.forward(data);
@@ -2275,7 +2275,7 @@ namespace TorchSharp
         [Fact]
         public void TestReflectionPad1d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4 });
 
             using (var pad = ReflectionPad1d(3)) {
                 var output = pad.forward(data);
@@ -2293,7 +2293,7 @@ namespace TorchSharp
         [Fact]
         public void TestReflectionPad2d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4 });
 
             using (var pad = ReflectionPad2d(3)) {
                 var output = pad.forward(data);
@@ -2308,7 +2308,7 @@ namespace TorchSharp
         [Fact]
         public void TestReplicationPad1d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4 });
 
             using (var pad = ReplicationPad1d(3)) {
                 var output = pad.forward(data);
@@ -2326,7 +2326,7 @@ namespace TorchSharp
         [Fact]
         public void TestReplicationPad2d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4 });
 
             using (var pad = ReplicationPad2d(3)) {
                 var output = pad.forward(data);
@@ -2341,7 +2341,7 @@ namespace TorchSharp
         [Fact]
         public void TestReplicationPad3d()
         {
-            var data = Float32Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 });
 
             using (var pad = ReplicationPad3d(3)) {
                 var output = pad.forward(data);
@@ -2356,7 +2356,7 @@ namespace TorchSharp
         [Fact]
         public void TestConstantPad1d()
         {
-            var data = Float64Tensor.rand(new long[] { 32, 3, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4 }, torch.float64);
 
             using (var pad = ConstantPad1d(3, Math.PI)) {
                 var output = pad.forward(data);
@@ -2368,7 +2368,7 @@ namespace TorchSharp
         [Fact]
         public void TestConstantPad2d()
         {
-            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4 }, torch.float64);
 
             using (var pad = ConstantPad2d(3, Math.PI)) {
                 var output = pad.forward(data);
@@ -2380,7 +2380,7 @@ namespace TorchSharp
         [Fact]
         public void TestConstantPad3d()
         {
-            var data = Float64Tensor.rand(new long[] { 32, 3, 4, 4, 4 });
+            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, torch.float64);
 
             using (var pad = ConstantPad3d(3, Math.PI)) {
                 var output = pad.forward(data);
@@ -2392,8 +2392,8 @@ namespace TorchSharp
         [Fact]
         public void TestRNN1()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }))
             using(var rnn = RNN(10, 20)) {
                 var (output, hN) = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2405,8 +2405,8 @@ namespace TorchSharp
         [Fact]
         public void TestRNN2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }))
             using (var rnn = RNN(10, 20, 2)) {
                 var (output, hN) = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2419,8 +2419,8 @@ namespace TorchSharp
         public void TestRNNCell1()
         {
             var seq = 5;
-            using (Tensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = RNNCell(10, 20)) {
                 var hN = rnn.forward(input[0], h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2434,8 +2434,8 @@ namespace TorchSharp
         [Fact]
         public void TestRNNCell2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = RNNCell(10, 20, NonLinearities.ReLU)) {
                 var hN = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2445,8 +2445,8 @@ namespace TorchSharp
         [Fact]
         public void TestGRU1()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }))
             using (var gru = GRU(10, 20)) {
                 var (output, hN) = gru.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2458,8 +2458,8 @@ namespace TorchSharp
         [Fact]
         public void TestGRU2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }))
             using (var gru = GRU(10, 20, 2)) {
                 var (output, hN) = gru.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2472,8 +2472,8 @@ namespace TorchSharp
         public void TestGRUCell1()
         {
             var seq = 5;
-            using (Tensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = GRUCell(10, 20)) {
                 var hN = rnn.forward(input[0], h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2487,8 +2487,8 @@ namespace TorchSharp
         [Fact]
         public void TestGRUCell2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = GRUCell(10, 20, bias: false)) {
                 var hN = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
@@ -2498,9 +2498,9 @@ namespace TorchSharp
         [Fact]
         public void TestLSTM1()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 1, 3, 20 }),
-                   c0 = Float32Tensor.randn(new long[] { 1, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }),
+                   c0 = torch.randn(new long[] { 1, 3, 20 }))
             using (var rnn = LSTM(10, 20)) {
                 var (output, hN, cN) = rnn.forward(input, (h0, c0));
                 Assert.Equal(h0.shape, hN.shape);
@@ -2513,9 +2513,9 @@ namespace TorchSharp
         [Fact]
         public void TestLSTM2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 5, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 2, 3, 20 }),
-                   c0 = Float32Tensor.randn(new long[] { 2, 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }))
             using (var rnn = LSTM(10, 20, 2)) {
                 var (output, hN, cN) = rnn.forward(input, (h0,c0));
                 Assert.Equal(h0.shape, hN.shape);
@@ -2529,9 +2529,9 @@ namespace TorchSharp
         public void TestLSTMCell1()
         {
             var seq = 5;
-            using (Tensor input = Float32Tensor.randn(new long[] { seq, 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }),
-                   c0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }),
+                   c0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = LSTMCell(10, 20)) {
                 var (hN, cN) = rnn.forward(input[0], (h0, c0));
                 Assert.Equal(h0.shape, hN.shape);
@@ -2548,9 +2548,9 @@ namespace TorchSharp
         [Fact]
         public void TestLSTMCell2()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 3, 10 }),
-                   h0 = Float32Tensor.randn(new long[] { 3, 20 }),
-                   c0 = Float32Tensor.randn(new long[] { 3, 20 }))
+            using (Tensor input = torch.randn(new long[] { 3, 10 }),
+                   h0 = torch.randn(new long[] { 3, 20 }),
+                   c0 = torch.randn(new long[] { 3, 20 }))
             using (var rnn = LSTMCell(10, 20, bias:false)) {
                 var (hN, cN) = rnn.forward(input, (h0, c0));
                 Assert.Equal(h0.shape, hN.shape);
@@ -2562,7 +2562,7 @@ namespace TorchSharp
         [Fact]
         public void TestPixelShuffle()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 8,9,4,4 }))
+            using (Tensor input = torch.randn(new long[] { 8,9,4,4 }))
             using (var layer = PixelShuffle(3)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 8, 1, 12, 12 }, res.shape);
@@ -2572,7 +2572,7 @@ namespace TorchSharp
         [Fact]
         public void TestPixelUnshuffle()
         {
-            using (Tensor input = Float32Tensor.randn(new long[] { 8, 1, 12, 12 }))
+            using (Tensor input = torch.randn(new long[] { 8, 1, 12, 12 }))
             using (var layer = PixelUnshuffle(3)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 8, 9, 4, 4 }, res.shape);
@@ -2582,7 +2582,7 @@ namespace TorchSharp
         [Fact]
         public void TestPad()
         {
-            using (Tensor p4d = Float32Tensor.randn(new long[] { 3, 3, 4, 2 })) {
+            using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 })) {
                 using (var res = pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
                     Assert.Equal(new long[] { 3, 3, 6, 4 }, res.shape);
                 }
@@ -2596,7 +2596,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateDefaults()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var res = interpolate(input, scale_factor: new double[] { 2, 2 })) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2605,7 +2605,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateNearest()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Nearest)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2614,7 +2614,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateBilinear2D()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Bilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2624,7 +2624,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateArea()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Area)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
             }
@@ -2633,7 +2633,7 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateTrilinear()
         {
-            using (Tensor input = Float32Tensor.arange(1, 9, 1).view(1, 1, 2, 2, 2))
+            using (Tensor input = torch.arange(1, 9, 1, float32).view(1, 1, 2, 2, 2))
             using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
             }
@@ -2642,7 +2642,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleNearest()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2652,7 +2652,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleLinear()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 4 ))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 4 ))
             using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
@@ -2662,7 +2662,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBilinear()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2672,7 +2672,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBilinearAC()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners:true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2682,7 +2682,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBicubic()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2692,7 +2692,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleBicubicAC()
         {
-            using (Tensor input = Float32Tensor.arange(1, 5).view(1, 1, 2, 2))
+            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -2702,7 +2702,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleTrilinear()
         {
-            using (Tensor input = Float32Tensor.arange(1, 9).view(1, 1, 2, 2, 2))
+            using (Tensor input = torch.arange(1, 9, float32).view(1, 1, 2, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
@@ -2712,7 +2712,7 @@ namespace TorchSharp
         [Fact]
         public void TestUpsampleTrilinearAC()
         {
-            using (Tensor input = Float32Tensor.arange(1, 9).view(1, 1, 2, 2, 2))
+            using (Tensor input = torch.arange(1, 9, float32).view(1, 1, 2, 2, 2))
             using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
                 var res = layer.forward(input);
                 Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);

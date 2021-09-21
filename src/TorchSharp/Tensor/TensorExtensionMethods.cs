@@ -115,28 +115,28 @@ namespace TorchSharp
 
             switch (true) {
             case bool _ when typeof(T) == typeof(byte): {
-                    return ByteTensor.from(array as byte[], dimensions, requiresGrad); ;
+                    return torch.tensor(array as byte[], dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(sbyte): {
-                    return Int8Tensor.from(array as sbyte[], dimensions, requiresGrad); ;
+                    return torch.tensor(array as sbyte[], dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(short): {
-                    return Int16Tensor.from(array as short[], dimensions, requiresGrad); ;
+                    return torch.tensor(array as short[], dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(int): {
-                    return Int32Tensor.from(array as int[], dimensions, requiresGrad);
+                    return torch.tensor(array as int[], dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(long): {
-                    return Int64Tensor.from(array as long[], dimensions, requiresGrad);
+                    return torch.tensor(array as long[], dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(double): {
-                    return Float64Tensor.from(array as double[], dimensions, requiresGrad);
+                    return torch.tensor(array as double[], dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(float): {
-                    return Float32Tensor.from(array as float[], dimensions, requiresGrad);
+                    return torch.tensor(array as float[], dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(bool): {
-                    return BoolTensor.from(array as bool[], dimensions, requiresGrad);
+                    return torch.tensor(array as bool[], dimensions, requiresGrad: requiresGrad);
                 }
             //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
             //    {
@@ -161,19 +161,19 @@ namespace TorchSharp
             }
 
             if (typeof(T) == typeof(byte))
-                return ByteTensor.from((byte)(object)scalar, device, requiresGrad);
+                return torch.tensor((byte)(object)scalar, uint8, device, requiresGrad);
             if (typeof(T) == typeof(sbyte))
-                return Int8Tensor.from((sbyte)(object)scalar, device, requiresGrad);
+                return torch.tensor((sbyte)(object)scalar, int8, device, requiresGrad);
             if (typeof(T) == typeof(short))
-                return Int16Tensor.from((short)(object)scalar, device, requiresGrad);
+                return torch.tensor((short)(object)scalar, int16, device, requiresGrad);
             if (typeof(T) == typeof(int))
-                return Int32Tensor.from((int)(object)scalar, device, requiresGrad);
+                return torch.tensor((int)(object)scalar, int32, device, requiresGrad);
             if (typeof(T) == typeof(long))
-                return Int64Tensor.from((long)(object)scalar, device, requiresGrad);
-            if (typeof(T) == typeof(double))
-                return Float64Tensor.from((double)(object)scalar, device, requiresGrad);
+                return torch.tensor((long)(object)scalar, int64, device, requiresGrad);
             if (typeof(T) == typeof(float))
-                return Float32Tensor.from((float)(object)scalar, device, requiresGrad);
+                return torch.tensor((float)(object)scalar, float32, device, requiresGrad);
+            if (typeof(T) == typeof(double))
+                return torch.tensor((double)(object)scalar, float64, device, requiresGrad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 

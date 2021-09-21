@@ -52,11 +52,11 @@ type PositionalEncoding(dmodel, maxLen) as this =
     inherit Module("PositionalEncoding")
 
     let dropout = Dropout(dropout)
-    let mutable pe = torch.Float32Tensor.zeros([| maxLen; dmodel|])
+    let mutable pe = torch.zeros([| maxLen; dmodel|])
 
     do
-        let position = torch.Float32Tensor.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
-        let divTerm = (torch.Float32Tensor.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
+        let position = torch.arange(0L.ToScalar(), maxLen.ToScalar(), 1L.ToScalar()).unsqueeze(1L)
+        let divTerm = (torch.arange(0L.ToScalar(), dmodel.ToScalar(), 2L.ToScalar()) * (-Math.Log(10000.0) / (float dmodel)).ToScalar()).exp()
 
         let NULL = System.Nullable<int64>()
 
@@ -105,9 +105,9 @@ type TransformerModel(ntokens, device:torch.Device) as this =
         decoder.forward(enc)
 
     member _.GenerateSquareSubsequentMask(size:int64) =
-        use mask = torch.Float32Tensor.ones([|size;size|]).eq(torch.Float32Tensor.from(1.0f)).triu().transpose(0L,1L)
-        use maskIsZero = mask.eq(torch.Float32Tensor.from(0.0f))
-        use maskIsOne = mask.eq(torch.Float32Tensor.from(1.0f))
+        use mask = torch.ones([|size;size|]).eq(torch.tensor(1.0f)).triu().transpose(0L,1L)
+        use maskIsZero = mask.eq(torch.tensor(0.0f))
+        use maskIsOne = mask.eq(torch.tensor(1.0f))
         mask.to_type(torch.float32)
             .masked_fill(maskIsZero, Single.NegativeInfinity.ToScalar())
             .masked_fill(maskIsOne, 0.0f.ToScalar()).``to``(device)
@@ -117,7 +117,7 @@ let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchT
         [|
             for item in iter do
                 let itemData = [| for token in tokenizer(item) do (int64 vocab.[token]) |]
-                let t = torch.Int64Tensor.from(itemData)
+                let t = torch.tensor(itemData)
                 if t.NumberOfElements > 0L then
                     t
         |], 0L)

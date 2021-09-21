@@ -40,7 +40,7 @@ namespace TorchSharp
                 Assert.False(isCudnnAvailable);
             }
 
-            //Tensor t = Float32Tensor.ones(shape);
+            //Tensor t = torch.ones(shape);
             //Assert.Equal(shape, t.Shape);
             //Assert.Equal(1.0f, t[0, 0].ToSingle());
             //Assert.Equal(1.0f, t[1, 1].ToSingle());
@@ -55,7 +55,7 @@ namespace TorchSharp
             for (int i = 0; i < n; i++) {
                 Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
 
-                using (var x = Float32Tensor.empty(new long[] { 64000, 1000 }, device: torch.CPU)) { }
+                using (var x = torch.empty(new long[] { 64000, 1000 }, device: torch.CPU)) { }
             }
             Console.WriteLine("Hello World!");
         }
@@ -78,7 +78,7 @@ namespace TorchSharp
                 }
                 Assert.NotEqual(a, c);
 
-                var x = Float32Tensor.rand(new long[] { 10, 10, 10 });
+                var x = torch.rand(new long[] { 10, 10, 10 });
                 Assert.Equal(new long[] { 10, 10, 10 }, x.shape);
             }
         }
@@ -120,11 +120,11 @@ namespace TorchSharp
                     Assert.NotNull(state);
 
                     // Generate a number
-                    var val1 = Float32Tensor.randn(new long[] { 1 });
+                    var val1 = torch.randn(new long[] { 1 });
                     var value1 = val1[0].ToSingle();
 
                     // Genereate a different number
-                    var val2 = Float32Tensor.randn(new long[] { 1 });
+                    var val2 = torch.randn(new long[] { 1 });
                     var value2 = val2[0].ToSingle();
                     Assert.NotEqual(value1, value2);
 
@@ -132,7 +132,7 @@ namespace TorchSharp
                     gen.set_state(state);
 
                     // Generate the first number again.
-                    var val3 = Float32Tensor.randn(new long[] { 1 });
+                    var val3 = torch.randn(new long[] { 1 });
                     var value3 = val3[0].ToSingle();
                     Assert.Equal(value1, value3);
                 }

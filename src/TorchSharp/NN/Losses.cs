@@ -421,7 +421,7 @@ namespace TorchSharp
 
                         if ((variance < 0).any().DataItem<bool>()) throw new ArgumentException("variance has negative entry/entries");
 
-                        variance = variance.clone().maximum(Float32Tensor.from(eps));
+                        variance = variance.clone().maximum(torch.tensor(eps));
 
                         var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dimensions: new long[] { 1 });
 

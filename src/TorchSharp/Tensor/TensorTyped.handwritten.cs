@@ -8,10 +8,13 @@ using System.Collections.Concurrent;
 
 namespace TorchSharp
 {
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void GCHandleDeleter(IntPtr memory);
     public static partial class torch
     {
 
-        public partial class ComplexFloat32Tensor
+        internal partial class ComplexFloat32Tensor
         {
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
@@ -133,7 +136,7 @@ namespace TorchSharp
             }
         }
 
-        public partial class ComplexFloat64Tensor
+        internal partial class ComplexFloat64Tensor
         {
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);

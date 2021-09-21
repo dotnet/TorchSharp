@@ -70,23 +70,26 @@ To change the TorchSharp package version update this [file](https://github.com/d
 The TorchSharp package is pushed to nuget.org via Azure DevOps CI release pipeline.  Assuming you're not building or updating the LibTorch packages
 (`BuildLibTorchPackages` is `false` in [azure-pipelines.yml](azure-pipelines.yml)) this is pretty simple once you have the permissions:
 
-1. Integrate code to main and wait for CI to process
-2. Go to [releases](https://donsyme.visualstudio.com/TorchSharp/_release) and choose "Create Release" (top right)
-3. Under "Artifacts-->Version" choose the pipeline build corresponding to the thing you want to release.  It should be a successful build on main
-4. Press "Create"
+1. Update the version number in [./build/BranchInfo.props](./build/BranchInfo.props) and in the [Release Notes](./RELEASENOTES.md) file and then submit a PR. 
 
-The package version is currently taken from the CI build version.
+   Updating the major or minor version number should only be done after a discussion with repo admins. The patch number should be incremented by one each release and set to zero after a change to the major or minor version.
+2. Integrate code to main and wait for CI to process
+3. Go to [releases](https://donsyme.visualstudio.com/TorchSharp/_release) and choose "Create Release" (top right)
+4. Under "Artifacts-->Version" choose the pipeline build corresponding to the thing you want to release.  It should be a successful build on main
+5. Press "Create"
+
+6. Once the package has been successfully pushed and is available in the NuGet gallery, create a GitHub tag in the 'main' branch with the version  as the name of the tag.
 
 # The libtorch packages
 
 The libtorch packages are huge (~3GB compressed combined for CUDA Windows) and cause a
-lot of problems to make and deliver due to nuget package size restrictions.
+lot of problems to make and deliver due to NuGet package size restrictions.
 
 These problems include:
 
 1. A massive 2GB binary in the linux CUDA package and multiple 1.0GB binaries in Windows CUDA package
 
-2. Size limitations of about ~500MB on nuget packages on the Azure DevOps CI system and about ~250MB on `nuget.org`
+2. Size limitations of about ~500MB on NuGet packages on the Azure DevOps CI system and about ~250MB on `nuget.org`
 
 4. Regular download/upload failures on these systems due to network interruptions for packages of this size
 
