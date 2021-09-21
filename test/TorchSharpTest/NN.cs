@@ -589,7 +589,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.Data<double>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -599,7 +599,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.Data<double>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }

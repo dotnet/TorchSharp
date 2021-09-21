@@ -151,11 +151,74 @@ namespace TorchSharp
                 if (device_type != DeviceType.CPU) {
                     throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
                 }
+
+                ValidateType(typeof(T));
+
                 unsafe {
                     var res = THSTensor_data(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     // NOTE: there is no safety here.
                     return new Span<T>((void*)res, (int)NumberOfElements);
+                }
+            }
+
+            /// <summary>
+            /// Returns the singleton value of a scalar tensor.
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns>The scalar held in the tensor</returns>
+            public T DataItem<T>()
+            {
+                if (NumberOfElements != 1) throw new ArgumentException("Number of elements in the tensor must be 1");
+
+                return Data<T>()[0];
+            }
+
+            private void ValidateType(Type dotnetType)
+            {
+                switch (dtype) {
+                case ScalarType.Byte:
+                    if (dotnetType != typeof(byte))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Int8:
+                    if (dotnetType != typeof(sbyte))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Int16:
+                    if (dotnetType != typeof(short))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Int32:
+                    if (dotnetType != typeof(int))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Int64:
+                    if (dotnetType != typeof(long))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Bool:
+                    if (dotnetType != typeof(bool))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.BFloat16:
+                case ScalarType.Float16:
+                case ScalarType.Float32:
+                    if (dotnetType != typeof(float))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.Float64:
+                    if (dotnetType != typeof(double))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.ComplexFloat32:
+                    if (dotnetType != typeof((float, float)))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
+                case ScalarType.ComplexFloat64:
+                    if (dotnetType != typeof(System.Numerics.Complex))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                    break;
                 }
             }
 
@@ -214,18 +277,6 @@ namespace TorchSharp
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
-            }
-
-            /// <summary>
-            /// Returns the singleton value of a scalar tensor.
-            /// </summary>
-            /// <typeparam name="T"></typeparam>
-            /// <returns>The scalar held in the tensor</returns>
-            public T DataItem<T>()
-            {
-                if (NumberOfElements != 1) throw new ArgumentException("Number of elements in the tensor must be 1");
-
-                return Data<T>()[0];
             }
 
             /// <summary>
