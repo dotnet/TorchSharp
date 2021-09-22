@@ -177,6 +177,8 @@ namespace TorchSharp
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
+        public static (float Real,float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
         public static float ToSingle(this Tensor value) => value.ToScalar().ToSingle();
         public static double ToDouble(this Tensor value) => value.ToScalar().ToDouble();
         public static sbyte ToSByte(this Tensor value) => value.ToScalar().ToSByte();
