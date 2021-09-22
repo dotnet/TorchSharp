@@ -8,9 +8,9 @@ using System.Collections.Concurrent;
 
 namespace TorchSharp
 {
-
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void GCHandleDeleter(IntPtr memory);
+
     public static partial class torch
     {
 

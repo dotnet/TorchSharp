@@ -203,6 +203,263 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestDataBool()
+        {
+            var x = torch.ones(5, torch.@bool);
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<bool>();
+        }
+
+        [Fact]
+        public void TestDataByte()
+        {
+            var x = torch.ones(5, torch.uint8);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<byte>();
+        }
+
+        [Fact]
+        public void TestDataInt8()
+        {
+            var x = torch.ones(5, torch.int8);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<sbyte>();
+        }
+
+        [Fact]
+        public void TestDataInt16()
+        {
+            var x = torch.ones(5, torch.int16);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<short>();
+        }
+
+        [Fact]
+        public void TestDataInt32()
+        {
+            var x = torch.ones(5, torch.int32);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<int>();
+        }
+
+        [Fact]
+        public void TestDataInt64()
+        {
+            var x = torch.ones(5, torch.int64);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<long>();
+        }
+
+        [Fact]
+        public void TestDataFloat32()
+        {
+            var x = torch.ones(5, torch.float32);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<float>();
+        }
+
+        [Fact]
+        public void TestDataFloat64()
+        {
+            var x = torch.ones(5, torch.float64);
+            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<(float,float)>());
+            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
+            x.Data<double>();
+        }
+
+        [Fact]
+        public void TestDataItemBool()
+        {
+            var x = torch.ones(1, torch.@bool);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<bool>();
+        }
+
+        [Fact]
+        public void TestDataItemByte()
+        {
+            var x = torch.ones(1, torch.uint8);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<byte>();
+        }
+
+        [Fact]
+        public void TestDataItemInt8()
+        {
+            var x = torch.ones(1, torch.int8);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<sbyte>();
+        }
+
+        [Fact]
+        public void TestDataItemInt16()
+        {
+            var x = torch.ones(1, torch.int16);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<short>();
+        }
+
+        [Fact]
+        public void TestDataItemInt32()
+        {
+            var x = torch.ones(1, torch.int32);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<int>();
+        }
+
+        [Fact]
+        public void TestDataItemInt64()
+        {
+            var x = torch.ones(1, torch.int64);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<long>();
+        }
+
+        [Fact]
+        public void TestDataItemFloat32()
+        {
+            var x = torch.ones(1, torch.float32);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<float>();
+        }
+
+        [Fact]
+        public void TestDataItemFloat64()
+        {
+            var x = torch.ones(1, torch.float64);
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
+            x.DataItem<double>();
+        }
+
+
+        [Fact]
         public void CreateFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -2634,52 +2891,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestArithmeticOperatorsComplexFloat32()
-        {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, complex64, device: device).expand(new long[] { 10, 10 });
-                    var c2 = torch.arange(10, 0, -1, complex64, device: device).expand(new long[] { 10, 10 });
-                    var c3 = torch.ones(new long[] { 10, 10 }, complex64, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    // scalar-tensor operators
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a - 0.5f, a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a * 0.5f, a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f * a, a => 0.5f * a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a / 0.5f, a => a / 0.5f);
-
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.add(0.5f), a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.sub(0.5f), a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.mul(0.5f), a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.div(0.5f), a => a / 0.5f);
-
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.add_(0.5f), a => a + 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.sub_(0.5f), a => a - 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.mul_(0.5f), a => a * 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.div_(0.5f), a => a / 0.5f);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
         public void TestArithmeticOperatorsFloat64()
         {
             foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
@@ -2733,40 +2944,40 @@ namespace TorchSharp
                     var c1 = torch.arange(0, 10, complex128, device: device).expand(new long[] { 10, 10 });
                     var c2 = torch.arange(10, 0, -1, complex128, device: device).expand(new long[] { 10, 10 });
                     var c3 = torch.ones(new long[] { 10, 10 }, complex128, device: device);
-                    Func<Tensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
+                    Func<Tensor, long, long, System.Numerics.Complex> getFunc = (tt, i, j) => tt[i, j].ToComplexFloat64();
                     // scalar-tensor operators
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
 
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
+                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
 
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
+                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
+                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
+                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
+                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
 
                     // tensor-tensor operators
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
 
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
+                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
 
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
+                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
+                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
+                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
+                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
                 }
             }
         }
@@ -2911,7 +3122,6 @@ namespace TorchSharp
 
             if (x.device_type == DeviceType.CPU) {
                 var xData = x.Data<Tin>();
-                var xCloneData = xClone.Data<Tin>();
                 var yData = y.Data<Tin>();
                 var zData = z.Data<Tin>();
 

@@ -11,6 +11,7 @@ __Fixed Bugs:__
 Fixed incorrectly implemented Module APIs related to parameter / module registration.
 Changed Module.state_dict() and Module.load() to 'virtual,' so that saving and restoring state may be customized.
 #353 Missing torch.minimum (with an alternative raising exception)
+#327 Tensor.Data<T> should do a type check
 
 __API Changes:__
 
