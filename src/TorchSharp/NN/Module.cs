@@ -333,7 +333,7 @@ namespace TorchSharp
                 }
 
 
-                public Dictionary<string, Tensor> state_dict()
+                public virtual Dictionary<string, Tensor> state_dict()
                 {
                     var ptrArray = new List<IntPtr>();
                     var strArray = new List<IntPtr>();
@@ -499,7 +499,7 @@ namespace TorchSharp
                     return this;
                 }
 
-                public Module load(System.IO.BinaryReader reader)
+                public virtual Module load(System.IO.BinaryReader reader)
                 {
                     var sd = state_dict();
 
