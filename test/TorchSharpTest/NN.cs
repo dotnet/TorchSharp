@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Xunit;
 
+using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
@@ -69,7 +70,7 @@ namespace TorchSharp
         public void TestWeightAndBiasParametersInLinear()
         {
             var lin = Linear(1000, 100, true);
-            var names = lin.NamedParameters().Select(p => p.name);
+            var names = lin.named_parameters().Select(p => p.name);
             Assert.True(names.Contains("weight") == true);
             Assert.True(names.Contains("bias") == true);
         }
@@ -78,7 +79,7 @@ namespace TorchSharp
         public void TestWeightParameterInLinear()
         {
             var lin = Linear(1000, 100, false);
-            var names = lin.NamedParameters().Select(p => p.name);
+            var names = lin.named_parameters().Select(p => p.name);
             Assert.True(names.Contains("weight") == true);
             Assert.False(names.Contains("bias") == true);
         }
@@ -87,8 +88,8 @@ namespace TorchSharp
         public void TestWeightAndBiasShapeInLinear3()
         {
             var lin = Linear(1000, 100, true);
-            var weight = lin.GetParameter("weight");
-            var bias = lin.GetParameter("bias");
+            var weight = lin.get_parameter("weight");
+            var bias = lin.get_parameter("bias");
             Assert.Equal(2, weight.shape.Length);
             Assert.Equal(100, weight.shape[0]);
             Assert.Equal(1000, weight.shape[1]);
@@ -879,10 +880,10 @@ namespace TorchSharp
             public CondModel(string name, bool isTrue) : base(name)
             {
                 _isTrue = isTrue;
-                RegisterModule("fb", fb);
-                RegisterModule("fbT1", fbT1);
-                RegisterModule("fbF1", fbF1);
-                RegisterModule("fbF2", fbF2);
+                register_module("fb", fb);
+                register_module("fbT1", fbT1);
+                register_module("fbF1", fbF1);
+                register_module("fbF2", fbF2);
             }
 
             public override Tensor forward(Tensor input)
@@ -1278,48 +1279,132 @@ namespace TorchSharp
 
         #region Custom Modules
         [Fact]
-        public void TestCustomModule()
+        public void TestCustomModule1()
         {
-            var module = new TestModule("test", torch.randn(new long[] { 2, 2 }), true);
+            var module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
             var name = module.GetName();
             Assert.NotNull(name);
-            Assert.Equal("test", name);
-            Assert.True(module.HasParameter("test"));
+            Assert.Equal("TestModule1", name);
+
+            Assert.True(module.has_parameter("test"));
+            Assert.True(module.has_parameter("list.0"));
+            Assert.True(module.has_parameter("dict.first"));
+            Assert.True(module.has_parameter("dict.second"));
 
             var ps = module.parameters();
             var n = ps.Length;
-            Assert.Equal(1, n);
+            Assert.Equal(4, n);
         }
 
         [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
             var param = torch.randn(new long[] { 1000, 100 });
-            var module = new TestModule("test", param, true);
+            var module = new TestModule1(param, true);
 
-            Assert.Equal(1000, module.GetParameter("test").shape[0]);
-            Assert.Equal(100, module.GetParameter("test").shape[1]);
+            Assert.Equal(1000, module.get_parameter("test").shape[0]);
+            Assert.Equal(100, module.get_parameter("test").shape[1]);
+
+            param = module.get_parameter("test");
 
             using (torch.no_grad()) {
                 param.transpose_(0, 1);
             }
-            Assert.Equal(100, module.GetParameter("test").shape[0]);
-            Assert.Equal(1000, module.GetParameter("test").shape[1]);
+            Assert.Equal(100, module.get_parameter("test").shape[0]);
+            Assert.Equal(1000, module.get_parameter("test").shape[1]);
             Assert.Equal(100, param.shape[0]);
             Assert.Equal(1000, param.shape[1]);
         }
 
-        private class TestModule : Module
+        [Fact]
+        public void TestCustomModule2()
         {
-            public TestModule(string name, Tensor tensor, bool withGrad)
-                : base(name, new parameter.Parameter(name, tensor, withGrad))
+            var module = new TestModule2(torch.randn(new long[] { 2, 2 }), true);
+
+            var ps = module.named_parameters();
+            Assert.Equal(16, ps.Length);
+
+            Assert.True(module.has_parameter("submodule.test"));
+            Assert.True(module.has_parameter("submodule.list.0"));
+            Assert.True(module.has_parameter("submodule.dict.first"));
+            Assert.True(module.has_parameter("submodule.dict.second"));
+            Assert.True(module.has_parameter("list.0.test"));
+            Assert.True(module.has_parameter("list.0.list.0"));
+            Assert.True(module.has_parameter("list.0.dict.first"));
+            Assert.True(module.has_parameter("list.0.dict.second"));
+            Assert.True(module.has_parameter("dict.first.test"));
+            Assert.True(module.has_parameter("dict.first.list.0"));
+            Assert.True(module.has_parameter("dict.first.dict.first"));
+            Assert.True(module.has_parameter("dict.first.dict.second"));
+            Assert.True(module.has_parameter("dict.second.test"));
+            Assert.True(module.has_parameter("dict.second.list.0"));
+            Assert.True(module.has_parameter("dict.second.dict.first"));
+            Assert.True(module.has_parameter("dict.second.dict.second"));
+        }
+
+
+        [Fact]
+        public void TestCustomModule3()
+        {
+            var module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
+
+            var seq = Sequential(("test", module));
+
+            Assert.True(module.has_parameter("test"));
+            Assert.True(module.has_parameter("list.0"));
+            Assert.True(module.has_parameter("dict.first"));
+            Assert.True(module.has_parameter("dict.second"));
+
+            Assert.True(seq.has_parameter("test.test"));
+            Assert.True(seq.has_parameter("test.list.0"));
+            Assert.True(seq.has_parameter("test.dict.first"));
+            Assert.True(seq.has_parameter("test.dict.second"));
+        }
+
+        private class TestModule1 : Module
+        {
+            public TestModule1(Tensor tensor, bool withGrad)
+                : base("TestModule1")
             {
+                test = Parameter(tensor.clone(), withGrad);
+                list.append(Parameter(tensor.clone(), withGrad));
+                dict.Add("first", Parameter(tensor.clone(), withGrad));
+                dict.Add("second", Parameter(tensor.clone(), withGrad));
+                RegisterComponents();
             }
 
             public override Tensor forward(Tensor input)
             {
                 throw new NotImplementedException();
             }
+
+            private Parameter test;
+            private ParameterList list = new ParameterList();
+            private ParameterDict dict = new ParameterDict();
+        }
+
+        private class TestModule2 : Module
+        {
+            public TestModule2(Tensor tensor, bool withGrad)
+                : base("TestModule1")
+            {
+                submodule = new TestModule1(tensor.clone(), withGrad);
+
+                list.append(new TestModule1(tensor.clone(), withGrad));
+                dict.Add("first", new TestModule1(tensor.clone(), withGrad));
+                dict.Add("second", new TestModule1(tensor.clone(), withGrad));
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                for (int i = 0; i < list.Count; i++) { input = list[i].forward(input); }
+                throw new NotImplementedException();
+            }
+
+            private Module submodule;
+            private ModuleList list = new ModuleList();
+            private ModuleDict dict = new ModuleDict();
         }
         #endregion
 

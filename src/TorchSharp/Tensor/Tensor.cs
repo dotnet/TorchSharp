@@ -15,7 +15,7 @@ namespace TorchSharp
         /// <summary>
         /// Represents a TorchSharp tensor.
         /// </summary>
-        public sealed partial class Tensor : IDisposable
+        public partial class Tensor : IDisposable
         {
             internal IntPtr handle;
 
@@ -89,6 +89,13 @@ namespace TorchSharp
             /// 
             /// </summary>
             public IntPtr Handle => handle;
+
+            internal IntPtr MoveHandle()
+            {
+                var h = handle;
+                handle = IntPtr.Zero;
+                return h;
+            }
 
             [DllImport("LibTorchSharp")]
             static extern long THSTensor_ndimension(IntPtr handle);
@@ -179,45 +186,45 @@ namespace TorchSharp
                 switch (dtype) {
                 case ScalarType.Byte:
                     if (dotnetType != typeof(byte))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Int8:
                     if (dotnetType != typeof(sbyte))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Int16:
                     if (dotnetType != typeof(short))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Int32:
                     if (dotnetType != typeof(int))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Int64:
                     if (dotnetType != typeof(long))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Bool:
                     if (dotnetType != typeof(bool))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.BFloat16:
                 case ScalarType.Float16:
                 case ScalarType.Float32:
                     if (dotnetType != typeof(float))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.Float64:
                     if (dotnetType != typeof(double))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.ComplexFloat32:
                     if (dotnetType != typeof((float, float)))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 case ScalarType.ComplexFloat64:
                     if (dotnetType != typeof(System.Numerics.Complex))
-                        throw new ArgumentException($"{dotnetType.Name} is not compatible with ${dtype.ToString()}");
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
                 }
             }
@@ -528,9 +535,9 @@ namespace TorchSharp
             /// <summary>
             /// Adds gradient tracking.
             /// </summary>
-            public Tensor with_requires_grad()
+            public Tensor with_requires_grad(bool requires_grad = true)
             {
-                this.requires_grad = true;
+                this.requires_grad = requires_grad;
                 return this;
             }
 

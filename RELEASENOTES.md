@@ -12,10 +12,15 @@ Fixed incorrectly implemented Module APIs related to parameter / module registra
 Changed Module.state_dict() and Module.load() to 'virtual,' so that saving and restoring state may be customized.
 #353 Missing torch.minimum (with an alternative raising exception)
 #327 Tensor.Data<T> should do a type check
+#358 Implement ModuleList / ModuleDict / Parameter / ParameterList / ParameterDict
 
 __API Changes:__
 
 Removed the type-named tensor factories, such as 'Int32Tensor.rand(),' etc.
+
+__Documentation Changes:__
+
+Added an article on creating custom modules.
 
 ### NuGet Version 0.92.52220
 

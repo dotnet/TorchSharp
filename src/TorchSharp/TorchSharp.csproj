@@ -13,11 +13,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Tensor\TensorTyped.tt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Tensor\TensorTyped.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TensorTyped.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 

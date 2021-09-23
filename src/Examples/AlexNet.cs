@@ -50,9 +50,9 @@ namespace TorchSharp.Examples
                 ("l3", Linear(4096, numClasses))
             );
 
-            RegisterModule("features", features);
-            RegisterModule("avg", avgPool);
-            RegisterModule("classify", classifier);
+            register_module("features", features);
+            register_module("avg", avgPool);
+            register_module("classify", classifier);
 
             if (device != null && device.type == DeviceType.CUDA)
                 this.to(device);

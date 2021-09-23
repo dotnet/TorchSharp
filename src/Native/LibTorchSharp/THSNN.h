@@ -35,7 +35,7 @@ EXPORT_API(void)        THSNN_Module_to_dtype(NNModule module, int8_t dtype);
 EXPORT_API(void)        THSNN_AnyModule_dispose(const NNAnyModule module);
 //EXPORT_API(NNModule)    THSNN_AnyModule_get(const NNAnyModule module);
 
-EXPORT_API(NNModule) THSNN_custom_module(const char* name, const char** names, at::Tensor** parameters, const bool* require_grad, const int length, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_custom_module(const char* name, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
 
 // Pooling
 
