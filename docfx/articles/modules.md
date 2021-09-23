@@ -23,7 +23,7 @@ A custom module is created by deriving a subclass from torch.nn.Module. One that
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 lin1 = Linear(100, 10);
@@ -70,7 +70,7 @@ The purpose is simply to provide a list implementation that automatically regist
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 RegisterComponents();
@@ -96,7 +96,7 @@ The purpose is simply to provide a list implementation that automatically regist
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 dict.Add("lin1", Linear(100, 10));
