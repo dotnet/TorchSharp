@@ -19,6 +19,9 @@ open TorchSharp.Examples
 // It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
 //
 // https://github.com/mhjabreel/CharCnn_Keras/tree/master/data/ag_news_csv
+//
+// Download the two files, and place them in a folder called "AG_NEWS" in
+// accordance with the file path below (Windows only).
 
 let emsize = 200L
 

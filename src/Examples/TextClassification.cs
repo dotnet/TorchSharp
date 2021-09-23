@@ -21,6 +21,9 @@ namespace TorchSharp.Examples
     ///
     /// https://github.com/mhjabreel/CharCnn_Keras/tree/master/data/ag_news_csv
     ///
+    /// Download the two files, and place them in a folder called "AG_NEWS" in
+    /// accordance with the file path below (Windows only).
+    ///
     /// </summary>
     public class TextClassification
     {

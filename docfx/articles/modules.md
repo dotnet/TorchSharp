@@ -1,6 +1,6 @@
 # Creating Your Own TorchSharp Modules
 
-Unfortunatly, the word 'Module' is one of the most overloaded terms in software. That said, the module concept is central to TorchSharp, which means we have to define its contextual meaing. 
+Unfortunatly, the word 'Module' is one of the most overloaded terms in software. That said, the module concept is central to TorchSharp, which means we have to define its contextual meaning. 
 
 In the context of TorchSharp, it means the same as in PyTorch: the fundamental building block of all models is the 'Module' class. All neural network layers are derived from Module and the way to create a model for training and inference in your code is to create a new Module. Without it, back-propagation will not work.
 
@@ -23,7 +23,7 @@ A custom module is created by deriving a subclass from torch.nn.Module. One that
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 lin1 = Linear(100, 10);
@@ -70,7 +70,7 @@ The purpose is simply to provide a list implementation that automatically regist
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 RegisterComponents();
@@ -96,7 +96,7 @@ The purpose is simply to provide a list implementation that automatically regist
 ```C#
         private class TestModule1 : Module
         {
-            public TestModule1(Tensor tensor, bool withGrad)
+            public TestModule1()
                 : base("TestModule1")
             {
                 dict.Add("lin1", Linear(100, 10));
