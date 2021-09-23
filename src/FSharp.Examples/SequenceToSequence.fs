@@ -21,6 +21,8 @@ open TorchSharp.Examples
 //
 // https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip
 //
+// After downloading, extract the files using the defaults (Windows only).
+//
 
 let emsize = 200L
 let nhidden = 200L
