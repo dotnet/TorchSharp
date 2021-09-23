@@ -436,7 +436,7 @@ namespace TorchSharp
 
                 public virtual void register_module(string name, Module submodule)
                 {
-                    if (submodule is null || submodule.handle.IsInvalid) throw new ArgumentNullException("A null module cannot be registered as a buffer.");
+                    if (submodule is null || submodule.handle.IsInvalid) throw new ArgumentNullException("A null module cannot be registered.");
 
                     submodule.RegisterComponents();
 
