@@ -1278,27 +1278,33 @@ namespace TorchSharp
 
         #region Custom Modules
         [Fact]
-        public void TestCustomModule()
+        public void TestCustomModule1()
         {
-            var module = new TestModule("test", torch.randn(new long[] { 2, 2 }), true);
+            var module = new TestModule1("test", torch.randn(new long[] { 2, 2 }), true);
             var name = module.GetName();
             Assert.NotNull(name);
             Assert.Equal("test", name);
+
             Assert.True(module.HasParameter("test"));
+            Assert.True(module.HasParameter("list.0"));
+            Assert.True(module.HasParameter("dict.first"));
+            Assert.True(module.HasParameter("dict.second"));
 
             var ps = module.parameters();
             var n = ps.Length;
-            Assert.Equal(1, n);
+            Assert.Equal(4, n);
         }
 
         [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
             var param = torch.randn(new long[] { 1000, 100 });
-            var module = new TestModule("test", param, true);
+            var module = new TestModule1("test", param, true);
 
             Assert.Equal(1000, module.GetParameter("test").shape[0]);
             Assert.Equal(100, module.GetParameter("test").shape[1]);
+
+            param = module.GetParameter("test");
 
             using (torch.no_grad()) {
                 param.transpose_(0, 1);
@@ -1309,17 +1315,75 @@ namespace TorchSharp
             Assert.Equal(1000, param.shape[1]);
         }
 
-        private class TestModule : Module
+        [Fact]
+        public void TestCustomModule2()
         {
-            public TestModule(string name, Tensor tensor, bool withGrad)
-                : base(name, new parameter.Parameter(name, tensor, withGrad))
+            var module = new TestModule2("test", torch.randn(new long[] { 2, 2 }), true);
+
+            var ps = module.NamedParameters();
+            Assert.Equal(16, ps.Length);
+
+            Assert.True(module.HasParameter("submodule.test"));
+            Assert.True(module.HasParameter("submodule.list.0"));
+            Assert.True(module.HasParameter("submodule.dict.first"));
+            Assert.True(module.HasParameter("submodule.dict.second"));
+            Assert.True(module.HasParameter("list.0.test"));
+            Assert.True(module.HasParameter("list.0.list.0"));
+            Assert.True(module.HasParameter("list.0.dict.first"));
+            Assert.True(module.HasParameter("list.0.dict.second"));
+            Assert.True(module.HasParameter("dict.first.test"));
+            Assert.True(module.HasParameter("dict.first.list.0"));
+            Assert.True(module.HasParameter("dict.first.dict.first"));
+            Assert.True(module.HasParameter("dict.first.dict.second"));
+            Assert.True(module.HasParameter("dict.second.test"));
+            Assert.True(module.HasParameter("dict.second.list.0"));
+            Assert.True(module.HasParameter("dict.second.dict.first"));
+            Assert.True(module.HasParameter("dict.second.dict.second"));
+        }
+
+        private class TestModule1 : Module
+        {
+            public TestModule1(string name, Tensor tensor, bool withGrad)
+                : base(name)
             {
+                test = Parameter(tensor.clone(), withGrad);
+                list.append(Parameter(tensor.clone(), withGrad));
+                dict.Add("first", Parameter(tensor.clone(), withGrad));
+                dict.Add("second", Parameter(tensor.clone(), withGrad));
+                RegisterComponents();
             }
 
             public override Tensor forward(Tensor input)
             {
                 throw new NotImplementedException();
             }
+
+            private parameter.Parameter test;
+            private ParameterList list = new ParameterList("list");
+            private ParameterDict dict = new ParameterDict("dict");
+        }
+
+        private class TestModule2 : Module
+        {
+            public TestModule2(string name, Tensor tensor, bool withGrad)
+                : base(name)
+            {
+                submodule = new TestModule1("sub", tensor.clone(), withGrad);
+
+                list.append(new TestModule1("sub", tensor.clone(), withGrad));
+                dict.Add("first", new TestModule1("sub", tensor.clone(), withGrad));
+                dict.Add("second", new TestModule1("sub", tensor.clone(), withGrad));
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                throw new NotImplementedException();
+            }
+
+            private Module submodule;
+            private ModuleList list = new ModuleList("list");
+            private ModuleDict dict = new ModuleDict("dict");
         }
         #endregion
 

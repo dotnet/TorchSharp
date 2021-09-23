@@ -423,6 +423,8 @@ namespace TorchSharp
 
                 public virtual void RegisterModule(string name, Module submodule)
                 {
+                    submodule.RegisterComponents();
+
                     THSNN_Module_register_module(handle, name, submodule.handle);
                     torch.CheckForErrors();
                 }
@@ -525,29 +527,15 @@ namespace TorchSharp
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSNN_custom_module([MarshalAs(UnmanagedType.LPStr)] string name,
-                    IntPtr names, IntPtr parameters, IntPtr require_grad,
-                    int length, ForwardFunctionC forward, out IntPtr pBoxedModule);
+                    ForwardFunctionC forward, out IntPtr pBoxedModule);
 
                 /// <summary>
                 /// Constructor for custom modules, i.e. those defined outside of TorchSharp.
                 /// </summary>
                 /// <param name="name">The name of the module. Useful for debugging purposes, mostly.</param>
-                /// <param name="parameters">The module parameters, i.e. its trainable weights and (non-trainable) "buffers."</param>
-                protected Module(string name, params parameter.Parameter[] parameters) : this(IntPtr.Zero, IntPtr.Zero)
+                protected Module(string name) : this(IntPtr.Zero, IntPtr.Zero)
                 {
                     this.name = name;
-
-                    var names = parameters.Select(p => Marshal.StringToHGlobalAnsi(p.Name)).ToArray();
-                    var @params = parameters.Select(p => p.Tensor.Handle).ToArray();
-                    var withGrads = parameters.Select(p => p.WithGrad).ToArray();
-
-                    var namesPinned = new PinnedArray<IntPtr>();
-                    var paramsPinned = new PinnedArray<IntPtr>();
-                    var wGradPinned = new PinnedArray<bool>();
-
-                    var nparray = namesPinned.CreateArray(names);
-                    var pparray = paramsPinned.CreateArray(@params);
-                    var gparray = wGradPinned.CreateArray(withGrads);
 
                     ForwardFunctionC forwardNative = t => {
                         var input = new Tensor(t);
@@ -566,28 +554,36 @@ namespace TorchSharp
                         return output.Handle;
                     };
 
-                    var res = THSNN_custom_module(name, nparray, pparray, gparray, names.Length, forwardNative, out var boxedHandle);
+                    var res = THSNN_custom_module(name, forwardNative, out var boxedHandle);
                     torch.CheckForErrors();
                     this.handle = new HType(res, true);
                     this.forwardNative = forwardNative;
                     this.boxedModule = new BoxedModule(boxedHandle);
                 }
 
-                protected void RegisterComponents()
+                protected virtual void RegisterComponents()
                 {
+                    if (_registered) return;
+
                     foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
                         var value = field.GetValue(this);
 
                         var module = field.GetValue(this) as Module;
                         Tensor tensor = value as Tensor;
+                        parameter.Parameter param = value as parameter.Parameter;
 
                         if (module != null) {
                             RegisterModule(field.Name, module);
-                        } else if (!(tensor is null)) {
+                        } else if (param is not null) {  // This test must come before the Tensor test
+                            RegisterParameter(field.Name, tensor);
+                        } else if (tensor is not null) {
                             RegisterBuffer(field.Name, tensor);
                         }
                     }
+                    _registered = true;
                 }
+
+                private bool _registered = false;
 
                 /// Keeps the callback delegate alive
                 private ForwardFunctionC forwardNative;

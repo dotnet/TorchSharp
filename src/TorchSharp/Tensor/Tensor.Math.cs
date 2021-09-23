@@ -21,7 +21,7 @@ namespace TorchSharp
 
         // This file contains the mathematical operators on Tensor
 
-        public sealed partial class Tensor
+        public partial class Tensor
         {
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_abs(IntPtr tensor);
