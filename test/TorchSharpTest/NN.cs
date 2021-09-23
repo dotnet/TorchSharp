@@ -1342,7 +1342,6 @@ namespace TorchSharp
             Assert.True(module.has_parameter("dict.second.dict.second"));
         }
 
-
         [Fact]
         public void TestCustomModule3()
         {

@@ -405,7 +405,7 @@ namespace TorchSharp
                     torch.CheckForErrors();
 
                     if (parameter == IntPtr.Zero) {
-                        throw new ArgumentNullException("Linear module without bias term.");
+                        return null;
                     }
 
                     return new Modules.Parameter(parameter);
@@ -416,6 +416,7 @@ namespace TorchSharp
 
                 public virtual void register_buffer(string name, Tensor tensor)
                 {
+                    if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a buffer.");
                     THSNN_Module_register_buffer(handle, name, tensor.handle);
                     torch.CheckForErrors();
                 }
@@ -425,6 +426,7 @@ namespace TorchSharp
 
                 public virtual void register_parameter(string name, Tensor tensor, bool requires_grad = true)
                 {
+                    if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a parameter.");
                     THSNN_Module_register_parameter(handle, name, tensor.handle, requires_grad);
                     torch.CheckForErrors();
                 }
@@ -434,6 +436,8 @@ namespace TorchSharp
 
                 public virtual void register_module(string name, Module submodule)
                 {
+                    if (submodule is null || submodule.handle.IsInvalid) throw new ArgumentNullException("A null module cannot be registered as a buffer.");
+
                     submodule.RegisterComponents();
 
                     THSNN_Module_register_module(handle, name, submodule.handle);

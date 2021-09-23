@@ -17,8 +17,6 @@ namespace TorchSharp
                 GELU = 1
             }
 
-            private Tensor NullTensor = new Tensor(IntPtr.Zero);
-
             internal TransformerEncoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
