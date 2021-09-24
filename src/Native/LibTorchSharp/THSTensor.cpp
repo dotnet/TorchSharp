@@ -24,9 +24,19 @@ Tensor THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length
     CATCH_TENSOR(tensor->amax(c10::IntArrayRef(dimensions, length), keepdim));
 }
 
+Tensor THSTensor_amax_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out)
+{
+    CATCH_TENSOR(torch::amax_out(*out, *tensor, c10::IntArrayRef(dimensions, length), keepdim));
+}
+
 Tensor THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim)
 {
     CATCH_TENSOR(tensor->amin(c10::IntArrayRef(dimensions, length), keepdim));
+}
+
+Tensor THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out)
+{
+    CATCH_TENSOR(torch::amin_out(*out, *tensor, c10::IntArrayRef(dimensions, length), keepdim));
 }
 
 Tensor THSTensor_angle(const Tensor tensor)

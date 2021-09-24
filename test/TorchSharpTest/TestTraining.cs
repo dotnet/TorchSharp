@@ -57,8 +57,10 @@ namespace TorchSharp
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
-                        var update = grad.mul(learning_rate);
-                        param.sub_(update);
+                        if (grad is not null) {
+                            var update = grad.mul(learning_rate);
+                            param.sub_(update);
+                        }
                     }
                 }
             }
@@ -99,8 +101,10 @@ namespace TorchSharp
                 using (torch.no_grad()) {
                     foreach (var param in seq.parameters()) {
                         var grad = param.grad();
-                        var update = grad.mul(learning_rate);
-                        param.sub_(update);
+                        if (grad is not null) {
+                            var update = grad.mul(learning_rate);
+                            param.sub_(update);
+                        }
                     }
                 }
             }
@@ -227,7 +231,6 @@ namespace TorchSharp
         }
 
 
-
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using Adagrad optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
@@ -244,6 +247,147 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using Adadelta optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdadelta()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 1.0f;
+            var optimizer = torch.optim.Adadelta(seq.named_parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using Adamax optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdamax()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adamax(seq.named_parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingASGD()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.ASGD(seq.named_parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRprop()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Rprop(seq.named_parameters());
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -532,7 +676,7 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter:15, max_eval: 15);
+            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();

@@ -21,6 +21,18 @@ namespace TorchSharp
 
     public class TestTorchTensorBugs
     {
+
+        [Fact]
+        public void ValidateAddInplace()
+        {
+            var x = torch.zeros(10,10);
+            var y = torch.ones(10).expand(10, 10);
+
+            x.add_(y, 1);
+
+            Assert.Equal(x, y);
+        }
+
         [Fact]
         public void ValidateIssue145()
         {

@@ -166,7 +166,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             use loss = criterion (output.view(-1L, ntokens)) targets
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
-            optimizer.step()
+            optimizer.step() |> ignore
 
             total_loss <- total_loss + loss.cpu().DataItem<float32>()
         end 

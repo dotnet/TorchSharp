@@ -47,7 +47,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor asin()
             {
-                return new Tensor(THSTensor_asin(handle));
+                var res = THSTensor_asin(handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             /// <summary>

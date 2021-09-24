@@ -104,7 +104,7 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
             use output = loss estimate labels
 
             output.backward()
-            optimizer.step()
+            optimizer.step() |> ignore
 
             if batchID % logInterval = 0 then
                 printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
