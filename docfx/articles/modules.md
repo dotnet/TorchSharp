@@ -4,18 +4,6 @@ Unfortunatly, the word 'Module' is one of the most overloaded terms in software.
 
 In the context of TorchSharp, it means the same as in PyTorch: the fundamental building block of all models is the 'Module' class. All neural network layers are derived from Module and the way to create a model for training and inference in your code is to create a new Module. Without it, back-propagation will not work.
 
-## Sequential
-
-For the simplest network architecture, which actually covers a surprising breadth, there is a simplified way to create modules -- the 'Sequential' class. This class is created from a list of Modules (i.e. model components). When data is passed to the model, the Sequential instance will invoke each submodule in the order they were passed when the Sequential instance was created, passing the output from each layer to the next. The output of the final submodule will be the output of the Sequential instance.
-
-```C#
-var seq = Sequential(("lin1", Linear(100, 10)), ("lin2", Linear(10, 5)));
-...
-seq.forward(some_data);
-```
-
-Sequential is marginally more efficient than doing this yourself, since all data is passed between layers in native code, avoiding the need to create .NET wrappers for temporaries. However, compared with the overall cost of computation within most layers, that cost is very small. If using a custom module (up next) is your preference, that's what you should do.
-
 ## Custom Modules
 
 A custom module is created by deriving a subclass from torch.nn.Module. One that is equivalent to the previous example looks like this:
@@ -46,9 +34,9 @@ Note that the field names in the module class correspond to the names that were 
 
 Custom modules should always call `RegisterComponents()` once all submodules and buffers (see discussion later in this document) have been created. This will register the modules and its parameters with the native runtime, which is essential for it to function correctly. For this to work properly, each submodule should have its own private field (**not** property) in the class. The only exception are submodules that do not have trainable weights, such as activation functions like ReLU or tanh.
 
-The `forward()` function contains the computation of the module. It can contain a mix of TorchSharp primitives, layers, as well as any .NET code. Note, however, that only TorchSharp APIs are capable of operating on data residing in CUDA memory. Therefore, if performance is of the essence, expressing all computation in terms of TorchSharp APIs is essential. Non-TorchSharp APIs should be limited to things that aren't related to the tensor data, things like logging, for example.
+The `forward()` method contains the computation of the module. It can contain a mix of TorchSharp primitives, layers, as well as any .NET code. Note, however, that only TorchSharp APIs are capable of operating on data residing in CUDA memory. Therefore, if performance is of the essence, expressing all computation in terms of TorchSharp APIs is essential. Non-TorchSharp APIs should be limited to things that aren't related to the tensor data, things like logging, for example.
 
-In PyTorch, the `forward()` function takes an arbitrary number of arguments, of any type, and supports using default arguments. Currently, TorchSharp only defines two versions of `forward()` -- taking one or two tensors, and returning a single tensor. The TorchSharp implementation of Sequential assumes that it is passing only a single tensor along between its layers. Therefore, any model that needs to pass multiple arguments between layers will have to be custom.
+In PyTorch, the `forward()` method takes an arbitrary number of arguments, of any type, and supports using default arguments. Currently, TorchSharp only defines two versions of `forward()` -- taking one or two tensors, and returning a single tensor. The TorchSharp implementation of Sequential assumes that it is passing only a single tensor along between its layers. Therefore, any model that needs to pass multiple arguments between layers will have to be custom.
 
 Note that the local variable 'x' was declared in a using statement. This is important in order to deallocate the native memory associated with it as soon as it is no longer needed. For that reason, it is important to pull out temporaries like this into local variables, especially when the code is running on a GPU. (More on this at: [Dispose vs. GC in TorchSharp](memory.md)) 
 
@@ -60,12 +48,92 @@ In other words, the following code is less memory efficient, because it delays r
             return lin2.forward(lin1.forward(input));
         }
 ```
+## Sequential
+
+For the simplest network architecture, which actually covers a surprising breadth, there is a simplified way to create modules -- the 'Sequential' class. This class is created from a list of Modules (i.e. model components). When data is passed to the model, the Sequential instance will invoke each submodule in the order they were passed when the Sequential instance was created, passing the output from each layer to the next. The output of the final submodule will be the output of the Sequential instance.
+
+```C#
+var seq = Sequential(("lin1", Linear(100, 10)), ("lin2", Linear(10, 5)));
+...
+seq.forward(some_data);
+```
+
+There is no real performance reason to use Sequential instead of rolling your own custom module, but there is much less code to write. That said, if using a custom module (up next) is your preference, for whatever reason, that's what you should do. It can be useful to create a custom module first, debug it, and then convert to using Sequential.
+
+
+## Using Sequential Inside A Custome Module
+
+Custom modules are often combined with Sequential, which is especially useful when building long chains of repetitive blocks inside a custom module. In the C# TorchSharp examples, VGG, MobileNet, and ResNet demonstrate this well. 
+
+To illustrate, this is the code for MobileNet from the TorchSharp examples:
+
+```C#
+    class MobileNet : Module
+    {
+        private readonly long[] planes = new long[] { 64, 128, 128, 256, 256, 512, 512, 512, 512, 512, 512, 1024, 1024 };
+        private readonly long[] strides = new long[] { 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1 };
+
+        private readonly Module layers;
+
+        public MobileNet(string name, int numClasses, Device device = null) : base(name)
+        {
+            var modules = new List<(string, Module)>();
+
+            modules.Add(("conv2d-first", 
+                Conv2d(3, 32, kernelSize: 3, stride: 1, padding: 1, bias: false)));
+            modules.Add(("bnrm2d-first", 
+                BatchNorm2d(32)));
+            modules.Add(("relu-first",   
+                ReLU()));
+            MakeLayers(modules, 32);
+            modules.Add(("avgpool",      
+                AvgPool2d(new long[] { 2, 2 })));
+            modules.Add(("flatten",      
+                Flatten()));
+            modules.Add(("linear",       
+                Linear(planes[^1], numClasses)));
+
+            layers = Sequential(modules);
+
+            RegisterComponents();
+        }
+
+        private void MakeLayers(List<(string, Module)> modules, long in_planes)
+        {
+
+            for (var i = 0; i < strides.Length; i++) {
+                var out_planes = planes[i];
+                var stride = strides[i];
+
+                modules.Add(($"conv2d-{i}a", 
+                    Conv2d(in_planes, in_planes, kernelSize: 3, stride: stride, padding: 1, groups: in_planes, bias: false)));
+                modules.Add(($"bnrm2d-{i}a", 
+                    BatchNorm2d(in_planes)));
+                modules.Add(($"relu-{i}a",   
+                    ReLU()));
+                modules.Add(($"conv2d-{i}b", 
+                    Conv2d(in_planes, out_planes, kernelSize: 1L, stride: 1L, padding: 0L, bias: false)));
+                modules.Add(($"bnrm2d-{i}b", 
+                    BatchNorm2d(out_planes)));
+                modules.Add(($"relu-{i}b",   
+                    ReLU()));
+
+                in_planes = out_planes;
+            }
+        }
+
+        public override Tensor forward(Tensor input)
+        {
+            return layers.forward(input);
+        }
+    }
+```
 
 ## ModuleList
 
-In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` function will throw an exception if invoked.
+In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` method will throw an exception if invoked.
 
-The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` function:
+The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` method:
 
 ```C#
         private class TestModule1 : Module
@@ -89,9 +157,9 @@ The purpose is simply to provide a list implementation that automatically regist
 
 ## ModuleDict
 
-In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` function will throw an exception if invoked.
+In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` method will throw an exception if invoked.
 
-The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` function:
+The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` method:
 
 ```C#
         private class TestModule1 : Module
@@ -118,7 +186,7 @@ ModuleDict is an ordered dictionary, so you can also iterate through the diction
 
 ## Parameter
 
-Many modules are just compositions of existing modules, but sometimes it will implement a novel algorithm. In this case, the `forward()` function will not just pass tensors from one module to another, but actually use TorchSharp operators and functions to perform arithmetic directly. If this requires training of parameters, those parameters should be declared directly in the module. The Parameter class is a wrapper around tensor; its only purpose is to make sure that it is registered with the native runtime.
+Many modules are just compositions of existing modules, but sometimes it will implement a novel algorithm. In this case, the `forward()` method will not just pass tensors from one module to another, but actually use TorchSharp operators and functions to perform arithmetic directly. If this requires training of parameters, those parameters should be declared directly in the module. The Parameter class is a wrapper around tensor; its only purpose is to make sure that it is registered with the native runtime.
 
 For example, a re-implementation of 'Linear' would look something like:
 
@@ -144,7 +212,7 @@ For example, a re-implementation of 'Linear' would look something like:
         }
 ```
 
-In this case, we're not relying on 'using' in the `forward()` function, because the temporary is reused as the target by the `add_()` function.
+In this case, we're not relying on 'using' in the `forward()` method, because the temporary is reused as the target by the `add_()` function.
 
 Parameter's dirty little secret is that it will clean out the tensor that is given to its constructor. So, `Parameter()` is preferrably used with another tensor factory (such as in the example above), or a cloned tensor.
 
