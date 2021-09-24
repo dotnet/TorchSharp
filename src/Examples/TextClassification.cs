@@ -110,15 +110,17 @@ namespace TorchSharp.Examples
             foreach (var (labels, texts, offsets) in train_data) {
 
                 optimizer.zero_grad();
-                var predicted_labels = model.forward(texts, offsets);
 
-                var loss = criterion(predicted_labels, labels);
-                loss.backward();
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
-                optimizer.step();
+                using (var predicted_labels = model.forward(texts, offsets)) {
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
-                total_count += labels.size(0);
+                    var loss = criterion(predicted_labels, labels);
+                    loss.backward();
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
+                    optimizer.step();
+
+                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
+                    total_count += labels.size(0);
+                }
 
                 if (batch % log_interval == 0 && batch > 0) {
                     var accuracy = total_acc / total_count;
@@ -142,11 +144,12 @@ namespace TorchSharp.Examples
 
             foreach (var (labels, texts, offsets) in test_data) {
 
-                var predicted_labels = model.forward(texts, offsets);
-                var loss = criterion(predicted_labels, labels);
+                using (var predicted_labels = model.forward(texts, offsets)) {
+                    var loss = criterion(predicted_labels, labels);
 
-                total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
-                total_count += labels.size(0);
+                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
+                    total_count += labels.size(0);
+                }
             }
 
             return total_acc / total_count;
@@ -183,7 +186,8 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input, Tensor offsets)
         {
-            return fc.forward(embedding.forward(input, offsets));
+            using var t = embedding.forward(input, offsets);
+            return fc.forward(t);
         }
 
         public new TextClassificationModel to(Device device)

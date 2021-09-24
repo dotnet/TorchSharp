@@ -121,9 +121,8 @@ namespace TorchSharp.Examples
                     src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                 }
 
-                var output = model.forward(data, src_mask);
-                var loss = criterion(output.view(-1, ntokens), targets);
-                {
+                using (var output = model.forward(data, src_mask)) {
+                    var loss = criterion(output.view(-1, ntokens), targets);
                     loss.backward();
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
@@ -135,10 +134,12 @@ namespace TorchSharp.Examples
 
                 if (batch % log_interval == 0 && batch > 0) {
                     var cur_loss = total_loss / log_interval;
-                    Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen/bptt} | loss: {cur_loss:0.00}");
+                    Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen / bptt} | loss: {cur_loss:0.00}");
                     total_loss = 0;
                 }
             }
+
+            src_mask.Dispose();
         }
 
         private static double evaluate(Tensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
@@ -148,7 +149,7 @@ namespace TorchSharp.Examples
             var total_loss = 0.0f;
             var src_mask = model.GenerateSquareSubsequentMask(bptt);
             var batch = 0;
-            
+
             for (int i = 0; i < eval_data.shape[0] - 1; batch++, i += bptt) {
 
                 var (data, targets) = GetBatch(eval_data, i, bptt);
@@ -156,15 +157,18 @@ namespace TorchSharp.Examples
                     src_mask.Dispose();
                     src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                 }
-                var output = model.forward(data, src_mask);
-                var loss = criterion(output.view(-1, ntokens), targets); 
-                total_loss += data.shape[0] * loss.to(torch.CPU).DataItem<float>();
+                using (var output = model.forward(data, src_mask)) {
+                    var loss = criterion(output.view(-1, ntokens), targets);
+                    total_loss += data.shape[0] * loss.to(torch.CPU).DataItem<float>();
+                }
 
                 data.Dispose();
                 targets.Dispose();
 
                 GC.Collect();
             }
+
+            src_mask.Dispose();
 
             return total_loss / eval_data.shape[0];
         }
@@ -179,13 +183,15 @@ namespace TorchSharp.Examples
                 }
                 data.Add(torch.tensor(itemData.ToArray(), torch.int64));
             }
-            return torch.cat(data.Where(t => t.NumberOfElements > 0).ToArray(), 0);
+
+            var result = torch.cat(data.Where(t => t.NumberOfElements > 0).ToList(), 0);
+            return result;
         }
 
         static Tensor Batchify(Tensor data, int batch_size)
         {
             var nbatch = data.shape[0] / batch_size;
-            var d2 = data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t();
+            using var d2 = data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t();
             return d2.contiguous();
         }
 
@@ -223,7 +229,7 @@ namespace TorchSharp.Examples
 
             public Tensor GenerateSquareSubsequentMask(long size)
             {
-                var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
+                using var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
                 return mask.to_type(ScalarType.Float32)
                     .masked_fill(mask == 0, float.NegativeInfinity)
                     .masked_fill(mask == 1, 0.0f).to(device);
@@ -245,8 +251,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t, Tensor mask)
             {
-                var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
-                var enc = transformer_encoder.forward(src, mask);
+                using var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
+                using var enc = transformer_encoder.forward(src, mask);
                 return decoder.forward(enc);
             }
 
@@ -278,7 +284,7 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t)
             {
-                var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
+                using var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
                 return dropout.forward(x);
             }
         }
