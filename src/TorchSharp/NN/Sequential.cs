@@ -46,11 +46,19 @@ namespace TorchSharp
             public override Tensor forward(Tensor tensor)
             {
                 if (_modules.Count == 0) return tensor.clone();
-
+#if false
                 // Using an index helps debugging, because we know the ordinal of the submodule.
                 for (var idx = 0; idx < _modules.Count; idx++) {
-                    tensor = _modules[idx].forward(tensor);
+                    var t = _modules[idx].forward(tensor);
+                    //tensor.Dispose();
+                    tensor = t;
                 }
+#else
+                var res = THSNN_Sequential_forward(handle, tensor.handle);
+                torch.CheckForErrors();
+
+                tensor = new Tensor(res);
+#endif
                 return tensor;
             }
 
