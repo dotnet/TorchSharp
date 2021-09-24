@@ -11,8 +11,6 @@ namespace TorchSharp
     {
         public class TransformerDecoderLayer : torch.nn.Module
         {
-            private Tensor NullTensor = new Tensor(IntPtr.Zero);
-
             internal TransformerDecoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
