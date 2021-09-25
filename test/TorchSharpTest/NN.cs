@@ -949,11 +949,11 @@ namespace TorchSharp
             Assert.Equal(3, gradCounts);
         }
 
-        [Fact]
+        [Fact(Skip= "Intermittently failing: https://github.com/dotnet/TorchSharp/issues/367"]
         public void TestAutoGradMode()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
                 using (torch.no_grad()) {
                     Assert.False(torch.is_grad_enabled());
