@@ -381,6 +381,9 @@ jobs:
   - download: current
     artifact: BuildPackages
 
+  - download: current
+    artifact: config
+
   - pwsh: |
       .\SignClient "Sign" `
       --baseDirectory "$(Pipeline.Workspace)\BuildPackages" `
@@ -424,9 +427,6 @@ jobs:
 
   - download: current
     artifact: SignedPackages
-
-  - download: current
-    artifact: config
 
   - task: NuGetCommand@2
     displayName: 'NuGet push (TorchSharp)'
