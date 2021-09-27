@@ -229,10 +229,18 @@ jobs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: packages
+  # - task: PublishBuildArtifacts@1
+  #   inputs:
+  #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
+  #     artifactName: packages      
+
+  - publish: '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
+    displayName: Publish build packages
+    artifact: packages
+
+  - publish: SignClient.json
+    displayName: Publish signing config
+    artifact: config
   
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
