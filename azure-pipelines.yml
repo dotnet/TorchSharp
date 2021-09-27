@@ -366,16 +366,11 @@ jobs:
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
-    BuildConfig: Release
-    OfficialBuildId: $(BUILD.BUILDNUMBER)
-    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    DOTNET_MULTILEVEL_LOOKUP: 0
   - group: SignClient Credentials
   pool:
     vmImage: 'windows-2019'
   steps:
-  
+
   - task: DotNetCoreCLI@2
     inputs:
       command: custom
