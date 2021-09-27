@@ -229,11 +229,11 @@ jobs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
-  - task: PublishBuildArtifacts@1
-    displayName: Publish build packages task 
-    inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: packages      
+  # - task: PublishBuildArtifacts@1
+  #   displayName: Publish build packages task 
+  #   inputs:
+  #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
+  #     artifactName: packages      
 
   - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish build packages
@@ -266,6 +266,12 @@ jobs:
   #
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
+
+  - download: current
+    artifact: packages
+
+  - download: current
+    artifact: config
 
   - task: NuGetCommand@2
     displayName: 'NuGet push (TorchSharp)'
