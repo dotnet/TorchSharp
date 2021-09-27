@@ -136,7 +136,7 @@ jobs:
 
 
 ################################################################################
-- job: Build_And_Push_TorchSharp_And_libtorch_cpu_Packages
+- job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
@@ -234,6 +234,22 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
+################################################################################
+- job: Push_TorchSharp_And_libtorch_cpu_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  dependsOn:
+  - Build_TorchSharp_And_libtorch_cpu_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+
   # Push packages to feed
   #
   # Doing these one by one as we're getting a lot of failures pushing them
@@ -287,7 +303,7 @@ jobs:
 
 ################################################################################
 # Only run if BuildLibTorchPackages is true
-- job: Build_And_Push_libtorch_cuda_win_Packages
+- job: Build_libtorch_cuda_win_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
@@ -339,6 +355,23 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
+
+################################################################################
+# Only run if BuildLibTorchPackages is true
+- job: Push_libtorch_cuda_win_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  dependsOn:
+  - Build_libtorch_cuda_win_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'windows-2019'
+  steps:
 
   # Push packages to feed
   #
@@ -404,7 +437,7 @@ jobs:
     continueOnError: true
 
 ################################################################################
-- job: Build_And_Push_libtorch_cuda_linux_Packages
+- job: Build_libtorch_cuda_linux_Packages
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
@@ -473,6 +506,23 @@ jobs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)'
       artifactName: packages
   
+################################################################################
+- job: Push_libtorch_cuda_linux_Packages
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  dependsOn:
+  - Build_libtorch_cuda_linux_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'ubuntu-latest'
+  container: UbuntuContainer
+  # Exact copy of the dependency install above - TODO share this somewhere
+  steps:
 
   # Push packages to feed
   #
