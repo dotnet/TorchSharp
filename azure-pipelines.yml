@@ -360,40 +360,47 @@ jobs:
     artifact: BuildPackages
   
 ################################################################################
-- deployment: CodeSign
+- job: CodeSign
 ################################################################################
-    displayName: Code Signing
-    pool:
-      vmImage: windows-2019    
-    # environment: Code Sign
-    variables:
-    - group: SignClient Credentials
-    strategy:
-      runOnce:
-        deploy:
-          steps: 
-          - task: DotNetCoreCLI@2
-            inputs:
-              command: custom
-              custom: tool
-              arguments: install --tool-path . SignClient
-            displayName: Install SignTool tool
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  dependsOn:
+  - Build_TorchSharp_And_libtorch_cpu_Packages
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  - group: SignClient Credentials
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+  
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: custom
+      custom: tool
+      arguments: install --tool-path . SignClient
+    displayName: Install SignTool tool
 
-          - pwsh: |
-              .\SignClient "Sign" `
-              --baseDirectory "$(Pipeline.Workspace)\BuildPackages" `
-              --input "**/*.nupkg" `
-              --config "$(Pipeline.Workspace)\config\SignClient.json" `
-              --user "$(SignClientUser)" `
-              --secret "$(SignClientSecret)" `
-              --name "TorchSharp" `
-              --description "TorchSharp" `
-              --descriptionUrl "https://github.com/dotnet/TorchSharp"
-            displayName: Sign packages
-              
-          - publish: $(Pipeline.Workspace)/BuildPackages
-            displayName: Publish Signed Packages
-            artifact: SignedPackages    
+  - download: current
+    artifact: BuildPackages
+
+  - pwsh: |
+      .\SignClient "Sign" `
+      --baseDirectory "$(Pipeline.Workspace)\BuildPackages" `
+      --input "**/*.nupkg" `
+      --config "$(Pipeline.Workspace)\config\SignClient.json" `
+      --user "$(SignClientUser)" `
+      --secret "$(SignClientSecret)" `
+      --name "TorchSharp" `
+      --description "TorchSharp" `
+      --descriptionUrl "https://github.com/dotnet/TorchSharp"
+    displayName: Sign packages
+      
+  - publish: $(Pipeline.Workspace)/BuildPackages
+    displayName: Publish Signed Packages
+    artifact: SignedPackages    
   
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
@@ -437,7 +444,7 @@ jobs:
     displayName: 'NuGet push (libtorch-cpu)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
     continueOnError: true
@@ -447,7 +454,7 @@ jobs:
     displayName: 'NuGet push (libtorch-cpu - retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
     continueOnError: true
@@ -457,7 +464,7 @@ jobs:
     displayName: 'NuGet push (libtorch-cpu - retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/libtorch-cpu*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
     continueOnError: true
