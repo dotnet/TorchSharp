@@ -425,6 +425,9 @@ jobs:
   - download: current
     artifact: SignedPackages
 
+  - download: current
+    artifact: config
+
   - task: NuGetCommand@2
     displayName: 'NuGet push (TorchSharp)'
     inputs:
