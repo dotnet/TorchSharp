@@ -43,7 +43,7 @@ namespace TorchSharp
 
             public override Tensor log_prob(Tensor value)
             {
-                return (value.log() * (concentration - 1)).sum(-1) + torch.lgamma(concentration.sum(-1)) - torch.lgamma(concentration).sum(-1);
+                return (concentration - 1).xlogy(value).sum(-1) + torch.lgamma(concentration.sum(-1)) - torch.lgamma(concentration).sum(-1);
             }
 
             public override Tensor entropy()
