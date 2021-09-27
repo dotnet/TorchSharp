@@ -229,12 +229,13 @@ jobs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
  
-  # - task: PublishBuildArtifacts@1
-  #   inputs:
-  #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
-  #     artifactName: packages      
+  - task: PublishBuildArtifacts@1
+    displayName: Publish build packages task 
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: packages      
 
-  - publish: '$(Build.ArtifactStagingDirectory)/TorchSharp*.nupkg'
+  - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish build packages
     artifact: packages
 
@@ -270,7 +271,7 @@ jobs:
     displayName: 'NuGet push (TorchSharp)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp*.nupkg'
       publishVstsFeed: 'TorchSharp/packages2'
       allowPackageConflicts: true
     continueOnError: true
