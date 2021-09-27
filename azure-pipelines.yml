@@ -234,7 +234,7 @@ jobs:
   #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
   #     artifactName: packages      
 
-  - publish: '$(Build.ArtifactStagingDirectory)/**/TorchSharp*.nupkg'
+  - publish: '$(Build.ArtifactStagingDirectory)/TorchSharp*.nupkg'
     displayName: Publish build packages
     artifact: packages
 
