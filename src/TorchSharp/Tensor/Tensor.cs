@@ -465,7 +465,7 @@ namespace TorchSharp
             /// <summary>
             /// Is the tensor a sparse tensor?
             /// </summary>
-            public bool IsSparse {
+            public bool is_sparse {
                 get {
                     var res = THSTensor_is_sparse(handle);
                     torch.CheckForErrors();
@@ -856,7 +856,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, bool non_blocking);
 
             /// <summary>
-            /// Copies the elements from src into self tensor and returns self.
+            /// Copies the elements from source into the tensor and returns it.
             /// </summary>
             /// <returns></returns>
             /// <remarks>The src tensor must be broadcastable with the target 'this' tensor. It may be of a different data type or reside on a different device.</remarks>
@@ -888,15 +888,18 @@ namespace TorchSharp
             static extern IntPtr THSTensor_grad(IntPtr handle);
 
             /// <summary>
-            /// This attribute is None by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
+            /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
             /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
             /// </summary>
             /// <returns></returns>
-            public Tensor grad()
+            public Tensor? grad()
             {
                 var res = THSTensor_grad(handle);
+                torch.CheckForErrors();
+
                 if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
+                    return null;
+
                 return new Tensor(res);
             }
 
@@ -1465,7 +1468,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor transpose_(long dim0, long dim1)
             {
-                return new Tensor(THSTensor_transpose_(handle, dim0, dim1));
+                var res = THSTensor_transpose_(handle, dim0, dim1);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -1550,18 +1556,23 @@ namespace TorchSharp
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_amax(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_amax_out(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim, IntPtr _out);
 
             /// <summary>
             /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
             /// </summary>
             /// <param name="dims">The dimension or dimensions to reduce.</param>
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
             /// <returns></returns>
-            public Tensor amax(long[] dims, bool keepDim = false)
+            public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSTensor_amax(handle, (IntPtr)pdims, dims.Length, keepDim);
+                        var res = @out is null ?
+                            THSTensor_amax(handle, (IntPtr)pdims, dims.Length, keepDim) :
+                            THSTensor_amax_out(handle, (IntPtr)pdims, dims.Length, keepDim, @out.handle);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }
@@ -1570,18 +1581,23 @@ namespace TorchSharp
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_amin(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_amin_out(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim, IntPtr _out);
 
             /// <summary>
             /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
             /// </summary>
             /// <param name="dims">The dimension or dimensions to reduce.</param>
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
             /// <returns></returns>
-            public Tensor amin(long[] dims, bool keepDim = false)
+            public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
-                        var res = THSTensor_amin(handle, (IntPtr)pdims, dims.Length, keepDim);
+                        var res = @out is null ?
+                            THSTensor_amin(handle, (IntPtr)pdims, dims.Length, keepDim) :
+                            THSTensor_amin_out(handle, (IntPtr)pdims, dims.Length, keepDim, @out.handle);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new Tensor(res);
                     }

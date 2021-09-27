@@ -63,8 +63,10 @@ EXPORT_API(Tensor) THSTensor_all(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
 
 EXPORT_API(Tensor) THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+EXPORT_API(Tensor) THSTensor_amax_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+EXPORT_API(Tensor) THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_any(const Tensor tensor);
 

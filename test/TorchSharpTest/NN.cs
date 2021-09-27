@@ -852,9 +852,9 @@ namespace TorchSharp
             var scalerGrad = scaler.grad();
             var weightGrad = linear.Weight.grad();
             var biasGrad = linear.Bias.grad();
-            Assert.True(scalerGrad.shape.Length == 2);
-            Assert.True(weightGrad.shape.Length == 2);
-            Assert.True(biasGrad.shape.Length == 2);
+            Assert.True(scalerGrad is not null && scalerGrad.shape.Length == 2);
+            Assert.True(weightGrad is not null && weightGrad.shape.Length == 2);
+            Assert.True(biasGrad is not null && biasGrad.shape.Length == 2);
         }
 
         [Fact]
@@ -923,9 +923,9 @@ namespace TorchSharp
             output.backward();
             var gradCounts = 0;
 
-            foreach (var parm in modT.parameters()) {
+            foreach (var (name, parm) in modT.named_parameters()) {
                 var grad = parm.grad();
-                gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
+                gradCounts += grad is not null ? (grad.Handle == IntPtr.Zero ? 0 : 1) : 0;
             }
 
             Assert.Equal(2, gradCounts);
@@ -943,13 +943,13 @@ namespace TorchSharp
 
             foreach (var parm in modF.parameters()) {
                 var grad = parm.grad();
-                gradCounts += grad.Handle == IntPtr.Zero ? 0 : 1;
+                gradCounts += grad is not null ? (grad.Handle == IntPtr.Zero ? 0 : 1) : 0;
             }
 
             Assert.Equal(3, gradCounts);
         }
 
-        [Fact]
+        [Fact(Skip= "Intermittently failing: https://github.com/dotnet/TorchSharp/issues/367")]
         public void TestAutoGradMode()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
@@ -967,8 +967,8 @@ namespace TorchSharp
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();
-                    Assert.False(grad.Handle == IntPtr.Zero);
-                    var data = grad.Data<float>();
+                    Assert.False(grad is null || grad.Handle == IntPtr.Zero);
+                    var data = grad is not null ?  grad.Data<float>() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }

@@ -62,7 +62,10 @@ namespace TorchSharp
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                return new Tensor(THSTensor_cat(tensorsRef, parray.Array.Length, dimension));
+                var res = THSTensor_cat(tensorsRef, parray.Array.Length, dimension);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
         }
 
@@ -266,9 +269,9 @@ namespace TorchSharp
 
         static public Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min(min);
 
-        static public Tensor amax(Tensor input, long[] dims, bool keepDim = false) => input.amax(dims, keepDim);
+        static public Tensor amax(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amax(dims, keepDim, @out);
 
-        static public Tensor amin(Tensor input, long[] dims, bool keepDim = false) => input.amin(dims, keepDim);
+        static public Tensor amin(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amin(dims, keepDim, @out);
 
         /// <summary>
         /// Return a tensor of elements selected from either x or y, depending on condition.

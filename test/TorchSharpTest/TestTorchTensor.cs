@@ -1984,9 +1984,9 @@ namespace TorchSharp
             using (var v = torch.tensor(new float[] { 3, 4, 5 }, new long[] { 3 })) {
                 var sparse = torch.sparse(i, v, new long[] { 2, 3 });
 
-                Assert.True(sparse.IsSparse);
-                Assert.False(i.IsSparse);
-                Assert.False(v.IsSparse);
+                Assert.True(sparse.is_sparse);
+                Assert.False(i.is_sparse);
+                Assert.False(v.is_sparse);
                 Assert.Equal(sparse.SparseIndices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
                 Assert.Equal(sparse.SparseValues.Data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
@@ -2630,8 +2630,8 @@ namespace TorchSharp
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();
-                    Assert.False(grad.Handle == IntPtr.Zero);
-                    var data = grad.Data<float>();
+                    Assert.False(grad is null || grad.Handle == IntPtr.Zero);
+                    var data = grad is not null ? grad.Data<float>() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }
@@ -2649,8 +2649,8 @@ namespace TorchSharp
                     var sum = x.sum();
                     sum.backward();
                     var grad = x.grad();
-                    Assert.False(grad.Handle == IntPtr.Zero);
-                    var data = grad.Data<float>();
+                    Assert.False(grad is not null && grad.Handle == IntPtr.Zero);
+                    var data = grad is not null ? grad.Data<float>() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }

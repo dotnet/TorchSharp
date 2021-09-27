@@ -14,16 +14,9 @@ void THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocato
     }
 }
 
-void THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)())
+Tensor THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)())
 {
-    if (loss_closure == nullptr)
-    {
-        (*optimizer)->step();
-    }
-    else
-    {
-        (*optimizer)->step([loss_closure]() -> at::Tensor { return *(loss_closure()); });
-    }    
+    CATCH_TENSOR((loss_closure == nullptr) ? (*optimizer)->step() : (*optimizer)->step([loss_closure]() -> at::Tensor { return *(loss_closure()); }));
 }
 
 void THSNN_Optimizer_zero_grad(const Optimizer optimizer)

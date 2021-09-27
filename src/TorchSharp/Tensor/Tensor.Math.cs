@@ -109,7 +109,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add(Scalar scalar, Scalar alpha)
             {
-                return new Tensor(THSTensor_add_scalar(handle, scalar.Handle, alpha.Handle));
+                var res = THSTensor_add_scalar(handle, scalar.Handle, alpha.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -128,12 +131,15 @@ namespace TorchSharp
             /// <summary>
             /// In-place element-wise addition, with scaling
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="alpha"></param>
+            /// <param name="target">The right-hand operand.</param>
+            /// <param name="alpha">Scale factor for the right-hand operand.</param>
             /// <returns></returns>
             public Tensor add_(Tensor target, Scalar alpha)
             {
-                return new Tensor(THSTensor_add_(handle, target.Handle, alpha.Handle));
+                var res = THSTensor_add_(handle, target.Handle, alpha.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]

@@ -267,8 +267,10 @@ namespace TorchSharp
 
                 using (var parray = new PinnedArray<IntPtr>()) {
                     IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                    return new Tensor(THSLinalg_multi_dot(tensorsRef, parray.Array.Length));
+                    var res = THSLinalg_multi_dot(tensorsRef, parray.Array.Length);
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+                    return new Tensor(res);
                 }
             }
 
