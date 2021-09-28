@@ -385,15 +385,15 @@ jobs:
     artifact: config
 
   - pwsh: |
-      .\SignClient "Sign" `
-      --baseDirectory "$(Pipeline.Workspace)\BuildPackages" `
-      --input "**/*.nupkg" `
-      --config "$(Pipeline.Workspace)\config\SignClient.json" `
-      --user "$(SignClientUser)" `
-      --secret "$(SignClientSecret)" `
-      --name "TorchSharp" `
-      --description "TorchSharp" `
-      --descriptionUrl "https://github.com/dotnet/TorchSharp"
+      .\SignClient 'Sign' `
+      --baseDirectory '$(Pipeline.Workspace)\BuildPackages' `
+      --input '**/*.nupkg' `
+      --config '$(Pipeline.Workspace)\config\SignClient.json' `
+      --user '$(SignClientUser)' `
+      --secret '$(SignClientSecret)' `
+      --name 'TorchSharp' `
+      --description 'TorchSharp' `
+      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
     displayName: Sign packages
       
   - publish: $(Pipeline.Workspace)/BuildPackages
