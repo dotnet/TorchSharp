@@ -365,6 +365,8 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
+  - Build_libtorch_cuda_win_Packages
+  - Build_libtorch_cuda_linux_Packages
   variables:
   - group: SignClient Credentials
   pool:
@@ -433,7 +435,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -443,7 +445,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -453,7 +455,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -463,7 +465,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -507,7 +509,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -518,7 +520,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -529,7 +531,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -540,7 +542,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -551,7 +553,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -593,7 +595,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -604,7 +606,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -615,7 +617,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -626,7 +628,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
-      publishVstsFeed: 'TorchSharp/packages2'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
