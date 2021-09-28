@@ -365,8 +365,6 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
-  - Build_libtorch_cuda_win_Packages
-  - Build_libtorch_cuda_linux_Packages
   variables:
   - group: SignClient Credentials
   pool:
@@ -414,7 +412,6 @@ jobs:
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
-  - Build_TorchSharp_And_libtorch_cpu_Packages
   - Build_libtorch_cuda_win_Packages
   - Build_libtorch_cuda_linux_Packages
   variables:
@@ -490,7 +487,7 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
-  - CodeSign
+  - CodeSign_Core
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -564,7 +561,7 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
-  - CodeSign
+  - CodeSign_Extras
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -649,7 +646,7 @@ jobs:
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
   dependsOn:
   - Build_libtorch_cuda_linux_Packages
-  - CodeSign
+  - CodeSign_Extras
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
