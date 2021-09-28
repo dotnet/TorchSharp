@@ -360,7 +360,7 @@ jobs:
     artifact: BuildLinuxCUDAPackages
   
 ################################################################################
-- job: CodeSign
+- job: CodeSign_Core
 ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
@@ -408,7 +408,32 @@ jobs:
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
     displayName: Free up space (TorchSharp packages in workspace)
-  
+
+################################################################################
+- job: CodeSign_Extras
+################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  dependsOn:
+  - Build_TorchSharp_And_libtorch_cpu_Packages
+  - Build_libtorch_cuda_win_Packages
+  - Build_libtorch_cuda_linux_Packages
+  variables:
+  - group: SignClient Credentials
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: custom
+      custom: tool
+      arguments: install --tool-path . SignClient
+    displayName: Install SignTool tool
+
+  - download: current
+    displayName: Download configuration
+    artifact: config
+
   - download: current
     displayName: Download Windows CUDA Packages
     artifact: BuildWinCUDAPackages
@@ -458,7 +483,6 @@ jobs:
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
     displayName: Free up space (TorchSharp packages in workspace)
-
 
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
