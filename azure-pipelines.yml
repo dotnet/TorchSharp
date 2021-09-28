@@ -406,55 +406,55 @@ jobs:
     continueOnError: true
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+  #   displayName: Free up space (TorchSharp packages in workspace)
   
-  - download: current
-    displayName: Download Windows CUDA Packages
-    artifact: BuildWinCUDAPackages
+  # - download: current
+  #   displayName: Download Windows CUDA Packages
+  #   artifact: BuildWinCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+  # - pwsh: |
+  #     .\SignClient 'Sign' `
+  #     --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
+  #     --input '**/*.nupkg' `
+  #     --config '$(Pipeline.Workspace)\config\SignClient.json' `
+  #     --user '$(SignClientUser)' `
+  #     --secret '$(SignClientSecret)' `
+  #     --name 'TorchSharp' `
+  #     --description 'TorchSharp' `
+  #     --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+  #   displayName: Sign packages
       
-  - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
-    displayName: Publish Signed Windows CUDA Packages
-    artifact: SignedWinCUDAPackages    
-    continueOnError: true
+  # - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
+  #   displayName: Publish Signed Windows CUDA Packages
+  #   artifact: SignedWinCUDAPackages    
+  #   continueOnError: true
   
-  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+  # - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
+  #   displayName: Free up space (TorchSharp packages in workspace)
 
-  - download: current
-    displayName: Download Linux CUDA Packages
-    artifact: BuildLinuxCUDAPackages
+  # - download: current
+  #   displayName: Download Linux CUDA Packages
+  #   artifact: BuildLinuxCUDAPackages
 
-  - pwsh: |
-      .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
-      --input '**/*.nupkg' `
-      --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --user '$(SignClientUser)' `
-      --secret '$(SignClientSecret)' `
-      --name 'TorchSharp' `
-      --description 'TorchSharp' `
-      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
-    displayName: Sign packages
+  # - pwsh: |
+  #     .\SignClient 'Sign' `
+  #     --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
+  #     --input '**/*.nupkg' `
+  #     --config '$(Pipeline.Workspace)\config\SignClient.json' `
+  #     --user '$(SignClientUser)' `
+  #     --secret '$(SignClientSecret)' `
+  #     --name 'TorchSharp' `
+  #     --description 'TorchSharp' `
+  #     --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+  #   displayName: Sign packages
       
-  - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
-    displayName: Publish Signed Linux CUDA Packages
-    artifact: SignedLinuxCUDAPackages
-    continueOnError: true
+  # - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
+  #   displayName: Publish Signed Linux CUDA Packages
+  #   artifact: SignedLinuxCUDAPackages
+  #   continueOnError: true
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
-    displayName: Free up space (TorchSharp packages in workspace)
+  # - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
+  #   displayName: Free up space (TorchSharp packages in workspace)
 
 
 ################################################################################
@@ -557,8 +557,12 @@ jobs:
     displayName: 'NuGet Authenticate'
 
   - download: current
-    displayName: Download Signed Windows CUDA Packages
-    artifact: SignedWinCUDAPackages
+    displayName: Download Windows CUDA Packages
+    artifact: BuildWinCUDAPackages
+
+  # - download: current
+  #   displayName: Download Signed Windows CUDA Packages
+  #   artifact: SignedWinCUDAPackages
 
   # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
   - task: NuGetCommand@2
@@ -644,8 +648,12 @@ jobs:
     displayName: 'NuGet Authenticate'
 
   - download: current
-    displayName: Download Signed Linux CUDA Packages
-    artifact: SignedLinuxCUDAPackages
+    displayName: Download Linux CUDA Packages
+    artifact: BuildLinuxCUDAPackages
+
+  # - download: current
+  #   displayName: Download Signed Linux CUDA Packages
+  #   artifact: SignedLinuxCUDAPackages
 
   # push the Linux Cuda packages 
   - task: NuGetCommand@2
