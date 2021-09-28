@@ -393,7 +393,7 @@ jobs:
       --baseDirectory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
       --input '**/*.nupkg' `
       --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist "$(Pipeline.Workspace)\config\signedfiles.txt" `      
+      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `
       --user '$(SignClientUser)' `
       --secret '$(SignClientSecret)' `
       --name 'TorchSharp' `
@@ -418,7 +418,7 @@ jobs:
       --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
       --input '**/*.nupkg' `
       --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist "$(Pipeline.Workspace)\config\signedfiles.txt" `      
+      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' ` 
       --user '$(SignClientUser)' `
       --secret '$(SignClientSecret)' `
       --name 'TorchSharp' `
@@ -443,7 +443,7 @@ jobs:
       --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
       --input '**/*.nupkg' `
       --config '$(Pipeline.Workspace)\config\SignClient.json' `
-      --filelist "$(Pipeline.Workspace)\config\signedfiles.txt" `      
+      --filelist '$(Pipeline.Workspace)\config\signedfiles.txt' `  
       --user '$(SignClientUser)' `
       --secret '$(SignClientSecret)' `
       --name 'TorchSharp' `
