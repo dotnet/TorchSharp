@@ -57,7 +57,7 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue315_1()
         {
-            // https://github.com/xamarin/TorchSharp/issues/315
+            // https://github.com/dotnet/TorchSharp/issues/315
             // custom module crash in GC thread
 
             // make Torch call our custom module by adding a ReLU in front of it

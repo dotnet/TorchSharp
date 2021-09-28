@@ -8,7 +8,7 @@ This surfaces the C API as a strongly-typed C# API.
 
 ## Getting Started
 
-Check the [GitHub project page](https://github.com/xamarin/TorchSharp) for TorchSharp.
+Check the [GitHub project page](https://github.com/dotnet/TorchSharp) for TorchSharp.
 
 Then, start by reading up on [creating your own modules](articles/modules.md).
 
