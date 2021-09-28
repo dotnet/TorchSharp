@@ -10,7 +10,7 @@
   <PropertyGroup Condition="'$(_IsAuxPackage)' != 'true' AND '$(_IsLibTorchPackage)' == 'true'">
     <Authors>PyTorch contributors;TorchSharp contributors</Authors>
     <PackageLicenseFile>LICENSE-LIBTORCH.txt</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <Copyright>Copyright PyTorch contributors</Copyright>
     <Owners>TorchSharp maintainers</Owners>
@@ -33,7 +33,7 @@
   <PropertyGroup Condition="'$(_IsLibTorchPackage)' != 'true'">
     <Authors>TorchSharp contributors</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/xamarin/TorchSharp</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <Copyright>Copyright Microsoft, TorchSharp contributors</Copyright>
     <Owners>TorchSharp maintainers</Owners>

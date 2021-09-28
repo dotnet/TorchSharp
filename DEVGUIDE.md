@@ -129,7 +129,7 @@ For this reason, we do the following
    b. Press 'New Release'
 
    c. Select the successful main CI build that includes the `libtorch` packages, create the release and wait for it to finish. You should
-      see `Initialize job`, `Download artifact - _xamarin.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
+      see `Initialize job`, `Download artifact - dotnet.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
 
    d. All packages should now be pushed to `nuget.org` and will appear after indexing.
 
