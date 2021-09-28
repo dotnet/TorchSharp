@@ -634,8 +634,8 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'ubuntu-latest'
-  container: UbuntuContainer
+    vmImage: 'windows-2019'
+  # container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
 
