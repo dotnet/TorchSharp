@@ -9,7 +9,7 @@ variables:
   
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
+  BuildLibTorchPackages: true
 
 resources:
   containers:
@@ -508,7 +508,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -519,7 +519,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -530,7 +530,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -541,7 +541,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -552,7 +552,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -594,7 +594,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -605,7 +605,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -616,7 +616,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -627,7 +627,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Build.ArtifactStagingDirectory)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
