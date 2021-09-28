@@ -13,7 +13,7 @@
     <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <Copyright>Copyright PyTorch contributors</Copyright>
-    <Owners>TorchSharp maintainers</Owners>
+    <Owners>.NET Foundation and Contributors</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -24,7 +24,7 @@
     <Authors>(see main package)</Authors>
     <PackageTags></PackageTags>
     <Copyright>(see main package)</Copyright>
-    <Owners>TorchSharp maintainers</Owners>
+    <Owners>T.NET Foundation and Contributors</Owners>
     <PackageDescription>(see main package)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -32,11 +32,11 @@
   <!-- TorchSharp -->
   <PropertyGroup Condition="'$(_IsLibTorchPackage)' != 'true'">
     <Authors>TorchSharp contributors</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/dotnet/TorchSharp</PackageProjectUrl>
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
-    <Copyright>Copyright Microsoft, TorchSharp contributors</Copyright>
-    <Owners>TorchSharp maintainers</Owners>
+    <Copyright>Copyright .NET Foundation and Contributors</Copyright>
+    <Owners>.NET Foundation and Contributors</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
