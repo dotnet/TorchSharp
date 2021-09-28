@@ -233,7 +233,7 @@ jobs:
     displayName: Publish build packages
     artifact: BuildTorchSharpPackages
 
-  - publish: config
+  - publish: $(Build.SourcesDirectory)/config
     displayName: Publish signing config
     artifact: config
 
