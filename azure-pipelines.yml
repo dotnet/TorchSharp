@@ -231,7 +231,7 @@ jobs:
  
   - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish build packages
-    artifact: BuildPackages
+    artifact: BuildTorchSharpPackages
 
   - publish: SignClient.json
     displayName: Publish signing config
@@ -287,8 +287,8 @@ jobs:
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   - publish: $(Build.ArtifactStagingDirectory)
-    displayName: Publish build packages
-    artifact: BuildPackages
+    displayName: Publish Windows CUDA build packages
+    artifact: BuildWinCUDAPackages
   
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
@@ -356,8 +356,8 @@ jobs:
       targetFolder: $(Build.ArtifactStagingDirectory)
  
   - publish: $(Build.ArtifactStagingDirectory)
-    displayName: Publish build packages
-    artifact: BuildPackages
+    displayName: Publish Linux CUDA build packages
+    artifact: BuildLinuxCUDAPackages
   
 ################################################################################
 - job: CodeSign
@@ -381,14 +381,16 @@ jobs:
     displayName: Install SignTool tool
 
   - download: current
-    artifact: BuildPackages
+    displayName: Download configuration
+    artifact: config
 
   - download: current
-    artifact: config
+    displayName: Download TorchSharp Packages
+    artifact: BuildTorchSharpPackages
 
   - pwsh: |
       .\SignClient 'Sign' `
-      --baseDirectory '$(Pipeline.Workspace)\BuildPackages' `
+      --baseDirectory '$(Pipeline.Workspace)\BuildTorchSharpPackages' `
       --input '**/*.nupkg' `
       --config '$(Pipeline.Workspace)\config\SignClient.json' `
       --user '$(SignClientUser)' `
@@ -398,10 +400,60 @@ jobs:
       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
     displayName: Sign packages
       
-  - publish: $(Pipeline.Workspace)/BuildPackages
-    displayName: Publish Signed Packages
-    artifact: SignedPackages    
+  - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
+    displayName: Publish Signed TorchSharp Packages
+    artifact: SignedTorchSharpPackages    
+
+  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
+    displayName: Free up space (TorchSharp packages in workspace)
   
+  - download: current
+    displayName: Download Windows CUDA Packages
+    artifact: BuildWinCUDAPackages
+
+  - pwsh: |
+      .\SignClient 'Sign' `
+      --baseDirectory '$(Pipeline.Workspace)\BuildWinCUDAPackages' `
+      --input '**/*.nupkg' `
+      --config '$(Pipeline.Workspace)\config\SignClient.json' `
+      --user '$(SignClientUser)' `
+      --secret '$(SignClientSecret)' `
+      --name 'TorchSharp' `
+      --description 'TorchSharp' `
+      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+    displayName: Sign packages
+      
+  - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
+    displayName: Publish Signed Windows CUDA Packages
+    artifact: SignedWinCUDAPackages    
+  
+  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
+    displayName: Free up space (TorchSharp packages in workspace)
+
+  - download: current
+    displayName: Download Linux CUDA Packages
+    artifact: BuildLinuxCUDAPackages
+
+  - pwsh: |
+      .\SignClient 'Sign' `
+      --baseDirectory '$(Pipeline.Workspace)\BuildLinuxCUDAPackages' `
+      --input '**/*.nupkg' `
+      --config '$(Pipeline.Workspace)\config\SignClient.json' `
+      --user '$(SignClientUser)' `
+      --secret '$(SignClientSecret)' `
+      --name 'TorchSharp' `
+      --description 'TorchSharp' `
+      --descriptionUrl 'https://github.com/dotnet/TorchSharp'
+    displayName: Sign packages
+      
+  - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
+    displayName: Publish Signed Linux CUDA Packages
+    artifact: SignedLinuxCUDAPackages
+
+  - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
+    displayName: Free up space (TorchSharp packages in workspace)
+
+
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
@@ -428,7 +480,8 @@ jobs:
     displayName: 'NuGet Authenticate'
 
   - download: current
-    artifact: SignedPackages
+    displayName: Download Signed TorchSharp Packages
+    artifact: SignedTorchSharpPackages
 
   - task: NuGetCommand@2
     displayName: 'NuGet push (TorchSharp)'
@@ -501,7 +554,8 @@ jobs:
     displayName: 'NuGet Authenticate'
 
   - download: current
-    artifact: SignedPackages
+    displayName: Download Signed Windows CUDA Packages
+    artifact: SignedWinCUDAPackages
 
   # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
   - task: NuGetCommand@2
@@ -587,7 +641,8 @@ jobs:
     displayName: 'NuGet Authenticate'
 
   - download: current
-    artifact: SignedPackages
+    displayName: Download Signed Linux CUDA Packages
+    artifact: SignedLinuxCUDAPackages
 
   # push the Linux Cuda packages 
   - task: NuGetCommand@2
