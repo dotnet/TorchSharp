@@ -403,6 +403,7 @@ jobs:
   - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
     displayName: Publish Signed TorchSharp Packages
     artifact: SignedTorchSharpPackages    
+    continueOnError: true
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
     displayName: Free up space (TorchSharp packages in workspace)
@@ -426,6 +427,7 @@ jobs:
   - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
     displayName: Publish Signed Windows CUDA Packages
     artifact: SignedWinCUDAPackages    
+    continueOnError: true
   
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
     displayName: Free up space (TorchSharp packages in workspace)
@@ -449,6 +451,7 @@ jobs:
   - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
     displayName: Publish Signed Linux CUDA Packages
     artifact: SignedLinuxCUDAPackages
+    continueOnError: true
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildLinuxCUDAPackages
     displayName: Free up space (TorchSharp packages in workspace)
