@@ -2,6 +2,10 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.93.1
+
+With this release, the native libtorch package version was updated to 1.9.0.11, and that required rebuilding this package.
+
 ### NuGet Version 0.93.0
 
 With this release, releases will have explicit control over the patch version number.
