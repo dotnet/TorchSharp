@@ -9,7 +9,7 @@
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
       <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
       <IsPackable>false</IsPackable>
-      <DefineConstants>TRACE;DEBUG;LIBTORCH_1_9_0_11;CUDA_11_1</DefineConstants>
+      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
