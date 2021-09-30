@@ -1,6 +1,9 @@
-[![Build Status](https://donsyme.visualstudio.com/TorchSharp/_apis/build/status/xamarin.TorchSharp?branchName=main)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=1&branchName=main)
+[![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 
 __TorchSharp is now in the .NET Foundation!__
+
+If you are using TorchSharp from NuGet, you should be using a version >= 0.93.1 of TorchSharp, and >= 1.9.0.11 of the libtorch-xxx redistributable packages.
+
 
 __NOTE:__
 
