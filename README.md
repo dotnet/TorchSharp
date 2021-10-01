@@ -9,7 +9,7 @@ __NOTE:__
 
 In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
 
-In PR 354, further significant changes were made, again aligning with the Pytorch APIs. It is also a massively braking change. We removed the {IntNN|FloatNN|ComplexNN}Tensor.* APIs, which had no parallel in PyTorch. Once again, we apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
+In PR 354, further significant changes were made, again aligning with the Pytorch APIs. It is also a massively breaking change. We removed the {IntNN|FloatNN|ComplexNN}Tensor.* APIs, which had no parallel in PyTorch. Once again, we apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
 
 # TorchSharp
 
@@ -106,14 +106,12 @@ binaries of LibTorch installed through other means (for example, by installing [
 ```
 
 # Code of Conduct
-The .NET Foundation has adopted the Contributor Covenant You can read more guidance on the Code of Conduct here. However, it is good practice to include the following text somewhere appropriate in your README.
-
 This project has adopted the code of conduct defined by the Contributor Covenant to clarify expected behavior in our community.
 For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct).
 
-# Developing
+# Developing and Contributing
 
-See [DEVGUIDE.md](DEVGUIDE.md).
+See [DEVGUIDE.md](DEVGUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 # Uses
 
