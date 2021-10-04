@@ -39,7 +39,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-16.04'
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
