@@ -19,7 +19,7 @@ resources:
 #   https://mcrflowprodcentralus.data.mcr.microsoft.com/mcrprod/dotnet-buildtools/prereqs?P1=1616630425&P2=1&P3=1&P4=xAN4nwxX9ps%2BMi75FMzu0iGuhA7luhLsZKUGf0Q9fFU%3D&se=2021-03-25T00%3A00%3A25Z&sig=j1uhQmj8EAbZqaSyGS%2Fwz0ETxwrGVhN3WFwX4OpNz4w%3D&sp=r&sr=b&sv=2015-02-21
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-mlnet-20210311173918-2c829e8
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-20.04-mlnet-20210311173918-2c829e8
 
 jobs:
 - template: /build/ci/job-template.yml
@@ -32,14 +32,14 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-get -y update &&
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     buildScript: dotnet build /p:SkipCuda=true -c 
     testScript: dotnet test /p:SkipCuda=true -c 
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-20.04'
     container: UbuntuContainer
 
 - template: /build/ci/job-template.yml
@@ -84,7 +84,7 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-get -y update &&
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
@@ -311,7 +311,7 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-get -y update &&
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
