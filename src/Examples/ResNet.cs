@@ -8,7 +8,7 @@ using static TorchSharp.torch.nn;
 namespace TorchSharp.Examples
 {
     /// <summary>
-    /// Modified version of MobileNet to classify CIFAR10 32x32 images.
+    /// Modified version of ResNet to classify CIFAR10 32x32 images.
     /// </summary>
     /// <remarks>
     /// With an unaugmented CIFAR-10 data set, the author of this saw training converge
