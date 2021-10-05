@@ -8,12 +8,8 @@ using static TorchSharp.torch.nn;
 namespace TorchSharp.Examples
 {
     /// <summary>
-    /// Modified version of MobileNet to classify CIFAR10 32x32 images.
+    /// Modified version of ResNet to classify CIFAR10 32x32 images.
     /// </summary>
-    /// <remarks>
-    /// With an unaugmented CIFAR-10 data set, the author of this saw training converge
-    /// at roughly 75% accuracy on the test set, over the course of 1500 epochs.
-    /// </remarks>
     class ResNet : Module
     {
         // The code here is is loosely based on https://github.com/kuangliu/pytorch-cifar/blob/master/models/resnet.py
